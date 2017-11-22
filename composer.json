@@ -1,0 +1,35 @@
+{
+    "name": "topthink/think",
+    "description": "the new thinkphp framework",
+    "type": "project",
+    "keywords": [
+        "framework",
+        "thinkphp",
+        "ORM"
+    ],
+    "homepage": "http://thinkphp.cn/",
+    "license": "Apache-2.0",
+    "authors": [
+        {
+            "name": "liu21st",
+            "email": "liu21st@gmail.com"
+        }
+    ],
+    "require": {
+        "php": ">=5.4.0",
+        "topthink/framework": "~5.0.0",
+        "terranc/think-blade": "^1.0",
+        "aliyuncs/oss-sdk-php": "^2.2",
+        "wxpay/wxpay": "^0.0.5",
+        "luoyt/auth": "^1.0",
+        "webonyx/graphql-php": "^0.11.2",
+        "jpush/jpush": "^3.5",
+        "topthink/think": "^5.0"
+    },
+    "extra": {
+        "think-path": "thinkphp"
+    },
+    "config": {
+        "preferred-install": "dist"
+    }
+}

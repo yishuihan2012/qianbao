@@ -1,0 +1,390 @@
+[
+    {
+        "name": "topthink/think-installer",
+        "version": "v1.0.12",
+        "version_normalized": "1.0.12.0",
+        "source": {
+            "type": "git",
+            "url": "https://github.com/top-think/think-installer.git",
+            "reference": "1be326e68f63de4e95977ed50f46ae75f017556d"
+        },
+        "dist": {
+            "type": "zip",
+            "url": "https://files.phpcomposer.com/files/top-think/think-installer/1be326e68f63de4e95977ed50f46ae75f017556d.zip",
+            "reference": "1be326e68f63de4e95977ed50f46ae75f017556d",
+            "shasum": ""
+        },
+        "require": {
+            "composer-plugin-api": "^1.0"
+        },
+        "require-dev": {
+            "composer/composer": "1.0.*@dev"
+        },
+        "time": "2017-05-27T06:58:09+00:00",
+        "type": "composer-plugin",
+        "extra": {
+            "class": "think\\composer\\Plugin"
+        },
+        "installation-source": "dist",
+        "autoload": {
+            "psr-4": {
+                "think\\composer\\": "src"
+            }
+        },
+        "notification-url": "https://packagist.org/downloads/",
+        "license": [
+            "Apache-2.0"
+        ],
+        "authors": [
+            {
+                "name": "yunwuxin",
+                "email": "448901948@qq.com"
+            }
+        ]
+    },
+    {
+        "name": "wxpay/wxpay",
+        "version": "0.0.5",
+        "version_normalized": "0.0.5.0",
+        "source": {
+            "type": "git",
+            "url": "https://github.com/wxpay/WXPay-SDK-PHP.git",
+            "reference": "6bf6918257886b35327d86371a05f145997b8deb"
+        },
+        "dist": {
+            "type": "zip",
+            "url": "https://files.phpcomposer.com/files/wxpay/WXPay-SDK-PHP/6bf6918257886b35327d86371a05f145997b8deb.zip",
+            "reference": "6bf6918257886b35327d86371a05f145997b8deb",
+            "shasum": ""
+        },
+        "time": "2017-03-13T13:19:01+00:00",
+        "type": "library",
+        "installation-source": "dist",
+        "autoload": {
+            "psr-4": {
+                "WXPay\\": "src/"
+            }
+        },
+        "notification-url": "https://packagist.org/downloads/",
+        "license": [
+            "BSD"
+        ],
+        "description": "微信支付 PHP SDK",
+        "keywords": [
+            "pay",
+            "sdk",
+            "wechat"
+        ]
+    },
+    {
+        "name": "luoyt/auth",
+        "version": "1.0",
+        "version_normalized": "1.0.0.0",
+        "source": {
+            "type": "git",
+            "url": "https://github.com/luoyt/auth.git",
+            "reference": "d8f6147754284c04eb9f8cab9db05ab9e0fb53d6"
+        },
+        "dist": {
+            "type": "zip",
+            "url": "https://files.phpcomposer.com/files/luoyt/auth/d8f6147754284c04eb9f8cab9db05ab9e0fb53d6.zip",
+            "reference": "d8f6147754284c04eb9f8cab9db05ab9e0fb53d6",
+            "shasum": ""
+        },
+        "require": {
+            "php": ">=5.4.4"
+        },
+        "time": "2016-11-11T06:00:25+00:00",
+        "type": "library",
+        "installation-source": "dist",
+        "autoload": {
+            "psr-4": {
+                "luoyt\\auth\\": "src/"
+            }
+        },
+        "notification-url": "https://packagist.org/downloads/",
+        "license": [
+            "MIT"
+        ],
+        "authors": [
+            {
+                "name": "luoyt",
+                "email": "501244162@qq.com"
+            }
+        ],
+        "description": "thinkphp5 auth"
+    },
+    {
+        "name": "webonyx/graphql-php",
+        "version": "v0.11.2",
+        "version_normalized": "0.11.2.0",
+        "source": {
+            "type": "git",
+            "url": "https://github.com/webonyx/graphql-php.git",
+            "reference": "b17b1c33366d07877feb4299f207a420fbfe53b5"
+        },
+        "dist": {
+            "type": "zip",
+            "url": "https://files.phpcomposer.com/files/webonyx/graphql-php/b17b1c33366d07877feb4299f207a420fbfe53b5.zip",
+            "reference": "b17b1c33366d07877feb4299f207a420fbfe53b5",
+            "shasum": ""
+        },
+        "require": {
+            "ext-mbstring": "*",
+            "php": ">=5.5,<8.0-DEV"
+        },
+        "require-dev": {
+            "phpunit/phpunit": "^4.8",
+            "psr/http-message": "^1.0"
+        },
+        "suggest": {
+            "psr/http-message": "To use standard GraphQL server",
+            "react/promise": "To leverage async resolving on React PHP platform"
+        },
+        "time": "2017-10-13T17:45:55+00:00",
+        "type": "library",
+        "installation-source": "dist",
+        "autoload": {
+            "files": [
+                "src/deprecated.php"
+            ],
+            "psr-4": {
+                "GraphQL\\": "src/"
+            }
+        },
+        "notification-url": "https://packagist.org/downloads/",
+        "license": [
+            "BSD"
+        ],
+        "description": "A PHP port of GraphQL reference implementation",
+        "homepage": "https://github.com/webonyx/graphql-php",
+        "keywords": [
+            "api",
+            "graphql"
+        ]
+    },
+    {
+        "name": "topthink/framework",
+        "version": "v5.0.12",
+        "version_normalized": "5.0.12.0",
+        "source": {
+            "type": "git",
+            "url": "https://github.com/top-think/framework.git",
+            "reference": "0fb51680e8d62495d27f17a0e6cf889b763a6d3c"
+        },
+        "dist": {
+            "type": "zip",
+            "url": "https://files.phpcomposer.com/files/top-think/framework/0fb51680e8d62495d27f17a0e6cf889b763a6d3c.zip",
+            "reference": "0fb51680e8d62495d27f17a0e6cf889b763a6d3c",
+            "shasum": ""
+        },
+        "require": {
+            "php": ">=5.4.0",
+            "topthink/think-installer": "~1.0"
+        },
+        "require-dev": {
+            "johnkary/phpunit-speedtrap": "^1.0",
+            "mikey179/vfsstream": "~1.6",
+            "phpdocumentor/reflection-docblock": "^2.0",
+            "phploc/phploc": "2.*",
+            "phpunit/phpunit": "4.8.*",
+            "sebastian/phpcpd": "2.*"
+        },
+        "time": "2017-11-06T01:19:03+00:00",
+        "type": "think-framework",
+        "installation-source": "dist",
+        "autoload": {
+            "psr-4": {
+                "think\\": "library/think"
+            }
+        },
+        "notification-url": "https://packagist.org/downloads/",
+        "license": [
+            "Apache-2.0"
+        ],
+        "authors": [
+            {
+                "name": "liu21st",
+                "email": "liu21st@gmail.com"
+            }
+        ],
+        "description": "the new thinkphp framework",
+        "homepage": "http://thinkphp.cn/",
+        "keywords": [
+            "framework",
+            "orm",
+            "thinkphp"
+        ]
+    },
+    {
+        "name": "terranc/blade",
+        "version": "0.1.0",
+        "version_normalized": "0.1.0.0",
+        "source": {
+            "type": "git",
+            "url": "https://github.com/terranc/blade.git",
+            "reference": "e6a879aaa1b45c7f779a69d4831db2f7e6d66e73"
+        },
+        "dist": {
+            "type": "zip",
+            "url": "https://files.phpcomposer.com/files/terranc/blade/e6a879aaa1b45c7f779a69d4831db2f7e6d66e73.zip",
+            "reference": "e6a879aaa1b45c7f779a69d4831db2f7e6d66e73",
+            "shasum": ""
+        },
+        "require": {
+            "php": ">=5.4.0"
+        },
+        "time": "2017-02-04T05:29:43+00:00",
+        "type": "library",
+        "installation-source": "dist",
+        "autoload": {
+            "files": [
+                "src/helpers.php"
+            ],
+            "psr-4": {
+                "terranc\\Blade\\": "src/"
+            }
+        },
+        "notification-url": "https://packagist.org/downloads/",
+        "license": [
+            "MIT"
+        ],
+        "authors": [
+            {
+                "name": "terranc",
+                "email": "terran.chao@lookfeel.co"
+            }
+        ],
+        "description": "an independent version of laravel view template - blade",
+        "homepage": "http://0x1.im"
+    },
+    {
+        "name": "terranc/think-blade",
+        "version": "1.0.2",
+        "version_normalized": "1.0.2.0",
+        "source": {
+            "type": "git",
+            "url": "https://github.com/terranc/think-blade.git",
+            "reference": "20c2d86e15bd782f0e2ff9e77c4ecad47558ff62"
+        },
+        "dist": {
+            "type": "zip",
+            "url": "https://files.phpcomposer.com/files/terranc/think-blade/20c2d86e15bd782f0e2ff9e77c4ecad47558ff62.zip",
+            "reference": "20c2d86e15bd782f0e2ff9e77c4ecad47558ff62",
+            "shasum": ""
+        },
+        "require": {
+            "php": ">=5.4.0",
+            "terranc/blade": "^0.1"
+        },
+        "time": "2017-02-05T12:15:51+00:00",
+        "type": "library",
+        "installation-source": "dist",
+        "autoload": {
+            "classmap": [
+                {
+                    "think\\view\\driver\\Blade": "drivers/thinkphp5/Blade.php"
+                }
+            ]
+        },
+        "notification-url": "https://packagist.org/downloads/",
+        "license": [
+            "Apache2"
+        ],
+        "authors": [
+            {
+                "name": "terranc",
+                "email": "terran.chao@lookfeel.co"
+            }
+        ],
+        "description": "think blade view engine"
+    },
+    {
+        "name": "aliyuncs/oss-sdk-php",
+        "version": "v2.2.4",
+        "version_normalized": "2.2.4.0",
+        "source": {
+            "type": "git",
+            "url": "https://github.com/aliyun/aliyun-oss-php-sdk.git",
+            "reference": "0b9b85b6c5c38cfc4ef3b0205a5a62d1e36acf2e"
+        },
+        "dist": {
+            "type": "zip",
+            "url": "https://files.phpcomposer.com/files/aliyun/aliyun-oss-php-sdk/0b9b85b6c5c38cfc4ef3b0205a5a62d1e36acf2e.zip",
+            "reference": "0b9b85b6c5c38cfc4ef3b0205a5a62d1e36acf2e",
+            "shasum": ""
+        },
+        "require": {
+            "php": ">=5.3"
+        },
+        "require-dev": {
+            "phpunit/phpunit": "~4.0",
+            "satooshi/php-coveralls": "~1.0"
+        },
+        "time": "2017-04-25T09:15:12+00:00",
+        "type": "library",
+        "installation-source": "dist",
+        "autoload": {
+            "psr-4": {
+                "OSS\\": "src/OSS"
+            }
+        },
+        "notification-url": "https://packagist.org/downloads/",
+        "license": [
+            "MIT"
+        ],
+        "authors": [
+            {
+                "name": "Aliyuncs",
+                "homepage": "http://www.aliyun.com"
+            }
+        ],
+        "description": "Aliyun OSS SDK for PHP",
+        "homepage": "http://www.aliyun.com/product/oss/"
+    },
+    {
+        "name": "jpush/jpush",
+        "version": "v3.5.23",
+        "version_normalized": "3.5.23.0",
+        "source": {
+            "type": "git",
+            "url": "https://github.com/jpush/jpush-api-php-client.git",
+            "reference": "921b491fa36e96d58431cefade5f4782d09690e4"
+        },
+        "dist": {
+            "type": "zip",
+            "url": "https://files.phpcomposer.com/files/jpush/jpush-api-php-client/921b491fa36e96d58431cefade5f4782d09690e4.zip",
+            "reference": "921b491fa36e96d58431cefade5f4782d09690e4",
+            "shasum": ""
+        },
+        "require": {
+            "ext-curl": "*",
+            "php": ">=5.3.3"
+        },
+        "require-dev": {
+            "phpunit/phpunit": "*"
+        },
+        "time": "2017-10-16T04:27:45+00:00",
+        "type": "library",
+        "installation-source": "dist",
+        "autoload": {
+            "psr-4": {
+                "JPush\\": "src/JPush/"
+            }
+        },
+        "notification-url": "https://packagist.org/downloads/",
+        "license": [
+            "MIT"
+        ],
+        "authors": [
+            {
+                "name": "JPush",
+                "email": "support@jpush.cn",
+                "homepage": "https://www.jpush.cn/",
+                "role": "Developer"
+            }
+        ],
+        "description": "JPush API PHP Client",
+        "homepage": "https://github.com/jpush/jpush-api-php-client"
+    }
+]
