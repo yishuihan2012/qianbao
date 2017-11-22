@@ -1,0 +1,88 @@
+/*common*/
+html,
+body.login-container,
+body.login-container .container-fluid,
+body.login-container .container-fluid .wrapper{
+    height: 100%;
+}
+a{
+  color: #43a047;
+}
+table.table{
+    margin-top:10px;
+}
+div.row-search div{
+    margin:3px 0;
+}
+/*login start*/
+body.login-container{
+    background-image: url('../images/bg.jpg');
+}
+body.login-container .container-fluid .wrapper{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+body.login-container .container-fluid .wrapper .panel{
+    border-radius: 0;
+    min-width: 400px;
+}
+body.login-container .container-fluid .wrapper div.panel div.panel-body{
+  text-align: center;
+}
+body.login-container .container-fluid .wrapper div.panel div.input-group{
+    width: 100%;
+    margin:25px 0;
+}
+/*login end*/
+/*breadcrump satrt*/
+body.main-container ol.breadcrumb{
+    margin-bottom:10px;
+}
+body.main-container hr{
+    margin-top: 10px;
+}
+body.main-container .wrapper{
+    min-height: 500px;
+}
+/*breadcrumb end*/
+/*common*/
+footer{
+    position: fixed;
+    left:0;
+    width: 100%;
+    padding-bottom: 20px;
+}
+
+/*男女图标颜色*/
+.icon{
+  cursor:pointer;
+}
+.icon-mars{
+    color:#13bdf1;
+}
+.icon-venus{
+    color:#ef50a0;
+}
+
+/*去除列表上方的margin*/
+table.table{
+    margin-top: 0
+}
+.panel{margin-bottom: 10px;}
+/*统计样式*/
+small{
+    font-size: 100%;
+}
+blockquote{
+    margin:0 0 3px;
+    padding: 5px 10px;
+    font-size: 14px;
+    border-left: 4px solid #e5e5e5;
+}
+.dropdown-menu{
+    min-width: 120px;
+}
+table .table tr.middle td{
+  vertical-align: middle!important;
+}

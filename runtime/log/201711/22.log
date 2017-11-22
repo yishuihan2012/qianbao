@@ -1,0 +1,2521 @@
+---------------------------------------------------------------
+[ 2017-11-22T11:17:53+08:00 ] 127.0.0.1 127.0.0.1 GET /index/login/index
+[ info ] 127.0.0.1:82/index/login/index [运行时间：0.045003s][吞吐率：22.22req/s] [内存消耗：2,144.11kb] [文件加载：84]
+[ info ] [ LANG ] D:\wallet\thinkphp\lang\zh-cn.php
+[ info ] [ ROUTE ] array (
+  'type' => 'module',
+  'module' => 
+  array (
+    0 => 'index',
+    1 => 'login',
+    2 => 'index',
+  ),
+)
+[ info ] [ HEADER ] array (
+  'host' => '127.0.0.1:82',
+  'connection' => 'keep-alive',
+  'cache-control' => 'max-age=0',
+  'upgrade-insecure-requests' => '1',
+  'user-agent' => 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/55.0.2883.87 Safari/537.36',
+  'accept' => 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8',
+  'accept-encoding' => 'gzip, deflate, sdch, br',
+  'accept-language' => 'zh-CN,zh;q=0.8',
+  'cookie' => 'ci_session=qvagv1ep1a4p6m4j58gdf9lcuu5v7gu3; PHPSESSID=amhqti0cfnr3mqn564hohnd297; __guid=96992031.560262871296186300.1511319800999.382; monitor_count=19',
+)
+[ info ] [ PARAM ] array (
+)
+[ info ] [ RUN ] app\index\controller\Login->index[ D:\wallet\application\index\controller\Login.php ]
+[ info ] [ SESSION ] INIT array (
+  'id' => '',
+  'var_session_id' => '',
+  'prefix' => 'think',
+  'type' => '',
+  'auto_start' => true,
+)
+[ info ] [ VIEW ] D:\wallet\template\admin\login\index.blade.php [ array (
+) ]
+[ info ] [ LOG ] INIT File
+---------------------------------------------------------------
+[ 2017-11-22T11:17:53+08:00 ] 127.0.0.1 127.0.0.1 GET /static/css/zui.min.css
+[ info ] 127.0.0.1:82/static/css/zui.min.css [运行时间：0.023002s][吞吐率：43.47req/s] [内存消耗：1,611.30kb] [文件加载：65]
+[ info ] [ LANG ] D:\wallet\thinkphp\lang\zh-cn.php
+[ info ] [ ROUTE ] array (
+  'type' => 'module',
+  'module' => 
+  array (
+    0 => 'static',
+    1 => 'css',
+    2 => 'zui.min.css',
+  ),
+)
+[ info ] [ HEADER ] array (
+  'host' => '127.0.0.1:82',
+  'connection' => 'keep-alive',
+  'user-agent' => 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/55.0.2883.87 Safari/537.36',
+  'accept' => 'text/css,*/*;q=0.1',
+  'referer' => 'http://127.0.0.1:82/index/login/index',
+  'accept-encoding' => 'gzip, deflate, sdch, br',
+  'accept-language' => 'zh-CN,zh;q=0.8',
+  'cookie' => 'ci_session=qvagv1ep1a4p6m4j58gdf9lcuu5v7gu3; PHPSESSID=amhqti0cfnr3mqn564hohnd297; __guid=96992031.560262871296186300.1511319800999.382; monitor_count=19',
+)
+[ info ] [ PARAM ] array (
+)
+[ info ] [ LOG ] INIT File
+---------------------------------------------------------------
+[ 2017-11-22T11:17:53+08:00 ] 127.0.0.1 127.0.0.1 GET /static/css/animate.min.css
+[ info ] 127.0.0.1:82/static/css/animate.min.css [运行时间：0.025002s][吞吐率：40.00req/s] [内存消耗：1,611.30kb] [文件加载：65]
+[ info ] [ LANG ] D:\wallet\thinkphp\lang\zh-cn.php
+[ info ] [ ROUTE ] array (
+  'type' => 'module',
+  'module' => 
+  array (
+    0 => 'static',
+    1 => 'css',
+    2 => 'animate.min.css',
+  ),
+)
+[ info ] [ HEADER ] array (
+  'host' => '127.0.0.1:82',
+  'connection' => 'keep-alive',
+  'user-agent' => 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/55.0.2883.87 Safari/537.36',
+  'accept' => 'text/css,*/*;q=0.1',
+  'referer' => 'http://127.0.0.1:82/index/login/index',
+  'accept-encoding' => 'gzip, deflate, sdch, br',
+  'accept-language' => 'zh-CN,zh;q=0.8',
+  'cookie' => 'ci_session=qvagv1ep1a4p6m4j58gdf9lcuu5v7gu3; PHPSESSID=amhqti0cfnr3mqn564hohnd297; __guid=96992031.560262871296186300.1511319800999.382; monitor_count=19',
+)
+[ info ] [ PARAM ] array (
+)
+[ info ] [ LOG ] INIT File
+---------------------------------------------------------------
+[ 2017-11-22T11:17:53+08:00 ] 127.0.0.1 127.0.0.1 GET /static/css/common.css
+[ info ] 127.0.0.1:82/static/css/common.css [运行时间：0.027002s][吞吐率：37.03req/s] [内存消耗：1,611.30kb] [文件加载：65]
+[ info ] [ LANG ] D:\wallet\thinkphp\lang\zh-cn.php
+[ info ] [ ROUTE ] array (
+  'type' => 'module',
+  'module' => 
+  array (
+    0 => 'static',
+    1 => 'css',
+    2 => 'common.css',
+  ),
+)
+[ info ] [ HEADER ] array (
+  'host' => '127.0.0.1:82',
+  'connection' => 'keep-alive',
+  'user-agent' => 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/55.0.2883.87 Safari/537.36',
+  'accept' => 'text/css,*/*;q=0.1',
+  'referer' => 'http://127.0.0.1:82/index/login/index',
+  'accept-encoding' => 'gzip, deflate, sdch, br',
+  'accept-language' => 'zh-CN,zh;q=0.8',
+  'cookie' => 'ci_session=qvagv1ep1a4p6m4j58gdf9lcuu5v7gu3; PHPSESSID=amhqti0cfnr3mqn564hohnd297; __guid=96992031.560262871296186300.1511319800999.382; monitor_count=19',
+)
+[ info ] [ PARAM ] array (
+)
+[ info ] [ LOG ] INIT File
+---------------------------------------------------------------
+[ 2017-11-22T11:17:53+08:00 ] 127.0.0.1 127.0.0.1 GET /static/lib/datatable/zui.datatable.min.css
+[ info ] 127.0.0.1:82/static/lib/datatable/zui.datatable.min.css [运行时间：0.035002s][吞吐率：28.57req/s] [内存消耗：1,611.34kb] [文件加载：65]
+[ info ] [ LANG ] D:\wallet\thinkphp\lang\zh-cn.php
+[ info ] [ ROUTE ] array (
+  'type' => 'module',
+  'module' => 
+  array (
+    0 => 'static',
+    1 => 'lib',
+    2 => 'datatable',
+  ),
+)
+[ info ] [ HEADER ] array (
+  'host' => '127.0.0.1:82',
+  'connection' => 'keep-alive',
+  'user-agent' => 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/55.0.2883.87 Safari/537.36',
+  'accept' => 'text/css,*/*;q=0.1',
+  'referer' => 'http://127.0.0.1:82/index/login/index',
+  'accept-encoding' => 'gzip, deflate, sdch, br',
+  'accept-language' => 'zh-CN,zh;q=0.8',
+  'cookie' => 'ci_session=qvagv1ep1a4p6m4j58gdf9lcuu5v7gu3; PHPSESSID=amhqti0cfnr3mqn564hohnd297; __guid=96992031.560262871296186300.1511319800999.382; monitor_count=19',
+)
+[ info ] [ PARAM ] array (
+)
+[ info ] [ LOG ] INIT File
+---------------------------------------------------------------
+[ 2017-11-22T11:17:53+08:00 ] 127.0.0.1 127.0.0.1 GET /static/lib/bootbox/bootbox.min.css
+[ info ] 127.0.0.1:82/static/lib/bootbox/bootbox.min.css [运行时间：0.032002s][吞吐率：31.25req/s] [内存消耗：1,611.32kb] [文件加载：65]
+[ info ] [ LANG ] D:\wallet\thinkphp\lang\zh-cn.php
+[ info ] [ ROUTE ] array (
+  'type' => 'module',
+  'module' => 
+  array (
+    0 => 'static',
+    1 => 'lib',
+    2 => 'bootbox',
+  ),
+)
+[ info ] [ HEADER ] array (
+  'host' => '127.0.0.1:82',
+  'connection' => 'keep-alive',
+  'user-agent' => 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/55.0.2883.87 Safari/537.36',
+  'accept' => 'text/css,*/*;q=0.1',
+  'referer' => 'http://127.0.0.1:82/index/login/index',
+  'accept-encoding' => 'gzip, deflate, sdch, br',
+  'accept-language' => 'zh-CN,zh;q=0.8',
+  'cookie' => 'ci_session=qvagv1ep1a4p6m4j58gdf9lcuu5v7gu3; PHPSESSID=amhqti0cfnr3mqn564hohnd297; __guid=96992031.560262871296186300.1511319800999.382; monitor_count=19',
+)
+[ info ] [ PARAM ] array (
+)
+[ info ] [ LOG ] INIT File
+---------------------------------------------------------------
+[ 2017-11-22T11:17:53+08:00 ] 127.0.0.1 127.0.0.1 GET /static/lib/datetimepicker/datetimepicker.min.css
+[ info ] 127.0.0.1:82/static/lib/datetimepicker/datetimepicker.min.css [运行时间：0.046003s][吞吐率：21.74req/s] [内存消耗：1,611.36kb] [文件加载：65]
+[ info ] [ LANG ] D:\wallet\thinkphp\lang\zh-cn.php
+[ info ] [ ROUTE ] array (
+  'type' => 'module',
+  'module' => 
+  array (
+    0 => 'static',
+    1 => 'lib',
+    2 => 'datetimepicker',
+  ),
+)
+[ info ] [ HEADER ] array (
+  'host' => '127.0.0.1:82',
+  'connection' => 'keep-alive',
+  'user-agent' => 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/55.0.2883.87 Safari/537.36',
+  'accept' => 'text/css,*/*;q=0.1',
+  'referer' => 'http://127.0.0.1:82/index/login/index',
+  'accept-encoding' => 'gzip, deflate, sdch, br',
+  'accept-language' => 'zh-CN,zh;q=0.8',
+  'cookie' => 'ci_session=qvagv1ep1a4p6m4j58gdf9lcuu5v7gu3; PHPSESSID=amhqti0cfnr3mqn564hohnd297; __guid=96992031.560262871296186300.1511319800999.382; monitor_count=19',
+)
+[ info ] [ PARAM ] array (
+)
+[ info ] [ LOG ] INIT File
+---------------------------------------------------------------
+[ 2017-11-22T11:17:53+08:00 ] 127.0.0.1 127.0.0.1 GET /static/lib/uploader/zui.uploader.min.css
+[ info ] 127.0.0.1:82/static/lib/uploader/zui.uploader.min.css [运行时间：0.028001s][吞吐率：35.71req/s] [内存消耗：1,611.34kb] [文件加载：65]
+[ info ] [ LANG ] D:\wallet\thinkphp\lang\zh-cn.php
+[ info ] [ ROUTE ] array (
+  'type' => 'module',
+  'module' => 
+  array (
+    0 => 'static',
+    1 => 'lib',
+    2 => 'uploader',
+  ),
+)
+[ info ] [ HEADER ] array (
+  'host' => '127.0.0.1:82',
+  'connection' => 'keep-alive',
+  'user-agent' => 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/55.0.2883.87 Safari/537.36',
+  'accept' => 'text/css,*/*;q=0.1',
+  'referer' => 'http://127.0.0.1:82/index/login/index',
+  'accept-encoding' => 'gzip, deflate, sdch, br',
+  'accept-language' => 'zh-CN,zh;q=0.8',
+  'cookie' => 'ci_session=qvagv1ep1a4p6m4j58gdf9lcuu5v7gu3; PHPSESSID=amhqti0cfnr3mqn564hohnd297; __guid=96992031.560262871296186300.1511319800999.382; monitor_count=19',
+)
+[ info ] [ PARAM ] array (
+)
+[ info ] [ LOG ] INIT File
+---------------------------------------------------------------
+[ 2017-11-22T11:17:53+08:00 ] 127.0.0.1 127.0.0.1 GET /static/lib/jquery/jquery.js
+[ info ] 127.0.0.1:82/static/lib/jquery/jquery.js [运行时间：0.037002s][吞吐率：27.03req/s] [内存消耗：1,611.30kb] [文件加载：65]
+[ info ] [ LANG ] D:\wallet\thinkphp\lang\zh-cn.php
+[ info ] [ ROUTE ] array (
+  'type' => 'module',
+  'module' => 
+  array (
+    0 => 'static',
+    1 => 'lib',
+    2 => 'jquery',
+  ),
+)
+[ info ] [ HEADER ] array (
+  'host' => '127.0.0.1:82',
+  'connection' => 'keep-alive',
+  'user-agent' => 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/55.0.2883.87 Safari/537.36',
+  'accept' => '*/*',
+  'referer' => 'http://127.0.0.1:82/index/login/index',
+  'accept-encoding' => 'gzip, deflate, sdch, br',
+  'accept-language' => 'zh-CN,zh;q=0.8',
+  'cookie' => 'ci_session=qvagv1ep1a4p6m4j58gdf9lcuu5v7gu3; PHPSESSID=amhqti0cfnr3mqn564hohnd297; __guid=96992031.560262871296186300.1511319800999.382; monitor_count=19',
+)
+[ info ] [ PARAM ] array (
+)
+[ info ] [ LOG ] INIT File
+---------------------------------------------------------------
+[ 2017-11-22T11:17:53+08:00 ] 127.0.0.1 127.0.0.1 GET /static/lib/chosen/chosen.min.css
+[ info ] 127.0.0.1:82/static/lib/chosen/chosen.min.css [运行时间：0.034002s][吞吐率：29.41req/s] [内存消耗：1,611.32kb] [文件加载：65]
+[ info ] [ LANG ] D:\wallet\thinkphp\lang\zh-cn.php
+[ info ] [ ROUTE ] array (
+  'type' => 'module',
+  'module' => 
+  array (
+    0 => 'static',
+    1 => 'lib',
+    2 => 'chosen',
+  ),
+)
+[ info ] [ HEADER ] array (
+  'host' => '127.0.0.1:82',
+  'connection' => 'keep-alive',
+  'user-agent' => 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/55.0.2883.87 Safari/537.36',
+  'accept' => 'text/css,*/*;q=0.1',
+  'referer' => 'http://127.0.0.1:82/index/login/index',
+  'accept-encoding' => 'gzip, deflate, sdch, br',
+  'accept-language' => 'zh-CN,zh;q=0.8',
+  'cookie' => 'ci_session=qvagv1ep1a4p6m4j58gdf9lcuu5v7gu3; PHPSESSID=amhqti0cfnr3mqn564hohnd297; __guid=96992031.560262871296186300.1511319800999.382; monitor_count=19',
+)
+[ info ] [ PARAM ] array (
+)
+[ info ] [ LOG ] INIT File
+---------------------------------------------------------------
+[ 2017-11-22T11:17:53+08:00 ] 127.0.0.1 127.0.0.1 GET /static/lib/datatable/zui.datatable.min.js
+[ info ] 127.0.0.1:82/static/lib/datatable/zui.datatable.min.js [运行时间：0.023001s][吞吐率：43.48req/s] [内存消耗：1,611.33kb] [文件加载：65]
+[ info ] [ LANG ] D:\wallet\thinkphp\lang\zh-cn.php
+[ info ] [ ROUTE ] array (
+  'type' => 'module',
+  'module' => 
+  array (
+    0 => 'static',
+    1 => 'lib',
+    2 => 'datatable',
+  ),
+)
+[ info ] [ HEADER ] array (
+  'host' => '127.0.0.1:82',
+  'connection' => 'keep-alive',
+  'user-agent' => 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/55.0.2883.87 Safari/537.36',
+  'accept' => '*/*',
+  'referer' => 'http://127.0.0.1:82/index/login/index',
+  'accept-encoding' => 'gzip, deflate, sdch, br',
+  'accept-language' => 'zh-CN,zh;q=0.8',
+  'cookie' => 'ci_session=qvagv1ep1a4p6m4j58gdf9lcuu5v7gu3; PHPSESSID=amhqti0cfnr3mqn564hohnd297; __guid=96992031.560262871296186300.1511319800999.382; monitor_count=20',
+)
+[ info ] [ PARAM ] array (
+)
+[ info ] [ LOG ] INIT File
+---------------------------------------------------------------
+[ 2017-11-22T11:17:53+08:00 ] 127.0.0.1 127.0.0.1 GET /static/lib/bootbox/bootbox.min.js
+[ info ] 127.0.0.1:82/static/lib/bootbox/bootbox.min.js [运行时间：0.021001s][吞吐率：47.62req/s] [内存消耗：1,611.30kb] [文件加载：65]
+[ info ] [ LANG ] D:\wallet\thinkphp\lang\zh-cn.php
+[ info ] [ ROUTE ] array (
+  'type' => 'module',
+  'module' => 
+  array (
+    0 => 'static',
+    1 => 'lib',
+    2 => 'bootbox',
+  ),
+)
+[ info ] [ HEADER ] array (
+  'host' => '127.0.0.1:82',
+  'connection' => 'keep-alive',
+  'user-agent' => 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/55.0.2883.87 Safari/537.36',
+  'accept' => '*/*',
+  'referer' => 'http://127.0.0.1:82/index/login/index',
+  'accept-encoding' => 'gzip, deflate, sdch, br',
+  'accept-language' => 'zh-CN,zh;q=0.8',
+  'cookie' => 'ci_session=qvagv1ep1a4p6m4j58gdf9lcuu5v7gu3; PHPSESSID=amhqti0cfnr3mqn564hohnd297; __guid=96992031.560262871296186300.1511319800999.382; monitor_count=20',
+)
+[ info ] [ PARAM ] array (
+)
+[ info ] [ LOG ] INIT File
+---------------------------------------------------------------
+[ 2017-11-22T11:17:53+08:00 ] 127.0.0.1 127.0.0.1 GET /static/lib/chosen/chosen.min.js
+[ info ] 127.0.0.1:82/static/lib/chosen/chosen.min.js [运行时间：0.021001s][吞吐率：47.62req/s] [内存消耗：1,611.30kb] [文件加载：65]
+[ info ] [ LANG ] D:\wallet\thinkphp\lang\zh-cn.php
+[ info ] [ ROUTE ] array (
+  'type' => 'module',
+  'module' => 
+  array (
+    0 => 'static',
+    1 => 'lib',
+    2 => 'chosen',
+  ),
+)
+[ info ] [ HEADER ] array (
+  'host' => '127.0.0.1:82',
+  'connection' => 'keep-alive',
+  'user-agent' => 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/55.0.2883.87 Safari/537.36',
+  'accept' => '*/*',
+  'referer' => 'http://127.0.0.1:82/index/login/index',
+  'accept-encoding' => 'gzip, deflate, sdch, br',
+  'accept-language' => 'zh-CN,zh;q=0.8',
+  'cookie' => 'ci_session=qvagv1ep1a4p6m4j58gdf9lcuu5v7gu3; PHPSESSID=amhqti0cfnr3mqn564hohnd297; __guid=96992031.560262871296186300.1511319800999.382; monitor_count=20',
+)
+[ info ] [ PARAM ] array (
+)
+[ info ] [ LOG ] INIT File
+---------------------------------------------------------------
+[ 2017-11-22T11:17:53+08:00 ] 127.0.0.1 127.0.0.1 GET /static/js/zui.min.js
+[ info ] 127.0.0.1:82/static/js/zui.min.js [运行时间：0.039002s][吞吐率：25.64req/s] [内存消耗：1,611.28kb] [文件加载：65]
+[ info ] [ LANG ] D:\wallet\thinkphp\lang\zh-cn.php
+[ info ] [ ROUTE ] array (
+  'type' => 'module',
+  'module' => 
+  array (
+    0 => 'static',
+    1 => 'js',
+    2 => 'zui.min.js',
+  ),
+)
+[ info ] [ HEADER ] array (
+  'host' => '127.0.0.1:82',
+  'connection' => 'keep-alive',
+  'user-agent' => 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/55.0.2883.87 Safari/537.36',
+  'accept' => '*/*',
+  'referer' => 'http://127.0.0.1:82/index/login/index',
+  'accept-encoding' => 'gzip, deflate, sdch, br',
+  'accept-language' => 'zh-CN,zh;q=0.8',
+  'cookie' => 'ci_session=qvagv1ep1a4p6m4j58gdf9lcuu5v7gu3; PHPSESSID=amhqti0cfnr3mqn564hohnd297; __guid=96992031.560262871296186300.1511319800999.382; monitor_count=20',
+)
+[ info ] [ PARAM ] array (
+)
+[ info ] [ LOG ] INIT File
+---------------------------------------------------------------
+[ 2017-11-22T11:17:53+08:00 ] 127.0.0.1 127.0.0.1 GET /static/lib/datetimepicker/datetimepicker.min.js
+[ info ] 127.0.0.1:82/static/lib/datetimepicker/datetimepicker.min.js [运行时间：0.033001s][吞吐率：30.30req/s] [内存消耗：1,611.34kb] [文件加载：65]
+[ info ] [ LANG ] D:\wallet\thinkphp\lang\zh-cn.php
+[ info ] [ ROUTE ] array (
+  'type' => 'module',
+  'module' => 
+  array (
+    0 => 'static',
+    1 => 'lib',
+    2 => 'datetimepicker',
+  ),
+)
+[ info ] [ HEADER ] array (
+  'host' => '127.0.0.1:82',
+  'connection' => 'keep-alive',
+  'user-agent' => 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/55.0.2883.87 Safari/537.36',
+  'accept' => '*/*',
+  'referer' => 'http://127.0.0.1:82/index/login/index',
+  'accept-encoding' => 'gzip, deflate, sdch, br',
+  'accept-language' => 'zh-CN,zh;q=0.8',
+  'cookie' => 'ci_session=qvagv1ep1a4p6m4j58gdf9lcuu5v7gu3; PHPSESSID=amhqti0cfnr3mqn564hohnd297; __guid=96992031.560262871296186300.1511319800999.382; monitor_count=20',
+)
+[ info ] [ PARAM ] array (
+)
+[ info ] [ LOG ] INIT File
+---------------------------------------------------------------
+[ 2017-11-22T11:17:53+08:00 ] 127.0.0.1 127.0.0.1 GET /static/lib/uploader/zui.uploader.min.js
+[ info ] 127.0.0.1:82/static/lib/uploader/zui.uploader.min.js [运行时间：0.031002s][吞吐率：32.26req/s] [内存消耗：1,611.31kb] [文件加载：65]
+[ info ] [ LANG ] D:\wallet\thinkphp\lang\zh-cn.php
+[ info ] [ ROUTE ] array (
+  'type' => 'module',
+  'module' => 
+  array (
+    0 => 'static',
+    1 => 'lib',
+    2 => 'uploader',
+  ),
+)
+[ info ] [ HEADER ] array (
+  'host' => '127.0.0.1:82',
+  'connection' => 'keep-alive',
+  'user-agent' => 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/55.0.2883.87 Safari/537.36',
+  'accept' => '*/*',
+  'referer' => 'http://127.0.0.1:82/index/login/index',
+  'accept-encoding' => 'gzip, deflate, sdch, br',
+  'accept-language' => 'zh-CN,zh;q=0.8',
+  'cookie' => 'ci_session=qvagv1ep1a4p6m4j58gdf9lcuu5v7gu3; PHPSESSID=amhqti0cfnr3mqn564hohnd297; __guid=96992031.560262871296186300.1511319800999.382; monitor_count=20',
+)
+[ info ] [ PARAM ] array (
+)
+[ info ] [ LOG ] INIT File
+---------------------------------------------------------------
+[ 2017-11-22T11:17:53+08:00 ] 127.0.0.1 127.0.0.1 GET /static/lib/kindeditor/kindeditor.min.js
+[ info ] 127.0.0.1:82/static/lib/kindeditor/kindeditor.min.js [运行时间：0.021002s][吞吐率：47.61req/s] [内存消耗：1,611.31kb] [文件加载：65]
+[ info ] [ LANG ] D:\wallet\thinkphp\lang\zh-cn.php
+[ info ] [ ROUTE ] array (
+  'type' => 'module',
+  'module' => 
+  array (
+    0 => 'static',
+    1 => 'lib',
+    2 => 'kindeditor',
+  ),
+)
+[ info ] [ HEADER ] array (
+  'host' => '127.0.0.1:82',
+  'connection' => 'keep-alive',
+  'user-agent' => 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/55.0.2883.87 Safari/537.36',
+  'accept' => '*/*',
+  'referer' => 'http://127.0.0.1:82/index/login/index',
+  'accept-encoding' => 'gzip, deflate, sdch, br',
+  'accept-language' => 'zh-CN,zh;q=0.8',
+  'cookie' => 'ci_session=qvagv1ep1a4p6m4j58gdf9lcuu5v7gu3; PHPSESSID=amhqti0cfnr3mqn564hohnd297; __guid=96992031.560262871296186300.1511319800999.382; monitor_count=20',
+)
+[ info ] [ PARAM ] array (
+)
+[ info ] [ LOG ] INIT File
+---------------------------------------------------------------
+[ 2017-11-22T11:17:53+08:00 ] 127.0.0.1 127.0.0.1 GET /static/js/jquery.PrintArea.js
+[ info ] 127.0.0.1:82/static/js/jquery.PrintArea.js [运行时间：0.023001s][吞吐率：43.48req/s] [内存消耗：1,611.34kb] [文件加载：65]
+[ info ] [ LANG ] D:\wallet\thinkphp\lang\zh-cn.php
+[ info ] [ ROUTE ] array (
+  'type' => 'module',
+  'module' => 
+  array (
+    0 => 'static',
+    1 => 'js',
+    2 => 'jquery.PrintArea.js',
+  ),
+)
+[ info ] [ HEADER ] array (
+  'host' => '127.0.0.1:82',
+  'connection' => 'keep-alive',
+  'user-agent' => 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/55.0.2883.87 Safari/537.36',
+  'accept' => '*/*',
+  'referer' => 'http://127.0.0.1:82/index/login/index',
+  'accept-encoding' => 'gzip, deflate, sdch, br',
+  'accept-language' => 'zh-CN,zh;q=0.8',
+  'cookie' => 'ci_session=qvagv1ep1a4p6m4j58gdf9lcuu5v7gu3; PHPSESSID=amhqti0cfnr3mqn564hohnd297; __guid=96992031.560262871296186300.1511319800999.382; monitor_count=20',
+)
+[ info ] [ PARAM ] array (
+)
+[ info ] [ LOG ] INIT File
+---------------------------------------------------------------
+[ 2017-11-22T11:17:53+08:00 ] 127.0.0.1 127.0.0.1 GET /static/lib/chart/zui.chart.min.js
+[ info ] 127.0.0.1:82/static/lib/chart/zui.chart.min.js [运行时间：0.025001s][吞吐率：40.00req/s] [内存消耗：1,611.30kb] [文件加载：65]
+[ info ] [ LANG ] D:\wallet\thinkphp\lang\zh-cn.php
+[ info ] [ ROUTE ] array (
+  'type' => 'module',
+  'module' => 
+  array (
+    0 => 'static',
+    1 => 'lib',
+    2 => 'chart',
+  ),
+)
+[ info ] [ HEADER ] array (
+  'host' => '127.0.0.1:82',
+  'connection' => 'keep-alive',
+  'user-agent' => 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/55.0.2883.87 Safari/537.36',
+  'accept' => '*/*',
+  'referer' => 'http://127.0.0.1:82/index/login/index',
+  'accept-encoding' => 'gzip, deflate, sdch, br',
+  'accept-language' => 'zh-CN,zh;q=0.8',
+  'cookie' => 'ci_session=qvagv1ep1a4p6m4j58gdf9lcuu5v7gu3; PHPSESSID=amhqti0cfnr3mqn564hohnd297; __guid=96992031.560262871296186300.1511319800999.382; monitor_count=20',
+)
+[ info ] [ PARAM ] array (
+)
+[ info ] [ LOG ] INIT File
+---------------------------------------------------------------
+[ 2017-11-22T11:17:53+08:00 ] 127.0.0.1 127.0.0.1 GET /static/js/common.js
+[ info ] 127.0.0.1:82/static/js/common.js [运行时间：0.030002s][吞吐率：33.33req/s] [内存消耗：1,611.28kb] [文件加载：65]
+[ info ] [ LANG ] D:\wallet\thinkphp\lang\zh-cn.php
+[ info ] [ ROUTE ] array (
+  'type' => 'module',
+  'module' => 
+  array (
+    0 => 'static',
+    1 => 'js',
+    2 => 'common.js',
+  ),
+)
+[ info ] [ HEADER ] array (
+  'host' => '127.0.0.1:82',
+  'connection' => 'keep-alive',
+  'user-agent' => 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/55.0.2883.87 Safari/537.36',
+  'accept' => '*/*',
+  'referer' => 'http://127.0.0.1:82/index/login/index',
+  'accept-encoding' => 'gzip, deflate, sdch, br',
+  'accept-language' => 'zh-CN,zh;q=0.8',
+  'cookie' => 'ci_session=qvagv1ep1a4p6m4j58gdf9lcuu5v7gu3; PHPSESSID=amhqti0cfnr3mqn564hohnd297; __guid=96992031.560262871296186300.1511319800999.382; monitor_count=20',
+)
+[ info ] [ PARAM ] array (
+)
+[ info ] [ LOG ] INIT File
+---------------------------------------------------------------
+[ 2017-11-22T11:17:53+08:00 ] 127.0.0.1 127.0.0.1 GET /static/lib/datatable/zui.datatable.min.js
+[ info ] 127.0.0.1:82/static/lib/datatable/zui.datatable.min.js [运行时间：0.037002s][吞吐率：27.03req/s] [内存消耗：1,611.33kb] [文件加载：65]
+[ info ] [ LANG ] D:\wallet\thinkphp\lang\zh-cn.php
+[ info ] [ ROUTE ] array (
+  'type' => 'module',
+  'module' => 
+  array (
+    0 => 'static',
+    1 => 'lib',
+    2 => 'datatable',
+  ),
+)
+[ info ] [ HEADER ] array (
+  'host' => '127.0.0.1:82',
+  'connection' => 'keep-alive',
+  'user-agent' => 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/55.0.2883.87 Safari/537.36',
+  'accept' => '*/*',
+  'referer' => 'http://127.0.0.1:82/index/login/index',
+  'accept-encoding' => 'gzip, deflate, sdch, br',
+  'accept-language' => 'zh-CN,zh;q=0.8',
+  'cookie' => 'ci_session=qvagv1ep1a4p6m4j58gdf9lcuu5v7gu3; PHPSESSID=amhqti0cfnr3mqn564hohnd297; __guid=96992031.560262871296186300.1511319800999.382; monitor_count=20',
+)
+[ info ] [ PARAM ] array (
+)
+[ info ] [ LOG ] INIT File
+---------------------------------------------------------------
+[ 2017-11-22T11:17:53+08:00 ] 127.0.0.1 127.0.0.1 GET /static/lib/bootbox/bootbox.min.js
+[ info ] 127.0.0.1:82/static/lib/bootbox/bootbox.min.js [运行时间：0.022001s][吞吐率：45.45req/s] [内存消耗：1,611.30kb] [文件加载：65]
+[ info ] [ LANG ] D:\wallet\thinkphp\lang\zh-cn.php
+[ info ] [ ROUTE ] array (
+  'type' => 'module',
+  'module' => 
+  array (
+    0 => 'static',
+    1 => 'lib',
+    2 => 'bootbox',
+  ),
+)
+[ info ] [ HEADER ] array (
+  'host' => '127.0.0.1:82',
+  'connection' => 'keep-alive',
+  'user-agent' => 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/55.0.2883.87 Safari/537.36',
+  'accept' => '*/*',
+  'referer' => 'http://127.0.0.1:82/index/login/index',
+  'accept-encoding' => 'gzip, deflate, sdch, br',
+  'accept-language' => 'zh-CN,zh;q=0.8',
+  'cookie' => 'ci_session=qvagv1ep1a4p6m4j58gdf9lcuu5v7gu3; PHPSESSID=amhqti0cfnr3mqn564hohnd297; __guid=96992031.560262871296186300.1511319800999.382; monitor_count=20',
+)
+[ info ] [ PARAM ] array (
+)
+[ info ] [ LOG ] INIT File
+---------------------------------------------------------------
+[ 2017-11-22T11:17:53+08:00 ] 127.0.0.1 127.0.0.1 GET /static/lib/datetimepicker/datetimepicker.min.js
+[ info ] 127.0.0.1:82/static/lib/datetimepicker/datetimepicker.min.js [运行时间：0.031002s][吞吐率：32.26req/s] [内存消耗：1,611.34kb] [文件加载：65]
+[ info ] [ LANG ] D:\wallet\thinkphp\lang\zh-cn.php
+[ info ] [ ROUTE ] array (
+  'type' => 'module',
+  'module' => 
+  array (
+    0 => 'static',
+    1 => 'lib',
+    2 => 'datetimepicker',
+  ),
+)
+[ info ] [ HEADER ] array (
+  'host' => '127.0.0.1:82',
+  'connection' => 'keep-alive',
+  'user-agent' => 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/55.0.2883.87 Safari/537.36',
+  'accept' => '*/*',
+  'referer' => 'http://127.0.0.1:82/index/login/index',
+  'accept-encoding' => 'gzip, deflate, sdch, br',
+  'accept-language' => 'zh-CN,zh;q=0.8',
+  'cookie' => 'ci_session=qvagv1ep1a4p6m4j58gdf9lcuu5v7gu3; PHPSESSID=amhqti0cfnr3mqn564hohnd297; __guid=96992031.560262871296186300.1511319800999.382; monitor_count=20',
+)
+[ info ] [ PARAM ] array (
+)
+[ info ] [ LOG ] INIT File
+---------------------------------------------------------------
+[ 2017-11-22T11:17:53+08:00 ] 127.0.0.1 127.0.0.1 GET /static/lib/chosen/chosen.min.js
+[ info ] 127.0.0.1:82/static/lib/chosen/chosen.min.js [运行时间：0.020001s][吞吐率：50.00req/s] [内存消耗：1,611.30kb] [文件加载：65]
+[ info ] [ LANG ] D:\wallet\thinkphp\lang\zh-cn.php
+[ info ] [ ROUTE ] array (
+  'type' => 'module',
+  'module' => 
+  array (
+    0 => 'static',
+    1 => 'lib',
+    2 => 'chosen',
+  ),
+)
+[ info ] [ HEADER ] array (
+  'host' => '127.0.0.1:82',
+  'connection' => 'keep-alive',
+  'user-agent' => 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/55.0.2883.87 Safari/537.36',
+  'accept' => '*/*',
+  'referer' => 'http://127.0.0.1:82/index/login/index',
+  'accept-encoding' => 'gzip, deflate, sdch, br',
+  'accept-language' => 'zh-CN,zh;q=0.8',
+  'cookie' => 'ci_session=qvagv1ep1a4p6m4j58gdf9lcuu5v7gu3; PHPSESSID=amhqti0cfnr3mqn564hohnd297; __guid=96992031.560262871296186300.1511319800999.382; monitor_count=20',
+)
+[ info ] [ PARAM ] array (
+)
+[ info ] [ LOG ] INIT File
+---------------------------------------------------------------
+[ 2017-11-22T11:17:53+08:00 ] 127.0.0.1 127.0.0.1 GET /static/lib/uploader/zui.uploader.min.js
+[ info ] 127.0.0.1:82/static/lib/uploader/zui.uploader.min.js [运行时间：0.029002s][吞吐率：34.48req/s] [内存消耗：1,611.31kb] [文件加载：65]
+[ info ] [ LANG ] D:\wallet\thinkphp\lang\zh-cn.php
+[ info ] [ ROUTE ] array (
+  'type' => 'module',
+  'module' => 
+  array (
+    0 => 'static',
+    1 => 'lib',
+    2 => 'uploader',
+  ),
+)
+[ info ] [ HEADER ] array (
+  'host' => '127.0.0.1:82',
+  'connection' => 'keep-alive',
+  'user-agent' => 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/55.0.2883.87 Safari/537.36',
+  'accept' => '*/*',
+  'referer' => 'http://127.0.0.1:82/index/login/index',
+  'accept-encoding' => 'gzip, deflate, sdch, br',
+  'accept-language' => 'zh-CN,zh;q=0.8',
+  'cookie' => 'ci_session=qvagv1ep1a4p6m4j58gdf9lcuu5v7gu3; PHPSESSID=amhqti0cfnr3mqn564hohnd297; __guid=96992031.560262871296186300.1511319800999.382; monitor_count=20',
+)
+[ info ] [ PARAM ] array (
+)
+[ info ] [ LOG ] INIT File
+---------------------------------------------------------------
+[ 2017-11-22T11:17:53+08:00 ] 127.0.0.1 127.0.0.1 GET /static/lib/kindeditor/kindeditor.min.js
+[ info ] 127.0.0.1:82/static/lib/kindeditor/kindeditor.min.js [运行时间：0.020001s][吞吐率：50.00req/s] [内存消耗：1,611.31kb] [文件加载：65]
+[ info ] [ LANG ] D:\wallet\thinkphp\lang\zh-cn.php
+[ info ] [ ROUTE ] array (
+  'type' => 'module',
+  'module' => 
+  array (
+    0 => 'static',
+    1 => 'lib',
+    2 => 'kindeditor',
+  ),
+)
+[ info ] [ HEADER ] array (
+  'host' => '127.0.0.1:82',
+  'connection' => 'keep-alive',
+  'user-agent' => 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/55.0.2883.87 Safari/537.36',
+  'accept' => '*/*',
+  'referer' => 'http://127.0.0.1:82/index/login/index',
+  'accept-encoding' => 'gzip, deflate, sdch, br',
+  'accept-language' => 'zh-CN,zh;q=0.8',
+  'cookie' => 'ci_session=qvagv1ep1a4p6m4j58gdf9lcuu5v7gu3; PHPSESSID=amhqti0cfnr3mqn564hohnd297; __guid=96992031.560262871296186300.1511319800999.382; monitor_count=20',
+)
+[ info ] [ PARAM ] array (
+)
+[ info ] [ LOG ] INIT File
+---------------------------------------------------------------
+[ 2017-11-22T11:17:53+08:00 ] 127.0.0.1 127.0.0.1 GET /static/lib/chart/zui.chart.min.js
+[ info ] 127.0.0.1:82/static/lib/chart/zui.chart.min.js [运行时间：0.028002s][吞吐率：35.71req/s] [内存消耗：1,611.30kb] [文件加载：65]
+[ info ] [ LANG ] D:\wallet\thinkphp\lang\zh-cn.php
+[ info ] [ ROUTE ] array (
+  'type' => 'module',
+  'module' => 
+  array (
+    0 => 'static',
+    1 => 'lib',
+    2 => 'chart',
+  ),
+)
+[ info ] [ HEADER ] array (
+  'host' => '127.0.0.1:82',
+  'connection' => 'keep-alive',
+  'user-agent' => 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/55.0.2883.87 Safari/537.36',
+  'accept' => '*/*',
+  'referer' => 'http://127.0.0.1:82/index/login/index',
+  'accept-encoding' => 'gzip, deflate, sdch, br',
+  'accept-language' => 'zh-CN,zh;q=0.8',
+  'cookie' => 'ci_session=qvagv1ep1a4p6m4j58gdf9lcuu5v7gu3; PHPSESSID=amhqti0cfnr3mqn564hohnd297; __guid=96992031.560262871296186300.1511319800999.382; monitor_count=20',
+)
+[ info ] [ PARAM ] array (
+)
+[ info ] [ LOG ] INIT File
+---------------------------------------------------------------
+[ 2017-11-22T11:17:53+08:00 ] 127.0.0.1 127.0.0.1 GET /static/js/jquery.PrintArea.js
+[ info ] 127.0.0.1:82/static/js/jquery.PrintArea.js [运行时间：0.020001s][吞吐率：50.00req/s] [内存消耗：1,611.34kb] [文件加载：65]
+[ info ] [ LANG ] D:\wallet\thinkphp\lang\zh-cn.php
+[ info ] [ ROUTE ] array (
+  'type' => 'module',
+  'module' => 
+  array (
+    0 => 'static',
+    1 => 'js',
+    2 => 'jquery.PrintArea.js',
+  ),
+)
+[ info ] [ HEADER ] array (
+  'host' => '127.0.0.1:82',
+  'connection' => 'keep-alive',
+  'user-agent' => 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/55.0.2883.87 Safari/537.36',
+  'accept' => '*/*',
+  'referer' => 'http://127.0.0.1:82/index/login/index',
+  'accept-encoding' => 'gzip, deflate, sdch, br',
+  'accept-language' => 'zh-CN,zh;q=0.8',
+  'cookie' => 'ci_session=qvagv1ep1a4p6m4j58gdf9lcuu5v7gu3; PHPSESSID=amhqti0cfnr3mqn564hohnd297; __guid=96992031.560262871296186300.1511319800999.382; monitor_count=20',
+)
+[ info ] [ PARAM ] array (
+)
+[ info ] [ LOG ] INIT File
+---------------------------------------------------------------
+[ 2017-11-22T11:17:53+08:00 ] 127.0.0.1 127.0.0.1 GET /static/js/common.js
+[ info ] 127.0.0.1:82/static/js/common.js [运行时间：0.029002s][吞吐率：34.48req/s] [内存消耗：1,611.28kb] [文件加载：65]
+[ info ] [ LANG ] D:\wallet\thinkphp\lang\zh-cn.php
+[ info ] [ ROUTE ] array (
+  'type' => 'module',
+  'module' => 
+  array (
+    0 => 'static',
+    1 => 'js',
+    2 => 'common.js',
+  ),
+)
+[ info ] [ HEADER ] array (
+  'host' => '127.0.0.1:82',
+  'connection' => 'keep-alive',
+  'user-agent' => 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/55.0.2883.87 Safari/537.36',
+  'accept' => '*/*',
+  'referer' => 'http://127.0.0.1:82/index/login/index',
+  'accept-encoding' => 'gzip, deflate, sdch, br',
+  'accept-language' => 'zh-CN,zh;q=0.8',
+  'cookie' => 'ci_session=qvagv1ep1a4p6m4j58gdf9lcuu5v7gu3; PHPSESSID=amhqti0cfnr3mqn564hohnd297; __guid=96992031.560262871296186300.1511319800999.382; monitor_count=20',
+)
+[ info ] [ PARAM ] array (
+)
+[ info ] [ LOG ] INIT File
+---------------------------------------------------------------
+[ 2017-11-22T11:18:25+08:00 ] 127.0.0.1 127.0.0.1 GET /index/login/index
+[ info ] 127.0.0.1:82/index/login/index [运行时间：0.045002s][吞吐率：22.22req/s] [内存消耗：2,144.06kb] [文件加载：84]
+[ info ] [ LANG ] D:\wallet\thinkphp\lang\zh-cn.php
+[ info ] [ ROUTE ] array (
+  'type' => 'module',
+  'module' => 
+  array (
+    0 => 'index',
+    1 => 'login',
+    2 => 'index',
+  ),
+)
+[ info ] [ HEADER ] array (
+  'host' => '127.0.0.1:82',
+  'connection' => 'keep-alive',
+  'cache-control' => 'max-age=0',
+  'upgrade-insecure-requests' => '1',
+  'user-agent' => 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/55.0.2883.87 Safari/537.36',
+  'accept' => 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8',
+  'accept-encoding' => 'gzip, deflate, sdch, br',
+  'accept-language' => 'zh-CN,zh;q=0.8',
+  'cookie' => 'ci_session=qvagv1ep1a4p6m4j58gdf9lcuu5v7gu3; PHPSESSID=amhqti0cfnr3mqn564hohnd297; __guid=96992031.560262871296186300.1511319800999.382; monitor_count=20',
+)
+[ info ] [ PARAM ] array (
+)
+[ info ] [ RUN ] app\index\controller\Login->index[ D:\wallet\application\index\controller\Login.php ]
+[ info ] [ SESSION ] INIT array (
+  'id' => '',
+  'var_session_id' => '',
+  'prefix' => 'think',
+  'type' => '',
+  'auto_start' => true,
+)
+[ info ] [ VIEW ] D:\wallet\template\admin\login\index.blade.php [ array (
+) ]
+[ info ] [ LOG ] INIT File
+---------------------------------------------------------------
+[ 2017-11-22T11:18:51+08:00 ] 127.0.0.1 127.0.0.1 POST /index/Login/do_login.html
+[ info ] 127.0.0.1:82/index/Login/do_login.html [运行时间：0.054003s][吞吐率：18.52req/s] [内存消耗：2,068.40kb] [文件加载：80]
+[ info ] [ LANG ] D:\wallet\thinkphp\lang\zh-cn.php
+[ info ] [ ROUTE ] array (
+  'type' => 'module',
+  'module' => 
+  array (
+    0 => 'index',
+    1 => 'Login',
+    2 => 'do_login',
+  ),
+)
+[ info ] [ HEADER ] array (
+  'host' => '127.0.0.1:82',
+  'connection' => 'keep-alive',
+  'content-length' => '56',
+  'cache-control' => 'max-age=0',
+  'origin' => 'http://127.0.0.1:82',
+  'upgrade-insecure-requests' => '1',
+  'user-agent' => 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/55.0.2883.87 Safari/537.36',
+  'content-type' => 'application/x-www-form-urlencoded',
+  'accept' => 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8',
+  'referer' => 'http://127.0.0.1:82/index/login/index',
+  'accept-encoding' => 'gzip, deflate, br',
+  'accept-language' => 'zh-CN,zh;q=0.8',
+  'cookie' => 'ci_session=qvagv1ep1a4p6m4j58gdf9lcuu5v7gu3; PHPSESSID=amhqti0cfnr3mqn564hohnd297; __guid=96992031.560262871296186300.1511319800999.382; monitor_count=21',
+)
+[ info ] [ PARAM ] array (
+  'login_name' => 'john',
+  'login_passwd' => '123456',
+  'login_key' => 'xijujituan',
+)
+[ info ] [ RUN ] app\index\controller\Login->do_login[ D:\wallet\application\index\controller\Login.php ]
+[ info ] [ LOG ] INIT File
+[ error ] [0]致命错误: Class 'app\index\model\Adminster' not found[D:\wallet\application\index\controller\Login.php:36]
+---------------------------------------------------------------
+[ 2017-11-22T11:18:54+08:00 ] 127.0.0.1 127.0.0.1 GET /index/login/index
+[ info ] 127.0.0.1:82/index/login/index [运行时间：0.040003s][吞吐率：25.00req/s] [内存消耗：2,143.55kb] [文件加载：84]
+[ info ] [ LANG ] D:\wallet\thinkphp\lang\zh-cn.php
+[ info ] [ ROUTE ] array (
+  'type' => 'module',
+  'module' => 
+  array (
+    0 => 'index',
+    1 => 'login',
+    2 => 'index',
+  ),
+)
+[ info ] [ HEADER ] array (
+  'host' => '127.0.0.1:82',
+  'connection' => 'keep-alive',
+  'upgrade-insecure-requests' => '1',
+  'user-agent' => 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/55.0.2883.87 Safari/537.36',
+  'accept' => 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8',
+  'accept-encoding' => 'gzip, deflate, sdch, br',
+  'accept-language' => 'zh-CN,zh;q=0.8',
+  'cookie' => 'ci_session=qvagv1ep1a4p6m4j58gdf9lcuu5v7gu3; PHPSESSID=amhqti0cfnr3mqn564hohnd297; __guid=96992031.560262871296186300.1511319800999.382; monitor_count=22',
+)
+[ info ] [ PARAM ] array (
+)
+[ info ] [ RUN ] app\index\controller\Login->index[ D:\wallet\application\index\controller\Login.php ]
+[ info ] [ SESSION ] INIT array (
+  'id' => '',
+  'var_session_id' => '',
+  'prefix' => 'think',
+  'type' => '',
+  'auto_start' => true,
+)
+[ info ] [ VIEW ] D:\wallet\template\admin\login\index.blade.php [ array (
+) ]
+[ info ] [ LOG ] INIT File
+---------------------------------------------------------------
+[ 2017-11-22T11:20:22+08:00 ] 127.0.0.1 127.0.0.1 POST /index/Login/do_login.html
+[ info ] 127.0.0.1:82/index/Login/do_login.html [运行时间：0.041003s][吞吐率：24.39req/s] [内存消耗：2,068.40kb] [文件加载：80]
+[ info ] [ LANG ] D:\wallet\thinkphp\lang\zh-cn.php
+[ info ] [ ROUTE ] array (
+  'type' => 'module',
+  'module' => 
+  array (
+    0 => 'index',
+    1 => 'Login',
+    2 => 'do_login',
+  ),
+)
+[ info ] [ HEADER ] array (
+  'host' => '127.0.0.1:82',
+  'connection' => 'keep-alive',
+  'content-length' => '56',
+  'cache-control' => 'max-age=0',
+  'origin' => 'http://127.0.0.1:82',
+  'upgrade-insecure-requests' => '1',
+  'user-agent' => 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/55.0.2883.87 Safari/537.36',
+  'content-type' => 'application/x-www-form-urlencoded',
+  'accept' => 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8',
+  'referer' => 'http://127.0.0.1:82/index/login/index',
+  'accept-encoding' => 'gzip, deflate, br',
+  'accept-language' => 'zh-CN,zh;q=0.8',
+  'cookie' => 'ci_session=qvagv1ep1a4p6m4j58gdf9lcuu5v7gu3; PHPSESSID=amhqti0cfnr3mqn564hohnd297; __guid=96992031.560262871296186300.1511319800999.382; monitor_count=23',
+)
+[ info ] [ PARAM ] array (
+  'login_name' => 'john',
+  'login_passwd' => '123456',
+  'login_key' => 'xijujituan',
+)
+[ info ] [ RUN ] app\index\controller\Login->do_login[ D:\wallet\application\index\controller\Login.php ]
+[ info ] [ LOG ] INIT File
+[ error ] [0]致命错误: Class 'app\index\model\Adminster' not found[D:\wallet\application\index\controller\Login.php:36]
+---------------------------------------------------------------
+[ 2017-11-22T11:20:23+08:00 ] 127.0.0.1 127.0.0.1 GET /index/login/index
+[ info ] 127.0.0.1:82/index/login/index [运行时间：0.030002s][吞吐率：33.33req/s] [内存消耗：2,143.55kb] [文件加载：84]
+[ info ] [ LANG ] D:\wallet\thinkphp\lang\zh-cn.php
+[ info ] [ ROUTE ] array (
+  'type' => 'module',
+  'module' => 
+  array (
+    0 => 'index',
+    1 => 'login',
+    2 => 'index',
+  ),
+)
+[ info ] [ HEADER ] array (
+  'host' => '127.0.0.1:82',
+  'connection' => 'keep-alive',
+  'upgrade-insecure-requests' => '1',
+  'user-agent' => 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/55.0.2883.87 Safari/537.36',
+  'accept' => 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8',
+  'accept-encoding' => 'gzip, deflate, sdch, br',
+  'accept-language' => 'zh-CN,zh;q=0.8',
+  'cookie' => 'ci_session=qvagv1ep1a4p6m4j58gdf9lcuu5v7gu3; PHPSESSID=amhqti0cfnr3mqn564hohnd297; __guid=96992031.560262871296186300.1511319800999.382; monitor_count=24',
+)
+[ info ] [ PARAM ] array (
+)
+[ info ] [ RUN ] app\index\controller\Login->index[ D:\wallet\application\index\controller\Login.php ]
+[ info ] [ SESSION ] INIT array (
+  'id' => '',
+  'var_session_id' => '',
+  'prefix' => 'think',
+  'type' => '',
+  'auto_start' => true,
+)
+[ info ] [ VIEW ] D:\wallet\template\admin\login\index.blade.php [ array (
+) ]
+[ info ] [ LOG ] INIT File
+---------------------------------------------------------------
+[ 2017-11-22T13:20:19+08:00 ] 127.0.0.1 127.0.0.1 GET /index/login/index
+[ info ] 127.0.0.1:82/index/login/index [运行时间：0.044002s][吞吐率：22.73req/s] [内存消耗：2,144.09kb] [文件加载：84]
+[ info ] [ LANG ] D:\wallet\thinkphp\lang\zh-cn.php
+[ info ] [ ROUTE ] array (
+  'type' => 'module',
+  'module' => 
+  array (
+    0 => 'index',
+    1 => 'login',
+    2 => 'index',
+  ),
+)
+[ info ] [ HEADER ] array (
+  'host' => '127.0.0.1:82',
+  'connection' => 'keep-alive',
+  'cache-control' => 'max-age=0',
+  'upgrade-insecure-requests' => '1',
+  'user-agent' => 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/55.0.2883.87 Safari/537.36',
+  'accept' => 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8',
+  'accept-encoding' => 'gzip, deflate, sdch, br',
+  'accept-language' => 'zh-CN,zh;q=0.8',
+  'cookie' => 'ci_session=qvagv1ep1a4p6m4j58gdf9lcuu5v7gu3; PHPSESSID=amhqti0cfnr3mqn564hohnd297; __guid=96992031.560262871296186300.1511319800999.382; monitor_count=25',
+)
+[ info ] [ PARAM ] array (
+)
+[ info ] [ RUN ] app\index\controller\Login->index[ D:\wallet\application\index\controller\Login.php ]
+[ info ] [ SESSION ] INIT array (
+  'id' => '',
+  'var_session_id' => '',
+  'prefix' => 'think',
+  'type' => '',
+  'auto_start' => true,
+)
+[ info ] [ VIEW ] D:\wallet\template\admin\login\index.blade.php [ array (
+) ]
+[ info ] [ LOG ] INIT File
+---------------------------------------------------------------
+[ 2017-11-22T13:20:19+08:00 ] 127.0.0.1 127.0.0.1 GET /semantic/dist/semantic.min.css
+[ info ] 127.0.0.1:82/semantic/dist/semantic.min.css [运行时间：0.023001s][吞吐率：43.48req/s] [内存消耗：1,611.37kb] [文件加载：65]
+[ info ] [ LANG ] D:\wallet\thinkphp\lang\zh-cn.php
+[ info ] [ ROUTE ] array (
+  'type' => 'module',
+  'module' => 
+  array (
+    0 => 'semantic',
+    1 => 'dist',
+    2 => 'semantic.min.css',
+  ),
+)
+[ info ] [ HEADER ] array (
+  'host' => '127.0.0.1:82',
+  'connection' => 'keep-alive',
+  'user-agent' => 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/55.0.2883.87 Safari/537.36',
+  'accept' => 'text/css,*/*;q=0.1',
+  'referer' => 'http://127.0.0.1:82/index/login/index',
+  'accept-encoding' => 'gzip, deflate, sdch, br',
+  'accept-language' => 'zh-CN,zh;q=0.8',
+  'cookie' => 'ci_session=qvagv1ep1a4p6m4j58gdf9lcuu5v7gu3; PHPSESSID=amhqti0cfnr3mqn564hohnd297; __guid=96992031.560262871296186300.1511319800999.382; monitor_count=25',
+)
+[ info ] [ PARAM ] array (
+)
+[ info ] [ LOG ] INIT File
+---------------------------------------------------------------
+[ 2017-11-22T13:20:19+08:00 ] 127.0.0.1 127.0.0.1 GET /semantic/dist/semantic.min.js
+[ info ] 127.0.0.1:82/semantic/dist/semantic.min.js [运行时间：0.034002s][吞吐率：29.41req/s] [内存消耗：1,611.34kb] [文件加载：65]
+[ info ] [ LANG ] D:\wallet\thinkphp\lang\zh-cn.php
+[ info ] [ ROUTE ] array (
+  'type' => 'module',
+  'module' => 
+  array (
+    0 => 'semantic',
+    1 => 'dist',
+    2 => 'semantic.min.js',
+  ),
+)
+[ info ] [ HEADER ] array (
+  'host' => '127.0.0.1:82',
+  'connection' => 'keep-alive',
+  'user-agent' => 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/55.0.2883.87 Safari/537.36',
+  'accept' => '*/*',
+  'referer' => 'http://127.0.0.1:82/index/login/index',
+  'accept-encoding' => 'gzip, deflate, sdch, br',
+  'accept-language' => 'zh-CN,zh;q=0.8',
+  'cookie' => 'ci_session=qvagv1ep1a4p6m4j58gdf9lcuu5v7gu3; PHPSESSID=amhqti0cfnr3mqn564hohnd297; __guid=96992031.560262871296186300.1511319800999.382; monitor_count=25',
+)
+[ info ] [ PARAM ] array (
+)
+[ info ] [ LOG ] INIT File
+---------------------------------------------------------------
+[ 2017-11-22T13:20:21+08:00 ] 127.0.0.1 127.0.0.1 GET /index/login/index
+[ info ] 127.0.0.1:82/index/login/index [运行时间：0.037002s][吞吐率：27.03req/s] [内存消耗：2,143.55kb] [文件加载：84]
+[ info ] [ LANG ] D:\wallet\thinkphp\lang\zh-cn.php
+[ info ] [ ROUTE ] array (
+  'type' => 'module',
+  'module' => 
+  array (
+    0 => 'index',
+    1 => 'login',
+    2 => 'index',
+  ),
+)
+[ info ] [ HEADER ] array (
+  'host' => '127.0.0.1:82',
+  'connection' => 'keep-alive',
+  'upgrade-insecure-requests' => '1',
+  'user-agent' => 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/55.0.2883.87 Safari/537.36',
+  'accept' => 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8',
+  'accept-encoding' => 'gzip, deflate, sdch, br',
+  'accept-language' => 'zh-CN,zh;q=0.8',
+  'cookie' => 'ci_session=qvagv1ep1a4p6m4j58gdf9lcuu5v7gu3; PHPSESSID=amhqti0cfnr3mqn564hohnd297; __guid=96992031.560262871296186300.1511319800999.382; monitor_count=26',
+)
+[ info ] [ PARAM ] array (
+)
+[ info ] [ RUN ] app\index\controller\Login->index[ D:\wallet\application\index\controller\Login.php ]
+[ info ] [ SESSION ] INIT array (
+  'id' => '',
+  'var_session_id' => '',
+  'prefix' => 'think',
+  'type' => '',
+  'auto_start' => true,
+)
+[ info ] [ VIEW ] D:\wallet\template\admin\login\index.blade.php [ array (
+) ]
+[ info ] [ LOG ] INIT File
+---------------------------------------------------------------
+[ 2017-11-22T13:20:24+08:00 ] 127.0.0.1 127.0.0.1 GET /semantic/dist/semantic.min.css
+[ info ] 127.0.0.1:82/semantic/dist/semantic.min.css [运行时间：0.022002s][吞吐率：45.45req/s] [内存消耗：1,611.67kb] [文件加载：65]
+[ info ] [ LANG ] D:\wallet\thinkphp\lang\zh-cn.php
+[ info ] [ ROUTE ] array (
+  'type' => 'module',
+  'module' => 
+  array (
+    0 => 'semantic',
+    1 => 'dist',
+    2 => 'semantic.min.css',
+  ),
+)
+[ info ] [ HEADER ] array (
+  'host' => '127.0.0.1:82',
+  'connection' => 'keep-alive',
+  'upgrade-insecure-requests' => '1',
+  'user-agent' => 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/55.0.2883.87 Safari/537.36',
+  'accept' => 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8',
+  'accept-encoding' => 'gzip, deflate, sdch, br',
+  'accept-language' => 'zh-CN,zh;q=0.8',
+  'cookie' => 'ci_session=qvagv1ep1a4p6m4j58gdf9lcuu5v7gu3; PHPSESSID=amhqti0cfnr3mqn564hohnd297; __guid=96992031.560262871296186300.1511319800999.382; monitor_count=26',
+)
+[ info ] [ PARAM ] array (
+)
+[ info ] [ LOG ] INIT File
+---------------------------------------------------------------
+[ 2017-11-22T13:20:28+08:00 ] 127.0.0.1 127.0.0.1 GET /semantic/dist/semantic.min.js
+[ info ] 127.0.0.1:82/semantic/dist/semantic.min.js [运行时间：0.024001s][吞吐率：41.66req/s] [内存消耗：1,611.66kb] [文件加载：65]
+[ info ] [ LANG ] D:\wallet\thinkphp\lang\zh-cn.php
+[ info ] [ ROUTE ] array (
+  'type' => 'module',
+  'module' => 
+  array (
+    0 => 'semantic',
+    1 => 'dist',
+    2 => 'semantic.min.js',
+  ),
+)
+[ info ] [ HEADER ] array (
+  'host' => '127.0.0.1:82',
+  'connection' => 'keep-alive',
+  'upgrade-insecure-requests' => '1',
+  'user-agent' => 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/55.0.2883.87 Safari/537.36',
+  'accept' => 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8',
+  'accept-encoding' => 'gzip, deflate, sdch, br',
+  'accept-language' => 'zh-CN,zh;q=0.8',
+  'cookie' => 'ci_session=qvagv1ep1a4p6m4j58gdf9lcuu5v7gu3; PHPSESSID=amhqti0cfnr3mqn564hohnd297; __guid=96992031.560262871296186300.1511319800999.382; monitor_count=27',
+)
+[ info ] [ PARAM ] array (
+)
+[ info ] [ LOG ] INIT File
+---------------------------------------------------------------
+[ 2017-11-22T13:21:43+08:00 ] 127.0.0.1 127.0.0.1 GET /index/login/index
+[ info ] 127.0.0.1:82/index/login/index [运行时间：0.043002s][吞吐率：23.25req/s] [内存消耗：2,143.55kb] [文件加载：84]
+[ info ] [ LANG ] D:\wallet\thinkphp\lang\zh-cn.php
+[ info ] [ ROUTE ] array (
+  'type' => 'module',
+  'module' => 
+  array (
+    0 => 'index',
+    1 => 'login',
+    2 => 'index',
+  ),
+)
+[ info ] [ HEADER ] array (
+  'host' => '127.0.0.1:82',
+  'connection' => 'keep-alive',
+  'upgrade-insecure-requests' => '1',
+  'user-agent' => 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/55.0.2883.87 Safari/537.36',
+  'accept' => 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8',
+  'accept-encoding' => 'gzip, deflate, sdch, br',
+  'accept-language' => 'zh-CN,zh;q=0.8',
+  'cookie' => 'ci_session=qvagv1ep1a4p6m4j58gdf9lcuu5v7gu3; PHPSESSID=amhqti0cfnr3mqn564hohnd297; __guid=96992031.560262871296186300.1511319800999.382; monitor_count=28',
+)
+[ info ] [ PARAM ] array (
+)
+[ info ] [ RUN ] app\index\controller\Login->index[ D:\wallet\application\index\controller\Login.php ]
+[ info ] [ SESSION ] INIT array (
+  'id' => '',
+  'var_session_id' => '',
+  'prefix' => 'think',
+  'type' => '',
+  'auto_start' => true,
+)
+[ info ] [ VIEW ] D:\wallet\template\admin\login\index.blade.php [ array (
+) ]
+[ info ] [ LOG ] INIT File
+---------------------------------------------------------------
+[ 2017-11-22T13:21:45+08:00 ] 127.0.0.1 127.0.0.1 GET /semantic/dist/semantic.min.css
+[ info ] 127.0.0.1:82/semantic/dist/semantic.min.css [运行时间：0.027002s][吞吐率：37.03req/s] [内存消耗：1,611.67kb] [文件加载：65]
+[ info ] [ LANG ] D:\wallet\thinkphp\lang\zh-cn.php
+[ info ] [ ROUTE ] array (
+  'type' => 'module',
+  'module' => 
+  array (
+    0 => 'semantic',
+    1 => 'dist',
+    2 => 'semantic.min.css',
+  ),
+)
+[ info ] [ HEADER ] array (
+  'host' => '127.0.0.1:82',
+  'connection' => 'keep-alive',
+  'upgrade-insecure-requests' => '1',
+  'user-agent' => 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/55.0.2883.87 Safari/537.36',
+  'accept' => 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8',
+  'accept-encoding' => 'gzip, deflate, sdch, br',
+  'accept-language' => 'zh-CN,zh;q=0.8',
+  'cookie' => 'ci_session=qvagv1ep1a4p6m4j58gdf9lcuu5v7gu3; PHPSESSID=amhqti0cfnr3mqn564hohnd297; __guid=96992031.560262871296186300.1511319800999.382; monitor_count=28',
+)
+[ info ] [ PARAM ] array (
+)
+[ info ] [ LOG ] INIT File
+---------------------------------------------------------------
+[ 2017-11-22T13:21:57+08:00 ] 127.0.0.1 127.0.0.1 GET /semantic/dist/semantic.min.css
+[ info ] 127.0.0.1:82/semantic/dist/semantic.min.css [运行时间：0.024001s][吞吐率：41.67req/s] [内存消耗：1,612.19kb] [文件加载：65]
+[ info ] [ LANG ] D:\wallet\thinkphp\lang\zh-cn.php
+[ info ] [ ROUTE ] array (
+  'type' => 'module',
+  'module' => 
+  array (
+    0 => 'semantic',
+    1 => 'dist',
+    2 => 'semantic.min.css',
+  ),
+)
+[ info ] [ HEADER ] array (
+  'host' => '127.0.0.1:82',
+  'connection' => 'keep-alive',
+  'cache-control' => 'max-age=0',
+  'upgrade-insecure-requests' => '1',
+  'user-agent' => 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/55.0.2883.87 Safari/537.36',
+  'accept' => 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8',
+  'accept-encoding' => 'gzip, deflate, sdch, br',
+  'accept-language' => 'zh-CN,zh;q=0.8',
+  'cookie' => 'ci_session=qvagv1ep1a4p6m4j58gdf9lcuu5v7gu3; PHPSESSID=amhqti0cfnr3mqn564hohnd297; __guid=96992031.560262871296186300.1511319800999.382; monitor_count=29',
+)
+[ info ] [ PARAM ] array (
+)
+[ info ] [ LOG ] INIT File
+---------------------------------------------------------------
+[ 2017-11-22T13:22:14+08:00 ] 127.0.0.1 127.0.0.1 GET /node_modules/semantic-ui/dist/semantic.min.css
+[ info ] 127.0.0.1:82/node_modules/semantic-ui/dist/semantic.min.css [运行时间：0.026002s][吞吐率：38.46req/s] [内存消耗：1,611.70kb] [文件加载：65]
+[ info ] [ LANG ] D:\wallet\thinkphp\lang\zh-cn.php
+[ info ] [ ROUTE ] array (
+  'type' => 'module',
+  'module' => 
+  array (
+    0 => 'node_modules',
+    1 => 'semantic-ui',
+    2 => 'dist',
+  ),
+)
+[ info ] [ HEADER ] array (
+  'host' => '127.0.0.1:82',
+  'connection' => 'keep-alive',
+  'upgrade-insecure-requests' => '1',
+  'user-agent' => 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/55.0.2883.87 Safari/537.36',
+  'accept' => 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8',
+  'accept-encoding' => 'gzip, deflate, sdch, br',
+  'accept-language' => 'zh-CN,zh;q=0.8',
+  'cookie' => 'ci_session=qvagv1ep1a4p6m4j58gdf9lcuu5v7gu3; PHPSESSID=amhqti0cfnr3mqn564hohnd297; __guid=96992031.560262871296186300.1511319800999.382; monitor_count=30',
+)
+[ info ] [ PARAM ] array (
+)
+[ info ] [ LOG ] INIT File
+---------------------------------------------------------------
+[ 2017-11-22T13:23:05+08:00 ] 127.0.0.1 127.0.0.1 GET /node_modules/semantic-ui/dist/semantic.min.css
+[ info ] 127.0.0.1:82/node_modules/semantic-ui/dist/semantic.min.css [运行时间：0.028002s][吞吐率：35.71req/s] [内存消耗：1,612.22kb] [文件加载：65]
+[ info ] [ LANG ] D:\wallet\thinkphp\lang\zh-cn.php
+[ info ] [ ROUTE ] array (
+  'type' => 'module',
+  'module' => 
+  array (
+    0 => 'node_modules',
+    1 => 'semantic-ui',
+    2 => 'dist',
+  ),
+)
+[ info ] [ HEADER ] array (
+  'host' => '127.0.0.1:82',
+  'connection' => 'keep-alive',
+  'cache-control' => 'max-age=0',
+  'upgrade-insecure-requests' => '1',
+  'user-agent' => 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/55.0.2883.87 Safari/537.36',
+  'accept' => 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8',
+  'accept-encoding' => 'gzip, deflate, sdch, br',
+  'accept-language' => 'zh-CN,zh;q=0.8',
+  'cookie' => 'ci_session=qvagv1ep1a4p6m4j58gdf9lcuu5v7gu3; PHPSESSID=amhqti0cfnr3mqn564hohnd297; __guid=96992031.560262871296186300.1511319800999.382; monitor_count=31',
+)
+[ info ] [ PARAM ] array (
+)
+[ info ] [ LOG ] INIT File
+---------------------------------------------------------------
+[ 2017-11-22T13:23:10+08:00 ] 127.0.0.1 127.0.0.1 GET /index/login/index
+[ info ] 127.0.0.1:82/index/login/index [运行时间：0.039002s][吞吐率：25.64req/s] [内存消耗：2,144.06kb] [文件加载：84]
+[ info ] [ LANG ] D:\wallet\thinkphp\lang\zh-cn.php
+[ info ] [ ROUTE ] array (
+  'type' => 'module',
+  'module' => 
+  array (
+    0 => 'index',
+    1 => 'login',
+    2 => 'index',
+  ),
+)
+[ info ] [ HEADER ] array (
+  'host' => '127.0.0.1:82',
+  'connection' => 'keep-alive',
+  'cache-control' => 'max-age=0',
+  'upgrade-insecure-requests' => '1',
+  'user-agent' => 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/55.0.2883.87 Safari/537.36',
+  'accept' => 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8',
+  'accept-encoding' => 'gzip, deflate, sdch, br',
+  'accept-language' => 'zh-CN,zh;q=0.8',
+  'cookie' => 'ci_session=qvagv1ep1a4p6m4j58gdf9lcuu5v7gu3; PHPSESSID=amhqti0cfnr3mqn564hohnd297; __guid=96992031.560262871296186300.1511319800999.382; monitor_count=32',
+)
+[ info ] [ PARAM ] array (
+)
+[ info ] [ RUN ] app\index\controller\Login->index[ D:\wallet\application\index\controller\Login.php ]
+[ info ] [ SESSION ] INIT array (
+  'id' => '',
+  'var_session_id' => '',
+  'prefix' => 'think',
+  'type' => '',
+  'auto_start' => true,
+)
+[ info ] [ VIEW ] D:\wallet\template\admin\login\index.blade.php [ array (
+) ]
+[ info ] [ LOG ] INIT File
+---------------------------------------------------------------
+[ 2017-11-22T13:23:12+08:00 ] 127.0.0.1 127.0.0.1 GET /index/login/index
+[ info ] 127.0.0.1:82/index/login/index [运行时间：0.036002s][吞吐率：27.78req/s] [内存消耗：2,143.55kb] [文件加载：84]
+[ info ] [ LANG ] D:\wallet\thinkphp\lang\zh-cn.php
+[ info ] [ ROUTE ] array (
+  'type' => 'module',
+  'module' => 
+  array (
+    0 => 'index',
+    1 => 'login',
+    2 => 'index',
+  ),
+)
+[ info ] [ HEADER ] array (
+  'host' => '127.0.0.1:82',
+  'connection' => 'keep-alive',
+  'upgrade-insecure-requests' => '1',
+  'user-agent' => 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/55.0.2883.87 Safari/537.36',
+  'accept' => 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8',
+  'accept-encoding' => 'gzip, deflate, sdch, br',
+  'accept-language' => 'zh-CN,zh;q=0.8',
+  'cookie' => 'ci_session=qvagv1ep1a4p6m4j58gdf9lcuu5v7gu3; PHPSESSID=amhqti0cfnr3mqn564hohnd297; __guid=96992031.560262871296186300.1511319800999.382; monitor_count=33',
+)
+[ info ] [ PARAM ] array (
+)
+[ info ] [ RUN ] app\index\controller\Login->index[ D:\wallet\application\index\controller\Login.php ]
+[ info ] [ SESSION ] INIT array (
+  'id' => '',
+  'var_session_id' => '',
+  'prefix' => 'think',
+  'type' => '',
+  'auto_start' => true,
+)
+[ info ] [ VIEW ] D:\wallet\template\admin\login\index.blade.php [ array (
+) ]
+[ info ] [ LOG ] INIT File
+---------------------------------------------------------------
+[ 2017-11-22T13:24:25+08:00 ] 127.0.0.1 127.0.0.1 GET /index/login/index
+[ info ] 127.0.0.1:82/index/login/index [运行时间：0.038002s][吞吐率：26.31req/s] [内存消耗：2,144.06kb] [文件加载：84]
+[ info ] [ LANG ] D:\wallet\thinkphp\lang\zh-cn.php
+[ info ] [ ROUTE ] array (
+  'type' => 'module',
+  'module' => 
+  array (
+    0 => 'index',
+    1 => 'login',
+    2 => 'index',
+  ),
+)
+[ info ] [ HEADER ] array (
+  'host' => '127.0.0.1:82',
+  'connection' => 'keep-alive',
+  'cache-control' => 'max-age=0',
+  'upgrade-insecure-requests' => '1',
+  'user-agent' => 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/55.0.2883.87 Safari/537.36',
+  'accept' => 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8',
+  'accept-encoding' => 'gzip, deflate, sdch, br',
+  'accept-language' => 'zh-CN,zh;q=0.8',
+  'cookie' => 'ci_session=qvagv1ep1a4p6m4j58gdf9lcuu5v7gu3; PHPSESSID=amhqti0cfnr3mqn564hohnd297; __guid=96992031.560262871296186300.1511319800999.382; monitor_count=35',
+)
+[ info ] [ PARAM ] array (
+)
+[ info ] [ RUN ] app\index\controller\Login->index[ D:\wallet\application\index\controller\Login.php ]
+[ info ] [ SESSION ] INIT array (
+  'id' => '',
+  'var_session_id' => '',
+  'prefix' => 'think',
+  'type' => '',
+  'auto_start' => true,
+)
+[ info ] [ VIEW ] D:\wallet\template\admin\login\index.blade.php [ array (
+) ]
+[ info ] [ LOG ] INIT File
+---------------------------------------------------------------
+[ 2017-11-22T13:25:30+08:00 ] 127.0.0.1 127.0.0.1 GET /index/login/index
+[ info ] 127.0.0.1:82/index/login/index [运行时间：0.046003s][吞吐率：21.74req/s] [内存消耗：2,144.64kb] [文件加载：84]
+[ info ] [ LANG ] D:\wallet\thinkphp\lang\zh-cn.php
+[ info ] [ ROUTE ] array (
+  'type' => 'module',
+  'module' => 
+  array (
+    0 => 'index',
+    1 => 'login',
+    2 => 'index',
+  ),
+)
+[ info ] [ HEADER ] array (
+  'host' => '127.0.0.1:82',
+  'connection' => 'keep-alive',
+  'cache-control' => 'max-age=0',
+  'upgrade-insecure-requests' => '1',
+  'user-agent' => 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/55.0.2883.87 Safari/537.36',
+  'accept' => 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8',
+  'accept-encoding' => 'gzip, deflate, sdch, br',
+  'accept-language' => 'zh-CN,zh;q=0.8',
+  'cookie' => 'ci_session=qvagv1ep1a4p6m4j58gdf9lcuu5v7gu3; PHPSESSID=amhqti0cfnr3mqn564hohnd297; __guid=96992031.560262871296186300.1511319800999.382; monitor_count=36',
+)
+[ info ] [ PARAM ] array (
+)
+[ info ] [ RUN ] app\index\controller\Login->index[ D:\wallet\application\index\controller\Login.php ]
+[ info ] [ SESSION ] INIT array (
+  'id' => '',
+  'var_session_id' => '',
+  'prefix' => 'think',
+  'type' => '',
+  'auto_start' => true,
+)
+[ info ] [ VIEW ] D:\wallet\template\admin\login\index.blade.php [ array (
+) ]
+[ info ] [ LOG ] INIT File
+---------------------------------------------------------------
+[ 2017-11-22T13:37:58+08:00 ] 127.0.0.1 127.0.0.1 GET /index/login/index
+[ info ] 127.0.0.1:82/index/login/index [运行时间：0.040003s][吞吐率：25.00req/s] [内存消耗：2,144.64kb] [文件加载：84]
+[ info ] [ LANG ] D:\wallet\thinkphp\lang\zh-cn.php
+[ info ] [ ROUTE ] array (
+  'type' => 'module',
+  'module' => 
+  array (
+    0 => 'index',
+    1 => 'login',
+    2 => 'index',
+  ),
+)
+[ info ] [ HEADER ] array (
+  'host' => '127.0.0.1:82',
+  'connection' => 'keep-alive',
+  'cache-control' => 'max-age=0',
+  'upgrade-insecure-requests' => '1',
+  'user-agent' => 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/55.0.2883.87 Safari/537.36',
+  'accept' => 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8',
+  'accept-encoding' => 'gzip, deflate, sdch, br',
+  'accept-language' => 'zh-CN,zh;q=0.8',
+  'cookie' => 'ci_session=qvagv1ep1a4p6m4j58gdf9lcuu5v7gu3; PHPSESSID=amhqti0cfnr3mqn564hohnd297; __guid=96992031.560262871296186300.1511319800999.382; monitor_count=37',
+)
+[ info ] [ PARAM ] array (
+)
+[ info ] [ RUN ] app\index\controller\Login->index[ D:\wallet\application\index\controller\Login.php ]
+[ info ] [ SESSION ] INIT array (
+  'id' => '',
+  'var_session_id' => '',
+  'prefix' => 'think',
+  'type' => '',
+  'auto_start' => true,
+)
+[ info ] [ VIEW ] D:\wallet\template\admin\login\index.blade.php [ array (
+) ]
+[ info ] [ LOG ] INIT File
+---------------------------------------------------------------
+[ 2017-11-22T13:37:59+08:00 ] 127.0.0.1 127.0.0.1 POST /index/Login/do_login.html
+[ info ] 127.0.0.1:82/index/Login/do_login.html [运行时间：0.093005s][吞吐率：10.75req/s] [内存消耗：3,474.95kb] [文件加载：91]
+[ info ] [ LANG ] D:\wallet\thinkphp\lang\zh-cn.php
+[ info ] [ ROUTE ] array (
+  'type' => 'module',
+  'module' => 
+  array (
+    0 => 'index',
+    1 => 'Login',
+    2 => 'do_login',
+  ),
+)
+[ info ] [ HEADER ] array (
+  'host' => '127.0.0.1:82',
+  'connection' => 'keep-alive',
+  'content-length' => '56',
+  'cache-control' => 'max-age=0',
+  'origin' => 'http://127.0.0.1:82',
+  'upgrade-insecure-requests' => '1',
+  'user-agent' => 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/55.0.2883.87 Safari/537.36',
+  'content-type' => 'application/x-www-form-urlencoded',
+  'accept' => 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8',
+  'referer' => 'http://127.0.0.1:82/index/login/index',
+  'accept-encoding' => 'gzip, deflate, br',
+  'accept-language' => 'zh-CN,zh;q=0.8',
+  'cookie' => 'ci_session=qvagv1ep1a4p6m4j58gdf9lcuu5v7gu3; PHPSESSID=amhqti0cfnr3mqn564hohnd297; __guid=96992031.560262871296186300.1511319800999.382; monitor_count=38',
+)
+[ info ] [ PARAM ] array (
+  'login_name' => 'john',
+  'login_passwd' => '123456',
+  'login_key' => 'xijujituan',
+)
+[ info ] [ RUN ] app\index\controller\Login->do_login[ D:\wallet\application\index\controller\Login.php ]
+[ info ] [ DB ] INIT mysql
+[ info ] [ LOG ] INIT File
+[ sql ] [ DB ] CONNECT:[ UseTime:0.025001s ] mysql:host=120.27.116.16;dbname=wallet_demo;charset=utf8
+[ error ] [10501]SQLSTATE[42S02]: Base table or view not found: 1146 Table 'wallet_demo.ft_adminster' doesn't exist[D:\wallet\thinkphp\library\think\db\Connection.php:388]
+---------------------------------------------------------------
+[ 2017-11-22T13:38:38+08:00 ] 127.0.0.1 127.0.0.1 POST /index/Login/do_login.html
+[ info ] 127.0.0.1:82/index/Login/do_login.html [运行时间：0.109006s][吞吐率：9.17req/s] [内存消耗：3,560.83kb] [文件加载：89]
+[ info ] [ LANG ] D:\wallet\thinkphp\lang\zh-cn.php
+[ info ] [ ROUTE ] array (
+  'type' => 'module',
+  'module' => 
+  array (
+    0 => 'index',
+    1 => 'Login',
+    2 => 'do_login',
+  ),
+)
+[ info ] [ HEADER ] array (
+  'host' => '127.0.0.1:82',
+  'connection' => 'keep-alive',
+  'content-length' => '56',
+  'cache-control' => 'max-age=0',
+  'origin' => 'http://127.0.0.1:82',
+  'upgrade-insecure-requests' => '1',
+  'user-agent' => 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/55.0.2883.87 Safari/537.36',
+  'content-type' => 'application/x-www-form-urlencoded',
+  'accept' => 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8',
+  'referer' => 'http://127.0.0.1:82/index/login/index',
+  'accept-encoding' => 'gzip, deflate, br',
+  'accept-language' => 'zh-CN,zh;q=0.8',
+  'cookie' => 'ci_session=qvagv1ep1a4p6m4j58gdf9lcuu5v7gu3; PHPSESSID=amhqti0cfnr3mqn564hohnd297; __guid=96992031.560262871296186300.1511319800999.382; monitor_count=39',
+)
+[ info ] [ PARAM ] array (
+  'login_name' => 'john',
+  'login_passwd' => '123456',
+  'login_key' => 'xijujituan',
+)
+[ info ] [ RUN ] app\index\controller\Login->do_login[ D:\wallet\application\index\controller\Login.php ]
+[ info ] [ DB ] INIT mysql
+[ info ] [ SESSION ] INIT array (
+  'id' => '',
+  'var_session_id' => '',
+  'prefix' => 'think',
+  'type' => '',
+  'auto_start' => true,
+)
+[ info ] [ LOG ] INIT File
+[ sql ] [ DB ] CONNECT:[ UseTime:0.027001s ] mysql:host=120.27.116.16;dbname=wallet_demo;charset=utf8
+[ sql ] [ SQL ] SHOW COLUMNS FROM `ft_adminster` [ RunTime:0.014001s ]
+[ sql ] [ SQL ] SELECT * FROM `ft_adminster` WHERE  `adminster_login` = 'john' LIMIT 1 [ RunTime:0.016001s ]
+---------------------------------------------------------------
+[ 2017-11-22T13:38:38+08:00 ] 127.0.0.1 127.0.0.1 GET /index/dashboard/index.html
+[ info ] 127.0.0.1:82/index/dashboard/index.html [运行时间：0.025002s][吞吐率：40.00req/s] [内存消耗：1,679.14kb] [文件加载：66]
+[ info ] [ LANG ] D:\wallet\thinkphp\lang\zh-cn.php
+[ info ] [ ROUTE ] array (
+  'type' => 'module',
+  'module' => 
+  array (
+    0 => 'index',
+    1 => 'dashboard',
+    2 => 'index',
+  ),
+)
+[ info ] [ HEADER ] array (
+  'host' => '127.0.0.1:82',
+  'connection' => 'keep-alive',
+  'cache-control' => 'max-age=0',
+  'upgrade-insecure-requests' => '1',
+  'user-agent' => 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/55.0.2883.87 Safari/537.36',
+  'accept' => 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8',
+  'referer' => 'http://127.0.0.1:82/index/login/index',
+  'accept-encoding' => 'gzip, deflate, sdch, br',
+  'accept-language' => 'zh-CN,zh;q=0.8',
+  'cookie' => 'ci_session=qvagv1ep1a4p6m4j58gdf9lcuu5v7gu3; PHPSESSID=amhqti0cfnr3mqn564hohnd297; __guid=96992031.560262871296186300.1511319800999.382; monitor_count=39',
+)
+[ info ] [ PARAM ] array (
+)
+[ info ] [ LOG ] INIT File
+---------------------------------------------------------------
+[ 2017-11-22T13:38:49+08:00 ] 127.0.0.1 127.0.0.1 GET /index/dashboard/index.html
+[ info ] 127.0.0.1:82/index/dashboard/index.html [运行时间：0.044003s][吞吐率：22.73req/s] [内存消耗：1,687.31kb] [文件加载：67]
+[ info ] [ LANG ] D:\wallet\thinkphp\lang\zh-cn.php
+[ info ] [ ROUTE ] array (
+  'type' => 'module',
+  'module' => 
+  array (
+    0 => 'index',
+    1 => 'dashboard',
+    2 => 'index',
+  ),
+)
+[ info ] [ HEADER ] array (
+  'host' => '127.0.0.1:82',
+  'connection' => 'keep-alive',
+  'cache-control' => 'max-age=0',
+  'upgrade-insecure-requests' => '1',
+  'user-agent' => 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/55.0.2883.87 Safari/537.36',
+  'accept' => 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8',
+  'referer' => 'http://127.0.0.1:82/index/login/index',
+  'accept-encoding' => 'gzip, deflate, sdch, br',
+  'accept-language' => 'zh-CN,zh;q=0.8',
+  'cookie' => 'ci_session=qvagv1ep1a4p6m4j58gdf9lcuu5v7gu3; PHPSESSID=amhqti0cfnr3mqn564hohnd297; __guid=96992031.560262871296186300.1511319800999.382; monitor_count=40',
+)
+[ info ] [ PARAM ] array (
+)
+[ info ] [ LOG ] INIT File
+[ error ] [1]Class 'app\index\controller\Common' not found[D:\wallet\application\index\controller\Dashboard.php:17]
+---------------------------------------------------------------
+[ 2017-11-22T13:39:03+08:00 ] 127.0.0.1 127.0.0.1 GET /index/dashboard/index.html
+[ info ] 127.0.0.1:82/index/dashboard/index.html [运行时间：0.041002s][吞吐率：24.39req/s] [内存消耗：2,070.59kb] [文件加载：82]
+[ info ] [ LANG ] D:\wallet\thinkphp\lang\zh-cn.php
+[ info ] [ ROUTE ] array (
+  'type' => 'module',
+  'module' => 
+  array (
+    0 => 'index',
+    1 => 'dashboard',
+    2 => 'index',
+  ),
+)
+[ info ] [ HEADER ] array (
+  'host' => '127.0.0.1:82',
+  'connection' => 'keep-alive',
+  'cache-control' => 'max-age=0',
+  'upgrade-insecure-requests' => '1',
+  'user-agent' => 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/55.0.2883.87 Safari/537.36',
+  'accept' => 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8',
+  'referer' => 'http://127.0.0.1:82/index/login/index',
+  'accept-encoding' => 'gzip, deflate, sdch, br',
+  'accept-language' => 'zh-CN,zh;q=0.8',
+  'cookie' => 'ci_session=qvagv1ep1a4p6m4j58gdf9lcuu5v7gu3; PHPSESSID=amhqti0cfnr3mqn564hohnd297; __guid=96992031.560262871296186300.1511319800999.382; monitor_count=41',
+)
+[ info ] [ PARAM ] array (
+)
+[ info ] [ SESSION ] INIT array (
+  'id' => '',
+  'var_session_id' => '',
+  'prefix' => 'think',
+  'type' => '',
+  'auto_start' => true,
+)
+[ info ] [ RUN ] app\index\controller\Dashboard->index[ D:\wallet\application\index\controller\Dashboard.php ]
+[ info ] [ LOG ] INIT File
+[ error ] [0]模板文件不存在:D:\wallet\template\admin\dashboard\index.blade.php[D:\wallet\vendor\terranc\think-blade\drivers\thinkphp5\Blade.php:101]
+---------------------------------------------------------------
+[ 2017-11-22T13:39:27+08:00 ] 127.0.0.1 127.0.0.1 GET /index/dashboard/index.html
+[ info ] 127.0.0.1:82/index/dashboard/index.html [运行时间：0.051003s][吞吐率：19.61req/s] [内存消耗：2,259.92kb] [文件加载：92]
+[ info ] [ LANG ] D:\wallet\thinkphp\lang\zh-cn.php
+[ info ] [ ROUTE ] array (
+  'type' => 'module',
+  'module' => 
+  array (
+    0 => 'index',
+    1 => 'dashboard',
+    2 => 'index',
+  ),
+)
+[ info ] [ HEADER ] array (
+  'host' => '127.0.0.1:82',
+  'connection' => 'keep-alive',
+  'cache-control' => 'max-age=0',
+  'upgrade-insecure-requests' => '1',
+  'user-agent' => 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/55.0.2883.87 Safari/537.36',
+  'accept' => 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8',
+  'referer' => 'http://127.0.0.1:82/index/login/index',
+  'accept-encoding' => 'gzip, deflate, sdch, br',
+  'accept-language' => 'zh-CN,zh;q=0.8',
+  'cookie' => 'ci_session=qvagv1ep1a4p6m4j58gdf9lcuu5v7gu3; PHPSESSID=amhqti0cfnr3mqn564hohnd297; __guid=96992031.560262871296186300.1511319800999.382; monitor_count=42',
+)
+[ info ] [ PARAM ] array (
+)
+[ info ] [ SESSION ] INIT array (
+  'id' => '',
+  'var_session_id' => '',
+  'prefix' => 'think',
+  'type' => '',
+  'auto_start' => true,
+)
+[ info ] [ RUN ] app\index\controller\Dashboard->index[ D:\wallet\application\index\controller\Dashboard.php ]
+[ info ] [ VIEW ] D:\wallet\template\admin\dashboard\index.blade.php [ array (
+  0 => 'id',
+  1 => 'name',
+  2 => 'email',
+  3 => 'last_login',
+  4 => 'state',
+  5 => 'title',
+) ]
+[ info ] [ LOG ] INIT File
+[ error ] [8]未定义变量: crumbsFirstActi[D:\wallet\runtime\temp\d42bd292916c81cf86205a273b6715a01f8d9945.php:3]
+---------------------------------------------------------------
+[ 2017-11-22T13:40:10+08:00 ] 127.0.0.1 127.0.0.1 GET /index/dashboard/index.html
+[ info ] 127.0.0.1:82/index/dashboard/index.html [运行时间：0.046003s][吞吐率：21.74req/s] [内存消耗：2,142.02kb] [文件加载：89]
+[ info ] [ LANG ] D:\wallet\thinkphp\lang\zh-cn.php
+[ info ] [ ROUTE ] array (
+  'type' => 'module',
+  'module' => 
+  array (
+    0 => 'index',
+    1 => 'dashboard',
+    2 => 'index',
+  ),
+)
+[ info ] [ HEADER ] array (
+  'host' => '127.0.0.1:82',
+  'connection' => 'keep-alive',
+  'cache-control' => 'max-age=0',
+  'upgrade-insecure-requests' => '1',
+  'user-agent' => 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/55.0.2883.87 Safari/537.36',
+  'accept' => 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8',
+  'referer' => 'http://127.0.0.1:82/index/login/index',
+  'accept-encoding' => 'gzip, deflate, sdch, br',
+  'accept-language' => 'zh-CN,zh;q=0.8',
+  'cookie' => 'ci_session=qvagv1ep1a4p6m4j58gdf9lcuu5v7gu3; PHPSESSID=amhqti0cfnr3mqn564hohnd297; __guid=96992031.560262871296186300.1511319800999.382; monitor_count=43',
+)
+[ info ] [ PARAM ] array (
+)
+[ info ] [ SESSION ] INIT array (
+  'id' => '',
+  'var_session_id' => '',
+  'prefix' => 'think',
+  'type' => '',
+  'auto_start' => true,
+)
+[ info ] [ RUN ] app\index\controller\Dashboard->index[ D:\wallet\application\index\controller\Dashboard.php ]
+[ info ] [ VIEW ] D:\wallet\template\admin\dashboard\index.blade.php [ array (
+  0 => 'id',
+  1 => 'name',
+  2 => 'email',
+  3 => 'last_login',
+  4 => 'state',
+  5 => 'title',
+) ]
+[ info ] [ LOG ] INIT File
+---------------------------------------------------------------
+[ 2017-11-22T13:40:16+08:00 ] 127.0.0.1 127.0.0.1 GET /index/Withdraw/index.html
+[ info ] 127.0.0.1:82/index/Withdraw/index.html [运行时间：0.034002s][吞吐率：29.41req/s] [内存消耗：1,679.08kb] [文件加载：66]
+[ info ] [ LANG ] D:\wallet\thinkphp\lang\zh-cn.php
+[ info ] [ ROUTE ] array (
+  'type' => 'module',
+  'module' => 
+  array (
+    0 => 'index',
+    1 => 'Withdraw',
+    2 => 'index',
+  ),
+)
+[ info ] [ HEADER ] array (
+  'host' => '127.0.0.1:82',
+  'connection' => 'keep-alive',
+  'upgrade-insecure-requests' => '1',
+  'user-agent' => 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/55.0.2883.87 Safari/537.36',
+  'accept' => 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8',
+  'referer' => 'http://127.0.0.1:82/index/dashboard/index.html',
+  'accept-encoding' => 'gzip, deflate, sdch, br',
+  'accept-language' => 'zh-CN,zh;q=0.8',
+  'cookie' => 'ci_session=qvagv1ep1a4p6m4j58gdf9lcuu5v7gu3; PHPSESSID=amhqti0cfnr3mqn564hohnd297; __guid=96992031.560262871296186300.1511319800999.382; monitor_count=44',
+)
+[ info ] [ PARAM ] array (
+)
+[ info ] [ LOG ] INIT File
+---------------------------------------------------------------
+[ 2017-11-22T13:40:18+08:00 ] 127.0.0.1 127.0.0.1 GET /index/dashboard/index.html
+[ info ] 127.0.0.1:82/index/dashboard/index.html [运行时间：0.036002s][吞吐率：27.78req/s] [内存消耗：2,141.91kb] [文件加载：89]
+[ info ] [ LANG ] D:\wallet\thinkphp\lang\zh-cn.php
+[ info ] [ ROUTE ] array (
+  'type' => 'module',
+  'module' => 
+  array (
+    0 => 'index',
+    1 => 'dashboard',
+    2 => 'index',
+  ),
+)
+[ info ] [ HEADER ] array (
+  'host' => '127.0.0.1:82',
+  'connection' => 'keep-alive',
+  'upgrade-insecure-requests' => '1',
+  'user-agent' => 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/55.0.2883.87 Safari/537.36',
+  'accept' => 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8',
+  'referer' => 'http://127.0.0.1:82/index/login/index',
+  'accept-encoding' => 'gzip, deflate, sdch, br',
+  'accept-language' => 'zh-CN,zh;q=0.8',
+  'cookie' => 'ci_session=qvagv1ep1a4p6m4j58gdf9lcuu5v7gu3; PHPSESSID=amhqti0cfnr3mqn564hohnd297; __guid=96992031.560262871296186300.1511319800999.382; monitor_count=45',
+)
+[ info ] [ PARAM ] array (
+)
+[ info ] [ SESSION ] INIT array (
+  'id' => '',
+  'var_session_id' => '',
+  'prefix' => 'think',
+  'type' => '',
+  'auto_start' => true,
+)
+[ info ] [ RUN ] app\index\controller\Dashboard->index[ D:\wallet\application\index\controller\Dashboard.php ]
+[ info ] [ VIEW ] D:\wallet\template\admin\dashboard\index.blade.php [ array (
+  0 => 'id',
+  1 => 'name',
+  2 => 'email',
+  3 => 'last_login',
+  4 => 'state',
+  5 => 'title',
+) ]
+[ info ] [ LOG ] INIT File
+---------------------------------------------------------------
+[ 2017-11-22T13:41:45+08:00 ] 127.0.0.1 127.0.0.1 GET /index/dashboard/index.html
+[ info ] 127.0.0.1:82/index/dashboard/index.html [运行时间：0.042003s][吞吐率：23.81req/s] [内存消耗：2,142.02kb] [文件加载：89]
+[ info ] [ LANG ] D:\wallet\thinkphp\lang\zh-cn.php
+[ info ] [ ROUTE ] array (
+  'type' => 'module',
+  'module' => 
+  array (
+    0 => 'index',
+    1 => 'dashboard',
+    2 => 'index',
+  ),
+)
+[ info ] [ HEADER ] array (
+  'host' => '127.0.0.1:82',
+  'connection' => 'keep-alive',
+  'cache-control' => 'max-age=0',
+  'upgrade-insecure-requests' => '1',
+  'user-agent' => 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/55.0.2883.87 Safari/537.36',
+  'accept' => 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8',
+  'referer' => 'http://127.0.0.1:82/index/login/index',
+  'accept-encoding' => 'gzip, deflate, sdch, br',
+  'accept-language' => 'zh-CN,zh;q=0.8',
+  'cookie' => 'ci_session=qvagv1ep1a4p6m4j58gdf9lcuu5v7gu3; PHPSESSID=amhqti0cfnr3mqn564hohnd297; __guid=96992031.560262871296186300.1511319800999.382; monitor_count=46',
+)
+[ info ] [ PARAM ] array (
+)
+[ info ] [ SESSION ] INIT array (
+  'id' => '',
+  'var_session_id' => '',
+  'prefix' => 'think',
+  'type' => '',
+  'auto_start' => true,
+)
+[ info ] [ RUN ] app\index\controller\Dashboard->index[ D:\wallet\application\index\controller\Dashboard.php ]
+[ info ] [ VIEW ] D:\wallet\template\admin\dashboard\index.blade.php [ array (
+  0 => 'id',
+  1 => 'name',
+  2 => 'email',
+  3 => 'last_login',
+  4 => 'state',
+  5 => 'title',
+) ]
+[ info ] [ LOG ] INIT File
+---------------------------------------------------------------
+[ 2017-11-22T13:42:04+08:00 ] 127.0.0.1 127.0.0.1 GET /index/dashboard/index.html
+[ info ] 127.0.0.1:82/index/dashboard/index.html [运行时间：0.041003s][吞吐率：24.39req/s] [内存消耗：2,141.91kb] [文件加载：89]
+[ info ] [ LANG ] D:\wallet\thinkphp\lang\zh-cn.php
+[ info ] [ ROUTE ] array (
+  'type' => 'module',
+  'module' => 
+  array (
+    0 => 'index',
+    1 => 'dashboard',
+    2 => 'index',
+  ),
+)
+[ info ] [ HEADER ] array (
+  'host' => '127.0.0.1:82',
+  'connection' => 'keep-alive',
+  'upgrade-insecure-requests' => '1',
+  'user-agent' => 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/55.0.2883.87 Safari/537.36',
+  'accept' => 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8',
+  'referer' => 'http://127.0.0.1:82/index/login/index',
+  'accept-encoding' => 'gzip, deflate, sdch, br',
+  'accept-language' => 'zh-CN,zh;q=0.8',
+  'cookie' => 'ci_session=qvagv1ep1a4p6m4j58gdf9lcuu5v7gu3; PHPSESSID=amhqti0cfnr3mqn564hohnd297; __guid=96992031.560262871296186300.1511319800999.382; monitor_count=47',
+)
+[ info ] [ PARAM ] array (
+)
+[ info ] [ SESSION ] INIT array (
+  'id' => '',
+  'var_session_id' => '',
+  'prefix' => 'think',
+  'type' => '',
+  'auto_start' => true,
+)
+[ info ] [ RUN ] app\index\controller\Dashboard->index[ D:\wallet\application\index\controller\Dashboard.php ]
+[ info ] [ VIEW ] D:\wallet\template\admin\dashboard\index.blade.php [ array (
+  0 => 'id',
+  1 => 'name',
+  2 => 'email',
+  3 => 'last_login',
+  4 => 'state',
+  5 => 'title',
+) ]
+[ info ] [ LOG ] INIT File
+---------------------------------------------------------------
+[ 2017-11-22T13:42:45+08:00 ] 127.0.0.1 127.0.0.1 GET /index/dashboard/index.html
+[ info ] 127.0.0.1:82/index/dashboard/index.html [运行时间：0.041003s][吞吐率：24.39req/s] [内存消耗：2,141.99kb] [文件加载：89]
+[ info ] [ LANG ] D:\wallet\thinkphp\lang\zh-cn.php
+[ info ] [ ROUTE ] array (
+  'type' => 'module',
+  'module' => 
+  array (
+    0 => 'index',
+    1 => 'dashboard',
+    2 => 'index',
+  ),
+)
+[ info ] [ HEADER ] array (
+  'host' => '127.0.0.1:82',
+  'connection' => 'keep-alive',
+  'cache-control' => 'max-age=0',
+  'upgrade-insecure-requests' => '1',
+  'user-agent' => 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/55.0.2883.87 Safari/537.36',
+  'accept' => 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8',
+  'referer' => 'http://127.0.0.1:82/index/login/index',
+  'accept-encoding' => 'gzip, deflate, sdch, br',
+  'accept-language' => 'zh-CN,zh;q=0.8',
+  'cookie' => 'ci_session=qvagv1ep1a4p6m4j58gdf9lcuu5v7gu3; PHPSESSID=amhqti0cfnr3mqn564hohnd297; __guid=96992031.560262871296186300.1511319800999.382; monitor_count=51',
+)
+[ info ] [ PARAM ] array (
+)
+[ info ] [ SESSION ] INIT array (
+  'id' => '',
+  'var_session_id' => '',
+  'prefix' => 'think',
+  'type' => '',
+  'auto_start' => true,
+)
+[ info ] [ RUN ] app\index\controller\Dashboard->index[ D:\wallet\application\index\controller\Dashboard.php ]
+[ info ] [ VIEW ] D:\wallet\template\admin\dashboard\index.blade.php [ array (
+  0 => 'id',
+  1 => 'name',
+  2 => 'email',
+  3 => 'last_login',
+  4 => 'state',
+  5 => 'title',
+) ]
+[ info ] [ LOG ] INIT File
+---------------------------------------------------------------
+[ 2017-11-22T13:45:00+08:00 ] 127.0.0.1 127.0.0.1 GET /index/dashboard/index.html
+[ info ] 127.0.0.1:82/index/dashboard/index.html [运行时间：0.044002s][吞吐率：22.73req/s] [内存消耗：2,141.99kb] [文件加载：89]
+[ info ] [ LANG ] D:\wallet\thinkphp\lang\zh-cn.php
+[ info ] [ ROUTE ] array (
+  'type' => 'module',
+  'module' => 
+  array (
+    0 => 'index',
+    1 => 'dashboard',
+    2 => 'index',
+  ),
+)
+[ info ] [ HEADER ] array (
+  'host' => '127.0.0.1:82',
+  'connection' => 'keep-alive',
+  'cache-control' => 'max-age=0',
+  'upgrade-insecure-requests' => '1',
+  'user-agent' => 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/55.0.2883.87 Safari/537.36',
+  'accept' => 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8',
+  'referer' => 'http://127.0.0.1:82/index/login/index',
+  'accept-encoding' => 'gzip, deflate, sdch, br',
+  'accept-language' => 'zh-CN,zh;q=0.8',
+  'cookie' => 'ci_session=qvagv1ep1a4p6m4j58gdf9lcuu5v7gu3; PHPSESSID=amhqti0cfnr3mqn564hohnd297; __guid=96992031.560262871296186300.1511319800999.382; monitor_count=52',
+)
+[ info ] [ PARAM ] array (
+)
+[ info ] [ SESSION ] INIT array (
+  'id' => '',
+  'var_session_id' => '',
+  'prefix' => 'think',
+  'type' => '',
+  'auto_start' => true,
+)
+[ info ] [ RUN ] app\index\controller\Dashboard->index[ D:\wallet\application\index\controller\Dashboard.php ]
+[ info ] [ VIEW ] D:\wallet\template\admin\dashboard\index.blade.php [ array (
+  0 => 'id',
+  1 => 'name',
+  2 => 'email',
+  3 => 'last_login',
+  4 => 'state',
+  5 => 'title',
+) ]
+[ info ] [ LOG ] INIT File
+---------------------------------------------------------------
+[ 2017-11-22T13:45:04+08:00 ] 127.0.0.1 127.0.0.1 GET /index/login/logout.html
+[ info ] 127.0.0.1:82/index/login/logout.html [运行时间：0.041003s][吞吐率：24.39req/s] [内存消耗：2,113.55kb] [文件加载：80]
+[ info ] [ LANG ] D:\wallet\thinkphp\lang\zh-cn.php
+[ info ] [ ROUTE ] array (
+  'type' => 'module',
+  'module' => 
+  array (
+    0 => 'index',
+    1 => 'login',
+    2 => 'logout',
+  ),
+)
+[ info ] [ HEADER ] array (
+  'host' => '127.0.0.1:82',
+  'connection' => 'keep-alive',
+  'upgrade-insecure-requests' => '1',
+  'user-agent' => 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/55.0.2883.87 Safari/537.36',
+  'accept' => 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8',
+  'referer' => 'http://127.0.0.1:82/index/dashboard/index.html',
+  'accept-encoding' => 'gzip, deflate, sdch, br',
+  'accept-language' => 'zh-CN,zh;q=0.8',
+  'cookie' => 'ci_session=qvagv1ep1a4p6m4j58gdf9lcuu5v7gu3; PHPSESSID=amhqti0cfnr3mqn564hohnd297; __guid=96992031.560262871296186300.1511319800999.382; monitor_count=53',
+)
+[ info ] [ PARAM ] array (
+)
+[ info ] [ RUN ] app\index\controller\Login->logout[ D:\wallet\application\index\controller\Login.php ]
+[ info ] [ SESSION ] INIT array (
+  'id' => '',
+  'var_session_id' => '',
+  'prefix' => 'think',
+  'type' => '',
+  'auto_start' => true,
+)
+[ info ] [ LOG ] INIT File
+---------------------------------------------------------------
+[ 2017-11-22T13:45:04+08:00 ] 127.0.0.1 127.0.0.1 GET /index/login/index.html
+[ info ] 127.0.0.1:82/index/login/index.html [运行时间：0.036002s][吞吐率：27.78req/s] [内存消耗：2,150.59kb] [文件加载：86]
+[ info ] [ LANG ] D:\wallet\thinkphp\lang\zh-cn.php
+[ info ] [ ROUTE ] array (
+  'type' => 'module',
+  'module' => 
+  array (
+    0 => 'index',
+    1 => 'login',
+    2 => 'index',
+  ),
+)
+[ info ] [ HEADER ] array (
+  'host' => '127.0.0.1:82',
+  'connection' => 'keep-alive',
+  'upgrade-insecure-requests' => '1',
+  'user-agent' => 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/55.0.2883.87 Safari/537.36',
+  'accept' => 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8',
+  'referer' => 'http://127.0.0.1:82/index/dashboard/index.html',
+  'accept-encoding' => 'gzip, deflate, sdch, br',
+  'accept-language' => 'zh-CN,zh;q=0.8',
+  'cookie' => 'ci_session=qvagv1ep1a4p6m4j58gdf9lcuu5v7gu3; PHPSESSID=amhqti0cfnr3mqn564hohnd297; __guid=96992031.560262871296186300.1511319800999.382; monitor_count=53',
+)
+[ info ] [ PARAM ] array (
+)
+[ info ] [ RUN ] app\index\controller\Login->index[ D:\wallet\application\index\controller\Login.php ]
+[ info ] [ SESSION ] INIT array (
+  'id' => '',
+  'var_session_id' => '',
+  'prefix' => 'think',
+  'type' => '',
+  'auto_start' => true,
+)
+[ info ] [ VIEW ] D:\wallet\template\admin\login\index.blade.php [ array (
+  0 => 'jump_msg',
+) ]
+[ info ] [ LOG ] INIT File
+---------------------------------------------------------------
+[ 2017-11-22T13:45:06+08:00 ] 127.0.0.1 127.0.0.1 POST /index/Login/do_login.html
+[ info ] 127.0.0.1:82/index/Login/do_login.html [运行时间：0.096006s][吞吐率：10.42req/s] [内存消耗：3,474.97kb] [文件加载：91]
+[ info ] [ LANG ] D:\wallet\thinkphp\lang\zh-cn.php
+[ info ] [ ROUTE ] array (
+  'type' => 'module',
+  'module' => 
+  array (
+    0 => 'index',
+    1 => 'Login',
+    2 => 'do_login',
+  ),
+)
+[ info ] [ HEADER ] array (
+  'host' => '127.0.0.1:82',
+  'connection' => 'keep-alive',
+  'content-length' => '56',
+  'cache-control' => 'max-age=0',
+  'origin' => 'http://127.0.0.1:82',
+  'upgrade-insecure-requests' => '1',
+  'user-agent' => 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/55.0.2883.87 Safari/537.36',
+  'content-type' => 'application/x-www-form-urlencoded',
+  'accept' => 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8',
+  'referer' => 'http://127.0.0.1:82/index/login/index.html',
+  'accept-encoding' => 'gzip, deflate, br',
+  'accept-language' => 'zh-CN,zh;q=0.8',
+  'cookie' => 'ci_session=qvagv1ep1a4p6m4j58gdf9lcuu5v7gu3; PHPSESSID=amhqti0cfnr3mqn564hohnd297; __guid=96992031.560262871296186300.1511319800999.382; monitor_count=54',
+)
+[ info ] [ PARAM ] array (
+  'login_name' => 'john',
+  'login_passwd' => '123456',
+  'login_key' => 'xijujituan',
+)
+[ info ] [ RUN ] app\index\controller\Login->do_login[ D:\wallet\application\index\controller\Login.php ]
+[ info ] [ DB ] INIT mysql
+[ info ] [ LOG ] INIT File
+[ sql ] [ DB ] CONNECT:[ UseTime:0.023001s ] mysql:host=120.27.116.16;dbname=wallet_demo;charset=utf8
+[ error ] [10501]SQLSTATE[42S02]: Base table or view not found: 1146 Table 'wallet_demo.ft_adminster' doesn't exist[D:\wallet\thinkphp\library\think\db\Connection.php:388]
+---------------------------------------------------------------
+[ 2017-11-22T13:45:45+08:00 ] 127.0.0.1 127.0.0.1 POST /index/Login/do_login.html
+[ info ] 127.0.0.1:82/index/Login/do_login.html [运行时间：0.080004s][吞吐率：12.50req/s] [内存消耗：3,474.86kb] [文件加载：91]
+[ info ] [ LANG ] D:\wallet\thinkphp\lang\zh-cn.php
+[ info ] [ ROUTE ] array (
+  'type' => 'module',
+  'module' => 
+  array (
+    0 => 'index',
+    1 => 'Login',
+    2 => 'do_login',
+  ),
+)
+[ info ] [ HEADER ] array (
+  'host' => '127.0.0.1:82',
+  'connection' => 'keep-alive',
+  'content-length' => '56',
+  'cache-control' => 'max-age=0',
+  'origin' => 'http://127.0.0.1:82',
+  'upgrade-insecure-requests' => '1',
+  'user-agent' => 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/55.0.2883.87 Safari/537.36',
+  'content-type' => 'application/x-www-form-urlencoded',
+  'accept' => 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8',
+  'referer' => 'http://127.0.0.1:82/index/login/index.html',
+  'accept-encoding' => 'gzip, deflate, br',
+  'accept-language' => 'zh-CN,zh;q=0.8',
+  'cookie' => 'ci_session=qvagv1ep1a4p6m4j58gdf9lcuu5v7gu3; PHPSESSID=amhqti0cfnr3mqn564hohnd297; __guid=96992031.560262871296186300.1511319800999.382; monitor_count=55',
+)
+[ info ] [ PARAM ] array (
+  'login_name' => 'john',
+  'login_passwd' => '123456',
+  'login_key' => 'xijujituan',
+)
+[ info ] [ RUN ] app\index\controller\Login->do_login[ D:\wallet\application\index\controller\Login.php ]
+[ info ] [ DB ] INIT mysql
+[ info ] [ LOG ] INIT File
+[ sql ] [ DB ] CONNECT:[ UseTime:0.021001s ] mysql:host=120.27.116.16;dbname=wallet_demo;charset=utf8
+[ error ] [10501]SQLSTATE[42S02]: Base table or view not found: 1146 Table 'wallet_demo.ft_adminster' doesn't exist[D:\wallet\thinkphp\library\think\db\Connection.php:388]
+---------------------------------------------------------------
+[ 2017-11-22T13:45:47+08:00 ] 127.0.0.1 127.0.0.1 POST /index/Login/do_login.html
+[ info ] 127.0.0.1:82/index/Login/do_login.html [运行时间：0.082005s][吞吐率：12.19req/s] [内存消耗：3,474.86kb] [文件加载：91]
+[ info ] [ LANG ] D:\wallet\thinkphp\lang\zh-cn.php
+[ info ] [ ROUTE ] array (
+  'type' => 'module',
+  'module' => 
+  array (
+    0 => 'index',
+    1 => 'Login',
+    2 => 'do_login',
+  ),
+)
+[ info ] [ HEADER ] array (
+  'host' => '127.0.0.1:82',
+  'connection' => 'keep-alive',
+  'content-length' => '56',
+  'cache-control' => 'max-age=0',
+  'origin' => 'http://127.0.0.1:82',
+  'upgrade-insecure-requests' => '1',
+  'user-agent' => 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/55.0.2883.87 Safari/537.36',
+  'content-type' => 'application/x-www-form-urlencoded',
+  'accept' => 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8',
+  'referer' => 'http://127.0.0.1:82/index/login/index.html',
+  'accept-encoding' => 'gzip, deflate, br',
+  'accept-language' => 'zh-CN,zh;q=0.8',
+  'cookie' => 'ci_session=qvagv1ep1a4p6m4j58gdf9lcuu5v7gu3; PHPSESSID=amhqti0cfnr3mqn564hohnd297; __guid=96992031.560262871296186300.1511319800999.382; monitor_count=56',
+)
+[ info ] [ PARAM ] array (
+  'login_name' => 'john',
+  'login_passwd' => '123456',
+  'login_key' => 'xijujituan',
+)
+[ info ] [ RUN ] app\index\controller\Login->do_login[ D:\wallet\application\index\controller\Login.php ]
+[ info ] [ DB ] INIT mysql
+[ info ] [ LOG ] INIT File
+[ sql ] [ DB ] CONNECT:[ UseTime:0.023002s ] mysql:host=120.27.116.16;dbname=wallet_demo;charset=utf8
+[ error ] [10501]SQLSTATE[42S02]: Base table or view not found: 1146 Table 'wallet_demo.ft_adminster' doesn't exist[D:\wallet\thinkphp\library\think\db\Connection.php:388]
+---------------------------------------------------------------
+[ 2017-11-22T13:45:48+08:00 ] 127.0.0.1 127.0.0.1 GET /index/login/index.html
+[ info ] 127.0.0.1:82/index/login/index.html [运行时间：0.032001s][吞吐率：31.25req/s] [内存消耗：2,144.60kb] [文件加载：84]
+[ info ] [ LANG ] D:\wallet\thinkphp\lang\zh-cn.php
+[ info ] [ ROUTE ] array (
+  'type' => 'module',
+  'module' => 
+  array (
+    0 => 'index',
+    1 => 'login',
+    2 => 'index',
+  ),
+)
+[ info ] [ HEADER ] array (
+  'host' => '127.0.0.1:82',
+  'connection' => 'keep-alive',
+  'upgrade-insecure-requests' => '1',
+  'user-agent' => 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/55.0.2883.87 Safari/537.36',
+  'accept' => 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8',
+  'referer' => 'http://127.0.0.1:82/index/dashboard/index.html',
+  'accept-encoding' => 'gzip, deflate, sdch, br',
+  'accept-language' => 'zh-CN,zh;q=0.8',
+  'cookie' => 'ci_session=qvagv1ep1a4p6m4j58gdf9lcuu5v7gu3; PHPSESSID=amhqti0cfnr3mqn564hohnd297; __guid=96992031.560262871296186300.1511319800999.382; monitor_count=57',
+)
+[ info ] [ PARAM ] array (
+)
+[ info ] [ RUN ] app\index\controller\Login->index[ D:\wallet\application\index\controller\Login.php ]
+[ info ] [ SESSION ] INIT array (
+  'id' => '',
+  'var_session_id' => '',
+  'prefix' => 'think',
+  'type' => '',
+  'auto_start' => true,
+)
+[ info ] [ VIEW ] D:\wallet\template\admin\login\index.blade.php [ array (
+) ]
+[ info ] [ LOG ] INIT File
+---------------------------------------------------------------
+[ 2017-11-22T13:45:49+08:00 ] 127.0.0.1 127.0.0.1 GET /index/login/index.html
+[ info ] 127.0.0.1:82/index/login/index.html [运行时间：0.036002s][吞吐率：27.78req/s] [内存消耗：2,145.18kb] [文件加载：84]
+[ info ] [ LANG ] D:\wallet\thinkphp\lang\zh-cn.php
+[ info ] [ ROUTE ] array (
+  'type' => 'module',
+  'module' => 
+  array (
+    0 => 'index',
+    1 => 'login',
+    2 => 'index',
+  ),
+)
+[ info ] [ HEADER ] array (
+  'host' => '127.0.0.1:82',
+  'connection' => 'keep-alive',
+  'cache-control' => 'max-age=0',
+  'upgrade-insecure-requests' => '1',
+  'user-agent' => 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/55.0.2883.87 Safari/537.36',
+  'accept' => 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8',
+  'referer' => 'http://127.0.0.1:82/index/dashboard/index.html',
+  'accept-encoding' => 'gzip, deflate, sdch, br',
+  'accept-language' => 'zh-CN,zh;q=0.8',
+  'cookie' => 'ci_session=qvagv1ep1a4p6m4j58gdf9lcuu5v7gu3; PHPSESSID=amhqti0cfnr3mqn564hohnd297; __guid=96992031.560262871296186300.1511319800999.382; monitor_count=58',
+)
+[ info ] [ PARAM ] array (
+)
+[ info ] [ RUN ] app\index\controller\Login->index[ D:\wallet\application\index\controller\Login.php ]
+[ info ] [ SESSION ] INIT array (
+  'id' => '',
+  'var_session_id' => '',
+  'prefix' => 'think',
+  'type' => '',
+  'auto_start' => true,
+)
+[ info ] [ VIEW ] D:\wallet\template\admin\login\index.blade.php [ array (
+) ]
+[ info ] [ LOG ] INIT File
+---------------------------------------------------------------
+[ 2017-11-22T13:45:51+08:00 ] 127.0.0.1 127.0.0.1 GET /index/login/index.html
+[ info ] 127.0.0.1:82/index/login/index.html [运行时间：0.035002s][吞吐率：28.57req/s] [内存消耗：2,145.18kb] [文件加载：84]
+[ info ] [ LANG ] D:\wallet\thinkphp\lang\zh-cn.php
+[ info ] [ ROUTE ] array (
+  'type' => 'module',
+  'module' => 
+  array (
+    0 => 'index',
+    1 => 'login',
+    2 => 'index',
+  ),
+)
+[ info ] [ HEADER ] array (
+  'host' => '127.0.0.1:82',
+  'connection' => 'keep-alive',
+  'cache-control' => 'max-age=0',
+  'upgrade-insecure-requests' => '1',
+  'user-agent' => 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/55.0.2883.87 Safari/537.36',
+  'accept' => 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8',
+  'referer' => 'http://127.0.0.1:82/index/dashboard/index.html',
+  'accept-encoding' => 'gzip, deflate, sdch, br',
+  'accept-language' => 'zh-CN,zh;q=0.8',
+  'cookie' => 'ci_session=qvagv1ep1a4p6m4j58gdf9lcuu5v7gu3; PHPSESSID=amhqti0cfnr3mqn564hohnd297; __guid=96992031.560262871296186300.1511319800999.382; monitor_count=59',
+)
+[ info ] [ PARAM ] array (
+)
+[ info ] [ RUN ] app\index\controller\Login->index[ D:\wallet\application\index\controller\Login.php ]
+[ info ] [ SESSION ] INIT array (
+  'id' => '',
+  'var_session_id' => '',
+  'prefix' => 'think',
+  'type' => '',
+  'auto_start' => true,
+)
+[ info ] [ VIEW ] D:\wallet\template\admin\login\index.blade.php [ array (
+) ]
+[ info ] [ LOG ] INIT File
+---------------------------------------------------------------
+[ 2017-11-22T13:45:52+08:00 ] 127.0.0.1 127.0.0.1 POST /index/Login/do_login.html
+[ info ] 127.0.0.1:82/index/Login/do_login.html [运行时间：0.086005s][吞吐率：11.63req/s] [内存消耗：3,474.86kb] [文件加载：91]
+[ info ] [ LANG ] D:\wallet\thinkphp\lang\zh-cn.php
+[ info ] [ ROUTE ] array (
+  'type' => 'module',
+  'module' => 
+  array (
+    0 => 'index',
+    1 => 'Login',
+    2 => 'do_login',
+  ),
+)
+[ info ] [ HEADER ] array (
+  'host' => '127.0.0.1:82',
+  'connection' => 'keep-alive',
+  'content-length' => '56',
+  'cache-control' => 'max-age=0',
+  'origin' => 'http://127.0.0.1:82',
+  'upgrade-insecure-requests' => '1',
+  'user-agent' => 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/55.0.2883.87 Safari/537.36',
+  'content-type' => 'application/x-www-form-urlencoded',
+  'accept' => 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8',
+  'referer' => 'http://127.0.0.1:82/index/login/index.html',
+  'accept-encoding' => 'gzip, deflate, br',
+  'accept-language' => 'zh-CN,zh;q=0.8',
+  'cookie' => 'ci_session=qvagv1ep1a4p6m4j58gdf9lcuu5v7gu3; PHPSESSID=amhqti0cfnr3mqn564hohnd297; __guid=96992031.560262871296186300.1511319800999.382; monitor_count=60',
+)
+[ info ] [ PARAM ] array (
+  'login_name' => 'john',
+  'login_passwd' => '123456',
+  'login_key' => 'xijujituan',
+)
+[ info ] [ RUN ] app\index\controller\Login->do_login[ D:\wallet\application\index\controller\Login.php ]
+[ info ] [ DB ] INIT mysql
+[ info ] [ LOG ] INIT File
+[ sql ] [ DB ] CONNECT:[ UseTime:0.020001s ] mysql:host=120.27.116.16;dbname=wallet_demo;charset=utf8
+[ error ] [10501]SQLSTATE[42S02]: Base table or view not found: 1146 Table 'wallet_demo.ft_adminster' doesn't exist[D:\wallet\thinkphp\library\think\db\Connection.php:388]
+---------------------------------------------------------------
+[ 2017-11-22T13:46:04+08:00 ] 127.0.0.1 127.0.0.1 POST /index/Login/do_login.html
+[ info ] 127.0.0.1:82/index/Login/do_login.html [运行时间：0.101006s][吞吐率：9.90req/s] [内存消耗：3,560.80kb] [文件加载：89]
+[ info ] [ LANG ] D:\wallet\thinkphp\lang\zh-cn.php
+[ info ] [ ROUTE ] array (
+  'type' => 'module',
+  'module' => 
+  array (
+    0 => 'index',
+    1 => 'Login',
+    2 => 'do_login',
+  ),
+)
+[ info ] [ HEADER ] array (
+  'host' => '127.0.0.1:82',
+  'connection' => 'keep-alive',
+  'content-length' => '56',
+  'cache-control' => 'max-age=0',
+  'origin' => 'http://127.0.0.1:82',
+  'upgrade-insecure-requests' => '1',
+  'user-agent' => 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/55.0.2883.87 Safari/537.36',
+  'content-type' => 'application/x-www-form-urlencoded',
+  'accept' => 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8',
+  'referer' => 'http://127.0.0.1:82/index/login/index.html',
+  'accept-encoding' => 'gzip, deflate, br',
+  'accept-language' => 'zh-CN,zh;q=0.8',
+  'cookie' => 'ci_session=qvagv1ep1a4p6m4j58gdf9lcuu5v7gu3; PHPSESSID=amhqti0cfnr3mqn564hohnd297; __guid=96992031.560262871296186300.1511319800999.382; monitor_count=61',
+)
+[ info ] [ PARAM ] array (
+  'login_name' => 'john',
+  'login_passwd' => '123456',
+  'login_key' => 'xijujituan',
+)
+[ info ] [ RUN ] app\index\controller\Login->do_login[ D:\wallet\application\index\controller\Login.php ]
+[ info ] [ DB ] INIT mysql
+[ info ] [ SESSION ] INIT array (
+  'id' => '',
+  'var_session_id' => '',
+  'prefix' => 'think',
+  'type' => '',
+  'auto_start' => true,
+)
+[ info ] [ LOG ] INIT File
+[ sql ] [ DB ] CONNECT:[ UseTime:0.024002s ] mysql:host=120.27.116.16;dbname=wallet_demo;charset=utf8
+[ sql ] [ SQL ] SHOW COLUMNS FROM `wt_adminster` [ RunTime:0.014001s ]
+[ sql ] [ SQL ] SELECT * FROM `wt_adminster` WHERE  `adminster_login` = 'john' LIMIT 1 [ RunTime:0.015000s ]
+---------------------------------------------------------------
+[ 2017-11-22T13:46:04+08:00 ] 127.0.0.1 127.0.0.1 GET /index/dashboard/index.html
+[ info ] 127.0.0.1:82/index/dashboard/index.html [运行时间：0.035002s][吞吐率：28.57req/s] [内存消耗：2,143.92kb] [文件加载：90]
+[ info ] [ LANG ] D:\wallet\thinkphp\lang\zh-cn.php
+[ info ] [ ROUTE ] array (
+  'type' => 'module',
+  'module' => 
+  array (
+    0 => 'index',
+    1 => 'dashboard',
+    2 => 'index',
+  ),
+)
+[ info ] [ HEADER ] array (
+  'host' => '127.0.0.1:82',
+  'connection' => 'keep-alive',
+  'cache-control' => 'max-age=0',
+  'upgrade-insecure-requests' => '1',
+  'user-agent' => 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/55.0.2883.87 Safari/537.36',
+  'accept' => 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8',
+  'referer' => 'http://127.0.0.1:82/index/login/index.html',
+  'accept-encoding' => 'gzip, deflate, sdch, br',
+  'accept-language' => 'zh-CN,zh;q=0.8',
+  'cookie' => 'ci_session=qvagv1ep1a4p6m4j58gdf9lcuu5v7gu3; PHPSESSID=amhqti0cfnr3mqn564hohnd297; __guid=96992031.560262871296186300.1511319800999.382; monitor_count=61',
+)
+[ info ] [ PARAM ] array (
+)
+[ info ] [ SESSION ] INIT array (
+  'id' => '',
+  'var_session_id' => '',
+  'prefix' => 'think',
+  'type' => '',
+  'auto_start' => true,
+)
+[ info ] [ RUN ] app\index\controller\Dashboard->index[ D:\wallet\application\index\controller\Dashboard.php ]
+[ info ] [ VIEW ] D:\wallet\template\admin\dashboard\index.blade.php [ array (
+  0 => 'id',
+  1 => 'name',
+  2 => 'email',
+  3 => 'last_login',
+  4 => 'state',
+  5 => 'title',
+  6 => 'jump_msg',
+) ]
+[ info ] [ LOG ] INIT File
+---------------------------------------------------------------
+[ 2017-11-22T13:46:28+08:00 ] 127.0.0.1 127.0.0.1 GET /index/dashboard/index.html
+[ info ] 127.0.0.1:82/index/dashboard/index.html [运行时间：0.041002s][吞吐率：24.39req/s] [内存消耗：2,141.93kb] [文件加载：89]
+[ info ] [ LANG ] D:\wallet\thinkphp\lang\zh-cn.php
+[ info ] [ ROUTE ] array (
+  'type' => 'module',
+  'module' => 
+  array (
+    0 => 'index',
+    1 => 'dashboard',
+    2 => 'index',
+  ),
+)
+[ info ] [ HEADER ] array (
+  'host' => '127.0.0.1:82',
+  'connection' => 'keep-alive',
+  'upgrade-insecure-requests' => '1',
+  'user-agent' => 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/55.0.2883.87 Safari/537.36',
+  'accept' => 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8',
+  'referer' => 'http://127.0.0.1:82/index/login/index.html',
+  'accept-encoding' => 'gzip, deflate, sdch, br',
+  'accept-language' => 'zh-CN,zh;q=0.8',
+  'cookie' => 'ci_session=qvagv1ep1a4p6m4j58gdf9lcuu5v7gu3; PHPSESSID=amhqti0cfnr3mqn564hohnd297; __guid=96992031.560262871296186300.1511319800999.382; monitor_count=62',
+)
+[ info ] [ PARAM ] array (
+)
+[ info ] [ SESSION ] INIT array (
+  'id' => '',
+  'var_session_id' => '',
+  'prefix' => 'think',
+  'type' => '',
+  'auto_start' => true,
+)
+[ info ] [ RUN ] app\index\controller\Dashboard->index[ D:\wallet\application\index\controller\Dashboard.php ]
+[ info ] [ VIEW ] D:\wallet\template\admin\dashboard\index.blade.php [ array (
+  0 => 'id',
+  1 => 'name',
+  2 => 'email',
+  3 => 'last_login',
+  4 => 'state',
+  5 => 'title',
+) ]
+[ info ] [ LOG ] INIT File
+---------------------------------------------------------------
+[ 2017-11-22T13:47:16+08:00 ] 127.0.0.1 127.0.0.1 GET /index/dashboard/index.html
+[ info ] 127.0.0.1:82/index/dashboard/index.html [运行时间：0.042002s][吞吐率：23.81req/s] [内存消耗：2,142.04kb] [文件加载：89]
+[ info ] [ LANG ] D:\wallet\thinkphp\lang\zh-cn.php
+[ info ] [ ROUTE ] array (
+  'type' => 'module',
+  'module' => 
+  array (
+    0 => 'index',
+    1 => 'dashboard',
+    2 => 'index',
+  ),
+)
+[ info ] [ HEADER ] array (
+  'host' => '127.0.0.1:82',
+  'connection' => 'keep-alive',
+  'cache-control' => 'max-age=0',
+  'upgrade-insecure-requests' => '1',
+  'user-agent' => 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/55.0.2883.87 Safari/537.36',
+  'accept' => 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8',
+  'referer' => 'http://127.0.0.1:82/index/login/index.html',
+  'accept-encoding' => 'gzip, deflate, sdch, br',
+  'accept-language' => 'zh-CN,zh;q=0.8',
+  'cookie' => 'ci_session=qvagv1ep1a4p6m4j58gdf9lcuu5v7gu3; PHPSESSID=amhqti0cfnr3mqn564hohnd297; __guid=96992031.560262871296186300.1511319800999.382; monitor_count=62',
+)
+[ info ] [ PARAM ] array (
+)
+[ info ] [ SESSION ] INIT array (
+  'id' => '',
+  'var_session_id' => '',
+  'prefix' => 'think',
+  'type' => '',
+  'auto_start' => true,
+)
+[ info ] [ RUN ] app\index\controller\Dashboard->index[ D:\wallet\application\index\controller\Dashboard.php ]
+[ info ] [ VIEW ] D:\wallet\template\admin\dashboard\index.blade.php [ array (
+  0 => 'id',
+  1 => 'name',
+  2 => 'email',
+  3 => 'last_login',
+  4 => 'state',
+  5 => 'title',
+) ]
+[ info ] [ LOG ] INIT File
+---------------------------------------------------------------
+[ 2017-11-22T13:47:21+08:00 ] 127.0.0.1 127.0.0.1 GET /index/dashboard/index.html
+[ info ] 127.0.0.1:82/index/dashboard/index.html [运行时间：0.047003s][吞吐率：21.28req/s] [内存消耗：2,142.01kb] [文件加载：89]
+[ info ] [ LANG ] D:\wallet\thinkphp\lang\zh-cn.php
+[ info ] [ ROUTE ] array (
+  'type' => 'module',
+  'module' => 
+  array (
+    0 => 'index',
+    1 => 'dashboard',
+    2 => 'index',
+  ),
+)
+[ info ] [ HEADER ] array (
+  'host' => '127.0.0.1:82',
+  'connection' => 'keep-alive',
+  'cache-control' => 'max-age=0',
+  'upgrade-insecure-requests' => '1',
+  'user-agent' => 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/55.0.2883.87 Safari/537.36',
+  'accept' => 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8',
+  'referer' => 'http://127.0.0.1:82/index/login/index.html',
+  'accept-encoding' => 'gzip, deflate, sdch, br',
+  'accept-language' => 'zh-CN,zh;q=0.8',
+  'cookie' => 'ci_session=qvagv1ep1a4p6m4j58gdf9lcuu5v7gu3; PHPSESSID=amhqti0cfnr3mqn564hohnd297; __guid=96992031.560262871296186300.1511319800999.382; monitor_count=63',
+)
+[ info ] [ PARAM ] array (
+)
+[ info ] [ SESSION ] INIT array (
+  'id' => '',
+  'var_session_id' => '',
+  'prefix' => 'think',
+  'type' => '',
+  'auto_start' => true,
+)
+[ info ] [ RUN ] app\index\controller\Dashboard->index[ D:\wallet\application\index\controller\Dashboard.php ]
+[ info ] [ VIEW ] D:\wallet\template\admin\dashboard\index.blade.php [ array (
+  0 => 'id',
+  1 => 'name',
+  2 => 'email',
+  3 => 'last_login',
+  4 => 'state',
+  5 => 'title',
+) ]
+[ info ] [ LOG ] INIT File
