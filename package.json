@@ -1,0 +1,21 @@
+{
+  "name": "wallet",
+  "version": "1.0.0",
+  "description": "wallet",
+  "main": "index.js",
+  "scripts": {
+    "test": "wallet"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git@120.27.116.16:/data/git/wallet.git"
+  },
+  "keywords": [
+    "wallet"
+  ],
+  "author": "John <1160608332@qq.com>",
+  "license": "MIT",
+  "dependencies": {
+    "semantic-ui": "^2.2.13"
+  }
+}
