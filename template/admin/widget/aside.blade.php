@@ -3,10 +3,10 @@
     <a class="btn" href="#"><i class="icon icon-cloud-upload"></i> 轮播图上传</a>
     <ul class="nav nav-primary">
 
-        <li class="dashboard"><a href="#"><i class="icon icon-dashboard"></i> 控制面板</a></li>
+        <li class="dashboard"><a href="#"><i class="0icon icon-dashboard"></i> 控制面板</a></li>
 
         <li class="nav-parent member-manager">
-            <a href="javascript:;"><i class="icon icon-group"></i> 会员管理</a>
+            <a href="javascript:;"><i class="0icon icon-user"></i> 会员管理</a>
             <ul class="nav">
                 <li class="member"><a href="#"> 会员管理</a></li>
                 <li class="member_group"><a href="#"> 用户组管理</a></li>
