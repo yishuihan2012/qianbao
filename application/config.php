@@ -338,7 +338,7 @@ return [
     ],
     'page_size'             =>  '10', // 默认每页大小
     'default_groups'        =>  1,//默认用户组（管理员）
-    'default_title'         =>'房投网',
+    'default_title'         =>'喜家钱包',
     #OSS远程OSS图片上传服务器参数
     'OSS' => [
         'accessKeyId'       =>'LTAIn4oprg773emN',
@@ -364,37 +364,4 @@ return [
     'certification_count'    =>'5',     //认证次数
     'everyday_log'           =>'./logs',
     'amount_without_aduit'   =>'100',   //免审核 提现金额 （分）
-
-    'db_confignew' => [
-        // 数据库类型
-        'type'        => 'mysql',
-        // 服务器地址
-        'hostname'    => '120.27.116.16',
-        // 数据库名
-        'database'    => 'fangtoujrnew',
-        // 数据库用户名
-        'username'    => 'fangtoujrnew',
-        // 数据库密码
-        'password'    => 'qaz123',
-        // 数据库编码默认采用utf8
-        'charset'     => 'utf8',
-        // 数据库表前缀
-        'prefix'      => 'ft_',
-    ],
-    'db_configold' => [
-        // 数据库类型
-        'type'        => 'mysql',
-        // 服务器地址
-        'hostname'    => '120.27.116.16',
-        // 数据库名
-        'database'    => 'fangtouold',
-        // 数据库用户名
-        'username'    => 'fangtouold',
-        // 数据库密码
-        'password'    => 'qaz123',
-        // 数据库编码默认采用utf8
-        'charset'     => 'utf8',
-        // 数据库表前缀
-        'prefix'      => 'zml_',
-    ],    
 ];

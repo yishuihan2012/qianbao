@@ -10,7 +10,7 @@
               <span class="icon-bar"></span>
             </button>
             <!-- 品牌名称或logo -->
-            <a class="navbar-brand" href="#">{{ $title }}</a>
+            <a class="navbar-brand" href="#">{{$title}}</a>
         </div>
 
         <!-- 导航项目 -->
@@ -31,11 +31,11 @@
                 <li><a href="#">提现审批</a></li>
                 <li><a href="#">使用说明</a></li>
                 <li class="dropdown">
-                    <a href="#" class="dropdown-toggle" data-toggle="dropdown">{{ $name }} <b class="caret"></b></a>
+                    <a href="#" class="dropdown-toggle" data-toggle="dropdown">{{$name}} <b class="caret"></b></a>
                     <ul class="dropdown-menu" role="menu">
                         <li><a href="#">个人信息</a></li>
                         <li class="divider"></li>
-                        <li><a href="{{ url('/index/login/logout') }}">登出</a></li>
+                        <li><a href="{{url('/index/login/logout')}}">登出</a></li>
                     </ul>
                 </li>
             </ul>

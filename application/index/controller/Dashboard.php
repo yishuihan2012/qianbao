@@ -13,7 +13,6 @@ use think\Session;
 use think\Config;
 use think\Loader;
 
-
 class Dashboard extends Common
 {
 
