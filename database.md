@@ -1,4 +1,4 @@
-###1 文章表(Article)
+### 1 文章表(Article)
 | 字段                 | 类型          | 备注                        |
 | ------------------ | ----------- | ------------------------- |
 | article_id          | int         | 文章ID，pk，ai                |
@@ -14,21 +14,21 @@
 | article_edit_time      | datatime    | 文章更新时间 |
 | article_add_time      | datatime    | 文章添加时间 |
 
-###1.1 文章内容表(Article_data)
+### 1.1 文章内容表(Article_data)
 | 字段                 | 类型          | 备注                        |
 | ------------------ | ----------- | ------------------------- |
 | data_id          | int         | 文章内容ID，pk，ai 		|
 | data_article   | int         | 文章主表ID 		|
 | data_text       | text       | 文章内容               		|
 
-###1.2 文章分类表(Article_category)
+### 1.2 文章分类表(Article_category)
 | 字段                 | 类型          | 备注                        |
 | ------------------ | ----------- | ------------------------- |
 | category_id          | int         | 分类ID			 		|
 | category_name    | varchar | 分类名字           		|
 | category_parent   | int | 分类父级ID	           		|
 
-###2 用户信息表(Member)
+### 2 用户基本信息表(Member)
 | 字段                 | 类型          | 备注                        |
 | ------------------ | ----------- | ------------------------- |
 | member_id          | int         | 用户信息ID			 		|
@@ -50,17 +50,20 @@
 | member_status   | tinyint | 1可用，0禁止	           		|
 | member_os   | int | 已知晓的名下会员数	           		|
 | member_cert   | tinyint | 是否实名	           		|
-| member_device_number   | varchar | 设备号	           		|
-| member_isget_cert_redpackets   | tinyint | 是否领取实名红包	           		|
-| member_isget_firstflush_redpackets   | tinyint | 是否领取首刷红包	           		|
-| member_merchid   | varchar | 商户号	           		|
-| member_merchname   | varchar | 商户名称	           		|
-| member_regid   | varchar | 极光推送id	           		|
-| member_package_people   | varchar | 刷卡奖励红包人数	           		|
-| member_jyf_fee   | varchar | 	           		|
-| member_tzadd_fee   | varchar | 	           		|
 
-###2.1 用户登录表(Member_login)
+### 2 用户详细信息表（member_extend）
+| 字段           | 类型       | 备注       |
+|----------------|-----------|------------|
+| member_auto_id | int       | 自增id     |
+| member_id      |   int     | 用户id     |
+| member_jyf_id  | varchar   | 金易付报备id|
+| member_jyf_name| varchar   | 金易付报备名称|
+| member_jpush_id| varchar   | 极光推送id   |
+| member_device_id| varchar  | 用户手机设备号|
+| member_cert_pack| tinyint  | 实名红包0未领取|
+| member_cardpay_pack| tinyint| 首次刷卡红包 |
+
+### 2.1 用户登录表(Member_login)
 | 字段                 | 类型          | 备注                        |
 | ------------------ | ----------- | ------------------------- |
 | login_id          | int         | 登录表自增id 		|
@@ -74,7 +77,7 @@
 | login_update_time       | datetime       | 登陆时间               		|
 | login_create_time       | datetime       | 添加时间               		|
 
-###2.2 用户实名表(Member_certification)
+### 2.2 用户实名表(Member_certification)
 | 字段                 | 类型          | 备注                        |
 | ------------------ | ----------- | ------------------------- |
 | certification_id          | int         | 实名表自增id 		|
@@ -96,3 +99,68 @@
 | certification_bankcard_front          | varchar         | 银行卡正面 		|
 | certification_bankcard_back          | varchar         | 银行卡反面 		|
 | certification_people_bankcard          | varchar         | 人卡合一 		|
+
+### 2.3 用户绑定的银行卡信息(wt_bank_card)
+| 字段                 | 类型          | 备注                        |
+| ------------------ | -----------    | ------------------------- |
+| card_id            | int            | 表自增id 		     |
+| card_member_id     | int            | 用户id 		      |
+| card_number        | varchar         | 银行卡号 		    |
+| card_type          | varchar         | 卡类型0信用卡1储蓄卡|
+| card_tel           | varchar          | 预留手机号 		|
+| card_bank          | varchar          | 所属银行    |
+| card_name          |varchar           |持卡人姓名   |
+| card_identify      | varchar          | 身份证号   |
+| card_cvn2          | varchar          |卡背面cvn2码|
+|card_validity_date  |varchar           |卡的有效期  |
+|card_provice        |varchar           |开户省份    |
+| card_city          |varchar           |开户城市    |
+| card_area          | varchar          |开户区      |
+|card_city_code      |varcjar           |开户行城市码 |
+
+### 2.4 用户第三方账户信息（wt_member_account）
+| 字段                 | 类型            | 备注             |
+| ------------------   | -----------    | ---------------- |
+| account_id           |  int           | 表自增id 		|
+| account_user         | varchar        | 用户id 		     |
+| account_code         | varchar        | 账户类型  	    |
+| account_name         | varchar        | 账户类型名称 	  |
+| account_info         | varchar        | 其他账户信息 	  |
+| account_account      | varchar        | 账户名称          |
+| account_create_at    | varchar        | 创建日期          |   
+
+### 2.5 用户提现表（wt_member_cash）
+| 字段                 | 类型            | 备注             |
+| ------------------   | -----------    | ---------------- |
+| cash_id              |  int           | 表自增id 		 |
+| cash_member_id       | varchar        | 用户id 		      |
+| cash_amount          | varchar        | 提现金额  	    |
+| service_charge       | varchar        | 提现手续费  	   |
+| cash_state           | varchar        | 提现状态 	        |
+| cash_other_info      | varchar        | 备注信息          |
+| cash_create_at       | varchar        | 创建日期          |     
+
+### 3 基本配置表（wt_config）
+| 字段                 | 类型          | 备注                |
+| ------------------ | ----------- | -----------------------|
+| config_id          | int         | 表自增id 		          |
+| config_key         | int         | 配置项键名 		        |
+| config_value        | varchar         | 配置项键值 		|
+| config_des          | varchar         | 配置描述 		     |
+| config_type          | varchar         | 配置分类 		 |
+| config_field_type   | varchar          | 字段类型          |
+| config_create_time |varchar            |创建时间           |
+| config_update_time | varchar          | 更新时间           |
+
+### 4 APP版本控制（wt_version）
+| 字段                 | 类型            | 备注             |
+| ------------------   | -----------    | ---------------- |
+| version_id           |  int           | 表自增id 		|
+| version_name         | varchar        | 版本名称 		   |
+| version_code         | varchar        | 版本code 		 |
+| version_type         | varchar        | android ios 	   |
+| vrsion_link          | varchar        | 版本更新链接 	  |
+| version_desc         | varchar        | 版本更新描述      |
+| version_state        | varchar        | 版本状态 1目前版本 |
+| version_create_at    | varchar        |  创建日期         |
+
