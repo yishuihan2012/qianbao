@@ -1,16 +1,16 @@
 <?php
-namespace app\index\controller;
-use think\Controller;
-use think\Session;
-use think\Request;
-use think\View;
-use think\Config;
-class Common extends Controller
-{
-    protected $jump_msg;
-    protected $_post;
-    public $history;
-    public function __construct(){
+ namespace app\index\controller;
+ use think\Controller;
+ use think\Session;
+ use think\Request;
+ use think\View;
+ use think\Config;
+ class Common extends Controller
+ {  
+      protected $jump_msg;
+      protected $_post;
+      public $history;
+      public function __construct(){
       parent::__construct();
       if(!Session::has('adminster'))
            $this->redirect('Login/index');
@@ -29,4 +29,4 @@ class Common extends Controller
            Session::delete('jump_msg');
            View::share($data);
       }
-}
+ }

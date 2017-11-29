@@ -8,7 +8,7 @@
             <a href="#"><i class="0icon icon-list"></i> 文章管理</a>
             <ul class="nav">
                 <li class="articles"><a href="<?php echo e(url('/index/article/index')); ?>"> 文章列表</a></li>
-                <li class="articles_category"><a href="#"> 分类管理</a></li>
+                <li class="articles_category"><a href="<?php echo e(url('/index/article_category/index')); ?>"> 分类管理</a></li>
             </ul>
         </li>
 
