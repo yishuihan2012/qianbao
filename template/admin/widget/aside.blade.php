@@ -36,5 +36,13 @@
 
             </ul>
         </li>
+        <li class="nav-parent suggestion">
+            <a href="javascript:;"><i class="icon icon-user"></i> 意见建议</a>
+            <ul class="nav">
+                <li class="suggestion_list"><a href="{{url('/index/suggestion/index')}}"><i class="icon icon-sliders"></i> 用户反馈</a></li>
+
+
+            </ul>
+        </li>
     </ul>
 </nav>

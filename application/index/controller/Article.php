@@ -109,7 +109,7 @@ class Article extends Common{
 			    	 #exit;
 			 #}
 			 $article =Articles::get(Request::instance()->param('id'));
-			 $result= $article->allowField(true)->together(['articleData'=>['data_text']])->save($_POST);
+			 $result= $article->allowField(true)->save($_POST);
 			 #数据是否提交成功
 			 $content = ($result===false) ? ['type'=>'error','msg'=>'文章修改失败'] : ['type'=>'success','msg'=>'文章修改成功'];
 			 Session::set('jump_msg', $content);

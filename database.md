@@ -138,7 +138,18 @@
 | service_charge       | varchar        | 提现手续费  	   |
 | cash_state           | varchar        | 提现状态 	        |
 | cash_other_info      | varchar        | 备注信息          |
-| cash_create_at       | varchar        | 创建日期          |     
+| cash_create_at       | varchar        | 创建日期          | 
+
+### 2.5 用户反馈（wt_member_suggestion）
+| 字段                 | 类型            | 备注             |
+| ------------------   | -----------    | ---------------- |
+| suggestion_id              |  int           | 表自增id 		 |
+| suggestion_member_id       | varchar        | 用户id 		      |
+| suggestion_info          | varchar        | 反馈信息  	    |
+| return_info       | varchar        | 回复信息  	   |
+| return_adminster           | int        | 处理人id 	        |
+| suggestion_state      | tinyint        | 是否处理（0未处理，1已处理）          |
+| suggestion_creat_time       | timestamp        | 创建日期          |    
 
 ### 3 基本配置表（wt_config）
 | 字段                 | 类型          | 备注                |
