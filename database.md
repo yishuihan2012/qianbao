@@ -175,3 +175,28 @@
 | version_state        | varchar        | 版本状态 1目前版本 |
 | version_create_at    | varchar        |  创建日期         |
 
+### 5 渠道来源（wt_channel_type）
+| 字段                 | 类型            | 备注             |
+| ------------------   | -----------    | ---------------- |
+| ct_id                |  int           | 表自增id 		|
+| ct_name              | varchar        | 渠道名称 		   |
+| ct_min_money         | varchar        | 渠道最小刷卡金额  |
+| ct_max_money         | varchar        | 渠道最大刷卡金额  |
+| ct_min_rate          | varchar        | 最低税率      	|
+| ct_des               | varchar        | 渠道描述          |
+| ct_img               | varchar        | 渠道图片          |
+| ct_status            | varchar        |  状态1启用0关闭   |
+| ct_unique_sign       | varchar        |  渠道标识         |
+| ct_create_time       | varchar        |  渠道创建时间     |
+
+### 5.1 渠道对应会员费率表（wt_channel_rate）
+| 字段                 | 类型            | 备注             |
+| ------------------   | -----------    | ---------------- |
+| channel_id           |  int           | 表自增id 		 |
+| channel_level        | varchar        | 会员级别 		    |
+| channel_type         | varchar        | 渠道类型          |
+| channel_rate         | varchar        | 交易费率          |
+| channel_generation   | varchar        | 固定代收费        |
+| channel_show         | varchar        | 是否显示          |
+| channe_create_time   | varchar        | 创建时间          |
+
