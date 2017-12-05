@@ -15,7 +15,7 @@
         <li class="nav-parent member-manager">
             <a href="javascript:;"><i class="0icon icon-user"></i> 会员管理</a>
             <ul class="nav">
-                <li class="member"><a href="#"> 会员管理</a></li>
+                <li class="member"><a href="{{url('/index/member/index')}}"> 会员管理</a></li>
                 <li class="member_group"><a href="#"> 用户组管理</a></li>
             </ul>
         </li>
@@ -31,7 +31,7 @@
         <li class="nav-parent system-setting">
             <a href="javascript:;"><i class="icon icon-cog"></i> 系统管理</a>
             <ul class="nav">
-                <li class="setting"><a href="#"><i class="icon icon-sliders"></i> 参数设置</a></li>
+                <li class="setting-register"><a href="{{url('/index/system/register')}}"><i class="icon icon-sliders"></i> 登录注册</a></li>
 
 
             </ul>
