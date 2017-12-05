@@ -1,65 +1,76 @@
 @extends('admin/layout/layout_main')
-@section('title','会员列表管理~')
+@section('title','会员列表管理~')  
 @section('wrapper')
 
-<div class="row">
-	@foreach ($member as $list)
-          <div class="col-sm-4" style="height: 230px;">
-                <div class="contact-box">
-                    <a href="">
-                        <div class="col-sm-4">
-                            <div class="text-center">
-                                <img alt="image" class="img-circle m-t-xs img-responsive" src="http://xijia.oss-cn-shanghai.aliyuncs.com/images/appavatar/uc_defaultavatar%402x.png" width="128" height="256">
-                                <div class="m-t-xs font-bold"></div>
-                            </div>
-                        </div>
-                        </a>
-                        <div class="col-sm-8">
-                        	<a href="/index.php?s=/Mrpiadmin/UserManage/UserCon/id/44.html">
-                            <h3><strong>{{$list['member_mobile']}}&nbsp;&nbsp;&nbsp;@if($list['member_cert']==1)已认证@else未认证@endif</strong></h3>
-                            </a>
-                            <p><a href="">普通商户
-                            </a><a style="color:green;font-size:16px;" user_id="44" u_member_id="1" class="uplevel"><button type="button" class="btn btn-primary btn-lg" data-toggle="modal" data-target="#myModal" style="font-size:12px;">升级</button></a>                            
-                        </p>
-                        <address>
-                            电话：15253394752<br>
+ <div class="row">
+      @foreach ($member_list as $list)
+      <div class="col-sm-3">
+           <a class="card" href="###">
+              <img src="{{$list->member_image}}" data-toggle="lightbox"  class="img-circle">
+              <div class="card-heading"><strong>{{$list->member_nick}}({{$list->member_mobile}}){{state_preg($list->member_status,1,'实名')}}</strong></div>
+              <div class="card-content text-muted">良辰美景奈何天，赏心乐事谁家院。</div>
+              <div class="card-actions">
+                <button type="button" class="btn btn-gray"></button>
+                <div class="pull-right text-gray"><span style="font-size: 12px;">注册时间:</span> <code>{{$list->member_creat_time}}</code></div>
+              </div>
+           </a>
+      </div>
+      @endforeach
+      <table class="table datatable">
+           <thead>
+                 <tr>
+                 <!-- 以下两列左侧固定 -->
+                      <th>#</th>
+                      <th>昵称</th>
+                      <th>手机号</th>
+                      <th>商户号</th>
+                      <!-- 以下三列中间可滚动 -->
+                      <th class="flex-col">事件类型</th> 
+                      <th class="flex-col">描述</th>
+                      <th class="flex-col">相关人物</th>
+                      <!-- 以下列右侧固定 -->
+                      <th>状态</th>
+                      <th>注册时间</th>
+                      <th>操作</th>
+                 </tr>
+      </thead>
+      <tbody>
+           @foreach ($member_list as $list)
+           <tr>
+                 <td>{{$list->member_id}}</td>
+                 <td><code>{{$list->member_nick}}</code> @if(!$list->member_cert)<i class="icon icon-flag text-success" title="已实名"></i> @endif</td>
+                 <td>{{$list->member_mobile}}</td>
+                 <td>{{$list->member_no}}</td>
+                 <td> </td>
+                 <td></td>
+                 <td></td>
+                 <td></td>
+                 <td>{{$list->member_creat_time}}</td>
+                 <td>
+                      <div class="btn-group">
+                           <button type="button" data-toggle="modal" data-remote="{{url('/index/member/info/id/'.$list->member_id)}}" class="btn btn-default btn-sm">详细信息</button>
+                           <div class="btn-group">
+                                 <button type="button" class="btn btn-default dropdown-toggle btn-sm" data-toggle="dropdown"><span class="caret"></span></button>
+                                 <ul class="dropdown-menu" role="menu">
+                                      <li><a href="#">封停用户</a></li>
+                                      
+                                 </ul>
+                           </div>
+                      </div>
+                 </td>
+           </tr>
+           @endforeach
+      </tbody>
+</table>
 
-                            推荐码：wrwigotw<br>
-
-                            注册时间：2017-11-24 09:09:15
-                        </address>
-                        </div>
-                        <div class="clearfix">
-                            <p class="project-actions" style="float:right;">
-                                 <a href="" class="btn btn-white btn-sm"><span class="glyphicon glyphicon-list-alt" aria-hidden="true"></span>分成信息</a>
-                             </p>
-                            <p class="project-actions" style="float:right;">
-                                 <a onclick="UserDel(44)" class="btn btn-white btn-sm"><span class="glyphicon glyphicon-list-alt login_forbid" aria-hidden="true"></span>账号禁用</a>
-                            </p>
-                            <p class="project-actions" style="float:right;">
-                                <a href="" class="btn btn-white btn-sm"><i class="fa fa-pencil"></i> 修改 </a>
-                            </p>
-                        </div>
-                    
-                </div>
-            </div>
-            @endforeach
-        </div>
-<script type="text/javascript">
-$(document).ready(function(){
+</div>
+ <script type="text/javascript">
+ $(document).ready(function(){
+      $('table.datatable').datatable({sortable: true});
      	 $('.menu .nav .active').removeClass('active');
     	 $('.menu .nav li.member').addClass('active');
     	 $('.menu .nav li.member-manager').addClass('show');
 
-    	 $(".parent li a").click(function(){
-    	 	$("input[name='article_parent']").val($(this).attr('data-id'));
-    	 	$("input[name='article_category']").val(0);
-    	 	$("#myform").submit();
-    	 })
-    	 $(".son li a").click(function(){
-    	 	$("input[name='article_category']").val($(this).attr('data-id'));
-    	 	$("#myform").submit();
-    	 })
     	 $(".remove").click(function(){
     	 	 var url=$(this).attr('data-url');
 		 bootbox.confirm({
@@ -75,6 +86,6 @@ $(document).ready(function(){
 		    }
 		 });
     	 })
-});
-</script>
-@endsection
+ });
+ </script>
+ @endsection
