@@ -19,11 +19,9 @@
         		 	 <a class="remove" href="#" data-url="{{url('/index/Suggestion/remove/id/'.$list['suggestion_id'])}}"><i class="icon-remove"></i> 删除</a>
         		 </div>
         		 <h4><a href="{{url('/index/Suggestion/edit/id/'.$list['suggestion_id'])}}">
-        		 
         		 </h4>
       	 </div>
      		 <div class="item-content">
-     		 
         		 <div class="text">{{$list['suggestion_info']}}</div>
       	 </div>
       	 <div class="item-footer">

@@ -25,9 +25,8 @@
                       <th>手机号</th>
                       <th>商户号</th>
                       <!-- 以下三列中间可滚动 -->
-                      <th class="flex-col">事件类型</th> 
-                      <th class="flex-col">描述</th>
-                      <th class="flex-col">相关人物</th>
+                      <th class="flex-col">推荐码</th> 
+                      <th class="flex-col">用户角色</th> 
                       <!-- 以下列右侧固定 -->
                       <th>状态</th>
                       <th>注册时间</th>
@@ -41,10 +40,11 @@
                  <td><code>{{$list->member_nick}}</code> @if(!$list->member_cert)<i class="icon icon-flag text-success" title="已实名"></i> @endif</td>
                  <td>{{$list->member_mobile}}</td>
                  <td>{{$list->member_no}}</td>
-                 <td> </td>
-                 <td></td>
-                 <td></td>
-                 <td></td>
+
+                 <td>{{$list->member_code}}</td>
+                 <td>{{$list->member_level_id}}</td>
+
+                 <td>@if($list->member_state==1)正常@else封停@endif</td>
                  <td>{{$list->member_creat_time}}</td>
                  <td>
                       <div class="btn-group">

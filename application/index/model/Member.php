@@ -41,4 +41,10 @@ class Member extends Model{
       {
            return $this->hasOne('MemberLogin','login_member_id','member_id');
       }
+
+      #关联模型 一对一关联 (MemberSuggestion) 用户反馈表
+      public function membersuggestion()
+      {
+           return $this->belongsTo('MemberSuggestion','suggestion_id','suggestion_member_id');
+      }
 }
