@@ -10,60 +10,13 @@
               <div class="card-heading"><strong>{{$list->member_nick}}({{$list->member_mobile}}){{state_preg($list->member_status,1,'实名')}}</strong></div>
               <div class="card-content text-muted">良辰美景奈何天，赏心乐事谁家院。</div>
               <div class="card-actions">
-                <button type="button" class="btn btn-gray"></button>
+                <span style="font-size: 12px;">登录状态:</span> <code>{{$list->login_state}}</code>
                 <div class="pull-right text-gray"><span style="font-size: 12px;">注册时间:</span> <code>{{$list->member_creat_time}}</code></div>
               </div>
            </a>
       </div>
       @endforeach
-      <table class="table datatable">
-           <thead>
-                 <tr>
-                 <!-- 以下两列左侧固定 -->
-                      <th>#</th>
-                      <th>昵称</th>
-                      <th>手机号</th>
-                      <th>商户号</th>
-                      <!-- 以下三列中间可滚动 -->
-                      <th class="flex-col">事件类型</th> 
-                      <th class="flex-col">描述</th>
-                      <th class="flex-col">相关人物</th>
-                      <!-- 以下列右侧固定 -->
-                      <th>状态</th>
-                      <th>注册时间</th>
-                      <th>操作</th>
-                 </tr>
-      </thead>
-      <tbody>
-           @foreach ($member_list as $list)
-           <tr>
-                 <td>{{$list->member_id}}</td>
-                 <td><code>{{$list->member_nick}}</code> @if(!$list->member_cert)<i class="icon icon-flag text-success" title="已实名"></i> @endif</td>
-                 <td>{{$list->member_mobile}}</td>
-                 <td>{{$list->member_no}}</td>
-                 <td> </td>
-                 <td></td>
-                 <td></td>
-                 <td></td>
-                 <td>{{$list->member_creat_time}}</td>
-                 <td>
-                      <div class="btn-group">
-                           <button type="button" data-toggle="modal" data-remote="{{url('/index/member/info/id/'.$list->member_id)}}" class="btn btn-default btn-sm">详细信息</button>
-                           <div class="btn-group">
-                                 <button type="button" class="btn btn-default dropdown-toggle btn-sm" data-toggle="dropdown"><span class="caret"></span></button>
-                                 <ul class="dropdown-menu" role="menu">
-                                      <li><a href="#">封停用户</a></li>
-                                      
-                                 </ul>
-                           </div>
-                      </div>
-                 </td>
-           </tr>
-           @endforeach
-      </tbody>
-</table>
-
-</div>
+ </div>
  <script type="text/javascript">
  $(document).ready(function(){
       $('table.datatable').datatable({sortable: true});
