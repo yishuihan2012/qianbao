@@ -39,7 +39,7 @@ class Member extends Model{
       #关联模型 一对一关联 (MemberLogin) 用户登录表
       public function memberLogin()
       {
-           return $this->hasOne('MemberLogin','login_member_id','member_id');
+           return $this->hasOne('MemberLogin','login_member_id','member_id')->bind('login_state')->setEagerlyType(0);
       }
 
       #关联模型 一对一关联 (MemberSuggestion) 用户反馈表

@@ -18,8 +18,8 @@
 
  class System extends Common
  {
-    	 #获取更改注册登录配置
-	public function Register()
+    	 #系统核心配置
+	public function basic()
 	{
 		 #如果是提交更新
 		 if(Request::instance()->isPost())
@@ -50,10 +50,15 @@
 				 }
 			 }
 		 }
-		 #查询基本参数设置
-	 	 $setting = Systems::where('system_type','register')->whereOr('system_type','login')->order('system_id', 'asc')->select()->toArray();
+		 #查询核心参数设置之注册登录配置
+	 	 $setting = Systems::order('system_id', 'asc')->select()->toArray();
+	 	 // var_dump(count($setting));die;
 	 	 $this->assign('setting', $setting);
+
+		 #查询核心参数设置之配置
+	 	 //$setting = Systems::where('system_type','register')->whereOr('system_type','login')->order('system_id', 'asc')->select()->toArray();
+	 	 //$this->assign('setting', $setting);
 		 #渲染视图
-		 return view('admin/system/register');
+		 return view('admin/system/basic');
 	}
 }

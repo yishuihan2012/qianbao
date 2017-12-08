@@ -21,7 +21,7 @@ class Adminster extends Common {
 		 $query=[];
 		 $where=[];
 		 $groups=[];
-		 //$params=Request::instance()->param();
+		 $params=Request::instance()->param();
 		 !empty($params['login']) ? $where['adminster_login']=["like","%".$params['login']."%"] : $params['login']="";
 		 !empty($params['email']) ? $where['adminster_email']=["like","%".$params['email']."%"] : $params['email']="";
 		 !empty($params['state']) ? $where['adminster_state']=$params['state'] :  $params['state']="";

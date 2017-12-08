@@ -200,3 +200,27 @@
 | channel_show         | varchar        | 是否显示          |
 | channe_create_time   | varchar        | 创建时间          |
 
+
+### 6 银行列表(bank)
+| 字段                 | 类型          | 备注                |
+| ------------------ | ----------- | -----------------------|
+| bank_id          | int         | pk ai 		          |
+| bank_name    | varchar | 银行名称             |
+| bank_avatar   | varchar | 银行图标		    |
+| bank_letter     | varchar | 银行名称首字母  |
+| bank_state     | int         | 银行状态 1启用 0停用 		|
+| bank_update_time   | datetime          | 修改时间          |
+| bank_add_time        | datetime          | 添加时间          |
+
+### 6.1 银行卡识别(bank_ident)
+| 字段                 | 类型          | 备注                |
+| ------------------ | ----------- | -----------------------|
+| ident_id          | int         | pk ai 		          |
+| ident_name    | varchar | 卡在银行名称             |
+| ident_type      | int         | 卡类型 1信用卡 2借记卡 3贷记卡 4准贷记卡 5预付费卡 |
+| ident_desc     | varchar | 卡详细信息  |
+| ident_code     | int         | 卡识别码 前6位		|
+| ident_update_time   | datetime          | 修改时间          |
+| ident_add_time        | datetime          | 添加时间          |
+
+

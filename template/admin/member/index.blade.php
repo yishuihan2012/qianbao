@@ -10,12 +10,13 @@
               <div class="card-heading"><strong>{{$list->member_nick}}({{$list->member_mobile}}){{state_preg($list->member_status,1,'实名')}}</strong></div>
               <div class="card-content text-muted">良辰美景奈何天，赏心乐事谁家院。</div>
               <div class="card-actions">
-                <button type="button" class="btn btn-gray"></button>
+                <span style="font-size: 12px;">登录状态:</span> <code>{{$list->login_state}}</code>
                 <div class="pull-right text-gray"><span style="font-size: 12px;">注册时间:</span> <code>{{$list->member_creat_time}}</code></div>
               </div>
            </a>
       </div>
       @endforeach
+<<<<<<< HEAD
       <table class="table datatable">
            <thead>
                  <tr>
@@ -64,6 +65,9 @@
 </table>
 
 </div>
+=======
+ </div>
+>>>>>>> 82a1b26e20e8c7e5d8908512284896ae837292db
  <script type="text/javascript">
  $(document).ready(function(){
       $('table.datatable').datatable({sortable: true});

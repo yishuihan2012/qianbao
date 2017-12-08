@@ -18,8 +18,6 @@ class Suggestion extends Common{
 	 public function index()
 	 {
 	 	$lists=MemberSuggestion::paginate(Config::get('page_size'), false, ['query'=>Request::instance()->param()]);
-	 	// $lists=MemberSuggestion::get(1);
-	 	// var_dump($lists->member());die;
 	 	$this->assign('lists', $lists);
 	 	$this->assign('count', count($lists));
 		 #渲染视图
