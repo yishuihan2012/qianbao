@@ -224,3 +224,31 @@
 | ident_add_time        | datetime          | 添加时间          |
 
 
+### 7 通道列表(passageway)
+| 字段                 | 类型          | 备注                |
+| ------------------ | ----------- | -----------------------|
+| passageway_id     | int         | pk ai 		          |
+| passageway_no    | varchar | 通道代号 /类名             |
+| passageway_name      | int         | 通道名称 |
+| passageway_avatar     | varchar | 通道图标  |
+| passageway_mech     | int         |  通道机构号		|
+| passageway_key  |varchar | 通道机构key |
+| passageway_min  | float | 最小刷卡额 |
+| passageway_max | float | 最大刷卡额 |
+| passageway_rate | float | 最低税率 | 
+| passageway_desc | varchar | 通道描述 | 
+| passageway_state | int | 通道状态 | 
+| passageway_update_time   | datetime          | 修改时间          |
+| passageway_add_time        | datetime          | 添加时间          |
+
+### 7.1 通道对会员组的税率表(passageway_item)
+| 字段                 | 类型          | 备注                |
+| ------------------ | ----------- | -----------------------|
+| item_id     | int         | pk ai 		           |
+| item_passageway  | int  | 通道id            |
+| item_group      		| int  | 用户组id        |
+| item_rate     		| float | 税率	 	     |
+| item_update_time   | datetime  | 修改时间          |
+| item_add_time        | datetime  | 添加时间          |
+
+

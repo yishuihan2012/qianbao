@@ -13,6 +13,14 @@
             </ul>
         </li>
 
+        <li class="nav-parent generalize-manager">
+            <a href="#"><i class="0icon icon-list"></i> 推广素材</a>
+            <ul class="nav">
+                <li class="generalize"><a href="{{url('/index/generalize/index')}}"> 文章列表</a></li>
+            </ul>
+        </li>
+
+
         <li class="nav-parent bank-manager">
             <a href="javascript:;"><i class="icon icon-user"></i> 银行管理</a>
             <ul class="nav">
@@ -30,12 +38,35 @@
             </ul>
         </li>
 
+        <li class="nav-parent wallet-manager">
+            <a href="javascript:;"><i class="icon icon-dollar"></i>钱包管理</a>
+            <ul class="nav">
+                <li class="wallet"><a href="{{ url('/index/wallet/index') }}">钱包列表</a></li>
+                <li class="walletlog"><a href="{{ url('/index/wallet_log/index') }}">日志列表</a></li>
+            </ul>
+        </li>
+
         <li class="nav-parent passageway-manager">
             <a href="javascript:;"><i class="icon icon-user"></i> 通道管理</a>
             <ul class="nav">
                 <li class="passageway"><a href="{{url('/index/passageway/index')}}"><i class="icon icon-sliders"></i> 通道列表</a></li>
             </ul>
         </li>
+
+        <li class="nav-parent plan-manager">
+            <a href="javascript:;"><i class="icon icon-user"></i> 还款计划</a>
+            <ul class="nav">
+                <li class="plan"><a href="{{url('/index/plan/index')}}"><i class="icon icon-sliders"></i> 计划列表</a></li>
+            </ul>
+        </li>
+
+        <li class="nav-parent order-manager">
+            <a href="javascript:;"><i class="icon icon-user"></i> 订单统计</a>
+            <ul class="nav">
+                <li class="order"><a href="{{url('/index/order/index')}}"><i class="icon icon-sliders"></i> 订单列表</a></li>
+            </ul>
+        </li>
+
 
         <li class="nav-parent suggestion">
             <a href="javascript:;"><i class="icon icon-user"></i> 意见建议</a>
@@ -51,12 +82,11 @@
             </ul>
         </li>
 
-
         <li class="adminster-manager nav-parent">
-            <a href="{{ url('/index/adminster/index') }}"><i class="0icon icon-user"></i> 管 理 员</a>
+            <a href="{{url('/index/adminster/index')}}"><i class="0icon icon-user"></i> 管 理 员</a>
             <ul class="nav">
-                <li class="adminster"><a href="{{ url('/index/adminster/index') }}">管理员管理</a></li>
-                <li class="auth_group"><a href="{{ url('/index/auth_group/index') }}">用户组管理</a></li>
+                <li class="adminster"><a href="{{url('/index/adminster/index')}}">管理员管理</a></li>
+                <li class="auth_group"><a href="{{url('/index/auth_group/index')}}">用户组管理</a></li>
             </ul>
         </li>
 
