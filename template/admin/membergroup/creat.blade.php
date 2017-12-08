@@ -47,13 +47,8 @@ input.labelauty + label { font: 12px "Microsoft Yahei";}
 		</div>
 
 		<div class="row">
-			<label for="group_type" class="col-sm-2 text-right"><b>组 类 型:</b></label>
-			<div id="group_name" class="col-sm-6">
-				<select class="form-control" name="group_type">
-				  	<option value="1">内部</option>
-				  	<option value="2">外部</option>
-				</select>
-			</div>
+			<label for="group_salt" class="col-sm-2 text-right"><b>组 级 别:</b></label>
+			<div id="group_salt" class="col-sm-6"><input type="number" class="form-control group_salt" name="group_salt" value=""></div>
 		</div>
 
 		<h5></h5>

@@ -57,16 +57,7 @@ input.labelauty + label { font: 12px "Microsoft Yahei";}
 		</div>
 
 		<h5></h5>
-		<div class="row">
-			<label for="group_type" class="col-sm-2 text-right"><b>红包权限:</b></label>
-			<div id="group_name" class="col-sm-6">
-				<ul class="dowebok">
-					@foreach($packet as $type)
-					<li><input @if(isset($group->group_packet) && in_array($type['type_id'],$group->group_packet)) checked @endif type="checkbox" name="group_packet[]" value="{{$type['type_id']}}" data-labelauty="{{$type['type_name']}}"></li>
-					@endforeach
-				</ul>
-			</div>
-		</div>
+
 
 	</form>
 	<h2></h2>

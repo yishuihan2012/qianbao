@@ -1,13 +1,16 @@
 @extends('admin/layout/layout_main')
 @section('title','会员用户组管理~')
 @section('wrapper')
+<blockquote>
+	 用户组列表(组级别越高代表组内用户等级越高)
+</blockquote>
+ <hr/>
 <table class="table table-striped table-hover">
   	<thead>
 	    <tr>
 	      	<th>#</th>
 	      	<th>用户组</th>
-	      	<th>类型</th>
-	      	<th>红包类型</th>
+	      	<th>组级别</th>
 	      	<th>更新时间</th>
 	      	<th>注册时间</th>
 	      	<th>操作</th>
@@ -18,8 +21,7 @@
 	    <tr>
 	      	<td>{{$group['group_id']}}</td>
 	      	<td>{{$group['group_name']}}</td>
-	      	<td>{{$group['group_type']=='1' ? '内部' : '外部'}}</td>
-	      	<td></td>
+	      	<td>{{$group['group_salt']}} 级</td>
 	      	<td>{{$group['group_update_time']}}</td>
 	      	<td>{{$group['group_add_time']}}</td>
 	      	<td>
