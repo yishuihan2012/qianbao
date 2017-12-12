@@ -12,6 +12,19 @@
  use think\Config;
  use app\index\model\SmsLog as SmsLogs;
  use app\index\model\Member as Members;
+  use app\index\model\System;
+
+ //-----------------------------------------------------------
+ // @version  验证手机号格式
+ // @author   $bill$
+ // @datatime 2017-12-08 11:22
+ // @param $phone=手机号
+ // @description 验证手机号是否是中国大陆常用手机号
+ // @return 验证结果
+ //-----------------------------------------------------------
+ function preg_mobile($phone) {
+      return preg_match("/^1[34578]\d{9}$/", $phone) ? true : false;
+ }
 
  //-----------------------------------------------------------
  // @version  密码加密方式
@@ -162,10 +175,10 @@
  //-----------------------------------------------------------
  function send_sms($phone, $message)
  {
-      $user_id        = Config::get('SMS.user_id');
-      $user_name  = Config::get('SMS.user_name');
-      $pwd             = Config::get('SMS.password');
-      $title              = Config::get('default_title');
+      $user_id        = System::getName('mobile_key');
+      $user_name  = System::getName('mobile_username');
+      $pwd             = System::getName('mobile_pwd');
+      $title              = System::getName('sitename');
       $content        = "【{$title}】$message";
       $url     = 'http://sms1.ronglaids.com/sms.aspx?action=send&userid=' . $user_id . '&account=' . $user_name . '&password=' . $pwd . '&mobile=' . $phone . '&content=' . $content . '&sendTime=&extno=';
       $res     = curl_post($url);
@@ -445,4 +458,17 @@
       $state = $value===$success ? 'check text-success' : 'times text-danger';
       if($tips!='') $tips.=$value===$success ? '成功' : '失败';
       echo "<i title='".$tips."' class='icon icon-".$state."'></i>";
+ }
+
+  //-----------------------------------------------------------
+ // @version  验证手机号格式是否正确
+ // @author   $bill$
+ // @datatime 2017-12-11 11:22
+ // @param  $phone=手机号
+ // @description 检验是否是正确的手机号格式 并返回相应结果
+ // @return  布尔值 
+ //-----------------------------------------------------------
+ function phone_check($phone)
+ {
+      return (!isset($phone) || empty($phone) || !preg_mobile($phone)) ? false : true;
  }

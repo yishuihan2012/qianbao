@@ -11,7 +11,11 @@
 	      	<th>#</th>
 	      	<th>用户组</th>
 	      	<th>组级别</th>
-	      	<th>更新时间</th>
+	      	<th>组 升 级</th>
+	      	<th>升级方式</th>
+	      	<th>升级条件</th>
+	      	<th>分佣</th>
+	      	<th>分润</th>
 	      	<th>注册时间</th>
 	      	<th>操作</th>
 	    </tr>
@@ -22,7 +26,27 @@
 	      	<td>{{$group['group_id']}}</td>
 	      	<td>{{$group['group_name']}}</td>
 	      	<td>{{$group['group_salt']}} 级</td>
-	      	<td>{{$group['group_update_time']}}</td>
+	      	<td>{{$group['group_level']=='1' ? '可以升级' :  '禁止升级'}}</td>
+	      	<td>
+	      	@if($group['group_level_type']=='0')
+	      		不限
+	      	@elseif($group['group_level_type']=='1')
+				总推荐人数
+	      	@elseif($group['group_level_type']=='1')
+	      		总刷卡额
+	      	@endif
+	      	</td>
+	      	<td>
+	      	@if($group['group_level_type']=='1')
+				总推荐人数>{{$group['group_level_invite']}} 人
+	      	@elseif($group['group_level_type']=='2')
+				总刷卡额>{{$group['group_level_transact']}} 元
+	      	@elseif($group['group_level_type']=='0')
+				推荐人数>{{$group['group_level_invite']}} 人| 刷卡额 > {{$group['group_level_transact']}} 元
+	      	@endif
+	      	</td>
+	      	<td>{{$group['group_cent']=='1' ? '允许' :  '不允许'}}</td>
+	      	<td>{{$group['group_run']=='1' ? '允许' :  '不允许'}}</td>
 	      	<td>{{$group['group_add_time']}}</td>
 	      	<td>
 	      		<div class="btn-group">

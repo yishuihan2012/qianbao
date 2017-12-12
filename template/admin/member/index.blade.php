@@ -16,58 +16,9 @@
            </a>
       </div>
       @endforeach
-<<<<<<< HEAD
-      <table class="table datatable">
-           <thead>
-                 <tr>
-                 <!-- 以下两列左侧固定 -->
-                      <th>#</th>
-                      <th>昵称</th>
-                      <th>手机号</th>
-                      <th>商户号</th>
-                      <!-- 以下三列中间可滚动 -->
-                      <th class="flex-col">推荐码</th> 
-                      <th class="flex-col">用户角色</th> 
-                      <!-- 以下列右侧固定 -->
-                      <th>状态</th>
-                      <th>注册时间</th>
-                      <th>操作</th>
-                 </tr>
-      </thead>
-      <tbody>
-           @foreach ($member_list as $list)
-           <tr>
-                 <td>{{$list->member_id}}</td>
-                 <td><code>{{$list->member_nick}}</code> @if(!$list->member_cert)<i class="icon icon-flag text-success" title="已实名"></i> @endif</td>
-                 <td>{{$list->member_mobile}}</td>
-                 <td>{{$list->member_no}}</td>
-
-                 <td>{{$list->member_code}}</td>
-                 <td>{{$list->member_level_id}}</td>
-
-                 <td>@if($list->member_state==1)正常@else封停@endif</td>
-                 <td>{{$list->member_creat_time}}</td>
-                 <td>
-                      <div class="btn-group">
-                           <button type="button" data-toggle="modal" data-remote="{{url('/index/member/info/id/'.$list->member_id)}}" class="btn btn-default btn-sm">详细信息</button>
-                           <div class="btn-group">
-                                 <button type="button" class="btn btn-default dropdown-toggle btn-sm" data-toggle="dropdown"><span class="caret"></span></button>
-                                 <ul class="dropdown-menu" role="menu">
-                                      <li><a href="#">封停用户</a></li>
-                                      
-                                 </ul>
-                           </div>
-                      </div>
-                 </td>
-           </tr>
-           @endforeach
-      </tbody>
-</table>
 
 </div>
-=======
- </div>
->>>>>>> 82a1b26e20e8c7e5d8908512284896ae837292db
+
  <script type="text/javascript">
  $(document).ready(function(){
       $('table.datatable').datatable({sortable: true});

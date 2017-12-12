@@ -1236,7 +1236,7 @@ abstract class Model implements \JsonSerializable, \ArrayAccess
      * @return integer|true
      * @throws Exception
      */
-    public function setDec($field, $step = 1, $lazyTime = 0)
+/*    public function setDec($field, $step = 1, $lazyTime = 0)
     {
         // 更新条件
         $where  = $this->getWhere();
@@ -1246,8 +1246,27 @@ abstract class Model implements \JsonSerializable, \ArrayAccess
         }
 
         return $result;
+    }*/
+    public function setDec($field, $step = 1, $lazyTime = 0)
+    {
+            $condition = $this->options['where'];
+            if (empty($condition)) {
+                // 没有条件不做任何更新
+                throw new Exception('no data to update');
+            }
+            if ($lazyTime > 0) {
+                // 延迟写入
+                $guid = md5($this->name . '_' . $field . '_' . serialize($condition));
+                $step = $this->lazyWrite($guid, $step, $lazyTime);
+                if (empty($step)) {
+                    return true; // 等待下次写入
+                } elseif ($step < 0) {
+                    $step = '-' . $step;
+                }
+            }
+            $this->duplicate = [];
+            return $this->setField($field, ['exp','(case when '. $field.' is null then 0 else '.$field.' end)' . '-' . $step]);
     }
-
     /**
      * 获取更新条件
      * @access protected

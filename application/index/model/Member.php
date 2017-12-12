@@ -47,4 +47,12 @@ class Member extends Model{
       {
            return $this->belongsTo('MemberSuggestion','suggestion_id','suggestion_member_id');
       }
+
+      #关联模型 一对一关联 (MemberRelation) 用户推荐表
+      public function memberRelation()
+      {
+           return $this->hasOne('MemberRelation','relation_member_id','member_id');
+      }
+
+
 }
