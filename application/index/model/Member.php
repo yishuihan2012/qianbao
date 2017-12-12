@@ -1,5 +1,5 @@
 <?php
-/**
+ /**
 *  @version Member Model  会员基本信息模型
  * @author  $bill 755969423@qq.com
  * @time      2017-11-24 09:20
@@ -47,13 +47,12 @@ class Member extends Model{
       {
            return $this->belongsTo('MemberSuggestion','suggestion_id','suggestion_member_id');
       }
-<<<<<<< HEAD
+
       #关联模型 一对一关联 (MemberGroup) 用户等级表
       public function membergroup()
       {
            return $this->hasOne('MemberGroup','group_id','member_id');
       }
-=======
 
       #关联模型 一对一关联 (MemberRelation) 用户推荐表
       public function memberRelation()
@@ -61,6 +60,4 @@ class Member extends Model{
            return $this->hasOne('MemberRelation','relation_member_id','member_id');
       }
 
-
->>>>>>> gk-010
 }
