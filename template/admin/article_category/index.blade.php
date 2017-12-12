@@ -4,9 +4,41 @@
 <style>
 	 h4 > a,.pull-right > a{color:#145ccd;}
 </style>
-
+  
 <section>
-      <nav class="navbar navbar-default" role="navigation">
+    
+    <ul class="tree tree-menu" data-ride="tree">
+       @foreach($tree as $trees)
+      <li>
+        <a style="float: right;margin-right: 20px;" class="remove" href="#" data-url="{{url('/index/article_category/remove/id/'.$trees['category_id'])}}"><i class="icon icon-trash"></i> 删除</a>
+        <a style="float: right;margin-right: 20px;" href="{{url('/index/article_category/category_edit/id/'.$trees['category_id'])}}"><i class="icon-pencil"></i> 编辑</a>
+        <a href="#">{{$trees['category_name']}}</a>
+
+        @if(!empty($trees['category_parent']))
+        <ul>
+          @foreach($trees['category_parent'] as $val)
+          <li>
+            <a style="float: right;margin-right: 20px;" class="remove" href="#" data-url="{{url('/index/article_category/remove/id/'.$val['category_id'])}}"><i class="icon icon-trash"></i> 删除</a>
+            <a style="float: right;margin-right: 20px;" href="{{url('/index/article_category/category_edit/id/'.$val['category_id'])}}"><i class="icon-pencil"></i> 编辑</a>
+            <a href="#">{{$val['category_name']}}</a></li>
+          @endforeach
+        </ul>
+        @endif
+      </li>
+      @endforeach
+    </ul>
+
+
+
+
+
+
+
+
+
+
+
+      <!-- <nav class="navbar navbar-default" role="navigation">
            <div class="container-fluid">
            <ul class="nav navbar-nav nav-justified">
                  @foreach($tree as $trees)
@@ -22,7 +54,7 @@
                  @endforeach
            </ul>
            </div> 
-      </nav>
+      </nav> -->
 </section>
 <script type="text/javascript">
 $(document).ready(function(){
@@ -42,8 +74,8 @@ $(document).ready(function(){
     	 $(".remove").click(function(){
     	 	 var url=$(this).attr('data-url');
 		 bootbox.confirm({
-		    title: "删除文章确认",
-		    message: "确定删除这篇文章吗? 删除后不可恢复!",
+		    title: "删除分类确认",
+		    message: "确定删除这条分类吗? 删除后不可恢复!",
 		    buttons: {
 		        cancel: {label: '<i class="fa fa-times"></i> 点错了'},
 		        confirm: {label: '<i class="fa fa-check"></i> 确定'}

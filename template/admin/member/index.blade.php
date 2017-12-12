@@ -16,7 +16,6 @@
            </a>
       </div>
       @endforeach
-<<<<<<< HEAD
       <table class="table datatable">
            <thead>
                  <tr>
@@ -43,7 +42,7 @@
                  <td>{{$list->member_no}}</td>
 
                  <td>{{$list->member_code}}</td>
-                 <td>{{$list->member_level_id}}</td>
+                 <td>{{$list->member_group->group_name}}</td>
 
                  <td>@if($list->member_state==1)正常@else封停@endif</td>
                  <td>{{$list->member_creat_time}}</td>
@@ -65,9 +64,9 @@
 </table>
 
 </div>
-=======
+
  </div>
->>>>>>> 82a1b26e20e8c7e5d8908512284896ae837292db
+
  <script type="text/javascript">
  $(document).ready(function(){
       $('table.datatable').datatable({sortable: true});

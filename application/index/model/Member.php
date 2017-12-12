@@ -39,12 +39,17 @@ class Member extends Model{
       #关联模型 一对一关联 (MemberLogin) 用户登录表
       public function memberLogin()
       {
-           return $this->hasOne('MemberLogin','login_member_id','member_id')->bind('login_state')->setEagerlyType(0);
+           return $this->hasOne('MemberLogin','login_member_id','member_id')->bind('login_state,login_account,login_token,login_attempts')->setEagerlyType(0);
       }
 
       #关联模型 一对一关联 (MemberSuggestion) 用户反馈表
       public function membersuggestion()
       {
            return $this->belongsTo('MemberSuggestion','suggestion_id','suggestion_member_id');
+      }
+      #关联模型 一对一关联 (MemberGroup) 用户等级表
+      public function membergroup()
+      {
+           return $this->hasOne('MemberGroup','group_id','member_id');
       }
 }

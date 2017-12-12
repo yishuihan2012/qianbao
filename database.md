@@ -251,4 +251,16 @@
 | item_update_time   | datetime  | 修改时间          |
 | item_add_time        | datetime  | 添加时间          |
 
+### 8 推广素材列表(generalize)
+| 字段                 | 类型          | 备注                |
+| ------------------ | ----------- | -----------------------|
+| generalize_id     | int         | 自增id 		          |
+| generalize_titile    | varchar | 标题           |
+| generalize_content      | text         | 内容 |
+| generalize_creat_time     | datetime | 添加时间  |
+| generalize_download_num     | int         |  下载数量		|
+| generalize_sort  |tinyint | 排序 |
+| generalize_is_del  | tinyint | 是否删除（0未删除，1已删除） |
+| generalize_thumb  | varchar | 图片 |
+
 

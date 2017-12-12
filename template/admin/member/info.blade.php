@@ -35,21 +35,21 @@
 	 <table class="table table-bordered table-hover table-striped" style="width:90%; margin:0 auto;">
 		 <tr>
 			 <th>账号</th>
-			 <td></td>
+			 <td>{{$member_info->login_account}}</td>
 			 <th>token</th>
-			 <td></td>
+			 <td>{{$member_info->login_token}}</td>
 		 </tr>
 		 <tr>
 			 <th>尝试次数</th>
-			 <td></td>
+			 <td>{{$member_info->login_attempts}}</td>
 			 <th>登录状态</th>
-			 <td></td>
+			 <td>@if($member_info->login_state==1)正常@elseif($member_info->login_state==-1)禁止@else异常@endif</td>
 		 </tr>
 		 <tr>
 			 <th>更新时间</th>
-			 <td></td>
+			 <td>{{$member_info->member_update_time}}</td>
 			 <th>注册时间</th>
-			 <td></td>
+			 <td>{{$member_info->member_creat_time}}</td>
 		 </tr>
 	 </table>
 
@@ -57,9 +57,9 @@
 	 <table class="table table-bordered table-hover table-striped" style="width:90%; margin:0 auto;">
 		 <tr>
 			 <th>更新时间</th>
-			 <td></td>
+			 <td>{{$member_info->member_update_time}}</td>
 			 <th>注册时间</th>
-			 <td></td>
+			 <td>{{$member_info->member_creat_time}}</td>
 		 </tr>
 	 </table>
 

@@ -18,7 +18,7 @@ class Member extends Common{
 	 public function index()
 	 {
 	 	 #获取会员列表 
-	 	 $member_list=Members::with('memberLogin')->order('member_id','desc')->paginate(Config::get('page_size'), false, ['query'=>Request::instance()->param()]);
+	 	 $member_list=Members::with('memberLogin,membergroup')->order('member_id','desc')->paginate(Config::get('page_size'), false, ['query'=>Request::instance()->param()]);
 	 	 $this->assign('member_list', $member_list);
 		 #渲染视图
 		 return view('admin/member/index');
@@ -33,7 +33,8 @@ class Member extends Common{
 			 $this->redirect($this->history['1']);
 	 	 }
 	 	 #查询到当前会员的基本信息
-	 	 $member_info=Members::get($request->param('id'));
+	 	 $member_info=Members::with('memberLogin')->find($request->param('id'));
+	 	 // var_dump($member_info);die;
 	 	 $this->assign('member_info', $member_info);
 	 	 return view('admin/member/info');
 	 }

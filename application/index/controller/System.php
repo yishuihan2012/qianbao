@@ -46,9 +46,10 @@
 					 $result = Systems::setName($key, $value);
 					 $content=$result===false ? ['type'=>'error','msg'=>$key.'修改失败!'] : ['type'=>'success','msg'=>'修改成功!'];
 				 	 Session::set('jump_msg', $content);
-	 	 		 	 $this->redirect($this->history['0']);
+	 	 		 	 
 				 }
 			 }
+			 $this->redirect($this->history['0']);
 		 }
 		 #查询核心参数设置之注册登录配置
 	 	 $setting = Systems::order('system_id', 'asc')->select()->toArray();
