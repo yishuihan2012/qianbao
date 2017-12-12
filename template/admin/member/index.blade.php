@@ -16,6 +16,7 @@
            </a>
       </div>
       @endforeach
+<<<<<<< HEAD
       <table class="table datatable">
            <thead>
                  <tr>
@@ -67,6 +68,11 @@
 
  </div>
 
+=======
+
+</div>
+
+>>>>>>> gk-010
  <script type="text/javascript">
  $(document).ready(function(){
       $('table.datatable').datatable({sortable: true});
