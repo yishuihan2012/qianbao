@@ -9,6 +9,7 @@ namespace app\index\controller;
 use app\index\model\Passageway as Passageways;
 use app\index\model\PassagewayItem;
 use app\index\model\MemberGroup;
+use app\index\model\Cashout;
 use think\Controller;
 use think\Request;
 use think\Session;
@@ -21,7 +22,7 @@ class Passageway extends Common{
 	 {
 	 	 #查询通道列表分页
 	 	 $passageway=Passageways::order('passageway_id','desc')->paginate(Config::get('page_size'), false, ['query'=>Request::instance()->param()]);
- 		 $this->assign('button', ['text'=>'新增通道', 'link'=>url('/index/passageway/creat')]);
+ 		 $this->assign('button', ['text'=>'新增通道', 'link'=>url('/index/passageway/creat'), 'modal'=>'modal']);
  		 $this->assign('passageway_list', $passageway);
 		 #渲染视图
 		 return view('admin/passageway/index');
@@ -33,7 +34,6 @@ class Passageway extends Common{
 	  	 #获取通道
 	  	 if(!Request::instance()->param('id'))
 	  	 	 return '参数错误';
-
 	 	 if(Request::instance()->isPost())
 	 	 {
 	 	 	 #获取提交的数据
@@ -42,21 +42,20 @@ class Passageway extends Common{
 	 	 	 foreach ($post as $key => $value) {
 	 	 		 #拆分Key键
 	 	 	 	 $group_id=strrev(strstr(strrev($key),strrev('_'),true));
+	 	 	 	 $key_fix=strtok($key,'_');
+	 	 	 	 $field='item_'.$key_fix;
 	 	 	 	 #查询库中是否存在本条数据
 	 	 	 	 $passage=PassagewayItem::where(['item_passageway'=>Request::instance()->param('id'),'item_group'=>$group_id])->find();
 	 	 	 	 if($passage){
-	 	 	 	 	 dump('12');
 	 	 	 	 	 #如果存在的话 对比一下之前和之后的值 如果不一致 则进行修改
-	 	 	 	 	 if($passage['item_rate']!=$value)
-	 	 	 	 	 {
-	 	 	 	 	 	 $update=PassagewayItem::get(['item_passageway'=>Request::instance()->param('id'),'item_group'=>$group_id]);
-	 	 	 	 	 	 $result= $update->allowField(true)->save(['item_rate'=>$value]);
-	 	 	 	 	 }
+	 	 	 	 	 if($passage[$field]!=$value)
+	 	 	 	 	 	 PassagewayItem::where(['item_passageway'=>Request::instance()->param('id'),'item_group'=>$group_id])->setField($field, $value);
 	 	 	 	 }else{
 	 	 	 	 	 $data=array(
 	 	 	 	 	 	'item_passageway'	=>Request::instance()->param('id'),
 	 	 	 	 	 	'item_group'			=>$group_id,
-	 	 	 	 	 	'item_rate'			=>$value
+	 	 	 	 	 	'item_rate'			=>$post['rate_'.$group_id],
+	 	 	 	 	 	'item_also'			=>$post['also_'.$group_id]
 	 	 	 	 	 );
 	 	 	 	 	 $newpass=new PassagewayItem($data);
 	 	 	 	 	 $result = $newpass->allowField(true)->save();
@@ -64,6 +63,9 @@ class Passageway extends Common{
 	 	 	 	 if(!$result)
 	 	 	 	 	 continue;
 	 	 	 }
+
+
+
 		 	 $content = $result ? ['type'=>'success','msg'=>'税率调整成功'] : ['type'=>'warning','msg'=>'税率调整失败'];
 		 	 Session::set('jump_msg', $content);
 		 	 $this->redirect($this->history['0']);
@@ -78,7 +80,7 @@ class Passageway extends Common{
 	  	 return view('admin/passageway/rate');
 	 }
 
-	 #新增文章
+	 #新增通道
 	 public function creat()
 	 {
 	 	 if(Request::instance()->isPost())
@@ -96,31 +98,23 @@ class Passageway extends Common{
 				 #exit;
 			 #}
 			 #验证器验证成功
-			 $article = new Articles($_POST);
-			 $article->articleData = ['data_text' =>$_POST['data_text']];
-			 $result = $article->allowField(true)->together('articleData')->save();
+			 $passageway = new Passageways($_POST);
+			 $result = $passageway->allowField(true)->save();
 			 #数据是否提交成功
-			 $content = $result ? ['type'=>'success','msg'=>'文章添加成功'] : ['type'=>'warning','msg'=>'文章添加失败'];
+			 $content = $result ? ['type'=>'success','msg'=>'通道添加成功'] : ['type'=>'warning','msg'=>'通道添加失败'];
 			 Session::set('jump_msg', $content);
 			 #重定向控制器 跳转到列表页
-			 $this->redirect('Article/index');
+			 $this->redirect('Passageway/index');
 	 	 }
-	 	 #获取到所有一级分类
- 		 $category_list=ArticleCategorys::where('category_parent','0')->select();
-	 	 $this->assign('category_list', $category_list);
- 		 $this->assign('button', ['text'=>'返回列表', 'link'=>$this->history['2'],'icon'=>'arrow-left']);
-	 	 return view('admin/article/creat');
+	 	 return view('admin/passageway/creat');
 	 }
 
-	 #修改文章
+
+	 #修改通道
 	 public function edit(Request $request)
 	 {
-		 #获取到详细信息
-		 $articleArray = Articles::get(Request::instance()->param('id'),'articleData');
-	 	 #获取到所有一级分类
- 		 $category_list=ArticleCategorys::where('category_parent','0')->select();
- 		 #获取到所有二级分类
- 		 $secend_category=ArticleCategorys::where('category_parent', $articleArray['article_parent'])->select();
+	 	#获取到详细信息
+		 $passageways = Passageways::get(Request::instance()->param('id'));
 		 #提交更改信息
 		 if(Request::instance()->isPost())
 		 {
@@ -138,21 +132,19 @@ class Passageway extends Common{
 			      #return view('admin/category/edit');
 			    	 #exit;
 			 #}
-			 $article =Articles::get(Request::instance()->param('id'));
-			 $result= $article->allowField(true)->save($_POST);
+			 $Passageways =Passageways::get(Request::instance()->param('id'));
+			 $result= $Passageways->allowField(true)->save($_POST);
 			 #数据是否提交成功
-			 $content = ($result===false) ? ['type'=>'error','msg'=>'文章修改失败'] : ['type'=>'success','msg'=>'文章修改成功'];
+			 $content = ($result===false) ? ['type'=>'error','msg'=>'修改失败'] : ['type'=>'success','msg'=>'修改成功'];
 			 Session::set('jump_msg', $content);
 			 #重定向控制器 跳转到列表页
-			 $this->redirect($this->history['1']);
+			 $this->redirect('/index/Passageway/index');
 		 }
 		 #传递当前信息源去视图
-		 $this->assign('article', $articleArray);
-	 	 $this->assign('category_list', $category_list);
-	 	 $this->assign('secend_category', $secend_category);
-	 	 $this->assign('button', ['text'=>'返回列表', 'link'=>$this->history['2'],'icon'=>'arrow-left']);
-		 return view('admin/article/creat');
+		 $this->assign('passageways', $passageways);
+		 return view('admin/passageway/edit');
 	 }
+
 
 	 #删除文章
 	 public function remove()
@@ -171,5 +163,35 @@ class Passageway extends Common{
 	 {
 	 	$category_list=ArticleCategorys::where('category_parent', Request::instance()->param('id'))->select();
 	 	echo json_encode($category_list);
+	 }
+
+	 #提现设置
+	 public function cashout(){
+	 	$data = Cashout::with('passageway')->where('cashout_passageway_id='.Request::instance()->param('id'))->find();
+
+	 	if(empty($data)){
+	 		$data=array(
+	 			'cashout_passageway_id'=>Request::instance()->param('id'),
+	 			'cashout_add_time'=>date("Y-m-d H:i:s",time())
+	 		);
+	 		$result= Cashout::insert($data);
+	 	}elseif(Request::instance()->isPost()){
+	 		if(Request::instance()->param('cashout_open')!=1){
+	 			$_POST['cashout_open']=0;
+	 		}
+	 		$cashout =Cashout::get(Request::instance()->param('cashout_id'));
+
+			 $result= $cashout->allowField(true)->save($_POST);
+			 #数据是否提交成功
+			 $content = ($result===false) ? ['type'=>'error','msg'=>'修改失败'] : ['type'=>'success','msg'=>'修改成功'];
+			 Session::set('jump_msg', $content);
+			 #重定向控制器 跳转到列表页
+			 $this->redirect('/index/Passageway/index');die;
+	 	}
+
+	 	$data = Cashout::with('passageway')->where('cashout_passageway_id='.Request::instance()->param('id'))->find();
+
+	 	$this->assign('data',$data);
+	 	return view('admin/Passageway/cashout');
 	 }
 }

@@ -21,11 +21,29 @@ class Generalize extends Common{
 
 	 	 $this->assign('button', 
  		 	 [
- 		 		 ['text'=>'新增素材', 'link'=>url('/index/generalize/creat')],
+ 		 		 ['text'=>'新增素材', 'link'=>url('/index/generalize/creat'), 'modal'=>'modal'],
  		 	 ]);
 	 	 $this->assign('generalize',$generalize);
 		 #渲染视图
 		 return view('admin/Generalize/index');
+	 }
+
+	 #添加素材
+	 public function creat(){
+	 	if(Request::instance()->isPost()){
+	 		var_dump($_POST);die;
+	 		 $Generalizes = new Generalizes($_POST);
+			 
+			 $result = $Generalizes->allowField(true)->save();
+			 #数据是否提交成功
+			 $content = ($result===false) ? ['type'=>'error','msg'=>'添加失败'] : ['type'=>'success','msg'=>'添加成功'];
+			 Session::set('jump_msg', $content);
+			 #重定向控制器 跳转到列表页
+			 $this->redirect('/index/Generalize/index');die;
+	 	}
+
+	 	 #渲染视图
+		 return view('admin/Generalize/creat');
 	 }
 
 }

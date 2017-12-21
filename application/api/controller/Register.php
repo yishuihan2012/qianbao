@@ -10,10 +10,13 @@
  use think\Config;
  use think\Request;
  use app\index\model\System;
-use app\index\model\MemberLogin;
-use app\index\model\Member;
-use app\index\model\MemberRelation;
-use app\index\model\Wallet;
+ use app\index\model\MemberLogin;
+ use app\index\model\Member;
+ use app\index\model\Wallet;
+ use app\index\model\MemberRelation;
+ use app\index\model\MemberTeam;
+
+ use app\index\model\SmsCode;
 
  class Register
  {
@@ -28,21 +31,34 @@ use app\index\model\Wallet;
        *  @version Register method / Api 注册会员
        *  @author $bill$(755969423@qq.com)
        *  @datetime    2017-12-08 13:31:05
-       *  @param phone=手机号  pwd=密码  parent_phone=邀请手机号
+       *  @param phone=手机号  pwd=密码  parent_phone=邀请手机号   ☆☆☆::使用中
       **/
       public function register(Request $Request)
       {
-             #验证参数是否存在
-             if(!phone_check($this->param['phone']))
+           #验证参数是否存在
+           if(!phone_check($this->param['phone']))
              	 return ['code'=>401];
-             #验证密码
-             if(!isset($this->param['pwd']) || empty($this->param['pwd']))
+           #验证密码
+           if(!isset($this->param['pwd']) || empty($this->param['pwd']))
              	 return ['code'=>402];
-             #检查用户名(是否存在)
-             $member=MemberLogin::phone_exit($this->param['phone']);
-             if($member)
+           #手机验证码参数
+           if(!isset($this->param['smsCode']) || empty($this->param['smsCode']))
+                 return ['code'=>404];
+           #验证码验证规则 读取本手机号最后一条没有使用的验证码 并且在系统设置的有效时间内
+           $code_info=SmsCode::where(['sms_send'=>$this->param['phone'],'sms_log_state'=>1])->whereTime('sms_log_add_time', "-".System::getName('code_timeout').' minutes')->order('sms_log_id','desc')->find();
+           if(!$code_info || $code_info['sms_log_content']!=$this->param['smsCode'])
+                 return ['code'=>404];
+           #改变验证码使用状态
+           $code_info->sms_log_state=2;
+           $result=$code_info->save();
+           #验证是否成功
+           if(!$result)
+                 return ['code'=>404];
+           #检查用户名(是否存在)
+           $member=MemberLogin::phone_exit($this->param['phone']);
+           if($member)
              	 return ['code'=>309];
-             Db::startTrans();
+           Db::startTrans();
             #填写注册信息
             try{
             	 #随机密码salt
@@ -60,11 +76,13 @@ use app\index\model\Wallet;
             	 	 Db::rollback();
             	 	 return ['code'=>300];
             	 }
+                 $token = get_token();
             	 $member_login= new MemberLogin([
             	 	 'login_member_id'=>$member_info->member_id,
             	 	 'login_account'	  =>$this->param['phone'],
             	 	 'login_pass'		  =>$pwd,
             	 	 'login_pass_salt'  =>$rand_salt,
+                      'login_token'         =>$token,
             	 	 'login_attempts'	  =>0,
             	 ]);
             	 #用户推荐表信息处理
@@ -102,27 +120,44 @@ use app\index\model\Wallet;
             	 	 'wallet_member'=>$member_info->member_id,
             	 	 'wallet_amount'=>0
             	 ]);
-            	 if( !$member_login->save() || !$meber_relation->save() || !$member_wallet->save())
+
+               #初始化会员团队信息
+               $member_team=new MemberTeam([
+                'team_name'=>$member_info->member_nick,
+                'team_member_id'=>$member_info->member_id,
+               ]);
+            	 if( !$member_login->save() || !$meber_relation->save() || !$member_wallet->save() || !$member_team->save())
             	 {
             	 	 Db::rollback();
             	 	 return ['code'=>300];
             	 }
-            	 $data=$this->get_user_info($member_info->member_id);
+
             	 Db::commit();
-            	 return ['code'=>200,'data'=>$data]; //请求成功
+                 $data=Member::member_info($token);
+            	 return ['code'=>200,'msg'=>'注册成功~','data'=>$data]; //请求成功
             } catch (\Exception $e) {
-            Db::rollback();
-            return ['code'=>308,'msg'=>$e->getMessage()];
+                 Db::rollback();
+                 return ['code'=>308,'msg'=>$e->getMessage()];
             }
       }
-
+      
       /**
-      * 返回API所用数据 
-      * @param  [type] $member_id [会员ID]
-      * @return [type]     [description]
-      */
-      private function get_user_info($member_id, $type="login")
+      *  @version register_phone method / Api 验证手机号是否注册
+      *  @author $bill$(755969423@qq.com)
+      *  @datetime    2017-12-13 09:03:05
+      *  @param phone=手机号  ☆☆☆::使用中
+      **/
+      public function register_phone()
       {
-             return $member_id;
+           #验证参数是否存在
+           if(!phone_check($this->param['phone']))
+                 return ['code'=>401];
+           #查找账号
+           $memberLogin=MemberLogin::phone_exit($this->param['phone']);
+           #能否查找到手机号码
+           if($memberLogin)
+                 return ['code'=>309];
+           return ['code'=>200,'msg'=>'本手机号尚未注册~'];
       }
+
  }

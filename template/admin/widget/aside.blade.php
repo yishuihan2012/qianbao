@@ -94,6 +94,7 @@
             <a href="javascript:;"><i class="icon icon-cog"></i> 系统管理</a>
             <ul class="nav">
                 <li class="setting-basic"><a href="{{url('/index/system/basic')}}"><i class="icon icon-sliders"></i> 核心设置</a></li>
+                <li class="setting-basic"><a href="{{url('/index/system/page')}}"><i class="icon icon-sliders"></i> 内置页面</a></li>
             </ul>
         </li>
 

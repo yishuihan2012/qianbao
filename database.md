@@ -140,7 +140,7 @@
 | cash_other_info      | varchar        | 备注信息          |
 | cash_create_at       | varchar        | 创建日期          | 
 
-### 2.5 用户反馈（wt_member_suggestion）
+### 2.6 用户反馈（wt_member_suggestion）
 | 字段                 | 类型            | 备注             |
 | ------------------   | -----------    | ---------------- |
 | suggestion_id              |  int           | 表自增id 		 |
@@ -149,7 +149,17 @@
 | return_info       | varchar        | 回复信息  	   |
 | return_adminster           | int        | 处理人id 	        |
 | suggestion_state      | tinyint        | 是否处理（0未处理，1已处理）          |
-| suggestion_creat_time       | timestamp        | 创建日期          |    
+| suggestion_creat_time       | timestamp        | 创建日期          |  
+
+### 2.7 团队表（wt_member_team）
+| 字段                 | 类型            | 备注             |
+| ------------------   | -----------    | ---------------- |
+| team_id              |  int           | 表自增id 		 |
+| team_name              |  varchar           | 团队名称 		 |
+| team_avatar              |  varchar           | 团队头像 		 |
+| team_member_id       | int        | 用户id 		      |
+| team_parent_id          | int        | 上级id  	    |
+| team_creat_time       | timestamp        | 创建日期          |  
 
 ### 3 基本配置表（wt_config）
 | 字段                 | 类型          | 备注                |
@@ -262,5 +272,27 @@
 | generalize_sort  |tinyint | 排序 |
 | generalize_is_del  | tinyint | 是否删除（0未删除，1已删除） |
 | generalize_thumb  | varchar | 图片 |
+
+### 9 单页表(page)
+| 字段                 | 类型          | 备注                |
+| ------------------ | ----------- | -----------------------|
+| page_id     | int         | 自增id 		          |
+| page_type     | tinyint         | 单页类型 		          |
+| page_titile    | varchar | 标题           |
+| page_content      | text         | 内容 |
+| page_desc      | text         | 简介 |
+| page_creat_time     | datetime | 添加时间  |
+
+### 10 套现表(cashout)
+| 字段                 | 类型          | 备注                |
+| ------------------ | ----------- | -----------------------|
+| cashout_id     | int         | 自增id 		          |
+| cashout_passageway_id     | int         | 套现通道id 		          |
+| cashout_open    | tinyint | 是否开启           |
+| cashout_min      | decimal         | 最小提现额 |
+| cashout_max      | decimal         | 最大提现额 |
+| cashout_type     | varchar | 套现用到的类名  |
+| cashout_add_time     | detetime | 添加时间  |
+
 
 

@@ -20,6 +20,8 @@
  	 	 	 #获取请求参数
  	 	 	 $data=$Request->only('data');
  	 	 	 $data=$data['data'];
+                 if(!is_array($data))
+                      $data = json_decode($data, true);
  	 	 	 #解密data请求参数 TODO:解密方式 非对称解密
  	 	 	 #if request action and method is not exit
  	 	 	 if(!isset($data['action']) or !isset($data['method']))

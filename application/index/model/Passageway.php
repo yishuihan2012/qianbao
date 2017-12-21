@@ -29,4 +29,9 @@ class Passageway extends Model{
            #TODO:自定义的初始化
       }
 
+      #关联模型 一对一关联 (Passageway) 关联通道表
+      public function cashout()
+      {
+           return $this->hasOne('Cashout','cashout_passageway_id','passageway_id')->setEagerlyType(0);
+      }
 }

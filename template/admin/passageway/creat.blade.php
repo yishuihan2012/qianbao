@@ -1,7 +1,7 @@
  <!--dialog Title-->
  <div class="modal-header animated fadeInLeft">
 	 <div class="row">
-        	 <div class="col-sm-8"><h4>新增银行</h4></div>
+        	 <div class="col-sm-8"><h4>新增通道</h4></div>
         	 <div class="col-sm-4">
             	 <div class="text-right">
                 	 <span class="label label-dot"></span>
@@ -17,18 +17,45 @@
 
  <!--dialog Content-->
  <div class="modal-content animated fadeInLeft">
-	 <form action="" method="post" class="form-horizontal" id="myform">
+	 <form action="{{url('/index/passageway/creat')}}" method="post" class="form-horizontal" id="myform">
 	 <h2></h2>
 	 <div class="row form-group">
-		 <label for="bank_name" class="col-sm-3 text-right"><b>银行名称:</b></label>
-		 <div class="col-sm-6" id="bank_name">
-			 <input type="text" class="form-control bank_name" name="bank_name" placeholder="请填写银行的名称" value="">
+		 <label for="passageway_name" class="col-sm-3 text-right"><b>通道名称:</b></label>
+		 <div class="col-sm-6" id="passageway_name">
+			 <input type="text" class="form-control passageway_name" name="passageway_name" placeholder="请填写通道的名称" value="">
 		 </div>		
 	 </div>
 
 	 <div class="row form-group">
-		 <label for="category_order" class="col-sm-3 text-right"><b>银行图标:</b></label>
-		 <div id="category_order" class="col-sm-6">
+		 <label for="passageway_no" class="col-sm-3 text-right"><b>通道代号:</b></label>
+		 <div class="col-sm-6" id="passageway_no">
+			 <input type="text" class="form-control passageway_no" name="passageway_no" placeholder="请填写通道的代号" value="">
+		 </div>		
+	 </div>
+
+	 <div class="row form-group">
+		 <label for="passageway_mech" class="col-sm-3 text-right"><b>通道机构号:</b></label>
+		 <div class="col-sm-6" id="passageway_mech">
+			 <input type="text" class="form-control passageway_mech" name="passageway_mech" placeholder="请填写通道的机构号" value="">
+		 </div>		
+	 </div>
+
+	 <div class="row form-group">
+		 <label for="passageway_key" class="col-sm-3 text-right"><b>通道机构KEY:</b></label>
+		 <div class="col-sm-6" id="passageway_key">
+			 <input type="text" class="form-control passageway_key" name="passageway_key" placeholder="请填写通道的机构KEY" value="">
+		 </div>		
+	 </div>
+	 <div class="row form-group">
+		 <label for="passageway_desc" class="col-sm-3 text-right"><b>通道描述:</b></label>
+		 <div class="col-sm-6" id="passageway_desc">
+			 <textarea name="passageway_desc" class="form-control passageway_desc" ></textarea>
+		 </div>		
+	 </div>
+
+	 <div class="row form-group">
+		 <label for="passageway_avatar" class="col-sm-3 text-right"><b>通道图标:</b></label>
+		 <div id="passageway_avatar" class="col-sm-6">
 			 <div id='uploaderExample3' class="uploader">
 			 	 <div class="uploader-message text-center">
 			    	 	 <div class="content"></div>
@@ -42,14 +69,14 @@
 			 	 	 <button type="button" class="btn btn-link uploader-btn-start"><i class="icon icon-cloud-upload"></i> 开始上传</button>
 			 	 </div>
 			 </div>
-			 <input type="hidden" class="form-control category_order" name="category_order" value="">
+			 <input type="hidden" class="form-control passageway_avatar" name="passageway_avatar" value="">
 		 </div>		
 	 </div>
 
 	 <div class="row form-group">
-		 <label for="bank_state" class="col-sm-3 text-right"><b>银行状态:</b></label>
-		 <div id="bank_state" class="col-sm-6">
-			 <select name="bank_state" class="form-control">
+		 <label for="passageway_state" class="col-sm-3 text-right"><b>状态:</b></label>
+		 <div id="passageway_state" class="col-sm-6">
+			 <select name="passageway_state" class="form-control">
 				 <option value="1">正常</option>
 				 <option value="0">停用</option>
 			 </select>
@@ -68,8 +95,8 @@
 
  <script>
  $(".save").click(function(){	
-	if(!$(".bank_name").val()){
-		 $(".bank_name").parent().addClass("has-error");
+	if(!$(".passageway_name").val()){
+		 $(".passageway_name").parent().addClass("has-error");
 		 return;
 	 }
 	 $("#myform").submit()
@@ -82,7 +109,7 @@
 	 limitFilesCount:1,
 	 onFileUploaded(file, responseObject) {
 	    	 var attr=eval('('+responseObject.response+")");
-	    	 attr.code ? $("input[name=bank_avatar]").val(attr.url) : bootbox.alert({ message: attr.msg, size: 'small' });
+	    	 attr.code ? $("input[name=passageway_avatar]").val(attr.url) : bootbox.alert({ message: attr.msg, size: 'small' });
 	 }
  });
 </script>

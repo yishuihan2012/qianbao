@@ -7,7 +7,7 @@
  */
 namespace app\index\controller;
 
-use app\index\model\Setting;
+use app\index\model\System;
 use think\Controller;
 use think\Request;
 use think\Session;
@@ -37,7 +37,7 @@ class Tool
 			#图片上传成功与否返回对应的参数
 			$data = $info ? array('code'=>'200', 'msg'=>'上传成功!', 'url'=>"/uploads/".$path.DS.$info->getSaveName()) : array('code'=>'0', 'msg'=>$file->getError(), 'url'=>'');
 			#如果开启OSS
-/*			if(Setting::getName('ossopen'))
+			if(Setting::getName('ossopen'))
 			{
 				#初始化OSS 并且传入配置参数
 				try {
@@ -67,47 +67,56 @@ class Tool
 					#上传失败后返回上传失败的错误信息
 					$data = array('code'=>'0', 'msg'=>$e->getMessage(), 'url'=>'');
 				}
-			}*/
+			}
 			#返回地址
 			echo json_encode($data);
 		}
 	}
-/**
- * app上传头像使用
- * @param  [type] $file [description]
- * @param  string $path [description]
- * @return [type]       [description]
- */
-	public function uploads($file,$path="other"){
-		//TODO 后台可配置 上传大小以及各式 和 目录
-		try { //开始上传
-	    $info = $file->validate(['size'=>15678000,'ext'=>'jpg,png'])->move(ROOT_PATH . 'public' . DS . 'uploads'. DS . $path);
-	    if($info){ //上传成功 上传oss
-					$data = json_encode(['code'=>'200', 'msg'=>'上传成功', 'data'=>['link'=>Request::instance()->domain(). DS . 'uploads'. DS . $path. DS .$info->getSaveName()]]);
-					if(Setting::getName('ossopen')){
-							$result = $this->upload_oss($info,$path);
-							$data = json_encode(['code'=>'200', 'msg'=>'上传成功', 'data'=>['link'=>$result]]);
-					}
-	    }else{
-	        return json_encode(['code'=>'100', 'msg'=>$file->getError(), 'data'=>'']); //上传失败 ;
-	    }
-			return $data;
+
+	 /**
+	 * app上传头像使用
+	 * @param  [type] $file [description]
+	 * @param  string $path [description]
+	 * @return [type]       [description]
+	 */
+	 public function uploads($file,$path="other"){
+		 #TODO 后台可配置 上传大小以及各式 和 目录
+		 try { 
+		 	 #开始上传
+	    		 $info = $file->move(ROOT_PATH . 'public' . DS . 'uploads'. DS . $path);
+	    		 //return $info;
+	    		 if($info){ 
+	    		 	 #上传成功 上传oss
+				 $data = json_encode(['code'=>'200', 'msg'=>'上传成功', 'data'=>['link'=>Request::instance()->domain(). DS . 'uploads'. DS . $path. DS .$info->getSaveName()]]);
+				 if(System::getName('ossopen')){
+					 $result = $this->upload_oss($info,$path);
+					 $data = json_encode(['code'=>'200', 'msg'=>'上传成功', 'data'=>['link'=>$result]]);
+				 }
+	    		 }else{
+	        		 return json_encode(['code'=>'100', 'msg'=>$file->getError(), 'data'=>'']); //上传失败 ;
+	    		 }
+			 return $data;
 		} catch (OssException $e) {
-				return json_encode(['code'=>'100', 'msg'=>$e->getMessage(), 'data'=>'']); //上传失败
+			 #上传失败
+			 return json_encode(['code'=>'100', 'msg'=>$e->getMessage(), 'data'=>'']); 
 		}
 	}
-/**
- * 上传至OSS
- * @return [type] [description]
- */
-	private function upload_oss($info,$path){
-			$ossClient = new OssClient(Config::get('OSS.accessKeyId'),Config::get('OSS.accessKeySecret'),Config::get('OSS.endpoint'));
-			$object = 'images/'.$path.DS.$info->getSaveName();							//OSS保存地址
-			$file =$info->getRealPath();							//文件在服务器上的绝对地址
-			$result=$ossClient->uploadFile(Config::get('OSS.bucket'), $object, $file); 			//上传OSS
-			if(Setting::getName('delpic')){ 		//是否开启删除服务器文件开关
-					@unlink($file);			//移除本地文件
-			}
-			return $result['info']['url'];
-	}
+
+	 /**
+	 * 上传至OSS
+	 * @return [type] [description]
+	 */
+	 private function upload_oss($info,$path){
+		 $ossClient = new OssClient(System::getName('ossKeyId'),System::getName('ossKeySecret'),System::getName('ossendpoint'));
+		 #OSS保存地址
+		 $object = 'images/'.$path.DS.$info->getSaveName();							
+		 #文件在服务器上的绝对地址
+		 $file =$info->getRealPath();							
+		 #上传OSS
+		 $result=$ossClient->uploadFile(System::getName('ossbucket'), $object, $file); 			
+		 #是否开启删除服务器文件开关  #移除本地文件
+		 if(Setting::getName('delpic'))
+		      @unlink($file);			
+		 return $result['info']['url'];
+	 }
 }

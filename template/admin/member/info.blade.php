@@ -46,6 +46,9 @@
 			 <td>@if($member_info->login_state==1)正常@elseif($member_info->login_state==-1)禁止@else异常@endif</td>
 		 </tr>
 		 <tr>
+		 	<th colspan="4"><button class="btn"  type="button">封停用户</button></th>
+		 </tr>
+		 <tr>
 			 <th>更新时间</th>
 			 <td>{{$member_info->member_update_time}}</td>
 			 <th>注册时间</th>

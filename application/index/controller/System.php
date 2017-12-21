@@ -8,6 +8,7 @@
  namespace app\index\controller;
 
  use app\index\model\System as Systems;
+ use app\index\model\Page;
  use think\Controller;
  use think\Request;
  use think\Session;
@@ -61,5 +62,28 @@
 	 	 //$this->assign('setting', $setting);
 		 #渲染视图
 		 return view('admin/system/basic');
+	}
+
+
+	//单页设置
+	public function page(){
+		$page=Request::instance()->param('page_type') ? Request::instance()->param('page_type') : 1;
+
+		if(Request::instance()->isPost()){
+			 $Page =Page::get(Request::instance()->param('page_id'));
+			 $result= $Page->allowField(true)->save($_POST);
+			 $content = ($result===false) ? ['type'=>'error','msg'=>'修改失败'] : ['type'=>'success','msg'=>'修改成功'];
+			 Session::set('jump_msg', $content);
+			 $this->redirect('System/page',array('page_type'=>$page));
+		}
+
+
+
+		$pageinfo=Page::where("page_type="."{$page}")->find();
+
+		$this->assign('pageinfo',$pageinfo);
+
+		#渲染视图
+		 return view('admin/system/page');
 	}
 }

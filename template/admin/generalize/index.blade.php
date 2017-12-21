@@ -26,7 +26,6 @@
      		 	 @if($list['generalize_thumb']!='')
      		 	 <div class="media pull-right text-right"><img src="{{$list['generalize_thumb']}}" alt="{{$list['generalize_title']}}" style="width:70%"  data-toggle="lightbox"></div>
      		 	 @endif
-        		 <div class="text">{{$list['article_desc']}}</div>
       	 </div>
       	 <div class="item-footer">
         	 	 <a href="#" class="text-muted"><i class="icon-comments"></i> {{$list['generalize_download_num']}}</a> &nbsp; <span class="text-muted">{{$list['generalize_creat_time']}}</span>

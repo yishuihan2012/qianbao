@@ -137,6 +137,43 @@
  }
 
  //-----------------------------------------------------------
+ // @version  BankCert  银行卡实名认证
+ // @author   $bill$
+ // @datatime 2017-12-15 13:10
+ // @param accountNo=银行卡号  bankPreMobile=银行预留手机 idCardCode=身份证号码  name=持卡人姓名     ☆☆☆::使用中
+ // @description Curl方式请求url 返回请求的数据
+ // @return  $data 返回认证结果
+ //-----------------------------------------------------------
+ function BankCert($accountNo, $bankPreMobile, $idCardCode, $name)
+ {
+      $name=urlencode($name);
+       //$host = "http://aliyuncardby4element.haoservice.com";
+       //$path = "/creditop/BankCardQuery/QryBankCardBy4Element";
+       $method = "GET";
+       //$appcode = "你自己的AppCode"; 
+       $headers = array();
+       array_push($headers, "Authorization:APPCODE " . System::getName('appcode'));
+       $querys = "accountNo=".$accountNo."&bankPreMobile=".$bankPreMobile."&idCardCode=".$idCardCode."&name=".$name;
+       $bodys = "";
+       $url = System::getName('certhost') . System::getName('path') . "?" . $querys;
+       $curl = curl_init();
+       curl_setopt($curl, CURLOPT_CUSTOMREQUEST, $method);
+       curl_setopt($curl, CURLOPT_URL, $url);
+       curl_setopt($curl, CURLOPT_HTTPHEADER, $headers);
+       curl_setopt($curl, CURLOPT_FAILONERROR, false);
+       curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
+       curl_setopt($curl, CURLOPT_HEADER, 0);
+       if (1 == strpos("$".System::getName('certhost'), "https://"))
+       {
+             curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, false);
+             curl_setopt($curl, CURLOPT_SSL_VERIFYHOST, false);
+       }
+      return json_decode( json_encode(json_decode(curl_exec($curl))),true);
+ }
+
+
+
+ //-----------------------------------------------------------
  // @version  Xml 转数组
  // @author   $bill$
  // @datatime 2017-11-30 09:31
