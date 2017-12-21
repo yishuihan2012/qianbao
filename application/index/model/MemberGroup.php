@@ -39,7 +39,13 @@ class MemberGroup extends Model{
     #相对的模型关联(Member) 一对一关联
     public function member()
     {
-        return $this->hasOne('Member', 'member_group', 'group_id');   
+        return $this->hasOne('Member', 'member_group_id', 'group_id');   
+    }
+
+    #相对的模型关联(channelrate) 一对一关联
+    public function channelrate()
+    {
+        return $this->hasOne('ChannelRate', 'channel_level', 'group_id');   
     }
 
     //-------------------------------------------------------

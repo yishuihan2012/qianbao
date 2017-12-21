@@ -32,6 +32,9 @@ hr{margin:0 5px!important;}
                 <li><a href="###" data-target="#tab2Content2" data-toggle="tab">登录注册</a></li>
                 <li><a href="###" data-target="#tab2Content3" data-toggle="tab">短信邮件</a></li>
                 <li><a href="###" data-target="#tab2Content4" data-toggle="tab">分佣信息</a></li>
+                <li><a href="###" data-target="#tab2Content5" data-toggle="tab">认证配置</a></li>
+                <li><a href="###" data-target="#tab2Content6" data-toggle="tab">提现配置</a></li>
+                <li><a href="###" data-target="#tab2Content7" data-toggle="tab">上传配置</a></li>
               </ul>
 
               <div class="tab-content">
@@ -47,7 +50,7 @@ hr{margin:0 5px!important;}
                          <div class="col-sm-6 input-group" id="{{$val['system_key']}}">
                               @if($val['system_genre']=='input')
                                    <input type="{{$val['system_genre']}}" name="{{$val['system_key']}}" class="form-control" value="{{$val['system_val']}}" />
-                                   <span class="input-group-btn">&nbsp;{{$val['system_des']}}</span>
+                                   <span class="input-group-btn help-block" style="float: left;">&nbsp;{{$val['system_des']}}</span>
                               @elseif($val['system_genre']=='radio')
                                    <select class="form-control" name="{{$val['system_key']}}">
                                          @foreach(explode(",",$val['system_default']) as $key)
@@ -78,7 +81,7 @@ hr{margin:0 5px!important;}
                          <div class="col-sm-6 input-group" id="{{$val['system_key']}}">
                               @if($val['system_genre']=='input')
                                    <input type="{{$val['system_genre']}}" name="{{$val['system_key']}}" class="form-control" value="{{$val['system_val']}}" />
-                                   <span class="input-group-btn">&nbsp;{{$val['system_des']}}</span>
+                                   <span class="input-group-btn help-block" style="float: left;">&nbsp;{{$val['system_des']}}</span>
                               @elseif($val['system_genre']=='radio')
                                    <select class="form-control" name="{{$val['system_key']}}">
                                          @foreach(explode(",",$val['system_default']) as $key)
@@ -107,7 +110,7 @@ hr{margin:0 5px!important;}
                          <div class="col-sm-6 input-group" id="{{$val['system_key']}}">
                               @if($val['system_genre']=='input')
                                    <input type="{{$val['system_genre']}}" name="{{$val['system_key']}}" class="form-control" value="{{$val['system_val']}}" />
-                                   <span class="input-group-btn">&nbsp;{{$val['system_des']}}</span>
+                                   <span class="input-group-btn help-block" style="float: left;">&nbsp;{{$val['system_des']}}</span>
                               @elseif($val['system_genre']=='radio')
                                    <select class="form-control" name="{{$val['system_key']}}">
                                          @foreach(explode(",",$val['system_default']) as $key)
@@ -136,7 +139,98 @@ hr{margin:0 5px!important;}
                          <div class="col-sm-6 input-group" id="{{$val['system_key']}}">
                               @if($val['system_genre']=='input')
                                    <input type="{{$val['system_genre']}}" name="{{$val['system_key']}}" class="form-control" value="{{$val['system_val']}}" />
-                                   <span class="input-group-btn">&nbsp;{{$val['system_des']}}</span>
+                                   <span class="input-group-btn help-block" style="float: left;">&nbsp;{{$val['system_des']}}</span>
+                              @elseif($val['system_genre']=='radio')
+                                   <select class="form-control" name="{{$val['system_key']}}">
+                                         @foreach(explode(",",$val['system_default']) as $key)
+                                         <option @if((strrev(strstr(strrev($key),strrev('='),true)))==$val['system_val']) selected  @endif value="{{strrev(strstr(strrev($key),strrev('='),true))}}">{{strstr($key,"=",true)}}</option>
+                                         @endforeach
+                                   </select>
+                                   <span class="text-left help-block">&nbsp;{{$val['system_des']}}</span>
+                              @endif
+                         </div>
+                   </div>  
+                   <hr>
+                   @endif
+                   @endforeach
+                   <div class="row">
+                <h4></h4>
+                 <div class="col-sm-7 text-center"><button type="submit" class="btn btn-primary save">保存</button></div>
+                </div>
+                </div>
+
+
+                <div class="tab-pane fade" id="tab2Content5">
+                  <form action="" method="post" class="form-horizontal" id="myform">
+                  @foreach($setting as $val)
+                    @if($val['system_type']=='cardcert')
+                   <div class="row form-group">
+                         <label for="{{$val['system_key']}}" class="col-sm-2 text-right"><b>{{$val['system_value']}}:</b></label>
+                         <div class="col-sm-6 input-group" id="{{$val['system_key']}}">
+                              @if($val['system_genre']=='input')
+                                   <input type="{{$val['system_genre']}}" name="{{$val['system_key']}}" class="form-control" value="{{$val['system_val']}}" />
+                                   <span class="input-group-btn help-block" style="float: left;">&nbsp;{{$val['system_des']}}</span>
+                              @elseif($val['system_genre']=='radio')
+                                   <select class="form-control" name="{{$val['system_key']}}">
+                                         @foreach(explode(",",$val['system_default']) as $key)
+                                         <option @if((strrev(strstr(strrev($key),strrev('='),true)))==$val['system_val']) selected  @endif value="{{strrev(strstr(strrev($key),strrev('='),true))}}">{{strstr($key,"=",true)}}</option>
+                                         @endforeach
+                                   </select>
+                                   <span class="text-left help-block">&nbsp;{{$val['system_des']}}</span>
+                              @endif
+                         </div>
+                   </div>  
+                   <hr>
+                   @endif
+                   @endforeach
+                   <div class="row">
+                <h4></h4>
+                 <div class="col-sm-7 text-center"><button type="submit" class="btn btn-primary save">保存</button></div>
+                </div>
+                </div>
+
+
+
+                <div class="tab-pane fade" id="tab2Content6">
+                  <form action="" method="post" class="form-horizontal" id="myform">
+                  @foreach($setting as $val)
+                    @if($val['system_type']=='withdrawals')
+                   <div class="row form-group">
+                         <label for="{{$val['system_key']}}" class="col-sm-2 text-right"><b>{{$val['system_value']}}:</b></label>
+                         <div class="col-sm-6 input-group" id="{{$val['system_key']}}">
+                              @if($val['system_genre']=='input')
+                                   <input type="{{$val['system_genre']}}" name="{{$val['system_key']}}" class="form-control" value="{{$val['system_val']}}" />
+                                   <span class="input-group-btn help-block" style="float: left;">&nbsp;{{$val['system_des']}}</span>
+                              @elseif($val['system_genre']=='radio')
+                                   <select class="form-control" name="{{$val['system_key']}}">
+                                         @foreach(explode(",",$val['system_default']) as $key)
+                                         <option @if((strrev(strstr(strrev($key),strrev('='),true)))==$val['system_val']) selected  @endif value="{{strrev(strstr(strrev($key),strrev('='),true))}}">{{strstr($key,"=",true)}}</option>
+                                         @endforeach
+                                   </select>
+                                   <span class="text-left help-block">&nbsp;{{$val['system_des']}}</span>
+                              @endif
+                         </div>
+                   </div>  
+                   <hr>
+                   @endif
+                   @endforeach
+                   <div class="row">
+                <h4></h4>
+                 <div class="col-sm-7 text-center"><button type="submit" class="btn btn-primary save">保存</button></div>
+                </div>
+                </div>
+
+
+                <div class="tab-pane fade" id="tab2Content7">
+                  <form action="" method="post" class="form-horizontal" id="myform">
+                  @foreach($setting as $val)
+                    @if($val['system_type']=='filed')
+                   <div class="row form-group">
+                         <label for="{{$val['system_key']}}" class="col-sm-2 text-right"><b>{{$val['system_value']}}:</b></label>
+                         <div class="col-sm-6 input-group" id="{{$val['system_key']}}">
+                              @if($val['system_genre']=='input')
+                                   <input type="{{$val['system_genre']}}" name="{{$val['system_key']}}" class="form-control" value="{{$val['system_val']}}" />
+                                   <span class="input-group-btn help-block" style="float: left;">&nbsp;{{$val['system_des']}}</span>
                               @elseif($val['system_genre']=='radio')
                                    <select class="form-control" name="{{$val['system_key']}}">
                                          @foreach(explode(",",$val['system_default']) as $key)

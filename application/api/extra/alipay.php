@@ -1,15 +1,15 @@
 <?php
 return [
     'gateway_url'  =>"https://openapi.alipay.com/gateway.do",
-    'app_id'       =>"2017030706087725",
+    'app_id'       =>"2016122204517053",
     'app_version'  =>"1.0",
-    'sign_type'    =>"RSA",
+    'sign_type'    =>"RSA2",
     'format'       =>"json",
     'timeout_express' =>"30m",
-    'notify_url'       =>"http://api.fangtoujr.com/api/Alipay/callback",
-    'login_url'       =>"http://api.fangtoujr.com/api/Alipay/users",
+    'notify_url'       =>"http://gongke.iask.in:21339//api/Alipay/callback",
+    'login_url'       =>"http://gongke.iask.in:21339//api/Alipay/users",
     'product_code'    =>"QUICK_MSECURITY_PAY",
     'pid'             =>"2088421433746925",
-    'rsa_public_key'    =>"MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQDDI6d306Q8fIfCOaTXyiUeJHkrIvYISRcc73s3vF1ZT7XN8RNPwJxo8pWaJMmvyTn9N4HQ632qJBVHf8sxHi/fEsraprwCtzvzQETrNRwVxLO5jVmRGi60j8Ue1efIlzPXV9je9mkjzOmdssymZkh2QhUrCmZYI/FCEa3/cNMW0QIDAQAB",
-    'rsa_private_key'     => "MIICXgIBAAKBgQDOn914pNjwW/Tm53zXOjqwwBDRhTwL3c/NU8m67weQg5E+lSTMLCmElFRmykyaq0vxUL8PHqdnUgxPfDc92Y84vl51LKZD6+6HjTpDw0OC11Kj/T85684L28AHo3UoqAjdlhjovKg5ryk12fRhH5ArcoGh7GmztsAhXVBu3S/cowIDAQABAoGADX2koTbqLy9h2x2sKgVURawUrQls9T1jTv20gy8OKGJevl5Qi8AqacyhgiCdRc//Yl8qSltvBLD3uszacoBc+HJMH5ePOjLVp47B6EszSztdy9YUBPpcik+Zzy2bgR6jcJpQk5r9P/AwvZ55DowcA1bdvUEz2w4c2CSgJJGn7TkCQQD+9zSZfTK0DISsrQhNlAApv5s1RRQKaVAgC2TTuZCCSD9JQk7WUDy06aPcpPbz6jyzJqL9Ak0g5k/ZPMtV9zJ9AkEAz3Z0dsDc7Pz4Q1uxQLQXXlyUXX5cx2XFHh0qxf/+NDJ0b5ZKtvgmSqzTbXINqvyJDHfD8vynYUTVb7fpibRVnwJBALpZvBwjIZfvPllm7palAamB3dMFdixV5LZHHZ6SFkjivT6yNCT36CbiTV3LRKPqJAtcxevebrkJHHtOr99ZGZECQQCD9Q9M/Y1IO/tZNLhAtIvsnCxOb3Jp7eR8LAcp25L/9luzIkAxsxMACn+MrK/e4zP0tzTumB+KsfKkVbF4wjh3AkEA7CNh1oV5ImTpBd9XG2Y0Er2k2ThCNJJlGzATOP2bxmQHYvtolvY3xknwUw8OXYwibO2Vq08d1Z999LUrMbMTlA=="
+    'rsa_public_key'    =>"MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAkf4HWbCixbhFBCCxrK0D0UwCmQimZUS3IPwxJckfSXo4egYLdTieJOg7urHuJyNV7IpYixX2b8j5Nru6tWExiTDd8cT5H5gjmKAyEKIgk1y0RhvKh4iBtka/ILI9kswjhEK+WiZMdSOahVOPgVYMOwNCI7kJsG28+1zjlNhN1q9095502eRGG9vrMRSDH3HCNZVhwdIjmn1bjXP+ccryAbxSKDYh1RjAPzM8VPIhNJ5YxIYw78zmh98cqyaBnY8Sr6Cp0ip7pcz47RpAqD07f6w3YrFw4dVHb84WW3NEhIy3o+mrjIIkoMbxSrGFnQSyI2ogWCdyv3xiUjmL3BPugwIDAQAB",
+    'rsa_private_key'     => "MIIEpAIBAAKCAQEArsn3f8EqodyUyH7Aqe2PW7ZaB9PdKWEFhcBLq42/SY5dzeBRAEF3SvuIfileDI9xjIMRiR1DxjJpd795xYz9eKmixpPAzmcX2hsVXUxFwwwAMDLuQxu7lT8fvqfdmuZXFappGwkuesi1VIlsByCbXn5ACZIa4t/QIvkDc+CdCCi+iHM3omfj6ZBD/j539Ng59bCA4/v17P+ZsryaTqwG880EtFmd98gNL8tmYNqNQp4VEWEdEA1GDqzPF3ge5BWznAFM1W6U9zvAWJcwf56aBc1mrWRTzGGqMU4apQNZu5/UccVDa0vSo0R8wZREPtE+3TAsw9u4GtNGjlLDkdeA1wIDAQABAoIBACEnYBHUgxCmtXX+TO8uh2W/Bf68GhQyOgjvu6qzvVfncDWP2e1xfX40jeRYVmWNg91CMz5N1cAvab/0CtYE80NC8gQ2nHjKJ0UQpBHJWOYxTYvW7Ui/ZupdSdkxICC0lkoew8cEC9PwZCy/0ETd03qt+dmW5BCqoWEw2I3PShn0yAOYOOzUOeUMKKxYfP/s6eDJAvq2SSalXbgTJ3G9OfoDBFQFbwNx8/piFNfhGobL8jQ1OgIRprn3Gc7tUXZ3pC9H0iXgKuLCvVZ7OqRL8B8DhQ2fGV0tjXAaU6smOmeYahyZf/nNRGvQXHPKgPr/roMQBeTa6+jAgNSwNdtbjhkCgYEA5XxvR/KPr2frlTt3ohmBi9akg3Lq82tRCBo0ODr8aOsBw8pKewsvvaYGUULe7tItQqIwYUMnQ7U2l6TvJBqtUy598MBf+DuwDDBef5I/kbRJ1C6WbzxZOS0isLqw0rkJxybUJEz18LFbjXynujzRs62gNR1G2KIPRjWZb0sIoUsCgYEAwvu90x9V6iMTdjiHLFd6pAldLNVaKU50bN5D+xcR9T5g+7K6k/xpXnYvHVr7gfCLU3idCALxe+v9Rkt8otCiSxLhVyVhoVjZEni7JkefEfpT5YFqobBy+wBC+kRmt+czRSR7G6HHqHdhyx/LY1KRUNljLVIB0X7Pyh6WTwi68yUCgYEAosM44hyl0FCyhCujVDMm8JmSITEWdwM8e7SqKN+dOoTDwavuW4q5l5bzkBsPpu8m7sW97p4EcT9Lsw5mFoNdP0wQQvsOli8vU9XSkESYFa17V6SbSdXRqn3axuICm9JlnvxpJj33iXkhaB5rj+mnCfsxT7quDuQSVUeaxZbATjUCgYEAvrVDARARFCSikGrRq0kUpwSRoZw7x1L5BNKQYzI5WklcylIRs1SaKs4lXuzyOjFv1ICP9poKX05+Nxb2HLk7Q3p/9KCXURx5lFuJkPNUXl0dWciu5t6SV3X2DJqCbTUxLFt2HZyqj9fUSrwaTlcf0pgNLPKc3K7Pxb0M/thnIhECgYA/WoeBnkoLJySgfKK+K9VbPlYC1Hj43CG/7BL9hQaS5pk8FtsvVEGGbD4f2NQnALNx/w9oXInAvJ4sB5AGadFof2i3gu41AnFM5fP19SX6NGguBqokiEuMemNwn0Ef8dbQKCnpAUuHuyqNNorZbIDZdmQzylymF5oHml1RLCnjWA=="
 ];

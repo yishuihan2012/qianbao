@@ -17,9 +17,6 @@
                  <!-- 以下三列中间可滚动 -->
                  <th class="flex-col">机构号</th> 
                  <th class="flex-col">机构Key</th>
-                 <th class="flex-col">最小刷卡额</th>
-                 <th class="flex-col">最大刷卡额</th>
-                 <th class="flex-col">最低税率</th>
                  <!-- 以下列右侧固定 -->
                  <th>通道状态</th>
                  <th>添加时间</th>
@@ -33,17 +30,16 @@
                  <td>{{$list->passageway_name}}</td>
                  <td>{{$list->passageway_mech}}</td>
                  <td>{{$list->passageway_key}}</td>
-                 <td>{{$list->passageway_min}}</td>
-                 <td>{{$list->passageway_max}}</td>
-                 <td>{{$list->passageway_rate}}</td>
                  <td>{{$list->passageway_state}}</td>
                  <td>{{$list->passageway_add_time}}</td>
                  <td>
-                      <div class="btn-group"><a  data-remote="{{ url('/index/passageway/rate','id='.$list['passageway_id']) }}" data-toggle="modal" data-size="lg" href="#" class="btn btn-sm">税率调整</a>
+                      <div class="btn-group"><a  data-remote="{{url('/index/passageway/rate','id='.$list['passageway_id'])}}" data-toggle="modal" data-size="lg" href="#" class="btn btn-sm">税率调整</a>
                            <div class="btn-group">
                                  <button type="button" class="btn dropdown-toggle btn-sm" data-toggle="dropdown"><span class="caret"></span></button>
                                  <ul class="dropdown-menu" role="menu">
-                                      
+                                  <li><a  data-remote="{{url('/index/passageway/edit','id='.$list['passageway_id'])}}" data-toggle="modal" data-size="lg" href="#">修改</a></li>
+                                      <li><a  data-remote="{{url('/index/passageway/cashout','id='.$list['passageway_id'])}}" data-toggle="modal" data-size="lg" href="#">提现设置</a></li>
+                                      <li><a  data-remote="{{url('/index/passageway/also','id='.$list['passageway_id'])}}" data-toggle="modal" data-size="lg" href="#">代还设置</a> </li>
                                  </ul>
                            </div>
                       </div>

@@ -11,7 +11,13 @@ use think\Model;
 use think\Config;
 
 class MemberSuggestion extends Model{
-      
+      protected $pk    = 'suggestion_id';
+      #定义自动写入时间字段开启 格式为时间格式
+      protected $autoWriteTimestamp = 'datetime';
+      #定义时间戳字段名 信息添加时间
+      protected $createTime = 'suggestion_creat_time';
+      #定义时间戳字段名 信息修改时间
+      protected $updateTime = false;
       protected function initialize()
       {
            #需要调用父类的`initialize`方法

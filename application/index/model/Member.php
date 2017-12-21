@@ -31,9 +31,9 @@ class Member extends Model{
       }
 
       #关联模型 一对一关联 (MemberCertification) 用户实名表
-      public function membercertification()
+      public function membercert()
       {
-           return $this->hasOne('MemberCertification','certification_member_id','member_id');
+           return $this->hasOne('MemberCert','cert_member_id','member_id');
       }
 
       #关联模型 一对一关联 (MemberLogin) 用户登录表
@@ -51,7 +51,7 @@ class Member extends Model{
       #关联模型 一对一关联 (MemberGroup) 用户等级表
       public function membergroup()
       {
-           return $this->hasOne('MemberGroup','group_id','member_id');
+           return $this->hasOne('MemberGroup','group_id','member_group_id')->bind('group_name,group_id');
       }
 
       #关联模型 一对一关联 (MemberRelation) 用户推荐表
@@ -60,4 +60,32 @@ class Member extends Model{
            return $this->hasOne('MemberRelation','relation_member_id','member_id');
       }
 
+      #关联模型 一对一关联 (memberWallet) 用户钱包表
+      public function memberWallet()
+      {
+           return $this->hasOne('Wallet','wallet_member','member_id');
+      }
+
+
+
+      /**
+       *  @version member_info method /返回会员信息
+       *  @author $bill$(755969423@qq.com)
+       *  @datetime    2017-12-13 10:00:05
+       *  @param $token 会员token值
+      **/
+      public static function member_info($token)
+      {
+           $info = self::with('memberLogin')->where('login_token',$token)->find();
+           $data=array(
+                 'uid'=>$info['member_id'],
+                 'token'=>$info['login_token']
+            );
+            return $data;
+      }
+
+      public function memberLevel()
+      {
+           return $this->belongsTo('memberLevel','level_member_id','member_id');
+      }
 }
