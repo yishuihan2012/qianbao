@@ -57,7 +57,7 @@ class CashOut
 	                 $this->error=455;
 	           #获取信息卡信息
 	           $creditcard=MemberCreditcard::get($cardid);
-	           if(!$creditcard)
+	           if(!$creditcard)  
 	           	 $this->error=442;
 	           if($creditcard->card_member_id!=$memberId || $creditcard->card_name!=$member_cert->cert_member_name)
 	           	 $this->error=461;
