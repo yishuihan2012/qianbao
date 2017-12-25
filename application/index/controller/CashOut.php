@@ -54,7 +54,7 @@ class CashOut
 	      	 if(!$passageway)
 	      	 	 $this->error=454;
 	           if($passageway->cashout->cashout_open!='1')
-	                  $this->error=455;
+	                 $this->error=455;
 	           #获取信息卡信息
 	           $creditcard=MemberCreditcard::get($cardid);
 	           if(!$creditcard)
@@ -78,13 +78,14 @@ class CashOut
 	 /**
 	 * @version  米刷 套现 
 	 * @authors John(1160608332@qq.com)
-	 * @date    2017-09-29 16:03:05
+	 * @date    2017-12-21 16:03:05
 	 * @version $Bill$
 	 */
 	 public function mishua($tradeNo,$price,$description='米刷测试')
 	 {
 	 	 $versionNo='1';//米刷版本号 , 值固定为1
 	 	 //return $this->passway_info->passageway_mech;
+	 	 // return $this->passway_info->cashout->cashout_callback;
 	      $arr = array(
 	            'versionNo'   => $versionNo, //版本固定为1
 	            'mchNo'       	=> $this->passway_info->passageway_mech, //商户号
@@ -136,6 +137,19 @@ class CashOut
 	      }
 
 	 }
+
+	 /**
+	 * @version  快捷支付 套现 
+	 * @authors John(1160608332@qq.com)
+	 * @date    2017-12-23 16:25:05
+	 * @version $Bill$
+	 */
+	 public function quickPay()
+	 {
+
+	 }
+
+
 
 	 //AES对称加密 $locallV加密偏移量
     	 public function encrypt($encryptStr,$encryptKey='') {

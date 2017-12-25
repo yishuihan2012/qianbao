@@ -81,7 +81,7 @@ class Member extends Model{
                  'uid'=>$info['member_id'],
                  'token'=>$info['login_token']
             );
-            return $data;
+            return $info;
       }
 
       public function memberLevel()

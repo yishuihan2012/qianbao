@@ -16,6 +16,7 @@
  use app\index\model\RegionArea;
  use app\index\model\SystemBank;
  use app\index\model\BankIdent;
+ use app\index\model\Payplatform;
 
  class Region 
  {
@@ -93,8 +94,12 @@
            $where['province']=$province['Name'];
            $where['city']=$city['Name'];
            #是否有关键词搜索
-           if(isset($this->param['keyword']) && !empty($this->param['keyword']))
-                 $where['bank_name']=array('like','%'.$this->param['keyword'].'%');
+           if(isset($this->param['keyword']) && !empty($this->param['keyword'])){
+              $where['bank_name']=array('like','%'.$this->param['bankName'].'%'.$this->param['keyword'].'%');
+          }else{
+             $where['bank_name']=array('like','%'.$this->param['bankName'].'%');
+          }
+                 
            #查找符合条件的数据
            $list=SystemBank::where($where)->field('id,bank_code,bank_name')->select();
            if($list===false)
@@ -120,6 +125,40 @@
            #将银行卡识别次数加1
            $memberSetInc=BankIdent::where(['ident_code'=>$fixcard])->setInc('ident_count');
            return ['code'=>200, 'msg'=>'银行卡识别成功', 'data'=>$result];
+      }
+
+
+      /**
+      *  @version get_info method / Api App公共通用信息查询
+      *  @author $bill$(755969423@qq.com)
+      *  @datetime    2017-12-14 13:41:05
+      *  @param 
+      **/ 
+      public function get_info()
+      {
+           $info=System::where("system_type='basic' or system_key='min_withdrawals'")->select();
+           foreach ($info as $key => $value) {
+              if($value['system_key']=='min_withdrawals'){
+                 $data['minWithdraw']=$value['system_val'];
+              }
+              if($value['system_key']=='CSWechatId'){
+                 $data['CSWechatId']=$value['system_val'];
+              }
+              if($value['system_key']=='CSQQ'){
+                 $data['CSQQ']=$value['system_val'];
+              }
+              if($value['system_key']=='CSTel'){
+                 $data['CSTel']=$value['system_val'];
+              }
+              if($value['system_key']=='CSServiceTime'){
+                 $data['CSServiceTime']=$value['system_val'];
+              }
+           }
+
+           #支付平台信息
+           $Payplatform=Payplatform::where('payplatform_state=1')->field('payplatform_id, payplatform_name, payplatform_icon')->select();
+           $data['payPlatforms']=$Payplatform;
+           return ['code'=>200, 'msg'=>'获取信息成功', 'data'=>$data];
       }
 
 

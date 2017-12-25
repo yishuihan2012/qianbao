@@ -20,7 +20,7 @@ class Membervalidation extends Validate
         	 ['card_idcard', 'require', '身份证号不能为空~'],
         	 ['card_bank_province','require','所属省份没有选择~'],
         	 ['card_bank_city','require','所属城市没有选择~'],
-        	 ['card_bank_area','require','所属区域没有选择~'],
+        	 //['card_bank_area','require','所属区域没有选择~'],
         	 ['card_bank_address', 'require', '支行没有选择~'],
         	 ['card_bankname', 'require', '银行名称找不到~'],
       ];

@@ -20,11 +20,13 @@
  use app\index\model\MemberAccount;
  use app\index\model\MemberTeam;
  use app\index\model\MemberCreditcard;
+ use app\index\model\MemberCashcard;
  use app\index\model\ChannelRate;
  use app\index\model\ChannelType;
  use app\index\model\MemberCert;
  use app\index\model\Passageway;
  use app\index\model\PassagewayItem;
+ use app\index\model\Wallet;
  
  class Member 
  {
@@ -58,11 +60,21 @@
            $data['authState']=$member['member_cert'];
            $data['name']=$member['member_cert']==1 ? $member['member_nick'] : '';
 
-           $data['membercard']=$member['member_cert']==1 ? card_preg($member->memberCert->cert_member_idcard) : '';
+           $data['membercard']=$member['member_cert']==1 ? $member->memberCert->cert_member_idcard : '';#card_preg()
            $data['phone']=$member['member_mobile'];
            $data['portrait']=$member['member_image'];
-           $data['totalProfit']=$member->memberWallet->wallet_total_revenue;
-           $data['balance']=$member->memberWallet->wallet_amount;
+
+           $data['wallet_total_revenue']=$member->memberWallet->wallet_total_revenue;
+           $data['wallet_fenrun']=$member->memberWallet->wallet_fenrun;
+           $data['wallet_commission']=$member->memberWallet->wallet_commission;
+           $data['wallet_amount']=$member->memberWallet->wallet_amount;
+
+
+           $data['wallet_total_revenue']=sprintf("%.2f",substr(sprintf("%.3f", $member->memberWallet->wallet_total_revenue), 0, -1));
+           $data['wallet_fenrun']=sprintf("%.2f",substr(sprintf("%.3f", $member->memberWallet->wallet_fenrun), 0, -1));
+           $data['wallet_commission']=sprintf("%.2f",substr(sprintf("%.3f", $member->memberWallet->wallet_commission), 0, -1));
+           $data['wallet_amount']=sprintf("%.2f",substr(sprintf("%.3f", $member->memberWallet->wallet_amount), 0, -1));
+
            $data['memberLevelId']=$member['member_group_id'];
            $data['memberLevelName']=$member->memberGroup->group_name;
            #查询信用卡绑定数量
@@ -74,6 +86,10 @@
            $parent_id=MemberRelation::where(['relation_member_id'=>$this->param['uid']])->value('relation_parent_id');
            $data['parent']=$parent_id=='0' ? '' : Members::where('member_id',$parent_id)->value('member_nick');
            $data['parent_phone']=$parent_id=='0' ? '' : Members::where('member_id',$parent_id)->value('member_mobile');
+           #查询用户储蓄卡
+           $CashCard=MemberCashcard::where(['card_member_id'=>$this->param['uid'],'card_state'=>1])->find();
+           $data['cashcardinfo']=$CashCard['card_bankname'].' 尾号'.substr($CashCard['card_bankno'], -4); 
+           $data['hasmessage']=1; 
            return ['code'=>200, 'msg'=>'获取成功~', 'data'=>$data];
       }
 
@@ -455,19 +471,22 @@
             $this->error=314;
 
         $this->param['member_cert'] ? $this->param['member_cert'] : 0;
-
-        $MemberRelation_1rd=MemberRelation::where("relation_parent_id={$this->param['uid']}")->select();
-
+        $member_info=array();
+        $MemberRelation_1rd=MemberRelation::with('memberp')->where("relation_parent_id={$this->param['uid']}")->select();
         foreach ($MemberRelation_1rd as $key => $value) {
-            $member_1rd=Members::where('member_id='.$value['relation_member_id'])->field('member_id,member_image, member_mobile, member_creat_time, member_cert')->find();
-            $member_info[]=$member_1rd;
-            $MemberRelation_2rd=MemberRelation::where('relation_parent_id='.$member_1rd['member_id'])->select();
-            if(!empty($MemberRelation_2rd)){
-              foreach ($MemberRelation_2rd as $k => $val) {
-                   $member_2rd=Members::where('member_id='.$val['relation_member_id'])->field('member_id,member_image, member_mobile, member_creat_time, member_cert')->find();
-                   $member_info[]=$member_2rd;
+          if($value['member_cert']==$this->param['member_cert'] || $this->param['member_cert']==0){
+              $member_1rd=Members::where('member_id='.$value['relation_member_id'])->field('member_id,member_image, member_mobile, member_creat_time, member_cert')->find();
+              $member_info[]=$member_1rd;
+              $MemberRelation_2rd=MemberRelation::with('memberp')->where('relation_parent_id='.$member_1rd['member_id'])->select();
+              if(!empty($MemberRelation_2rd)){
+                foreach ($MemberRelation_2rd as $k => $val) {
+                  if($val['member_cert']==$this->param['member_cert'] || $this->param['member_cert']==0){
+                     $member_2rd=Members::where('member_id='.$val['relation_member_id'])->field('member_id,member_image, member_mobile, member_creat_time, member_cert')->find();
+                     $member_info[]=$member_2rd;
+                    }
+                }
               }
-            }
+              }
         }
         $data['totalChildAmount']=count($member_info);
         $data['list']=$member_info;
@@ -518,4 +537,24 @@
             return ['code'=>200, 'msg'=>'信息反馈成功~','data'=>$data];
       }
 
+
+      /**
+   *  @version get_wallet method / Api 会员资产信息
+   *  @author $bill$(755969423@qq.com)
+   *  @datetime    2017-12-13 09:03:05
+   *  @param   
+      **/ 
+      public function get_wallet()
+      {
+           $member=Members::get($this->param['uid']);
+           $data=array();
+
+           $data['wallet_total_revenue']=sprintf("%.2f",substr(sprintf("%.3f", $member->memberWallet->wallet_total_revenue), 0, -1));
+           $data['wallet_fenrun']=sprintf("%.2f",substr(sprintf("%.3f", $member->memberWallet->wallet_fenrun), 0, -1));
+           $data['wallet_commission']=sprintf("%.2f",substr(sprintf("%.3f", $member->memberWallet->wallet_commission), 0, -1));
+           $data['wallet_amount']=sprintf("%.2f",substr(sprintf("%.3f", $member->memberWallet->wallet_amount), 0, -1));
+           $data['wallet_invitation']=sprintf("%.2f",substr(sprintf("%.3f", $member->memberWallet->wallet_invite), 0, -1));
+
+           return ['code'=>200, 'msg'=>'获取成功~', 'data'=>$data];
+      }
  }

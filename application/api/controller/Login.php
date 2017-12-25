@@ -15,6 +15,10 @@
  use app\index\model\System;
  use app\index\model\Member;
  use app\index\model\SmsCode as SmsCodes;
+ use app\index\model\MemberCreditcard;
+ use app\index\model\MemberAccount;
+ use app\index\model\MemberRelation;
+ use app\index\model\MemberCashcard;
 
  class Login 
  {
@@ -62,8 +66,39 @@
            #验证账号异常
            if($memberLogin['login_state']!='1')
                  return ['code'=>318];
-               //dump($memberLogin['login_token']);
-           $data=Member::member_info($memberLogin['login_token']);
+
+           $member=Member::get($memberLogin['member']['member_id']);
+           $data=array();
+           $data['authState']=$member['member_cert'];
+           $data['name']=$member['member_cert']==1 ? $member['member_nick'] : '';
+
+           $data['membercard']=$member['member_cert']==1 ? $member->memberCert->cert_member_idcard : '';#card_preg()
+           $data['phone']=$member['member_mobile'];
+           $data['portrait']=$member['member_image'];
+           
+           $data['wallet_total_revenue']=sprintf("%.2f",substr(sprintf("%.3f", $member->memberWallet->wallet_total_revenue), 0, -1));
+           $data['wallet_fenrun']=sprintf("%.2f",substr(sprintf("%.3f", $member->memberWallet->wallet_fenrun), 0, -1));
+           $data['wallet_commission']=sprintf("%.2f",substr(sprintf("%.3f", $member->memberWallet->wallet_commission), 0, -1));
+           $data['wallet_amount']=sprintf("%.2f",substr(sprintf("%.3f", $member->memberWallet->wallet_amount), 0, -1));
+
+           $data['memberLevelId']=$member['member_group_id'];
+           $data['memberLevelName']=$member->memberGroup->group_name;
+           #查询信用卡绑定数量
+           $data['numberOfCreditCard']=MemberCreditcard::where(['card_member_id'=>$memberLogin['member']['member_id'],'card_state'=>'1'])->count();
+           $data['alipayBindState']=MemberAccount::where(['account_user'=>$memberLogin['member']['member_id'],'account_type'=>'Alipay'])->find() ? 1 : 0;
+           $data['wechatBindState']=MemberAccount::where(['account_user'=>$memberLogin['member']['member_id'],'account_type'=>'Weipay'])->find() ? 1 : 0;
+           #查询会员下级数量 TODO: 现在是直接下级数量 是否改成三级
+           $data['subordinateNumber']=MemberRelation::where('relation_parent_id',$memberLogin['member']['member_id'])->count();
+           $parent_id=MemberRelation::where(['relation_member_id'=>$memberLogin['member']['member_id']])->value('relation_parent_id');
+           $data['parent']=$parent_id=='0' ? '' : Member::where('member_id',$parent_id)->value('member_nick');
+           $data['parent_phone']=$parent_id=='0' ? '' : Member::where('member_id',$parent_id)->value('member_mobile');
+           #查询用户储蓄卡
+           $CashCard=MemberCashcard::where(['card_member_id'=>$memberLogin['member']['member_id'],'card_state'=>1])->find();
+           $data['cashcardinfo']=$CashCard['card_bankname'].' 尾号'.substr($CashCard['card_bankno'], -4); 
+           $data['hasmessage']=1; 
+
+           $data['token']=$memberLogin['login_token'];
+           $data['uid']=$memberLogin['member']['member_id'];
            return ['code'=>200,'msg'=>'登录成功~', 'data'=>$data];
       }
 

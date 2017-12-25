@@ -8,6 +8,7 @@
  namespace app\index\controller;
 
  use app\index\model\System as Systems;
+ use app\index\model\CustomerService;
  use app\index\model\Page;
  use think\Controller;
  use think\Request;
@@ -85,5 +86,13 @@
 
 		#渲染视图
 		 return view('admin/system/page');
+	}
+
+
+	public function customer_service(){
+		 $services=CustomerService::paginate(Config::get('page_size'), false, ['query'=>Request::instance()->param()]);
+	 	 $this->assign('services', $services);
+		 #渲染视图
+		 return view('admin/system/service');
 	}
 }

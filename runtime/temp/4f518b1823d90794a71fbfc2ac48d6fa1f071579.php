@@ -95,6 +95,7 @@
             <ul class="nav">
                 <li class="setting-basic"><a href="<?php echo e(url('/index/system/basic')); ?>"><i class="icon icon-sliders"></i> 核心设置</a></li>
                 <li class="setting-basic"><a href="<?php echo e(url('/index/system/page')); ?>"><i class="icon icon-sliders"></i> 内置页面</a></li>
+                <li class="setting-basic"><a href="<?php echo e(url('/index/system/customer_service')); ?>"><i class="icon icon-sliders"></i> 客服管理</a></li>
             </ul>
         </li>
 

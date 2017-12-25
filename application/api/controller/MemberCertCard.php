@@ -76,6 +76,7 @@
                  return ['code'=>404];
            #查询当前卡有没有绑定过
            $creditcard=MemberCreditcard::get(['card_bankno'=>$this->param['creditCardNo'],'card_phone'=>$this->param['phone'],'card_name'=>$this->name,'card_idcard'=>$this->idcard]);
+
            if($creditcard)
            {  
                  if($creditcard['card_state']=='1')
@@ -152,7 +153,8 @@
            if(!isset($this->param['uid']) || empty($this->param['uid']) || !isset($this->param['token']) ||empty($this->param['token']))
                 $this->error=314;
            #查找到当前用户信用卡列表
-           $data=MemberCreditcard::where('card_member_id='.$this->param['uid'])->select();
+           $data=MemberCreditcard::with("repayment")->where('card_member_id='.$this->param['uid'])->select();
+           return ['code'=>200, 'msg'=>'获取信用卡列表成功~', 'data'=>$data];
            if(empty($data))
                  return ['code'=>314];
 

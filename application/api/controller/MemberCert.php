@@ -52,7 +52,7 @@
            if(!$validate->scene('creat')->check($this->param))
                  return ['code'=>350, 'msg'=>$validate->getError()];
            #验证码验证规则 读取本手机号最后一条没有使用的验证码 并且在系统设置的有效时间内
-           $code_info=SmsCodes::where(['sms_send'=>$this->param['card_phone'],'sms_log_state'=>1])->whereTime('sms_log_add_time', "-".System::getName('code_timeout').' minutes')->find();
+           $code_info=SmsCodes::where(['sms_send'=>$this->param['card_phone'],'sms_log_state'=>1])->whereTime('sms_log_add_time', "-".System::getName('code_timeout').' minutes')->order('sms_log_id','desc')->find();
            if(!$code_info || ($code_info['sms_log_content']!=$this->param['smsCode']))
                  return ['code'=>404];
            #改变验证码使用状态
@@ -88,6 +88,7 @@
            if($card_validate['reason']!='成功')
                  return ['code'=>351];
            $state=$card_validate['result']['result']=='T' ? '1' : '0';
+          Db::startTrans();
            #写入认证表
            $member_cashcard=new MemberCashcard([
                 'card_member_id'=>$this->param['uid'],
@@ -106,7 +107,7 @@
            ]);
            if($member_cashcard->save()===false)
                 return ['code'=>350];
-           Db::startTrans();
+          
            try {
                  if($card_validate['result']['result']=='F')
                       return ['code'=>352];
@@ -118,12 +119,12 @@
                       $member_certs=new MemberCerts([
                            'cert_member_id' =>$this->param['uid'],
                            'cert_card_id'       =>$member_cashcard->card_id,
-                           'cert_member_name' => $this->param['name'],
-                           'cert_member_idcard' => $this->param['idNo']
+                           'cert_member_name' => $this->param['card_name'],
+                           'cert_member_idcard' => $this->param['card_idcard']
                       ]);
                       #更改数据表
                       $member_result=new Member;
-                      $result=$member_result->save(['member_cert'=>'1','member_nick'=>$this->param['name']],['member_id'=>$this->param['uid']]);
+                      $result=$member_result->where(['member_id'=>$this->param['uid']])->update(['member_cert'=>'1','member_nick'=>$this->param['card_name']]);
                       if($result===false || $member_certs->save()===false)
                       {
                             Db::rollback();
@@ -134,7 +135,7 @@
                  }
            } catch (\Exception $e) {
                  Db::rollback();
-                 return ['code'=>350];
+                 return ['code'=>350,'msg'=>$e->getMessage()];
            }
       }
 
@@ -207,7 +208,8 @@
         return ['code'=>435];
 
       #银行卡实名验证
-         $card_validate=BankCert($this->param['cardNo'],$this->param['card_phone'],$this->param['card_idcard'],$this->param['card_name']);
+         $card_validate=BankCert($this->param['card_bankno'],$this->param['card_phone'],$cashcard['card_idcard'],$cashcard['card_name']);
+
          if($card_validate['reason']!='成功')
                return ['code'=>351];
 
@@ -224,6 +226,10 @@
           'card_state'          => $state,
           'card_return'        =>json_encode($card_validate),
         );
+        if($card_validate['result']['result']=='F')
+            return ['code'=>352];
+       if($card_validate['result']['result']=='N')
+            return ['code'=>353];
 
         $result=MemberCashcard::where('card_member_id='.$this->param['uid'])->update($card);
         if(!$result)
