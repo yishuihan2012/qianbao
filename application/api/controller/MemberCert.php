@@ -17,7 +17,10 @@
  use app\index\model\MemberCert as MemberCerts;
  use app\index\model\MemberCreditcard;
  use app\index\model\MemberCashcard;
+ use app\index\model\MemberRelation;
  use app\index\model\SmsCode as SmsCodes;
+ use app\index\model\Wallet;
+ use app\index\model\WalletLog;
 
  class MemberCert 
  {
@@ -130,6 +133,39 @@
                             Db::rollback();
                             return ['code'=>350];
                       }
+
+                      #实名认证成功返回上级红包
+                      $parent_member_id=MemberRelation::where('relation_member_id='.$this->param['uid'])->value('relation_parent_id');
+                      if($parent_member_id!=0){
+                          $system_wallet=System::where("system_key='realname_max' or system_key='realname_min'")->order('system_val desc')->field('system_val')->select();
+                          $realname_wallet=mt_rand($system_wallet[0]['system_val'],$system_wallet[1]['system_val']);
+                          $wallet=Wallet::where('wallet_member='.$parent_member_id)->find();
+                          if(!$wallet)
+                            Db::rollback();
+                            return ['code'=>350];
+
+                          $realname=$wallet['wallet_invite']+$realname_wallet;
+                          $res=Wallet::where('wallet_member='.$parent_member_id)->update(['wallet_invite'=>$realname_wallet]);
+                          if($res===false)
+                             Db::rollback();
+                             return ['code'=>350];
+
+                          $wallet_log=new WalletLog([
+                           'log_wallet_id' =>$wallet['wallet_id'],
+                           'log_wallet_amount'       =>$realname_wallet,
+                           'log_wallet_type' =>1,
+                           'log_relation_type' => 5,
+                           'log_form' => '邀请红包',
+                           'log_desc' => '邀请好友注册并实名认证红包',
+                           'log_add_time' =>date("Y-m-d H:i:s",time())
+                           ]);
+                          if($member_certs->save()===false)
+                             Db::rollback();
+                             return ['code'=>350];
+                          
+                      }
+
+
                       Db::commit();
                       return ['code'=>200,'msg'=>'实名认证成功~', 'data'=>''];
                  }

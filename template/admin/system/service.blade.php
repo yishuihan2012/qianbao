@@ -27,9 +27,9 @@
 	      	<td>{{$val->service_time}}</td>
 	      	<td>
 	      		<div class="btn-group">
-	  				<a type="button" class="btn btn-sm" data-remote="{{url('/index/system/service_edit/id/'.$val->service_id)}}" data-size='lg' data-toggle="modal" href="#">查看</a>
+	  				<a type="button" class="btn btn-sm" data-remote="{{url('/index/system/show_service/service_id/'.$val->service_id)}}" data-size='lg' data-toggle="modal" href="#">查看</a>
 
-	  				<a type="button" class="btn btn-sm" data-remote="{{url('/index/system/service_edit/id/'.$val->service_id)}}" data-size='lg' data-toggle="modal" href="#">删除</a>
+	  				<a type="button" class="btn btn-sm" data-remote="{{url('/index/system/service_edit/service_id/'.$val->service_id)}}" data-size='lg' data-toggle="modal" href="#">删除</a>
 
 				</div>
 	      	</td>
@@ -45,8 +45,8 @@
 <script type="text/javascript">
 $(document).ready(function(){
     $('.menu .nav .active').removeClass('active');
-    $('.menu .nav li.wallet').addClass('active');
-    $('.menu .nav li.wallet-manager').addClass('show');
+    $('.menu .nav li.service').addClass('active');
+    $('.menu .nav li.service').addClass('show');
     $(".freezing").click(function(){
     	var id = $(this).attr('data-id');
     	var explain = $(this).attr('explain');

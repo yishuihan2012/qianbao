@@ -88,11 +88,49 @@
 		 return view('admin/system/page');
 	}
 
-
+	#客服人员列表
 	public function customer_service(){
 		 $services=CustomerService::paginate(Config::get('page_size'), false, ['query'=>Request::instance()->param()]);
+
+		 $this->assign('button', 
+ 		 	 [
+ 		 		 ['text'=>'新增客服', 'link'=>url('/index/System/add_service')],
+ 		 	 ]);
 	 	 $this->assign('services', $services);
 		 #渲染视图
 		 return view('admin/system/service');
+	}
+
+	#增加客服
+	public function add_service(){
+
+		 if(Request::instance()->isPost()){
+
+		 	 $CustomerService = new CustomerService($_POST);
+			 $result = $CustomerService->allowField(true)->save();
+
+			 $content = ($result===false) ? ['type'=>'error','msg'=>'保存失败'] : ['type'=>'success','msg'=>'保存成功'];
+			 Session::set('jump_msg', $content);
+			 $this->redirect('System/customer_service');
+		}
+		 #渲染视图
+		 return view('admin/system/addservice');
+	}
+
+
+	#查看
+	public function show_service(){
+		
+		 if(Request::instance()->isPost()){
+		 	 $CustomerService =CustomerService::get(Request::instance()->param('service_id'));
+			 $result= $CustomerService->allowField(true)->save($_POST);
+			 $content = ($result===false) ? ['type'=>'error','msg'=>'修改失败'] : ['type'=>'success','msg'=>'修改成功'];
+			 Session::set('jump_msg', $content);
+			 $this->redirect('System/customer_service');
+		}
+		$services=CustomerService::where('service_id='.Request::instance()->param('service_id'))->find();
+		$this->assign('services', $services);
+		 #渲染视图
+		 return view('admin/system/showservice');
 	}
 }

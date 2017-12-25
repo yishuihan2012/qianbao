@@ -17,6 +17,7 @@
  use app\index\model\SystemBank;
  use app\index\model\BankIdent;
  use app\index\model\Payplatform;
+ use app\index\model\CustomerService;
 
  class Region 
  {
@@ -136,24 +137,17 @@
       **/ 
       public function get_info()
       {
-           $info=System::where("system_type='basic' or system_key='min_withdrawals'")->select();
-           foreach ($info as $key => $value) {
-              if($value['system_key']=='min_withdrawals'){
-                 $data['minWithdraw']=$value['system_val'];
-              }
-              if($value['system_key']=='CSWechatId'){
-                 $data['CSWechatId']=$value['system_val'];
-              }
-              if($value['system_key']=='CSQQ'){
-                 $data['CSQQ']=$value['system_val'];
-              }
-              if($value['system_key']=='CSTel'){
-                 $data['CSTel']=$value['system_val'];
-              }
-              if($value['system_key']=='CSServiceTime'){
-                 $data['CSServiceTime']=$value['system_val'];
-              }
-           }
+
+        
+           $info=System::where("system_key='min_withdrawals'")->find();
+           $data['minWithdraw']=$info['system_val'];
+           $service=CustomerService::order('service_id desc')->select();
+
+           $data['customerser']=$service;
+
+           $tel=CustomerService::where('service_type=1')->order('service_id desc')->find();
+           
+           $data['CSTel']=$tel['service_contact'];
 
            #支付平台信息
            $Payplatform=Payplatform::where('payplatform_state=1')->field('payplatform_id, payplatform_name, payplatform_icon')->select();
