@@ -13,6 +13,7 @@
  Class Index{
  	 public function index(Request $Request)
  	 {
+    // var_dump($Request);die;
  	 	 try{
  	 	 	 #判断请求方式
  	 	 	 if(!$Request->isPost())

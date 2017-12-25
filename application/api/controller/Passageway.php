@@ -18,6 +18,10 @@
       public $error;
       public function __construct($param)
       {
+<<<<<<< HEAD
+=======
+         var_dump(123);die;
+>>>>>>> dev2
         	 $this->param=$param;
       }
 
@@ -29,10 +33,18 @@
       **/ 
       public function passageway_lists()
       {
+<<<<<<< HEAD
       	$Passageways=new Passageways;
          #可用支付通道
          $passageway_lists=$Passageways->where('passageway_state=1')->select();
          return ['code'=>200, 'msg'=>'获取成功~', 'data'=>$passageway_lists];
+=======
+         var_dump(123);die;
+      	 // $Passageways=new Passageways;
+        //  #可用支付通道
+        //  $passageway_lists=$Passageways->where('passageway_state=1')->select();
+        //  return ['code'=>200, 'msg'=>'获取成功~', 'data'=>$passageway_lists];
+>>>>>>> dev2
       }
 
 

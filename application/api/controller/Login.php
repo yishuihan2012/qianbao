@@ -37,6 +37,7 @@
       **/
       public function login()
       {	
+        var_dump(123);die;
       	 #验证参数是否存在
       	 if(!phone_check($this->param['phone']))
       	 	 return ['code'=>401];
