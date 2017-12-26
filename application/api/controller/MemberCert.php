@@ -186,56 +186,51 @@
       **/
       public function change_validation()
       {
-       #验证器验证 验证参数合法性
-       $validate = Loader::validate('Membervalidation');
-       #如果验证不通过 返回错误代码 及提示信息
-       if(!$validate->scene('edit')->check($this->param))
-             return ['code'=>322, 'msg'=>$validate->getError()];
-      #验证码验证规则 读取本手机号最后一条没有使用的验证码 并且在系统设置的有效时间内
-       $code_info=SmsCodes::where(['sms_send'=>$this->param['card_phone'],'sms_log_state'=>1])->whereTime('sms_log_add_time', "-".System::getName('code_timeout').' minutes')->find();
-       if(!$code_info || ($code_info['sms_log_content']!=$this->param['smsCode']))
-             return ['code'=>404];
-       #改变验证码使用状态
-       $code_info->sms_log_state=2;
-       $result=$code_info->save();
-       #验证是否成功
-       if(!$result)
-             return ['code'=>404];
+           #验证器验证 验证参数合法性
+           $validate = Loader::validate('Membervalidation');
+           #如果验证不通过 返回错误代码 及提示信息
+           if(!$validate->scene('edit')->check($this->param))
+                 return ['code'=>322, 'msg'=>$validate->getError()];
+           #验证码验证规则 读取本手机号最后一条没有使用的验证码 并且在系统设置的有效时间内
+           $code_info=SmsCodes::where(['sms_send'=>$this->param['card_phone'],'sms_log_state'=>1])->whereTime('sms_log_add_time', "-".System::getName('code_timeout').' minutes')->find();
+           if(!$code_info || ($code_info['sms_log_content']!=$this->param['smsCode']))
+                 return ['code'=>404];
+           #改变验证码使用状态
+           $code_info->sms_log_state=2;
+           $result=$code_info->save();
+           #验证是否成功
+           if(!$result)
+                 return ['code'=>404];
+           #验证用户是否绑定储蓄卡
+           $cashcard=MemberCashcard::where('card_member_id='.$this->param['uid'])->find();
+           if(!$cashcard)
+                 return ['code'=>435];
 
-      #验证用户是否绑定储蓄卡
-      $cashcard=MemberCashcard::where('card_member_id='.$this->param['uid'])->find();
-      if(!$cashcard)
-        return ['code'=>435];
-
-      #银行卡实名验证
-         $card_validate=BankCert($this->param['card_bankno'],$this->param['card_phone'],$cashcard['card_idcard'],$cashcard['card_name']);
-
-         if($card_validate['reason']!='成功')
-               return ['code'=>351];
-
-        $state=$card_validate['result']['result']=='T' ? '1' : '0';
-
-        $card=array(
-          'card_bankno'=>$this->param['card_bankno'],
-          'card_phone'=>$this->param['card_phone'],
-          'card_bank_province'=>$this->param['card_bank_province'],
-          'card_bank_city'=>$this->param['card_bank_city'],
-          'card_bank_area'=>$this->param['card_bank_area'],
-          'card_bank_address'=>$this->param['card_bank_address'],
-          'card_bankname'=>$this->param['card_bankname'],
-          'card_state'          => $state,
-          'card_return'        =>json_encode($card_validate),
-        );
-        if($card_validate['result']['result']=='F')
-            return ['code'=>352];
-       if($card_validate['result']['result']=='N')
-            return ['code'=>353];
-
-        $result=MemberCashcard::where('card_member_id='.$this->param['uid'])->update($card);
-        if(!$result)
-          return ['code'=>435];
-
-        return ['code'=>200,'msg'=>'更换储蓄卡成功~', 'data'=>''];
-
+           #银行卡实名验证
+           $card_validate=BankCert($this->param['card_bankno'],$this->param['card_phone'],$cashcard['card_idcard'],$cashcard['card_name']);
+           if($card_validate['reason']!='成功')
+                 return ['code'=>351];
+           $state=$card_validate['result']['result']=='T' ? '1' : '0';
+           $card=array(
+                 'card_bankno'=>$this->param['card_bankno'],
+                 'card_phone'=>$this->param['card_phone'],
+                 'card_bank_province'=>$this->param['card_bank_province'],
+                 'card_bank_city'=>$this->param['card_bank_city'],
+                 'card_bank_area'=>$this->param['card_bank_area'],
+                 'card_bank_address'=>$this->param['card_bank_address'],
+                 'card_bankname'=>$this->param['card_bankname'],
+                 'card_state'          => $state,
+                 'card_return'        =>json_encode($card_validate),
+           );
+           if($card_validate['result']['result']=='F')
+                 return ['code'=>352];
+           if($card_validate['result']['result']=='N')
+                 return ['code'=>353];
+           $result=MemberCashcard::where('card_member_id='.$this->param['uid'])->update($card);
+           if(!$result)
+                 return ['code'=>435];
+           return ['code'=>200,'msg'=>'更换储蓄卡成功~', 'data'=>''];
       }
+
+
  }

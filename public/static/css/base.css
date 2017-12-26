@@ -1,0 +1,214 @@
+@charset "utf-8";
+/*页面公共部分*/
+html,body{
+	font: 17px/1.2 "苹方","微软雅黑","\5b8b\4f53",Arial,sans-serif;
+	background-color:#f0f3f5;
+	color: #333;
+	word-break: normal;
+    text-align: justify;
+}
+.mui-content{padding-bottom:5%;}
+.mui-segmented-control.mui-segmented-control-inverted .mui-control-item.mui-active{color:#1983d1;}
+.mui-segmented-control.mui-segmented-control-inverted~.mui-slider-progress-bar{background-color:#1983d1;}
+ul,li,dl,dt,dd{list-style: none;margin:0;padding:0}
+table th{font-weight:normal;}
+.wrap{padding:3%;}
+.wrap2{padding:0 3%;}
+.wrap3{padding:7% 5%;}
+.wrap4{padding:2%;}
+.v-m{vertical-align: middle;}
+.my-footer-btn{position:fixed;bottom:0;width:100%;height:80px;z-index:2;}
+/*首行缩进*/
+.f-t-in{text-indent:17px;}
+.space-up-down{margin:15px 0;}
+.space-up2{margin-top:10px;}
+.space-up3{margin-top:5px;}
+.space-up{margin-top:15px;}
+.space-bot{margin-bottom:10px;}
+.space-left{margin-left:5px;}
+.space-right{margin-right:5px}
+.space-right2{margin-right:20px;}
+.bor-top{border-top:1px solid #e5e5e5;}
+.bor-bot{border-bottom:1px solid #e5e5e5;}
+.bor-right{border-right:1px solid #e5e5e5;}
+.bor-bot-das{border-bottom:1px dashed #e5e5e5;}
+.bor-rig span{display:block;width:1px;height:50px;}
+.clear {
+    clear: both;
+}
+.f-cb{
+    zoom: 1;
+}
+.f-cb:after {
+    clear: both;
+    content: ".";
+    display: block;
+    height: 0;
+    overflow: hidden;
+    visibility: hidden;
+}
+.f-telli{
+  overflow:hidden;
+  white-space:nowrap;
+  text-overflow:ellipsis;
+}
+.f-telli2{
+  overflow:hidden;
+  text-overflow:ellipsis;
+  display:-webkit-box; 
+  -webkit-box-orient:vertical;
+  -webkit-line-clamp:2; 
+}
+.f12{font-size:12px;}
+.f13{font-size:13px;}
+.f14{font-size:14px;}
+.f15{font-size:15px;}
+.f16{font-size:16px;}
+.f18{font-size:18px;}
+.f20{font-size:20px;}
+.f24{font-size:24px;}
+.f36{font-size:36px;}
+.f48{font-size:48px;}
+.fl{
+  float:left;
+}
+.fr{
+  float:right;
+}
+.fc{
+  text-align:center;
+}
+.ftl{
+	text-align:left;
+}
+.ftr{
+  text-align:right;
+}
+.ftj{
+  text-align: justify;
+}
+.ftn{
+  white-space: nowrap;
+}
+.f-br{
+  border-radius:5%;
+}
+.f-br2{
+	border-radius:2%;
+}
+.f-bold{
+    font-weight: bold;
+}
+.f-normal{
+	font-weight:normal;
+}
+.por {
+    position: relative;
+}
+.poa {
+    position: absolute;
+}
+.poa-f {
+    width: 100%;
+    height: 100%;
+    left: 0;
+    position: absolute;
+    top: 0;
+}
+.poa-r {
+    position: absolute;
+    top: 50%;
+    right: 15px;
+    -webkit-transform: translateY(-50%);
+    transform: translateY(-50%);
+}
+.poa-m{
+    position: absolute;
+    top: 50%;
+    -webkit-transform: translateY(-50%);
+    transform: translateY(-50%);
+}
+.ovh {
+    overflow: hidden;
+}
+.noselect {
+    user-select: none;
+}
+.z1 {
+    z-index: 1;
+}
+.z2 {
+    z-index: 2;
+}
+.dn {
+    display: none;
+}
+.w-f {
+    width: 100%;
+}
+.h-f {
+    height: 100%;
+}
+.fwn {
+    font-weight: normal;
+}
+.t-f {
+    transition: all 0.5s ease 0s;
+}
+.t-c {
+    transition: color 0.5s ease 0s;
+}
+.t-bg {
+    transition: background 0.5s ease 0s;
+}
+.dis-flex-ar{
+  display:flex;
+  -webkit-display:flex;
+  justify-content: space-around;
+  align-items: center;
+}
+.dis-flex-be{
+  display:flex;
+  -webkit-display:flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.dis-flex-fs{
+  display:flex;
+  -webkit-display:flex;
+  justify-content: flex-start;
+  align-items: center;
+}
+.dis-flex{flex:1;white-space:normal; word-break:break-all;}
+/*字体*/
+.ari{
+    font-family: "Arial";
+}
+
+/*图片控制*/
+/*图片加载不出来，显示一张默认图片，即使不显示默认图片，也让图片有一个占位作用*/
+/*图片不固定的话，在img的父元素设置width和height,img根据父元素的width和height设置max-width和max-height,然后设置居中属性*/
+.my-img-rounded{
+  border-radius: 6px;
+}
+.my-img-circle{
+  border-radius: 50%;
+}
+.my-img-thumbnail{
+  display: inline-block;
+  max-width: 100%;
+  height: auto;
+  padding: 4px;
+  line-height: 1.42857143;
+  background-color: #fff;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  -webkit-transition: all .2s ease-in-out;
+  -o-transition: all .2s ease-in-out;
+  transition: all .2s ease-in-out;
+}
+.my-img-responsive{
+  display: block;
+  max-width: 100%;
+  height: auto;
+}

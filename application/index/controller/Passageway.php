@@ -98,6 +98,17 @@ class Passageway extends Common{
 				 #exit;
 			 #}
 			 #验证器验证成功
+	 	 	if($_POST['passageway_status']==1){
+	 	 		if(empty($_POST['passageway_no'])){
+	 	 			 $content = ['type'=>'warning','msg'=>'通道代号不能为空'];
+					 Session::set('jump_msg', $content);
+					 #重定向控制器 跳转到列表页
+					 $this->redirect('Passageway/index');
+	 	 		}
+	 	 	}
+
+
+
 			 $passageway = new Passageways($_POST);
 			 $result = $passageway->allowField(true)->save();
 			 #数据是否提交成功

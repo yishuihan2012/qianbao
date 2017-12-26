@@ -103,7 +103,6 @@ class CashOut
 	            'downPayFee'  	=> $this->also->item_rate*10, //结算费率  必填  接入机构给商户的费率，D0直清按照此费率结算，千分之X， 精确到0.01
 	            'downDrawFee' => '0', // 代付费 选填  每笔扣商户额外代付费。不填为不扣。
 	      );
-
 	      //请求体参数加密 AES对称加密 然后连接加密字符串转MD5转为大写
 	      $payload = $this->encrypt(json_encode($arr),$this->passway_info->passageway_pwd_key);
 	      //return $payload;
@@ -135,18 +134,41 @@ class CashOut
 	      }else{
 	      	return $result;
 	      }
-
 	 }
 
 	 /**
-	 * @version  快捷支付 套现 
+	 * @version  快捷支付 0.23费率套现 
 	 * @authors John(1160608332@qq.com)
 	 * @date    2017-12-23 16:25:05
 	 * @version $Bill$
 	 */
-	 public function quickPay()
+	 public function quickPay023($tradeNo,$price,$description='米刷测试')
 	 {
+	 	 $version="v1.2";//接口版本号  目前固定
+		 $arr = array(
+	            'versionNo'	=> $versionNo, //版本固定为1
+	            'merchno'	=> $this->passway_info->passageway_mech, //商户号
+	            'traceno'		=> $tradeNo,//网站订单号 确保在网站的唯一
+	            'amount'       	=> $price, //单位为元，精确到0.01,必须大于1元
+	            'accountno'	=> $this->member_card->card_bankno,//结算卡号
+	            'accountName'	=> $this->card_info->card_name,//结算户名 URLEncode编码
+	            'cardType'	=> , //1：信用卡，2：储蓄卡
+	            'validDate'	=> ,//使用信用卡时必填，需要信用卡4位有效日期(格式：MMYY)。
+	            'safeCode'	=> ,//使用信用卡时必填，需要卡背面的3位安全码
+	            'mobile'		=> ,//银行卡对应的手机号
+	            'certno'		=> $this->card_info->card_idcard,//银行卡对应的身份证号
+	            'bankCode'	=> ,//银行卡对应的银行编码
+	            'bankName'	=> $this->member_card->card_bankname,//银行卡对应的银行名称。采用URLEncode编码
+	            'settleType'	=> ,//固定值2-T+1结算
+	            'notifyUrl'		=> $this->passway_info->cashout->cashout_callback,//支付完成后将支付结果回调至该链接
+	            'returnUrl'		=> '123',//支付完成后前端跳转地址
+	            'signature'	=> ,//对签名数据进行MD5加密的结果。参见3.1
 
+	            'payCardNo' => $this->card_info->card_bankno, //信用卡卡号
+
+	            'downPayFee'  	=> $this->also->item_rate*10, //结算费率  必填  接入机构给商户的费率，D0直清按照此费率结算，千分之X， 精确到0.01
+	            'downDrawFee' => '0', // 代付费 选填  每笔扣商户额外代付费。不填为不扣。
+	      );
 	 }
 
 

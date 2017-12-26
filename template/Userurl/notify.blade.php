@@ -1,0 +1,67 @@
+<!doctype html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title>消息</title>
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<link href="/static/css/mui.min.css" rel="stylesheet" />
+		<link href="/static/css/iconfont.css" rel="stylesheet" />
+		<link href="/static/css/base.css" rel="stylesheet" />
+		<link href="/static/css/page.css" rel="stylesheet" />
+		<link href="/static/css/themes.css" rel="stylesheet"/>
+	</head>
+	<body>
+		<div class="mui-content notify">
+			<ul class="mui-table-view">
+			    <li class="mui-table-view-cell mui-media bor-bot">
+			        <a class="mui-navigate-right" id="toNotifyList">
+			        	<img class="mui-media-object mui-pull-left" src="/static/images/message_notice.png">
+			        	<div class="mui-media-body">平台公告</div>
+			        	<!--有消息通知时显示-->
+			        	<span class="mui-badge  mui-badge-red">1</span>
+			        </a>
+			    </li>
+			    <li class="mui-table-view-cell mui-media bor-bot">
+			        <a class="mui-navigate-right" id="toDealList">
+			        	<img class="mui-media-object mui-pull-left" src="/static/images/message_notice.png">
+			        	 <div class="mui-media-body">动账交易</div>
+			        </a>
+			    </li>
+			    <li class="mui-table-view-cell mui-media bor-bot">
+			        <a class="mui-navigate-right" id="toWelfareList">
+			        	<img class="mui-media-object mui-pull-left" src="/static/images/message_notice.png">
+			        	 <div class="mui-media-body">平台福利</div>
+			        </a>
+			    </li>
+			</ul>
+		</div>
+		<script src="js/mui.min.js"></script>
+		<script type="text/javascript">
+			mui.init();
+			mui.ready(function(){
+				//跳转到平台公告列表页
+				document.getElementById('toNotifyList').addEventListener('tap',function(){
+					mui.openWindow({
+						url:'notify_list.html',
+						id:'notify_list'
+					});
+				});
+				//跳转到动账交易列表
+				document.getElementById('toDealList').addEventListener('tap',function(){
+					mui.openWindow({
+						url:'deal_list.html',
+						id:'deal_list'
+					});
+				});
+				//跳转到平台福利列表
+				document.getElementById('toWelfareList').addEventListener('tap',function(){
+					mui.openWindow({
+						url:'welfare_list.html',
+						id:'welfare_list'
+					});
+				});
+			});
+		</script>
+	</body>
+
+</html>

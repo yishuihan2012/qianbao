@@ -109,7 +109,7 @@
  function format_money_get($num)
  {
       if (!is_numeric($num)) return false;
-      return number_format($num/100/10000, 2) ;
+           return number_format($num/100/10000, 2);
  }
 
  //-----------------------------------------------------------
@@ -120,19 +120,23 @@
  // @description Curl方式请求url 返回请求的数据
  // @return  $str=格式化后的金额
  //-----------------------------------------------------------
- function curl_post($url, $method = 'post', $data = '')
+ function curl_post($url, $method = 'post', $data='')
  {
+      //echo '<meta http-equiv="Content-Type" content="text/html; charset=GBK">';
+      //$data=iconv("UTF-8","GBK",$data);
       $ch = curl_init();
       curl_setopt($ch, CURLOPT_URL, $url);
       curl_setopt($ch, CURLOPT_CUSTOMREQUEST, strtoupper($method));
       curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
       curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, false);
+      curl_setopt($ch, CURLOPT_HEADER, 0);
       curl_setopt($ch, CURLOPT_USERAGENT, 'Mozilla/5.0 (compatible; MSIE 5.01; Windows NT 5.0)');
       curl_setopt($ch, CURLOPT_FOLLOWLOCATION, 1);
       curl_setopt($ch, CURLOPT_AUTOREFERER, 1);
       curl_setopt($ch, CURLOPT_POSTFIELDS, $data);
       curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
       $temp = curl_exec($ch);
+      $information = curl_getinfo($ch);
       return $temp;
  }
 

@@ -1,0 +1,98 @@
+@charset "utf-8";
+/*背景色*/
+.bg-color{background-color:#f0f3f5;}
+.bg-w{background-color:#fff;}
+.bg-table{background-color:#f7fafc;}
+.bg-blue{background-color:#1983d1;}
+.bg-tint{background-color:#fff6ea;}
+.bg-tint-yellow{background-color:#fbecd2;;}
+/*标题文字*/
+.main-color{font-size:17px;color:#333;}
+/*普通内容*/
+.normal-color{color:#666;}
+/*辅助性、失效文字*/
+.invalid-color{color:#999;}
+.blue-color{color:#1983d1;font-weight:bold;}
+.blue-color-th{color:#1983d1;}
+.yellow-color{color:#f9bc38;}
+.pro-yellow-color{color:#d69c35;}
+.tint-yellow-color{color:#fbecd2;}
+.white-color{color:#fff;}
+.red-color{color:#fc5c51;}
+
+/*数字角标*/
+.my-badge{
+	display:inline-block;
+	font-size:14px;
+	padding:3px;
+	background-color:#1983d1;
+	color:#fff;
+	font-weight:bold;
+}
+/*button组样式*/
+.my-btn-blue{
+	display:block;
+	width:100%;
+	height:50px;
+	line-height:50px;
+	background-color:#1983d1;
+	color:#fff;
+	text-align:center;
+}
+.my-btn-blue2{
+	display:block;
+	margin:0 auto;
+	width:90%;
+	height:50px;
+	line-height:50px;
+	border-radius:2%;
+	background-color:#1983d1;
+	color:#fff;
+	text-align:center;
+}
+.my-btn-blue3{
+	display:inline-block;
+	width:40%;
+	height:50px;
+	line-height:50px;
+	border-radius:3%;
+	background-color:#1983d1;
+	color:#fff;
+	text-align:center;
+}
+.my-btn-yellow2{
+	display:block;
+	margin:0 auto;
+	width:38%;
+	height:32px;
+	line-height:32px;
+	background:url("../images/my_btn2.png") no-repeat;
+	background-size:100% 100%;
+	color:#fff;
+	text-align:center;
+	top:-16px;
+}
+.my-btn-yellow{
+	display:block;
+	margin:20px auto;
+	width:50%;
+	height:42px;
+	line-height:42px;
+	background:url("../images/my_btn.png") no-repeat;
+	background-size:100% 100%;
+	color:#fff;
+	text-align:center;
+}
+.my-btn-default,
+.my-btn-primary,
+.my-btn-success,
+.my-btn-info,
+.my-btn-warning,
+.my-btn-danger{
+  text-shadow: 0 -1px 0 rgba(0, 0, 0, .2);
+  -webkit-box-shadow: inset 0 1px 0 rgba(255, 255, 255, .15), 0 1px 1px rgba(0, 0, 0, .075);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, .15), 0 1px 1px rgba(0, 0, 0, .075);
+}
+
+
+

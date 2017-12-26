@@ -557,4 +557,15 @@
 
            return ['code'=>200, 'msg'=>'获取成功~', 'data'=>$data];
       }
+
+      /**
+    * 生成签名信息 获取授权登录信息
+    * @return [type] [description]
+    */
+    public function get_sign()
+    {
+        $payment=new \app\index\controller\Alipay();
+        $return=$payment->get_sign(); //转账
+        return ['code'=>200, 'msg'=>'获取成功~', 'data'=>$return];
+    }
  }
