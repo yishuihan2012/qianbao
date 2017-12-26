@@ -30,4 +30,12 @@
             parent::initialize();
             #TODO:自定义的初始化
         }
+        /**
+         * [customerinfo 联系客服信息]
+         * @return [type] [description]
+         */
+        public static function customerinfo($data = ''){
+          $where['service_title'] = $data;
+          return Db::table("wt_customer_service")->where($where)->find();
+        }
 }

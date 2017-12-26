@@ -1,6 +1,6 @@
 <?php
  /**
-*  @version Member Model  会员基本信息模型
+ *  @version Member Model  会员基本信息模型
  * @author  $bill 755969423@qq.com
  * @time      2017-11-24 09:20
  * @return  
