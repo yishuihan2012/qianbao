@@ -27,6 +27,7 @@
  use app\index\model\Passageway;
  use app\index\model\PassagewayItem;
  use app\index\model\Wallet;
+ use app\index\model\Recomment;
  
  class Member 
  {
@@ -337,23 +338,23 @@
       *  @author $bill$(1270909623@qq.com)       *  @datetime    2017-12-15 11:58:05
       *  @param        
       **/       
-      public function registerForOthers()       
+      public function registerForOthers()
       {
            #验证parent_phone号码是否存在
-           if(!phone_check($this->param['parent_phone']))                  
-                 return ['code'=>428];            
+           if(!phone_check($this->param['parent_phone']))
+                 return ['code'=>428];
            #验证参数是否存在
-           if(!phone_check($this->param['phone']))                  
+           if(!phone_check($this->param['phone']))
                  return ['code'=>401];
-           #手机验证码参数            
-           if(!isset($this->param['smsCode']) || empty($this->param['smsCode']))                  
+           #手机验证码参数
+           if(!isset($this->param['smsCode']) || empty($this->param['smsCode']))
                  return ['code'=>404];
            #验证码验证规则 读取本手机号最后一条没有使用的验证码 并且在系统设置的有效时间内            
            $code_info=SmsCode::where(['sms_send'=>$this->param['phone'],'sms_log_state'=>1])->whereTime('sms_log_add_time', "-".System::getName('code_timeout').' minutes')->find();
            if(!$code_info || $code_info['sms_log_content']!=$this->param['smsCode'])
-                 return ['code'=>404];            
+                 return ['code'=>404];
            #改变验证码使用状态
-           $code_info->sms_log_state=2;            
+           $code_info->sms_log_state=2;
            $result=$code_info->save();
            #验证是否成功            
            if(!$result)                  
@@ -377,7 +378,7 @@
                       'member_nick'=>$this->param['phone'],
                       'member_mobile'=>$this->param['phone'],
                       'member_group_id'=>System::getName('open_reg_membertype')]);
-                 if($member_info->save()===false)                  
+                 if($member_info->save()===false)
                  {
                       Db::rollback();                       
                       return ['code'=>300];                  
@@ -556,5 +557,25 @@
            $data['wallet_invitation']=sprintf("%.2f",substr(sprintf("%.3f", $member->memberWallet->wallet_invite), 0, -1));
 
            return ['code'=>200, 'msg'=>'获取成功~', 'data'=>$data];
+      }
+
+        /**
+   *  @version recomment_list method / Api 用户分润分佣明细列表
+   *  @author $bill$(755969423@qq.com)
+   *  @datetime    2017-12-25 09:03:05
+   *  @param   
+      **/ 
+      public function recomment_list()
+      {
+          if(!isset($this->param['type']))
+             $this->error=314;
+
+          $this->param['type'] ? $this->param['type'] : 1;
+           
+          $recomment=Recomment::with('member')->where('recomment_member_id='.$this->param['uid'].' and recomment_type='.$this->param['type'])->select();
+          if(!$recomment)
+            return ['code'=>314];
+
+           return ['code'=>200, 'msg'=>'获取成功~', 'data'=>$recomment];
       }
  }
