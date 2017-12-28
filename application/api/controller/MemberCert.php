@@ -162,7 +162,7 @@
                            'log_add_time' =>date("Y-m-d H:i:s",time())
                            ]);
 
-                          if($member_certs->save()===false)
+                          if($wallet_log->save()===false)
                              Db::rollback();
                              return ['code'=>350];
 
