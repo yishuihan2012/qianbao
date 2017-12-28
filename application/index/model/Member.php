@@ -88,4 +88,9 @@ class Member extends Model{
       {
            return $this->belongsTo('memberLevel','level_member_id','member_id');
       }
+
+      public function recomment()
+      {
+           return $this->hasOne('Recomment','recomment_member_id','member_id');
+      }
 }

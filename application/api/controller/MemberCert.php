@@ -21,6 +21,7 @@
  use app\index\model\SmsCode as SmsCodes;
  use app\index\model\Wallet;
  use app\index\model\WalletLog;
+ use app\index\model\Recomment;
 
  class MemberCert 
  {
@@ -150,6 +151,7 @@
                              Db::rollback();
                              return ['code'=>350];
 
+                          #添加到钱包记录表
                           $wallet_log=new WalletLog([
                            'log_wallet_id' =>$wallet['wallet_id'],
                            'log_wallet_amount'       =>$realname_wallet,
@@ -159,7 +161,22 @@
                            'log_desc' => '邀请好友注册并实名认证红包',
                            'log_add_time' =>date("Y-m-d H:i:s",time())
                            ]);
-                          if($member_certs->save()===false)
+
+                          if($wallet_log->save()===false)
+                             Db::rollback();
+                             return ['code'=>350];
+
+                          #添加到分佣表
+                            $recomment=new Recomment([
+                              'recomment_member_id'=>$parent_member_id,
+                              'recomment_children_member'=>$this->param['uid'],
+                              'recomment_type'=>2,
+                              'recomment_money'=>$realname_wallet,
+                              'recomment_desc'=>'推荐下级注册并实名认证',
+                              'recomment_creat_time'=>date('Y-m-d H:i:s',time())
+                            ]);
+
+                            if($recomment->save()===false)
                              Db::rollback();
                              return ['code'=>350];
                           
