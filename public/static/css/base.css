@@ -10,15 +10,15 @@ html,body{
 .f-tex-l{text-align:left;word-break: break-all;}
 .f-tex-n{white-space: normal;}
 .mui-content{padding-bottom:5%;}
-.mui-segmented-control.mui-segmented-control-inverted .mui-control-item.mui-active{color:#1983d1;}
-.mui-segmented-control.mui-segmented-control-inverted~.mui-slider-progress-bar{background-color:#1983d1;}
+.mui-segmented-control.mui-segmented-control-inverted .mui-control-item.mui-active{color:#24a1ff;}
+.mui-segmented-control.mui-segmented-control-inverted~.mui-slider-progress-bar{background-color:#24a1ff;}
 /*form表单重写*/
 .mui-input-group:after{height:0;}
 .mui-input-group .mui-input-row:last-child:after{height:0;}
 .mui-checkbox input[type=checkbox], .mui-radio input[type=radio]{top:-15px;left:5px !important;}
 .mui-checkbox.mui-left label, .mui-radio.mui-left label{padding-left:32px;}
 .mui-checkbox input[type=checkbox]:before, .mui-radio input[type=radio]:before{font-size:20px;}
-.mui-checkbox input[type=checkbox]:checked:before, .mui-radio input[type=radio]:checked:before{color:#1983d1;}
+.mui-checkbox input[type=checkbox]:checked:before, .mui-radio input[type=radio]:checked:before{color:#24a1ff;}
 .mui-input-group .mui-input-row{height:50px;}
 .mui-input-row label{padding:18px 0px 21px 15px;}
 .mui-input-row input{height:50px;padding:28px 15px;}
@@ -38,6 +38,7 @@ table th{font-weight:normal;}
 .wrap4{padding:2%;}
 .wrap5{padding-top:3%}
 .wrap-bt{padding:3% 0;}
+.wrap-lr{padding:0 5px;}
 .v-m{vertical-align: middle;}
 .my-footer-btn{position:fixed;bottom:0;width:100%;height:80px;z-index:2;}
 /*首行缩进*/
@@ -60,6 +61,7 @@ table th{font-weight:normal;}
 .bor-right{border-right:1px solid #e5e5e5;}
 .bor-bot-das{border-bottom:1px dashed #e5e5e5;}
 .bor-left{border-left:1px solid #e5e5e5;}
+.bor-left-blue{border-left:3px solid #24a1ff;}
 .bor-rig span{display:block;width:1px;height:50px;}
 .pic-container{width:30%;margin:0px auto 30px;padding-top:30px;}
 .pic-container2{width:80%;margin:30px auto 0;}

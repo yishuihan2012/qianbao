@@ -5,10 +5,15 @@ use think\Db;
 use think\Config;
 use think\Loader;
 use think\Controller;
+use app\index\model\CustomerService;
+use app\index\model\Share;
+use app\index\model\Page;
+use app\index\model\Generalize;
 use app\index\model\Member as Members;
 use app\index\model\MemberCash;
 use app\index\model\Withdraw;
 use app\index\model\CashOrder;
+use app\index\model\Exclusive;
 use app\index\model\Recomment;
 use app\index\model\Announcement;
 /**
@@ -39,13 +44,18 @@ class Userurl extends Controller
 		$this->assign('uid',$this->param['uid']);
 		$this->assign('token',$this->param['token']);
       }
+	public function exclusive_code(){
+	    $list = Exclusive::all();
+	    $this->assign("list",$list);
+	    return view("api/logic/share_code_list");
+	}
 	/**
 	 * @Author   Star(794633291@qq.com)
 	 * @DateTime 2017-12-25T14:01:55+0800
 	 * @version  [专属二维码]
 	 * @return   [type]
 	 */
-	public function exclusive_code(){
+	public function exclusive_code_detail(){
 		$this->checkToken();
 		//获取当前手机号
 		$tel=Members::get($this->param['uid'])->value('member_mobile');
@@ -74,9 +84,9 @@ class Userurl extends Controller
 		 255, $QR_width, $QR_height); 
 		//输出图片 
 		imagepng($bg, 'autoimg\qrcode'.$tel.'.png'); 
-		$url='/autoimg\qrcode'.$tel.'.png';
+		$url='http://'.$_SERVER['HTTP_HOST'].'/autoimg/qrcode'.$tel.'.png';
 		$this->assign('url',$url);
-		return $this->fetch();
+		return $this->fetch('Userurl/exclusive_code');
 	}
 	/**
 	 * @Author   Star(794633291@qq.com)
@@ -249,7 +259,6 @@ class Userurl extends Controller
 		return $this->fetch();
 	}
 
-
   /**
    * @Author   杨成志(3115317085@qq.com)
    * @DateTime 2017-12-25T14:01:55+0800
@@ -308,19 +317,20 @@ class Userurl extends Controller
   }
   /**
    * @Author   杨成志(3115317085@qq.com)
-   * [share_link_list 分享下载链接列表]
+   * [share_link_list 分享注册邀请链接列表]
    * @return [type] [description]
    */
   public function share_link_list(){
-    $list = Share::sharelist();
+    $list = Share::all();
     $this->assign("list",$list);
     return view("api/logic/share_link_list");
   }
   /**
    * @Author   杨成志(3115317085@qq.com)
-   * [share_link 分享下载链接]
+   * [share_link 推广分享页]
    * @return [type] [description]
    */
   public function share_link(){
     return view("api/logic/share_link");
-  }}
+  }
+}

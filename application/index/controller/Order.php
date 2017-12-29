@@ -68,7 +68,10 @@ class Order extends Common{
 	 }
 	 #审核提现列表
 	 public function toexminewithdraw(){
-	 	
+	 	if($_POST){
+	 		
+	 	}
+	 	$this->assign("id",input("id"));
 	 	return view("admin/order/toexminewithdraw");
 	 }
 }

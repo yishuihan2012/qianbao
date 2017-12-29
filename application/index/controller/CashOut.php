@@ -183,7 +183,7 @@ class CashOut
 	            //'signature'	=> ,//对签名数据进行MD5加密的结果。参见3.1
 	      );
  	      $param=get_signature($arr,$this->passway_info->passageway_key);
-           $result=curl_post($this->passway_info->cashout->cashout_url,'post',$param);
+           $result=curl_post($this->passway_info->cashout->cashout_url,'post',$param,'Content-Type: application/x-www-form-urlencoded; charset=gbk');
            $data=json_decode(mb_convert_encoding($result, 'utf-8', 'GBK,UTF-8,ASCII'),true);
  		 if ($data['respCode'] == 00) {
 	           $order_result=$this->writeorder($tradeNo, $price, $price*($this->also->item_rate/100) ,$description,$data['traceno']);//写入套现订单

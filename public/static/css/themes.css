@@ -3,9 +3,9 @@
 .bg-color{background-color:#f0f3f5;}
 .bg-w{background-color:#fff;}
 .bg-table{background-color:#f7fafc;}
-.bg-blue{background-color:#1983d1;}
+.bg-blue{background-color:#24a1ff;}
 .bg-tint{background-color:#fff6ea;}
-.bg-tint-yellow{background-color:#f9bc38;;}
+.bg-tint-yellow{background-color:#f9bc38;}
 .bg-red{width:100%;height:10px;background-color:#ff4151;border-radius: 5px 5px 0 0;}
 .bg-gray{width:100%;height:10px;background-color:#999999;border-radius: 5px 5px 0 0;}
 /*标题文字*/
@@ -14,8 +14,8 @@
 .normal-color{color:#666;}
 /*辅助性、失效文字*/
 .invalid-color{color:#999;}
-.blue-color{color:#1983d1;font-weight:bold;}
-.blue-color-th{color:#1983d1;}
+.blue-color{color:#24a1ff;font-weight:bold;}
+.blue-color-th{color:#24a1ff;}
 .yellow-color{color:#f9bc38;}
 .pro-yellow-color{color:#d69c35;}
 .tint-yellow-color{color:#fbecd2;}
@@ -30,7 +30,7 @@
 	display:inline-block;
 	font-size:14px;
 	padding:3px;
-	background-color:#1983d1;
+	background-color:#24a1ff;
 	color:#fff;
 	font-weight:bold;
 }
@@ -68,7 +68,7 @@
 	width:100%;
 	height:50px;
 	line-height:50px;
-	background-color:#1983d1;
+	background-color:#24a1ff;
 	color:#fff;
 	text-align:center;
 }
@@ -79,7 +79,7 @@
 	height:50px;
 	line-height:50px;
 	border-radius:2%;
-	background-color:#1983d1;
+	background-color:#24a1ff;
 	color:#fff;
 	text-align:center;
 }
@@ -89,7 +89,7 @@
 	height:50px;
 	line-height:50px;
 	border-radius:5px;
-	background-color:#1983d1;
+	background-color:#24a1ff;
 	color:#fff;
 	text-align:center;
 }
@@ -100,7 +100,7 @@
 	height:50px;
 	line-height:50px;
 	border-radius:2%;
-	background-color:#1983d1;
+	background-color:#24a1ff;
 	color:#fff;
 	text-align:center;
 }
@@ -110,7 +110,7 @@
 	height:50px;
 	line-height:50px;
 	border-radius:5px;
-	background-color:#1983d1;
+	background-color:#24a1ff;
 	color:#fff;
 	text-align:center;
 }

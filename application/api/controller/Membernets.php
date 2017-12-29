@@ -13,6 +13,7 @@
  use app\index\model\Passageway;
  use app\index\model\System;
  use app\index\model\MemberNet;
+ use app\index\model\PassagewayItem;
 
  class Membernets{ 
       public $error;
@@ -52,6 +53,7 @@
       **/
       public function quickNet()
       {
+          $memberAlso=PassagewayItem::where(['item_group'=>$this->member->member_group_id,'item_passageway'=>$this->passway->passageway_id])->value('item_rate');
            $arr=array( 
                  'accountName' => $this->membercard->card_name,//账户户名，采用URLEncode编码
                  'accountno'      => $this->membercard->card_bankno,//结算账号，不能重复
@@ -63,7 +65,7 @@
                  'bankno'           => $this->membercard->card_bank_lang,//开户行支行联行号，例如310305500198。所支持银行参见码表
                  'bizLicense'      => System::getName('business_license'),//商户营业执照
                  'city'                 => "370100:济南" ,// 同上
-                 'd0Rate'           => System::getName('charge_t0'),//小数点后四位，例如0.0035 D0费率
+                 'd0Rate'           => $memberAlso/100,//小数点后四位，例如0.0035 D0费率
                  'email'              => System::getName('platform_email'), //email
                  'fullName'         => $this->membercard->card_name.rand(1000,9999), //商户全称 采用URLEncode编码
                  'identityCard'   => $this->membercard->card_idcard,//银行预留身份证号
@@ -75,7 +77,7 @@
                  't1Rate'           => System::getName('charge_t1'), //小数点后四位，例如0.0035
                  'version'            => "v1.2",//接口固定版本号
            );
-           dump($arr);
+           //dump($arr);
            $param=get_signature($arr,$this->passway->passageway_key);
            //dump($param);
            $result=curl_post("http://api.ekbuyclub.com:6001/quick.do?m=registermerch",'post',$param,'Content-Type: application/x-www-form-urlencoded; charset=gbk');
@@ -109,7 +111,7 @@
                  'idcardno'            =>$this->membercard->card_idcard,
                  //'address'             =>
            );
-           dump($arr);
+           //dump($arr);
            $passParam=urlsafe_b64encode(AESencode(json_encode($arr),$this->passway->passageway_pwd_key,$this->passway->passageway_pwd_key));
            $array=array(
                  'appid'      =>$this->passway->passageway_mech, //APPID

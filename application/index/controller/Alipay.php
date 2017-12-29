@@ -40,17 +40,17 @@ use app\index\model\CallbackLog as CallbackLogs;
       {
            try {
                  $request = new \AlipayTradeAppPayRequest();
-                 $bizcontent = "{\"body\":\"".$order['projects']['project_name']."\","
-                      . "\"subject\": \"".$order['projects']['project_name']."\","
-                      . "\"out_trade_no\": \"".$order['order_no']."\","
+                 $bizcontent = "{\"body\":\"".$order['upgrade_bak']."\","
+                      . "\"subject\": \"".$order['upgrade_bak']."\","
+                      . "\"out_trade_no\": \"".$order['upgrade_no']."\","
                       . "\"timeout_express\": \"".Config::get('alipay.timeout_express')."\","
-                      . "\"total_amount\": \"".($order['order_total_amount'])."\"," //支付宝支付 单位为 元
+                      . "\"total_amount\": \"".($order['upgrade_money'])."\"," //支付宝支付 单位为 元
                       . "\"product_code\":\"".Config::get('alipay.product_code')."\""
                       . "}";
                  $request->setNotifyUrl(Config::get('alipay.notify_url'));
                  $request->setBizContent($bizcontent);
                  $response = $this->aop->sdkExecute($request);
-                 return ['code'=>200,'data'=>$response];
+                 return $response;
            } catch (\Exception $e) {
                  return ['code'=>344];
            }
@@ -166,7 +166,7 @@ use app\index\model\CallbackLog as CallbackLogs;
                       'app_id'        =>Config::get('alipay.app_id'),
                  ];
                  $sign =   $this->aop->generateSign($sign_data);
-                 $sign_data['sign_type']  = "RSA";
+                 $sign_data['sign_type']  = "RSA2";
                  $sign_data['sign']  = $sign;
                  $sign_content = $this->aop->getSignContentUrlencode($sign_data);
                  if (!$sign_content || !$sign)

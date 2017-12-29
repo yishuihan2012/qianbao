@@ -53,7 +53,7 @@
      	 *  @param     ☆☆☆::使用中
        **/
       public function validation()
-      {	         
+      {
            #验证器验证 验证参数合法性
            $validate = Loader::validate('Membervalidation');
            #如果验证不通过 返回错误代码 及提示信息
@@ -293,6 +293,12 @@
                  return ['code'=>352];
            if($card_validate['result']['result']=='N')
                  return ['code'=>353];
+
+            #修改入网信息M03修改结算卡信息
+            $membernetObject=new Membernetsedit($this->param['uid'],'','M03',$this->param['card_bankno'],$this->param['card_phone'],$cashcard['card_idcard']);
+            #返回00为修改成功
+            if($membernetObject['respCode']!='00')
+                return ['code'=>435];
 
            $result=MemberCashcard::where('card_member_id='.$this->param['uid'])->update($card);
            if($result===false)

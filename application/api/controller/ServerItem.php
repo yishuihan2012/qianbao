@@ -36,7 +36,7 @@
                  foreach ($model as $key => $value) {
                        $data[$key]['serviceName']=$value['item_name'];
                        $data[$key]['serviceIcon']=$value['item_icon'];
-                       $data[$key]['serviceItems']=ServiceItemList::where('list_state','1')->order('list_weight','asc')->select();
+                       $data[$key]['serviceItems']=ServiceItemList::where(['list_state'=>'1','list_item_id'=>$value['item_id']])->order('list_weight','asc')->limit(6)->select();
                  }
                   return ['code'=>200, 'msg'=>'获取成功~', 'data'=>$data];
            } catch (\Exception $e) {

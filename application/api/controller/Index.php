@@ -5,7 +5,8 @@
  * @version $Bill$
  */
  namespace app\api\controller;
- use think\Config;
+  use app\index\model\Member as Members;
+use think\Config;
  use think\Request;
  use think\Exception;
  use think\Loader;
@@ -13,7 +14,6 @@
  Class Index{
  	 public function index(Request $Request)
  	 {
-    // var_dump($Request);die;
  	 	 try{
  	 	 	 #判断请求方式
  	 	 	 if(!$Request->isPost())
@@ -66,5 +66,9 @@
            if ($data)
                  $data=$this->encryption_data($data);
            return json_encode(['code'=>$code, 'msg'=>$msg, 'data'=>$data]);
+      }
+      #测试用
+      public function test(){
+        return 1;
       }
  }

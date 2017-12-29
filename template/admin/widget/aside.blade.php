@@ -5,6 +5,14 @@
 
         <li class="dashboard"><a href="#"><i class="0icon icon-dashboard"></i> 控制面板</a></li>
 
+        <li class="nav-parent model-manager">
+                 <a href="#"><i class="0icon icon-list"></i> 自定义模块</a>
+                 <ul class="nav">
+                        <li class="model-list"><a href="{{url('/index/server_model/index')}}"><i class="icon icon-sliders"></i> 模块列表</a></li>
+                        <li class="model-server"><a href="{{url('/index/server_model/service_list')}}"><i class="icon icon-sliders"></i> 服务列表</a></li>
+                 </ul>
+        </li>
+
         <li class="nav-parent article-manager">
             <a href="#"><i class="0icon icon-list"></i> 文章管理</a>
             <ul class="nav">
@@ -18,6 +26,7 @@
             <ul class="nav">
                 <li class="generalize"><a href="{{url('/index/generalize/index')}}"> 素材列表</a></li>
                 <li class="generalize_share"><a href="{{url('/index/generalize/share')}}"> 分享列表</a></li>
+                 <li class="generalize_share"><a href="{{url('/index/generalize/exclusive_list')}}"> 专属列表</a></li>
             </ul>
         </li>
         <li class="nav-parent bank-manager">

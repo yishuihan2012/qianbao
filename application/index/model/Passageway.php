@@ -36,7 +36,7 @@ class Passageway extends Model{
       }
 
       #关联模型 一对一关联 (rate) 关联费率表
-      public function rate()
+      public function passagewayitem()
       {
            return $this->hasOne('PassagewayItem','item_passageway','passageway_id')->setEagerlyType(0);
       }

@@ -13,6 +13,7 @@
  use app\index\model\SmsLog as SmsLogs;
  use app\index\model\Member as Members;
   use app\index\model\System;
+  use app\api\controller as con;
 
  //-----------------------------------------------------------
  // @version  验证手机号格式
@@ -687,5 +688,18 @@
       );
       return $arr;
     }
-
+    //极光推送  指定用户单条推送
+    // uid 用户id   title 标题  content 内容  [item 链接]
+    function jpush($uid=null,$title=null,$content=null,$item=null){
+      $jpush=new con\Push();
+      if($uid && $title && $content){
+        $member_token=Members::get($uid)->value('member_token');
+        $jpush->set_message_title($title);
+        $jpush->set_registration_id($member_token);
+        $jpush->set_message_sort_desc($content);
+        $jpush->set_message_info_type(2);
+        if($item)$jpush->set_message_info_item($item);
+        return $jpush->sign_push();
+      }
+    }
 

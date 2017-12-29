@@ -31,6 +31,12 @@ class ServiceItemList extends Model{
       #关联模型 一对一关联 (ArticleData) 关联文章内容表
       public function serverItem()
       {
-           return $this->belongsTo('ServiceItem','item_id','list_item_id');
+           return $this->belongsTo('ServiceItem','list_item_id','item_id')->bind('item_id','item_name');
+      }
+      
+      #查找自定义服务列表模型
+      public static function info($data = 0){
+           $where['list_item_id'] = $data;
+           return $list = Db::table("wt_service_item_list")->where($where)->select();
       }
 }

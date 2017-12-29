@@ -21,6 +21,7 @@
  use app\index\model\MemberCashcard;
  use app\index\model\Passageway;
  use app\index\model\PassagewayItem;
+ use app\index\model\BankIdent;
  use app\index\model\SmsCode as SmsCodes;
 
  class MemberCertCard 
@@ -122,6 +123,8 @@
               }
                  $card=MemberCreditcard::where("card_bankno={$this->param['creditCardNo']}")->find();
                 if(empty($card)){
+                  $ident_code=substr($this->param['creditCardNo'],0,6);
+                  $ident_icon=BankIdent::where(['ident_code'=>$ident_code])->value('ident_icon');
                    #写入信用卡表
                    $member_cashcard=new MemberCreditcard([
                         'card_member_id'=>$this->param['uid'],
@@ -137,6 +140,7 @@
                         'bindId' => $income['bindId'],
                         'bindStatus' => $income['bindStatus'],
                         'mchno' => $passageway['passageway_mech'],
+                        'card_bankicon' => $ident_icon,
                         'card_state'  => 0,
                         // 'card_return' =>json_encode($card_validate),
                    ]);

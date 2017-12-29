@@ -333,8 +333,8 @@ return [
         'Weipay'     =>"微信",
     ],
     "jpush"      =>[ //推送信息
-        'api_key'       =>"b78bcc163c81e82ca83034b8",
-        'api_master'     =>"8911874d22e162bc86c48f29",
+        'api_key'       =>"7d4ac5734cd932f101a64aa5",
+        'api_master'     =>"153d5507fc2f6869509b6d80",
     ],
     'page_size'             =>  '10', // 默认每页大小
     'default_groups'        =>  1,//默认用户组（管理员）
@@ -357,7 +357,7 @@ return [
         'sign_type'    =>"RSA2",
         'format'       =>"json",
         'timeout_express' =>"30m",
-        'notify_url'       =>"http://gongke.iask.in:21339/index/Alipay/callback",
+        'notify_url'       =>"http://gongke.iask.in:21339/index/Alipaycallback/callback",
         'login_url'       =>"http://gongke.iask.in:21339/api/Alipay/users",
         'product_code'    =>"QUICK_MSECURITY_PAY",
         'pid'             =>"2088421433746925",

@@ -33,7 +33,7 @@
       </div>
     @endforeach 
   </div>
- 
+  {!! $share->render() !!}
 </div>
 
 </section>

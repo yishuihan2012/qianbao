@@ -33,4 +33,35 @@ class ServiceItem extends Model{
       {
            return $this->hasOne('ServiceItemList','list_item_id','item_id');
       }
+      
+      #删除模块
+      public static function remove($data = 0){
+        $where['item_id'] = $data;
+        //查询图片地址
+        $url = Db::table("wt_service_item")->where($where)->find();
+        //图片是多图分割成数组
+        //删除数据
+        if(Db::table("wt_service_item")->where($where)->delete()){
+            @unlink(".".$url['item_icon']);
+          return true;
+        }else{
+          return false;
+        }
+      }
+
+      public static function info($data){
+        $where['item_id'] = $data;
+        //查询图片地址
+        return $info = Db::table("wt_service_item")->where($where)->find();
+      }
+
+      public static function saves($data = ''){
+         $where['item_id'] = $data['item_id'];
+        //查询图片地址
+        $info = Db::table("wt_service_item")->where($where)->find();
+        if($data['item_icon']){
+          @unlink(".".$info['item_icon']);
+        }
+        return Db::table("wt_service_item")->where($where)->update($data);
+      }
 }

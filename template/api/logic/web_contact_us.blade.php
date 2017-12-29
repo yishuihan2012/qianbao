@@ -67,8 +67,13 @@
 		    	//点击复制微信号码
 		    	document.getElementById('wexNumber002').addEventListener('tap',function(){
 		    		var wexNum = document.getElementById('wexNumber002').getAttribute('tel');
-		    		 window.webkit.messageHandlers.copyArticle.postMessage(wexNum);
+		    		if (/(iPhone|iPad|iPod|iOS)/i.test(navigator.userAgent)) {  //判断iPhone|iPad|iPod|iOS
+		    		 	window.webkit.messageHandlers.copyArticle.postMessage(wexNum);
+		    		}else{
+		    			// alert();
+		    			android.copyArticle(tel);
 		    		 //复制成功后提示  “内容已复制到粘贴板”
+		    		}
 		    	});
 		    	//qq客服
 		    	document.getElementById('qqService002').addEventListener('tap',function(){
@@ -81,9 +86,9 @@
 	                    if (e.index == 1) {
 	                        var tel=document.getElementById('telPhone002').getAttribute('tel');
 				            if (/(iPhone|iPad|iPod|iOS)/i.test(navigator.userAgent)) {  //判断iPhone|iPad|iPod|iOS
-				                 window.webkit.messageHandlers.drialPhone.postMessage(tel);
+				                 window.webkit.AndroidMessage.drialPhone.postMessage(tel);
 				            } else if (/(Android)/i.test(navigator.userAgent)) {   //判断Android
-				                 window.AndroidMessage.call(tel);
+				                 android.drialPhone(tel);
 				            }
 	                    }
 	                });
@@ -95,9 +100,9 @@
                     if (e.index == 1) {
                         var tel=document.getElementById('telPhone003').getAttribute('tel');
 			            if (/(iPhone|iPad|iPod|iOS)/i.test(navigator.userAgent)) {  //判断iPhone|iPad|iPod|iOS
-			                 window.webkit.messageHandlers.drialPhone.postMessage(tel);
+			                 window.webkit.AndroidMessage.drialPhone.postMessage(tel);
 			            } else if (/(Android)/i.test(navigator.userAgent)) {   //判断Android
-			                 window.AndroidMessage.call(tel);
+			                 android.drialPhone(tel);
 			            }
                     }
                   });

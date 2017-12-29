@@ -15,8 +15,8 @@
 				@foreach($list as $k => $v)
 					<li class="fl">
 					  <a href="share_link.html">
-						<div ><img src="{{$v['share_thumb']}}"></div>
-						<p class="f14 fc">{{$v['share_title']}}</p>
+						<div ><img src="{{$v['exclusive_thumb']}}"></div>
+						<p class="f14 fc">{{$v['exclusive_name']}}</p>
 					  </a>
 					</li>
 				@endforeach

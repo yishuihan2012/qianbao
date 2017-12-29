@@ -101,4 +101,15 @@ class Generalize extends Model{
         $info['arrImg'] = explode("#",$info['generalize_thumb']);
         return $info ;
       }
+      #修改素材详情
+      public static function saves($data){
+        $where['generalize_id'] = $data['generalize_id'];
+        $datas['generalize_title'] = $data['generalize_title'];
+        $datas['generalize_contents'] = $data['generalize_contents'];
+        if($data['generalize_thumb']){
+          $datas['generalize_thumb'] = $data['generalize_thumb'];
+        }
+         return Db::table("wt_generalize")->where($where)->update($datas);
+      }
 }
+

@@ -28,6 +28,8 @@
  use app\index\model\PassagewayItem;
  use app\index\model\Wallet;
  use app\index\model\Recomment;
+ use app\index\model\Commission;
+ use app\index\model\Upgrade;
  
  class Member 
  {
@@ -269,6 +271,10 @@
       **/ 
       public function level()
       {
+        $membernetObject=new Membernetsedit($this->param['uid'],'5','M03');
+       $a= $membernetObject->quickNet();
+        var_dump($a);die;
+
            if(!isset($this->param['targetLevelId']) || empty($this->param['targetLevelId']))
                  return ['code'=>448];
            $member=Members::get($this->param['uid']);
@@ -289,8 +295,24 @@
            $price_diff  =$member_group['group_level_money']-$currentgroup['group_level_money'];
            if($price_diff<0)
                  return ['code'=>453];
-           $data['signedStr']=$price_diff;
            $data['money']=$price_diff;
+
+           #插入到升级表
+           $params=array(
+            'upgrade_member_id'=>$this->param['uid'],
+            'upgrade_before_group'=>$member->member_group_id,
+            'upgrade_group_id'=>$this->param['targetLevelId'],
+            'upgrade_type'=>'Alipay',
+            'upgrade_no'=>make_order(),
+            'upgrade_money'=>$price_diff,
+            'upgrade_bak'=>'会员付费升级',
+            'upgrade_creat_time'=>date("Y-m-d H:i:s",time())
+           );
+           Upgrade::insert($params);
+
+           #支付宝支付
+           $Alipay=new \app\index\controller\Alipay();
+           $data['signedStr']=$Alipay->pay($params);
            return ['code'=>200, 'msg'=>'获取成功~', 'data'=>$data];
       }
 
@@ -306,9 +328,25 @@
                  return ['code'=>446];
            $member=Members::where('member_id', $this->param['uid'])->find();
            $member->member_token=$this->param['registrationId'];
+
            if($member->save()===false)
                  return ['code'=>447];
            return ['code'=>200, 'msg'=>'绑定成功~', 'data'=>'']; 
+      }
+
+       /**
+      *  @version edit_pwd method / Api 解绑会员推送设备
+      *  @author $bill$(755969423@qq.com)
+      *  @datetime    2017-12-13 09:03:05
+      *  @param uid=会员ID token=登录令牌 registrationId 设备ID  
+      **/ 
+      public function unbind_devince()
+      {
+           $member=Members::where('member_id', $this->param['uid'])->find();
+           $member->member_token='';
+           if($member->save()===false)
+                 return ['code'=>447];
+           return ['code'=>200, 'msg'=>'解绑成功~', 'data'=>'']; 
       }
 
       /**
@@ -505,12 +543,14 @@
       **/
       public function get_upgrade_price()
       { 
+        // var_dump("expression");die;
             #获取用户组等级信息
             $membergroup=MemberGroup::select();
             foreach ($membergroup as $key => $value) {
                 $data['group'][$key]['name']=$value['group_name'];
                 $data['group'][$key]['group_salt']=$value['group_salt'];
                 $data['group'][$key]['id']=$value['group_id'];
+                $data['group'][$key]['icon']=$value['group_thumb'];
                 $data['group'][$key]['group_level_money']=$value['group_level_money'];
                 $data['group'][$key]['price_desc']='普通会员升级到此用户组需要的价格';
                 $data['group'][$key]['group_url']=$value['group_url'];
@@ -522,7 +562,7 @@
                 if(!empty($passageway)){
                   $data['group'][$key]['rate']='刷卡费率：'.$passagewayItem['item_rate'].'% 代还费率：'.$passagewayItem['item_also'].'%';
                   $data['group'][$key]['des']=$passageway['passageway_desc'];
-                  $data['group'][$key]['icon']=$passageway['passageway_avatar'];
+                  $data['group'][$key]['icon']=$value['group_thumb'];
                 }
             }
             $member=Members::where('member_id='.$this->param['uid'])->find();
@@ -568,27 +608,28 @@
     {
         $payment=new \app\index\controller\Alipay();
         $return=$payment->get_sign(); //转账
-        return ['code'=>200, 'msg'=>'获取成功~', 'data'=>$return];
+        if($return['code']==200)
+            return ['code'=>200, 'msg'=>'获取成功~', 'data'=>['sign'=>$return['data']['sign']]];
     }
 
         /**
-   *  @version recomment_list method / Api 用户分润分佣明细列表
+   *  @version commission_list method / Api 用户分润分佣明细列表
    *  @author $bill$(755969423@qq.com)
    *  @datetime    2017-12-25 09:03:05
    *  @param   
       **/ 
-      public function recomment_list()
+      public function commission_list()
       {
           if(!isset($this->param['type']))
              $this->error=314;
 
-          $this->param['type'] ? $this->param['type'] : 1;
+          $this->param['type']=$this->param['type'] ? $this->param['type'] : 1;
            
-          $recomment=Recomment::with('member')->where('recomment_member_id='.$this->param['uid'].' and recomment_type='.$this->param['type'])->select();
-          if(!$recomment)
+          $Commission=Commission::with('member')->where('commission_member_id='.$this->param['uid'].' and commission_type='.$this->param['type'])->select();
+          if(!$Commission)
             return ['code'=>314];
 
-           return ['code'=>200, 'msg'=>'获取成功~', 'data'=>$recomment];
+           return ['code'=>200, 'msg'=>'获取成功~', 'data'=>$Commission];
       }
       
  }

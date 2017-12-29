@@ -86,4 +86,18 @@ class Logic extends Controller
   public function share_link(){
     return view("api/logic/share_link");
   }
+
+
+    /**
+   * @Author   杨成志(3115317085@qq.com)
+   * [share_link 新手指引]
+   * @return [type] [description]
+   */
+  public function user_guide(){
+    return view("api/web/share_link");
+  }
+  #新手指引
+  public function web_freshman_guide(){
+    return view("api/web/web_freshman_guide");
+  }
 }
