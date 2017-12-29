@@ -14,7 +14,7 @@
 			 <ul class="bg-w exc-code-list">
 				@foreach($list as $k => $v)
 				 <li class="fl">
-					 <a href="share_link.html"><div ><img src="{{$v['share_thumb']}}"></div><p class="f14 fc">{{$v['share_title']}}</p></a>
+					 <a href="share_link.html" s="{{$v['share_thumb']}}"><div ><img src="{{$v['share_thumb']}}"></div><p class="f14 fc">{{$v['share_title']}}</p></a>
 				 </li>
 				@endforeach
 			 </ul>
@@ -27,10 +27,12 @@
 	      var isiOS = !!u.match(/\(i[^;]+;( U;)? CPU.+Mac OS X/); //ios终端
 			mui.init();
 			mui('.exc-code-list').on('tap','a',function(){
+				var url="{{$url}}"+"/share_thumb/"+$(this).attr('s');
+				var title=$(this).find('p').html();
 		      if(!isAndroid){
-		        window.webkit.messageHandlers.shareUrl.postMessage("");
+		        window.webkit.messageHandlers.shareUrl.postMessage(url,title);
 		      }else{
-		        android.shareUrl("");
+		        android.shareUrl(url,title);
 		      }
 		    });
 		</script>

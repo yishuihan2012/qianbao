@@ -18,7 +18,7 @@
             <ul class="nav">
                 <li class="articles"><a href="<?php echo e(url('/index/article/index')); ?>"> 文章列表</a></li>
                 <li class="articles_category"><a href="<?php echo e(url('/index/article_category/index')); ?>"> 分类管理</a></li>
-            <li class="articles_category"><a href="<?php echo e(url('/index/article/memberNovice')); ?>"> 新手指引</a></li>
+                <li class="new_zhiyin"><a href="<?php echo e(url('/index/article/memberNovice')); ?>"> 新手指引</a></li>
             </ul>
         </li>
 

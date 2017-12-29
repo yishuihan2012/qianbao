@@ -11,17 +11,20 @@
 		<link href="/static/css/page.css" rel="stylesheet" />
 	</head>
 	<body>
-		<div class="mui-content bg-w wrap bor-bot" style="background-image: url({{$img}});">
+		<div class="mui-content bg-w wrap bor-bot" style="background-image: url({{$share_thumb}});">
 			<a class="btn" href="{{$url}}">立即注册</a>
 		</div>
 		<script src="/static/js/mui.min.js"></script>
 		<script type="text/javascript">
+	      var u = navigator.userAgent;
+	      var isAndroid = u.indexOf('Android') > -1 || u.indexOf('Adr') > -1; //android终端
+	      var isiOS = !!u.match(/\(i[^;]+;( U;)? CPU.+Mac OS X/); //ios终端
 			mui.init();
 			mui.ready(function(){
 				var _h =  window.screen.availHeight;
-				document.getElementById("shareLink").style.height = _h - 150 +"px";
+				// document.getElementById("shareLink").style.height = _h - 150 +"px";
 				//分享二维码
-				document.getElementById('shareCode').addEventListener('tap',function(){
+				// document.getElementById('shareCode').addEventListener('tap',function(){
 					
 				});
 			});

@@ -17,6 +17,10 @@ use app\index\model\Exclusive;
 use app\index\model\Recomment;
 use app\index\model\Announcement;
 use app\index\model\MemberNovice; 
+use app\index\model\Passageway; 
+use app\index\model\PassagewayItem; 
+use app\index\model\MemberGroup; 
+use app\index\model\MemberRelation; 
 /**
  *  此处放置一些固定的web地址
  */
@@ -330,6 +334,10 @@ class Userurl extends Controller
    * @return [type] [description]
    */
   public function share_link_list(){
+	$this->checkToken();
+	$phone=Members::get($this->param['uid'])->value('member_mobile');
+	$url='http://'.$_SERVER['HTTP_HOST'].'/api/userurl/gotoregister/recomment/'.$phone;
+	$this->assign('url',$url);
     $list = Share::all();
     $this->assign("list",$list);
     return view("api/logic/share_link_list");
@@ -340,15 +348,47 @@ class Userurl extends Controller
    * @return [type] [description]
    */
   public function share_link(){
+	$this->checkToken();
+	$phone=Members::get($this->param['uid'])->value('member_mobile');
+	$url='http://'.$_SERVER['HTTP_HOST'].'/api/userurl/register/recomment/'.$phone;
+	$this->assign('url',$url);
     return view("api/logic/share_link");
   }
   #分享的注册页 只有一个按钮的那个
   public function gotoregister(){
-  	return $this->fetch();
+  	$url='http://'.$_SERVER['HTTP_HOST'].'/api/userurl/register/recomment/'.$this->param['recomment'];
+	$this->assign('url',$url);
+	$this->assign('share_thumb',$this->param['share_thumb']);
+  	return view("Userurl/gotoregister");
   }
   #费率说明
   public function my_rates(){
-  	return $this->fetch();
+  	 $group=MemberGroup::select();
+           $data['totalChildAmount']=0;
+           foreach ($group as $key => $value) {
+             $data['list'][$key]['levelName']=$value['group_name'];
+             $MemberRelation_1rd=MemberRelation::where("relation_parent_id={$this->param['uid']}")->select();
+             foreach ($MemberRelation_1rd as $k => $val) {
+                $member[$k]=Members::with('membergroup')->where('member_id='.$val['relation_member_id'])->find();
+                if($member[$k]['group_id']==$value['group_id']){
+                  $data['list'][$key]['childAmount']+=1;
+                } 
+
+                $member_2rd[$k]=MemberRelation::where('relation_parent_id='.$member[$k]['member_id'])->select();
+                foreach ($member_2rd[$k] as $k1 => $val1) {
+                    $member_3rd[$k1]=Members::with('membergroup')->where('member_id='.$val1['relation_member_id'])->find();
+                    if($member_3rd[$k1]['group_id']==$value['group_id']){
+                    $data['list'][$key]['grandChildAmount']+=1;
+                  } 
+                }
+
+             }
+
+             $data['list'][$key]['grossChildAmount']=$data['list'][$key]['grandChildAmount']+$data['list'][$key]['childAmount'];
+             #总人数
+             $data['totalChildAmount']+=$data['list'][$key]['grossChildAmount'];
+           }
+  	return view("api/Userurl/my_rates");
   }
   #盈利模式说明
   public function explain(){

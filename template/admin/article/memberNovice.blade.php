@@ -43,8 +43,8 @@
 <script type="text/javascript">
 $(document).ready(function(){
      	 $('.menu .nav .active').removeClass('active');
-    	 $('.menu .nav li.model-server').addClass('active');
-    	 $('.menu .nav li.model-manager').addClass('show');
+    	 $('.menu .nav li.new_zhiyin').addClass('active');
+    	 $('.menu .nav li.article-manager').addClass('show');
     $(".freezing").click(function(){
     	var id = $(this).attr('data-id');
     	var explain = $(this).attr('explain');

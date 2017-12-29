@@ -19,7 +19,7 @@
 @endif
 
 <div class="row">
-	 <form action="{{url('article/noviceCreat')}}" method="post" class="form-horizontal" id="myform">
+	 <form action="{{url('index/article/noviceCreat')}}" method="post" class="form-horizontal" id="myform">
 		 <div class="row form-group">
 			<label for="article_title" class="col-sm-2 text-right"><b>文章标题:</b></label>
 			<div id="article_title" class="col-sm-6"><input type="text" class="form-control article_title" name="article_title" placeholder="novice_name" value="{{ $article['article_title'] or ''}}"></div>
@@ -43,7 +43,7 @@
 </div>
 <!--dialog Button-->
 <div class="row">
-	<div class="col-sm-4 text-right"><button type="submit" class="btn btn-primary">保存</button></div>
+	<div class="col-sm-4 text-right"><button type="submit" class="btn btn-primary save">保存</button></div>
 	<div class="col-sm-4 text-left"><button type="button" class="btn goHistory">返回</button></div>
 </div>
 <!--Kingedit脚本-->
@@ -54,22 +54,12 @@ $(document).ready(function(){
     $('.menu .nav li.newslist').addClass('active');
     $('.menu .nav li.articles-manager').addClass('show');
     //获取二级分类
-	$("select[name='article_parent']").change(function(){
-	      var id=$(this).val();
-	      $("select[name='article_category'] option:not(:first)").remove();
-	      if(id!=0){
-		    	 $.post("{{url('/index/article/getCategory')}}",{id:id},function(data){
-	                $.each(data,function(n,value) {
-	                	$("select[name='article_category']").append("<option value='"+value.category_id+"'>"+value.category_name+"</option>");
-	                });
-			 },'json');
-	      }
-	})
 	$(".save").click(function(){
-		if(!$(".article_title").val()){
+		alert('123');
+/*		if(!$(".article_title").val()){
 			$(".article_title").parent().addClass("has-error");
 			return false;
-		}
+		}*/
 		html = editor.html();
 		// 同步数据后可以直接取得textarea的value
 		editor.sync();

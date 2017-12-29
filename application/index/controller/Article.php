@@ -143,30 +143,29 @@ class Article extends Common{
 	 	$category_list=ArticleCategorys::where('category_parent', Request::instance()->param('id'))->select();
 	 	echo json_encode($category_list);
 	 }
+
 	 #新手指引
 	 public function memberNovice(){
-
 	 	 $MemberNovice=MemberNovice::paginate(Config::get('page_size'), false, ['query'=>Request::instance()->param()]);
-	 	 $this->assign('button', ['text'=>'新增文章', 'link'=>url('/index/article/noviceCreat')]);
+	 	 $this->assign('button', ['text'=>'新增指引', 'link'=>url('/index/article/noviceCreat')]);
 	 	 $this->assign('MemberNovice',$MemberNovice);
-	 	
 	 	 return view('admin/article/memberNovice');
 	 }
-	#新增新手指引
-	public function noviceCreat(){
-	 	if(Request::instance()->isPost()){
 
+	 #新增新手指引
+	 public function noviceCreat(){
+	 	 if(Request::instance()->isPost()){
+	 	 	dump("!23");
 	 		 $MemberNovice = new MemberNovice($_POST);
 			 $result = $MemberNovice->allowField(true)->save();
-
 			 #数据是否提交成功
 			 $content = ($result===false) ? ['type'=>'error','msg'=>'添加失败'] : ['type'=>'success','msg'=>'添加成功'];
 			 Session::set('jump_msg', $content);
 			 #重定向控制器 跳转到列表页
 			 $this->redirect('/index/article/memberNovice');die;
-	 	}
-	 	return view('admin/article/noviceCreat');
-	}
+	 	 }
+	 	 return view('admin/article/noviceCreat');
+	 }
 	/**
 	 * [noviceRemove 删除新手指引]
 	 * @return [type] [description]
