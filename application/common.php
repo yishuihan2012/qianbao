@@ -631,12 +631,7 @@
     //米刷
     function getSign($data,$signkey='')
     {
-        #4 拼接字符串
-        // if(!$signkey){
-            // $str = $data . $signkey;
-        // }else{
-             $str = $data .$signkey;
-        // }       
+        $str = $data .$signkey;
         #5 md5加密
         $md5 = md5($str);
         #6 转成大写

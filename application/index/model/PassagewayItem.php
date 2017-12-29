@@ -32,7 +32,13 @@ class PassagewayItem extends Model{
       #关联模型 一对一关联 (group) 关联用户组表
       public function group()
       {
-           return $this->hasOne('Member','member_group_id','item_group')->setEagerlyType(0);
+           return $this->belongsTo('MemberGroup','item_group','group_id')->setEagerlyType(0);
+      }
+
+      #关联模型 一对一关联 (group) 反向关联 关联通道表
+      public function passageway()
+      {
+           return $this->belongsTo('Passageway','item_passageway','passageway_id')->setEagerlyType(0);
       }
 
 }

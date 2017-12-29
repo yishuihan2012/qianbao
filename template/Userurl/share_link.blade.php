@@ -26,7 +26,7 @@
 					var url="{{$url}}";
 					var title='注册链接';
 				      if(!isAndroid){
-				        window.webkit.messageHandlers.shareUrl.postMessage(url,title);
+				        window.webkit.messageHandlers.shareUrl.postMessage([url,title]);
 				      }else{
 				        android.shareUrl(url,title);
 				      }

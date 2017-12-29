@@ -118,7 +118,9 @@
  	 	 	 }else{
  	 	 	 	 $member_fatherAlsoMoney=$price*(($member_also-$member_fatherAlso)/100);
  	 	 	 	 $leftmoney+=$member_fatherAlsoMoney;
- 	 	 	 	 $father_result=$this->commissionOrder($memberId,$member_faterId,$member_fatherAlsoMoney,1,$desction."-直接分润:邀请的".$memberInfo['member_nick'].$action."成功,获得收益".$member_fatherAlsoMoney."元~");
+ 	 	 	 	 $str=$desction."-直接分润:邀请的".$memberInfo['member_nick'].$action."成功,获得收益".$member_fatherAlsoMoney."元~";
+ 	 	 	 	 $father_result=$this->commissionOrder($memberId,$member_faterId,$member_fatherAlsoMoney,1,$str);
+ 	 	 	 	 jpush($member_faterId,'分润收益到账提醒~',$str);
  	 	 	 }
  	 	 }
  	 	 if(!$father_result)
@@ -148,7 +150,9 @@
  	 	 	 } else{
 	 	 	 	 $member_grandFatherAlsoMoney=$price*(($member_fatherAlso-$member_grandFatherAlso)/100);
 	 	 	 	 $leftmoney+=$member_grandFatherAlsoMoney;
-	 	 	 	 $grandResult=$this->commissionOrder($memberId,$member_grandFaterId,$member_grandFatherAlsoMoney,1,$desction."-间接分润:邀请的".$memberInfo['member_nick'].$action."成功,获得收益".$member_grandFatherAlsoMoney."~");
+	 	 	 	 $str1=$desction."-间接分润:邀请的".$memberInfo['member_nick'].$action."成功,获得收益".$member_grandFatherAlsoMoney."元~";
+	 	 	 	 $grandResult=$this->commissionOrder($memberId,$member_grandFaterId,$member_grandFatherAlsoMoney,1,$str1);
+	 	 	 	  jpush($member_grandFaterId,'分润收益到账提醒~',$str1);
  	 	 	 }
  	 	 }
  	 	 if(!$grandResult)
@@ -180,7 +184,9 @@
  	 	 	 }else{
  	 	 	 	 $member_endFatherAlsoMoney=$price*(($smallAlso-$member_endFatherAlso)/100);
  	 	 	 	 $leftmoney+=$member_endFatherAlsoMoney;
- 	 	 	 	 $endFather_result=$this->commissionOrder($memberId,$member_endFatherId,$member_endFatherAlsoMoney,1,$desction."-三级分润:邀请的".$memberInfo['member_nick'].$action."成功,获得收益".$member_endFatherAlsoMoney."元~");
+ 	 	 	 	 $str2=$desction."-三级分润:邀请的".$memberInfo['member_nick'].$action."成功,获得收益".$member_endFatherAlsoMoney."元~";
+ 	 	 	 	 $endFather_result=$this->commissionOrder($memberId,$member_endFatherId,$member_endFatherAlsoMoney,1,$str2);
+ 	 	 	 	  jpush($member_endFatherId,'分润收益到账提醒~',$str2);
  	 	 	 }
  	 	 }
  	 	 if(!$endFather_result)

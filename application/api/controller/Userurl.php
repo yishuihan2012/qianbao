@@ -67,7 +67,7 @@ class Userurl extends Controller
 		//获取当前手机号
 		$tel=Members::get($this->param['uid'])->value('member_mobile');
 		//推广连接
-		$url='http://gongke.iask.in:21339/api/userurl/register/recomment/'.$tel;
+		$url='http://'.$_SERVER['HTTP_HOST'].'\api\userurl\register\recomment\\'.$tel;
 		//背景图片ID
 		$exclusive_id=$this->param['exclusive_id'];
 		//若已经生成过
@@ -97,9 +97,9 @@ class Userurl extends Controller
 			imagepng($bg, 'autoimg\qrcode_'.$exclusive_id.'_'.$tel.'.png'); 
 		}
 		//返回图片地址
-		$url='http://'.$_SERVER['HTTP_HOST'].'/autoimg/qrcode_'.$exclusive_id.'_'.$tel.'.png';
+		$url='http://'.$_SERVER['HTTP_HOST'].'\autoimg\qrcode_'.$exclusive_id.'_'.$tel.'.png';
 		$this->assign('url',$url);
-		return $this->fetch('Userurl/exclusive_code');
+	  	return view("Userurl/exclusive_code_detail");
 	}
 	/**
 	 * @Author   Star(794633291@qq.com)
@@ -109,7 +109,7 @@ class Userurl extends Controller
 	 */
 	public function repayment_plan_list(){
 		$this->checkToken();
-		return $this->fetch();
+	  	return view("Userurl/repayment_plan_list");
 	}
 	/**
 	 * @Author   Star(794633291@qq.com)
@@ -119,7 +119,7 @@ class Userurl extends Controller
 	 */
 	public function repayment_history(){
 		$this->checkToken();
-		return $this->fetch();
+	  	return view("Userurl/repayment_history");
 	}
 	/**
 	 * @Author   Star(794633291@qq.com)
@@ -129,7 +129,7 @@ class Userurl extends Controller
 	 */
 	public function repayment_plan_detail(){
 		$this->checkToken();
-		return $this->fetch();
+	  	return view("Userurl/repayment_plan_detail");
 	}
 	/**
 	 * @Author   Star(794633291@qq.com)
@@ -139,7 +139,7 @@ class Userurl extends Controller
 	 */
 	 public function notify(){
 		 $this->checkToken();
-		 return $this->fetch();
+	  	return view("Userurl/notify");
 	 }
 	/**
 	 * @Author   Star(794633291@qq.com)
@@ -151,7 +151,7 @@ class Userurl extends Controller
 		$this->checkToken();
 		$Announcement=Announcement::all(['announcement_status'=>1]);
 		$this->assign('announcement',$Announcement);
-		return $this->fetch();
+	  	return view("Userurl/notify_list");
 	}
 	/**
 	 * @Author   Star(794633291@qq.com)
@@ -164,7 +164,7 @@ class Userurl extends Controller
 		$this->checkToken();
 		$Announcement=Announcement::get($id);
 		$this->assign('announcement',$Announcement);
-		return $this->fetch();
+	  	return view("Userurl/notify_list_detail");
 	}
 	/**
 	 * @Author   Star(794633291@qq.com)
@@ -217,7 +217,7 @@ class Userurl extends Controller
 			$data[$i++]['order_update_time']=$v['order_update_time'];
 		}
 		$this->assign('data',$data);
-		return $this->fetch();
+	  	return view("Userurl/deal_list");
 	}
 	/**
 	 * @Author   Star(794633291@qq.com)
@@ -238,7 +238,7 @@ class Userurl extends Controller
 		}
 		//Todo 对应事件数据 被推荐用户  操作
 		$this->assign('data',$data);
-		return $this->fetch();
+	  	return view("Userurl/welfare_list");
 	}
 	/**
 	 * @Author   Star(794633291@qq.com)
@@ -260,7 +260,7 @@ class Userurl extends Controller
 		if(!$recommentid)
 			return 'recomment telephone isnt exist';
 		$this->assign('tel',$recomment);
-		return $this->fetch();
+	  	return view("Userurl/register");
 	}
 	/**
 	 * @Author   Star(794633291@qq.com)
@@ -269,7 +269,7 @@ class Userurl extends Controller
 	 * @return   [type]
 	 */
 	public function download(){
-		return $this->fetch();
+	  	return view("Userurl/download");
 	}
 
   /**
@@ -363,36 +363,40 @@ class Userurl extends Controller
   }
   #费率说明
   public function my_rates(){
-  	 $group=MemberGroup::select();
-           $data['totalChildAmount']=0;
-           foreach ($group as $key => $value) {
-             $data['list'][$key]['levelName']=$value['group_name'];
-             $MemberRelation_1rd=MemberRelation::where("relation_parent_id={$this->param['uid']}")->select();
-             foreach ($MemberRelation_1rd as $k => $val) {
-                $member[$k]=Members::with('membergroup')->where('member_id='.$val['relation_member_id'])->find();
-                if($member[$k]['group_id']==$value['group_id']){
-                  $data['list'][$key]['childAmount']+=1;
-                } 
+  	 #获取所有通道
+  	#获取所有税率
+  	$also=PassagewayItem::haswhere('passageway',['passageway_state'=>1])->select();
+  	//dump()
 
-                $member_2rd[$k]=MemberRelation::where('relation_parent_id='.$member[$k]['member_id'])->select();
-                foreach ($member_2rd[$k] as $k1 => $val1) {
-                    $member_3rd[$k1]=Members::with('membergroup')->where('member_id='.$val1['relation_member_id'])->find();
-                    if($member_3rd[$k1]['group_id']==$value['group_id']){
-                    $data['list'][$key]['grandChildAmount']+=1;
-                  } 
-                }
+  	 /*$passageway=Passageway::all();
+  	 foreach ($passageway as $key => $value) {
+  	 	 $passageway[$]
+  	 }
 
-             }
+  	 #获取会员等级
+  	$group=MemberGroup::select();
 
-             $data['list'][$key]['grossChildAmount']=$data['list'][$key]['grandChildAmount']+$data['list'][$key]['childAmount'];
-             #总人数
-             $data['totalChildAmount']+=$data['list'][$key]['grossChildAmount'];
-           }
-  	return view("api/Userurl/my_rates");
+  	foreach ($passageway as $key => $value) {
+  		foreach ($group as $k => $val) {
+  			$passageway[$key]['group']=$val;
+  		}
+  	}*/
+  	// var_dump($passageway);die;
+
+  	// #获取通道对应等级费率
+  	// foreach ($passageway as $key => $value) {
+  	// 	foreach ($group as $k => $val) {
+  	// 		$passageway[$key]=PassagewayItem::where(['item_group'=>$val['group_id'],'item_passageway'=>$value['passageway_id']])->value('item_rate');
+  	// 	}
+  	// }
+
+  	$this->assign('also',$also);
+  	// $this->assign('group',$group);
+  	return view("userurl/my_rates");
   }
   #盈利模式说明
   public function explain(){
-  	return $this->fetch();
+	  	return view("Userurl/explain");
   }
   #关于我们
   public function about_us(){
@@ -402,7 +406,7 @@ class Userurl extends Controller
   	$server['tel']=CustomerService::where('service_title','电话')->find();
   	$this->assign('data', $data);
   	$this->assign('server', $server);
-  	return view("api/userurl/about_us");
+  	return view("userurl/about_us");
   }
   /**
    * [web_freshman_guide 新手指引]

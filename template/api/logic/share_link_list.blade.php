@@ -30,7 +30,7 @@
 				var url="{{$url}}"+"/share_thumb/"+$(this).attr('s');
 				var title=$(this).find('p').html();
 		      if(!isAndroid){
-		        window.webkit.messageHandlers.shareUrl.postMessage(url,title);
+		        window.webkit.messageHandlers.shareUrl.postMessage([url,title]);
 		      }else{
 		        android.shareUrl(url,title);
 		      }
