@@ -40,7 +40,7 @@
 <script type="text/javascript">
 $(document).ready(function(){
      	 $('.menu .nav .active').removeClass('active');
-    	 $('.menu .nav li.generalize').addClass('active');
+    	 $('.menu .nav li.generalize_share2').addClass('active');
     	 $('.menu .nav li.generalize-manager').addClass('show');
 
     	 $(".parent li a").click(function(){

@@ -27,7 +27,7 @@
             <ul class="nav">
                 <li class="generalize"><a href="<?php echo e(url('/index/generalize/index')); ?>"> 素材列表</a></li>
                 <li class="generalize_share"><a href="<?php echo e(url('/index/generalize/share')); ?>"> 分享列表</a></li>
-                 <li class="generalize_share"><a href="<?php echo e(url('/index/generalize/exclusive_list')); ?>"> 专属列表</a></li>
+                 <li class="generalize_share2"><a href="<?php echo e(url('/index/generalize/exclusive_list')); ?>"> 专属列表</a></li>
             </ul>
         </li>
         <li class="nav-parent bank-manager">
@@ -88,7 +88,7 @@
         <li class="nav-parent suggestion">
             <a href="javascript:;"><i class="icon icon-user"></i> 财务管理</a>
             <ul class="nav">
-                <li class="suggestion_list"><a href="<?php echo e(url('/index/suggestion/index')); ?>"><i class="icon icon-sliders"></i> 用户反馈</a></li>
+                <li class=""><a href="<?php echo e(url('/index/suggestion/index')); ?>"><i class="icon icon-sliders"></i> 用户反馈</a></li>
             </ul>
         </li>
 

@@ -28,8 +28,8 @@
 	     
 	      	<td>@if($val->novice_class==1) 自动还款 @else 收款 @endif</td>
 	      	<td>
-	      		<a type="button" class="btn btn-sm" data-remote="{{url('/index/server_model/noviceSave/novice_id/'.$val->novice_id)}}" data-size='lg' data-toggle="modal" href="#">编辑</a>
-	  				<a type="button" class="btn btn-sm" href="{{url('/index/server_model/noviceRemove/novice_id/'.$val->novice_id)}}">删除</a>
+	      		<a type="button" class="btn btn-sm" data-remote="{{url('/index/article/noviceSave/novice_id/'.$val->novice_id)}}" data-size='lg' data-toggle="modal" href="#">编辑</a>
+	  				<a type="button" class="btn btn-sm" href="{{url('/index/article/noviceRemove/novice_id/'.$val->novice_id)}}">删除</a>
 	      	</td>
 	    </tr>
 	@endforeach

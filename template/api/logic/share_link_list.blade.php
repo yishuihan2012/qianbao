@@ -23,16 +23,15 @@
 		<script src="/static/js/mui.min.js"></script>
 		<script type="text/javascript">
 	      var u = navigator.userAgent;
-		// new QRCode(document.getElementById("qrcode"), "{{$url}}");
 	      var isAndroid = u.indexOf('Android') > -1 || u.indexOf('Adr') > -1; //android终端
 	      var isiOS = !!u.match(/\(i[^;]+;( U;)? CPU.+Mac OS X/); //ios终端
 			mui.init();
 			mui('.exc-code-list').on('tap','a',function(){
-		      // if(!isAndroid){
-		      //   window.webkit.messageHandlers.sharePicture.postMessage("{{$url}}");
-		      // }else{
-		      //   android.sharePicture("{{$url}}");
-		      // }
+		      if(!isAndroid){
+		        window.webkit.messageHandlers.shareUrl.postMessage("");
+		      }else{
+		        android.shareUrl("");
+		      }
 		    });
 		</script>
 	</body>

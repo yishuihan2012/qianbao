@@ -11,9 +11,8 @@
 		<link href="/static/css/page.css" rel="stylesheet" />
 	</head>
 	<body>
-		<div class="mui-content bg-w wrap bor-bot">
-			<div class="exc-code" id="shareLink">
-			</div>
+		<div class="mui-content bg-w wrap bor-bot" style="background-image: url({{$img}});">
+			<a class="btn" href="{{$url}}">立即注册</a>
 		</div>
 		<script src="/static/js/mui.min.js"></script>
 		<script type="text/javascript">
