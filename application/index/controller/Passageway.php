@@ -15,6 +15,7 @@ use think\Request;
 use think\Session;
 use think\Config;
 use think\Loader;
+use think\Db;
 
 class Passageway extends Common{
 	 #通道列表
@@ -98,14 +99,21 @@ class Passageway extends Common{
 				 #exit;
 			 #}
 			 #验证器验证成功
-	 	 	if($_POST['passageway_status']==1){
-	 	 		if(empty($_POST['passageway_no'])){
-	 	 			 $content = ['type'=>'warning','msg'=>'通道代号不能为空'];
-					 Session::set('jump_msg', $content);
-					 #重定向控制器 跳转到列表页
-					 $this->redirect('Passageway/index');
-	 	 		}
-	 	 	}
+
+	 	 			$str = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';//62个字符
+					$strlen = 52;
+					while(5 > $strlen){
+						$str .= $str;
+						$strlen -= 52; 
+					}
+					$str = str_shuffle($str);
+					$alert=substr($str,0,5);
+
+					$_POST['passageway_no']=$alert;
+
+
+	 	 		$sql="ALTER TABLE `wt_member_net` ADD `".$_POST['passageway_no']."` varchar(255) COMMENT '".$_POST['passageway_name']."'";
+	 	 		Db::query($sql);
 
 
 

@@ -7,6 +7,7 @@
  */
 namespace app\index\controller;
 use app\index\model\Member as Members;
+use app\index\model\MemberLogin;
 use think\Controller;
 use think\Request;
 use think\Session;
@@ -37,6 +38,16 @@ class Member extends Common{
 	 	 // var_dump($member_info);die;
 	 	 $this->assign('member_info', $member_info);
 	 	 return view('admin/member/info');
+	 }
+	 #封停用户
+	 public function disables($id){
+	 	 $MemberLogin = MemberLogin::get(['login_member_id'=>$id]);
+		 $result = $MemberLogin->save(['login_state'=>-1]);
+		 #数据是否提交成功
+		 $content = ($result===false) ? ['type'=>'error','msg'=>'用户封停失败'] : ['type'=>'success','msg'=>'用户封停成功'];
+		 Session::set('jump_msg', $content);
+		 #重定向控制器 跳转到列表页
+		 $this->redirect($this->history['1']);
 	 }
 
 }

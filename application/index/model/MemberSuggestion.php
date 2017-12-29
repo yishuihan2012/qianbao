@@ -27,6 +27,6 @@ class MemberSuggestion extends Model{
       #关联模型 一对一关联 (Member) 关联用户信息
       public function member()
       {
-           return $this->hasOne('Member','suggestion_member_id','suggestion_id');
+           return $this->hasOne('Member','member_id','suggestion_member_id')->bind('member_nick,member_id,member_image,member_mobile,member_creat_time')->setEagerlyType(0);
       }
 }

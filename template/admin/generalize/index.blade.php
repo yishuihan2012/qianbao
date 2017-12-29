@@ -16,7 +16,7 @@
       <div class="item">
       	 <div class="item-heading">
         		 <div class="pull-right">
-        		 	 <a href="{{url('/index/Generalize/edit/id/'.$list['generalize_id'])}}"><i class="icon-pencil"></i> 编辑</a> &nbsp;
+        		 	 <a href="{{url('/index/Generalize/edit/id/'.$list['generalize_id'])}}"><i class="icon-pencil"></i> 查看</a> &nbsp;
         		 	 <a class="remove" href="#" data-url="{{url('/index/Generalize/remove/id/'.$list['generalize_id'])}}"><i class="icon-remove"></i> 删除</a>
         		 </div>
         		 <h4><a href="{{url('/index/Generalize/edit/id/'.$list['generalize_id'])}}">{{$list['generalize_title']}}

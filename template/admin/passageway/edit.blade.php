@@ -26,10 +26,27 @@
 		 </div>		
 	 </div>
 
+	  <div class="row form-group">
+		 <label for="passageway_status" class="col-sm-3 text-right"><b>是否必须入网:</b></label>
+		 <div id="passageway_status" class="col-sm-6">
+			 <select name="passageway_status" class="form-control passageway_status">
+				 <option value="1" @if($passageways['passageway_status']==1) selected="" @endif>是</option>
+				 <option value="0" @if($passageways['passageway_status']==0) selected="" @endif>否</option>
+			 </select>
+		 </div>		
+	 </div>
+
 	 <div class="row form-group">
 		 <label for="passageway_no" class="col-sm-3 text-right"><b>通道代号:</b></label>
 		 <div class="col-sm-6" id="passageway_no">
-			 <input type="text" class="form-control passageway_no" name="passageway_no" placeholder="请填写通道的代号" value="{{$passageways['passageway_no']}}">
+			 <input type="text" class="form-control passageway_no" placeholder="请填写通道的代号" value="{{$passageways['passageway_no']}}" disabled="">
+		 </div>		
+	 </div>
+
+	 <div class="row form-group">
+		 <label for="passageway_method" class="col-sm-3 text-right"><b>入网调用方法地址:</b></label>
+		 <div class="col-sm-6" id="passageway_method">
+			 <input type="text" class="form-control passageway_method" name="passageway_method" placeholder="请填写通道的入网调用方法地址" value="{{$passageways['passageway_method']}}">
 		 </div>		
 	 </div>
 
@@ -98,6 +115,14 @@
 	if(!$(".passageway_name").val()){
 		 $(".passageway_name").parent().addClass("has-error");
 		 return;
+	 }
+
+	 if($(".passageway_status").val()==1){
+	 	if(!$(".passageway_no").val()){
+		 	$(".passageway_status").parent().addClass("has-error");
+		 	$(".passageway_no").parent().addClass("has-error");
+			 return;
+		 }
 	 }
 	 $("#myform").submit()
  })

@@ -29,7 +29,7 @@
 	 <div class="row form-group">
 		 <label for="passageway_status" class="col-sm-3 text-right"><b>是否必须入网:</b></label>
 		 <div id="passageway_status" class="col-sm-6">
-			 <select name="passageway_status" class="form-control">
+			 <select name="passageway_status" class="form-control passageway_status">
 				 <option value="1">是</option>
 				 <option value="0">否</option>
 			 </select>
@@ -39,7 +39,7 @@
 	 <div class="row form-group">
 		 <label for="passageway_no" class="col-sm-3 text-right"><b>通道代号:</b></label>
 		 <div class="col-sm-6" id="passageway_no">
-			 <input type="text" class="form-control passageway_no" name="passageway_no" placeholder="请填写通道的代号" value="">
+			 <input type="text" class="form-control passageway_no" name="passageway_no" placeholder="请认真填写通道的代号，保存后无法修改" value="">
 		 </div>		
 	 </div>
 	  <div class="row form-group">
@@ -115,10 +115,11 @@
 		 $(".passageway_name").parent().addClass("has-error");
 		 return;
 	 }
-	 if($("#passageway_status").find('select').val()==1){
-	 	$(".passageway_name").parent().addClass("has-error");
-		 return;
-	 }
+
+	 	if(!$(".passageway_no").val()){
+		 	$(".passageway_no").parent().addClass("has-error");
+			 return;
+		 }
 
 
 	 $("#myform").submit()

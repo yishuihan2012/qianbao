@@ -22,7 +22,7 @@
         #定义时间戳字段名 信息修改时间
         protected $updateTime = false;
         #定义返回数据类型
-        protected $resultSetType = 'collection';
+        protected $resultSetType = '';
         #初始化模型
         protected function initialize()
         {

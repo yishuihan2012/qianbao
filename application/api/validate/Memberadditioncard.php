@@ -20,7 +20,7 @@ class Memberadditioncard extends Validate
         	 ['expireDate','require','请输入您的信用卡有效期'],
         	 ['billDate','require','请输入信用卡账单日~'],
         	 ['deadline','require','请输入信用卡最后还款日~'],
-        	 ['isRemind','require','是否提醒您呢~']
+        	 // ['isRemind','require','是否提醒您呢~']
       ];
       #定义验证场景
 	 protected $scene = [

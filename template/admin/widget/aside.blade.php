@@ -16,11 +16,10 @@
         <li class="nav-parent generalize-manager">
             <a href="#"><i class="0icon icon-list"></i> 推广素材</a>
             <ul class="nav">
-                <li class="generalize"><a href="{{url('/index/generalize/index')}}"> 文章列表</a></li>
+                <li class="generalize"><a href="{{url('/index/generalize/index')}}"> 素材列表</a></li>
+                <li class="generalize_share"><a href="{{url('/index/generalize/share')}}"> 分享列表</a></li>
             </ul>
         </li>
-
-
         <li class="nav-parent bank-manager">
             <a href="javascript:;"><i class="icon icon-user"></i> 银行管理</a>
             <ul class="nav">
@@ -28,8 +27,6 @@
                 <li class="bank_ident"><a href="{{url('/index/bank/ident')}}"><i class="icon icon-sliders"></i> 银行识别</a></li>
             </ul>
         </li>
-
-
         <li class="nav-parent member-manager">
             <a href="javascript:;"><i class="0icon icon-user"></i> 会员管理</a>
             <ul class="nav">
@@ -64,6 +61,7 @@
             <a href="javascript:;"><i class="icon icon-user"></i> 订单统计</a>
             <ul class="nav">
                 <li class="order"><a href="{{url('/index/order/index')}}"><i class="icon icon-sliders"></i> 订单列表</a></li>
+                <li class="withdraw"><a href="{{url('/index/order/Withdraw')}}"><i class="icon icon-sliders"></i> 提现列表</a></li>
             </ul>
         </li>
 
@@ -96,6 +94,7 @@
                 <li class="setting-basic"><a href="{{url('/index/system/basic')}}"><i class="icon icon-sliders"></i> 核心设置</a></li>
                 <li class="setting-basic"><a href="{{url('/index/system/page')}}"><i class="icon icon-sliders"></i> 内置页面</a></li>
                 <li class="setting-basic service"><a href="{{url('/index/system/customer_service')}}"><i class="icon icon-sliders"></i> 客服管理</a></li>
+                <li class="setting-basic"><a href="{{url('/index/system/announcement')}}"><i class="icon icon-sliders"></i> 公告管理</a></li>
             </ul>
         </li>
 

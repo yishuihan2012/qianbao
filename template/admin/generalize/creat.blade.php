@@ -26,7 +26,12 @@
 		 </div>		
 	 </div>
 
-	
+	<div class="row form-group">
+		 <label for="passageway_desc" class="col-sm-3 text-right"><b>素材内容:</b></label>
+		 <div class="col-sm-6" id="passageway_desc">
+			 <textarea name="generalize_contents" class="form-control passageway_desc"></textarea>
+		 </div>		
+	 </div>
 
 	 <div class="row form-group">
 		 <label for="generalize_thumb" class="col-sm-3 text-right"><b>素材图片:</b></label>
@@ -65,10 +70,20 @@
       url: "{{url('/index/Tool/upload_one')}}",
 	 file_data_name:'generalize',
 	 filters:{ max_file_size: '10mb',},
-	 limitFilesCount:1,
+	 limitFilesCount:3,
 	 onFileUploaded(file, responseObject) {
+
 	    	 attr=eval('('+responseObject.response+")");
-	    	 attr.code ? $(".generalize_thumb").val('attr.url') : bootbox.alert({ message: attr.msg, size: 'small' });
+	    	 console.log(attr);
+	    	 // attr.code ?  bootbox.alert({ message: attr.msg, size: 'small' }): $(".generalize_thumb").val('attr.url');
+	    	 var generalize_thumb = $(".generalize_thumb").val()
+	    	 if( generalize_thumb == ''){
+	    	 	$(".generalize_thumb").val(attr.url);
+	    	 	bootbox.alert({ message: attr.msg, size: 'small' })
+	    	 }else{
+	    	 	$(".generalize_thumb").val(generalize_thumb+"#"+attr.url);
+	    	 	bootbox.alert({ message: attr.msg, size: 'small' })
+	    	 }
 	 }
 
  });

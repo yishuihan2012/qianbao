@@ -7,6 +7,7 @@
  */
 namespace app\index\controller;
 use app\index\model\Order as Orders;
+use app\index\model\Withdraw;
 use think\Controller;
 use think\Request;
 use think\Session;
@@ -38,5 +39,36 @@ class Order extends Common{
 	 	 $order_info=Orders::with('member')->find($request->param('id'));
 	 	 $this->assign('order_info', $order_info);
 	 	 return view('admin/order/edit');
+	 }
+
+	 #套现订单
+	 public function withdraw(){
+	 	 // #查询订单列表分页
+	 	 $order_lists = Withdraw::with('member,adminster')->paginate(Config::get('page_size'), false, ['query'=>Request::instance()->param()]);
+	 	 #统计订单条数
+	 	 $count['count_size']=Withdraw::count();
+			 $this->assign('order_lists', $order_lists);
+			 $this->assign('count', $count);
+		 #渲染视图
+	 	return view('admin/order/withdraw');
+	 }
+
+	  #套现订单详情
+	 public function showwithdraw(Request $request){
+	 	if(!$request->param('id'))
+	 	 {
+			 Session::set('jump_msg', ['type'=>'error','msg'=>'参数错误']);
+			 $this->redirect($this->history['1']);
+	 	 }
+	 	 #查询到当前订单的基本信息
+	 	 $order_info=Withdraw::with('member,adminster')->find($request->param('id'));
+	 	 // var_dump($order_info);die;
+	 	 $this->assign('order_info', $order_info);
+	 	 return view('admin/order/showwithdraw');
+	 }
+	 #审核提现列表
+	 public function toexminewithdraw(){
+	 	echo "ppp";die;
+	 	return view("admin/order/toexminewithdraw");
 	 }
 }

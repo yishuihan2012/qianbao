@@ -1,6 +1,6 @@
 <?php
 /**
-*  @version 分佣模型
+*  @version 推荐红包模型
  * @author  $bill 755969423@qq.com
  * @time      2017-11-24 09:20
  * @return  
@@ -20,7 +20,7 @@ class Recomment extends Model{
       #定义时间戳字段名 信息添加时间
       protected $createTime = 'recomment_creat_time';
       #定义时间戳字段名 信息修改时间
-      // protected $updateTime = 'article_update_time';
+      protected $updateTime = false;
       #初始化模型
       protected function initialize()
       {

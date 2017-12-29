@@ -14,7 +14,7 @@
 		<div class="mui-content notify">
 			<ul class="mui-table-view">
 			    <li class="mui-table-view-cell mui-media bor-bot">
-			        <a class="mui-navigate-right" id="toNotifyList">
+			        <a class="mui-navigate-right" id="toNotifyList" href="/api/userurl/notify_list/uid/{{$uid}}/token/{{$token}}">
 			        	<img class="mui-media-object mui-pull-left" src="/static/images/message_notice.png">
 			        	<div class="mui-media-body">平台公告</div>
 			        	<!--有消息通知时显示-->
@@ -22,13 +22,13 @@
 			        </a>
 			    </li>
 			    <li class="mui-table-view-cell mui-media bor-bot">
-			        <a class="mui-navigate-right" id="toDealList">
+			        <a class="mui-navigate-right" id="toDealList"  href="/api/userurl/deal_list/uid/{{$uid}}/token/{{$token}}">
 			        	<img class="mui-media-object mui-pull-left" src="/static/images/message_notice.png">
 			        	 <div class="mui-media-body">动账交易</div>
 			        </a>
 			    </li>
-			    <li class="mui-table-view-cell mui-media bor-bot">
-			        <a class="mui-navigate-right" id="toWelfareList">
+			    <li class="mui-table-view-cell mui-media bor-bot" >
+			        <a class="mui-navigate-right" id="toWelfareList"  href="/api/userurl/welfare_list/uid/{{$uid}}/token/{{$token}}">
 			        	<img class="mui-media-object mui-pull-left" src="/static/images/message_notice.png">
 			        	 <div class="mui-media-body">平台福利</div>
 			        </a>

@@ -31,5 +31,22 @@
            #TODO:自定义的初始化
       }
 
+      #关联模型 一对一关联 (province) 省表
+      public function province()
+      {
+           return $this->hasOne('RegionProvince','id','card_bank_province')->bind('Name');
+      }
+      #关联模型 一对一关联 (city) 市
+      public function city()
+      {
+           return $this->hasOne('RegionCity','id','card_bank_city')->bind('Name');
+      }
+
+      #关联模型 一对一关联 (area) 区
+      public function area()
+      {
+           return $this->hasOne('RegionArea','id','card_bank_area')->bind('name');
+      }
+
 
 }

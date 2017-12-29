@@ -25,7 +25,7 @@
         		 <div class="text">{{$list['suggestion_info']}}</div>
       	 </div>
       	 <div class="item-footer">
-        	 	 <a href="#" class="text-muted"><i class="icon-comments"></i> {{$list['suggestion_member_id']}}</a> &nbsp; <span class="text-muted">{{$list['suggestion_creat_time']}}</span>
+        	 	 <a href="#" class="text-muted"><i class="icon-comments"></i> {{$list['member_nick']}}</a> &nbsp; <span class="text-muted">{{$list['suggestion_creat_time']}}</span>
       	 </div>
       </div>
       @endforeach

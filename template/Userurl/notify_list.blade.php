@@ -13,7 +13,22 @@
 	<body>
 		<div class="mui-content wrap3">
 			<ul class="notify-list">
+				@foreach ($announcement as $v)
 			   <li class="space-up4">
+			   	  <p class="fc"><span class="my-time-bg">{{$v['announcement_createtime']}}</span></p>
+			   	  <a href="/api/userurl/notify_list_detail/uid/{{$uid}}/token/{{$token}}/id/{{$v['announcement_id']}}" class="wrap bg-w f-br2 space-up">
+			   	  	<h4 class="black-color">{{$v['announcement_title']}}</h4>
+			   	  	<div class="space-up-down f-telli3 normal-color">
+			   	  		{{$v['announcement_content']}}
+			   	  	</div>
+			   	  	<p class="bor-top wrap5">
+			   	  		<span>查看详情</span>
+			   	  		<span class="mui-icon mui-icon-arrowright mui-pull-right"></span>
+			   	  	</p>
+			   	  </a>
+			   </li>
+				@endforeach
+			   <!--li class="space-up4">
 			   	  <p class="fc"><span class="my-time-bg">2017-11-28 08:00</span></p>
 			   	  <a href="notify_list_detail.html" class="wrap bg-w f-br2 space-up">
 			   	  	<h4 class="black-color">关于夜间平台系统升级的通知</h4>
@@ -25,7 +40,7 @@
 			   	  		<span class="mui-icon mui-icon-arrowright mui-pull-right"></span>
 			   	  	</p>
 			   	  </a>
-			   </li>
+			   </li-->
 			</ul>
 		</div>
 		<script src="/static/js/mui.min.js"></script>

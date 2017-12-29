@@ -33,7 +33,7 @@ class Member extends Model{
       #关联模型 一对一关联 (MemberCertification) 用户实名表
       public function membercert()
       {
-           return $this->hasOne('MemberCert','cert_member_id','member_id');
+           return $this->hasOne('MemberCert','cert_member_id','member_id')->bind('cert_member_name');
       }
 
       #关联模型 一对一关联 (MemberLogin) 用户登录表

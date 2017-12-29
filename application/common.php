@@ -120,11 +120,12 @@
  // @description Curl方式请求url 返回请求的数据
  // @return  $str=格式化后的金额
  //-----------------------------------------------------------
- function curl_post($url, $method = 'post', $data='')
+ function curl_post($url, $method = 'post', $data='',$type="Content-Type: application/json; charset=utf-8")
  {
       //echo '<meta http-equiv="Content-Type" content="text/html; charset=GBK">';
       //$data=iconv("UTF-8","GBK",$data);
       $ch = curl_init();
+      curl_setopt($ch, CURLOPT_HTTPHEADER, array($type));
       curl_setopt($ch, CURLOPT_URL, $url);
       curl_setopt($ch, CURLOPT_CUSTOMREQUEST, strtoupper($method));
       curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
@@ -151,10 +152,7 @@
  function BankCert($accountNo, $bankPreMobile, $idCardCode, $name)
  {
       $name=urlencode($name);
-       //$host = "http://aliyuncardby4element.haoservice.com";
-       //$path = "/creditop/BankCardQuery/QryBankCardBy4Element";
        $method = "GET";
-       //$appcode = "你自己的AppCode"; 
        $headers = array();
        array_push($headers, "Authorization:APPCODE " . System::getName('appcode'));
        $querys = "accountNo=".$accountNo."&bankPreMobile=".$bankPreMobile."&idCardCode=".$idCardCode."&name=".$name;
@@ -324,7 +322,7 @@
       $host = "http://idcard.market.alicloudapi.com";
       $path = "/lianzhuo/idcard";
       $method = "GET";
-      $appcode = "  ";
+      $appcode = "d04d00f17ddd430abc630269b4c30324";
       $headers = array();
       array_push($headers, "Authorization:APPCODE " . $appcode);
       $querys = "cardno=".$ID."&name=".urlencode($name);
@@ -513,3 +511,181 @@
  {
       return (!isset($phone) || empty($phone) || !preg_mobile($phone)) ? false : true;
  }
+
+  //-----------------------------------------------------------
+ // @version  快捷支付签名生成
+ // @author   $bill$
+ // @datatime 2017-12-11 11:22
+ // @param  $data 参与签名数组  $private_key 商户秘钥
+ // @return  签名 
+ //-----------------------------------------------------------
+ function get_signature($data, $private_key)
+ {
+      ksort($data);  //自然排序
+      $str="";          //设置空白字符串
+      foreach ($data as $key => $value)  //循环组成键值对
+           $str.=$key."=".$value."&";
+      $str.=$private_key; //拼接商户平台秘钥 86cb9d58e7dc11e7
+      $signature_str=mb_convert_encoding($str, 'gb2312', 'utf-8,UTF-8,ASCII'); //转为gb2312编码
+      $signature=strtoupper(MD5($signature_str)); //转为大写 MD5加密
+      $str1="";
+      foreach ($data as $key => $value)
+           $str1.=$key."=".$value."&";
+      $str1.="signature=".$signature; //拼接请求体参数
+      $str1=mb_convert_encoding($str1, 'gb2312', 'utf-8,UTF-8,ASCII'); //转为gb2312编码
+      return $str1;
+ }
+
+  //-----------------------------------------------------------
+ // @version  AES对称加密
+ // @author   $bill$
+ // @datatime 2017-12-11 11:22
+ // @param  $encryptStr='加密参数' $encryptKey='加密秘钥' $localIV='加密便宜量'
+ // @return  加密数据 
+ //-----------------------------------------------------------
+ function AESencode($encryptStr, $encryptKey,$localIV="0102030405060708")
+ {
+       $module = mcrypt_module_open(MCRYPT_RIJNDAEL_128, '', MCRYPT_MODE_CBC, $localIV);
+       mcrypt_generic_init($module, $encryptKey, $localIV);
+       $block = mcrypt_get_block_size(MCRYPT_RIJNDAEL_128, MCRYPT_MODE_CBC);
+       $pad = $block - (strlen($encryptStr) % $block); //Compute how many characters need to pad
+       $encryptStr .= str_repeat(chr($pad), $pad); // After pad, the str length must be equal to block or its integer multiples
+       $encrypted = mcrypt_generic($module, $encryptStr);
+       mcrypt_generic_deinit($module);
+       mcrypt_module_close($module);
+       return base64_encode($encrypted);
+ }
+ //-----------------------------------------------------------
+ // @version  AES对称解密密
+ // @author   $bill$
+ // @datatime 2017-12-11 11:22
+ // @param  $encryptStr='加密参数' $encryptKey='加密秘钥' $localIV='加密便宜量'
+ // @return  加密数据 
+ //-----------------------------------------------------------
+ function AESdecrypt($encryptStr,$encryptKey,$localIV="0102030405060708") {
+     $module = mcrypt_module_open(MCRYPT_RIJNDAEL_128, '', MCRYPT_MODE_CBC, $localIV); 
+     mcrypt_generic_init($module, $encryptKey, $localIV);
+     $encryptedData = base64_decode($encryptStr);
+     $encryptedData = mdecrypt_generic($module, $encryptedData);
+     return $encryptedData;
+ }
+  //-----------------------------------------------------------
+ // @version  urlsafe base64加密
+ // @author   $bill$
+ // @datatime 2017-12-27 11:22
+ // @param  $string=要进行加密数据
+ // @return  加密数据 
+ //-----------------------------------------------------------
+ function urlsafe_b64encode($string) {
+      $data = base64_encode($string);
+      $data = str_replace(array('+','/','='),array('-','_',''),$data);
+      return $data;
+ }
+
+
+
+   //米刷代换信用卡请求接口
+    function repay_request($params,$mechid,$url,$iv,$secretkey,$signkey,$type=0){
+        $payload =getPayload($params,$iv,$secretkey);
+        $sign    = getSign($payload,$signkey);
+            $request = array(
+                'mchNo'   => $mechid,
+                'payload' => $payload,
+                'sign'    => $sign,
+            );
+            $res =curl_post($url, 'post', json_encode($request));
+            $result = json_decode($res, true);
+            if ($result['code'] == 0) {
+                $datas = AESdecrypt($result['payload'],$secretkey,$iv);
+                $datas = trim($datas);
+                $datas = substr($datas, 0, strpos($datas, '}') + 1);
+                $resul = json_decode($datas, true);
+                $resul['code']=200;
+                return $resul;
+            }else{
+              return $result;
+            }
+      }
+
+      /**
+     * 米刷获取签名
+     * @return [type] [description]
+     */
+    function getPayload($data,$iv='',$secretkey='')
+    {
+        #0检查参数有效性
+        // $data=checkData($data);
+        if ($data) {
+            #1 转成json
+            $data = json_encode($data);
+            #2 AES加密
+            $encrypt = AESencode($data,$secretkey,$iv);
+            return $encrypt;
+        } else {
+            return 0;
+        }
+    }
+
+    //米刷
+    function getSign($data,$signkey='')
+    {
+        #4 拼接字符串
+        // if(!$signkey){
+            // $str = $data . $signkey;
+        // }else{
+             $str = $data .$signkey;
+        // }       
+        #5 md5加密
+        $md5 = md5($str);
+        #6 转成大写
+        $upper = strtoupper($md5);
+        return $upper;
+    }
+
+    //米刷入网方法
+    function mishua($passageway, $rate, $member_info, $phone){
+      $params=array(
+        'versionNo'=>'1',//接口版本号 必填  值固定为1 
+        'mchNo'=>$passageway['passageway_mech'], //mchNo 商户号 必填  由米刷统一分配 
+        'mercUserNo'=>$member_info['cert_member_id'], //用户标识,下级机构对用户身份唯一标识。
+        'userName'=>$member_info['cert_member_name'],//姓名
+        'userCertId'=>$member_info['cert_member_idcard'],//身份证号  必填  注册后不可修改
+        'userPhone'=>$phone,
+        'feeRatio'=>$rate['item_also']*10, //交易费率  必填  单位：千分位。如交易费率为0.005时,需传入5.0
+        'feeAmt'=>'50',//单笔交易手续费  必填  单位：分。如机构无单笔手续费，可传入0
+        'drawFeeRatio'=>'0',//提现费率
+        'drawFeeAmt'=>'0',//单笔提现易手续费
+      );
+      $url='http://pay.mishua.cn/zhonlinepay/service/rest/creditTrans/createMerchant';
+      $income=repay_request($params,$passageway['passageway_mech'],$url,$passageway['iv'],$passageway['secretkey'],$passageway['signkey']);
+      $arr=array(
+        'net_member_id'=>$member_info['cert_member_id'],
+        "{$passageway['passageway_no']}"=>$income['userNo']
+      );
+      return $arr;
+    }
+    //米刷入网修改方法
+    function mishuaedit($passageway, $rate, $member_info, $phone, $userno){
+      $params=array(
+        'versionNo'=>'1',//接口版本号 必填  值固定为1 
+        'mchNo'=>$passageway['passageway_mech'], //mchNo 商户号 必填  由米刷统一分配 
+        'userNo'=>$userno, //用户标识,下级机构对用户身份唯一标识。
+        'userName'=>$member_info['cert_member_name'],//姓名
+        'userCertId'=>$member_info['cert_member_idcard'],//身份证号  必填  注册后不可修改
+        'userPhone'=>$phone,
+        'feeRatio'=>$rate['item_also']*10, //交易费率  必填  单位：千分位。如交易费率为0.005时,需传入5.0
+        'feeAmt'=>'50',//单笔交易手续费  必填  单位：分。如机构无单笔手续费，可传入0
+        'drawFeeRatio'=>'0',//提现费率
+        'drawFeeAmt'=>'0',//单笔提现易手续费
+      );
+      var_dump($params);die;
+      $url='http://pay.mishua.cn/zhonlinepay/service/rest/creditTrans/updateMerchant';
+      $income=repay_request($params,$passageway['passageway_mech'],$url,$passageway['iv'],$passageway['secretkey'],$passageway['signkey']);
+      $arr=array(
+        'net_member_id'=>$member_info['cert_member_id'],
+        "{$passageway['passageway_no']}"=>$income['userNo']
+      );
+      return $arr;
+    }
+
+

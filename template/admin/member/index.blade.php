@@ -4,23 +4,14 @@
 
  <div class="row">
       @foreach ($member_list as $list)
-      <div class="col-sm-3">
+      <div class="col-sm-2">
            <a class="card" href="###" class="btn btn-default btn-sm">
-              <img src="{{$list->member_image}}" data-toggle="lightbox"  class="img-circle">
-              <div class="card-heading"><strong>{{$list->member_nick}}({{$list->member_mobile}}){{state_preg($list->member_cert,1,'实名')}}</strong></div>
-              <div class="card-content text-muted">良辰美景奈何天，赏心乐事谁家院。</div>
-
-
-              <div class="pull-right text-gray">
-
-                <button class="btn" data-toggle="modal" data-remote="{{url('/index/member/info/id/'.$list->member_id)}}"  type="button">查看详情</button>
-
-              </div>
+              <img src="{{$list->member_image}}" data-toggle="lightbox"  class="img-circle" style="max-width: 30%">
+              <div class="card-heading"><strong>{{$list->member_nick}}<br/>({{$list->member_mobile}}){{state_preg($list->member_cert,1,'实名')}}</strong></div>
 
 
               <div class="card-actions">
                 <span style="font-size: 12px;">会员等级:</span> <code>{{$list->group_name}}</code>
-                <div class="pull-right text-gray"><button class="btn" type="button">升级会员</button></div>
               </div>
 
 
@@ -28,6 +19,12 @@
                 <span style="font-size: 12px;">登录状态:</span> <code>@if($list->login_state==1)正常@else封停@endif</code>
                 <div class="pull-right text-gray"><span style="font-size: 12px;">注册时间:</span> <code>{{$list->member_creat_time}}</code></div>
               </div>
+              <div class="text-gray">
+
+                <button class="btn btn-sm" data-toggle="modal" data-remote="{{url('/index/member/info/id/'.$list->member_id)}}"  type="button">查看详情</button>
+                <button class="btn btn-sm" type="button">升级会员</button>
+              </div>
+
            </a>
       </div>
       @endforeach

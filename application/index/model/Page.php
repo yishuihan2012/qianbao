@@ -26,7 +26,13 @@ class Page extends Model{
            parent::initialize();
            #TODO:自定义的初始化
       }
+      /**
+       * [pageInfo 查询内置页面的详情信息]
+       * @param  integer $data [description]
+       * @return [type]        [description]
+       */
       public static function pageInfo($data = 0){
-
+        $where['page_id'] = $data;
+        return Db::table("wt_page")->where($where)->find();
       }
 }

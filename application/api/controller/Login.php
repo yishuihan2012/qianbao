@@ -37,7 +37,7 @@
       **/
       public function login()
       {	
-        var_dump(123);die;
+
       	 #验证参数是否存在
       	 if(!phone_check($this->param['phone']))
       	 	 return ['code'=>401];
@@ -69,10 +69,11 @@
                  return ['code'=>318];
 
            $member=Member::get($memberLogin['member']['member_id']);
+
            $data=array();
            $data['authState']=$member['member_cert'];
            $data['name']=$member['member_cert']==1 ? $member['member_nick'] : '';
-
+           // var_dump($member->memberCert);die;
            $data['membercard']=$member['member_cert']==1 ? $member->memberCert->cert_member_idcard : '';#card_preg()
            $data['phone']=$member['member_mobile'];
            $data['portrait']=$member['member_image'];
@@ -84,10 +85,25 @@
 
            $data['memberLevelId']=$member['member_group_id'];
            $data['memberLevelName']=$member->memberGroup->group_name;
+
            #查询信用卡绑定数量
            $data['numberOfCreditCard']=MemberCreditcard::where(['card_member_id'=>$memberLogin['member']['member_id'],'card_state'=>'1'])->count();
-           $data['alipayBindState']=MemberAccount::where(['account_user'=>$memberLogin['member']['member_id'],'account_type'=>'Alipay'])->find() ? 1 : 0;
-           $data['wechatBindState']=MemberAccount::where(['account_user'=>$memberLogin['member']['member_id'],'account_type'=>'Weipay'])->find() ? 1 : 0;
+           $alipay=MemberAccount::where(['account_user'=>$memberLogin['member']['member_id'],'account_type'=>'Alipay'])->find();
+           $wei=MemberAccount::where(['account_user'=>$memberLogin['member']['member_id'],'account_type'=>'Weipay'])->find();
+
+           $data['alipayBindState']=$alipay? 1 : 0;
+           $data['wechatBindState']= $wei ? 1 : 0;
+           if($data['alipayBindState']==1){
+              $data['payPlatformId']=$alipay['account_id'];
+           }else{
+             $data['alipayPlatformId']=0;
+           }
+           if($data['wechatBindState']==1){
+              $data['wechatpayPlatformId']=$wei['account_id'];
+           }else{
+            $data['wechatpayPlatformId']=0;
+           }
+
            #查询会员下级数量 TODO: 现在是直接下级数量 是否改成三级
            $data['subordinateNumber']=MemberRelation::where('relation_parent_id',$memberLogin['member']['member_id'])->count();
            $parent_id=MemberRelation::where(['relation_member_id'=>$memberLogin['member']['member_id']])->value('relation_parent_id');
@@ -95,11 +111,17 @@
            $data['parent_phone']=$parent_id=='0' ? '' : Member::where('member_id',$parent_id)->value('member_mobile');
            #查询用户储蓄卡
            $CashCard=MemberCashcard::where(['card_member_id'=>$memberLogin['member']['member_id'],'card_state'=>1])->find();
-           $data['cashcardinfo']=$CashCard['card_bankname'].' 尾号'.substr($CashCard['card_bankno'], -4); 
+           if(empty($CashCard)){
+              $data['cashcardinfo']='';
+           }else{
+              $data['cashcardinfo']=$CashCard['card_bankname'].' 尾号'.substr($CashCard['card_bankno'], -4); 
+           }
+            
            $data['hasmessage']=1; 
 
            $data['token']=$memberLogin['login_token'];
            $data['uid']=$memberLogin['member']['member_id'];
+
            return ['code'=>200,'msg'=>'登录成功~', 'data'=>$data];
       }
 
@@ -159,6 +181,65 @@
                  Db::rollback();
                  return ['code'=>308,'msg'=>$e->getMessage()];
            }
+      }
+
+      // #获取与登录相同的信息
+      public function get_info(){
+           $memberLogin=MemberLogin::where("login_member_id={$this->param['uid']} and login_token='{$this->param['token']}'")->find();
+           // var_dump($user);die;
+           if(empty($memberLogin)){
+              return ['code'=>304];
+           }
+           $member=Member::get($memberLogin['login_member_id']);
+           $data=array();
+           $data['authState']=$member['member_cert'];
+           $data['name']=$member['member_cert']==1 ? $member['member_nick'] : '';
+
+           $data['membercard']=$member['member_cert']==1 ? $member->memberCert->cert_member_idcard : '';#card_preg()
+           $data['phone']=$member['member_mobile'];
+           $data['portrait']=$member['member_image'];
+           
+           $data['wallet_total_revenue']=sprintf("%.2f",substr(sprintf("%.3f", $member->memberWallet->wallet_total_revenue), 0, -1));
+           $data['wallet_fenrun']=sprintf("%.2f",substr(sprintf("%.3f", $member->memberWallet->wallet_fenrun), 0, -1));
+           $data['wallet_commission']=sprintf("%.2f",substr(sprintf("%.3f", $member->memberWallet->wallet_commission), 0, -1));
+           $data['wallet_amount']=sprintf("%.2f",substr(sprintf("%.3f", $member->memberWallet->wallet_amount), 0, -1));
+
+           $data['memberLevelId']=$member['member_group_id'];
+           $data['memberLevelName']=$member->memberGroup->group_name;
+           #查询信用卡绑定数量
+           $data['numberOfCreditCard']=MemberCreditcard::where(['card_member_id'=>$memberLogin['member']['member_id'],'card_state'=>'1'])->count();
+           $alipay=MemberAccount::where(['account_user'=>$memberLogin['member']['member_id'],'account_type'=>'Alipay'])->find();
+           $wei=MemberAccount::where(['account_user'=>$memberLogin['member']['member_id'],'account_type'=>'Weipay'])->find();
+           $data['alipayBindState']=$alipay? 1 : 0;
+           $data['wechatBindState']= $wei ? 1 : 0;
+           if($data['alipayBindState']==1){
+              $data['payPlatformId']=$alipay['account_id'];
+           }else{
+             $data['alipayPlatformId']=0;
+           }
+           if($data['wechatBindState']==1){
+              $data['wechatpayPlatformId']=$wei['account_id'];
+           }else{
+            $data['wechatpayPlatformId']=0;
+           }
+           #查询会员下级数量 TODO: 现在是直接下级数量 是否改成三级
+           $data['subordinateNumber']=MemberRelation::where('relation_parent_id',$memberLogin['member']['member_id'])->count();
+           $parent_id=MemberRelation::where(['relation_member_id'=>$memberLogin['member']['member_id']])->value('relation_parent_id');
+           $data['parent']=$parent_id=='0' ? '' : Member::where('member_id',$parent_id)->value('member_nick');
+           $data['parent_phone']=$parent_id=='0' ? '' : Member::where('member_id',$parent_id)->value('member_mobile');
+           #查询用户储蓄卡
+           $CashCard=MemberCashcard::where(['card_member_id'=>$memberLogin['member']['member_id'],'card_state'=>1])->find();
+           if(empty($CashCard)){
+              $data['cashcardinfo']='';
+           }else{
+              $data['cashcardinfo']=$CashCard['card_bankname'].' 尾号'.substr($CashCard['card_bankno'], -4); 
+           }
+            
+           $data['hasmessage']=1; 
+
+           $data['token']=$memberLogin['login_token'];
+           $data['uid']=$memberLogin['member']['member_id'];
+           return ['code'=>200,'msg'=>'获取成功~', 'data'=>$data];
       }
 
  }

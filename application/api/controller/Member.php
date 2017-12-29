@@ -559,7 +559,7 @@
            return ['code'=>200, 'msg'=>'获取成功~', 'data'=>$data];
       }
 
-<<<<<<< HEAD
+
       /**
     * 生成签名信息 获取授权登录信息
     * @return [type] [description]
@@ -570,7 +570,7 @@
         $return=$payment->get_sign(); //转账
         return ['code'=>200, 'msg'=>'获取成功~', 'data'=>$return];
     }
-=======
+
         /**
    *  @version recomment_list method / Api 用户分润分佣明细列表
    *  @author $bill$(755969423@qq.com)
@@ -590,5 +590,5 @@
 
            return ['code'=>200, 'msg'=>'获取成功~', 'data'=>$recomment];
       }
->>>>>>> dev4
+      
  }

@@ -34,7 +34,7 @@
        #关联模型 一对一关联 (Repayment) 还款
       public function repayment()
       {
-           return $this->hasOne('Repayment','repayment_card_id','card_id')->bind('repayment_repayed,repayment_repaying,repayment_total_repayment');
+           return $this->hasOne('Repayment','repayment_card_id','card_id')->bind('repayment_repayed,repayment_repaying,repayment_total_repayment,repayment_statement,repayment_repayment');
       }
 
 

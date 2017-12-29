@@ -14,11 +14,13 @@
                  <!-- 以下两列左侧固定 -->
                  <th>#</th>
                  <th>通道名</th>
+                 <th>通道代号</th>
                  <!-- 以下三列中间可滚动 -->
                  <th class="flex-col">机构号</th> 
                  <th class="flex-col">机构Key</th>
                  <!-- 以下列右侧固定 -->
                  <th>通道状态</th>
+                 <th>是否入网</th>
                  <th>添加时间</th>
                  <th>其他操作</th>
            </tr>
@@ -28,9 +30,11 @@
            <tr>
                  <td>{{$list->passageway_id}}</td>
                  <td>{{$list->passageway_name}}</td>
+                 <td>{{$list->passageway_no}}</td>
                  <td>{{$list->passageway_mech}}</td>
                  <td>{{$list->passageway_key}}</td>
-                 <td>{{$list->passageway_state}}</td>
+                 <td>@if($list->passageway_state==1) 启用 @else 禁用 @endif</td>
+                 <td>@if($list->passageway_status==1) 是 @else 否 @endif</td>
                  <td>{{$list->passageway_add_time}}</td>
                  <td>
                       <div class="btn-group"><a  data-remote="{{url('/index/passageway/rate','id='.$list['passageway_id'])}}" data-toggle="modal" data-size="lg" href="#" class="btn btn-sm">税率调整</a>

@@ -20,17 +20,27 @@
 	 <form action="{{ url('/index/member/member_edit/id/'.$member_info->member_id) }} " method="post" class="form-group" id="myform">
 	 <input type="hidden" name="id" value="{{$member_info->member_id }}">
 	 <div class="help-block"><code>(基本信息)</code></div>
-	 <table class="table table-bordered table-hover table-striped" style="width:90%; margin:0 auto;">
+	 <div style="margin-bottom: 5px">
+	 <table class="table table-bordered table-hover table-striped" style="width:60%;float: left;margin-bottom: 0;margin-left: 30px">
 		 <tr>
-			 <th>昵称</th>	
-			 <td>{{$member_info->member_nick}}</td>	
-			 <th>手机号</th>	
-			 <td>{{$member_info->member_mobile}}</td>	
-			 <th>头像</th>	
-			 <th><img src="{{$member_info->member_image}}"  data-toggle="lightbox"></th>	
-		 </tr>	
+			 <td>昵称</td>
+			 <td>{{$member_info->member_nick}}</td>
+		 </tr>
+		 <tr>
+			 <td>手机号</td>
+			 <td>{{$member_info->member_mobile}}</td>
+		 </tr>
+		 <tr>
+			 <td>更新时间</td>
+			 <td>{{$member_info->member_update_time}}</td>
+		 </tr>
+		 <tr>
+			 <td>注册时间</td>
+			 <td>{{$member_info->member_creat_time}}</td>
+		 </tr>
 	 </table>
-
+	 <img src="{{$member_info->member_image}}"  data-toggle="lightbox" style="width: 25%">
+	 </div>
 	 <div class="help-block"><code>(登录信息)</code></div>
 	 <table class="table table-bordered table-hover table-striped" style="width:90%; margin:0 auto;">
 		 <tr>
@@ -45,25 +55,6 @@
 			 <th>登录状态</th>
 			 <td>@if($member_info->login_state==1)正常@elseif($member_info->login_state==-1)禁止@else异常@endif</td>
 		 </tr>
-		 <tr>
-		 	<th colspan="4"><button class="btn"  type="button">封停用户</button></th>
-		 </tr>
-		 <tr>
-			 <th>更新时间</th>
-			 <td>{{$member_info->member_update_time}}</td>
-			 <th>注册时间</th>
-			 <td>{{$member_info->member_creat_time}}</td>
-		 </tr>
-	 </table>
-
-	 <div class="help-block"><code>(其他信息)</code></div>
-	 <table class="table table-bordered table-hover table-striped" style="width:90%; margin:0 auto;">
-		 <tr>
-			 <th>更新时间</th>
-			 <td>{{$member_info->member_update_time}}</td>
-			 <th>注册时间</th>
-			 <td>{{$member_info->member_creat_time}}</td>
-		 </tr>
 	 </table>
 
 	 </form>
@@ -71,11 +62,29 @@
 
  <!--dialog Button-->
  <div class="modal-footer animated fadeInLeft">
+ 	<button type="button" class="btn disables"  data-url="{{url('/index/Member/disables/id/'.$member_info->member_id)}}">封停用户</button>
 	 <button type="button" class="btn btn-primary save">保存</button>
       <button type="button" class="btn" data-dismiss="modal">关闭</button>
  </div>
  <script>
 	 $(".save").click(function(){
 		 $("#myform").submit()
+	 })
+	 $(function(){
+	 	$('.disables').click(function(){
+ 		var url=$(this).attr('data-url');
+		 bootbox.confirm({
+		    title: "封停用户",
+		    message: "确定封停{{$member_info->member_nick}}吗？",
+		    buttons: {
+		        cancel: {label: '<i class="fa fa-times"></i> 点错'},
+		        confirm: {label: '<i class="fa fa-check"></i> 确定'}
+		    },
+		    callback: function (result) {
+		    	 if(result)
+		    	 	window.location.href=url;
+		    }
+		 });
+	 	})
 	 })
  </script>

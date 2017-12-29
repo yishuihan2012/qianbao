@@ -7,6 +7,7 @@
  */
 namespace app\index\controller;
 use app\index\model\MemberSuggestion;
+use app\index\model\Order;
 use think\Controller;
 use think\Request;
 use think\Session;
@@ -17,7 +18,8 @@ class Suggestion extends Common{
 	 #会员反馈
 	 public function index()
 	 {
-	 	$lists=MemberSuggestion::paginate(Config::get('page_size'), false, ['query'=>Request::instance()->param()]);
+	 	$lists=MemberSuggestion::with('member')->paginate(Config::get('page_size'), false, ['query'=>Request::instance()->param()]);
+	 	// $lists=MemberSuggestion::paginate(Config::get('page_size'), false, ['query'=>Request::instance()->param()]);
 	 	$this->assign('lists', $lists);
 	 	$this->assign('count', count($lists));
 		 #渲染视图

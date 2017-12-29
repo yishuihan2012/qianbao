@@ -2,104 +2,179 @@
 <html>
 	<head>
 		<meta charset="UTF-8">
-		<title>还款计划已完成列表</title>
+		<title>还款记录</title>
 		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
 		<link href="/static/css/mui.min.css" rel="stylesheet" />
+		<link href="/static/css/iconfont.css" rel="stylesheet" />
 		<link href="/static/css/base.css" rel="stylesheet" />
 		<link href="/static/css/page.css" rel="stylesheet" />
-		<link href="/static/css/themes.css" rel="stylesheet" />
+		<link href="/static/css/themes.css" rel="stylesheet"/>
 	</head>
 	<body>
-		<div class="muicontent repayment-history">
-			<ul class="mui-table-view" id="repaymentHistory">
-			   <li class="mui-table-view-cell bg-color invalid-color f16">
-			        2017年12月
-			    </li>
-			    <!--注：不同状态显示颜色不同-->
-			    <li class="mui-table-view-cell bor-bot">
-			        <a href="repayment_plan_detail.html">
-			        	<div class="dis-flex-be">
-			        		<p class="f16">还款计划2017/12/08</p>
-			        		<div class="ftr">
-			        		  <p>￥3000.00</p>
-			        		  <p class="f16 blue-color-th">已还完</p>
-			        		</div>
-			        	</div>
-			        </a>
-			    </li>
-			    <li class="mui-table-view-cell bor-bot">
-			        <a href="repayment_plan_detail.html"> 
-			        	<div class="dis-flex-be">
-			        		<p class="f16">还款计划2017/12/08</p>
-			        		<div class="ftr">
-			        		  <p>￥3000.00</p>
-			        		  <p class="f16 blue-color-th">已还完</p>
-			        		</div>
-			        	</div>
-			        </a>
-			    </li>
-			</ul>
+		<div class="mui-content repayment-history">
+			<!--还款计划列表-->
+			<div id="slider" class="mui-slider">
+				<div id="sliderSegmentedControl" class="mui-slider-indicator mui-segmented-control mui-segmented-control-inverted bg-w">
+					<a class="mui-control-item mui-active" href="#item1mobile">
+						进行中
+					</a>
+					<a class="mui-control-item" href="#item2mobile">
+						已取消
+					</a>
+					<a class="mui-control-item" href="#item3mobile">
+						已完成
+					</a>
+				</div>
+				<div id="sliderProgressBar" class="mui-slider-progress-bar mui-col-xs-4"></div>
+				<div class="mui-slider-group">
+					<!--执行中-->
+					<div id="item1mobile" class="mui-slider-item mui-control-content mui-active">
+						<div id="scroll1" class="mui-scroll-wrapper">
+							<div class="mui-scroll">
+								<ul class="mui-table-view bg-color wrap">
+									<li class="mui-table-view-cell bg-w space-up f-br2">
+									  <a href="">	
+										<div class="dis-flex-be wrap bor-bot-das">
+											<div class="dis-flex-fs">
+												<p class="card-pic-container">
+													<img src="/static/images/card.png">
+												</p>
+												<span class="f16">浦发银行(尾号2583)</span>
+											</div>
+											<div class="green-color"><span class="iconfont icon-shijian-copy-copy space-right"></span><span class="f16">执行中</span></div>
+										</div>
+										<div class="wrap">
+											<p class="invalid-color f15">还款总金额(含手续费79.05元)</p>
+											<p class="f24 space-up3"><strong>10079.05</strong><span class="f15">元</span></p>
+											<p class="invalid-color f15 space-up3 f-tex-n">还款计划时间：<span class="blue-color-th space-right">12月19日 </span><span class="blue-color-th">6笔</span></p>
+										</div>
+										<div class="dis-flex-be invalid-color wrap bor-top-das">
+											<span class="f16">查看详情</span>
+											<span class="mui-icon mui-icon-arrowright f20"></span>
+										</div>
+									  </a>
+									</li>
+								</ul>
+							</div>
+						</div>
+					</div>
+					<div id="item2mobile" class="mui-slider-item mui-control-content">
+						<div id="scroll2" class="mui-scroll-wrapper">
+							<div class="mui-scroll">
+								<div class="mui-loading">
+									<div class="mui-spinner">
+									</div>
+								</div>
+							</div>
+						</div>
+
+					</div>
+					<div id="item3mobile" class="mui-slider-item mui-control-content">
+						<div id="scroll3" class="mui-scroll-wrapper">
+							<div class="mui-scroll">
+								<div class="mui-loading">
+									<div class="mui-spinner">
+									</div>
+								</div>
+							</div>
+						</div>
+
+					</div>
+				</div>
+			</div>
 		</div>
 		<script src="/static/js/mui.min.js"></script>
-		<script src="/static/js/jquery-2.1.4.min.js"></script>
 		<script type="text/javascript">
 			mui.init();
 			mui('.mui-table-view-cell').on('tap','a',function(){
 		      window.top.location.href=this.href;
 		    });
-		    mui.ready(function(){
-			    //滚动加载提示    
-			    var allpage=2;//全部页面
-			    var page=1; //当前页的页码
-			    function showAjax(page){
-			      $.ajax({
-			        url:"",
-			        type:"post",
-			        data:{page:page},
-			        dateType:"json",
-			        beforeSend:function(XMLHttpRequest){ 
-			          $(".load-more").text("加载中..."); 
-			        }, 
-			        success:function(data){
-			        //要执行的内容
-			        //isEnd =  ;
-			        for(var i=0;i<data.length;i++){
-			         $("#repaymentHistory").append("<li class='mui-table-view-cell bor-bot'>"+
-				        "<a href='repayment_plan_detail.html'>"+
-				        	"<div class='dis-flex-be'>"+
-				        		"<p class='f16'>还款计划2017/12/08</p>"+
-				        		"<div class='ftr'>"+
-				        		  "<p>￥3000.00</p>"+
-				        		  "<p class='f16 blue-color-th'>已还完</p>"+
-				        		"</div>"+
-				        	"</div>"+
-				        "</a>"+
-				    "</li>");
-			            }
-			          },
-			          error:function(){
-		
-			          }
-			        });
-			      }
-		        function scrollFn(){
-			        //真实内容的高度
-			        var pageHeight = Math.max(document.body.scrollHeight,document.body.offsetHeight);
-			        //视窗的高度
-			        var viewportHeight = window.innerHeight || document.documentElement.clientHeight || document.body.clientHeight || 0;
-			        //隐藏的高度
-			        var scrollHeight = window.pageYOffset || document.documentElement.scrollTop || document.body.scrollTop || 0;
-			        if(pageHeight - viewportHeight - scrollHeight < 60){
-			            page++;
-			            if(page<=allpage){
-			                showAjax(page);
-			            }else{
-			                $(".load-more").text("已无数据");
-			            }
-			        }
-			    }
-		    $(window).bind("scroll",scrollFn);//绑定滚动事件
-		    });
+			mui.ready(function(){
+				var _h =  window.screen.availHeight;
+				var topH = document.getElementById("sliderSegmentedControl").offsetHeight;
+				document.getElementById("item1mobile").style.minHeight = _h-topH-100 + 'px';
+				document.getElementById("item2mobile").style.minHeight = _h-topH-100 + 'px';
+				document.getElementById("item3mobile").style.minHeight = _h-topH-100 + 'px';
+				mui('.mui-scroll-wrapper').scroll({
+					indicators: false //是否显示滚动条
+				});
+				//已取消
+				var html2 = "<ul class='mui-table-view bg-color wrap'>"+
+								"<li class='mui-table-view-cell bg-w space-up f-br2'>"+
+									  "<a href=''>"+
+										"<div class='dis-flex-be wrap bor-bot-das'>"+
+											"<div class='dis-flex-fs'>"+
+												"<p class='card-pic-container'>"+
+													"<img src='images/card.png'>"+
+												"</p>"+
+												"<span class='f16'>浦发银行(尾号2583)</span>"+
+											"</div>"+
+											"<div class='red-color'><span class='iconfont icon-shijian-copy-copy space-right'></span><span class='f16'>已取消</span></div>"+
+										"</div>"+
+										"<div class='wrap'>"+
+											"<p class='invalid-color f15'>还款总金额(含手续费79.05元)</p>"+
+											"<p class='f24 space-up3'><strong>10079.05</strong><span class='f15'>元</span></p>"+
+											"<p class='invalid-color f15 space-up3 f-tex-n'>取消计划时间：<span class='blue-color-th space-right'>12月19日  14:25:58</span><span class='blue-color-th'>已还款2笔</span></p>"+
+										"</div>"+
+										"<div class='dis-flex-be invalid-color wrap bor-top-das'>"+
+											"<span class='f16'>查看详情</span>"+
+											"<span class='mui-icon mui-icon-arrowright f20'></span>"+
+										"</div>"+
+									  "</a>"+
+									"</li>"+
+								"</ul>";
+				//已完成
+				var html3 = "<ul class='mui-table-view bg-color wrap'>"+
+								"<li class='mui-table-view-cell bg-w space-up f-br2'>"+
+									  "<a href=''>"+
+										"<div class='dis-flex-be wrap bor-bot-das'>"+
+											"<div class='dis-flex-fs'>"+
+												"<p class='card-pic-container'>"+
+													"<img src='images/card.png'>"+
+												"</p>"+
+												"<span class='f16'>浦发银行(尾号2583)</span>"+
+											"</div>"+
+											"<div class='blue-color-th'><span class='iconfont icon-successful space-right'></span><span class='f16'>已完成</span></div>"+
+										"</div>"+
+										"<div class='wrap'>"+
+											"<p class='invalid-color f15'>还款总金额(含手续费79.05元)</p>"+
+											"<p class='f24 space-up3'><strong>10079.05</strong><span class='f15'>元</span></p>"+
+											"<p class='invalid-color f15 space-up3 f-tex-n'>还款计划开始时间：<span class='blue-color-th space-right'>12月19日 </span><span class='blue-color-th'>6笔</span></p>"+
+										"</div>"+
+										"<div class='dis-flex-be invalid-color wrap bor-top-das'>"+
+											"<span class='f16'>查看详情</span>"+
+											"<span class='mui-icon mui-icon-arrowright f20'></span>"+
+										"</div>"+
+									  "</a>"+
+									"</li>"+
+								"</ul>";
+				var item2 = document.getElementById('item2mobile');
+				var item3 = document.getElementById('item3mobile');
+				//
+				document.getElementById('slider').addEventListener('slide', function(e) {
+					if (e.detail.slideNumber === 1) {
+						if (item2.querySelector('.mui-loading')) {
+							setTimeout(function() {
+								item2.querySelector('.mui-scroll').innerHTML = html2;
+							}, 500);
+						}
+					} else if (e.detail.slideNumber === 2) {
+						if (item3.querySelector('.mui-loading')) {
+							setTimeout(function() {
+								item3.querySelector('.mui-scroll').innerHTML = html3;
+							}, 500);
+						}
+					}
+				});
+				var sliderSegmentedControl = document.getElementById('sliderSegmentedControl');
+				mui('.mui-input-group').on('change', 'input', function() {
+					if (this.checked) {
+						sliderSegmentedControl.className = 'mui-slider-indicator mui-segmented-control mui-segmented-control-inverted mui-segmented-control-' + this.value;
+						//force repaint
+						sliderProgressBar.setAttribute('style', sliderProgressBar.getAttribute('style'));
+					}
+				});
+			});
 		</script>
 	</body>
 

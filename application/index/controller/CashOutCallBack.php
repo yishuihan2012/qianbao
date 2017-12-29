@@ -14,11 +14,17 @@ use think\Request;
 class Cashoutcallback
 {
 
+	 /**
+	 * @version  米刷套现
+	 * @authors bill(755969423@qq.com)
+	 * @date    2017-12-23 16:25:05
+	 * @version $Bill$
+	 */
 	 public function mishuaCallBack()
 	 {
-	 	 $data = file_get_contents("php://input");
+	      $data = file_get_contents("php://input");
 	 	 $data = trim($data);
-	 	// file_put_contents('datas1.txt', $data);
+	 	 // file_put_contents('datas1.txt', $data);
         	 // file_put_contents('filecontent.txt',$data);
         	 $data = json_decode($data, true);
         	 // file_put_contents('success.txt',$data['state']);
@@ -47,18 +53,37 @@ class Cashoutcallback
         	 //file_put_contents('datas2.txt', $datas);
         	 //返回结果
         	 $resul = json_decode($datas, true);
-        	 file_put_contents('datas3.txt',$resul);
+        	 //file_put_contents('datas3.txt',$resul);
         	 //订单详情
-        	 $order                = CashOrder::where(array('order_thead_no' => $resul['transNo']))->find();
+        	 $order   = CashOrder::where(array('order_thead_no' => $resul['transNo']))->find();
         	 //00代表成功
         	 if ($resul['status'] == '00' && $order) {
 		 	 $order->order_state=2;
+		 	 //进行分润
+		 	 $fenrun= new \app\api\controller\Commission();
+		 	 $fenrun_result=$fenrun->MemberFenRun($order->order_member,$order->order_charge,$order->order_charge,$order->order_passway,1,'套现手续费分润');
+		 	 if($fenrun_result['code']=="200")
+ 				 $order->order_fen=$fenrun_result['leftmoney'];
+ 			else	
+ 				 $order->order_fen=-1;
 		 	 $res = $order->save();
             	 if ($resul['qfStatus'] == 'SUCCESS' || $resul['qfStatus'] == 'IN_PROCESS') {
+            	 	 //订单更新成功的时候去执行分佣
                 	 echo 'success';
                 	 die;
             	 }
        	 } 
+	 }
+
+	 /**
+	 * @version  CashOutCallBack 套现回调 快捷支付0.23回调 
+	 * @authors John(1160608332@qq.com)
+	 * @date    2017-09-29 16:03:05
+	 * @version $Bill$
+	 */
+	 public function quick023callback()
+	 {
+	 	
 	 }
 
 }

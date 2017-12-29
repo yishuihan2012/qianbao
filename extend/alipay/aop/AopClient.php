@@ -58,11 +58,11 @@ class AopClient {
 
 	protected $alipaySdkVersion = "alipay-sdk-php-20161101";
 
-	public function generateSign($params, $signType = "RSA") {
+	public function generateSign($params, $signType = "RSA2") {
 		return $this->sign($this->getSignContent($params), $signType);
 	}
 
-	public function rsaSign($params, $signType = "RSA") {
+	public function rsaSign($params, $signType = "RSA2") {
 		return $this->sign($this->getSignContent($params), $signType);
 	}
 
@@ -116,7 +116,7 @@ class AopClient {
 		return $stringToBeSigned;
 	}
 
-	protected function sign($data, $signType = "RSA") {
+	protected function sign($data, $signType = "RSA2") {
 		if($this->checkEmpty($this->rsaPrivateKeyFilePath)){
 			$priKey=$this->rsaPrivateKey;
 			$res = "-----BEGIN RSA PRIVATE KEY-----\n" .
@@ -151,7 +151,7 @@ class AopClient {
      * @return string
      * @author mengyu.wh
      */
-	public function alonersaSign($data,$privatekey,$signType = "RSA",$keyfromfile=false) {
+	public function alonersaSign($data,$privatekey,$signType = "RSA2",$keyfromfile=false) {
 
 		if(!$keyfromfile){
 			$priKey=$privatekey;

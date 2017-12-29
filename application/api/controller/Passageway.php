@@ -10,6 +10,8 @@
  use think\Config;
  use think\Request;
  use app\index\model\Passageway as Passageways;
+ use app\index\model\PassagewayItem;
+ use app\index\model\CashOut;
 
 
  class Passageway 
@@ -18,10 +20,7 @@
       public $error;
       public function __construct($param)
       {
-<<<<<<< HEAD
-=======
-         var_dump(123);die;
->>>>>>> dev2
+
         	 $this->param=$param;
       }
 
@@ -33,19 +32,25 @@
       **/ 
       public function passageway_lists()
       {
-<<<<<<< HEAD
-      	$Passageways=new Passageways;
+
          #可用支付通道
-         $passageway_lists=$Passageways->where('passageway_state=1')->select();
-         return ['code'=>200, 'msg'=>'获取成功~', 'data'=>$passageway_lists];
-=======
-         var_dump(123);die;
+         $passageway_lists=Passageways::with('cashout')->where('passageway_state=1')->select();
+         foreach ($passageway_lists as $key => $value) {
+            $passageway[$key]['item_rate']=PassagewayItem::where('item_passageway='.$value['passageway_id'])->order('item_rate asc')->value('item_rate');
+            $passageway[$key]['cashout']='最大套现额度：'.$value['cashout_max'].'最小套现额度：'.$value['cashout_min'];
+            $passageway[$key]['passageway_id']=$value['passageway_id'];
+            $passageway[$key]['passageway_name']=$value['passageway_name'];
+            $passageway[$key]['passageway_desc']=$value['passageway_desc'];
+            $passageway[$key]['cashout_max']=$value['cashout_max'];
+            $passageway[$key]['cashout_min']=$value['cashout_min'];
+         }
+
+         return ['code'=>200, 'msg'=>'获取成功~', 'data'=>$passageway];
+
+
       	 // $Passageways=new Passageways;
         //  #可用支付通道
         //  $passageway_lists=$Passageways->where('passageway_state=1')->select();
         //  return ['code'=>200, 'msg'=>'获取成功~', 'data'=>$passageway_lists];
->>>>>>> dev2
       }
-
-
  }

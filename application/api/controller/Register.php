@@ -15,6 +15,7 @@
  use app\index\model\Wallet;
  use app\index\model\MemberRelation;
  use app\index\model\MemberTeam;
+ use app\index\model\MemberNet;
 
  use app\index\model\SmsCode;
 
@@ -78,12 +79,12 @@
             	 }
                  $token = get_token();
             	 $member_login= new MemberLogin([
-            	 	 'login_member_id'=>$member_info->member_id,
-            	 	 'login_account'	  =>$this->param['phone'],
-            	 	 'login_pass'		  =>$pwd,
-            	 	 'login_pass_salt'  =>$rand_salt,
-                      'login_token'         =>$token,
-            	 	 'login_attempts'	  =>0,
+            	 	 'login_member_id'  => $member_info->member_id,
+            	 	 'login_account'	  => $this->param['phone'],
+            	 	 'login_pass'		    => $pwd,
+            	 	 'login_pass_salt'  => $rand_salt,
+                 'login_token'      => $token,
+            	 	 'login_attempts'	  => 0,
             	 ]);
             	 #用户推荐表信息处理
             	 $parent=0;
@@ -99,10 +100,10 @@
             	 #验证是否有邀请手机号 并且邀请手机号是否存在
             	 if(isset($this->param['parent_phone']) && !empty($this->param['parent_phone']) && preg_mobile($this->param['parent_phone']))
             	 {
-            	 	 $parent_result=MemberLogin::phone_exit($this->param['parent_phone']);
-            	 	 #用手机号去查询会员信息
-            	 	 $parent = $parent_result ? $parent_result['login_member_id'] : 0;
-            	 	 #TODO 系统设置里是否开启必须邀请人
+                   $parent_result=MemberLogin::phone_exit($this->param['parent_phone']);
+                   #用手机号去查询会员信息
+                   $parent = $parent_result ? $parent_result['login_member_id'] : 0;
+                   #TODO 系统设置里是否开启必须邀请人
             	 	 if(!$parent_result)
             	 	 {
              	 	      Db::rollback();
@@ -126,11 +127,19 @@
                 'team_name'=>$member_info->member_nick,
                 'team_member_id'=>$member_info->member_id,
                ]);
-            	 if( !$member_login->save() || !$meber_relation->save() || !$member_wallet->save() || !$member_team->save())
+
+               #初始化会员入网信息
+               $MemberNet=new MemberNet([
+                'net_member_id'=>$member_info->member_id,
+               ]);
+               
+            	 if( !$member_login->save() || !$meber_relation->save() || !$member_wallet->save() || !$member_team->save() || !$MemberNet->save())
             	 {
             	 	 Db::rollback();
             	 	 return ['code'=>300];
             	 }
+
+               
 
             	 Db::commit();
                  $data=Member::member_info($token);

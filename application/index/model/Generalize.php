@@ -28,4 +28,77 @@ class Generalize extends Model{
            parent::initialize();
            #TODO:自定义的初始化
       }
+      /**
+       * [getPaginate 查询素材详情表]
+       * @return [type] [description]
+       */
+      // public function getPaginate(){
+      //   $
+      // }
+      /**
+       * [remove 删除素材详情]
+       * @param  integer $data [description]
+       * @return [type]        [description]
+       */
+      public static function remove($data = 0){
+        $where['generalize_id'] = $data;
+
+        //查询图片地址
+        $url = Db::table("wt_generalize")->where($where)->find();
+        //图片是多图分割成数组
+        
+        $arr = explode("#",$url['generalize_thumb']);
+       
+               //删除数据
+        if(Db::table("wt_generalize")->where($where)->delete()){
+          foreach ($arr as $key => $value) {
+            $img = $value;
+            @unlink(".".$img);
+          }
+          return true;
+        }else{
+          return false;
+        }
+      }
+      /**
+       * [generalizelist 查询推荐素材列表]
+       * @return [type] [description]
+       */
+      public static function generalizelist(){
+        $list = Db::table("wt_generalize")->select();
+        if($list){
+          foreach ($list as $key => $value) {
+            $list[$key]['thumbarr'] = explode("#",$value['generalize_thumb']);
+            $list[$key]['generalize_time'] = date("Y-m-d",strtotime($value['generalize_creat_time']));
+          }
+        }
+        return $list;
+      }
+      /**
+       * [generalizenum 修改素材下载次数]
+       * @return [type] [description]
+       */
+      public static function generalizenum($data = 0){
+        $where['generalize_id'] = $data;
+        //获取当前下载次数
+        $generalizenum = Db::table("wt_generalize")->where($where)->find();
+        //然后把当前次数加一
+        $num = $generalizenum['generalize_download_num'] + 1;
+        //更新数据库
+        if(Db::table("wt_generalize")->where($where)->update(["generalize_download_num"=>$num])){
+            return true;
+        }else{
+            return false;
+        }
+      }
+      /**
+       * [edit 推广详情]
+       * @return [type] [description]
+       */
+      public static function edits($data = 0){
+        $where['generalize_id'] = $data;
+        $info = Db::table("wt_generalize")->where($where)->find();
+        $info['arrImg'] = explode("#",$info['generalize_thumb']);
+        return $info ;
+      }
 }

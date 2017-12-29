@@ -72,18 +72,18 @@
            if($this->param['money']>$passway->cashout->cashout_max)
                  return ['code'=>457];
            #获取用户信用卡信息
-           $member_card=MemberCreditcard::get(['card_id'=>$this->param['cardid'],'card_member_id'=>$this->param['uid']]);
+          $member_card=MemberCreditcard::get(['card_id'=>$this->param['cardid'],'card_member_id'=>$this->param['uid']]);
            if(empty($member_card))
-                 return ['code'=>442];
+                return ['code'=>442];
            $method=$passway->cashout->cashout_method;
+           // return ['code'=>442,'msg'=>'123','data'=>$method];
            $cashObject=new CashOut($this->param['uid'],$this->param['passwayid'],$this->param['cardid']);
            if ($cashObject->error)
                 return ['code'=>$cashObject->error];
+              // var_dump($method);die;
            $DaoLong=$cashObject->$method(make_order(),$this->param['money']);
-
-           return ['code'=>'200','msg'=>'获取url成功','data'=>['url'=>$DaoLong]];
-           dump($DaoLong);
-           #获取用户
+           return $DaoLong;
       }
+
 
  }

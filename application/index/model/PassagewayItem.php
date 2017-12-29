@@ -29,4 +29,10 @@ class PassagewayItem extends Model{
            #TODO:自定义的初始化
       }
 
+      #关联模型 一对一关联 (group) 关联用户组表
+      public function group()
+      {
+           return $this->hasOne('Member','member_group_id','item_group')->setEagerlyType(0);
+      }
+
 }

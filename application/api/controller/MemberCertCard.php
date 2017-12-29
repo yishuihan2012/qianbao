@@ -14,9 +14,13 @@
  use app\index\model\MemberLogin;
  use app\index\model\System;
  use app\index\model\Member;
+ use app\index\model\MemberGroup;
+ use app\index\model\MemberNet;
  use app\index\model\MemberCert as MemberCerts;
  use app\index\model\MemberCreditcard;
  use app\index\model\MemberCashcard;
+ use app\index\model\Passageway;
+ use app\index\model\PassagewayItem;
  use app\index\model\SmsCode as SmsCodes;
 
  class MemberCertCard 
@@ -25,6 +29,7 @@
       public $error;
       public $name;
       public $idcard;
+      protected $mechid;
       public function __construct($param)
       {
         	 $this->param=$param;
@@ -48,8 +53,11 @@
            }
       }
 
+
+    
+
       /**
-      *  @version addition_card method / Api 绑定信用卡
+      *  @version addition_card method / Api 绑定信用卡1(获取验证码)
       *  @author $bill$(755969423@qq.com)
       *  @datetime    2017-12-15 09:22:05
       *  @param uid=会员ID token=登录令牌 
@@ -59,61 +67,159 @@
       **/ 
       public function addition_card()
       {
+         //  $add=new \app\api\controller\MemberNet($this->param['uid'],$this->param['passageway_id'],$this->param['phone']);
+         // return ['code'=>436, 'msg'=>'qwewq','data'=>$add];
            #验证器验证 验证参数合法性
            $validate = Loader::validate('Memberadditioncard');
            #如果验证不通过 返回错误代码 及提示信息
+
            if(!$validate->check($this->param))
                  return ['code'=>436, 'msg'=>$validate->getError()];
-           #验证码验证规则 读取本手机号最后一条没有使用的验证码 并且在系统设置的有效时间内
-           $code_info=SmsCodes::where(['sms_send'=>$this->param['phone'],'sms_log_state'=>1])->whereTime('sms_log_add_time', "-".System::getName('code_timeout').' minutes')->find();
-           if(!$code_info || ($code_info['sms_log_content']!=$this->param['smsCode']))
-                 return ['code'=>404];
-           #改变验证码使用状态
-           $code_info->sms_log_state=2;
-           $result=$code_info->save();
-           #验证是否成功
-           if(!$result)
-                 return ['code'=>404];
-           #查询当前卡有没有绑定过
-           $creditcard=MemberCreditcard::get(['card_bankno'=>$this->param['creditCardNo'],'card_phone'=>$this->param['phone'],'card_name'=>$this->name,'card_idcard'=>$this->idcard]);
 
-           if($creditcard)
-           {  
-                 if($creditcard['card_state']=='1')
-                      return ['code'=>437];
-                 return ['code'=>438] ;
-           } 
-           #信用卡有效状态校验
-           $card_validate=BankCert($this->param['creditCardNo'],$this->param['phone'],$this->idcard,$this->name);
-           if($card_validate['reason']!='成功')
-                 return ['code'=>351];
-           $state=$card_validate['result']['result']=='T' ? '1' : '0';
-           if($card_validate['result']['result']=='P')
-                 return ['code'=>440];
-           #写入信用卡表
-           $member_cashcard=new MemberCreditcard([
-                'card_member_id'=>$this->param['uid'],
-                'card_bankno'=>$this->param['creditCardNo'],
-                'card_name'  =>$this->name,
-                'card_idcard' =>$this->idcard,
-                'card_phone' =>$this->param['phone'],
-                'card_bankname' => $this->param['bank_name'],
-                'card_Ident'  => $this->param['cvv'],
-                'card_expireDate' => $this->param['expireDate'],
-                'card_billDate'   => $this->param['billDate'],
-                'card_deadline' => $this->param['deadline'],
-                'card_isRemind' => $this->param['isRemind'],
-                'card_remindDate' => $this->param['remindDate'] ? $this->param['remindDate'] : $this->param['billDate'],
-                'card_state'  => $state,
+           #获取用户信息
+           $member_info=MemberCerts::where('cert_member_id='.$this->param['uid'])->find();
+           if(empty($member_info))
+              $this->error=356;
+
+            #获取后台费率
+            $group=Member::where('member_id='.$this->param['uid'])->find();
+
+
+           #判断需要入网的通道
+           $passageway=Passageway::where('passageway_status=1 and passageway_also=1')->find();
+
+
+            $member_net=MemberNet::where('net_member_id='.$this->param['uid'])->find();
+
+            if(empty($member_net[$passageway['passageway_no']])){
+
+                 $rate=PassagewayItem::where('item_passageway='.$passageway['passageway_id'].' and item_group='.$group['member_group_id'])->find();
+                 $arr=mishua($passageway, $rate, $member_info, $this->param['phone']);
+                $add_net=MemberNet::where('net_member_id='.$this->param['uid'])->update($arr);
+
+           }
+
+
+
+            $member_net=MemberNet::where('net_member_id='.$this->param['uid'])->find();
+            
+            #绑定信用卡签约
+            $params=array(
+                  'mchNo'=>$passageway['passageway_mech'], //mchNo 商户号 必填  由米刷统一分配 
+                  'userNo'=>$member_net[$passageway['passageway_no']],
+                  'phone'=>$this->param['phone'],
+                  'cardNo'=>$this->param['creditCardNo'],
+                  'expiredDate'=>$this->param['expireDate'],
+                  'cvv'=>$this->param['cvv']
+            );
+
+            $url='http://pay.mishua.cn/zhonlinepay/service/rest/creditTrans/bindCardSms';
+            $income=repay_request($params,$passageway['passageway_mech'],$url,$passageway['iv'],$passageway['secretkey'],$passageway['signkey']);
+            
+            if($income['code']=='200'){
+              if($income['bindStatus']=='01'){
+                return ['code'=>463];//此卡已签约
+              }
+                 $card=MemberCreditcard::where("card_bankno={$this->param['creditCardNo']}")->find();
+                if(empty($card)){
+                   #写入信用卡表
+                   $member_cashcard=new MemberCreditcard([
+                        'card_member_id'=>$this->param['uid'],
+                        'card_bankno'=>$this->param['creditCardNo'],
+                        'card_name'  =>$this->name,
+                        'card_idcard' =>$this->idcard,
+                        'card_phone' =>$this->param['phone'],
+                        'card_bankname' => $this->param['bank_name'],
+                        'card_Ident'  => $this->param['cvv'],
+                        'card_expireDate' => $this->param['expireDate'],
+                        'card_billDate'   => $this->param['billDate'],
+                        'card_deadline' => $this->param['deadline'],
+                        'bindId' => $income['bindId'],
+                        'bindStatus' => $income['bindStatus'],
+                        'mchno' => $passageway['passageway_mech'],
+                        'card_state'  => 0,
+                        // 'card_return' =>json_encode($card_validate),
+                   ]);
+                   if($member_cashcard->save()===false)
+                         return ['code'=>436];
+                  }
+                 return ['code'=>200, 'msg'=>'短信发送成功~', 'data'=>['bindId'=>$income['bindId']]];
+              }else{
+                  return ['code'=>400, 'msg'=> $income['message']];
+              }
+      }
+
+
+       /**
+      *  @version addition_card_code method / Api 绑定信用卡2(签约)
+      *  @author $bill$(755969423@qq.com)
+      *  @datetime    2017-12-15 09:22:05
+      *  @param uid=会员ID token=登录令牌 
+          'creditCardNo:信用卡卡号',  'cvv:信用卡背面的3位cvv数字',  'expireDate:有效期',
+          'billDate:账单日，两位数字，如1号->01',  'deadline:最后还款日',  'isRemind:是否提醒，0表示不提醒，1表示提醒，\ 当关闭提醒时，下方的日期选择将隐藏',
+          'remindDate:提醒日，数据格式和账单日相同'
+      **/ 
+      public function addition_card_code(){
+           #判断参数是否存在
+           if(!isset($this->param['bindId']) || empty($this->param['bindId']))
+                 return ['code'=>441];
+           #查询信用卡信息
+           $creditcard=MemberCreditcard::where("bindId='{$this->param['bindId']}' and card_member_id={$this->param['uid']}")->find();
+           // return ['code'=>441,'msg'=>'13','data'=>$creditcard];
+           if(empty($creditcard))
+              return ['code'=>356];
+            if($creditcard['bindStatus']=='01')
+              return ['code'=>463];
+
+             #查询当前卡有没有绑定过
+              if($creditcard['card_state']=='1')
+                  return ['code'=>437];
+          
+               #信用卡有效状态校验
+               $card_validate=BankCert($creditcard['card_bankno'],$creditcard['card_phone'],$creditcard['card_idcard'],$creditcard['card_name']);
+               if($card_validate['reason']!='成功')
+                     return ['code'=>351];
+               $state=$card_validate['result']['result']=='T' ? '1' : '0';
+               if($card_validate['result']['result']=='P')
+                     return ['code'=>440];
+
+               if($card_validate['result']['result']=='F')
+                    return ['code'=>439];
+               if($card_validate['result']['result']=='N')
+                    return ['code'=>353];
+
+
+            $passageway=Passageway::where('passageway_status=1 and passageway_also=1')->find();
+
+
+            $member_net=MemberNet::where('net_member_id='.$this->param['uid'])->find();
+            $params=array(
+              'mchNo'=>$creditcard['mchno'], //机构号 必填  由平台统一分配 16
+              'userNo'=>$member_net[$passageway['passageway_no']],  //平台用户标识  必填  默认为平台下发用户标识 32
+              'bindId'=>$creditcard['bindId'],  //平台签约ID  必填  签约短信下发  32
+              'smsCode'=>$this->param['smsCode'],  //短信验证码 必填    10
+            );
+            $url='http://pay.mishua.cn/zhonlinepay/service/rest/creditTrans/bindCardConfirm';
+            $income=repay_request($params,$passageway['passageway_mech'],$url,$passageway['iv'],$passageway['secretkey'],$passageway['signkey']);
+            if($income['code']=='200'){
+              //修改签约状态
+              $bindStatus=array(
+                'bindStatus'=>$income['bindStatus'],
                 'card_return' =>json_encode($card_validate),
-           ]);
-           if($member_cashcard->save()===false)
-                 return ['code'=>436];
-           if($card_validate['result']['result']=='F')
-                return ['code'=>439];
-           if($card_validate['result']['result']=='N')
-                return ['code'=>353];
-           return ['code'=>200, 'msg'=>'信用卡绑定成功~', 'data'=>''];
+                'card_state'  => $state
+              );
+              $edit=MemberCreditcard::where("bindId='{$this->param['bindId']}' and mchno='{$creditcard['mchno']}'")->update($bindStatus);
+              
+              if($edit){
+                return ['code'=>200, 'msg'=>'签约成功~', 'data'=>''];
+              }else{
+                return ['code'=>464];
+              }
+              
+            }else{
+              return ['code' => 102, 'msg' => $income['message'], 'data' => ''];
+            }
+            
       }
  
       /**
@@ -136,8 +242,21 @@
            #进行和当前会员信息比对
            if($cert_card['card_name']!=$member_cert['cert_member_name'] ||  $cert_card['card_idcard']!=$member_cert['cert_member_idcard'])
                  return ['code'=>443];
+
+            $passageway=Passageway::where('passageway_status=1 and passageway_also=1')->find();
+            $member_net=MemberNet::where('net_member_id='.$this->param['uid'])->find();
+            $url='http://pay.mishua.cn/zhonlinepay/service/rest/creditTrans/unbindCard';
+            $params=array(
+              'mchNo'=> $cert_card['mchno'],
+              'userNo'=> $member_net[$passageway['passageway_no']],
+              'bindId'=>$cert_card['bindId']
+            );
+            $income=repay_request($params,$passageway['passageway_mech'],$url,$passageway['iv'],$passageway['secretkey'],$passageway['signkey']);
+            if($income['bindStatus']!='02')
+                return ['code'=>444];
            if($cert_card->delete()===false)
                  return ['code'=>444];
+               
            return ['code'=>200, 'msg'=>'解绑成功~', 'data'=>''];
       }
 
@@ -153,11 +272,12 @@
            if(!isset($this->param['uid']) || empty($this->param['uid']) || !isset($this->param['token']) ||empty($this->param['token']))
                 $this->error=314;
            #查找到当前用户信用卡列表
-           $data=MemberCreditcard::with("repayment")->where('card_member_id='.$this->param['uid'])->select();
-           return ['code'=>200, 'msg'=>'获取信用卡列表成功~', 'data'=>$data];
-           if(empty($data))
-                 return ['code'=>314];
+           $data=MemberCreditcard::with("repayment")->where('card_member_id='.$this->param['uid'].' and bindStatus=01')->select();
 
+           foreach ($data as $key => $value) {
+                 $data[$key]['card_banktitle']=$value['card_bankname'].'(尾号'.substr($value['card_bankno'],-4).')';
+                 $data[$key]['isInRepaySchedule']=empty($value['repayment_repayment']) ? 0 : 1 ;
+            }
            return ['code'=>200, 'msg'=>'获取信用卡列表成功~', 'data'=>$data];
       }
  }

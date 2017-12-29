@@ -34,12 +34,12 @@ class Withdraw extends Model{
     //-------------------------------------------------------
     public function adminster()
     {
-        return $this->hasOne('Adminster','adminster_id','withdraw_option');
+        return $this->hasOne('Adminster','adminster_id','withdraw_option')->bind('adminster_login');
     }
     //关联会员
     public function member()
     {
-        return $this->hasOne('Member','member_id','withdraw_member');
+        return $this->hasOne('Member','member_id','withdraw_member')->bind('member_nick,member_image,member_creat_time');
     }
     public function wallet()
     {

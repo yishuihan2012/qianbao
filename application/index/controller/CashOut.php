@@ -1,7 +1,7 @@
 <?php
 /**
  * @version  取现接口 套现 
- * @authors John(1160608332@qq.com)
+ * @authors Bill(755969423@qq.com)
  * @date    2017-09-29 16:03:05
  * @version $Bill$
  */
@@ -16,11 +16,13 @@ use app\index\model\Passageway;
 use app\index\model\MemberCreditcard;
 use app\index\model\CashOrder;
 use app\index\model\PassagewayItem;
-
 use app\index\model\Order as Orders;
 use app\index\model\Wallet as Wallets;
 use app\index\model\Withdraw as Withdraws;
 use app\index\model\CallbackLog as CallbackLogs;
+
+use app\api\controller\Membernets; //入网
+use app\index\model\MemberNet;//入网模型
 
 class CashOut
 {
@@ -31,7 +33,8 @@ class CashOut
       private $passway_info; //通道信息
       private $card_info;		//信用卡信息
       private $also;
-      function __construct($memberId,$passwayId,$cardid){
+      function __construct($memberId,$passwayId,$cardid)
+      {
       	 try{
 	      	 #根据memberId获取会员信息和会员的实名认证信息还有会员银行卡信息
 	      	 $member_info=Member::get($memberId);
@@ -56,8 +59,8 @@ class CashOut
 	           if($passageway->cashout->cashout_open!='1')
 	                 $this->error=455;
 	           #获取信息卡信息
-	           $creditcard=MemberCreditcard::get($cardid);
-	           if(!$creditcard)  
+	          $creditcard=MemberCreditcard::get($cardid);
+	          if(!$creditcard)  
 	           	 $this->error=442;
 	           if($creditcard->card_member_id!=$memberId || $creditcard->card_name!=$member_cert->cert_member_name)
 	           	 $this->error=461;
@@ -77,17 +80,14 @@ class CashOut
       }  
 	 /**
 	 * @version  米刷 套现 
-	 * @authors John(1160608332@qq.com)
+	 * @authors bill(755969423@qq.com)
 	 * @date    2017-12-21 16:03:05
 	 * @version $Bill$
 	 */
 	 public function mishua($tradeNo,$price,$description='米刷测试')
 	 {
-	 	 $versionNo='1';//米刷版本号 , 值固定为1
-	 	 //return $this->passway_info->passageway_mech;
-	 	 // return $this->passway_info->cashout->cashout_callback;
 	      $arr = array(
-	            'versionNo'   => $versionNo, //版本固定为1
+	            'versionNo'   => '1', //版本固定为1
 	            'mchNo'       	=> $this->passway_info->passageway_mech, //商户号
 	            'price'       	=> $price, //单位为元，精确到0.01,必须大于1元
 	            'description' 	=> $description, //交易描述
@@ -104,10 +104,11 @@ class CashOut
 	            'downDrawFee' => '0', // 代付费 选填  每笔扣商户额外代付费。不填为不扣。
 	      );
 	      //请求体参数加密 AES对称加密 然后连接加密字符串转MD5转为大写
-	      $payload = $this->encrypt(json_encode($arr),$this->passway_info->passageway_pwd_key);
+	      $payload =AESencode(json_encode($arr),$this->passway_info->passageway_pwd_key);
 	      //return $payload;
 	      $sign    	= strtoupper(md5($payload.$this->passway_info->passageway_key));
-	      $request = array('mchNo' =>$this->passway_info->passageway_mech,'payload' => $payload, 'sign' => $sign,);
+	      $request = array('mchNo' =>$this->passway_info->passageway_mech,'payload' => $payload, 'sign' => $sign);
+	      // $res=
 	      $ch = curl_init();
 	      curl_setopt($ch, CURLOPT_HTTPHEADER, array("Content-Type: application/json; charset=utf-8"));
 	      curl_setopt($ch, CURLOPT_URL, $this->passway_info->cashout->cashout_url);
@@ -122,87 +123,128 @@ class CashOut
 	      $res = curl_exec($ch);
 	      $result = json_decode($res, true);
 	      if ($result['code'] == 0) {
-	      	 $datas=$this->decrypt($result['payload'],$this->passway_info->passageway_pwd_key);
+	      	 $datas=AESdecrypt($result['payload'],$this->passway_info->passageway_pwd_key);
 	            $datas = trim($datas);
 	            $datas = substr($datas, 0, strpos($datas, '}') + 1);
 	            $resul = json_decode($datas, true);
 	            //写入套现订单
-	            $order_result=$this->writeorder($tradeNo, $price, $price*($this->also->item_rate/100) ,$description='米刷测试',$resul['transNo']);
+	            $order_result=$this->writeorder($tradeNo, $price, $price*($this->also->item_rate/100) ,$description,$resul['transNo']);
 	      	 if(!$order_result)
 	      	 	 return ['code'=>327];
-	             return $resul['tranStr'];
+	            return ['code'=>200,'msg'=>'订单获取成功~', 'data'=>['url'=>$resul['tranStr'],'type'=>1, ]];
 	      }else{
-	      	return $result;
+	      	 return ['msg'=>$result['message'].',下单失败~', 'code'=>400];
 	      }
 	 }
 
 	 /**
 	 * @version  快捷支付 0.23费率套现 
-	 * @authors John(1160608332@qq.com)
+	 * @authors bill(755969423@qq.com)
 	 * @date    2017-12-23 16:25:05
 	 * @version $Bill$
 	 */
-	 public function quickPay023($tradeNo,$price,$description='米刷测试')
+	 public function quickPay023($tradeNo,$price,$description='快捷支付 0.23费率套现')
 	 {
+	 	 #检测通道是否需要入网
+	 	 if($this->passway_info->passageway_status=="1")
+	 	 {
+	 	 	 #检测用户是否已经入网
+		 	 $member_net=MemberNet::where(['net_member_id'=>$this->member_infos->member_id])->find();
+		 	 #如果该通道需要用户入网 去检查入网信息 如果用户还没有入网 则先进行入网
+		 	 if(!$member_net || $member_net[$this->passway_info->passageway_no]=="")
+		 	 {
+		 	 	 $method=$this->passway_info->passageway_method;
+		 	 	 $membernetObject=new Membernets($this->member_infos->member_id, $this->passway_info->passageway_id);
+		 	 	 $member_net_result=$membernetObject->$method();
+		 	 	 if($member_net_result['respCode']!="00" || $member_net_result['merchno']=="")
+		 	 	 	 return ['code'=>462, 'msg'=>$member_net_result['message']];
+		 	 }	 
+	 	 }
+	 	 #获取用户入网信息
+	 	 $member_net=MemberNet::where('net_member_id',$this->member_infos->member_id)->find();
 	 	 $version="v1.2";//接口版本号  目前固定
 		 $arr = array(
-	            'versionNo'	=> $versionNo, //版本固定为1
-	            'merchno'	=> $this->passway_info->passageway_mech, //商户号
+	            'version'		=> $version, //版本固定为
+	            'merchno'	=> $member_net[$this->passway_info->passageway_no], //商户号
 	            'traceno'		=> $tradeNo,//网站订单号 确保在网站的唯一
 	            'amount'       	=> $price, //单位为元，精确到0.01,必须大于1元
-	            'accountno'	=> $this->member_card->card_bankno,//结算卡号
+	            'accountno'	=> $this->card_info->card_bankno,//结算卡号
 	            'accountName'	=> $this->card_info->card_name,//结算户名 URLEncode编码
-	            'cardType'	=> , //1：信用卡，2：储蓄卡
-	            'validDate'	=> ,//使用信用卡时必填，需要信用卡4位有效日期(格式：MMYY)。
-	            'safeCode'	=> ,//使用信用卡时必填，需要卡背面的3位安全码
-	            'mobile'		=> ,//银行卡对应的手机号
+	            'cardType'	=> 1, //1：信用卡，2：储蓄卡
+	            'validDate'	=> $this->card_info->card_expireDate,//使用信用卡时必填，需要信用卡4位有效日期(格式：MMYY)。
+	            'safeCode'	=> $this->card_info->card_Ident,//使用信用卡时必填，需要卡背面的3位安全码
+	            'mobile'		=> $this->card_info->card_phone,//银行卡对应的手机号
 	            'certno'		=> $this->card_info->card_idcard,//银行卡对应的身份证号
-	            'bankCode'	=> ,//银行卡对应的银行编码
-	            'bankName'	=> $this->member_card->card_bankname,//银行卡对应的银行名称。采用URLEncode编码
-	            'settleType'	=> ,//固定值2-T+1结算
+	            'bankCode'	=> '123',//银行卡对应的银行编码
+	            'bankName'	=> $this->card_info->card_bankname,//银行卡对应的银行名称。采用URLEncode编码
+	            'settleType'	=> 3,//固定值2-T+1结算
 	            'notifyUrl'		=> $this->passway_info->cashout->cashout_callback,//支付完成后将支付结果回调至该链接
 	            'returnUrl'		=> '123',//支付完成后前端跳转地址
-	            'signature'	=> ,//对签名数据进行MD5加密的结果。参见3.1
-
-	            'payCardNo' => $this->card_info->card_bankno, //信用卡卡号
-
-	            'downPayFee'  	=> $this->also->item_rate*10, //结算费率  必填  接入机构给商户的费率，D0直清按照此费率结算，千分之X， 精确到0.01
-	            'downDrawFee' => '0', // 代付费 选填  每笔扣商户额外代付费。不填为不扣。
+	            //'signature'	=> ,//对签名数据进行MD5加密的结果。参见3.1
 	      );
+ 	      $param=get_signature($arr,$this->passway_info->passageway_key);
+           $result=curl_post($this->passway_info->cashout->cashout_url,'post',$param);
+           $data=json_decode(mb_convert_encoding($result, 'utf-8', 'GBK,UTF-8,ASCII'),true);
+ 		 if ($data['respCode'] == 00) {
+	           $order_result=$this->writeorder($tradeNo, $price, $price*($this->also->item_rate/100) ,$description,$data['traceno']);//写入套现订单
+	      	 if(!$order_result)
+	      	 	 return ['code'=>327];
+	           return ['code'=>200,'msg'=>'订单获取成功~' , 'data'=>['url'=>$data['barCode'],'type'=>2]];
+	      }else{
+	      	 return ['code'=>400, 'msg'=>$data['message'].',套现失败~'];
+	      }
+	 }
+
+	 /**
+	 * @version  快捷支付 5万封顶 
+	 * @authors bill(755969423@qq.com)
+	 * @date    2017-12-23 16:25:05
+	 * @version $Bill$
+	 */
+	 public function quickPay5()
+	 {
+
+	 }
+
+
+	 /**
+	 * @version  荣邦快捷支付
+	 * @authors bill(755969423@qq.com)
+	 * @date    2017-12-23 16:25:05
+	 * @version $Bill$
+	 */
+	 public function rongbangcash($tradeNo,$price,$description='荣邦快捷支付')
+	 {
+	 	 #检测通道是否需要入网
+	 	 if($this->passway_info->passageway_status=="1")
+	 	 {
+	 	 	 #检测用户是否已经入网
+		 	 $member_net=MemberNet::where(['net_member_id'=>$this->member_infos->member_id])->find();
+		 	 #如果该通道需要用户入网 去检查入网信息 如果用户还没有入网 则先进行入网
+		 	 if(!$member_net || $member_net[$this->passway_info->passageway_no]=="")
+		 	 {
+		 	 	 $method=$this->passway_info->passageway_method;
+		 	 	 $membernetObject=new Membernets($this->member_infos->member_id, $this->passway_info->passageway_id);
+		 	 	 if(!$membernetObject->$method())
+		 	 	 	 return  ['code'=>462]; //入网失败
+		 	 }	 
+	 	 }
+	 	 #获取用户入网信息
+	 	 $member_net=MemberNet::where('net_member_id',$this->member_infos->member_id)->find();
+	 	 
 	 }
 
 
 
-	 //AES对称加密 $locallV加密偏移量
-    	 public function encrypt($encryptStr,$encryptKey='') {
-    	 	 $localIV="0102030405060708";
-        	 #Open module
-        	 $module = mcrypt_module_open(MCRYPT_RIJNDAEL_128, '', MCRYPT_MODE_CBC, $localIV);
-        	 mcrypt_generic_init($module, $encryptKey, $localIV);
-        	 #Padding
-        	 $block = mcrypt_get_block_size(MCRYPT_RIJNDAEL_128, MCRYPT_MODE_CBC);
-        	 $pad = $block - (strlen($encryptStr) % $block); //Compute how many characters need to pad
-        	 $encryptStr .= str_repeat(chr($pad), $pad); // After pad, the str length must be equal to block or its integer multiples
-        	 #encrypt
-        	 $encrypted = mcrypt_generic($module, $encryptStr);
-        	 #Close
-        	 mcrypt_generic_deinit($module);
-        	 mcrypt_module_close($module);
-        	 return base64_encode($encrypted);
-    	 }
-    	 //AES对称解密 $locallV加密偏移量
-    	 public function decrypt($encryptStr,$encryptKey='') {
-    	 	 $localIV="0102030405060708";
-        	 #Open module
-        	 $module = mcrypt_module_open(MCRYPT_RIJNDAEL_128, '', MCRYPT_MODE_CBC, $localIV); 
-        	 mcrypt_generic_init($module, $encryptKey, $localIV);
-        	 $encryptedData = base64_decode($encryptStr);
-        	 $encryptedData = mdecrypt_generic($module, $encryptedData);
-        	 return $encryptedData;
-    	 }
-    	 //写入订单
-    	 public function writeorder($tradeNo, $price, $charge, $desc, $order_thead='')
-    	 {
+
+	 /**
+	 * @version  获取订单成功的时候写入订单数据
+	 * @authors bill(755969423@qq.com)
+	 * @date    2017-12-23 16:25:05
+	 * @version $Bill$
+	 */
+	 public function writeorder($tradeNo, $price, $charge, $desc, $order_thead='')
+	 {
 	      $data=array(
 	      	 'order_no'=>$tradeNo,
 	      	 'order_thead_no'=>$order_thead,

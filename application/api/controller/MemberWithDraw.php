@@ -158,7 +158,7 @@
                  Db::commit();
 /*                 if($member->member_device) //非空 
                       message_push('提现申请',$content,$member->member_id,$member->member_device,1);*/
-                 return ['code'=>200,'msg'=>$message];
+                 return ['code'=>200,'msg'=>$message,'data'=>sprintf("%.2f",substr(sprintf("%.3f", $meyyue), 0, -1))];
            } catch (\Exception $e) {
                  Db::rollback();
                  return ['code'=>371,'msg'=>$e->getMessage()];

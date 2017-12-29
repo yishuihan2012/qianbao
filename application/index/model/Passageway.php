@@ -32,6 +32,12 @@ class Passageway extends Model{
       #关联模型 一对一关联 (Passageway) 关联通道表
       public function cashout()
       {
-           return $this->hasOne('Cashout','cashout_passageway_id','passageway_id')->setEagerlyType(0);
+           return $this->hasOne('Cashout','cashout_passageway_id','passageway_id')->bind('cashout_open,cashout_min,cashout_max')->setEagerlyType(0);
+      }
+
+      #关联模型 一对一关联 (rate) 关联费率表
+      public function rate()
+      {
+           return $this->hasOne('PassagewayItem','item_passageway','passageway_id')->setEagerlyType(0);
       }
 }

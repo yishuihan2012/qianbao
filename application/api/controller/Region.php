@@ -48,7 +48,7 @@
       	 {
       	 	 $province=RegionProvince::all();
       	 	 if(!$province)
-      	 	 	 return ['code'=>314];
+      	 	 	 return ['code'=>499];
       	 	 return ['code'=>200, 'msg'=>'获取成功~', 'data'=>$province]; 
       	 }
       	 #如果有省份ID 并且没有城市ID的话 返回省份内所有城市列表
@@ -56,7 +56,7 @@
       	 {
       	 	 $city=RegionCity::where('pro_id',$this->param['provinceId'])->select();
       	 	 if(!$city)
-      	 	 	 return ['code'=>314];
+      	 	 	 return ['code'=>499];
       	 	 return ['code'=>200, 'msg'=>'获取成功~', 'data'=>$city];
       	 }
       	 #如果省份ID和城市ID同时存在的话 查找该城市下的所有区县
@@ -64,10 +64,10 @@
       	 {
                    	 $city_info=RegionCity::get($this->param['cityId']);
                    	 if($city_info['pro_id']!=$this->param['provinceId'])
-                   	 	 return ['code'=>314];
+                   	 	 return ['code'=>498];
                    	 $area= RegionArea::where(['pro_id'=>$this->param['provinceId'], 'city_id'=>$this->param['cityId']])->select();
                    	 if(!$area)
-                   	 	 return ['code'=>314];
+                   	 	 return ['code'=>497];
                    	 return ['code'=>200, 'msg'=>'获取成功~', 'data'=>$area];
       	 }
       }
@@ -141,6 +141,8 @@
         
            $info=System::where("system_key='min_withdrawals'")->find();
            $data['minWithdraw']=$info['system_val'];
+           $info=System::where("system_key='max_withdrawals'")->find();
+           $data['max_withdrawals']=$info['system_val'];
            $service=CustomerService::order('service_id desc')->select();
 
            $data['customerser']=$service;
@@ -153,6 +155,21 @@
            $Payplatform=Payplatform::where('payplatform_state=1')->field('payplatform_id, payplatform_name, payplatform_icon')->select();
            $data['payPlatforms']=$Payplatform;
            return ['code'=>200, 'msg'=>'获取信息成功', 'data'=>$data];
+      }
+
+
+      /**
+      *  @version advertisement method / Api 公告
+      *  @author $bill$(755969423@qq.com)
+      *  @datetime    2017-12-14 13:41:05
+      *  @param 
+      **/ 
+      public function advertisement()
+      {
+
+        
+          
+           // return ['code'=>200, 'msg'=>'获取公告成功', 'data'=>];
       }
 
 
