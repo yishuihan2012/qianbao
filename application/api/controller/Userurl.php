@@ -362,7 +362,7 @@ class Userurl extends Controller
   	$server['tel']=CustomerService::where('service_title','电话')->find();
   	$this->assign('data', $data);
   	$this->assign('server', $server);
-  	return $this->fetch();
+  	return view("api/userurl/about_us");
   }
   /**
    * [web_freshman_guide 新手指引]
