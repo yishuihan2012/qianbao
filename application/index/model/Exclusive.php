@@ -14,7 +14,7 @@ class Exclusive extends Model{
 	#定义模型数据表 默认为Class名加前缀 如不一样 可自己定义
 	#protected $table = 'wt_article';
 	#定义主键信息  可留空 默认主键
-	protected $pk 	 = 'generalize_id';
+	protected $pk 	 = 'exclusive_id';
 	#定义自动写入时间字段开启 格式为时间格式
 	protected $autoWriteTimestamp = 'datetime';
 	#定义时间戳字段名 信息添加时间

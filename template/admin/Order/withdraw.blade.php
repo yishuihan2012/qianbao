@@ -64,6 +64,12 @@
   </div>
 {!! $order_lists->render() !!}
 </div>
-
 </section>
+<script>
+  $(document).ready(function(){
+       $('.menu .nav .active').removeClass('active');
+       $('.menu .nav li.withdraw').addClass('active');
+       $('.menu .nav li.order-manager').addClass('show');
+ })
+</script>
 @endsection

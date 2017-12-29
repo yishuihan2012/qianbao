@@ -18,6 +18,7 @@
             <ul class="nav">
                 <li class="articles"><a href="<?php echo e(url('/index/article/index')); ?>"> 文章列表</a></li>
                 <li class="articles_category"><a href="<?php echo e(url('/index/article_category/index')); ?>"> 分类管理</a></li>
+            <li class="articles_category"><a href="<?php echo e(url('/index/article/memberNovice')); ?>"> 新手指引</a></li>
             </ul>
         </li>
 
@@ -70,7 +71,9 @@
             <a href="javascript:;"><i class="icon icon-user"></i> 订单统计</a>
             <ul class="nav">
                 <li class="order"><a href="<?php echo e(url('/index/order/index')); ?>"><i class="icon icon-sliders"></i> 订单列表</a></li>
-                <li class="withdraw"><a href="<?php echo e(url('/index/order/Withdraw')); ?>"><i class="icon icon-sliders"></i> 提现列表</a></li>
+                <li class="withdraw"><a href="<?php echo e(url('/index/order/Withdraw')); ?>"><i class="icon icon-sliders"></i> 提现订单</a></li>
+                <li class="recomment"><a href="<?php echo e(url('/index/order/recomment')); ?>"><i class="icon icon-sliders"></i> 实名红包列表</a></li>
+                <li class="cash"><a href="<?php echo e(url('/index/order/cash')); ?>"><i class="icon icon-sliders"></i> 套现订单</a></li>
             </ul>
         </li>
 

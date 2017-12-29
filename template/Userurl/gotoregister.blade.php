@@ -15,10 +15,7 @@
 			<div class="exc-code" id="shareLink">
 			</div>
 		</div>
-		<nav class="mui-bar mui-bar-tab wrap bg-w dis-flex-ar" id="muiBarTab">
-		  <a class="main-color f16" id="shareCode"><span class="mui-icon iconfont icon-fenxiang space-right"></span>分享链接</a>
-		</nav>
-		<script src="js/mui.min.js"></script>
+		<script src="/static/js/mui.min.js"></script>
 		<script type="text/javascript">
 			mui.init();
 			mui.ready(function(){

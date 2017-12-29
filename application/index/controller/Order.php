@@ -8,6 +8,7 @@
 namespace app\index\controller;
 use app\index\model\Order as Orders;
 use app\index\model\Withdraw;
+use app\index\model\CashOrder;
 use think\Controller;
 use think\Request;
 use think\Session;
@@ -41,7 +42,7 @@ class Order extends Common{
 	 	 return view('admin/order/edit');
 	 }
 
-	 #套现订单
+	 #提现订单
 	 public function withdraw(){
 	 	 // #查询订单列表分页
 	 	 $order_lists = Withdraw::with('member,adminster')->paginate(Config::get('page_size'), false, ['query'=>Request::instance()->param()]);
@@ -53,7 +54,7 @@ class Order extends Common{
 	 	return view('admin/order/withdraw');
 	 }
 
-	  #套现订单详情
+	  #提现订单详情
 	 public function showwithdraw(Request $request){
 	 	if(!$request->param('id'))
 	 	 {
@@ -73,5 +74,17 @@ class Order extends Common{
 	 	}
 	 	$this->assign("id",input("id"));
 	 	return view("admin/order/toexminewithdraw");
+	 }
+
+	  #套现订单
+	 public function cash(){
+	 	 // #查询订单列表分页
+	 	 $order_lists = CashOrder::with('passageway')->paginate(Config::get('page_size'), false, ['query'=>Request::instance()->param()]);
+	 	 #统计订单条数
+	 	 $count['count_size']=CashOrder::count();
+			 $this->assign('order_lists', $order_lists);
+			 $this->assign('count', $count);
+		 #渲染视图
+	 	return view('admin/order/cash');
 	 }
 }

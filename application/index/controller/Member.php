@@ -19,7 +19,7 @@ class Member extends Common{
 	 public function index()
 	 {
 	 	 #获取会员列表 
-	 	 $member_list=Members::with('memberLogin,membergroup')->order('member_id','desc')->paginate(Config::get('page_size'), false, ['query'=>Request::instance()->param()]);
+	 	 $member_list=Members::with('memberLogin,membergroup')->order('member_id','desc')->paginate('12', false, ['query'=>Request::instance()->param()]);
 	 	 $this->assign('member_list', $member_list);
 		 #渲染视图
 		 return view('admin/member/index');

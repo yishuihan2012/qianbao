@@ -35,4 +35,10 @@
       {
            return $this->hasOne('BankCard','card_number','order_card')->bind('card_bank')->setEagerlyType(0);
       }
+
+      #关联模型 一对一关联 (passageway) 银行卡
+      public function passageway()
+      {
+           return $this->hasOne('Passageway','passageway_id','order_passway')->setEagerlyType(0);
+      }
 }

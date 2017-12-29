@@ -83,7 +83,8 @@ class Tool
 		 #TODO 后台可配置 上传大小以及各式 和 目录
 		 try { 
 		 	 #开始上传
-	    		 $info = $file->move(ROOT_PATH . 'public' . DS . 'uploads'. DS . $path);
+
+	    		 $info = $file->move($_SERVER['HTTP_HOST'] . 'public' . DS . 'uploads'. DS . $path);
 	    		 //return $info;
 	    		 if($info){ 
 	    		 	 #上传成功 上传oss

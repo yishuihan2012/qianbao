@@ -1,0 +1,152 @@
+<!doctype html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title>关于我们</title>
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<link href="/static/css/mui.min.css" rel="stylesheet" />
+		<link href="/static/css/iconfont.css" rel="stylesheet" />
+		<link href="/static/css/base.css" rel="stylesheet" />
+		<link href="/static/css/page.css" rel="stylesheet" />
+		<link href="/static/css/themes.css" rel="stylesheet"/>
+	</head>
+	<body>
+		<div class="mui-content">
+			<div id="slider" class="mui-slider">
+		        <div id="sliderSegmentedControl" class="mui-slider-indicator mui-segmented-control mui-segmented-control-inverted bg-w">  
+		            <a class="mui-control-item bor-rad-l mui-active" href="#item1mobile">公司介绍</a>  
+		            <a class="mui-control-item bor-rad-r" href="#item2mobile">资质证书</a>  
+		            <a class="mui-control-item bor-rad-r" href="#item3mobile">联系我们</a>  
+		        </div>  
+		        <div id="sliderProgressBar" class="mui-slider-progress-bar mui-col-xs-4"></div>  
+		        <div class="mui-slider-group space-up"> 
+		        	<!--公司介绍-->
+		            <div id="item1mobile" class="base-info md-f1 mui-slider-item mui-control-content detailInfos md-box md-ver bg-w mui-active">
+		            	<h4 class="main-color fc about-tit space-up"><span class="mui-icon iconfont icon-gongsijianjie space-right"></span>
+		            		公司介绍</h4>
+		            	<div class="about-info wrap2">
+		            		<p>喜家网络成立于2016年，位于济南市天桥区济泺路齐鲁云商大厦20层。是一家互联网整体策略规划公司</p>
+		            		<p>主要业务为：官网建设、微信开发、网页UI设计、APP设计开发、系统开发。</p>
+		            		<p>我们的理念：诚信服务、实例为赢、与业为你。</p>
+		            		<p>我们的优势：专业咨询指导、丰富项目经验、合理费用开支。</p>
+		            	</div>
+		            </div>
+		            <!--资质证书-->
+		            <div id="item2mobile" class="process bg md-f1 mui-slider-item mui-control-content detailInfos1 md-box md-ver bg-w">
+		            	<h4 class="main-color fc about-tit space-up"><span class="mui-icon iconfont icon-zizhizhengshu space-right"></span>资质证书</h4>
+		            	<div class="about-info">
+		            		<!--卡片视图-->
+		            		<div class="my-card">
+								<div class="my-card-header wrap2">
+									<span class="my-badge">01</span>
+		            		        <span>某某证书</span>
+								</div>
+								<div class="my-card-content">
+									 <img src="/static/images/certificate.png">
+								</div>
+							</div>
+							<div class="my-card">
+								<div class="my-card-header wrap2">
+									<span class="my-badge">01</span>
+		            		        <span>某某证书</span>
+								</div>
+								<div class="my-card-content">
+									 <img src="/static/images/certificate.png">
+								</div>
+							</div>
+		            	</div>
+		            </div> 
+		            <!--联系我们-->
+		            <div id="item3mobile" class="process bg md-f1 mui-slider-item mui-control-content detailInfos1 md-box md-ver bg-w">
+		            	<h4 class="main-color fc about-tit space-up"><span class="mui-icon iconfont icon-kefu space-right"></span>联系我们</h4>
+		            	<div class="about-info">
+		            		<!--列表-->
+		            		<ul class="my-pad bor-bot dis-flex-ar">
+		            		  <li>
+		            		  	<a tel="15610079763" id="wexNumber001">
+		            		  		<div class="icon-container bg-color">
+		            		  			<span class="mui-icon iconfont icon-weixin blue-color-th f36">
+		            		  		</div>
+		            		  		<div class="icon-con-into">
+		            		  			<h4 class="main-color">微信客服</h4>
+		            		  			<p class="invalid-color">点击复制微信号码</p>
+		            		  		</div>
+		            		  	</a>
+		            		  </li>
+		            		  <li>
+		            		  	<a id="qqService001">
+		            		  		<div class="icon-container bg-color">
+		            		  			<span class="mui-icon iconfont icon-qq blue-color-th f36">
+		            		  		</div>
+		            		  		<div class="icon-con-into">
+		            		  			<h4 class="main-color">QQ客服</h4>
+		            		  			<p class="invalid-color">点击在线咨询</p>
+		            		  		</div>
+		            		  	</a>
+		            		  </li>
+		            		  <li>
+		            		  	<a tel="4006750789" id="telPhone001">
+		            		  		<div class="icon-container bg-color">
+		            		  			<span class="mui-icon iconfont icon-dianhua blue-color-th f36">
+		            		  		</div>
+		            		  		<div class="icon-con-into">
+		            		  			<h4 class="main-color">电话客服</h4>
+		            		  			<p class="invalid-color">点击拨打电话</p>
+		            		  		</div>
+		            		  	</a>
+		            		  </li>
+		            		</ul>
+		            	</div>
+		            	<div class="my-pad2">
+		            		<dl class="space-bot">
+		            			<dt><h4><span class="mui-icon iconfont icon-icon104 blue-color-th v-m space-right"></span>公司地址</dt>
+		            			<dd>山东省济南市天桥区济泺路71号齐鲁云商大厦20层</dd>
+		            		</dl>
+		            		<ul class="dis-flex-be">
+		            			<li>
+		            				<h4><span class="mui-icon iconfont icon-my-phone blue-color-th v-m space-right"></span>商务合作</h4>
+		            				<p class="f14">18756853348</p>
+		            			</li>
+		            			<li>
+		            				<h4><span class="mui-icon iconfont icon-shijian-copy-copy blue-color-th v-m space-right"></span>工作时间</h4>
+		            				<p class="f14">08:00-18:00 周一至周六</p>
+		            			</li>
+		            		</ul>
+		            	</div>
+		            </div> 
+		        </div>  
+	        </div>  
+		</div>
+		<script src="/static/js/mui.min.js"></script>
+		<script type="text/javascript">
+			mui.init();
+		    mui.ready(function(){
+		    	//点击复制微信号码
+		    	document.getElementById('wexNumber001').addEventListener('tap',function(){
+		    		var wexNum = document.getElementById('wexNumber001').getAttribute('tel');
+		    		 window.webkit.messageHandlers.copyArticle.postMessage(wexNum);
+		    		 //复制成功后提示  “内容已复制到粘贴板”
+		    	});
+		    	//qq客服
+		    	document.getElementById('qqService001').addEventListener('tap',function(){
+		    		window.location.href="http://wpa.qq.com/msgrd?v=3&uin=174668774&site=qq&menu=yes";
+		    	});
+		    	//android、ios交互 拨打电话
+		    	document.getElementById('telPhone001').addEventListener('tap',function(){
+		    		 var btnArray = ['否', '是'];
+	                  mui.confirm('是否拨打？', '4006750789', btnArray, function(e) {
+	                    if (e.index == 1) {console.log(1);
+	                        var tel=document.getElementById('telPhone001').getAttribute('tel');
+				            if (/(iPhone|iPad|iPod|iOS)/i.test(navigator.userAgent)) {  //判断iPhone|iPad|iPod|iOS
+				                 window.webkit.messageHandlers.drialPhone.postMessage(tel);
+				            } else if (/(Android)/i.test(navigator.userAgent)) {   //判断Android
+				                 window.AndroidMessage.call(tel);
+				            }
+	                    }
+	                  });
+		            
+		        });
+		    });
+		</script>
+	</body>
+</html>

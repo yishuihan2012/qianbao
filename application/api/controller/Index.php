@@ -69,6 +69,6 @@ use think\Config;
       }
       #测试用
       public function test(){
-        return 1;
+                return 1;
       }
  }

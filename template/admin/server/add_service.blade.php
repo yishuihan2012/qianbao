@@ -24,7 +24,8 @@ hr{margin:0 5px!important;}
                   <form action="{{url('/index/server_model/add_service')}}" method="post" class="form-horizontal" id="myform">
                      <div class="row form-group">
                       <label for="announcement_title" class="col-sm-2 text-right"><b>名称</b></label>
-                      <div id="announcement_title" class="col-sm-6"><input type="text" class="form-control announcement_title" name="list_name" placeholder="名称" value=""></div>
+                      <div id="announcement_title" class="col-sm-6">
+                           <input type="text" class="form-control announcement_title" name="list_name" placeholder="名称" value=""></div>
                      </div>
 
                      <div class="row form-group">
@@ -41,10 +42,10 @@ hr{margin:0 5px!important;}
                      <div class="row form-group">
                       <label for="announcement_content" class="col-sm-2 text-right"><b>会员专属</b></label>
                       <div id="announcement_content" class="col-sm-6">
-                       <ul class="dowebok tags">
-                         <li><input type="radio" name="list_authority" checked value="0" data-labelauty="不限" /></li>
-                         <li><input type="radio" name="list_authority"  value="1" data-labelauty="是" /></li>
-                       </ul>  
+                           <ul class="dowebok tags">
+                                <li><input type="radio" name="list_authority" checked value="0" data-labelauty="不限" /></li>
+                                <li><input type="radio" name="list_authority"  value="1" data-labelauty="是" /></li>
+                           </ul>  
                       </div>
                      </div>
 

@@ -17,12 +17,13 @@
 
  <!--dialog Content-->
  <div class="modal-content animated fadeInLeft">
-   <form action="{{url('/index/server_model/service_list')}}" method="post" class="form-horizontal" id="myform">
+   <form action="{{url('/index/server_model/show_service')}}" method="post" class="form-horizontal" id="myform">
    <h2></h2>
+   <input type="hidden" name="list_id" value="{{$data['list_id']}}">
    <div class="row form-group">
-     <label for="announcement_title" class="col-sm-3 text-right"><b>名称</b></label>
-     <div class="col-sm-6" id="announcement_title">
-       <input type="text" class="form-control announcement_title" name="announcement_title" placeholder="名称" value="{{$data['list_name']}}">
+     <label for="list_name" class="col-sm-2 text-right"><b>名称</b></label>
+     <div class="col-sm-6" id="list_name">
+       <input type="text" class="form-control list_name" name="list_name" placeholder="名称" value="{{$data['list_name']}}">
      </div>   
    </div>
 
@@ -31,8 +32,10 @@
         <b>所属模块</b>
       </label>
       <div id="announcement_content" class="col-sm-6">
-        <select name="list_item_id" class="list_item_id">@foreach($service as $v)
-          <option value="{{$v->item_id}}">{{$v->item_name}}</option>@endforeach
+        <select name="list_item_id" class="list_item_id  form-control">
+        @foreach($service as $v)
+          <option value="{{$v->item_id}}" @if($v->item_id==$data['list_item_id']) selected @endif>{{$v->item_name}}</option>
+          @endforeach
         </select>
         </div>
     </div>
@@ -70,31 +73,29 @@
     </div>
 
 
-    <div class="row form-group">
-      <label for="announcement_content" class="col-sm-2 text-right">
-        <b>服务地址</b>
-      </label>
-      <div id="announcement_title" class="col-sm-6">
-        <input type="text" class="form-control announcement_title" name="list_url" placeholder="服务地址" value="{{$data['list_url']}}"></div>
-    </div>
+      <div class="row form-group">
+           <label for="list_url" class="col-sm-2 text-right"><b>服务地址</b></label>
+           <div id="list_url" class="col-sm-6">
+                 <input type="text" class="form-control list_url" name="list_url" placeholder="服务地址" value="{{$data['list_url']}}">
+           </div>
+      </div>
 
-    <div class="row form-group">
-      <label for="announcement_content" class="col-sm-2 text-right">
-        <b>权重</b>
-      </label>
-      <div id="announcement_title" class="col-sm-6">
-        <input type="text" class="form-control announcement_title" name="list_weight" placeholder="权重" value="{{$data['list_weight']}}"></div>
-    </div>
+      <div class="row form-group">
+            <label for="list_weight" class="col-sm-2 text-right"><b>权重</b></label>
+            <div id="list_weight" class="col-sm-6">
+                <input type="text" class="form-control list_weight" name="list_weight" placeholder="权重" value="{{$data['list_weight']}}">
+           </div>
+      </div>
 
-    <div class="row form-group">
-      <label for="announcement_content" class="col-sm-2 text-right">
-        <b>是否开启</b>
-      </label>
-      <div id="announcement_content" class="col-sm-6">
-        <input type="checkbox" name="list_state" {{$data['list_state'] ? 'checked=""' :''}}></div>
-    </div>
-
-<input type="hidden" name="list_id" value="{{$data['list_id']}}">
+      <div class="row form-group">
+            <label for="list_state" class="col-sm-2 text-right"><b>是否开启</b></label>
+            <div id="list_state" class="col-sm-6">
+                 <select name="list_state" class="form-control">
+                      <option value="1" {{$data['list_state']=='1' ? 'selected' : ' '}}>显示</option>
+                      <option value="0" {{$data['list_state']=='0' ? 'selected' : ' '}}>不显示</option>
+                 </select>
+            </div>
+      </div>
   
  <!--dialog Button-->
  <div class="modal-footer animated fadeInLeft">

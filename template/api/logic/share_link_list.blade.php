@@ -10,19 +10,15 @@
 		<link href="/static/css/page.css" rel="stylesheet" />
 	</head>
 	<body>
-		<div class="mui-content">
-			<ul class="bg-w exc-code-list">
+		 <div class="mui-content">
+			 <ul class="bg-w exc-code-list">
 				@foreach($list as $k => $v)
-					<li class="fl">
-					  <a href="share_link.html">
-						<div ><img src="{{$v['exclusive_thumb']}}"></div>
-						<p class="f14 fc">{{$v['exclusive_name']}}</p>
-					  </a>
-					</li>
+				 <li class="fl">
+					 <a href="share_link.html"><div ><img src="{{$v['share_thumb']}}"></div><p class="f14 fc">{{$v['share_title']}}</p></a>
+				 </li>
 				@endforeach
-				
-			</ul>
-		</div>
+			 </ul>
+		 </div>
 		<script src="/static/js/mui.min.js"></script>
 		<script type="text/javascript">
 			mui.init();
@@ -31,5 +27,4 @@
 		    });
 		</script>
 	</body>
-
 </html>

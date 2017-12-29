@@ -44,6 +44,8 @@ class Userurl extends Controller
 		$this->assign('uid',$this->param['uid']);
 		$this->assign('token',$this->param['token']);
       }
+
+      #专属二维码列表
 	public function exclusive_code(){
 	    $list = Exclusive::all();
 	    $this->assign("list",$list);
@@ -59,32 +61,38 @@ class Userurl extends Controller
 		$this->checkToken();
 		//获取当前手机号
 		$tel=Members::get($this->param['uid'])->value('member_mobile');
-
-		Vendor('phpqrcode.phpqrcode');
 		//推广连接
 		$url='http://gongke.iask.in:21339/api/userurl/register/recomment/'.$tel;
-		$QRcode=new \QRcode();
-		//生成二维码
-		$QRcode->png($url, 'autoimg\qrcode'.$tel.'.png');
-		$qrurl=ROOT_PATH.'public\autoimg\qrcode'.$tel.'.png';
-		//背景
-		$bg=ROOT_PATH.'public\static\images\exclusice_code_bg.png';
-		//合成专属二维码
-		 $QR = imagecreatefromstring(file_get_contents($qrurl)); 
-		 $bg = imagecreatefromstring(file_get_contents($bg)); 
-		 $QR_width = imagesx($QR);//二维码图片宽度 
-		 $QR_height = imagesy($QR);//二维码图片高度 
-		 $bg_width = imagesx($bg);
-		 $bg_height = imagesy($bg);
-		 $bg_qr_width = $QR_width / 5; 
-		 $scale = $bg_width/$bg_qr_width; 
-		 $bg_qr_height = $bg_height/$scale; 
-		 //重新组合图片并调整大小 
-		 imagecopyresampled( $bg,$QR, 210, 700, 0, 0, 255, 
-		 255, $QR_width, $QR_height); 
-		//输出图片 
-		imagepng($bg, 'autoimg\qrcode'.$tel.'.png'); 
-		$url='http://'.$_SERVER['HTTP_HOST'].'/autoimg/qrcode'.$tel.'.png';
+		//背景图片ID
+		$exclusive_id=$this->param['exclusive_id'];
+		//若已经生成过
+		if(!is_file('autoimg\qrcode_'.$exclusive_id.'_'.$tel.'.png')){
+			Vendor('phpqrcode.phpqrcode');
+			$QRcode=new \QRcode();
+			//生成二维码
+			$QRcode->png($url, 'autoimg\qrcode'.$tel.'.png',0,7);
+			$qrurl=ROOT_PATH.'public\autoimg\qrcode'.$tel.'.png';
+			$logourl=ROOT_PATH.'public\static\images\logo.png';
+			// 二维码加入logo
+			 $QR = imagecreatefromstring(file_get_contents($qrurl)); 
+			 $logo = imagecreatefromstring(file_get_contents($logourl)); 
+			 $logo_width = imagesx($logo);
+			 $logo_height = imagesy($logo);
+			 imagecopyresampled( $QR,$logo, 100, 100, 0, 0, 60, 60, $logo_width, $logo_height); 
+			imagepng($QR, 'autoimg\qrcode'.$tel.'.png'); 
+			// 背景
+			$bg_url=Exclusive::get($exclusive_id)->value('exclusive_thumb');
+			$bg_url=ROOT_PATH.'public'.$bg_url;
+			// $bg=ROOT_PATH.'public\static\images\exclusice_code_bg.png';
+			//合成专属二维码
+			 $bg = imagecreatefromstring(file_get_contents($bg_url)); 
+			 $QR_width = imagesx($QR);//二维码图片宽度 
+			 $QR_height = imagesy($QR);//二维码图片高度 
+			 imagecopyresampled( $bg,$QR, 250, 710, 0, 0, 259, 259, $QR_width, $QR_height); 
+			imagepng($bg, 'autoimg\qrcode_'.$exclusive_id.'_'.$tel.'.png'); 
+		}
+		//返回图片地址
+		$url='http://'.$_SERVER['HTTP_HOST'].'/autoimg/qrcode_'.$exclusive_id.'_'.$tel.'.png';
 		$this->assign('url',$url);
 		return $this->fetch('Userurl/exclusive_code');
 	}
@@ -124,10 +132,10 @@ class Userurl extends Controller
 	 * @version  [消息]
 	 * @return   [type]
 	 */
-	public function notify(){
-		$this->checkToken();
-		return $this->fetch();
-	}
+	 public function notify(){
+		 $this->checkToken();
+		 return $this->fetch();
+	 }
 	/**
 	 * @Author   Star(794633291@qq.com)
 	 * @DateTime 2017-12-25T14:10:55+0800
@@ -332,5 +340,24 @@ class Userurl extends Controller
    */
   public function share_link(){
     return view("api/logic/share_link");
+  }
+  #分享的注册页 只有一个按钮的那个
+  public function gotoregister(){
+  	return $this->fetch();
+  }
+  #费率说明
+  public function my_rates(){
+  	return $this->fetch();
+  }
+  #盈利模式说明
+  public function explain(){
+  	return $this->fetch();
+  }
+  #关于我们
+  public function about_us(){
+  	return $this->fetch();
+  }
+   public function web_freshman_guide(){
+    return view("api/logic/web_freshman_guide");
   }
 }

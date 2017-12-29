@@ -51,7 +51,7 @@
 .exc-code-list li{width:33.33%;margin:5px 0;}
 .exc-code-list li div{width:90%;margin:0 auto;}
 .exc-code-list img{width:100%;}
-.exc-code-list p{width:90%;height:32px;margin:0 auto;overflow:hidden;text-overflow:ellipsis;display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:2;}
+.exc-code-list p{width:90%;height:44px;margin:0 auto;overflow:hidden;text-overflow:ellipsis;display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:2;}
 /*专属二维码*/
 .exc-code{background:url("../images/exclusice_code_bg.png") no-repeat;background-size:100%;}
 .code-container{width:140px;height:140px;position:absolute;top:52%;left:50%;margin-left:-65px;}
@@ -66,44 +66,30 @@
 .richscan-btn{width:80%;margin:50px auto 10px;}
 
 /*还款记录*/
-.repayment-history .mui-table-view-cell:not(:first-child){padding:5px 15px;}
-.repayment-history .mui-table-view-cell a{margin:-5px -15px;}
-/*还款计划列表*/
-.repay-plan-list{padding:0;}
-.mui-control-content .mui-loading {margin-top: 50px;}
-.repay-plan-list-top{padding:5% 3% 7%;background:url("../images/sawtooth_bg.png") no-repeat;background-size:100% 100%;}
-/*.repay-plan-list .mui-segmented-control.mui-scroll-wrapper .mui-scroll{height:36px;}
-.repay-plan-list .mui-slider .mui-segmented-control.mui-segmented-control-inverted .mui-control-item.mui-active{border-bottom:2px solid #1983d1;color:#1983d1;}
-.repay-plan-list .mui-segmented-control.mui-segmented-control-inverted .mui-control-item{color:#999;}*/
-.repay-plan-list-wrap{width:94%;margin:0 3%;}
-.repay-plan-list-wrap ul li:first-child{border-radius: 4% 4% 0 0;}
-.repay-plan-list-wrap ul li:last-child{border-radius:0 0 4% 4%;}
-/*还款计划详情*/
-.generate-plan{margin-bottom:110px;}
-.generate-plan .mui-table-view:first-child{margin:0}
-.repay-plan-detail table{width:100%;border-right:1px solid #e5e5e5;border-bottom:1px solid #e5e5e5;}
-.repay-plan-detail table tr:nth-child(even){background-color:#f0f3f5;}
-.repay-plan-detail table tr{width:100%;}
-.repay-plan-detail table tr th{padding:10px 0;border-left:1px solid #e5e5e5;border-top:1px solid #e5e5e5}
-.repay-plan-detail table tr td{padding:10px 0px;border-left:1px solid #e5e5e5;border-top:1px solid #e5e5e5;}
-.repay-plan-detail table tr .table-tit{width:;}
-.repay-plan-detail table tr .space-top{margin-top:80px;}
-.see-details{display:block;}
-.my-footer-btn a:link,.my-footer-btn a:hover,.my-footer-btn a:active,.my-footer-btn a:visited{color:#fff;}
+.repayment-history .mui-control-content {min-height:535px;}
+.repayment-history  .mui-control-content .mui-loading {margin-top: 50px;}
+.card-pic-container{
+	width:45px;
+	padding:5%;
+	height:45px;
+	border-radius:50%;
+	border:1px solid #e5e5e5;
+	margin-right:10px;
+}
+.card-pic-container img{width:100%;height:100%;}
+/*生成计划*/
+.generate-plan{
+	margin-bottom:90px;
+	padding-bottom:0;
+}
+.mui-bar{
+	-webkit-box-shadow: 0 0 0px rgba(0,0,0,.85);
+    box-shadow: 0 0 0px rgba(0,0,0,.85); 
+}
 /*还款计划提交成功*/
 .repay-suc .iconfont{margin-top:70px;color:#27c25a;}
 .repay-suc .my-btn-container{margin-top:100px;}
-/*信用卡还款详情*/
-.creditcard-payment-detailtable{width:100%;border-right:1px solid #e5e5e5;border-bottom:1px solid #e5e5e5;}
-.echarts-container{width:180px;height:180px;margin:0px auto;}
-.ecarts-info{position:absolute;top:40%;left:50%;width:80px;margin-left:-40px;text-align:center;word-wrap:break-word;}
-.creditcard-payment-detail table caption{text-align:left;padding:10px 20px;}
-.creditcard-payment-detail table tr{width:100%;}
-.creditcard-payment-detail table tr th{padding:10px 0;border-left:1px solid #e5e5e5;border-top:1px solid #e5e5e5}
-.creditcard-payment-detail table tr td{width:14%;padding:10px 0px;border-left:1px solid #e5e5e5;border-top:1px solid #e5e5e5;}
-.creditcard-payment-detail table tr td span{display:inline-block;}
-.icon-container2{width:40px;height:40px;border-radius:50%;}
-.icon-container2 img{width:70%;height:auto;}
+
 
 /*收支明细*/
 .input-reset{width:24px !important;height:24px !important;top:0;right:0;opacity:0;}
@@ -145,3 +131,5 @@
 .prompt-message .pic-cont{width:8%;height:40px;margin-top:0;float:right;}
 .prompt-message .pic-cont img{width:100% !important;height:auto;}
 .down-load a:link,.down-load a:hover,.down-load a:active,.down-load a:visited{color:#fff;}
+.my-btn-blue:link,.my-btn-blue:hover,.my-btn-blue:active,.my-btn-blue:visited{color:#fff;}
+.my-btn-blue2:link,.my-btn-blue2:hover,.my-btn-blue2:active,.my-btn-blue2:visited{color:#fff;}

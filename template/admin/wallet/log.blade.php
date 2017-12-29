@@ -28,13 +28,13 @@
     <div class="col-sm-2 text-center"><strong>{{$log->log_add_time}}</strong></div>
     <div class="col-sm-2 text-center">
         @if($log->log_relation_type=='1')
-        购买项目
+        分润收益~
+        @elseif($log->log_relation_type=='5')
+        邀请红包~
         @elseif($log->log_relation_type=='2')
-        
-        @elseif($log->log_relation_type=='3')
-        推荐红包
+        分佣收益~
         @elseif($log->log_relation_type=='4')
-        每日红包        
+        其他收益~        
         @endif
     </div>
     <div class="col-sm-2 huise"><i class="icon icon-{{$log->log_wallet_type=='1' ? 'plus' : 'minus' }}"></i>{{format_money($log->log_wallet_amount)}}</div>

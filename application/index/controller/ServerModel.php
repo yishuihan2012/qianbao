@@ -85,12 +85,13 @@
 		 if(Request::instance()->isPost()){
 		 	 $ServiceItemList =ServiceItemList::get(Request::instance()->param('list_id'));
 			 $result= $ServiceItemList->allowField(true)->save($_POST);
+			 dump($ServiceItemList->getLastSql());
 			 $content = ($result===false) ? ['type'=>'error','msg'=>'修改失败'] : ['type'=>'success','msg'=>'修改成功'];
 			 Session::set('jump_msg', $content);
 			 $this->redirect('server_model/service_list');
 			 exit;
 		 }
-		 $data=ServiceItemList::where('list_id='.Request::instance()->param('list_id'))->find();
+		 $data=ServiceItemList::get(Request::instance()->param('list_id'));
 		 $service=ServiceItem::all();
 		 $this->assign('service', $service);
 		 $this->assign('data', $data);
@@ -100,7 +101,6 @@
 
 	 #增加自定义模块服务列表 
 	 public function add_service(){
-
 		 if(Request::instance()->isPost()){
 
 		 	 $ServiceItemList = new ServiceItemList($_POST);

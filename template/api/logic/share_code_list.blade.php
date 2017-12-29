@@ -14,7 +14,7 @@
 			<ul class="bg-w exc-code-list">
 				@foreach($list as $k => $v)
 					<li class="fl">
-					  <a href="{{$v['exclusive_id']}}">
+					  <a h="{{$v['exclusive_id']}}">
 						<div ><img src="{{$v['exclusive_thumb']}}"></div>
 						<p class="f14 fc">{{$v['exclusive_name']}}</p>
 					  </a>
@@ -23,11 +23,12 @@
 				
 			</ul>
 		</div>
+		<script src="/static/js/jquery-2.1.4.min.js"></script>
 		<script src="/static/js/mui.min.js"></script>
 		<script type="text/javascript">
 			mui.init();
 			mui('.exc-code-list').on('tap','a',function(){
-		      window.top.location.href=location.href.replace('exclusive_code','exclusive_code_detail');
+		      window.top.location.href=location.href.replace('exclusive_code','exclusive_code_detail')+'&exclusive_id='+$(this).attr('h');
 		    });
 		</script>
 	</body>

@@ -271,9 +271,6 @@
       **/ 
       public function level()
       {
-        $membernetObject=new Membernetsedit($this->param['uid'],'5','M03');
-       $a= $membernetObject->quickNet();
-        var_dump($a);die;
 
            if(!isset($this->param['targetLevelId']) || empty($this->param['targetLevelId']))
                  return ['code'=>448];
@@ -626,8 +623,8 @@
           $this->param['type']=$this->param['type'] ? $this->param['type'] : 1;
            
           $Commission=Commission::with('member')->where('commission_member_id='.$this->param['uid'].' and commission_type='.$this->param['type'])->select();
-          if(!$Commission)
-            return ['code'=>314];
+          // if(!$Commission)
+          //   return ['code'=>314];
 
            return ['code'=>200, 'msg'=>'获取成功~', 'data'=>$Commission];
       }

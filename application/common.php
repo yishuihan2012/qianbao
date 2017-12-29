@@ -12,6 +12,7 @@
  use think\Config;
  use app\index\model\SmsLog as SmsLogs;
  use app\index\model\Member as Members;
+ use app\index\model\Notice;
   use app\index\model\System;
   use app\api\controller as con;
 
@@ -693,7 +694,15 @@
     function jpush($uid=null,$title=null,$content=null,$item=null){
       $jpush=new con\Push();
       if($uid && $title && $content){
+        //获取registration_id
         $member_token=Members::get($uid)->value('member_token');
+        //写入记录
+        Notice::create([
+          'notice_title'=>$title,
+          'notice_content'=>$content,
+          'notice_recieve'=>$uid,
+          'notice_registration_id'=>$member_token,
+        ]);
         $jpush->set_message_title($title);
         $jpush->set_registration_id($member_token);
         $jpush->set_message_sort_desc($content);

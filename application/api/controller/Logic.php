@@ -68,16 +68,16 @@ class Logic extends Controller
       return json_encode(0);
     }
   }
-  /**
-   * @Author   杨成志(3115317085@qq.com)
-   * [share_link_list 分享下载链接列表]
-   * @return [type] [description]
-   */
-  public function share_link_list(){
-    $list = Share::sharelist();
-    $this->assign("list",$list);
-    return view("api/logic/share_link_list");
-  }
+      /**
+       * @Author   杨成志(3115317085@qq.com)
+       * [share_link_list 分享下载链接列表]
+       * @return [type] [description]
+       */
+      public function share_link_list(){
+            $list = Share::all();
+            $this->assign("list",$list);
+            return view("api/logic/share_link_list");
+      }
   /**
    * @Author   杨成志(3115317085@qq.com)
    * [share_link 分享下载链接]
@@ -98,6 +98,6 @@ class Logic extends Controller
   }
   #新手指引
   public function web_freshman_guide(){
-    return view("api/web/web_freshman_guide");
+    return view("api/logic/web_freshman_guide");
   }
 }
