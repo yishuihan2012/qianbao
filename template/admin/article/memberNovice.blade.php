@@ -15,9 +15,9 @@
 	    <tr>
 	      	<th>ID</th>
 	      	<th>名称</th>
-	      	<th>内容</th>
-	      	<th>分类</th>
 	      	
+	      	<th>分类</th>
+	      	<th>操作</th>
 	    </tr>
  	</thead>
   	<tbody>
@@ -25,10 +25,11 @@
 	    <tr>
 	      	<td>{{$val->novice_id}}</td>
 	      	<td><a href="">{{$val->novice_name}}</a></td>
-	      	<td>{!!$val->novice_contents!!}</td>
-	      	<td>{{$val->novice_class}}</td>
+	     
+	      	<td>@if($val->novice_class==1) 自动还款 @else 收款 @endif</td>
 	      	<td>
-	      		
+	      		<a type="button" class="btn btn-sm" data-remote="{{url('/index/server_model/noviceSave/novice_id/'.$val->novice_id)}}" data-size='lg' data-toggle="modal" href="#">编辑</a>
+	  				<a type="button" class="btn btn-sm" href="{{url('/index/server_model/noviceRemove/novice_id/'.$val->novice_id)}}">删除</a>
 	      	</td>
 	    </tr>
 	@endforeach

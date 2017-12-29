@@ -25,10 +25,7 @@
 		            	<h4 class="main-color fc about-tit space-up"><span class="mui-icon iconfont icon-gongsijianjie space-right"></span>
 		            		公司介绍</h4>
 		            	<div class="about-info wrap2">
-		            		<p>喜家网络成立于2016年，位于济南市天桥区济泺路齐鲁云商大厦20层。是一家互联网整体策略规划公司</p>
-		            		<p>主要业务为：官网建设、微信开发、网页UI设计、APP设计开发、系统开发。</p>
-		            		<p>我们的理念：诚信服务、实例为赢、与业为你。</p>
-		            		<p>我们的优势：专业咨询指导、丰富项目经验、合理费用开支。</p>
+		            		{!! $data->page_content !!}
 		            	</div>
 		            </div>
 		            <!--资质证书-->
@@ -85,7 +82,7 @@
 		            		  	</a>
 		            		  </li>
 		            		  <li>
-		            		  	<a tel="4006750789" id="telPhone001">
+		            		  	<a tel="{{$server['tel']}}" id="telPhone001">
 		            		  		<div class="icon-container bg-color">
 		            		  			<span class="mui-icon iconfont icon-dianhua blue-color-th f36">
 		            		  		</div>

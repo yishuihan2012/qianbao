@@ -16,6 +16,7 @@ use app\index\model\CashOrder;
 use app\index\model\Exclusive;
 use app\index\model\Recomment;
 use app\index\model\Announcement;
+use app\index\model\MemberNovice; 
 /**
  *  此处放置一些固定的web地址
  */
@@ -70,7 +71,7 @@ class Userurl extends Controller
 			Vendor('phpqrcode.phpqrcode');
 			$QRcode=new \QRcode();
 			//生成二维码
-			$QRcode->png($url, 'autoimg\qrcode'.$tel.'.png',0,7);
+			$QRcode->png($url, 'autoimg\qrcode'.$tel.'.png',0,8);
 			$qrurl=ROOT_PATH.'public\autoimg\qrcode'.$tel.'.png';
 			$logourl=ROOT_PATH.'public\static\images\logo.png';
 			// 二维码加入logo
@@ -78,7 +79,7 @@ class Userurl extends Controller
 			 $logo = imagecreatefromstring(file_get_contents($logourl)); 
 			 $logo_width = imagesx($logo);
 			 $logo_height = imagesy($logo);
-			 imagecopyresampled( $QR,$logo, 100, 100, 0, 0, 60, 60, $logo_width, $logo_height); 
+			 imagecopyresampled( $QR,$logo, 115, 115, 0, 0, 60, 60, $logo_width, $logo_height); 
 			imagepng($QR, 'autoimg\qrcode'.$tel.'.png'); 
 			// 背景
 			$bg_url=Exclusive::get($exclusive_id)->value('exclusive_thumb');
@@ -88,7 +89,7 @@ class Userurl extends Controller
 			 $bg = imagecreatefromstring(file_get_contents($bg_url)); 
 			 $QR_width = imagesx($QR);//二维码图片宽度 
 			 $QR_height = imagesy($QR);//二维码图片高度 
-			 imagecopyresampled( $bg,$QR, 250, 710, 0, 0, 259, 259, $QR_width, $QR_height); 
+			 imagecopyresampled( $bg,$QR, 240, 710, 0, 0, 296, 296, $QR_width, $QR_height); 
 			imagepng($bg, 'autoimg\qrcode_'.$exclusive_id.'_'.$tel.'.png'); 
 		}
 		//返回图片地址
@@ -355,9 +356,20 @@ class Userurl extends Controller
   }
   #关于我们
   public function about_us(){
+  	$data=Page::get(1);
+  	$server['weixin']=CustomerService::where('service_title','微信')->find();
+  	$server['qq']=CustomerService::where('service_title','QQ')->find();
+  	$server['tel']=CustomerService::where('service_title','电话')->find();
+  	$this->assign('data', $data);
+  	$this->assign('server', $server);
   	return $this->fetch();
   }
+  /**
+   * [web_freshman_guide 新手指引]
+   * @return [type] [description]
+   */
    public function web_freshman_guide(){
-    return view("api/logic/web_freshman_guide");
+   		// $list = 
+    	return view("api/logic/web_freshman_guide");
   }
 }

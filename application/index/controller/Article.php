@@ -167,4 +167,11 @@ class Article extends Common{
 	 	}
 	 	return view('admin/article/noviceCreat');
 	}
+	/**
+	 * [noviceRemove 删除新手指引]
+	 * @return [type] [description]
+	 */
+	public function noviceRemove(){
+		
+	}
 }

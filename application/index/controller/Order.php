@@ -9,6 +9,8 @@ namespace app\index\controller;
 use app\index\model\Order as Orders;
 use app\index\model\Withdraw;
 use app\index\model\CashOrder;
+use app\index\model\Recomment;
+use app\index\model\Member;
 use think\Controller;
 use think\Request;
 use think\Session;
@@ -86,5 +88,28 @@ class Order extends Common{
 			 $this->assign('count', $count);
 		 #渲染视图
 	 	return view('admin/order/cash');
+	 }
+
+
+
+
+
+
+
+
+	   #实名红包订单
+	 public function recomment(){
+	 	 // #查询订单列表分页
+	 	 $order_lists = Recomment::paginate(Config::get('page_size'), false, ['query'=>Request::instance()->param()]);
+	 	 foreach ($order_lists as $key => $value) {
+	 	 		$order_lists[$key]['recomment_member_name']=Member::where(['member_id'=>$value['recomment_member_id']])->value('member_nick');
+	 	 		$order_lists[$key]['recomment_children_name']=Member::where(['member_id'=>$value['recomment_children_member']])->value('member_nick');
+	 	 }
+	 	 #统计订单条数
+	 	 $count['count_size']=Recomment::count();
+			 $this->assign('order_lists', $order_lists);
+			 $this->assign('count', $count);
+		 #渲染视图
+	 	return view('admin/order/recomment');
 	 }
 }
