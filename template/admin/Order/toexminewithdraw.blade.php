@@ -1,7 +1,7 @@
  <!--dialog Title-->
  <div class="modal-header animated fadeInLeft">
 	 <div class="row">
-        	 <div class="col-sm-8"><h4>订单信息展示</h4></div>
+        	 <div class="col-sm-8"><h4>审核</h4></div>
         	 <div class="col-sm-4">
             	 <div class="text-right">
 	                 <span class="label label-dot label-primary"></span>
@@ -18,27 +18,18 @@
  <!--dialog Content-->
  <div class="modal-content animated fadeInLeft">
 	 <form action="" method="post" class="form-group" id="myform">
-	 <input type="hidden" name="id" value="{{$order_info->withdraw_id }}">
-	 <div class="help-block"><code>(基本信息)</code></div>
+	 <input type="hidden" name="id" value="">
+	
 	 <table class="table table-bordered table-hover table-striped" style="width:90%; margin:0 auto;">
 		 <tr>
-			 <th>订单号</th>	
-			 <td>{{$order_info->withdraw_no}}</td>	
-			 <th>用户</th>	
-			 <td>{{$order_info->withdraw_name}}</td>	
-			 <th>用户头像</th>	
-			 <th><img src="{{$order_info->member_image}}"  data-toggle="lightbox"></th>	
+			 <th>通过</th>	
+			 <td><input type="radio" name="withdraw_total_money"></td>	
+			 <th>未通过</th>	
+			 <td><input type="radio" name="withdraw_total_money" class="not"></td>	
+			 	
 		 </tr>	
 	 </table>
-	 <div class="help-block"><code>(其他信息)</code></div>
-	 <table class="table table-bordered table-hover table-striped" style="width:90%; margin:0 auto;">
-		 <tr>
-			 <th>订单创建时间</th>
-			 <td>{{$order_info->withdraw_add_time}}</td>
-			 <th>用户注册时间</th>
-			 <td>{{$order_info->member_creat_time}}</td>
-		 </tr>
-	 </table>
+	 
 
 	 </form>
  </div>

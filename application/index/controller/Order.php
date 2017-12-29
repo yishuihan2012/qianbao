@@ -68,7 +68,7 @@ class Order extends Common{
 	 }
 	 #审核提现列表
 	 public function toexminewithdraw(){
-	 	echo "ppp";die;
+	 	
 	 	return view("admin/order/toexminewithdraw");
 	 }
 }

@@ -23,12 +23,13 @@ class Alipaycallback
 	 public function callback()
 	 {
 	     $data = file_get_contents("php://input");
+         file_put_contents('datas0.txt', $data);
 	 	 $data = trim($data);
 	 	 file_put_contents('datas1.txt', $data);
     	 file_put_contents('filecontent.txt',$data);
     	 $data = json_decode($data, true);
     	 file_put_contents('success.txt',$data['state']);
-    	 // Upgrade::where('upgrade_no='.$post['upgrade_member_id'])
+         var_dump(123);die;
 	 	$post['upgrade_member_id']=20;
 	 	$post['upgrade_group_id']=3;
 

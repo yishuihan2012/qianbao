@@ -35,7 +35,7 @@
 				document.getElementById("excCode").style.height = _h - 150 +"px";
 			});
 			$(function(){
-				alert(ismobile()?1:2);
+				alert(ismobile()==1?1:0);
 				imgarr=["{{$url}}"];
 				// new QRCode(document.getElementById("qrcode"), "{{$url}}");
 			      var isAndroid = u.indexOf('Android') > -1 || u.indexOf('Adr') > -1; //android终端
@@ -53,22 +53,11 @@
  * @param test: 0:iPhone    1:Android
  */
 function ismobile(){
-    var u = navigator.userAgent, app = navigator.appVersion;
-    if(/AppleWebKit.*Mobile/i.test(navigator.userAgent) || (/MIDP|SymbianOS|NOKIA|SAMSUNG|LG|NEC|TCL|Alcatel|BIRD|DBTEL|Dopod|PHILIPS|HAIER|LENOVO|MOT-|Nokia|SonyEricsson|SIE-|Amoi|ZTE/.test(navigator.userAgent))){
-     if(window.location.href.indexOf("?mobile")<0){
-      try{
        if(/iPhone|mac|iPod|iPad/i.test(navigator.userAgent)){
         return '0';
        }else{
         return '1';
        }
-      }catch(e){}
-     }
-    }else if( u.indexOf('iPad') > -1){
-        return '0';
-    }else{
-        return '1';
-    }
 };
  
 		</script>
