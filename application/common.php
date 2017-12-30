@@ -706,4 +706,9 @@
         return $jpush->sign_push();
       }
     }
+    function msubstr($str = '',$start = 0, $length = 10){
+      
+     return  mb_substr( $str, $start, $length ) ;
+
+    }
 

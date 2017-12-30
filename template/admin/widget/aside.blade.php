@@ -6,10 +6,10 @@
         <li class="dashboard"><a href="#"><i class="0icon icon-dashboard"></i> 控制面板</a></li>
 
         <li class="nav-parent model-manager">
-                 <a href="#"><i class="0icon icon-list"></i> 自定义模块</a>
+                 <a href="#"><i class="0icon icon-cube-alt"></i> 自定义模块</a>
                  <ul class="nav">
-                        <li class="model-list"><a href="{{url('/index/server_model/index')}}"><i class="icon icon-sliders"></i> 模块列表</a></li>
-                        <li class="model-server"><a href="{{url('/index/server_model/service_list')}}"><i class="icon icon-sliders"></i> 服务列表</a></li>
+                        <li class="model-list"><a href="{{url('/index/server_model/index')}}"><i class="icon icon-th-large"></i> 模块列表</a></li>
+                        <li class="model-server"><a href="{{url('/index/server_model/service_list')}}"><i class="icon icon-server"></i> 服务列表</a></li>
                  </ul>
         </li>
 
@@ -23,7 +23,7 @@
         </li>
 
         <li class="nav-parent generalize-manager">
-            <a href="#"><i class="0icon icon-list"></i> 推广素材</a>
+            <a href="#"><i class="0icon icon-share"></i> 推广素材</a>
             <ul class="nav">
                 <li class="generalize"><a href="{{url('/index/generalize/index')}}"> 素材列表</a></li>
                 <li class="generalize_share"><a href="{{url('/index/generalize/share')}}"> 分享列表</a></li>

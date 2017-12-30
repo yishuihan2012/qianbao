@@ -30,6 +30,43 @@
   <header>
     <h3><i class="icon-list-ul"></i> 文章列表 <small>共 <strong class="text-danger"><?php echo e($count['count_size']); ?></strong> 条</small></h3>
   </header>
+  <!--  <div class="row">
+           <?php $__currentLoopData = $article_list; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $list): $__env->incrementLoopIndices(); $loop = $__env->getFirstLoop(); ?>
+           <div class="col-sm-2">
+                 <a class="card" href="###">
+                      <div id="myNiceCarousel_<?php echo e($list['article_id']); ?>" class="carousel slide" data-ride="carousel">
+                           <!-- 轮播项目 
+                           <div class="carousel-inner" style="height: 350px; min-height: 350px;">
+                               
+                                 <div class="item active"><img alt="First slide" src="<?php echo e($list['article_thumb']); ?>"  class="img-responsive"  data-toggle="lightbox"></div>
+                                 
+                           </div>
+                           <!-- 项目切换按钮 
+                           <a class="left carousel-control" href="#myNiceCarousel_<?php echo e($list['article_id']); ?>" data-slide="prev"><span class="icon icon-chevron-left"></span></a>
+                           <a class="right carousel-control" href="#myNiceCarousel_<?php echo e($list['article_id']); ?>" data-slide="next"><span class="icon icon-chevron-right"></span></a>
+                      </div>
+                      <div class="pull-right">
+                        <?php if($list['article_recommend']!='0'): ?>
+                     </a> <span class="label label-success">推荐</span>
+                     <?php endif; ?>
+                     <?php if($list['article_topper']!='0'): ?>
+                     <span class="label label-danger">置顶</span>
+                     <?php endif; ?>
+                     </h4><br/>
+                        <a href="<?php echo e(url('/index/Article/edit/id/'.$list['article_id'])); ?>"><i class="icon-pencil"></i> 编辑</a> &nbsp;
+                        <a class="remove" href="#" data-url="<?php echo e(url('/index/Article/remove/id/'.$list['article_id'])); ?>"><i class="icon-remove"></i> 删除</a>
+                     </div>
+                      <div class="item-footer">
+                         <a href="#" class="text-muted"><i class="icon-comments"></i> <?php echo e($list['article_read']); ?></a> &nbsp; <span class="text-muted"><?php echo e($list['article_add_time']); ?></span>
+                     </div>
+                       <div class="card-heading"><strong><?php echo e($list['article_title']); ?></strong></div>
+                      <div class="card-content text-muted"><?php echo e(msubstr($list['article_desc'],0,20)); ?></div>
+                 </a>
+           </div>
+           <?php endforeach; $__env->popLoop(); $loop = $__env->getFirstLoop(); ?>
+      </div> -->
+
+
   <div class="items items-hover">
       <?php $__currentLoopData = $article_list; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $list): $__env->incrementLoopIndices(); $loop = $__env->getFirstLoop(); ?>
       <div class="item">

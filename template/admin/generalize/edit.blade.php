@@ -59,7 +59,7 @@ hr{margin:0 5px!important;}
 
                      <div class="row form-group">
                       <label for="announcement_content" class="col-sm-2 text-right"><b>素材内容</b></label>
-                      <textarea name="generalize_contents" class="form-control passageway_desc">{{$info['generalize_contents']}}</textarea>
+                      <textarea name="generalize_contents" class="form-control passageway_desc" style="width:50%;">{{$info['generalize_contents']}}</textarea>
                       <!-- <div id="announcement_title" class="col-sm-6"><input type="text" class="form-control announcement_title" name="list_weight" placeholder="权重" value="{{$info['generalize_contents']}}"></div> -->
                       </div>
                       

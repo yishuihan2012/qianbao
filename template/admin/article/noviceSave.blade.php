@@ -1,7 +1,7 @@
  <!--dialog Title-->
  <div class="modal-header animated fadeInLeft">
 	 <div class="row">
-        	 <div class="col-sm-8"><h4>新增素材</h4></div>
+        	 <div class="col-sm-8"><h4>修改模块</h4></div>
         	 <div class="col-sm-4">
             	 <div class="text-right">
                 	 <span class="label label-dot"></span>
@@ -17,33 +17,31 @@
 
  <!--dialog Content-->
  <div class="modal-content animated fadeInLeft">
-	 <form action="{{url('/index/generalize/shareCreat')}}" method="post" class="form-horizontal" id="myform">
+	 <form action="{{url('/index/article/noviceSave')}}" method="post" class="form-horizontal" id="myform">
 	 <h2></h2>
 	 <div class="row form-group">
-		 <label for="generalize_title" class="col-sm-3 text-right"><b>素材名称:</b></label>
+		 <label for="generalize_title" class="col-sm-3 text-right"><b>模块名称:</b></label>
 		 <div class="col-sm-6" id="generalize_title">
-			 <input type="text" class="form-control generalize_title" name="share_title" placeholder="请填写素材的名称" value="">
+			 <input type="text" class="form-control generalize_title" name="novice_name" placeholder="请填写模块的名称" value="{{$info['novice_name']}}">
 		 </div>		
 	</div>
+	<input type="hidden" class="form-control" name="novice_id" value="{{$info['novice_id']}}">
+	
+	 <div class="row form-group">
+		 <label for="passageway_state" class="col-sm-3 text-right"><b>类型:</b></label>
+		 <div id="passageway_state" class="col-sm-6">
+			 <select name="novice_class" class="form-control">
+				 <option value="0"   @if($info['novice_class'] ==0) selected @endif>收款</option>
+				 <option value="1" @if($info['novice_class'] ==1) selected @endif>自动还款</option>
+			 </select>
+		 </div>		
+	 </div>
 	<div class="row form-group">
-		 <label for="generalize_thumb" class="col-sm-3 text-right"><b>素材图片:</b></label>
-		 <div id="generalize_thumb" class="col-sm-6">
-			 <div id='uploaderExample3' class="uploader">
-			 	 <div class="uploader-message text-center">
-			    	 	 <div class="content"></div>
-			    		 <button type="button" class="close">×</button>
-			  	 </div>
-			  	 <div class="uploader-files file-list file-list-grid"></div>
-			 	 <div>
-			 	 	 <hr class="divider">
-			 	 	 <div class="uploader-status pull-right text-muted"></div>
-			 	 	 <button type="button" class="btn btn-link uploader-btn-browse"><i class="icon icon-plus"></i> 选择文件</button>
-			 	 	 <button type="button" class="btn btn-link uploader-btn-start"><i class="icon icon-cloud-upload"></i> 开始上传</button>
-			 	 </div>
-			 </div>
-			 <input type="hidden" class="form-control generalize_thumb" name="share_thumb" value="">
-		 </div>		
-	</div>
+		 <label for="data_text" class="col-sm-2 text-right"><b>文章内容:</b></label>
+		 <div class="col-sm-6" id="data_text">
+			 <textarea name="novice_contents" cols="30" id="content" class="form-control kindeditor" rows="15">{{$info->novice_contents}}</textarea>
+		 </div>
+	 </div>
 
 	 <h2></h2>
 	 </form>
@@ -57,10 +55,6 @@
 
  <script>
 
- 	 $('.menu .nav .active').removeClass('active');
-    	 $('.menu .nav li.generalize_share').addClass('active');
-    	 $('.menu .nav li.generalize-manager').addClass('show');
-
  //上传文件设置
  $('#uploaderExample3').uploader({
       url: "{{url('/index/Tool/upload_one')}}",
@@ -68,20 +62,13 @@
 	 filters:{ max_file_size: '10mb',},
 	 limitFilesCount:1,
 	 onFileUploaded(file, responseObject) {
-
 	    	 attr=eval('('+responseObject.response+")");
 	    	 console.log(attr);
 	    	 // attr.code ?  bootbox.alert({ message: attr.msg, size: 'small' }): $(".generalize_thumb").val('attr.url');
 	    	 var generalize_thumb = $(".generalize_thumb").val()
-	    	 if( generalize_thumb == ''){
 	    	 	$(".generalize_thumb").val(attr.url);
 	    	 	bootbox.alert({ message: attr.msg, size: 'small' })
-	    	 }else{
-	    	 	$(".generalize_thumb").val(generalize_thumb+"#"+attr.url);
-	    	 	bootbox.alert({ message: attr.msg, size: 'small' })
-	    	 }
 	 }
-
  });
 
   $(".save").click(function(){	
@@ -91,4 +78,15 @@
 	 }
 	 $("#myform").submit()
  })
+  //编辑器初始化
+      KindEditor.ready(function(K) {
+            window.editor = K.create('#editor_id');
+      });
+	 var options = {
+	      filterMode : true
+	 };
+	 var editor = KindEditor.create('textarea[id="content"]', options);
+	 $(".goHistory").click(function(){
+	 	 window.history.go(-1);
+	 })
 </script>

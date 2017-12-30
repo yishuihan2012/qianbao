@@ -22,10 +22,10 @@
 	 <form action="{{url('index/article/noviceCreat')}}" method="post" class="form-horizontal" id="myform">
 		 <div class="row form-group">
 			<label for="article_title" class="col-sm-2 text-right"><b>文章标题:</b></label>
-			<div id="article_title" class="col-sm-6"><input type="text" class="form-control article_title" name="article_title" placeholder="novice_name" value="{{ $article['article_title'] or ''}}"></div>
+			<div id="article_title" class="col-sm-6"><input type="text" class="form-control article_title" name="novice_name" placeholder="新手标题" value="{{ $article['article_title'] or ''}}"></div>
 		 </div>
 		 <div class="row form-group">
-			 <label for="article_show" class="col-sm-2 text-right"><b>是否显示:</b></label>
+			 <label for="article_show" class="col-sm-2 text-right"><b>内容类型:</b></label>
 			 <div class="col-sm-6" id="article_show">
 				 <ul class="dowebok tags">
 					 <li><input type="radio" name="novice_class" @if( isset($article['article_show']) && $article['article_show']=='0') checked  @endif value="1" data-labelauty="自动还款" /></li>
@@ -36,7 +36,7 @@
 		 <div class="row form-group">
 			 <label for="data_text" class="col-sm-2 text-right"><b>文章内容:</b></label>
 			 <div class="col-sm-6" id="data_text">
-				 <textarea name="novice_contents" cols="30" id="content" class="form-control kindeditor" rows="15">{{ $article['data_text'] or '文章的内容'}}</textarea>
+				 <textarea name="novice_contents" cols="30" id="content" class="form-control kindeditor" rows="15"></textarea>
 			 </div>
 		 </div>
 	</form>

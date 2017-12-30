@@ -1,7 +1,7 @@
  <!--dialog Title-->
  <div class="modal-header animated fadeInLeft">
 	 <div class="row">
-        	 <div class="col-sm-8"><h4>新增模块</h4></div>
+        	 <div class="col-sm-8"><h4>修改模块</h4></div>
         	 <div class="col-sm-4">
             	 <div class="text-right">
                 	 <span class="label label-dot"></span>

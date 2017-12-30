@@ -172,5 +172,26 @@ class Article extends Common{
 	 */
 	public function noviceRemove(){
 		
+		$result= MemberNovice::destroy(Request::instance()->param('novice_id'));
+		$content = ($result===false) ? ['type'=>'error','msg'=>'删除失败'] : ['type'=>'success','msg'=>'删除成功'];
+		//print_r($content);
+		Session::set('jump_msg', $content);
+		$this->redirect('article/memberNovice');
+	}
+	#修改新手指引
+	public function noviceSave(){
+		if(Request::instance()->isPost()){
+		 	 $MemberNovice =MemberNovice::get(Request::instance()->param('novice_id'));
+			 $result= $MemberNovice->allowField(true)->save($_POST);
+			 $content = ($result===false) ? ['type'=>'error','msg'=>'修改失败'] : ['type'=>'success','msg'=>'修改成功'];
+			 Session::set('jump_msg', $content);
+			 $this->redirect('article/memberNovice');
+			 exit;
+		 }
+		$id = input("novice_id");
+		$info = MemberNovice::get(Request::instance()->param('novice_id'));
+
+		$this->assign("info",$info);
+		return view("admin/article/noviceSave");
 	}
 }

@@ -123,5 +123,6 @@
 		 Session::set('jump_msg', $content);
 		 $this->redirect('server_model/service_list');
 	 }
+	 
 
  }

@@ -23,6 +23,7 @@ class Notice extends Model
       #定义时间戳字段名 信息添加时间
       protected $createTime = 'notice_createtime';
       #定义时间戳字段名 信息修改时间
+      protected $updateTime = false;
     //初始化模型
     protected function initialize()
     {

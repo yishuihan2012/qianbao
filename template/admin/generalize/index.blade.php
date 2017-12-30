@@ -1,39 +1,42 @@
 @extends('admin/layout/layout_main')
 @section('title','素材列表管理~')
 @section('wrapper')
-<style>
+ <style>
 	 h4 > a,.pull-right > a{color:#145ccd;}
-</style>
+ </style>
 
-<section>
-<hr/>
-<div class="list">
-  <header>
-    <h3><i class="icon-list-ul"></i> 素材列表 <small>共 <strong class="text-danger">{{count($generalize)}}</strong> 条</small></h3>
-  </header>
-  <div class="items items-hover">
-      @foreach($generalize as $list)
-      <div class="item">
-      	 <div class="item-heading">
-        		 <div class="pull-right">
-        		 	 <a href="{{url('/index/Generalize/edit/id/'.$list['generalize_id'])}}"><i class="icon-pencil"></i> 编辑</a> &nbsp;
-        		 	 <a class="remove" href="#" data-url="{{url('/index/Generalize/remove/id/'.$list['generalize_id'])}}"><i class="icon-remove"></i> 删除</a>
-        		 </div>
-        		 <h4><a href="{{url('/index/Generalize/edit/id/'.$list['generalize_id'])}}">{{$list['generalize_title']}}
-        		 </h4>
-      	 </div>
-     		 <div class="item-content">
-     		 	 @if($list['generalize_thumb']!='')
-     		 	 <div class="media pull-right text-right"><img src="{{$list['generalize_thumb']}}" alt="{{$list['generalize_title']}}" style="width:70%"  data-toggle="lightbox"></div>
-     		 	 @endif
-      	 </div>
-      	 <div class="item-footer">
-        	 	 <a href="#" class="text-muted"><i class="icon-comments"></i> {{$list['generalize_download_num']}}</a> &nbsp; <span class="text-muted">{{$list['generalize_creat_time']}}</span>
-      	 </div>
+ <section>
+ <hr/>
+ <div class="list">
+      <header><h3><i class="icon-list-ul"></i> 素材列表 <small>共 <strong class="text-danger">{{count($generalize)}}</strong> 条</small></h3></header>
+      <div class="row">
+           @foreach($generalize as $list)
+           <div class="col-sm-2">
+                 <a class="card" href="###">
+                      <div id="myNiceCarousel_{{$list['generalize_id']}}" class="carousel slide" data-ride="carousel">
+                           <!-- 轮播项目 -->
+                           <div class="carousel-inner" style="height: 350px; min-height: 350px;">
+                                 {{-- */$i=0;/* --}}
+                                 @foreach(explode("#",$list['generalize_thumb']) as $img)
+                                 <div class="item @if($i==0) active @endif"><img alt="First slide" src="{{$img}}"  class="img-responsive"  data-toggle="lightbox"></div>
+                                 {{-- */$i++;/*--}}
+                                 @endforeach
+                           </div>
+                           <!-- 项目切换按钮 -->
+                           <a class="left carousel-control" href="#myNiceCarousel_{{$list['generalize_id']}}" data-slide="prev"><span class="icon icon-chevron-left"></span></a>
+                           <a class="right carousel-control" href="#myNiceCarousel_{{$list['generalize_id']}}" data-slide="next"><span class="icon icon-chevron-right"></span></a>
+                      </div>
+                      <div class="pull-right">
+               <a href="{{url('/index/Generalize/edit/id/'.$list['generalize_id'])}}"><i class="icon-pencil"></i> 编辑</a> &nbsp;
+               <a class="remove" href="#" data-url="{{url('/index/Generalize/remove/id/'.$list['generalize_id'])}}"><i class="icon-remove"></i> 删除</a>
+             </div>
+                      <div class="card-heading"><strong>{{$list['generalize_title']}}</strong></div>
+                      <div class="card-content text-muted">{{msubstr($list['generalize_contents'],0,20)}}...</div>
+                 </a>
+           </div>
+           @endforeach
       </div>
-      @endforeach
-  </div>
- {!! $generalize->render() !!}
+      {!! $generalize->render() !!}
 </div>
 
 </section>
@@ -66,7 +69,7 @@ $(document).ready(function(){
 		    	 	window.location.href=url;
 		    }
 		 });
-    	 })
+    })
 });
 </script>
 @endsection

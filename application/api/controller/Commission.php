@@ -76,12 +76,13 @@
 	 *   @author $bill$(755969423@qq.com)
 	 *   @datetime    2017-12-08 10:13:05
 	 *   @param  $memberId='刷卡会员ID'  $price="交易总额" $passwayId="使用通道ID" 
-	 *   @param $type=分润类型 1=套现分润 2=代还分润 $desction="简介描述" 
+	 *   @param $type=分润类型 1=快捷支付分润 2=代还分润 $desction="简介描述" 
 	 */
  	 public function MemberFenRun($memberId,$price,$passwayId, $type ,$desction="会员分润")
  	 {
+
  	 	 if($type=='1'){
- 	 	 	 $action="套现";
+ 	 	 	 $action="快捷支付";
  	 	 	 $field="item_rate";
  	 	 }
  	 	 if($type=="2"){
@@ -96,15 +97,18 @@
  	 	 	 return ['code'=>466];
  	 	 //获取到用户税率
  	 	 $member_also=PassagewayItem::where(['item_passageway'=>$passwayId,'item_group'=>$memberInfo['member_group_id']])->value($field);
+
  	 	 //获取用户直接上级ID
  	 	 $member_faterId=MemberRelation::where('relation_member_id',$memberId)->value('relation_parent_id');
  	 	 //如果该会员是一级会员 则不进行分润
  	 	 if($member_faterId=="0")
  	 	 	 return ['code'=>200, 'leftmoney'=>$leftmoney];
+
  	 	 //获取直接上级会员信息	
  	 	 $member_fatherInfo= Member::get($member_faterId); 
  	 	 if(!$member_fatherInfo)
  	 	 	 return ['code'=>400, 'msg'=>'找不到直接上级信息~'];
+
  	 	 //查询直接上级所属用户组 和他的费率
  	 	 $member_fatherAlso=PassagewayItem::where(['item_passageway'=>$passwayId,'item_group'=>$member_fatherInfo['member_group_id']])->value($field);
  	 	 //判断上级会员用户组是否允许分润
@@ -120,77 +124,87 @@
  	 	 	 	 $leftmoney+=$member_fatherAlsoMoney;
  	 	 	 	 $str=$desction."-直接分润:邀请的".$memberInfo['member_nick'].$action."成功,获得收益".$member_fatherAlsoMoney."元~";
  	 	 	 	 $father_result=$this->commissionOrder($memberId,$member_faterId,$member_fatherAlsoMoney,1,$str);
- 	 	 	 	 jpush($member_faterId,'分润收益到账提醒~',$str);
+ 	 	 	 	 //jpush($member_faterId,'分润收益到账提醒~',$str);
  	 	 	 }
  	 	 }
- 	 	 if(!$father_result)
- 	 	 	 return ['code'=>400,'msg'=>'分润失败~,直接上级分润失败,请联系客服'];
+
  	 	 #查询间接上级
  	 	 $member_grandFaterId=MemberRelation::where('relation_member_id',$member_faterId)->value('relation_parent_id');
  	 	 #如果没有间接上级的话 则分润完成 
  	 	 if($member_grandFaterId=="0")
  	 	 	 return ['code'=>200, 'leftmoney'=>$leftmoney];
+
  	 	 #查询间接上级的会员信息
  	 	 $member_grandFatherInfo=Member::get($member_grandFaterId);
  	 	 if(!$member_grandFatherInfo)
  	 	 	 return ['code'=>200, 'leftmoney'=>$leftmoney];
+
  	 	 #查询间接上级税率和用户组是否允许分润
- 	 	 $member_grandFatherGroup=MemberGroup::where(['group_id'=>$member_grandFatherInfo['member_group_id']])->value('group_run');
+ 	 	 $member_grandFatherGroup=MemberGroup::where(['group_id'=>$member_grandFatherInfo['member_group_id']])->value('group_run'); 
+		 #获取间接上级的税率
+		 $member_grandFatherAlso=PassagewayItem::where(['item_passageway'=>$passwayId,'item_group'=>$member_grandFatherInfo['member_group_id']])->value($field);
  	 	 if($member_grandFatherGroup=="0")
  	 	 {
  	 	 	 $grandResult=$this->commissionOrder($memberId,$member_grandFaterId,0,1,$desction."-间接分润:您的用户组不允许获得分润~");	
  	 	 }else{
- 	 	 	 #获取间接上级的税率
- 	 	 	 $member_grandFatherAlso=PassagewayItem::where(['item_passageway'=>$passwayId,'item_group'=>$member_grandFatherInfo['member_group_id']])->value($field);
- 	 	 	 #比对刷卡会员和直接上级的会员 较小的一方与间接会员费率比对
- 	 	 	 $smallOneAlso=$member_also-$member_fatherAlso>=0 ? $member_fatherAlso : $member_also;
- 	 	 	 #比对前两级的会员费率 如果比最小的费率大 则不进行分佣
- 	 	 	 if($smallOneAlso-$member_grandFatherAlso<=0){
+ 	 	 	 #查询他的上级是否允许分润
+ 	 	 	if($member_fatherGroup=="0")
+ 	 	 	{
+ 	 	 		$total_also_1 =$member_also;
+ 	 	 	}else{
+ 	 	 		$total_also_1 =$member_fatherAlso;
+ 	 	 	}
+ 	 	 	 #比对两级的会员费率 如果比最小的费率大 则不进行分佣
+ 	 	 	 if($total_also_1-$member_grandFatherAlso<=0){
  	 	 	 	 $grandResult=$this->commissionOrder($memberId,$member_grandFaterId,0,1,$desction."-间接分润:与下级会员级别相同或比下级级别低,不获得分润~");
  	 	 	 } else{
-	 	 	 	 $member_grandFatherAlsoMoney=$price*(($member_fatherAlso-$member_grandFatherAlso)/100);
+	 	 	 	 $member_grandFatherAlsoMoney=$price*(($total_also_1-$member_grandFatherAlso)/100);
 	 	 	 	 $leftmoney+=$member_grandFatherAlsoMoney;
 	 	 	 	 $str1=$desction."-间接分润:邀请的".$memberInfo['member_nick'].$action."成功,获得收益".$member_grandFatherAlsoMoney."元~";
 	 	 	 	 $grandResult=$this->commissionOrder($memberId,$member_grandFaterId,$member_grandFatherAlsoMoney,1,$str1);
-	 	 	 	  jpush($member_grandFaterId,'分润收益到账提醒~',$str1);
+	 	 	 	  //jpush($member_grandFaterId,'分润收益到账提醒~',$str1);
  	 	 	 }
  	 	 }
- 	 	 if(!$grandResult)
- 	 	 	 return ['code'=>400,'msg'=>'分润失败~,间接上级分润失败,请联系客服'];
 
  	 	 #查询第三级上级
  	 	 $member_endFatherId=MemberRelation::where('relation_member_id',$member_grandFaterId)->value('relation_parent_id');
  	 	 if($member_endFatherId=="0")
  	 	 	 return ['code'=>200, 'leftmoney'=>$leftmoney];
+
  	 	 #查询第三级上级会员信息
  	 	 $member_endFatherInfo=Member::get($member_endFatherId);
  	 	 if(!$member_endFatherInfo)
  	 	 	 return ['code'=>200, 'leftmoney'=>$leftmoney];
+
  	 	 #查询第三级上级用户组是否允许分润
  	 	 $member_endFatherGroup=MemberGroup::where(['group_id'=>$member_endFatherInfo['member_group_id']])->value('group_run');
+		 #获取三级上级的用户组税率
+ 	 	 $member_endFatherAlso=PassagewayItem::where(['item_passageway'=>$passwayId,'item_group'=>$member_endFatherInfo['member_group_id']])->value($field);
+
  	 	 if($member_endFatherGroup=="0"){
  	 	 	 $endFather_result=$this->commissionOrder($memberId,$member_endFatherId,0,1,$desction."-三级分润:您的用户组不允许获得分润~");
  	 	 }else{
- 	 	 	 #获取三级上级的用户组税率
- 	 	 	 $member_endFatherAlso=PassagewayItem::where(['item_passageway'=>$passwayId,'item_group'=>$member_endFatherInfo['member_group_id']])->value($field);
- 	 	 	 #进行直接上级和间接上级的税率比对 用税率小的一方进行和三级上级的税率计算 得到税率差 
- 	 	 	 $smallAlso=$member_fatherAlso-$member_grandFatherAlso>=0 ? $member_grandFatherAlso : $member_fatherAlso;
- 	 	 	 #将最小的税率与刷卡会员税率比对 取最小的税率与第三级别进行比对
- 	 	 	 $smallTwoAlso=$smallAlso-$member_also>=0 ? $member_also : $smallAlso;
+ 	 	 	 if($member_grandFatherGroup=="0")
+ 	 	 	 {
+ 	 	 	 	 if($member_fatherGroup=="0")
+ 	 	 	 	 	 $total_also_2=$member_also;
+ 	 	 	 	 else 
+ 	 	 	 	 	 $total_also_2=$member_fatherAlso;
+ 	 	 	 }else{
+ 	 	 	 	 $total_also_2=$member_grandFatherAlso-$member_fatherAlso>=0 ? $member_fatherAlso : $member_grandFatherAlso;
+ 	 	 	 }
  	 	 	 #进行税率计算 比对 如果想对税率小于0 则不进行分佣
- 	 	 	 if($smallTwoAlso-$member_endFatherAlso<=0)
+ 	 	 	 if($total_also_2-$member_endFatherAlso<=0)
  	 	 	 {
  	 	 	 	 $endFather_result=$this->commissionOrder($memberId,$member_endFatherId,0,1,$desction."-三级分润:您的会员组级别较低,不获得分润~");
  	 	 	 }else{
- 	 	 	 	 $member_endFatherAlsoMoney=$price*(($smallAlso-$member_endFatherAlso)/100);
+ 	 	 	 	 $member_endFatherAlsoMoney=$price*(($total_also_2-$member_endFatherAlso)/100);
  	 	 	 	 $leftmoney+=$member_endFatherAlsoMoney;
  	 	 	 	 $str2=$desction."-三级分润:邀请的".$memberInfo['member_nick'].$action."成功,获得收益".$member_endFatherAlsoMoney."元~";
  	 	 	 	 $endFather_result=$this->commissionOrder($memberId,$member_endFatherId,$member_endFatherAlsoMoney,1,$str2);
- 	 	 	 	  jpush($member_endFatherId,'分润收益到账提醒~',$str2);
+ 	 	 	 	  //jpush($member_endFatherId,'分润收益到账提醒~',$str2);
  	 	 	 }
  	 	 }
- 	 	 if(!$endFather_result)
- 	 	 	 return ['code'=>400,'msg'=>'分润失败~,三级上级分润失败,请联系客服'];
  	 	 #查询第三季上级税率和用户组是否允许分润
  	 	 return ['code'=>200, 'leftmoney'=>$leftmoney];
  	 }

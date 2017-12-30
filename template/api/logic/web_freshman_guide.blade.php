@@ -29,28 +29,15 @@
 						<div id="scroll1" class="mui-scroll-wrapper">
 							<div class="mui-scroll">
 								<ul class="mui-table-view bg-color">
+									@foreach($repaymentList as $k => $v )
 									<li class="mui-table-view-cell mui-collapse bor-bot">
 									  <a class="mui-navigate-right bg-w f16" href="#">
-									  	<span class="bor-left-blue wrap-lr"></span>代还功能应该如何使用？</a>
+									  	<span class="bor-left-blue wrap-lr"></span>{{$v['novice_name']}}</a>
 							            <div class="mui-collapse-content">
-							                <p>1.选择要还款的信用卡;</p>
-							                <p>2.输入还款金额和信用卡余额;</p>
-							                <p>3.系统自动生成还款计划;</p>
-							                <p>4.输入短信验证码,开始还款计划;</p>
-							                <p>5.等待还款结束。</p>
+							                {!!$v['novice_contents']!!}
 							            </div>
 									</li>
-									<li class="mui-table-view-cell mui-collapse bor-bot">
-									  <a class="mui-navigate-right bg-w f16" href="#">
-									  	<span class="bor-left-blue wrap-lr"></span>怎么收费？怎么付费？费率多少？</a>
-							            <div class="mui-collapse-content">
-							                <p>1.选择要还款的信用卡;</p>
-							                <p>2.输入还款金额和信用卡余额;</p>
-							                <p>3.系统自动生成还款计划;</p>
-							                <p>4.输入短信验证码,开始还款计划;</p>
-							                <p>5.等待还款结束。</p>
-							            </div>
-									</li>
+									@endforeach
 								</ul>
 							</div>
 						</div>
@@ -58,28 +45,16 @@
 					<div id="item2mobile" class="mui-slider-item mui-control-content">
 						<div id="scroll2" class="mui-scroll-wrapper">
 							<div class="mui-scroll">
+								@foreach($receivablesList as $k => $v )
 								<li class="mui-table-view-cell mui-collapse bor-bot">
-									  <a class="mui-navigate-right bg-w f16" href="">
-									  	<span class="bor-left-blue wrap-lr"></span>收款</a>
-							            <div class="mui-collapse-content">
-							                <p>1.选择要还款的信用卡;</p>
-							                <p>2.输入还款金额和信用卡余额;</p>
-							                <p>3.系统自动生成还款计划;</p>
-							                <p>4.输入短信验证码,开始还款计划;</p>
-							                <p>5.等待还款结束。</p>
-							            </div>
-									</li>
-									<li class="mui-table-view-cell mui-collapse bor-bot">
-									  <a class="mui-navigate-right bg-w f16" href="#">
-									  	<span class="bor-left-blue wrap-lr"></span>怎么收费？怎么付费？费率多少？</a>
-							            <div class="mui-collapse-content">
-							                <p>1.选择要还款的信用卡;</p>
-							                <p>2.输入还款金额和信用卡余额;</p>
-							                <p>3.系统自动生成还款计划;</p>
-							                <p>4.输入短信验证码,开始还款计划;</p>
-							                <p>5.等待还款结束。</p>
-							            </div>
-									</li>
+								  <a class="mui-navigate-right bg-w f16" href="">
+								  	<span class="bor-left-blue wrap-lr"></span>{{$v['novice_name']}}</a>
+						            <div class="mui-collapse-content">
+						                {!!$v['novice_contents']!!}
+						            </div>
+								</li>
+								@endforeach
+									
 							</div>
 						</div>
 					</div>

@@ -31,6 +31,43 @@
   <header>
     <h3><i class="icon-list-ul"></i> 文章列表 <small>共 <strong class="text-danger">{{$count['count_size']}}</strong> 条</small></h3>
   </header>
+  <!--  <div class="row">
+           @foreach($article_list as $list)
+           <div class="col-sm-2">
+                 <a class="card" href="###">
+                      <div id="myNiceCarousel_{{$list['article_id']}}" class="carousel slide" data-ride="carousel">
+                           <!-- 轮播项目 
+                           <div class="carousel-inner" style="height: 350px; min-height: 350px;">
+                               
+                                 <div class="item active"><img alt="First slide" src="{{$list['article_thumb']}}"  class="img-responsive"  data-toggle="lightbox"></div>
+                                 
+                           </div>
+                           <!-- 项目切换按钮 
+                           <a class="left carousel-control" href="#myNiceCarousel_{{$list['article_id']}}" data-slide="prev"><span class="icon icon-chevron-left"></span></a>
+                           <a class="right carousel-control" href="#myNiceCarousel_{{$list['article_id']}}" data-slide="next"><span class="icon icon-chevron-right"></span></a>
+                      </div>
+                      <div class="pull-right">
+                        @if($list['article_recommend']!='0')
+                     </a> <span class="label label-success">推荐</span>
+                     @endif
+                     @if($list['article_topper']!='0')
+                     <span class="label label-danger">置顶</span>
+                     @endif
+                     </h4><br/>
+                        <a href="{{url('/index/Article/edit/id/'.$list['article_id'])}}"><i class="icon-pencil"></i> 编辑</a> &nbsp;
+                        <a class="remove" href="#" data-url="{{url('/index/Article/remove/id/'.$list['article_id'])}}"><i class="icon-remove"></i> 删除</a>
+                     </div>
+                      <div class="item-footer">
+                         <a href="#" class="text-muted"><i class="icon-comments"></i> {{$list['article_read']}}</a> &nbsp; <span class="text-muted">{{$list['article_add_time']}}</span>
+                     </div>
+                       <div class="card-heading"><strong>{{$list['article_title']}}</strong></div>
+                      <div class="card-content text-muted">{{msubstr($list['article_desc'],0,20)}}</div>
+                 </a>
+           </div>
+           @endforeach
+      </div> -->
+
+
   <div class="items items-hover">
       @foreach($article_list as $list)
       <div class="item">

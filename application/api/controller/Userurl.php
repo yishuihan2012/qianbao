@@ -65,28 +65,31 @@ class Userurl extends Controller
 	public function exclusive_code_detail(){
 		$this->checkToken();
 		//获取当前手机号
-		$tel=Members::get($this->param['uid'])->value('member_mobile');
+		$tel=Members::get($this->param['uid']);
+		$tel=$tel->member_mobile;
 		//推广连接
-		$url='http://'.$_SERVER['HTTP_HOST'].'\api\userurl\register\recomment\\'.$tel;
+		$url='http://'.$_SERVER['HTTP_HOST'].'/api/userurl/register/recomment/'.$tel;
 		//背景图片ID
 		$exclusive_id=$this->param['exclusive_id'];
 		//若已经生成过
-		if(!is_file('autoimg\qrcode_'.$exclusive_id.'_'.$tel.'.png')){
+		if(!is_file('autoimg/qrcode_'.$exclusive_id.'_'.$tel.'.png')){
 			Vendor('phpqrcode.phpqrcode');
 			$QRcode=new \QRcode();
 			//生成二维码
-			$QRcode->png($url, 'autoimg\qrcode'.$tel.'.png',0,8);
-			$qrurl=ROOT_PATH.'public\autoimg\qrcode'.$tel.'.png';
-			$logourl=ROOT_PATH.'public\static\images\logo.png';
+			$QRcode->png($url, 'autoimg/qrcode'.$tel.'.png',0,8);
+			$qrurl=ROOT_PATH.'public/autoimg/qrcode'.$tel.'.png';
+			$logourl=ROOT_PATH.'public/static/images/logo.png';
 			// 二维码加入logo
 			 $QR = imagecreatefromstring(file_get_contents($qrurl)); 
 			 $logo = imagecreatefromstring(file_get_contents($logourl)); 
 			 $logo_width = imagesx($logo);
 			 $logo_height = imagesy($logo);
 			 imagecopyresampled( $QR,$logo, 115, 115, 0, 0, 60, 60, $logo_width, $logo_height); 
-			imagepng($QR, 'autoimg\qrcode'.$tel.'.png'); 
+			imagepng($QR, 'autoimg/qrcode'.$tel.'.png'); 
 			// 背景
-			$bg_url=Exclusive::get($exclusive_id)->value('exclusive_thumb');
+			$bg_url=Exclusive::get($exclusive_id);
+			$bg_url=$bg_url->exclusive_thumb;
+			$bg_url=preg_replace('/\\\\/', '/', $bg_url);
 			$bg_url=ROOT_PATH.'public'.$bg_url;
 			// $bg=ROOT_PATH.'public\static\images\exclusice_code_bg.png';
 			//合成专属二维码
@@ -94,10 +97,10 @@ class Userurl extends Controller
 			 $QR_width = imagesx($QR);//二维码图片宽度 
 			 $QR_height = imagesy($QR);//二维码图片高度 
 			 imagecopyresampled( $bg,$QR, 240, 710, 0, 0, 296, 296, $QR_width, $QR_height); 
-			imagepng($bg, 'autoimg\qrcode_'.$exclusive_id.'_'.$tel.'.png'); 
+			imagejpeg($bg, 'autoimg/qrcode_'.$exclusive_id.'_'.$tel.'.png',65); 
 		}
 		//返回图片地址
-		$url='http://'.$_SERVER['HTTP_HOST'].'\autoimg\qrcode_'.$exclusive_id.'_'.$tel.'.png';
+		$url='http://'.$_SERVER['HTTP_HOST'].'/autoimg/qrcode_'.$exclusive_id.'_'.$tel.'.png';
 		$this->assign('url',$url);
 	  	return view("Userurl/exclusive_code_detail");
 	}
@@ -335,7 +338,8 @@ class Userurl extends Controller
    */
   public function share_link_list(){
 	$this->checkToken();
-	$phone=Members::get($this->param['uid'])->value('member_mobile');
+	$phone=Members::get($this->param['uid']);
+	$phone=$phone->member_mobile;
 	$url='http://'.$_SERVER['HTTP_HOST'].'/api/userurl/gotoregister/recomment/'.$phone;
 	$this->assign('url',$url);
     $list = Share::all();
@@ -349,7 +353,8 @@ class Userurl extends Controller
    */
   public function share_link(){
 	$this->checkToken();
-	$phone=Members::get($this->param['uid'])->value('member_mobile');
+	$phone=Members::get($this->param['uid']);
+	$phone=$phone->member_mobile;
 	$url='http://'.$_SERVER['HTTP_HOST'].'/api/userurl/register/recomment/'.$phone;
 	$this->assign('url',$url);
     return view("api/logic/share_link");
@@ -366,33 +371,10 @@ class Userurl extends Controller
   	 #获取所有通道
   	#获取所有税率
   	$also=PassagewayItem::haswhere('passageway',['passageway_state'=>1])->select();
-  	//dump()
 
-  	 /*$passageway=Passageway::all();
-  	 foreach ($passageway as $key => $value) {
-  	 	 $passageway[$]
-  	 }
-
-  	 #获取会员等级
-  	$group=MemberGroup::select();
-
-  	foreach ($passageway as $key => $value) {
-  		foreach ($group as $k => $val) {
-  			$passageway[$key]['group']=$val;
-  		}
-  	}*/
-  	// var_dump($passageway);die;
-
-  	// #获取通道对应等级费率
-  	// foreach ($passageway as $key => $value) {
-  	// 	foreach ($group as $k => $val) {
-  	// 		$passageway[$key]=PassagewayItem::where(['item_group'=>$val['group_id'],'item_passageway'=>$value['passageway_id']])->value('item_rate');
-  	// 	}
-  	// }
 
   	$this->assign('also',$also);
-  	// $this->assign('group',$group);
-  	return view("userurl/my_rates");
+  	return view("Userurl/my_rates");
   }
   #盈利模式说明
   public function explain(){
@@ -413,7 +395,12 @@ class Userurl extends Controller
    * @return [type] [description]
    */
    public function web_freshman_guide(){
-   		// $list = 
+   		#还款列表
+   		$repaymentList = MemberNovice::list(1);
+   		$this->assign("repaymentList",$repaymentList);
+   		#收款列表
+   		$receivablesList = MemberNovice::list();
+   		$this->assign("receivablesList",$receivablesList);
     	return view("api/logic/web_freshman_guide");
   }
 }

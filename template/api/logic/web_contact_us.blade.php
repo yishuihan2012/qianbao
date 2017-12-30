@@ -71,7 +71,7 @@
 		    		 	window.webkit.messageHandlers.copyArticle.postMessage(wexNum);
 		    		}else{
 		    			// alert();
-		    			android.copyArticle(tel);
+		    			android.copyArticle(wexNum);
 		    		 //复制成功后提示  “内容已复制到粘贴板”
 		    		}
 		    	});
