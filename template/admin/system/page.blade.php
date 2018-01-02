@@ -86,7 +86,7 @@ hr{margin:0 5px!important;}
  <script type="text/javascript">
  $(document).ready(function(){
     $('.menu .nav .active').removeClass('active');
-    $('.menu .nav li.setting').addClass('active');
+    $('.menu .nav li.setting-page').addClass('active');
     $('.menu .nav li.system-setting').addClass('show');
  });
  $(function(){

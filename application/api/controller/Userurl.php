@@ -219,6 +219,7 @@ class Userurl extends Controller
 			$data[$i]['order_card']=substr($v['order_card'],-4);
 			$data[$i++]['order_update_time']=$v['order_update_time'];
 		}
+		// var_dump($data);die;
 		$this->assign('data',$data);
 	  	return view("Userurl/deal_list");
 	}
@@ -357,13 +358,15 @@ class Userurl extends Controller
 	$phone=$phone->member_mobile;
 	$url='http://'.$_SERVER['HTTP_HOST'].'/api/userurl/register/recomment/'.$phone;
 	$this->assign('url',$url);
-    return view("api/logic/share_link");
+    return view("Userurl/share_link");
   }
   #分享的注册页 只有一个按钮的那个
   public function gotoregister(){
+  	$this->param=request()->param();
+  	$share_thumb=preg_replace('/~/', '/', $this->param['share_thumb']);
   	$url='http://'.$_SERVER['HTTP_HOST'].'/api/userurl/register/recomment/'.$this->param['recomment'];
 	$this->assign('url',$url);
-	$this->assign('share_thumb',$this->param['share_thumb']);
+	$this->assign('share_thumb',$share_thumb);
   	return view("Userurl/gotoregister");
   }
   #费率说明

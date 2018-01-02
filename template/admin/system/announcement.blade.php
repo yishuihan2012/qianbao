@@ -47,8 +47,8 @@
 <script type="text/javascript">
 $(document).ready(function(){
     $('.menu .nav .active').removeClass('active');
-    $('.menu .nav li.service').addClass('active');
-    $('.menu .nav li.service').addClass('show');
+    $('.menu .nav li.setting-announcement').addClass('active');
+    $('.menu .nav li.system-setting').addClass('show');
     $(".freezing").click(function(){
     	var id = $(this).attr('data-id');
     	var explain = $(this).attr('explain');
@@ -64,7 +64,7 @@ $(document).ready(function(){
 		        		dataType : 'Json',
 		        		success:function(data){
 		    				explain+=data ? '成功' : '失败';
-		    				type= data ? 'success' : 'error';
+		    				type = data ? 'success' : 'error';
 							new $.zui.Messager(explain, { type: type, close: true, }).show();
 							window.location.reload();
 		        		}

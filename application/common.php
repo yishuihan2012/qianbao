@@ -207,6 +207,49 @@
  }
 
  //-----------------------------------------------------------
+ // @version  取得日期
+ // @author   $bill$
+ // @datatime 2018-1-1 11:35
+ // @param  $date_one=前一个时间  $date_two 后一个时间   
+ // @description 返回两个日期之间所有的日期 包括31天
+ //-----------------------------------------------------------
+ function prDates($start,$end){
+      $date=array();
+      $dt_start = strtotime($start);
+      $dt_end = strtotime($end);
+      while ($dt_start<=$dt_end){
+           $date[]=date('Y-m-d',$dt_start);
+           $dt_start = strtotime('+1 day',$dt_start);
+      }
+      return $date;
+ }
+
+ //-----------------------------------------------------------
+ // @version  取得随机小时 模拟人工消费
+ // @author   $bill$
+ // @datatime 2018-1-1 14:08
+ // @description 返回24小时制的小时
+ //-----------------------------------------------------------
+ function get_hours()
+ {
+      $hours=rand(8,19);
+      return $hours<10 ? '0'.$hours : $hours;
+ }
+ //-----------------------------------------------------------
+ // @version  取得随机分钟 模拟人工消费
+ // @author   $bill$
+ // @datatime 2018-1-1 14:08
+ // @description 返回60分钟内的随机分钟
+ //-----------------------------------------------------------
+ function get_minites()
+ {
+      $minites=rand(1,59);
+      return $minites<10 ? '0'.$minites : $minites;
+ }
+
+
+
+ //-----------------------------------------------------------
  // @version  短信发送
  // @author   $bill$
  // @datatime 2017-11-30 09:35

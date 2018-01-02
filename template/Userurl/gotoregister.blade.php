@@ -11,8 +11,9 @@
 		<link href="/static/css/page.css" rel="stylesheet" />
 	</head>
 	<body>
-		<div class="mui-content bg-w wrap bor-bot" style="background-image: url({{$share_thumb}});">
-			<a class="btn" href="{{$url}}">立即注册</a>
+		<div class="mui-content bg-w wrap bor-bot" >
+			<img src="{{$share_thumb}}" style="width: 100vw;height: 90vh">
+			<a class="mui-btn mui-btn-primary" href="{{$url}}" style="position: fixed;top: 77vh;left: 35vw;width: 30vw">立即注册</a>
 		</div>
 		<script src="/static/js/mui.min.js"></script>
 		<script type="text/javascript">
@@ -26,7 +27,7 @@
 				//分享二维码
 				// document.getElementById('shareCode').addEventListener('tap',function(){
 					
-				});
+				// });
 			});
 		</script>
 	</body>

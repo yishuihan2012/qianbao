@@ -2,6 +2,19 @@
 @section('title','会员列表管理~')  
 @section('wrapper')
 
+<blockquote>
+	<div class="input-group" style="width: 200px;float: left;margin-right: 20px;">
+	  <span class="input-group-addon">手机号</span>
+	  <input type="text" class="form-control" name="member_mobile" placeholder="手机号">
+
+	</div>
+	<div class="input-group" style="width: 200px;float: left;margin-right: 20px;">
+	  <span class="input-group-addon">手机号</span>
+	  <input type="text" class="form-control" placeholder="手机号">
+	</div>
+</blockquote>
+ <hr/>
+
  <div class="row">
       @foreach ($member_list as $list)
       <div class="col-sm-2">

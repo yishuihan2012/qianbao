@@ -26,15 +26,19 @@
 	      var isAndroid = u.indexOf('Android') > -1 || u.indexOf('Adr') > -1; //android终端
 	      var isiOS = !!u.match(/\(i[^;]+;( U;)? CPU.+Mac OS X/); //ios终端
 			mui.init();
-			mui('.exc-code-list').on('tap','a',function(){
-				var url="{{$url}}"+"/share_thumb/"+$(this).attr('s');
-				var title=$(this).find('p').html();
-		      if(!isAndroid){
-		        window.webkit.messageHandlers.shareUrl.postMessage([url,title]);
-		      }else{
-		        android.shareUrl(url,title);
-		      }
-		    });
+			$(function(){
+				mui('.exc-code-list').on('tap','a',function(){
+					var src=$(this).attr('s');
+					src=src.replace(/\//g,'~');
+					var url="{{$url}}"+"/share_thumb/"+src;
+					var title=$(this).find('p').html();
+			      if(!isAndroid){
+			        window.webkit.messageHandlers.shareUrl.postMessage([url,title,title]);
+			      }else{
+			        android.shareUrl(url,title,title);
+			      }
+			    });
+			})
 		</script>
 	</body>
 </html>

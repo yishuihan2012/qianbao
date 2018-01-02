@@ -10,10 +10,10 @@
 public function splitReward($rewardMoney, $rewardNum, $max, $min)
     {
         #传入红包金额和数量，因为小数在计算过程中会出现很大误差，所以我们直接把金额放大100倍，后面的计算全部用整数进行
-        $min = $min * 100;
-        $max = $max * 100;
+        $min = $min * 10;
+        $max = $max * 10;
         #预留出一部分钱作为误差补偿，保证每个红包至少有一个最小值
-        $this->rewardMoney = $rewardMoney * 100 - $rewardNum * $min;
+        $this->rewardMoney = $rewardMoney * 10 - $rewardNum * $min;
         $this->rewardNum = $rewardNum;
         #计算出发出红包的平均概率值、精确到小数4位。
         $avgRand = 1 / $this->rewardNum;
@@ -66,7 +66,7 @@ public function splitReward($rewardMoney, $rewardNum, $max, $min)
 
         #对比红包总数的差异、将差值放在第一个红包上
         $rewardAll = array_sum($rewardArr);
-        $rewardArr[0] = $rewardMoney * 100 - ($rewardAll - $rewardArr[0]);#此处应使用真正的总金额rewardMoney，$rewardArr[0]可能小于0
+        $rewardArr[0] = $rewardMoney * 10 - ($rewardAll - $rewardArr[0]);#此处应使用真正的总金额rewardMoney，$rewardArr[0]可能小于0
 
         #第一个红包小于0时,做修正
         if ($rewardArr[0] < 0) {

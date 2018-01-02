@@ -45,8 +45,8 @@
 <script type="text/javascript">
 $(document).ready(function(){
     $('.menu .nav .active').removeClass('active');
-    $('.menu .nav li.service').addClass('active');
-    $('.menu .nav li.service').addClass('show');
+    $('.menu .nav li.setting-customer_service').addClass('active');
+    $('.menu .nav li.system-setting').addClass('show');
     $(".freezing").click(function(){
     	var id = $(this).attr('data-id');
     	var explain = $(this).attr('explain');

@@ -18,17 +18,22 @@
 		</div>
 		
 		<script src="/static/js/mui.min.js"></script>
+		<script src="/static/js/jquery-2.1.4.min.js"></script>
 		<script type="text/javascript">
+	      var u = navigator.userAgent;
+	      var isAndroid = u.indexOf('Android') > -1 || u.indexOf('Adr') > -1; //android终端
+	      var isiOS = !!u.match(/\(i[^;]+;( U;)? CPU.+Mac OS X/); //ios终端
 			mui.init();
-			mui.ready(function(){
+			$(function(){
 				//立即去邀请
-				document.getElementById('toShare').addEventListener('tap',function(){
+				// document.getElementById('toShare').addEventListener('tap',function(){
+				mui(document).on('tap','img',function(){
 					var url="{{$url}}";
 					var title='注册链接';
 				      if(!isAndroid){
-				        window.webkit.messageHandlers.shareUrl.postMessage([url,title]);
+				        window.webkit.messageHandlers.shareUrl.postMessage([url,title,title]);
 				      }else{
-				        android.shareUrl(url,title);
+				        android.shareUrl(url,title,title);
 				      }
 				});
 			});
