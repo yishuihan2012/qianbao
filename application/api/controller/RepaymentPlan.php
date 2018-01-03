@@ -52,9 +52,9 @@
            $this->param['token']=16;
            $this->param['cardId']=12;
            $this->param['billMoney']=5000;
-           $this->param['cashCount']=10;
+           $this->param['payCount']=12;
            $this->param['startDate']="2018-01-01";
-           $this->param['endDate']="2018-01-20";
+           $this->param['endDate']="2018-01-03";
            $this->param['passageway']=8;
            #获取需要参数
           $member_info=MemberCerts::where('cert_member_id='.$this->param['uid'])->find();
@@ -67,28 +67,26 @@
             $this->error=473;
           }
           #获取后台费率
-
-          // $also=PassagewayItem::haswhere('passageway',['passageway_state'=>1])->select();
-          // var_dump($also);die;
-          // $also=Passageway::haswhere('passagewayitem',['item_passageway'=>8])->where('passageway_state=1')->select();
-          // $also=PassagewayItem::haswhere('passageway',['passageway_state'=>1,'item_passageway'=>8])->haswhere('group',['group'=>1])->where(['item_passageway'=>8])->select();
-          // var_dump(123);die;
-          $group=MemberGroup::
-          $also=PassagewayItem::where(['item_passageway'=>8,'item_group'=>1])->find();
-          var_dump($also);die;
-           #定义一个虚拟税率  
-           $also="0.0035";
+          $member_group_id=Member::where(['member_id'=>$this->param['uid']])->value('member_group_id');
+          $rate=PassagewayItem::where(['item_passageway'=>$this->param['passageway'],'item_group'=>$member_group_id])->find();
+           #定义税率  
+           $also=($rate->item_also)/100;
            #定义代扣费
-           $daikou=0.5;
-           //$total_money=$this->param['billMoney']+$this->param['billMoney']*$also+$this->param['cashCount']*$daikou;
+           $daikou=($rate->item_charges)*100;
+           //$total_money=$this->param['billMoney']+$this->param['billMoney']*$also+$this->param['payCount']*$daikou;
            #定义一个空数组, 用于存放最后的结果集 方便写入数据库
            $data=array();
            #判断总账单是否小于某个值,否则不执行, 比如还款10块20块的 执行没有必要,浪费资源
            if($this->param['billMoney']<100)
-                 return ['code'=>470];
+                 exit(json_encode(['code'=>111,'msg'=>'还款金额不能低于100元']));
            #总账单除以消费次数得到每次消费AVG平均值  如果平均值小于某个值 则不进行还款  也是浪费资源
-           if($this->param['billMoney']/$this->param['cashCount'] <50)
-                 return ['code'=>471,'msg'=>'单次还款额太小啦,请调整次数到'.intval($this->param['billMoney']/50).'次以下~'];
+           if($this->param['billMoney']/$this->param['payCount'] <50)
+                  exit(json_encode(['code'=>111,'msg'=>'单次还款额太小啦,请调整次数到'.intval($this->param['billMoney']/50).'次以下~']));
+           //判断卡号是否在计划内
+           // $plan=Generation::where(['generation_card'=>$card_info->card_bankno,'generation_state'=>1])->find();
+           // if($plan){
+           //      exit(json_encode(['code'=>111,'msg'=>'此卡已经在还款计划内，请先删除原计划再重新制定计划。']));
+           // }
            Db::startTrans();
            try
            {
@@ -98,12 +96,12 @@
                  #取得开始日期与结束日期之间的所有日期 并且打乱顺序
                  $date=prDates($this->param['startDate'],$this->param['endDate']);
                  #如果总还款次数小于日期间隔天数 则随机日期 每天消费一次 并且保证不重复;
-                 if($this->param['cashCount']<=$days)
+                 if($this->param['payCount']<=$days)
                  {
                        #打乱日期顺序
                        shuffle($date);
                        #消费几次就取几个随机日期
-                       $randDate=array_slice($date,0,$this->param['cashCount']);
+                       $randDate=array_slice($date,0,$this->param['payCount']);
                        #循环消费日期 拼接随机的消费小时和分钟 人工消费模拟 早8点-晚7点 24小时制
                        foreach ($randDate as $key => $value) {
                             $data[$key]['time']=$value." ".get_hours().":".get_minites();
@@ -111,7 +109,7 @@
                        }
                        //取得每天消费多少钱
                        $result=new \app\api\controller\GetPlan();
-                       $res=$result->splitReward($this->param['billMoney'],$this->param['cashCount'],$this->param['billMoney']/$this->param['cashCount']+100,$this->param['billMoney']/$this->param['cashCount']-100);
+                       $res=$result->splitReward($this->param['billMoney'],$this->param['payCount'],$this->param['billMoney']/$this->param['payCount']+100,$this->param['billMoney']/$this->param['payCount']-100);
                        #循环消费数组 关联到日期数组  阙值为0.1元 为保证四舍五入后还可以足够额度
                        sort($data);
                        foreach ($res as $key => $value) {
@@ -121,118 +119,105 @@
                             $data[$key]['range']=substr(sprintf("%.3f", ($value/10)* $also)+0.01,0,-1);
                             $data[$key]['daikou']=$daikou;
                        }
-
-                      //写入主计划表
-                      $Generation_result=new Generation([
-                           'generation_no'          =>uniqid(),//TODO 生成随机代号
-                           'generation_member'    =>$this->param['uid'],
-                           'generation_card'      =>$card_info->card_bankno,
-                           'generation_total'      =>$this->param['billMoney'],
-                           'generation_left'        =>$this->param['billMoney'],
-                           'generation_pound'   =>$this->param['billMoney']*$also,
-                           'generation_start'     =>$this->param['startDate'],
-                           'generation_end'      =>$this->param['endDate'],
-                      ]);
-
-                      if($Generation_result->save()!==false)
-                      {
-
-                           //写入还款卡表
-                           $reimbur_result=new Reimbur([
-                                 'reimbur_generation'   =>$Generation_result->generation_id,
-                                 'reimbur_card'             =>'还款卡号',
-                           ]); 
-
-                           //循环数据 
-                           $list=array();
-                           $lists=array();
-                           $lista=0;
-                           foreach ($data as $key => $value) {
-                            $lista++;
-                            $list[$key]['order_no']=uniqid();
-                                 $list[]=array(
-                                      'order_no'           =>'12',
-                                      'order_member'  =>'12',
-                                      'order_type'       =>1,
-                                      'order_card'       =>'信用卡号',
-                                      'order_money'   =>$value['xf_money'],
-                                      'order_pound'    =>$value['range'],
-                                      'order_desc'      =>'自动代还消费~',
-                                      'order_time'       =>$value['time']
-                                 );
-                                 $lists[]=array(
-                                      'order_no'           =>$Generation_result->generation_id,
-                                      'order_member'  =>uniqid(),
-                                      'order_type'       =>2,
-                                      'order_card'       =>'信用卡号',
-                                      'order_money'   =>$value['dz_money'],
-                                      'order_pound'    =>0,
-                                      'order_desc'      =>'自动代还还款~',
-                                      'order_time'       =>$value['endtime']
-                                 );
-                           }
-                           //写入定时任务表
-                           $Generation_order=new GenerationOrder();
-
-                           $order_result=$Generation_order->saveAll($list);
-
-                           $order_result1=$Generation_order->saveAll($lists);
-
-                           if($order_result && $order_result1 && $reimbur_result->save()!==false)
-                           { 
-                                 Db::commit();
-
-                                 return json_encode(['code'=>200, 'msg'=> '计划创建成功~']);
-                           }else{
-                                 Db::rollback();
-                                 return ['code'=>472];      
-                           }
-                      }
-                      return ['code'=>472];      
+                       // print_r($data);die;
+                      
                  }
-                 if($this->param['cashCount']>$days)
+                 if($this->param['payCount']>$days)
                  {
                        #计算出每天消费几次 总和等于总消费次数
-                       $result=$this->get_day_count($this->param['cashCount'],$days);
+                       $result=$this->get_day_count($this->param['payCount'],$days);
                        #计算出每天总消费金额 再加上手续费
                        $dayM=new \app\api\controller\GetPlan();
                        $dayMoney=$dayM->splitReward($this->param['billMoney'],$days,$this->param['billMoney']/$days*1.3,$this->param['billMoney']/$days*0.7);
                        foreach ($date as $key => $value) {
                             $CurrentMoney=$dayMoney[$key]/10;
                             $CurrentCount=$result[$key];//当天总消费次数
-                            $data[$key]['count']=$CurrentCount;
-                            $data[$key]['countMoney']=$CurrentMoney;//当天总还款额
-                            $data[$key]['endtime']=$value." 20:".get_minites();
+                            $list[$key]['count']=$CurrentCount;
+                            $list[$key]['countMoney']=$CurrentMoney;//当天总还款额
+                            $list[$key]['endtime']=$value." 20:".get_minites();
                             //计算出平均每天每次需还款多少钱
                             $everyCountMoney=$dayM->splitReward($CurrentMoney,$CurrentCount,$CurrentMoney/$CurrentCount*1.3,$CurrentMoney/$CurrentCount*0.7);
                             foreach ($everyCountMoney as $k => $v) {
                                  $xiaofei=substr(sprintf("%.2f",(($v/10)+0.1)/(1-$also)+$daikou),0,-1);
-                                 $data[$key]['list'][$k]['time']=$date[$key]." ".get_hours().":".get_minites();
-                                 $data[$key]['list'][$k]['xf_money']=$xiaofei;
-                                 $data[$key]['list'][$k]['range']=substr(sprintf("%.3f", ($v/10)* $also),0,-1)+0.01;
-                                 $data[$key]['list'][$k]['daikou']=$daikou;
-                                 $data[$key]['list'][$k]['dz_money']=round($xiaofei-$xiaofei*$also-$daikou,1, PHP_ROUND_HALF_DOWN);
+                                 $list[$key]['list'][$k]['time']=$date[$key]." ".get_hours().":".get_minites();
+                                 $list[$key]['list'][$k]['xf_money']=$xiaofei;
+                                 $list[$key]['list'][$k]['range']=substr(sprintf("%.3f", ($v/10)* $also),0,-1)+0.01;
+                                 $list[$key]['list'][$k]['daikou']=$daikou;
+                                 $list[$key]['list'][$k]['dz_money']=round($xiaofei-$xiaofei*$also-$daikou,1, PHP_ROUND_HALF_DOWN);
                             }
-
                        }
-
-
-
-
-
-
-
+                       $data=[];
+                       print_r($list);die;
+                       foreach ($list as $key => $v) {
+                          $data=array_merge($v['list'],$data);
+                       }
                  }
-                  dump($randDate);
-                  exit();
+                 //写入主计划表
+                  $Generation_result=new Generation([
+                       'generation_no'          =>uniqid(),//TODO 生成随机代号
+                       'generation_member'    =>$this->param['uid'],
+                       'generation_card'      =>$card_info->card_bankno,
+                       'generation_total'      =>$this->param['billMoney'],
+                       'generation_left'        =>$this->param['billMoney'],
+                       'generation_pound'   =>$this->param['billMoney']*$also+$rate->item_charges,
+                       'generation_start'     =>$this->param['startDate'],
+                       'generation_end'      =>$this->param['endDate'],
+                  ]);
+                  if($Generation_result->save()!==false)
+                  {
+                       //写入还款卡表
+                       $reimbur_result=new Reimbur([
+                             'reimbur_generation'   =>$Generation_result->generation_id,
+                             'reimbur_card'             =>$card_info->card_bankno,
+                       ]); 
+                       //循环数据 
+                       $list=array();
+                       $lists=array();
+                       // print_r($data);die;
+                       for ($i=0; $i <count($data) ; $i++) { 
+                       // foreach ($data as $key => $value) {
+                             $list[]=array(
+                                  'order_no'       =>$Generation_result->generation_id,
+                                  'order_member'   =>$this->param['uid'],
+                                  'order_type'     =>1,
+                                  'order_card'     =>$card_info->card_bankno,
+                                  'order_money'    =>$data[$i]['xf_money'],
+                                  'order_pound'    =>$data[$i]['range'],
+                                  'order_desc'     =>'自动代还消费~',
+                                  'order_time'     =>$data[$i]['time']
+                             );
+                             $lists[]=array(
+                                  'order_no'         =>$Generation_result->generation_id,
+                                  'order_member'     =>$this->param['uid'],
+                                  'order_type'       =>2,
+                                  'order_card'       =>$card_info->card_bankno,
+                                  'order_money'      =>$data[$i]['dz_money'],
+                                  'order_pound'      =>0,
+                                  'order_desc'       =>'自动代还还款~',
+                                  'order_time'       =>$data[$i]['endtime'],
+                             );
+                       }
+                       // var_dump($lists);die;
+                       //写入定时任务表
+                       $Generation_order=new GenerationOrder();
 
+                       $order_result=$Generation_order->saveAll($list);
 
-                 $result=new \app\api\controller\GetPlan();
-                 $res=$result->splitReward('5000','10','600','300');
-                 dump($res);
+                       $order_result1=$Generation_order->saveAll($lists);
+
+                       if($order_result && $order_result1 && $reimbur_result->save()!==false)
+                       { 
+                             Db::commit();
+
+                             exit(json_encode(['code'=>200, 'msg'=> '计划创建成功~','data'=>['repaymentScheduleId'=>1,'repaymentScheduleUrl'=>$_SERVER['SERVER_NAME'].'/api/Userurl/repayment_plan_detail/order_no/'.$Generation_result->generation_id]]));
+                       }else{
+                             Db::rollback();
+                             return ['code'=>472];      
+                       }
+                  }
                   #判断信用卡是否存在 状态是否正常 是否签约报备
                  /*$money=$this->param['billMoney'];#获取要还款的账单金额
-                 $cashCount=$this->param['cashCount'];#刷卡消费次数
+                 $payCount=$this->param['payCount'];#刷卡消费次数
                  $startDate=$this->param['startDate'];#计划执行日
                  $endDate=$this->param['endDate'];#计划结束日期
 
@@ -247,9 +232,9 @@
                  $passway['also']=0.0035; //税率 需在后台读取 TODO
                  $passway['holding']=3; //固定值 需在后台取 TODO
                  //计算平均每次需要还款多少钱 取AVG平均值 
-                 $avg=$this->param['billMoney']/$this->param['cashCount'];
+                 $avg=$this->param['billMoney']/$this->param['payCount'];
                  //取得总共需要多少手续费
-                 $total_changr=$this->param['billMoney']*$passway['also']+$this->param['cashCount']*$passway['holding'];
+                 $total_changr=$this->param['billMoney']*$passway['also']+$this->param['payCount']*$passway['holding'];
                  //计算最低需要多少余额
                  $total_avg=$avg+$total_changr;*/
                  //判断可用余额是否足够这些 如果不够的话 则计划失败
@@ -257,16 +242,21 @@
                  //计算余额最低不能小于多少钱 取Avg+手续费
                  //如果可用余额不足 则不进行代还
 
-
-
-
            } catch (\Exception $e) {
                  Db::rollback();
                  return ['code'=>308,'msg'=>$e->getMessage()];
            }
           
       }
-
+       public function action_repay_plan(){
+          $where['order_status']='1';
+          $where['order_time']=array('lt',date('Y-m-d H:i:s',time()));
+          $get_list=M('repay_cash')->where($where)->select();
+          // print_r($get_list);die;
+          foreach ($get_list as $key => $get) {
+            $this->transferApply($get);
+          }
+      }
 
 
        /**
