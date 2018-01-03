@@ -271,7 +271,7 @@ class CashOut
 	            'randomStr'=>$tradeNo,// 随机串
 	            'orderId'=>$tradeNo ,//商户订单号
 	            'notifyUrl'=>$this->passway_info->cashout->cashout_callback, //异步通知URL,  //后台异步通知地址
-	            // 'frontNotifyUrl'=>HOST.'/index.php?s=/Api/Jyf/frontNotofyUrl',
+	            'frontNotifyUrl'=>'123',
 	            'lpCertNo'=>$this->card_info->card_idcard, // 持卡人身份证号
 	            'accNo'=> $this->card_info->card_bankno, // 银行卡号
 	            'phoneNo'=>$this->card_info->card_phone, // 银行预留手机号
@@ -279,23 +279,24 @@ class CashOut
 	            'CVN2'=>jinyifu_encrypt($this->card_info->card_Ident,$this->passway_info->passageway_pwd_key,$this->passway_info->iv),
 	            'expDate'=>jinyifu_encrypt($this->card_info->card_expireDate,$this->passway_info->passageway_pwd_key,$this->passway_info->iv),
 	      );
-		 // return ['code'=>200,'msg'=>'订单获取成功~' , 'data'=>$arr];
  	        $arr=SortByASCII($arr);
 	        #2签名
 	        $sign=jinyifu_getSign($arr,$this->passway_info->passageway_key);
 	        // var_dump($sign);die;
 	        $arr['sign']=$sign;
 	        // echo $sign;die;
+	        // var_dump($arr);die;
 	        #3参数
 	        $params=base64_encode(json_encode($arr));
 	        #4请求字符串
 	        $urls='https://hydra.scjinepay.com/jk/QpayAction_getQpOrder?params='.urlencode($params);
 	        #请求
 	        $res=curl_post($urls);
-	        // var_dump($res);die;
+
 	        $res=json_decode($res,true);
+	        
 	        $result=base64_decode($res['params']);
-	        // echo($result);die;
+return ['code'=>200,'msg'=>'订单获取成功~11' , 'data'=>$result];
 	        $data=json_decode($result,true);
 	        return ['code'=>200,'msg'=>'订单获取成功~11' , 'data'=>$data];
  		 if ($data['respCode'] == 00) {

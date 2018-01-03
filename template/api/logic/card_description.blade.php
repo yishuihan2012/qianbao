@@ -22,57 +22,14 @@
 			    </tr>
 			  </thead>
 			  <tbody  class="bg-w" align="center">
+			  	@foreach($list as $key => $value)
 			    <tr>
-			      <td>工商银行</td>
-			      <td rowspan="10">信用卡</td>
-			      <td>2万</td>
-			      <td>5万</td>
+			      <td>{{$value->card_name}}</td>
+			      <td >信用卡</td>
+			      <td>{{$value->bank_single}}{{$value->bank_attrbute}}</td>
+			      <td>{{$value->bank_one_day}}{{$value->bank_attrbute}}</td>
 			    </tr>
-			    <tr>
-			      <td>中国银行</td>
-			      <td>2万</td>
-			      <td>5万</td>
-			    </tr>
-			    <tr>
-			      <td>建设银行</td>
-			      <td>2万</td>
-			      <td>5万</td>
-			    </tr>
-			    <tr>
-			      <td>平安银行</td>
-			      <td>2万</td>
-			      <td>5万</td>
-			    </tr>
-			    <tr>
-			      <td>兴业银行</td>
-			      <td>2万</td>
-			      <td>5万</td>
-			    </tr>
-			    <tr>
-			      <td>华夏银行</td>
-			      <td>2万</td>
-			      <td>5万</td>
-			    </tr>
-			    <tr>
-			      <td>光大银行</td>
-			      <td>2万</td>
-			      <td>5万</td>
-			    </tr>
-			    <tr>
-			      <td>民生银行</td>
-			      <td>2万</td>
-			      <td>5万</td>
-			    </tr>
-			    <tr>
-			      <td>招商银行</td>
-			      <td>2万</td>
-			      <td>5万</td>
-			    </tr>
-			    <tr>
-			      <td>广发银行</td>
-			      <td>2万</td>
-			      <td>5万</td>
-			    </tr>
+			   @endforeach
 			  </tbody>
 			</table>
 			<div class="space-up">

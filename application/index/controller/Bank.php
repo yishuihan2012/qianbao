@@ -143,9 +143,6 @@ class Bank extends Common{
 	 	$category_list=ArticleCategorys::where('category_parent', Request::instance()->param('id'))->select();
 	 	echo json_encode($category_list);
 	 }
-
-
-
 	 #银行卡号自动识别银行 识别银行总览
 	 public function ident()
 	 {

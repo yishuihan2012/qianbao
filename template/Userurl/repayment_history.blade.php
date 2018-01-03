@@ -32,21 +32,23 @@
 						<div id="scroll1" class="mui-scroll-wrapper">
 							<div class="mui-scroll">
 								<ul class="mui-table-view bg-color wrap">
+
+								@foreach($generation as $list)
 									<li class="mui-table-view-cell bg-w space-up f-br2">
-									  <a href="">	
+									  <a href="/api/Userurl/repayment_plan_detail/order_no/{{$list['generation_id']}}">	
 										<div class="dis-flex-be wrap bor-bot-das">
 											<div class="dis-flex-fs">
 												<p class="card-pic-container">
 													<img src="/static/images/card.png">
 												</p>
-												<span class="f16">浦发银行(尾号2583)</span>
+												<span class="f16">{{$list['card_bankname']}}(尾号{{$list['generation_card']}})</span>
 											</div>
-											<div class="green-color"><span class="iconfont icon-shijian-copy-copy space-right"></span><span class="f16">执行中</span></div>
+											<div class="green-color"><span class="iconfont icon-shijian-copy-copy space-right"></span><span class="f16">@if($list['generation_state']==2)执行中@elseif($list['generation_state']==1)待确认@elseif($list['generation_state']==3)还款结束@elseif($list['generation_state']==-1)还款失败@endif</span></div>
 										</div>
 										<div class="wrap">
-											<p class="invalid-color f15">还款总金额(含手续费79.05元)</p>
-											<p class="f24 space-up3"><strong>10079.05</strong><span class="f15">元</span></p>
-											<p class="invalid-color f15 space-up3 f-tex-n">还款计划时间：<span class="blue-color-th space-right">12月19日 </span><span class="blue-color-th">6笔</span></p>
+											<p class="invalid-color f15">还款总金额(含手续费{{$list['generation_pound']}}元)</p>
+											<p class="f24 space-up3"><strong>{{$list['generation_total']}}</strong><span class="f15">元</span></p>
+											<p class="invalid-color f15 space-up3 f-tex-n">还款计划时间：<span class="blue-color-th space-right">{{$list['generation_start']}} </span><span class="blue-color-th">{{$list['count']}}笔</span></p>
 										</div>
 										<div class="dis-flex-be invalid-color wrap bor-top-das">
 											<span class="f16">查看详情</span>
@@ -54,6 +56,8 @@
 										</div>
 									  </a>
 									</li>
+								@endforeach
+
 								</ul>
 							</div>
 						</div>
@@ -61,10 +65,34 @@
 					<div id="item2mobile" class="mui-slider-item mui-control-content">
 						<div id="scroll2" class="mui-scroll-wrapper">
 							<div class="mui-scroll">
-								<div class="mui-loading">
-									<div class="mui-spinner">
-									</div>
-								</div>
+								<ul class="mui-table-view bg-color wrap">
+
+								@foreach($generation1 as $list)
+									<li class="mui-table-view-cell bg-w space-up f-br2">
+									  <a href="/api/Userurl/repayment_plan_detail/order_no/{{$list['generation_id']}}">	
+										<div class="dis-flex-be wrap bor-bot-das">
+											<div class="dis-flex-fs">
+												<p class="card-pic-container">
+													<img src="/static/images/card.png">
+												</p>
+												<span class="f16">{{$list['card_bankname']}}(尾号{{$list['generation_card']}})</span>
+											</div>
+											<div class="green-color"><span class="iconfont icon-shijian-copy-copy space-right"></span><span class="f16">@if($list['generation_state']==2)执行中@elseif($list['generation_state']==1)待确认@elseif($list['generation_state']==3)还款结束@elseif($list['generation_state']==-1)还款失败@endif</span></div>
+										</div>
+										<div class="wrap">
+											<p class="invalid-color f15">还款总金额(含手续费{{$list['generation_pound']}}元)</p>
+											<p class="f24 space-up3"><strong>{{$list['generation_total']}}</strong><span class="f15">元</span></p>
+											<p class="invalid-color f15 space-up3 f-tex-n">还款计划时间：<span class="blue-color-th space-right">{{$list['generation_start']}} </span><span class="blue-color-th">{{$list['count']}}笔</span></p>
+										</div>
+										<div class="dis-flex-be invalid-color wrap bor-top-das">
+											<span class="f16">查看详情</span>
+											<span class="mui-icon mui-icon-arrowright f20"></span>
+										</div>
+									  </a>
+									</li>
+								@endforeach
+
+								</ul>
 							</div>
 						</div>
 
@@ -72,10 +100,34 @@
 					<div id="item3mobile" class="mui-slider-item mui-control-content">
 						<div id="scroll3" class="mui-scroll-wrapper">
 							<div class="mui-scroll">
-								<div class="mui-loading">
-									<div class="mui-spinner">
-									</div>
-								</div>
+								<ul class="mui-table-view bg-color wrap">
+
+								@foreach($generation3 as $list)
+									<li class="mui-table-view-cell bg-w space-up f-br2">
+									  <a href="/api/Userurl/repayment_plan_detail/order_no/{{$list['generation_id']}}">	
+										<div class="dis-flex-be wrap bor-bot-das">
+											<div class="dis-flex-fs">
+												<p class="card-pic-container">
+													<img src="/static/images/card.png">
+												</p>
+												<span class="f16">{{$list['card_bankname']}}(尾号{{$list['generation_card']}})</span>
+											</div>
+											<div class="green-color"><span class="iconfont icon-shijian-copy-copy space-right"></span><span class="f16">@if($list['generation_state']==2)执行中@elseif($list['generation_state']==1)待确认@elseif($list['generation_state']==3)还款结束@elseif($list['generation_state']==-1)还款失败@endif</span></div>
+										</div>
+										<div class="wrap">
+											<p class="invalid-color f15">还款总金额(含手续费{{$list['generation_pound']}}元)</p>
+											<p class="f24 space-up3"><strong>{{$list['generation_total']}}</strong><span class="f15">元</span></p>
+											<p class="invalid-color f15 space-up3 f-tex-n">还款计划时间：<span class="blue-color-th space-right">{{$list['generation_start']}} </span><span class="blue-color-th">{{$list['count']}}笔</span></p>
+										</div>
+										<div class="dis-flex-be invalid-color wrap bor-top-das">
+											<span class="f16">查看详情</span>
+											<span class="mui-icon mui-icon-arrowright f20"></span>
+										</div>
+									  </a>
+									</li>
+								@endforeach
+
+								</ul>
 							</div>
 						</div>
 

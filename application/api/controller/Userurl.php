@@ -21,6 +21,9 @@ use app\index\model\Passageway;
 use app\index\model\PassagewayItem; 
 use app\index\model\MemberGroup; 
 use app\index\model\MemberRelation; 
+use app\index\model\CreditCard;
+use app\index\model\Generation;
+use app\index\model\GenerationOrder;
 /**
  *  此处放置一些固定的web地址
  */
@@ -55,6 +58,11 @@ class Userurl extends Controller
 	    $list = Exclusive::all();
 	    $this->assign("list",$list);
 	    return view("api/logic/share_code_list");
+	}
+
+	#套现成功页面
+	public function calllback_success(){
+	    return view("Userurl/calllback_success");
 	}
 	/**
 	 * @Author   Star(794633291@qq.com)
@@ -111,7 +119,20 @@ class Userurl extends Controller
 	 * @return   [type]
 	 */
 	public function repayment_plan_list(){
-		$this->checkToken();
+		// $this->checkToken();
+		$this->param['uid']=12;
+		#全部
+		$order=GenerationOrder::where(['order_member'=>$this->param['uid']])->select();
+
+		#已执行
+		$order2=GenerationOrder::where(['order_member'=>$this->param['uid'],'order_status'=>2])->select();
+
+		#未执行
+		$order1=GenerationOrder::where(['order_member'=>$this->param['uid'],'order_status'=>1])->select();
+		
+		$this->assign('order',$order);
+		$this->assign('order2',$order2);
+		$this->assign('order1',$order1);
 	  	return view("Userurl/repayment_plan_list");
 	}
 	/**
@@ -121,7 +142,35 @@ class Userurl extends Controller
 	 * @return   [type]
 	 */
 	public function repayment_history(){
-		$this->checkToken();
+		// $this->checkToken();
+		$this->param['uid']=16;
+		#进行中
+		$generation=Generation::with('creditcard')->where(['generation_member'=>$this->param['uid'],'generation_state'=>2])->select();
+
+		foreach ($generation as $key => $value) {
+				$generation[$key]['generation_card']=substr($value['generation_card'], -4);
+				$generation[$key]['count']=GenerationOrder::where(['order_no'=>$value['generation_id']])->count();
+		}
+
+		#待确认
+		$generation1=Generation::with('creditcard')->where(['generation_member'=>$this->param['uid'],'generation_state'=>1])->select();
+		// var_dump($generation1);die;
+		foreach ($generation1 as $key => $value) {
+				$generation1[$key]['generation_card']=substr($value['generation_card'], -4);
+				$generation1[$key]['count']=GenerationOrder::where(['order_no'=>$value['generation_id']])->count();
+		}
+
+		#完成
+		$generation3=Generation::with('creditcard')->where(['generation_member'=>$this->param['uid'],'generation_state'=>3])->select();
+		foreach ($generation3 as $key => $value) {
+				$generation3[$key]['generation_card']=substr($value['generation_card'], -4);
+				$generation3[$key]['count']=GenerationOrder::where(['order_no'=>$value['generation_id']])->count();
+		}
+		// var_dump($generation);die;
+
+		$this->assign('generation',$generation);
+		$this->assign('generation3',$generation3);
+		$this->assign('generation1',$generation1);
 	  	return view("Userurl/repayment_history");
 	}
 	/**
@@ -130,8 +179,47 @@ class Userurl extends Controller
 	 * @version  [还款计划详情]
 	 * @return   [type]
 	 */
-	public function repayment_plan_detail(){
-		$this->checkToken();
+	public function repayment_plan_detail($order_no){
+		// $this->checkToken();
+		$order=array();
+		$generation=Generation::with('creditcard')->where(['generation_id'=>$order_no])->find();
+		$generation['generation_card']=substr($generation['generation_card'], -4);
+		$order1=GenerationOrder::where(['order_no'=>$order_no,'order_type'=>1])->select();
+		$order2=GenerationOrder::where(['order_no'=>$order_no,'order_type'=>2])->select();
+		// $order=GenerationOrder::where(['order_no'=>$order_no])->select();
+		// $order=$order->toArray();
+		// dump($order);die;
+		foreach ($order1 as $key => $value) {
+			foreach ($order2 as $k => $val) {
+				if($key==$k){
+
+					$order[$key]['pay']=$value;
+					$order[$key]['pay_money']=$value['order_money'];
+					$order[$key]['pay']['time']=date("H:i",strtotime($value['order_time']));
+
+					$order[$key]['huan']=$val;
+					$order[$key]['huan_money']=$val['order_money'];
+					$order[$key]['huan']['time']=date("H:i",strtotime($val['order_time']));
+
+					$order[$key]['time']=date("m月d日",strtotime($value['order_time']));
+				}
+			}
+		}
+
+		// foreach ($order as $key => $value) {
+		// 	$order[$key]['day_time']=date("m月d日",strtotime($value['order_time']));
+		// 	$order[$key]['current_time']=date("H:i",strtotime($value['order_time']));
+		// }
+
+		// $data=[];
+		// foreach ($order as $key => $value) {
+		// 	$data[$value['day_time']]=$value;
+		// }
+		// echo "<pre>";
+		// var_dump($data);die;
+		$this->assign('generation',$generation);
+		$this->assign('order',$order);
+		$this->assign('count',count($order1));
 	  	return view("Userurl/repayment_plan_detail");
 	}
 	/**
@@ -178,7 +266,7 @@ class Userurl extends Controller
 	public function deal_list(){
 		$this->checkToken();
 		//取MemberCash内容
-		$MemberCash=MemberCash::all(['cash_member_id'=>$this->param['uid'],'cash_state'=>1]);
+		$MemberCash=MemberCash::where(['cash_member_id'=>$this->param['uid'],'cash_state'=>1])->order('cash_create_at desc')->select();
 		$data=[];
 		//流水
 		$i=0;
@@ -187,19 +275,19 @@ class Userurl extends Controller
 			$data[$i]['number']=$i;
 			//用于区分MemberCash和Withdraw
 			$data[$i]['type']='MemberCash';
-			$data[$i]['cash_amount']=$v['cash_amount'];
-			$data[$i]['service_charge']=$v['service_charge'];
+			$data[$i]['cash_amount']=sprintf("%.2f",substr(sprintf("%.3f", $v['cash_amount']), 0, -1));
+			$data[$i]['service_charge']=sprintf("%.2f",substr(sprintf("%.3f", $v['service_charge']), 0, -1));
 			$data[$i++]['cash_create_at']=$v['cash_create_at'];
 		}
 		//取withdraw内容
-		$Withdraw=Withdraw::all(['withdraw_member'=>$this->param['uid'],'withdraw_state'=>12]);
+		$Withdraw=Withdraw::where(['withdraw_member'=>$this->param['uid'],'withdraw_state'=>12])->order('withdraw_add_time desc')->select();
 		//转存
 		foreach ($Withdraw as $k => $v) {
 			$data[$i]['number']=$i;
 			//用于区分MemberCash和Withdraw
 			$data[$i]['type']='Withdraw';
-			$data[$i]['withdraw_amount']=$v['withdraw_amount'];
-			$data[$i]['withdraw_charge']=$v['withdraw_charge'];
+			$data[$i]['withdraw_amount']=sprintf("%.2f",substr(sprintf("%.3f", $v['withdraw_amount']), 0, -1));
+			$data[$i]['withdraw_charge']=sprintf("%.2f",substr(sprintf("%.3f", $v['withdraw_charge']), 0, -1));
 			$data[$i]['withdraw_account']=substr($v['withdraw_account'],-4);
 			$data[$i]['withdraw_charge']=$v['withdraw_charge'];
 			$data[$i]['withdraw_add_time']=$v['withdraw_add_time'];
@@ -207,13 +295,13 @@ class Userurl extends Controller
 		}
 		//取CashOrder内容
 		// $CashOrder=CashOrder::with('bankcard')->all(['order_member'=>$this->param['uid'],'order_state'=>2]);
-		$CashOrder=CashOrder::with('membercreditcard')->where(['order_member'=>$this->param['uid'],'order_state'=>2])->select();
+		$CashOrder=CashOrder::with('membercreditcard')->where(['order_member'=>$this->param['uid'],'order_state'=>2])->order('order_add_time desc')->select();
 		//转存
 		foreach ($CashOrder as $k => $v) {
 			$data[$i]['number']=$i;
 			//用于区分MemberCash和Withdraw
 			$data[$i]['type']='CashOrder';
-			$data[$i]['order_money']=$v['order_money'];
+			$data[$i]['order_money']=sprintf("%.2f",substr(sprintf("%.3f", $v['order_money']), 0, -1));
 			$data[$i]['order_charge']=$v['order_charge'];
 			$data[$i]['card_bankname']=$v['card_bankname'];
 			$data[$i]['order_creditcard']=substr($v['order_creditcard'],-4);
@@ -411,6 +499,9 @@ class Userurl extends Controller
   }
   #信用卡说明
   public function card_description(){
+  	$CreditCard = new CreditCard();
+  	$list = $CreditCard->select();
+  	$this->assign('list',$list);
   	return view("api/logic/card_description");
   }
 }
