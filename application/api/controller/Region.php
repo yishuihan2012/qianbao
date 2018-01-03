@@ -18,6 +18,7 @@
  use app\index\model\BankIdent;
  use app\index\model\Payplatform;
  use app\index\model\CustomerService;
+ use app\index\model\Announcement;
 
  class Region 
  {
@@ -166,7 +167,13 @@
       **/ 
       public function advertisement()
       {
+        $announcement=Announcement::where(['announcement_status'=>1])->field('announcement_title')->select();
 
+        foreach ($announcement as $key => $value) {
+          $data[$key]=$value['announcement_title'];
+        }
+
+        return ['code'=>200, 'msg'=>'获取公告成功~', 'data'=>$data];
         
           
            // return ['code'=>200, 'msg'=>'获取公告成功', 'data'=>];

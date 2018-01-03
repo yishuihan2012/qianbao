@@ -48,7 +48,7 @@
       	 $memberLogin=MemberLogin::phone_exit($this->param['phone']);
       	 #能否查找到手机号码
       	 if(!$memberLogin)
-      	 	 return ['code'=>403];
+      	 	 return ['code'=>403,'msg'=>'未查找到手机号'];
       	 #验证最大尝试次数 TODO: 验证多久时间内最大的登录次数
            if($memberLogin['login_attempts']>=System::getName('is_locking'))
            {

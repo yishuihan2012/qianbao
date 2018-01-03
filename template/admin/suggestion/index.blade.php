@@ -25,7 +25,9 @@
         		 <div class="text">{{$list['suggestion_info']}}</div>
       	 </div>
       	 <div class="item-footer">
-        	 	 <a href="#" class="text-muted"><i class="icon-comments"></i> {{$list['member_nick']}}</a> &nbsp; <span class="text-muted">{{$list['suggestion_creat_time']}}</span>
+        	 	 <a href="#" class="text-muted"><i class="icon-comments"></i> {{$list['member_nick']}}</a> &nbsp;
+             <button class="btn btn-sm" data-toggle="modal" data-remote="{{url('/index/member/info/id/'.$list['member_id'])}}" type="button">查看用户详情</button>
+              <span class="text-muted">{{$list['suggestion_creat_time']}}</span>
       	 </div>
       </div>
       @endforeach

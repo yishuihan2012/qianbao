@@ -29,7 +29,7 @@
             <ul class="nav navbar-nav navbar-right">
                 <li><a href="#">红包审批</a></li>
                 <li><a href="#">提现审批</a></li>
-                <li><a href="#">使用说明</a></li>
+                <li><a href="{{url('/index/index/help')}}">使用说明</a></li>
                 <li class="dropdown">
                     <a href="#" class="dropdown-toggle" data-toggle="dropdown">{{$name}} <b class="caret"></b></a>
                     <ul class="dropdown-menu" role="menu">

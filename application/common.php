@@ -581,6 +581,60 @@
       return $str1;
  }
 
+
+
+
+
+  //-----------------------------------------------------------
+ // @version  金易付排序
+ // @author   $bill$
+ // @datatime 2017-12-11 11:22
+ // @param  $arr 参与排序数组
+ // @return  签名 
+ //-----------------------------------------------------------
+
+
+function SortByASCII($arr){
+        $keys=array_keys($arr);
+        $newrr=[];
+        foreach ($keys as $k => $v) {
+            if(!$v){
+                exit(json_encode(['code'=>101,'msg'=>'参数'.$k.'获取失败','data'=>'']));
+            }
+            $newrr[$k]['asc']=ord($v);
+            $newrr[$k]['key']=$v;
+            $keys[$k]=ord($v);
+        }
+        array_multisort($keys, SORT_ASC, $newrr);
+        $return=[];
+        foreach ($newrr as $k => $v) {
+           $return[$v['key']]=$arr[$v['key']];
+        }
+        return $return;
+    }
+
+  //-----------------------------------------------------------
+ // @version  金易付签名
+ // @author   $bill$
+ // @datatime 2017-12-11 11:22
+ // @param  $arr 参与签名数组，$passageway_key签名key
+ // @return  签名 
+ //-----------------------------------------------------------
+
+ function jinyifu_getSign($arr,$passageway_key){
+  // var_dump($arr);die;
+  $str=urldecode(http_build_query($arr));
+  // $str=http_build_query($arr);
+  // echo $str;die;
+  $key=$passageway_key;
+  $str=$str.$key;
+  // echo ($str);die;
+  $string=strtoupper(md5($str));
+  // echo "<br/>";
+  // echo $string;die;
+  return $string;
+}
+
   //-----------------------------------------------------------
  // @version  AES对称加密
  // @author   $bill$
@@ -627,10 +681,56 @@
       return $data;
  }
 
+ //-----------------------------------------------------------
+ // @version  金易付加密加密
+ // @author   $bill$
+ // @datatime 2017-12-27 11:22
+ // @param  $string=要进行加密数据
+ // @return  加密数据 
+ //-----------------------------------------------------------
+function jinyifu_encrypt($str,$encryptKey,$iv)
+  {
+
+    $str =pad($str);
+    $td = mcrypt_module_open( MCRYPT_RIJNDAEL_128, '', MCRYPT_MODE_ECB, '');
+    if (empty($iv)) {
+        $iv = @mcrypt_create_iv(mcrypt_enc_get_iv_size($td), MCRYPT_RAND);
+    }
+    mcrypt_generic_init($td, $encryptKey, $iv);
+   
+    $cyper_text = mcrypt_generic($td, $str);
+    //$rt = base64_encode($cyper_text);
+    $rt = bin2hex($cyper_text);
+    mcrypt_generic_deinit($td);
+    mcrypt_module_close($td);
+    return $rt;
+  }
+function pad($str)
+    {
+        return pad_or_unpad($str, '');
+    }
+function unpad($str)
+    {
+        return pad_or_unpad($str, 'un');
+    }
+function pad_or_unpad($str, $ext,$pad='pkcs5')
+    {
+        if (is_null($pad)) {
+            return $str;
+        } else {
+            $func_name = __CLASS__ . '::' . $pad . '_' . $ext . 'pad';
+            if (is_callable($func_name)) {
+                $size = mcrypt_get_block_size( MCRYPT_RIJNDAEL_128, MCRYPT_MODE_ECB);
+                return call_user_func($func_name, $str, $size);
+            }
+        }
+        return $str;
+    }
+
 
 
    //米刷代换信用卡请求接口
-    function repay_request($params,$mechid,$url,$iv,$secretkey,$signkey,$type=0){
+  function repay_request($params,$mechid,$url,$iv,$secretkey,$signkey,$type=0){
         $payload =getPayload($params,$iv,$secretkey);
         $sign    = getSign($payload,$signkey);
             $request = array(
@@ -733,7 +833,8 @@
       $jpush=new con\Push();
       if($uid && $title && $content){
         //获取registration_id
-        $member_token=Members::get($uid)->value('member_token');
+        $member=Members::get($uid);
+        $member_token=$member->member_token;
         //写入记录
         Notice::create([
           'notice_title'=>$title,
@@ -742,6 +843,7 @@
           'notice_registration_id'=>$member_token,
         ]);
         $jpush->set_message_title($title);
+        // $jpush->set_audience('all');
         $jpush->set_registration_id($member_token);
         $jpush->set_message_sort_desc($content);
         $jpush->set_message_info_type(2);

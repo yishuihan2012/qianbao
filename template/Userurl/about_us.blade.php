@@ -60,7 +60,7 @@
 		            		<!--列表-->
 		            		<ul class="my-pad bor-bot dis-flex-ar">
 		            		  <li>
-		            		  	<a tel="15610079763" id="wexNumber001">
+		            		  	<a tel="{{$server['weixin']['service_contact']}}" id="wexNumber001">
 		            		  		<div class="icon-container bg-color">
 		            		  			<span class="mui-icon iconfont icon-weixin blue-color-th f36">
 		            		  		</div>
@@ -71,7 +71,7 @@
 		            		  	</a>
 		            		  </li>
 		            		  <li>
-		            		  	<a id="qqService001">
+		            		  	<a id="qqService001" tel="{{$server['qq']['service_contact']}}">
 		            		  		<div class="icon-container bg-color">
 		            		  			<span class="mui-icon iconfont icon-qq blue-color-th f36">
 		            		  		</div>
@@ -82,7 +82,7 @@
 		            		  	</a>
 		            		  </li>
 		            		  <li>
-		            		  	<a tel="{{$server['tel']}}" id="telPhone001">
+		            		  	<a tel="{{$server['tel']['service_contact']}}" id="telPhone001">
 		            		  		<div class="icon-container bg-color">
 		            		  			<span class="mui-icon iconfont icon-dianhua blue-color-th f36">
 		            		  		</div>
@@ -118,29 +118,42 @@
 		<script type="text/javascript">
 			mui.init();
 		    mui.ready(function(){
+		    	//qq客服
+		    	document.getElementById("qqService001").addEventListener('tap',function(){
+					var qq = document.getElementById("qqService001").getAttribute("tel");
+		    		if (/(iPhone|iPad|iPod|iOS)/i.test(navigator.userAgent)) {  //判断iPhone|iPad|iPod|iOS
+		    		 	window.webkit.messageHandlers.qqService.postMessage(qq);
+		    		}else{
+		    			android.qqService(qq);
+		    		 //复制成功后提示  “内容已复制到粘贴板”
+		    		}
+				})
 		    	//点击复制微信号码
 		    	document.getElementById('wexNumber001').addEventListener('tap',function(){
 		    		var wexNum = document.getElementById('wexNumber001').getAttribute('tel');
-		    		 window.webkit.messageHandlers.copyArticle.postMessage(wexNum);
+		    		 
+		    		if (/(iPhone|iPad|iPod|iOS)/i.test(navigator.userAgent)) {  //判断iPhone|iPad|iPod|iOS
+		    		 	window.webkit.messageHandlers.copyArticle.postMessage(wexNum);
+		    		}else{
+
+		    			android.copyArticle(wexNum);
+		    		 //复制成功后提示  “内容已复制到粘贴板”
+		    		}
 		    		 //复制成功后提示  “内容已复制到粘贴板”
 		    	});
-		    	//qq客服
-		    	document.getElementById('qqService001').addEventListener('tap',function(){
-		    		window.location.href="http://wpa.qq.com/msgrd?v=3&uin=174668774&site=qq&menu=yes";
-		    	});
+		    	
+		    	// document.getElementById('qqService001').addEventListener('tap',function(){
+		    	// 	window.location.href="http://wpa.qq.com/msgrd?v=3&uin=174668774&site=qq&menu=yes";
+		    	// });
 		    	//android、ios交互 拨打电话
 		    	document.getElementById('telPhone001').addEventListener('tap',function(){
-		    		 var btnArray = ['否', '是'];
-	                  mui.confirm('是否拨打？', '4006750789', btnArray, function(e) {
-	                    if (e.index == 1) {console.log(1);
-	                        var tel=document.getElementById('telPhone001').getAttribute('tel');
-				            if (/(iPhone|iPad|iPod|iOS)/i.test(navigator.userAgent)) {  //判断iPhone|iPad|iPod|iOS
-				                 window.webkit.messageHandlers.drialPhone.postMessage(tel);
-				            } else if (/(Android)/i.test(navigator.userAgent)) {   //判断Android
-				                 window.AndroidMessage.call(tel);
-				            }
-	                    }
-	                  });
+                    var tel=document.getElementById('telPhone001').getAttribute('tel');
+		            if (/(iPhone|iPad|iPod|iOS)/i.test(navigator.userAgent)) {  //判断iPhone|iPad|iPod|iOS
+		                 window.webkit.messageHandlers.drialPhone.postMessage(tel);
+		            } else if (/(Android)/i.test(navigator.userAgent)) {   //判断Android
+		                 window.AndroidMessage.call(tel);
+		            }
+	                  
 		            
 		        });
 		    });

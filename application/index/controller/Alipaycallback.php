@@ -23,6 +23,7 @@ class Alipaycallback
 
 	 public function callback()
 	 {
+        var_dump(123);die;
 	     $data = file_get_contents("php://input");
          file_put_contents('datas0.txt', $data);
 	 	 $data = trim($data);

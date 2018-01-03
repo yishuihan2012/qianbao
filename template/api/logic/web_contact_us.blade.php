@@ -64,13 +64,16 @@
 		<script type="text/javascript">
 			mui.init();
 			mui.ready(function(){
+				//qq客服
 				document.getElementById("qqService002").addEventListener('tap',function(){
-					var qq = document.getElementByIdI("qqService002").getAttribute("tel");
+
+					var qq = document.getElementById("qqService002").getAttribute("tel");
 
 		    		if (/(iPhone|iPad|iPod|iOS)/i.test(navigator.userAgent)) {  //判断iPhone|iPad|iPod|iOS
+
 		    		 	window.webkit.messageHandlers.qqService.postMessage(qq);
 		    		}else{
-		    			// alert();
+
 		    			android.qqService(qq);
 		    		 //复制成功后提示  “内容已复制到粘贴板”
 		    		}
@@ -78,10 +81,11 @@
 		    	//点击复制微信号码
 		    	document.getElementById('wexNumber002').addEventListener('tap',function(){
 		    		var wexNum = document.getElementById('wexNumber002').getAttribute('tel');
+
 		    		if (/(iPhone|iPad|iPod|iOS)/i.test(navigator.userAgent)) {  //判断iPhone|iPad|iPod|iOS
 		    		 	window.webkit.messageHandlers.copyArticle.postMessage(wexNum);
 		    		}else{
-		    			// alert();
+
 		    			android.copyArticle(wexNum);
 		    		 //复制成功后提示  “内容已复制到粘贴板”
 		    		}
@@ -91,32 +95,28 @@
 		    	// 	window.location.href="http://wpa.qq.com/msgrd?v=3&uin={{$qqInfo['service_contact']}}&site=qq&menu=yes";
 		    	// });
 		    	//android、ios交互 拨打电话
-		    	document.getElementById('telPhone002').addEventListener('tap',function(){
-		    		// var btnArray = ['否', '是'];
-	                // mui.confirm('是否拨打？', '{{$phoneInfo["service_contact"]}}', btnArray, function(e) {
-	                    if (e.index == 1) {
+		    	document.getElementById('telPhone002').addEventListener('tap',function(){	                   
 	                        var tel=document.getElementById('telPhone002').getAttribute('tel');
 				            if (/(iPhone|iPad|iPod|iOS)/i.test(navigator.userAgent)) {  //判断iPhone|iPad|iPod|iOS
-				                 window.webkit.AndroidMessage.drialPhone.postMessage(tel);
-				            } else if (/(Android)/i.test(navigator.userAgent)) {   //判断Android
+				            	window.webkit.messageHandlers.drialPhone.postMessage(tel);
+
+				            } else {   //判断Android
 				                 android.drialPhone(tel);
 				            }
-	                    }
-	                // });
+
 		        });
 		        //android、ios交互 拨打电话
 		    	document.getElementById('telPhone003').addEventListener('tap',function(){
-	    		 // var btnArray = ['否', '是'];
-        //           mui.confirm('是否拨打？', '{{$phoneInfo["service_contact"]}}', btnArray, function(e) {
-                    if (e.index == 1) {
+	
                         var tel=document.getElementById('telPhone003').getAttribute('tel');
 			            if (/(iPhone|iPad|iPod|iOS)/i.test(navigator.userAgent)) {  //判断iPhone|iPad|iPod|iOS
-			                 window.webkit.AndroidMessage.drialPhone.postMessage(tel);
-			            } else if (/(Android)/i.test(navigator.userAgent)) {   //判断Android
+			            	window.webkit.messageHandlers.drialPhone.postMessage(tel);
+
+			            } else {   //判断Android
+
 			                 android.drialPhone(tel);
 			            }
-                    }
-                  // });
+               
                 });
 		    });
 		</script>

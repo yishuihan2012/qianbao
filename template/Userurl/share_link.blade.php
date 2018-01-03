@@ -27,13 +27,14 @@
 			$(function(){
 				//立即去邀请
 				// document.getElementById('toShare').addEventListener('tap',function(){
+			var imgurl=location.origin+"/static/images/logo.png";
 				mui(document).on('tap','img',function(){
 					var url="{{$url}}";
 					var title='注册链接';
 				      if(!isAndroid){
 				        window.webkit.messageHandlers.shareUrl.postMessage([url,title,title]);
 				      }else{
-				        android.shareUrl(url,title,title);
+				        android.shareUrl(url,title,title,imgurl);
 				      }
 				});
 			});

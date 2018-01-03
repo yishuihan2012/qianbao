@@ -21,12 +21,26 @@ class Order extends Common{
 	 #order列表
 	 public function index()
 	 {
+	 	$where=array();
+	 	 if(Request::instance()->param('member_nick')){
+	 	 	$where['member_nick']=Request::instance()->param('member_nick');
+	 	 }
+	 	 if(Request::instance()->param('member_mobile')){
+	 	 	$where['member_mobile']=Request::instance()->param('member_mobile');
+	 	 }
 	 	 // #查询订单列表分页
-	 	 $order_lists=Orders::with('member')->paginate(Config::get('page_size'), false, ['query'=>Request::instance()->param()]);
+	 	 $order_lists = Orders::haswhere('member',$where)->field('wt_member.member_nick')->paginate(Config::get('page_size'),false, ['query'=>Request::instance()->param()]);
 	 	 #统计订单条数
 	 	 $count['count_size']=Orders::count();
 			 $this->assign('order_lists', $order_lists);
 			 $this->assign('count', $count);
+		 if(!Request::instance()->param('member_nick')){
+		 	$where['member_nick']='';
+		 }
+		 if(!Request::instance()->param('member_mobile')){
+		 	$where['member_mobile']='';
+		 }
+		 $this->assign('where', $where);
 		 #渲染视图
 		 return view('admin/order/index');
 	 }
@@ -46,12 +60,32 @@ class Order extends Common{
 
 	 #提现订单
 	 public function withdraw(){
+
+	 	 #如果有查询条件
+	 	$where=array();
+	 	 if(Request::instance()->param('member_nick')){
+	 	 	$where['member_nick']=Request::instance()->param('member_nick');
+	 	 }
+	 	 if(Request::instance()->param('member_mobile')){
+	 	 	$where['member_mobile']=Request::instance()->param('member_mobile');
+	 	 }
 	 	 // #查询订单列表分页
-	 	 $order_lists = Withdraw::with('member,adminster')->paginate(Config::get('page_size'), false, ['query'=>Request::instance()->param()]);
+	 	 $order_lists = Withdraw::haswhere('member',$where)->paginate(Config::get('page_size'), false, ['query'=>Request::instance()->param()]);
+
+
 	 	 #统计订单条数
+	 	 $countmoney=Withdraw::where('withdraw_state=12')->sum('withdraw_amount');
 	 	 $count['count_size']=Withdraw::count();
-			 $this->assign('order_lists', $order_lists);
-			 $this->assign('count', $count);
+		 $this->assign('order_lists', $order_lists);
+		 $this->assign('countmoney', $countmoney);
+		 $this->assign('count', $count);
+		 if(!Request::instance()->param('member_nick')){
+		 	$where['member_nick']='';
+		 }
+		 if(!Request::instance()->param('member_mobile')){
+		 	$where['member_mobile']='';
+		 }
+		 $this->assign('where', $where);
 		 #渲染视图
 	 	return view('admin/order/withdraw');
 	 }
@@ -80,35 +114,61 @@ class Order extends Common{
 
 	  #套现订单
 	 public function cash(){
+	 	$where=array();
+	 	 if(Request::instance()->param('member_nick')){
+	 	 	$where['member_nick']=Request::instance()->param('member_nick');
+	 	 }
+	 	 if(Request::instance()->param('member_mobile')){
+	 	 	$where['member_mobile']=Request::instance()->param('member_mobile');
+	 	 }
 	 	 // #查询订单列表分页
-	 	 $order_lists = CashOrder::with('passageway')->paginate(Config::get('page_size'), false, ['query'=>Request::instance()->param()]);
+	 	 $order_lists = CashOrder::with('passageway')->join('wt_member',"wt_member.member_id=wt_cash_order.order_member")->where($where)->paginate(Config::get('page_size'), false, ['query'=>Request::instance()->param()]);
+	 	
 	 	 #统计订单条数
 	 	 $count['count_size']=CashOrder::count();
 			 $this->assign('order_lists', $order_lists);
 			 $this->assign('count', $count);
+		if(!Request::instance()->param('member_nick')){
+		 	$where['member_nick']='';
+		 }
+		 if(!Request::instance()->param('member_mobile')){
+		 	$where['member_mobile']='';
+		 }
+		 $this->assign('where', $where);
 		 #渲染视图
 	 	return view('admin/order/cash');
 	 }
 
-
-
-
-
-
-
-
 	   #实名红包订单
 	 public function recomment(){
 	 	 // #查询订单列表分页
-	 	 $order_lists = Recomment::paginate(Config::get('page_size'), false, ['query'=>Request::instance()->param()]);
+	 	  #如果有查询条件
+	 	 $where=array();
+	 	 if(Request::instance()->param('member_nick')){
+	 	 	$where['member_nick']=Request::instance()->param('member_nick');
+	 	 }
+	 	 if(Request::instance()->param('member_mobile')){
+	 	 	$where['member_mobile']=Request::instance()->param('member_mobile');
+	 	 }
+	 	 // #查询订单列表分页
+	 	 $order_lists = Recomment::haswhere('member',$where)->paginate(Config::get('page_size'), false, ['query'=>Request::instance()->param()]);
 	 	 foreach ($order_lists as $key => $value) {
 	 	 		$order_lists[$key]['recomment_member_name']=Member::where(['member_id'=>$value['recomment_member_id']])->value('member_nick');
 	 	 		$order_lists[$key]['recomment_children_name']=Member::where(['member_id'=>$value['recomment_children_member']])->value('member_nick');
 	 	 }
+	 	 $countmoney=Recomment::sum('recomment_money');
 	 	 #统计订单条数
 	 	 $count['count_size']=Recomment::count();
+			 $this->assign('countmoney', $countmoney);
 			 $this->assign('order_lists', $order_lists);
 			 $this->assign('count', $count);
+		 if(!Request::instance()->param('member_nick')){
+		 	$where['member_nick']='';
+		 }
+		 if(!Request::instance()->param('member_mobile')){
+		 	$where['member_mobile']='';
+		 }
+		 $this->assign('where', $where);
 		 #渲染视图
 	 	return view('admin/order/recomment');
 	 }

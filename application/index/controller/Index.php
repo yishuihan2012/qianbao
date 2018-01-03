@@ -6,6 +6,9 @@ class Index extends Common
 {
     public function index()
     {
-          return view("admin/dashboard/index");
+          $this->redirect('Dashboard/index');
+    }
+    public function help(){
+    	return view('admin/index/help');
     }
 }

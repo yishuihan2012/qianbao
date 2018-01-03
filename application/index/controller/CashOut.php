@@ -105,6 +105,7 @@ class CashOut
 	      );
 	      //请求体参数加密 AES对称加密 然后连接加密字符串转MD5转为大写
 	      $payload =AESencode(json_encode($arr),$this->passway_info->passageway_pwd_key);
+	      // var_dump($payload);die;
 	      //return $payload;
 	      $sign    	= strtoupper(md5($payload.$this->passway_info->passageway_key));
 	      $request = array('mchNo' =>$this->passway_info->passageway_mech,'payload' => $payload, 'sign' => $sign);
@@ -232,6 +233,79 @@ class CashOut
 	 	 #获取用户入网信息
 	 	 $member_net=MemberNet::where('net_member_id',$this->member_infos->member_id)->find();
 	 	 
+	 }
+
+
+	 	 /**
+	 * @version 金易付套现 
+	 * @authors bill(755969423@qq.com)
+	 * @date    2017-12-23 16:25:05
+	 * @version $Bill$
+	 */
+	 public function jinyifu($tradeNo,$price,$description='金易付套现')
+	 {
+	 	 #检测通道是否需要入网
+	 	 if($this->passway_info->passageway_status=="1")
+	 	 {
+	 	 	 #检测用户是否已经入网
+		 	 $member_net=MemberNet::where(['net_member_id'=>$this->member_infos->member_id])->find();
+		 	 #如果该通道需要用户入网 去检查入网信息 如果用户还没有入网 则先进行入网
+		 	 if(!$member_net || $member_net[$this->passway_info->passageway_no]=="")
+		 	 {
+		 	 	 $method=$this->passway_info->passageway_method;
+		 	 	 // var_dump($method);die;
+		 	 	 $membernetObject=new Membernets($this->member_infos->member_id, $this->passway_info->passageway_id);
+		 	 	 $member_net_result=$membernetObject->$method();
+		 	 	 if(!$member_net_result['merchId'])
+		 	 	 	return ['code'=>462, 'msg'=>$member_net_result['msg']];
+		 	 }	 
+	 	 }
+	 	 // var_dump($this->passway_info->passageway_pwd_key);die;
+	 	 // return ['code'=>200,'msg'=>'订单获取成功~' , 'data'=>$this->passway_info];
+		 $arr = array(
+	            'branchId'=>$this->passway_info->passageway_mech,// 机构号
+	            'jinepay_mid'=>$member_net[$this->passway_info->passageway_no], // 商户号
+	            'payamt'=>$price, //交易金额
+	            'clientType'=>'web',  //客户端类型
+	            'bizType'=>'4301',//业务类型
+	            'randomStr'=>$tradeNo,// 随机串
+	            'orderId'=>$tradeNo ,//商户订单号
+	            'notifyUrl'=>$this->passway_info->cashout->cashout_callback, //异步通知URL,  //后台异步通知地址
+	            // 'frontNotifyUrl'=>HOST.'/index.php?s=/Api/Jyf/frontNotofyUrl',
+	            'lpCertNo'=>$this->card_info->card_idcard, // 持卡人身份证号
+	            'accNo'=> $this->card_info->card_bankno, // 银行卡号
+	            'phoneNo'=>$this->card_info->card_phone, // 银行预留手机号
+	            'lpName'=>$this->card_info->card_name, //持卡人姓名
+	            'CVN2'=>jinyifu_encrypt($this->card_info->card_Ident,$this->passway_info->passageway_pwd_key,$this->passway_info->iv),
+	            'expDate'=>jinyifu_encrypt($this->card_info->card_expireDate,$this->passway_info->passageway_pwd_key,$this->passway_info->iv),
+	      );
+		 // return ['code'=>200,'msg'=>'订单获取成功~' , 'data'=>$arr];
+ 	        $arr=SortByASCII($arr);
+	        #2签名
+	        $sign=jinyifu_getSign($arr,$this->passway_info->passageway_key);
+	        // var_dump($sign);die;
+	        $arr['sign']=$sign;
+	        // echo $sign;die;
+	        #3参数
+	        $params=base64_encode(json_encode($arr));
+	        #4请求字符串
+	        $urls='https://hydra.scjinepay.com/jk/QpayAction_getQpOrder?params='.urlencode($params);
+	        #请求
+	        $res=curl_post($urls);
+	        // var_dump($res);die;
+	        $res=json_decode($res,true);
+	        $result=base64_decode($res['params']);
+	        // echo($result);die;
+	        $data=json_decode($result,true);
+	        return ['code'=>200,'msg'=>'订单获取成功~11' , 'data'=>$data];
+ 		 if ($data['respCode'] == 00) {
+	           $order_result=$this->writeorder($tradeNo, $price, $price*($this->also->item_rate/100) ,$description,$data['traceno']);//写入套现订单
+	      	 if(!$order_result)
+	      	 	 return ['code'=>327];
+	           return ['code'=>200,'msg'=>'订单获取成功~' , 'data'=>['url'=>$data['barCode'],'type'=>2]];
+	      }else{
+	      	 return ['code'=>400, 'msg'=>$data['message'].',套现失败~'];
+	      }
 	 }
 
 

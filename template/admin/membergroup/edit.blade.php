@@ -45,17 +45,43 @@ input.labelauty + label { font: 12px "Microsoft Yahei";}
 				<input type="text" class="form-control group_name" name="group_name" placeholder="请填写用户组名称" value="{{ $group->group_name }}">
 			</div>
 		</div>
+		<div class="row form-group">
+			<label for="group_name" class="col-sm-2 text-right"><b>组 级 别:</b></label>
+			<div id="group_salt" class="col-sm-6">
+				<input type="text" class="form-control group_salt" name="group_salt" placeholder="请填写用户组名称" value="{{ $group->group_salt }}">
+			</div>
+		</div>
 
 		<div class="row">
-			<label for="group_type" class="col-sm-2 text-right"><b>组 类 型:</b></label>
+			<label for="group_type" class="col-sm-2 text-right"><b>升级方式:</b></label>
 			<div id="group_name" class="col-sm-6">
-				<select class="form-control" name="group_type">
-				  	<option value="1" {{ $group->group_type=='1' ? 'selected' : '' }}>内部</option>
-				  	<option value="2" {{ $group->group_type=='2' ? 'selected' : '' }}>外部</option>
+				<select class="form-control" name="group_level_type">
+				  	<option value="-1" {{ $group->group_level_type=='-1' ? 'selected' : '' }}>不限</option>
+				  	<option value="1" {{ $group->group_level_type=='3' ? 'selected' : '' }}>推荐人</option>
+				  	<option value="2" {{ $group->group_level_type=='3' ? 'selected' : '' }}>刷卡量</option>
+				  	<option value="3" {{ $group->group_level_type=='3' ? 'selected' : '' }}>付费升级</option>
 				</select>
 			</div>
 		</div>
 
+		<div class="row form-group">
+			<label for="group_name" class="col-sm-2 text-right"><b>升级条件-推荐人数量:</b></label>
+			<div id="group_level_value" class="col-sm-6">
+				<input type="text" class="form-control group_level_value" name="group_level_invite" placeholder="" value="{{ $group->group_level_invite }}">
+			</div>
+		</div>
+		<div class="row form-group">
+			<label for="group_name" class="col-sm-2 text-right"><b>升级条件-刷卡量:</b></label>
+			<div id="group_level_value" class="col-sm-6">
+				<input type="text" class="form-control group_level_value" name="group_level_transact" placeholder="" value="{{ $group->group_level_transact }}">
+			</div>
+		</div>
+		<div class="row form-group">
+			<label for="group_name" class="col-sm-2 text-right"><b>升级条件-付费金额:</b></label>
+			<div id="group_level_value" class="col-sm-6">
+				<input type="text" class="form-control group_level_value" name="group_level_money" placeholder="" value="{{ $group->group_level_money }}">
+			</div>
+		</div>
 		<h5></h5>
 
 

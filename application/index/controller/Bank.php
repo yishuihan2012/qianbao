@@ -29,6 +29,7 @@ class Bank extends Common{
 	 #新增银行
 	 public function creat()
 	 {
+
 	 	 if(Request::instance()->isPost())
 	 	 {
 			 #验证器验证 触发Add事件验证
@@ -44,18 +45,44 @@ class Bank extends Common{
 				 #exit;
 			 #}
 			 #验证器验证成功
-			 $article = new Articles($_POST);
-			 $article->articleData = ['data_text' => $_POST['data_text']];
-			 $result = $article->allowField(true)->together('articleData')->save();
-			 #数据是否提交成功
-			 $content = $result ? ['type'=>'success','msg'=>'文章添加成功'] : ['type'=>'warning','msg'=>'文章添加失败'];
-			 Session::set('jump_msg', $content);
+
+			 $Banks = new Banks($_POST);
+			 $result = $Banks->allowField(true)->save();
+			 $content = ($result===false) ? ['type'=>'error','msg'=>'保存失败'] : ['type'=>'success','msg'=>'保存成功'];
+
+			  Session::set('jump_msg', $content);
 			 #重定向控制器 跳转到列表页
-			 $this->redirect('Article/index');
+			 $this->redirect('/index/bank/index');die;
 	 	 }
 	 	 return view('admin/bank/creat');
 	 }
-
+	 //修改银行信息
+	 public function bankSave(){
+	 	if(Request::instance()->isPost()){
+		 	 $Banks =Banks::get(Request::instance()->param('bank_id'));
+		 	 // dump($_POST);die;
+			 $result= $Banks->allowField(true)->save($_POST);
+			 $content = ($result===false) ? ['type'=>'error','msg'=>'修改失败'] : ['type'=>'success','msg'=>'修改成功'];
+			 Session::set('jump_msg', $content);
+			 $this->redirect('bank/index');
+			 exit;
+		 }
+		
+		$info = Banks::get(Request::instance()->param('bank_id'));
+		
+		$this->assign("info",$info);
+	
+	 	 return view('admin/bank/bankSave');
+	 }
+	 public function bankRemove(){
+	 	 $Banks = Banks::get(Request::instance()->param('id'));
+		 $result = $Banks->delete(0);
+		 #数据是否提交成功
+		 $content = ($result===false) ? ['type'=>'error','msg'=>'删除失败'] : ['type'=>'success','msg'=>'文章删除成功'];
+		 Session::set('jump_msg', $content);
+		 #重定向控制器 跳转到列表页
+		 $this->redirect('bank/index');
+	 }
 	 #修改文章
 	 public function edit(Request $request)
 	 {

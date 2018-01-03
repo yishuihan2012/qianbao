@@ -23,13 +23,13 @@
 			    </li>
 			    <li class="mui-table-view-cell mui-media bor-bot">
 			        <a class="mui-navigate-right" id="toDealList"  href="/api/userurl/deal_list/uid/{{$uid}}/token/{{$token}}">
-			        	<img class="mui-media-object mui-pull-left" src="/static/images/message_notice.png">
+			        	<img class="mui-media-object mui-pull-left" src="/static/images/message_transaction.png">
 			        	 <div class="mui-media-body">动账交易</div>
 			        </a>
 			    </li>
 			    <li class="mui-table-view-cell mui-media bor-bot" >
 			        <a class="mui-navigate-right" id="toWelfareList"  href="/api/userurl/welfare_list/uid/{{$uid}}/token/{{$token}}">
-			        	<img class="mui-media-object mui-pull-left" src="/static/images/message_notice.png">
+			        	<img class="mui-media-object mui-pull-left" src="/static/images/message_welfare.png">
 			        	 <div class="mui-media-body">平台福利</div>
 			        </a>
 			    </li>

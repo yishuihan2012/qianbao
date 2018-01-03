@@ -45,6 +45,7 @@ class Wallet extends Common
 	public function look_log(Request $request)
 	{
 		$wallet = Wallets::get(Request::instance()->param('id'));
+		
 		$this->assign('wallet', $wallet);
 		return view('admin/wallet/log');
 	}

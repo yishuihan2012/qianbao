@@ -30,6 +30,7 @@
  use app\index\model\Recomment;
  use app\index\model\Commission;
  use app\index\model\Upgrade;
+ use app\index\model\Announcement;
  
  class Member 
  {

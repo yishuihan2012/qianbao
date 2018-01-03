@@ -161,6 +161,6 @@ class Generalize extends Common{
 		$content = ($delete===false) ? ['type'=>'error','msg'=>'操作失败'] : ['type'=>'success','msg'=>'操作成功'];
  		Session::set('jump_msg', $content);
 		 #重定向控制器 跳转到列表页
-		 $this->redirect('/index/Generalize/share');die;
+		 $this->redirect('/index/Generalize/exclusive_list');die;
 	}
 }

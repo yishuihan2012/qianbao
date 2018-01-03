@@ -17,7 +17,13 @@ class Withdraw extends Model{
 
 	#定义主键信息  可留空 默认主键
 	protected $pk 	 = 'withdraw_id';    
-
+      #定义自动写入时间字段开启 格式为时间格式
+      protected $autoWriteTimestamp = 'datetime';
+      #定义时间戳字段名 信息添加时间
+      protected $createTime = 'withdraw_add_time';
+      #定义时间戳字段名 信息修改时间
+      protected $updateTime = 'withdraw_update_time';
+      #定义返回数据类型
     //初始化模型
     protected function initialize()
     {
@@ -39,7 +45,7 @@ class Withdraw extends Model{
     //关联会员
     public function member()
     {
-        return $this->hasOne('Member','member_id','withdraw_member')->bind('member_nick,member_image,member_creat_time');
+        return $this->hasOne('Member','member_id','withdraw_member')->bind('member_nick,member_image,member_creat_time,member_mobile');
     }
     public function wallet()
     {

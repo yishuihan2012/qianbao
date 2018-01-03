@@ -14,6 +14,8 @@
                  <img src="{{$list['bank_avatar']}}" alt="{{$list['bank_name']}}"  class="img-responsive" data-toggle="lightbox">
                  <div class="caption">{{$list['bank_name']}}  {{$list['bank_state'] ? '启用' : '禁用'}} </strong></div>
                  <div class="card-heading"><strong>{{$list['bank_name']}}<code>{{$list['bank_state'] ? '启用' : '禁用'}}</code></strong></div>
+                 <a href="{{url('/index/Bank/bankSave/bank_id/'.$list['bank_id'])}}"><i class="icon-pencil"></i> 编辑</a>
+                 <a class="remove" href="#" data-url="{{url('/index/Bank/bankRemove/id/'.$list['bank_id'])}}"><i class="icon-remove"></i> 删除</a>
                  <div class="card-content text-muted"><div class="help-block">添加时间:<code>{{$list['bank_add_time']}}</code></div> </div>
            </a>
       </div>

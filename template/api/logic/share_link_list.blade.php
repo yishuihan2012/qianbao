@@ -26,16 +26,18 @@
 	      var isAndroid = u.indexOf('Android') > -1 || u.indexOf('Adr') > -1; //android终端
 	      var isiOS = !!u.match(/\(i[^;]+;( U;)? CPU.+Mac OS X/); //ios终端
 			mui.init();
+			var imgurl=location.origin+"/static/images/logo.png";
 			$(function(){
 				mui('.exc-code-list').on('tap','a',function(){
 					var src=$(this).attr('s');
 					src=src.replace(/\//g,'~');
 					var url="{{$url}}"+"/share_thumb/"+src;
 					var title=$(this).find('p').html();
+					console.log(imgurl);
 			      if(!isAndroid){
 			        window.webkit.messageHandlers.shareUrl.postMessage([url,title,title]);
 			      }else{
-			        android.shareUrl(url,title,title);
+			        android.shareUrl(url,title,title,imgurl);
 			      }
 			    });
 			})

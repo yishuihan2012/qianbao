@@ -37,8 +37,6 @@
 		#提交更改信息
 		if(Request::instance()->isPost())
 		 {
-			 #处理一下红包权限字段 将其转为时间戳
-			 $_POST['group_packet']=isset($_POST['group_packet']) ? implode(",", $_POST['group_packet']) : '';
 			 $group = new MemberGroups($_POST);
 			 // post数组中只有name和email字段会写入
 			 $result = $group->allowField(true)->save();
@@ -56,10 +54,8 @@
 		 #提交更改信息
 		 if(Request::instance()->isPost())
 		 {
-			 #处理一下红包权限字段 将其转为时间戳
-			 $_POST['group_packet']=isset($_POST['group_packet']) ? implode(",", $_POST['group_packet']) : '';
 			 $group = MemberGroups::get(Request::instance()->param('id'));
-			 $result= $group->allowField(true)->save($_POST,['group_id' => Request::instance()->param('id')]);
+			 $result= $group->allowField(true)->save($_POST);
 			 $content = $result ? ['type'=>'success','msg'=>'用户组修改成功'] : ['type'=>'warning','msg'=>'用户组修改失败'];
 			 Session::set('jump_msg', $content);
 			 $this->redirect('member_group/index');
@@ -68,12 +64,7 @@
 		 $id=$request::instance()->param('id');
 		 #查询出会员用户组列表
 		 $group = MemberGroups::get($id);
-		 $group['group_packet']=explode(',', $group['group_packet']);
-	      //$ab=new \app\index\model\Admin;
 		 $this->assign('group', $group);
-		 #查询到所有的红包分类
-		 $packet = PacketTypes::all();
-		 $this->assign('packet', $packet);
 		 return view('admin/membergroup/edit');
 	 }
 

@@ -16,7 +16,10 @@
 <link href="/static/lib/datetimepicker/datetimepicker.min.css" rel="stylesheet">
 <link href="/static/lib/chosen/chosen.min.css" rel="stylesheet">
 <link href="/static/lib/uploader/zui.uploader.min.css" rel="stylesheet">
+<link href="/static/css/daterangepicker.css" rel="stylesheet">
 <script src="/static/lib/jquery/jquery.js"></script>
+<script src="/static/js/moment.min.js"></script>
+<script src="/static/js/daterangepicker.js"></script>
 <!--[if lt IE 9]>
   <script src="/static/lib/ieonly/html5shiv.js"></script>
   <script src="dist/lib/ieonly/respond.js"></script>

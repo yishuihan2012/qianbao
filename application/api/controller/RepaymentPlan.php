@@ -11,6 +11,9 @@
  use think\Request;
  use app\index\model\Member;
  use app\index\model\MemberCert;
+ use app\index\model\Generation;
+ use app\index\model\GenerationOrder;
+ use app\index\model\Reimbur;
 
  class Repaymentplan 
  {
@@ -38,11 +41,11 @@
                  $this->error=317;
            }
       }*/
-
+      //创建还款计划
       public function creatPlan()
       {
            $this->param['billMoney']=5000;
-           $this->param['cashCount']=30;
+           $this->param['cashCount']=10;
            $this->param['startDate']="2018-01-01";
            $this->param['endDate']="2018-01-20";
            #定义一个虚拟税率  
@@ -58,77 +61,182 @@
            #总账单除以消费次数得到每次消费AVG平均值  如果平均值小于某个值 则不进行还款  也是浪费资源
            if($this->param['billMoney']/$this->param['cashCount'] <50)
                  return ['code'=>471,'msg'=>'单次还款额太小啦,请调整次数到'.intval($this->param['billMoney']/50).'次以下~'];
-           #计算开始还款日期到最后还款日期之间的间隔天数
-           $days=days_between_dates($this->param['startDate'],$this->param['endDate'])+1;
-           #取得开始日期与结束日期之间的所有日期 并且打乱顺序
-           $date=prDates($this->param['startDate'],$this->param['endDate']);
-           #如果总还款次数小于日期间隔天数 则随机日期 每天消费一次 并且保证不重复;
-           if($this->param['cashCount']<=$days)
+           Db::startTrans();
+           try
            {
-                 #打乱日期顺序
-                 shuffle($date);
-                 #消费几次就取几个随机日期
-                 $randDate=array_slice($date,0,$this->param['cashCount']);
-                 #循环消费日期 拼接随机的消费小时和分钟 人工消费模拟 早8点-晚7点 24小时制
-                 foreach ($randDate as $key => $value) {
-                      $data[$key]['time']=$value." ".get_hours().":".get_minites();
-                      $data[$key]['endtime']=$value." 20:".get_minites();
+
+                 #计算开始还款日期到最后还款日期之间的间隔天数
+                 $days=days_between_dates($this->param['startDate'],$this->param['endDate'])+1;
+                 #取得开始日期与结束日期之间的所有日期 并且打乱顺序
+                 $date=prDates($this->param['startDate'],$this->param['endDate']);
+                 #如果总还款次数小于日期间隔天数 则随机日期 每天消费一次 并且保证不重复;
+                 if($this->param['cashCount']<=$days)
+                 {
+                       #打乱日期顺序
+                       shuffle($date);
+                       #消费几次就取几个随机日期
+                       $randDate=array_slice($date,0,$this->param['cashCount']);
+                       #循环消费日期 拼接随机的消费小时和分钟 人工消费模拟 早8点-晚7点 24小时制
+                       foreach ($randDate as $key => $value) {
+                            $data[$key]['time']=$value." ".get_hours().":".get_minites();
+                            $data[$key]['endtime']=$value." 20:".get_minites();
+                       }
+                       //取得每天消费多少钱
+                       $result=new \app\api\controller\GetPlan();
+                       $res=$result->splitReward($this->param['billMoney'],$this->param['cashCount'],$this->param['billMoney']/$this->param['cashCount']+100,$this->param['billMoney']/$this->param['cashCount']-100);
+                       #循环消费数组 关联到日期数组  阙值为0.1元 为保证四舍五入后还可以足够额度
+                       sort($data);
+                       foreach ($res as $key => $value) {
+                            $xiaofei=substr(sprintf("%.2f",(($value/10)+0.1)/(1-$also)+$daikou),0,-1);
+                            $data[$key]['xf_money']=$xiaofei;
+                            $data[$key]['dz_money']=round($xiaofei-$xiaofei*$also-$daikou,1, PHP_ROUND_HALF_DOWN);
+                            $data[$key]['range']=substr(sprintf("%.3f", ($value/10)* $also)+0.01,0,-1);
+                            $data[$key]['daikou']=$daikou;
+                       }
+
+                      //写入主计划表
+                      $Generation_result=new Generation([
+                           'generation_no'          =>'123',//TODO 生成随机代号
+                           'generation_member' =>'12',
+                           'generation_card'      =>'还款卡号',
+                           'generation_total'      =>$this->param['billMoney'],
+                           'generation_left'        =>$this->param['billMoney'],
+                           'generation_pound'   =>$this->param['billMoney']*$also,
+                           'generation_start'     =>$this->param['startDate'],
+                           'generation_end'      =>$this->param['endDate'],
+                      ]);
+
+                      if($Generation_result->save()!==false)
+                      {
+
+                           //写入还款卡表
+                           $reimbur_result=new Reimbur([
+                                 'reimbur_generation'   =>$Generation_result->generation_id,
+                                 'reimbur_card'             =>'还款卡号',
+                           ]); 
+
+                           //循环数据 
+                           $list=array();
+                           $lists=array();
+                           $lista=0;
+                           foreach ($data as $key => $value) {
+                            $lista++;
+                            $list[$key]['order_no']="123";
+                                 $list[]=array(
+                                      'order_no'           =>'12',
+                                      'order_member'  =>'12',
+                                      'order_type'       =>1,
+                                      'order_card'       =>'信用卡号',
+                                      'order_money'   =>$value['xf_money'],
+                                      'order_pound'    =>$value['range'],
+                                      'order_desc'      =>'自动代还消费~',
+                                      'order_time'       =>$value['time']
+                                 );
+                                 $lists[]=array(
+                                      'order_no'           =>$Generation_result->generation_id,
+                                      'order_member'  =>'123',
+                                      'order_type'       =>2,
+                                      'order_card'       =>'信用卡号',
+                                      'order_money'   =>$value['dz_money'],
+                                      'order_pound'    =>0,
+                                      'order_desc'      =>'自动代还还款~',
+                                      'order_time'       =>$value['endtime']
+                                 );
+                           }
+                           //写入定时任务表
+                           $Generation_order=new GenerationOrder();
+
+                           $order_result=$Generation_order->saveAll($list);
+
+                           $order_result1=$Generation_order->saveAll($lists);
+
+                           if($order_result && $order_result1 && $reimbur_result->save()!==false)
+                           { 
+                                 Db::commit();
+
+                                 return json_encode(['code'=>200, 'msg'=> '计划创建成功~']);
+                           }else{
+                                 Db::rollback();
+                                 return ['code'=>472];      
+                           }
+                      }
+                      return ['code'=>472];      
                  }
-                 //取得每天消费多少钱
+                 if($this->param['cashCount']>$days)
+                 {
+                       #计算出每天消费几次 总和等于总消费次数
+                       $result=$this->get_day_count($this->param['cashCount'],$days);
+                       #计算出每天总消费金额 再加上手续费
+                       $dayM=new \app\api\controller\GetPlan();
+                       $dayMoney=$dayM->splitReward($this->param['billMoney'],$days,$this->param['billMoney']/$days*1.3,$this->param['billMoney']/$days*0.7);
+                       foreach ($date as $key => $value) {
+                            $CurrentMoney=$dayMoney[$key]/10;
+                            $CurrentCount=$result[$key];//当天总消费次数
+                            $data[$key]['count']=$CurrentCount;
+                            $data[$key]['countMoney']=$CurrentMoney;//当天总还款额
+                            $data[$key]['endtime']=$value." 20:".get_minites();
+                            //计算出平均每天每次需还款多少钱
+                            $everyCountMoney=$dayM->splitReward($CurrentMoney,$CurrentCount,$CurrentMoney/$CurrentCount*1.3,$CurrentMoney/$CurrentCount*0.7);
+                            foreach ($everyCountMoney as $k => $v) {
+                                 $xiaofei=substr(sprintf("%.2f",(($v/10)+0.1)/(1-$also)+$daikou),0,-1);
+                                 $data[$key]['list'][$k]['time']=$date[$key]." ".get_hours().":".get_minites();
+                                 $data[$key]['list'][$k]['xf_money']=$xiaofei;
+                                 $data[$key]['list'][$k]['range']=substr(sprintf("%.3f", ($v/10)* $also),0,-1)+0.01;
+                                 $data[$key]['list'][$k]['daikou']=$daikou;
+                                 $data[$key]['list'][$k]['dz_money']=round($xiaofei-$xiaofei*$also-$daikou,1, PHP_ROUND_HALF_DOWN);
+                            }
+
+                       }
+
+
+
+
+
+
+
+                 }
+                  dump($randDate);
+                  exit();
+
+
                  $result=new \app\api\controller\GetPlan();
-                 $res=$result->splitReward($this->param['billMoney'],$this->param['cashCount'],$this->param['billMoney']/$this->param['cashCount']+100,$this->param['billMoney']/$this->param['cashCount']-100);
-                 #循环消费数组 关联到日期数组  阙值为0.1元 为保证四舍五入后还可以足够额度
-                 sort($data);
-                 foreach ($res as $key => $value) {
-                      $data[$key]['xf_money']=substr(sprintf("%.3f",($value/10)/(1-$also)+$daikou),0,-1)+1;
-                      $data[$key]['hk_money']=substr(sprintf("%.2f", ($value/10+0.1)),0,-1);
-                      $data[$key]['range']=substr(sprintf("%.3f", ($value/10)* $also),0,-1)+0.01;
-                      $data[$key]['daikou']=$daikou;
-                 }
-                 dump($data);
+                 $res=$result->splitReward('5000','10','600','300');
+                 dump($res);
+                  #判断信用卡是否存在 状态是否正常 是否签约报备
+                 /*$money=$this->param['billMoney'];#获取要还款的账单金额
+                 $cashCount=$this->param['cashCount'];#刷卡消费次数
+                 $startDate=$this->param['startDate'];#计划执行日
+                 $endDate=$this->param['endDate'];#计划结束日期
+
+                 #获取通道信息
+                 $passway=PassageWay($this->param['passwayId']);
+                 #判断该通道是否可以代还  如果可以的话 查询出该代还通道的费率和代扣费
+                 if($passway->passageway_also!='1' || $passway->passageway_state!='1')
+                       return ['code'=>496];
+                 //判断是否必须入网才可以进行代还设置 并且检查会员是否入网TODO:
+
+                 //取到该通道的税率和代扣费
+                 $passway['also']=0.0035; //税率 需在后台读取 TODO
+                 $passway['holding']=3; //固定值 需在后台取 TODO
+                 //计算平均每次需要还款多少钱 取AVG平均值 
+                 $avg=$this->param['billMoney']/$this->param['cashCount'];
+                 //取得总共需要多少手续费
+                 $total_changr=$this->param['billMoney']*$passway['also']+$this->param['cashCount']*$passway['holding'];
+                 //计算最低需要多少余额
+                 $total_avg=$avg+$total_changr;*/
+                 //判断可用余额是否足够这些 如果不够的话 则计划失败
+
+                 //计算余额最低不能小于多少钱 取Avg+手续费
+                 //如果可用余额不足 则不进行代还
+
+
+
+
+           } catch (\Exception $e) {
+                 Db::rollback();
+                 return ['code'=>308,'msg'=>$e->getMessage()];
            }
-           if($this->param['cashCount']>$days)
-           {
-                 $result=$this->get_day_count($this->param['cashCount'],$days);
-                 dump($result);
-                 exit;
-           }
-            dump($randDate);
-            exit();
-
-
-           $result=new \app\api\controller\GetPlan();
-           $res=$result->splitReward('5000','10','600','300');
-           dump($res);
-            #判断信用卡是否存在 状态是否正常 是否签约报备
-           /*$money=$this->param['billMoney'];#获取要还款的账单金额
-           $cashCount=$this->param['cashCount'];#刷卡消费次数
-           $startDate=$this->param['startDate'];#计划执行日
-           $endDate=$this->param['endDate'];#计划结束日期
-
-           #获取通道信息
-           $passway=PassageWay($this->param['passwayId']);
-           #判断该通道是否可以代还  如果可以的话 查询出该代还通道的费率和代扣费
-           if($passway->passageway_also!='1' || $passway->passageway_state!='1')
-                 return ['code'=>496];
-           //判断是否必须入网才可以进行代还设置 并且检查会员是否入网TODO:
-
-           //取到该通道的税率和代扣费
-           $passway['also']=0.0035; //税率 需在后台读取 TODO
-           $passway['holding']=3; //固定值 需在后台取 TODO
-           //计算平均每次需要还款多少钱 取AVG平均值 
-           $avg=$this->param['billMoney']/$this->param['cashCount'];
-           //取得总共需要多少手续费
-           $total_changr=$this->param['billMoney']*$passway['also']+$this->param['cashCount']*$passway['holding'];
-           //计算最低需要多少余额
-           $total_avg=$avg+$total_changr;*/
-           //判断可用余额是否足够这些 如果不够的话 则计划失败
-
-           //计算余额最低不能小于多少钱 取Avg+手续费
-           //如果可用余额不足 则不进行代还
-
-
-           
+          
       }
 
 

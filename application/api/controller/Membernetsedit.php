@@ -100,4 +100,43 @@
         $data=json_decode(mb_convert_encoding($result, 'utf-8', 'GBK,UTF-8,ASCII'),true);
         return $data;
       } 
+
+
+
+        /**
+      *  @version jinyifu / Api 修改金易付商户入网接口
+      *  @author $bill$(755969423@qq.com)
+      *  @datetime    2017-12-25 14:36:05
+      *  @param   $member=要入网的会员   ☆☆☆::使用中
+      **/
+      public function jinyifu()
+      {
+          $memberAlso=PassagewayItem::where(['item_group'=>$this->member->member_group_id,'item_passageway'=>$this->passway->passageway_id])->value('item_rate');
+           $arr=array( 
+                 'branchId' => $this->passway->passageway_mech,//机构号
+                 'merchId'  => $this->membernet->PtKWJ,//商户号
+                 'lpName'      => $this->membercard->card_name,//法人姓名
+                 'lpCertNo'  => $this->membercard->card_idcard,//法人身份证
+                 'merchName'          => $this->member->member_mobile,//商户名称
+                 'accNo'               => $this->membercard->card_bankno,//必须为法人本人卡号
+                 'telNo'      => $this->member->member_mobile,//商户手机号
+                 'city'           => "370105",//结算卡所在市编码
+                 'bizTypes'                 => "4301" ,// 开通业务类型
+                 '5001_fee'           => $memberAlso/100,//5001交易手续费例:0.0038  10000元交易手续费38（业务类型包含时必填）
+                 '5001_tzAddFee'              => 0, //5001T0额外手续费例:2  提现额外收取2元提现费（业务类型包含时必填）
+                 '4301_fee'         => $memberAlso/100, //4401交易手续费例:0.0038  10000元交易手续费38（业务类型包含时必填）
+                 '4301_tzAddFee'   => 0,//4401T0额外手续费例:2  提现额外收取2元提现费（业务类型包含时必填）
+           );
+           //dump($arr);
+           $param=get_signature($arr,$this->passway->passageway_key);
+           //dump($param);
+           $result=curl_post("https://hydra.scjinepay.com/jk/BranchMerchAction_update",'post',$param,'Content-Type: application/x-www-form-urlencoded; charset=gbk');
+           $data=json_decode(mb_convert_encoding($result, 'utf-8', 'GBK,UTF-8,ASCII'),true);
+           //dump($data);
+           if($data['respCode']=="00" || $data['merchno']!="")
+                 $res=MemberNet::where(['net_member_id'=>$this->member->member_id])->setField($this->passway->passageway_no, $data['merchno']);
+           // return ($data['respCode']=="00" || $res) ? true :  false;
+           return $data;
+      } 
+
  }

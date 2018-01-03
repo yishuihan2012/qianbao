@@ -50,12 +50,50 @@
 			 <td>{{$member_info->login_token}}</td>
 		 </tr>
 		 <tr>
+			 <th>登录设备号</th>
+			 <td>{{$member_info->member_token}}</td>
+			 <th></th>
+			 <td></td>
+		 </tr>
+		 <tr>
 			 <th>尝试次数</th>
 			 <td>{{$member_info->login_attempts}}</td>
 			 <th>登录状态</th>
 			 <td>@if($member_info->login_state==1)正常@elseif($member_info->login_state==-1)禁止@else异常@endif</td>
 		 </tr>
 	 </table>
+	 <div class="help-block"><code>(上级信息)</code>
+	 	@if($leadr)
+	 	</div>
+	 <table class="table table-bordered table-hover table-striped" style="width:90%; margin:0 auto;">
+		 <tr>
+			 <th>账号</th>
+			 <td>{{$leadr['member_mobile']}}</td>
+			 <th>手机号</th>
+			 <td><button class="btn btn-sm backdrop" data-toggle="modal" data-remote="{{url('/index/member/info/id/'.$leadr['member_id'])}}"  type="button">{{$leadr['member_mobile']}}</button></td>
+		 </tr>
+	 </table>
+	 	@else
+	 	无</div>
+	 	@endif
+
+	 <div class="help-block"><code>(下级信息)</code>
+	 	@if($team)
+	 	</div>
+	 <table class="table table-bordered table-hover table-striped" style="width:90%; margin:0 auto;">
+	 	@foreach($team as $v)
+		 <tr>
+			 <th>账号</th>
+			 <td>{{$v['member_mobile']}}</td>
+			 <th>手机号</th>
+			 <td><button class="btn btn-sm backdrop" data-toggle="modal" data-remote="{{url('/index/member/info/id/'.$v['member_id'])}}"  type="button">{{$v['member_mobile']}}</button></td>
+		 </tr>
+		@endforeach
+	 </table>
+	 	@else
+	 	无</div>
+	 	@endif
+	 
 
 	 </form>
  </div>
@@ -69,6 +107,10 @@
  <script>
 	 $(".save").click(function(){
 		 $("#myform").submit()
+	 })
+	 //移除背景多余遮罩
+	 $('.backdrop').click(function(){
+	 	$('.modal-backdrop').remove();
 	 })
 	 $(function(){
 	 	$('.disables').click(function(){

@@ -387,11 +387,14 @@ class Userurl extends Controller
   public function about_us(){
   	$data=Page::get(1);
   	$server['weixin']=CustomerService::where('service_title','微信')->find();
+
   	$server['qq']=CustomerService::where('service_title','QQ')->find();
+
   	$server['tel']=CustomerService::where('service_title','电话')->find();
+  
   	$this->assign('data', $data);
   	$this->assign('server', $server);
-  	return view("userurl/about_us");
+  	return view("Userurl/about_us");
   }
   /**
    * [web_freshman_guide 新手指引]

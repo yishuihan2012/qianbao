@@ -11,6 +11,19 @@
   <header>
     <h3><i class="icon-list-ul"></i> 套现订单 <small>共 <strong class="text-danger">{{$count['count_size']}}</strong> 条</small></h3>
   </header>
+   <form action="" method="post">
+    <div class="input-group" style="width: 200px;float: left;margin-right: 20px;">
+    <span class="input-group-addon">名称</span>
+    <input type="text" class="form-control" name="member_nick" value="{{$where['member_nick']}}" placeholder="名称">
+  </div>
+
+  <div class="input-group" style="width: 200px;float: left;margin-right: 20px;">
+    <span class="input-group-addon">手机号</span>
+    <input type="text" class="form-control" name="member_mobile" value="{{$where['member_mobile']}}" placeholder="手机号">
+  </div>
+
+  <button class="btn btn-primary" type="submit">搜索</button>
+</form>
   <div class="items items-hover">
       <!-- HTML 代码 -->
           <table class="table datatable">

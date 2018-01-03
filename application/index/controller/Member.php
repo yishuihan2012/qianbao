@@ -8,6 +8,8 @@
 namespace app\index\controller;
 use app\index\model\Member as Members;
 use app\index\model\MemberLogin;
+use app\index\model\MemberGroup;
+use app\index\model\MemberRelation;
 use think\Controller;
 use think\Request;
 use think\Session;
@@ -18,9 +20,49 @@ class Member extends Common{
 	 #会员列表
 	 public function index()
 	 {
+	 	//传入参数
+	 	$r=request()->param();
+	 	 #搜索条件
+	 	 $where=array();
+	 	 //手机号
+	 	 if(request()->param('member_mobile') ){
+	 	 	$where['member_mobile']=["like","%".$r['member_mobile']."%"];
+	 	 }else{
+	 	 	$r['member_mobile']='';
+	 	 }
+	 	 //昵称
+	 	 if(request()->param('member_nick') ){
+	 	 	$where['member_nick']=["like","%".$r['member_nick']."%"];
+	 	 }else{
+	 	 	$r['member_nick']='';
+	 	 }
+	 	 //是否实名
+	 	 if(request()->param('member_cert')){
+	 	 	$where['member_cert']=request()->param('member_cert');
+	 	 }else{
+	 	 	$r['member_cert']='';
+	 	 }
+	 	 //会员等级
+	 	 if(request()->param('member_group_id')){
+	 	 	$where['member_group_id']=request()->param('member_group_id');
+	 	 }else{
+	 	 	$r['member_group_id']='';
+	 	 }
+	 	 //注册时间
+		if(request()->param('beginTime') && request()->param('endTime')){
+			$endTime=strtotime(request()->param('endTime'))+24*3600;
+			$where['member_creat_time']=["between time",[request()->param('beginTime'),$endTime]];
+		}
+		
+
+	 	 //获取会员等级
+	 	 $member_group=MemberGroup::all();
 	 	 #获取会员列表 
-	 	 $member_list=Members::with('memberLogin,membergroup')->order('member_id','desc')->paginate('12', false, ['query'=>Request::instance()->param()]);
+	 	 $member_list=Members::with('memberLogin,membergroup')->where($where)->order('member_id','desc')->paginate('12', false, ['query'=>Request::instance()->param()]);
+	 	 dump(Members::getLastsql());
+	 	 $this->assign('r', $r);
 	 	 $this->assign('member_list', $member_list);
+	 	 $this->assign('member_group', $member_group);
 		 #渲染视图
 		 return view('admin/member/index');
 	 }
@@ -35,8 +77,18 @@ class Member extends Common{
 	 	 }
 	 	 #查询到当前会员的基本信息
 	 	 $member_info=Members::with('memberLogin')->find($request->param('id'));
+	 	 #查询上级信息
+	 	 $leadr=db('member_relation')->alias('r')
+	 	 	->where(["r.relation_member_id"=>$member_info->member_id])
+	 	 	->join('member m','r.relation_parent_id=m.member_id')->find();
+	 	 #查询下级信息
+	 	 $team=db('member_relation')->alias('r')
+	 	 	->where(["r.relation_parent_id"=>$member_info->member_id])
+	 	 	->join('member m','r.relation_member_id=m.member_id')->select();
 	 	 // var_dump($member_info);die;
 	 	 $this->assign('member_info', $member_info);
+	 	 $this->assign('leadr', $leadr);
+	 	 $this->assign('team', $team);
 	 	 return view('admin/member/info');
 	 }
 	 #封停用户

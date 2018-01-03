@@ -25,7 +25,7 @@
 					<div class="material-pic">
 						@foreach($v['thumbarr'] as $k2 => $v2)
 						<div class="material-pic-container">
-						    <img src="{{$v2}}" data-preview-src="" data-preview-group="1" class="img-list small" onLoad="loadPIc(this)"/>
+						    <img src="{{$v2}}" data-preview-src="" data-preview-group="{{$k}}" class="img-list small" onLoad="loadPIc(this)"/>
 						</div>
 						@endforeach
 					</div>
