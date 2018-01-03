@@ -11,10 +11,14 @@
  use think\Request;
  use app\index\model\Member;
  use app\index\model\MemberCert;
+ use app\index\model\MemberGroup;
  use app\index\model\Generation;
  use app\index\model\GenerationOrder;
  use app\index\model\Reimbur;
-
+ use app\index\model\MemberCert as MemberCerts;
+ use app\index\model\MemberCreditcard;
+ use app\index\model\PassagewayItem;
+ use app\index\model\Passageway;
  class Repaymentplan 
  {
       public $error;
@@ -44,10 +48,34 @@
       //创建还款计划
       public function creatPlan()
       {
+           $this->param['uid']=16;
+           $this->param['token']=16;
+           $this->param['cardId']=12;
            $this->param['billMoney']=5000;
            $this->param['cashCount']=10;
            $this->param['startDate']="2018-01-01";
            $this->param['endDate']="2018-01-20";
+           $this->param['passageway']=8;
+           #获取需要参数
+          $member_info=MemberCerts::where('cert_member_id='.$this->param['uid'])->find();
+          if(empty($member_info)){
+            $this->error=356;
+          }
+          // print_r($member_info);die;
+          $card_info=MemberCreditcard::where('card_id='.$this->param['cardId'])->find();
+          if(empty($member_info)){
+            $this->error=473;
+          }
+          #获取后台费率
+
+          // $also=PassagewayItem::haswhere('passageway',['passageway_state'=>1])->select();
+          // var_dump($also);die;
+          // $also=Passageway::haswhere('passagewayitem',['item_passageway'=>8])->where('passageway_state=1')->select();
+          // $also=PassagewayItem::haswhere('passageway',['passageway_state'=>1,'item_passageway'=>8])->haswhere('group',['group'=>1])->where(['item_passageway'=>8])->select();
+          // var_dump(123);die;
+          $group=MemberGroup::
+          $also=PassagewayItem::where(['item_passageway'=>8,'item_group'=>1])->find();
+          var_dump($also);die;
            #定义一个虚拟税率  
            $also="0.0035";
            #定义代扣费
@@ -96,9 +124,9 @@
 
                       //写入主计划表
                       $Generation_result=new Generation([
-                           'generation_no'          =>'123',//TODO 生成随机代号
-                           'generation_member' =>'12',
-                           'generation_card'      =>'还款卡号',
+                           'generation_no'          =>uniqid(),//TODO 生成随机代号
+                           'generation_member'    =>$this->param['uid'],
+                           'generation_card'      =>$card_info->card_bankno,
                            'generation_total'      =>$this->param['billMoney'],
                            'generation_left'        =>$this->param['billMoney'],
                            'generation_pound'   =>$this->param['billMoney']*$also,
@@ -121,7 +149,7 @@
                            $lista=0;
                            foreach ($data as $key => $value) {
                             $lista++;
-                            $list[$key]['order_no']="123";
+                            $list[$key]['order_no']=uniqid();
                                  $list[]=array(
                                       'order_no'           =>'12',
                                       'order_member'  =>'12',
@@ -134,7 +162,7 @@
                                  );
                                  $lists[]=array(
                                       'order_no'           =>$Generation_result->generation_id,
-                                      'order_member'  =>'123',
+                                      'order_member'  =>uniqid(),
                                       'order_type'       =>2,
                                       'order_card'       =>'信用卡号',
                                       'order_money'   =>$value['dz_money'],

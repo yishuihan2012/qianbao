@@ -40,4 +40,6 @@ class Passageway extends Model{
       {
            return $this->hasmany('PassagewayItem','item_passageway','passageway_id')->setEagerlyType(0);
       }
+
+      
 }
