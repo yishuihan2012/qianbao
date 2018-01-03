@@ -24,7 +24,7 @@
       public $error;
       protected $param;
       private $member;//会员
-     /* public function __construct($param)
+      public function __construct($param)
       {
            $this->param=$param;
            try{
@@ -44,18 +44,18 @@
             }catch (\Exception $e) {
                  $this->error=317;
            }
-      }*/
+      }
       //创建还款计划
       public function creatPlan()
       {
-           $this->param['uid']=16;
-           $this->param['token']=16;
-           $this->param['cardId']=12;
-           $this->param['billMoney']=5000;
-           $this->param['payCount']=12;
-           $this->param['startDate']="2018-01-01";
-           $this->param['endDate']="2018-01-03";
-           $this->param['passageway']=8;
+           // $this->param['uid']=16;
+           // $this->param['token']=16;
+           // $this->param['cardId']=12;
+           // $this->param['billMoney']=5000;
+           // $this->param['payCount']=12;
+           // $this->param['startDate']="2018-01-01";
+           // $this->param['endDate']="2018-01-03";
+           // $this->param['passageway']=8;
            #获取需要参数
           $member_info=MemberCerts::where('cert_member_id='.$this->param['uid'])->find();
           if(empty($member_info)){
@@ -152,7 +152,8 @@
                                         'order_money'    =>$data[$i]['xf_money'],
                                         'order_pound'    =>$data[$i]['range'],
                                         'order_desc'     =>'自动代还消费~',
-                                        'order_time'     =>$data[$i]['time']
+                                        'order_time'     =>$data[$i]['time'],
+                                        'order_passageway'=>$this->param['passageway'],
                                    );
                                    $lists[]=array(
                                         'order_no'         =>$Generation_result->generation_id,
@@ -163,6 +164,7 @@
                                         'order_pound'      =>0,
                                         'order_desc'       =>'自动代还还款~',
                                         'order_time'       =>$data[$i]['endtime'],
+                                        'order_passageway'=>$this->param['passageway'],
                                    );
                              }
                              // var_dump($lists);die;
@@ -243,6 +245,7 @@
                                         'order_pound'      =>0,
                                         'order_desc'       =>'自动代还还款~',
                                         'order_time'       =>$value['endtime'],
+                                        'order_passageway'=>$this->param['passageway'],
                                    );
                                    foreach ($value['list'] as $k => $v) {
                                          $list[]=array(
@@ -253,7 +256,8 @@
                                               'order_money'    =>$v['xf_money'],
                                               'order_pound'    =>$v['range'],
                                               'order_desc'     =>'自动代还消费~',
-                                              'order_time'     =>$v['time']
+                                              'order_time'     =>$v['time'],
+                                              'order_passageway'=>$this->param['passageway'],
                                          );
                                    }
                              }
@@ -312,14 +316,166 @@
        public function action_repay_plan(){
           $where['order_status']='1';
           $where['order_time']=array('lt',date('Y-m-d H:i:s',time()));
-          $get_list=M('repay_cash')->where($where)->select();
-          // print_r($get_list);die;
-          foreach ($get_list as $key => $get) {
-            $this->transferApply($get);
+          $list=GenerationOrder::where($where)->select();
+          if($list){
+              foreach ($list as $k => $v) {
+                $value=$v->toArray();
+                if($value['order_type']==1){ //消费
+                    $this->payBindCard($value);
+                }else if($value['order_type']==2){//提现
+                    $this->transferApply($value);
+                }
+            }
           }
       }
-
-
+      //7绑卡支付
+        //http://pay.mishua.cn/zhonlinepay/service/rest/creditTrans/payBindCard
+        public function payBindCard($pay){
+          #1获取费率
+          $member_group_id=Member::where(['member_id'=>$pay['order_member']])->value('member_group_id');
+          $rate=PassagewayItem::where(['item_passageway'=>$pay['order_passageway'],'item_group'=>$member_group_id])->find();
+          $also=($rate->item_also)/100;
+          $daikou=($rate->item_charges)*100;
+          #2获取通道信息
+          $merch=Passageway::where(['passageway_id'=>$pay['order_passageway']])->find();
+          // print_r($merch->passageway_mech);die;
+          #3获取银行卡信息
+          $card_info=MemberCreditcard::where(['card_bankno'=>$pay['order_card']])->find();
+          #4获取用户信息
+          $member=Member::where(['member_id'=>$pay['order_member']])->find();
+          print_r($member);die;
+          // print_r($pay);die;
+          $params=array(
+            'mchNo'=>$merch->passageway_mech, //机构号 必填  由平台统一分配 16
+            'userNo'=>$pay['ro_userno'],  //平台用户标识  必填  平台下发用户标识  32
+            'payCardId'=>$card_info->bindId, //支付卡签约ID 必填  支付签约ID，传入签约返回的平台签约ID  32
+            'notifyUrl'=>$_SERVER['SERVER_NAME'].'/Api/Repaymentplan/payCallback',  //异步通知地址  可填  异步回调地址，为空时不起推送  200
+            'orderNo'=>uniqid(), //订单流水号 必填  机构订单流水号，需唯一 64
+            'orderTime'=>date('YmdHis',time()+60),  //订单时间  必填  格式：yyyyMMddHHmmss 14
+            'goodsName'=>'虚拟商品',  //商品名称  必填    50
+            'orderDesc'=>C('SYSTEM_TITLE').'米刷信用卡还款', //订单描述  必填    50
+            'clientIp'=>$_SERVER['REMOTE_ADDR'],  //终端IP  必填  格式：127.0.0.1  20
+            'orderAmt'=>$pay['order_money']*100, //交易金额  必填  单位：分  整型(9,0)
+            'feeRatio'=>$also,  //交易费率  必填  需与用户入网信息保持一致  数值(5,2)
+            'feeAmt'=>$daikou, //交易单笔手续费   需与用户入网信息保持一致  整型(4,0)
+          );  
+          print_r($params);die;
+          // $params,$mechid,$url,$iv,$secretkey,$signkey,$type=0
+          $income=repay_request($params,$merch->passageway_mech,'http://pay.mishua.cn/zhonlinepay/service/rest/creditTrans/payBindCard',$merch->iv,$merch->secretkey,$merch->signkey);
+          if($income['code']=='200'){
+            $arr['back_tradeNo']=$income['tradeNo'];
+            $arr['back_statusDesc']=$income['statusDesc'];
+            $arr['back_status']=$income['status'];
+            $arr['order_status']='2';
+          }else{
+            $arr['back_statusDesc']=$income['message'];
+            $arr['back_status']='FAIL';
+            $arr['order_status']='-1';
+          }
+          //添加执行记录
+          GenerationOrder::where(['order_id'=>$pay['order_id']])->update($arr);
+        }
+        //8:支付回调
+        public function payCallback(){
+          $data = file_get_contents("php://input");
+             if ($data['code'] == 0) {
+                  $datas = AESdecrypt($result['payload'],$this->iv,$this->secretkey);
+                  $datas = trim($datas);
+                  $datas = substr($datas, 0, strpos($datas, '}') + 1);
+                  $resul = json_decode($datas, true);
+                  $arr['back_status']=$resul['status'];
+                  $arr['back_statusDesc']=$resul['statusDesc'];
+                  if($resul['status']=="SUCCESS"){
+                    $arr['order_status']='2';
+                  }else{
+                    $arr['order_status']='-1';
+                  }
+              }
+              GenerationOrder::where(['order_id'=>$pay['order_id']])->update($arr);
+              if($resul['status']=="SUCCESS"){
+                echo "success";die;
+              }
+        }
+        //9状态查询 unfinished
+        //http://pay.mishua.cn/zhonlinepay/service/rest/creditTrans/payResultQuery
+        public function payResultQuery(){
+          $params=array(
+            'mchNo'=>$this->mechid, //机构号 必填  由平台统一分配
+            'userNo'=>'123',  //平台用户标识  必填  平台下发用户标识
+            'orderNo'=>'',  //订单流水号 必填  机构订单流水号，需唯一
+            'tradeNo'=>'',  //平台流水号 必填  绑卡支付返回的流水号
+            'tradeDate'=>'',  //交易日期  可填  格式：yyyyMMdd为空时，仅查询仅3日内的交易数据；传入指定日期，可以查询更早前的数据
+          );
+          $income=$this->repay_request($params,'http://pay.mishua.cn/zhonlinepay/service/rest/creditTrans/payResultQuery');
+          var_dump($income);die;
+        }
+        //10.余额提现
+        //http://pay.mishua.cn/zhonlinepay/service/rest/creditTrans/transferApply
+        public function transferApply($get){
+          // print_r($get);die;
+          $user_merch_info=M('repay_user_merch')->where(['rm_userNo'=>$get['rc_userno']])->find();
+          $card_merch_info=M('repay_card_sign')->where(['rs_number'=>$get['rc_settlecardno']])->find();
+          $orderTime=date('YmdHis',time()+60);
+          $money=$get['rc_depositamt'];
+          $params=array(
+            'mchNo'=>$this->mechid, //机构号 必填  由平台统一分配 16
+            'userNo'=>$card_merch_info['rs_userno'],  //平台用户标识  必填  平台下发用户标识  32
+            'settleBindId'=>$card_merch_info['rs_bindid'],  //提现卡签约ID 必填  提现结算的卡，传入签约返回的平台签约ID  32
+            'notifyUrl'=>HOST.'/index.php?s=/Api/Repaycredit/cashCallback',// 异步通知地址  可填  异步通知的目标地址,为空时平台不发起推送  200
+            'orderNo'=>A('Api/Jyf')->createOrderId(), //提现流水号 必填  机构订单流水号，需唯一 64
+            'orderTime'=>$orderTime,//  提现时间点 必填  格式：yyyyMMddHHmmss 14
+            'depositAmt'=>(int)$money*100,  //提现金额  必填  单位：分  整型(9,0)
+            'feeRatio'=>$user_merch_info['rm_drawfeeratio'],  //提现费率  必填  需与用户入网信息保持一致  数值(5,2)
+            'feeAmt'=>$user_merch_info['rm_drawfeeamt'],//提现单笔手续费   需与用户入网信息保持一致  整型(4,0)
+          );
+          $income=repay_request($params,'http://pay.mishua.cn/zhonlinepay/service/rest/creditTrans/transferApply');
+          if($income['code']=='200'){
+            $arr['back_tradeNo']=$income['orderNo'];
+            $arr['back_status']=$income['status'];
+            $arr['back_statusDesc']=$income['statusDesc'];
+            $arr['order_status']='2';
+          }else{
+            $arr['back_status']='FAIL';
+            $arr['back_statusDesc']=$income['message'];
+            $arr['order_status']='-1';
+            
+          }
+          M('repay_cash')->where(['rc_id'=>$get['rc_id']])->save($arr);
+        }
+        //提现回调
+        public function cashCallback(){
+          $data = file_get_contents("php://input");
+              $result = json_decode($data, true);
+              if ($result['code'] == 0) {
+                 $datas = AESdecrypt($result['payload'],$this->iv,$this->secretkey);
+                  $datas = trim($datas);
+                  $datas = substr($datas, 0, strpos($datas, '}') + 1);
+                  $resul = json_decode($datas, true);
+                  $arr['back_status']=$resul['status'];
+                  $arr['back_statusDesc']=$resul['statusDesc'];
+                  if($resul['status']=="SUCCESS"){
+                    $arr['order_status']='2';
+                  }else{
+                    $arr['order_status']='-1';
+                  }
+              }
+              GenerationOrder::where(['order_id'=>$pay['order_id']])->update($arr);
+              if($resul['status']=="SUCCESS"){
+                echo "success";die;
+              }
+        }
+        //提现状态查询 unfinished
+        //http://pay.mishua.cn/zhonlinepay/service/rest/creditTrans/transferQuery
+        public function transferQuery(){
+          $user_merch_info=M('repay_user_merch')->where(['rm_mercUserNo'=>$post['mercUserNo']])->find();
+          $params=array(
+            'mchNo'=>$this->mechid, //机构号 必填
+            'userNo'=>$user_merch_info['rs_userno'],  //平台用户标识  必填
+            'orderNo'=>$orderNo,  //订单流水号 必填
+            'depositNo'=>$depositNo,  //平台流水号 必填
+            'depositDate'=>$depositDate,  //交易日期  可填
+          );
+        }
        /**
        *  @version get_day_count controller / method 获取每天消费几次
        *  @author $bill$(755969423@qq.com)
