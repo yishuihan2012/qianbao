@@ -33,25 +33,25 @@ class Userurl extends Controller
       public $error=0;
       
       //验证token
-      protected function checkToken(){
-       $this->param=request()->param();
-        try{
-             if(!isset($this->param['uid']) || empty($this->param['uid']) || !isset($this->param['token']) ||empty($this->param['token']))
-                   $this->error=314;
-             #查找到当前用户
-             $member=Members::haswhere('memberLogin',['login_token'=>$this->param['token']])->where('member_id', $this->param['uid'])->find();
-             if(!$member && !$this->error)
-                   $this->error=317;
-        }catch (\Exception $e) {
-             $this->error=317;
-        }
-        if($this->error){
-			$msg=Config::get('response.'.$this->error) ? Config::get('response.'.$this->error) : "系统错误~";
-            exit(json_encode(['code'=>$this->error, 'msg'=>$msg, 'data'=>'']));
-        }
-		$this->assign('uid',$this->param['uid']);
-		$this->assign('token',$this->param['token']);
-      }
+  //     protected function checkToken(){
+  //      $this->param=request()->param();
+  //       try{
+  //            if(!isset($this->param['uid']) || empty($this->param['uid']) || !isset($this->param['token']) ||empty($this->param['token']))
+  //                  $this->error=314;
+  //            #查找到当前用户
+  //            $member=Members::haswhere('memberLogin',['login_token'=>$this->param['token']])->where('member_id', $this->param['uid'])->find();
+  //            if(!$member && !$this->error)
+  //                  $this->error=317;
+  //       }catch (\Exception $e) {
+  //            $this->error=317;
+  //       }
+  //       if($this->error){
+		// 	$msg=Config::get('response.'.$this->error) ? Config::get('response.'.$this->error) : "系统错误~";
+  //           exit(json_encode(['code'=>$this->error, 'msg'=>$msg, 'data'=>'']));
+  //       }
+		// $this->assign('uid',$this->param['uid']);
+		// $this->assign('token',$this->param['token']);
+  //     }
 
       #专属二维码列表
 	public function exclusive_code(){
@@ -142,8 +142,7 @@ class Userurl extends Controller
 	 * @return   [type]
 	 */
 	public function repayment_history($id){
-		// $this->checkToken();
-		$this->param['uid']=$id;
+		$this->checkToken();
 		#进行中
 		$generation=Generation::with('creditcard')->where(['generation_member'=>$this->param['uid'],'generation_state'=>2])->select();
 
