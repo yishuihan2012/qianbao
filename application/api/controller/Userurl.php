@@ -118,9 +118,9 @@ class Userurl extends Controller
 	 * @version  [用户还款计划]
 	 * @return   [type]
 	 */
-	public function repayment_plan_list(){
+	public function repayment_plan_list($id){
 		// $this->checkToken();
-		$this->param['uid']=12;
+		$this->param['uid']=$id;
 		#全部
 		$order=GenerationOrder::where(['order_member'=>$this->param['uid']])->select();
 
@@ -141,9 +141,9 @@ class Userurl extends Controller
 	 * @version  [还款计划已完成列表]
 	 * @return   [type]
 	 */
-	public function repayment_history(){
+	public function repayment_history($id){
 		// $this->checkToken();
-		$this->param['uid']=16;
+		$this->param['uid']=$id;
 		#进行中
 		$generation=Generation::with('creditcard')->where(['generation_member'=>$this->param['uid'],'generation_state'=>2])->select();
 
@@ -183,43 +183,34 @@ class Userurl extends Controller
 		// $this->checkToken();
 		$order=array();
 		$generation=Generation::with('creditcard')->where(['generation_id'=>$order_no])->find();
-		$generation['generation_card']=substr($generation['generation_card'], -4);
-		$order1=GenerationOrder::where(['order_no'=>$order_no,'order_type'=>1])->select();
-		$order2=GenerationOrder::where(['order_no'=>$order_no,'order_type'=>2])->select();
-		// $order=GenerationOrder::where(['order_no'=>$order_no])->select();
-		// $order=$order->toArray();
-		// dump($order);die;
-		foreach ($order1 as $key => $value) {
-			foreach ($order2 as $k => $val) {
-				if($key==$k){
+		$order=GenerationOrder::where(['order_no'=>$order_no])->order('order_time','asc')->select();
+		foreach ($order as $key => $value) {
+			$value=$value->toArray();
+			// print_r($value);die;
+			$list[$key]=$value;
+			$list[$key]['day_time']=date("m月d日",strtotime($value['order_time']));
+			$list[$key]['current_time']=date("H:i",strtotime($value['order_time']));
 
-					$order[$key]['pay']=$value;
-					$order[$key]['pay_money']=$value['order_money'];
-					$order[$key]['pay']['time']=date("H:i",strtotime($value['order_time']));
-
-					$order[$key]['huan']=$val;
-					$order[$key]['huan_money']=$val['order_money'];
-					$order[$key]['huan']['time']=date("H:i",strtotime($val['order_time']));
-
-					$order[$key]['time']=date("m月d日",strtotime($value['order_time']));
-				}
-			}
 		}
-
-		// foreach ($order as $key => $value) {
-		// 	$order[$key]['day_time']=date("m月d日",strtotime($value['order_time']));
-		// 	$order[$key]['current_time']=date("H:i",strtotime($value['order_time']));
-		// }
-
-		// $data=[];
-		// foreach ($order as $key => $value) {
-		// 	$data[$value['day_time']]=$value;
-		// }
-		// echo "<pre>";
-		// var_dump($data);die;
+		$data=[];
+		foreach ($list as $key => $value) {
+			$data[$value['day_time']][]=$value;
+		}
+		// print_r($data);die;
+		$sum=[];
+        // foreach($data as $k=>$v){
+        // 	foreach ($v as $key => $vv) {
+        // 		if($vv['order_type']==1){
+        // 		  $sum[$k]['pay']+=$vv['order_money'];
+        // 		}else if($vv['order_type']==2){
+        // 		  $sum[$k]['get']=$vv['order_money'];
+        // 		}
+        // 	}
+        // }
+        // print_r($sum);die;
+        $this->assign('sum',$sum);
 		$this->assign('generation',$generation);
-		$this->assign('order',$order);
-		$this->assign('count',count($order1));
+		$this->assign('order',$data);
 	  	return view("Userurl/repayment_plan_detail");
 	}
 	/**

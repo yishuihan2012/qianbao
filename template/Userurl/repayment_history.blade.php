@@ -48,7 +48,7 @@
 										<div class="wrap">
 											<p class="invalid-color f15">还款总金额(含手续费{{$list['generation_pound']}}元)</p>
 											<p class="f24 space-up3"><strong>{{$list['generation_total']}}</strong><span class="f15">元</span></p>
-											<p class="invalid-color f15 space-up3 f-tex-n">还款计划时间：<span class="blue-color-th space-right">{{$list['generation_start']}} </span><span class="blue-color-th">{{$list['count']}}笔</span></p>
+											<p class="invalid-color f15 space-up3 f-tex-n">还款计划时间：<span class="blue-color-th space-right">{{date('m月d日',strtotime($list['generation_start']))}}-{{date('m月d日',strtotime($list['generation_end']))}} </span><span class="blue-color-th">{{$list['count']}}笔</span></p>
 										</div>
 										<div class="dis-flex-be invalid-color wrap bor-top-das">
 											<span class="f16">查看详情</span>
@@ -82,7 +82,7 @@
 										<div class="wrap">
 											<p class="invalid-color f15">还款总金额(含手续费{{$list['generation_pound']}}元)</p>
 											<p class="f24 space-up3"><strong>{{$list['generation_total']}}</strong><span class="f15">元</span></p>
-											<p class="invalid-color f15 space-up3 f-tex-n">还款计划时间：<span class="blue-color-th space-right">{{$list['generation_start']}} </span><span class="blue-color-th">{{$list['count']}}笔</span></p>
+											<p class="invalid-color f15 space-up3 f-tex-n">还款计划时间：<span class="blue-color-th space-right">{{date('m月d日',strtotime($list['generation_start']))}}-{{date('m月d日',strtotime($list['generation_end']))}}  </span><span class="blue-color-th">{{$list['count']}}笔</span></p>
 										</div>
 										<div class="dis-flex-be invalid-color wrap bor-top-das">
 											<span class="f16">查看详情</span>
@@ -117,7 +117,7 @@
 										<div class="wrap">
 											<p class="invalid-color f15">还款总金额(含手续费{{$list['generation_pound']}}元)</p>
 											<p class="f24 space-up3"><strong>{{$list['generation_total']}}</strong><span class="f15">元</span></p>
-											<p class="invalid-color f15 space-up3 f-tex-n">还款计划时间：<span class="blue-color-th space-right">{{$list['generation_start']}} </span><span class="blue-color-th">{{$list['count']}}笔</span></p>
+											<p class="invalid-color f15 space-up3 f-tex-n">还款计划时间：<span class="blue-color-th space-right">{{date('m月d日',strtotime($list['generation_start']))}}-{{date('m月d日',strtotime($list['generation_end']))}}  </span><span class="blue-color-th">{{$list['count']}}笔</span></p>
 										</div>
 										<div class="dis-flex-be invalid-color wrap bor-top-das">
 											<span class="f16">查看详情</span>
