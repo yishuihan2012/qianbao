@@ -83,10 +83,10 @@
            if($this->param['billMoney']/$this->param['payCount'] <50)
                   exit(json_encode(['code'=>111,'msg'=>'单次还款额太小啦,请调整次数到'.intval($this->param['billMoney']/50).'次以下~']));
            //判断卡号是否在计划内
-           // $plan=Generation::where(['generation_card'=>$card_info->card_bankno,'generation_state'=>1])->find();
-           // if($plan){
-           //      exit(json_encode(['code'=>111,'msg'=>'此卡已经在还款计划内，请先删除原计划再重新制定计划。']));
-           // }
+           $plan=Generation::where(['generation_card'=>$card_info->card_bankno,'generation_state'=>1])->find();
+           if($plan){
+                exit(json_encode(['code'=>111,'msg'=>'此卡已经在还款计划内，请先删除原计划再重新制定计划。']));
+           }
            Db::startTrans();
            try
            {
