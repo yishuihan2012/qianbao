@@ -53,7 +53,7 @@
 			   	  <div class="wrap3 bg-w space-up deal-list-wrap">
 			   	  	<div>
 				   	  	<p class="normal-color">收款交易成功提醒</p>
-				   	  	<p class="normal-color">您尾号{{$v['order_card']}}的{{$v['card_bank']}}信用卡交易成功</p>
+				   	  	<p class="normal-color">您尾号{{$v['order_creditcard']}}的{{$v['card_bankname']}}信用卡交易成功</p>
 				   	  	<p class="normal-color fc">交易金额</p>
 				   	  	<p class="normal-color fc f36">{{$v['order_charge']+$v['order_money']}}<span class="f24">元</span></p>
 			   	  	</div>

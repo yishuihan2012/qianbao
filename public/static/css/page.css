@@ -133,3 +133,8 @@
 .down-load a:link,.down-load a:hover,.down-load a:active,.down-load a:visited{color:#fff;}
 .my-btn-blue:link,.my-btn-blue:hover,.my-btn-blue:active,.my-btn-blue:visited{color:#fff;}
 .my-btn-blue2:link,.my-btn-blue2:hover,.my-btn-blue2:active,.my-btn-blue2:visited{color:#fff;}
+/*信用卡说明*/
+.card-desc table{width:100%;}
+.card-desc th,td{width:25%;padding:8px 0;}
+.card-desc th{border-left:1px solid #e5e5e5;border-top:1px solid #e5e5e5}
+.card-desc td{border-left:1px solid #e5e5e5;border-top:1px solid #e5e5e5;}

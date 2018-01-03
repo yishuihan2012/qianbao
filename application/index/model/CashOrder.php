@@ -31,9 +31,9 @@
            #TODO:自定义的初始化
       }
       #关联模型 一对一关联 (bankcard) 银行卡
-      public function bankcard()
+      public function membercreditcard()
       {
-           return $this->hasOne('BankCard','card_number','order_card')->bind('card_bank')->setEagerlyType(0);
+           return $this->hasOne('MemberCreditcard','card_bankno','order_creditcard')->bind('card_bankname')->setEagerlyType(0);
       }
 
       #关联模型 一对一关联 (passageway) 银行卡

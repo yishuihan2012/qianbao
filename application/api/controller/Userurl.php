@@ -207,7 +207,7 @@ class Userurl extends Controller
 		}
 		//取CashOrder内容
 		// $CashOrder=CashOrder::with('bankcard')->all(['order_member'=>$this->param['uid'],'order_state'=>2]);
-		$CashOrder=CashOrder::with('bankcard')->where(['order_member'=>$this->param['uid'],'order_state'=>2])->select();
+		$CashOrder=CashOrder::with('membercreditcard')->where(['order_member'=>$this->param['uid'],'order_state'=>2])->select();
 		//转存
 		foreach ($CashOrder as $k => $v) {
 			$data[$i]['number']=$i;
@@ -215,8 +215,8 @@ class Userurl extends Controller
 			$data[$i]['type']='CashOrder';
 			$data[$i]['order_money']=$v['order_money'];
 			$data[$i]['order_charge']=$v['order_charge'];
-			$data[$i]['card_bank']=$v['card_bank'];
-			$data[$i]['order_card']=substr($v['order_card'],-4);
+			$data[$i]['card_bankname']=$v['card_bankname'];
+			$data[$i]['order_creditcard']=substr($v['order_creditcard'],-4);
 			$data[$i++]['order_update_time']=$v['order_update_time'];
 		}
 		// var_dump($data);die;
@@ -408,5 +408,9 @@ class Userurl extends Controller
    		$receivablesList = MemberNovice::list();
    		$this->assign("receivablesList",$receivablesList);
     	return view("api/logic/web_freshman_guide");
+  }
+  #信用卡说明
+  public function card_description(){
+  	return view("api/logic/card_description");
   }
 }
