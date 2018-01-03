@@ -19,7 +19,7 @@
  use app\index\model\MemberCreditcard;
  use app\index\model\PassagewayItem;
  use app\index\model\Passageway;
- class Repaymentplan 
+ class RepaymentPlan 
  {
       public $error;
       protected $param;
