@@ -10,6 +10,7 @@ use app\index\model\Passageway as Passageways;
 use app\index\model\PassagewayItem;
 use app\index\model\MemberGroup;
 use app\index\model\Cashout;
+use app\index\model\CreditCard;
 use think\Controller;
 use think\Request;
 use think\Session;
@@ -213,4 +214,39 @@ class Passageway extends Common{
 	 	$this->assign('data',$data);
 	 	return view('admin/Passageway/cashout');
 	 }
+	 #添加信用卡
+	 public function add_credit_card(){
+	 	 if(Request::instance()->isPost()){
+	 	    $CreditCard = new CreditCard($_POST);
+			 $result = $CreditCard->allowField(true)->save();
+			 #数据是否提交成功
+			 $content = ($result===false) ? ['type'=>'error','msg'=>'添加失败'] : ['type'=>'success','msg'=>'添加成功'];
+			 Session::set('jump_msg', $content);
+			 #重定向控制器 跳转到列表页
+			 $this->redirect('/index/passageway/index');die;
+		}
+	 	$this->assign("passageway_id",Request::instance()->param('id'));
+	 	return view("admin/Passageway/add_credit_card");
+	 }
+	 #查看信用卡列表
+	 public function  list_credit_card(){
+	 	$CreditCard = new CreditCard();
+	 	$where['bank_passageway_id'] = Request::instance()->param('id');
+	 	
+	 	$list = $CreditCard->where($where)->select();
+
+	 	$this->assign("list",$list);
+	 	return view("admin/Passageway/list_credit_card");
+	 }
+	 #删除信用卡号
+	public function remove_credit_card(){
+		 $CreditCard = new CreditCard();
+	 	$where['card_id'] = Request::instance()->param('id');
+		 $result = $CreditCard->where($where)->delete();
+		 #数据是否提交成功
+		 $content = ($result===false) ? ['type'=>'error','msg'=>'文章删除失败'] : ['type'=>'success','msg'=>'文章删除成功'];
+		 Session::set('jump_msg', $content);
+		 #重定向控制器 跳转到列表页
+		 $this->redirect($this->history['1']);
+	}
 }

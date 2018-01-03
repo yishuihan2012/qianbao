@@ -57,66 +57,46 @@
 				</div>
 				<div id="sliderProgressBar" class="mui-slider-progress-bar mui-col-xs-4"></div>
 				<div class="mui-slider-group space-up3" id="itemmobile">
+
+
 					<div id="item1mobile" class="mui-slider-item mui-control-content bg-w mui-active">
 						<div id="scroll1" class="mui-scroll-wrapper bg-color">
 							<div class="mui-scroll repay-plan-list-wrap">
 								<ul class="mui-table-view bg-color">
+								@foreach ($order as $list)
 									<li class="mui-table-view-cell bg-w bor-bot">
 										<a class="mui-navigate-right" href="repayment_plan_detail.html">
 										  <div class="dis-flex-be">
-											<p class="f16 dis-flex fc">2017-12-09 08:45:53</p>
-											<p class="f16 dis-flex fc">211元</p>
-											<p class="f16 dis-flex ftr space-right2">执行成功</p>
+											<p class="f16 dis-flex fc">{{$list['order_add_time']}}</p>
+											<p class="f16 dis-flex fc">{{$list['order_money']}}元</p>
+											<p class="f16 dis-flex ftr space-right2">@if ($list['order_status']==-1) 失败 @elseif ($list['order_status']==2)成功 @else 待执行 @endif</p>
 										  </div>
 										</a>
 									</li>
-									<li class="mui-table-view-cell bg-w bor-bot">
-										<a class="mui-navigate-right" href="repayment_plan_detail.html">
-										  <div class="dis-flex-be">
-											<p class="f16 dis-flex fc">2017-12-09 08:45:53</p>
-											<p class="f16 dis-flex fc">211元</p>
-											<p class="f16 dis-flex ftr space-right2">执行成功</p>
-										  </div>
-										</a>
-									</li>
-									<li class="mui-table-view-cell bg-w bor-bot">
-										<a class="mui-navigate-right" href="repayment_plan_detail.html">
-										  <div class="dis-flex-be">
-											<p class="f16 dis-flex fc">2017-12-09 08:45:53</p>
-											<p class="f16 dis-flex fc">211元</p>
-											<p class="f16 dis-flex ftr space-right2">执行成功</p>
-										  </div>
-										</a>
-									</li>
-									<li class="mui-table-view-cell bg-w bor-bot">
-										<a class="mui-navigate-right" href="repayment_plan_detail.html">
-										  <div class="dis-flex-be">
-											<p class="f16 dis-flex fc">2017-12-09 08:45:53</p>
-											<p class="f16 dis-flex fc">211元</p>
-											<p class="f16 dis-flex ftr space-right2">执行成功</p>
-										  </div>
-										</a>
-									</li>
-									<li class="mui-table-view-cell bg-w bor-bot">
-										<a class="mui-navigate-right" href="repayment_plan_detail.html">
-										  <div class="dis-flex-be">
-											<p class="f16 dis-flex fc">2017-12-09 08:45:53</p>
-											<p class="f16 dis-flex fc">211元</p>
-											<p class="f16 dis-flex ftr space-right2">执行成功</p>
-										  </div>
-										</a>
-									</li>
+								@endforeach
 								</ul>
 							</div>
 						</div>
 					</div>
+
+
+
 					<div id="item2mobile" class="mui-slider-item mui-control-content bg-w">
 						<div id="scroll2" class="mui-scroll-wrapper">
 							<div class="mui-scroll">
-								<div class="mui-loading">
-									<div class="mui-spinner">
-									</div>
-								</div>
+								<ul class="mui-table-view bg-color">
+								@foreach ($order2 as $list)
+									<li class="mui-table-view-cell bg-w bor-bot">
+										<a class="mui-navigate-right" href="repayment_plan_detail.html">
+										  <div class="dis-flex-be">
+											<p class="f16 dis-flex fc">{{$list['order_add_time']}}</p>
+											<p class="f16 dis-flex fc">{{$list['order_money']}}元</p>
+											<p class="f16 dis-flex ftr space-right2">@if ($list['order_status']==-1) 失败 @elseif ($list['order_status']==2)成功 @else 待执行 @endif</p>
+										  </div>
+										</a>
+									</li>
+								@endforeach
+								</ul>
 							</div>
 						</div>
 
@@ -124,10 +104,19 @@
 					<div id="item3mobile" class="mui-slider-item mui-control-content bg-w">
 						<div id="scroll3" class="mui-scroll-wrapper">
 							<div class="mui-scroll">
-								<div class="mui-loading">
-									<div class="mui-spinner">
-									</div>
-								</div>
+								<ul class="mui-table-view bg-color">
+								@foreach ($order1 as $list)
+									<li class="mui-table-view-cell bg-w bor-bot">
+										<a class="mui-navigate-right" href="repayment_plan_detail.html">
+										  <div class="dis-flex-be">
+											<p class="f16 dis-flex fc">{{$list['order_add_time']}}</p>
+											<p class="f16 dis-flex fc">{{$list['order_money']}}元</p>
+											<p class="f16 dis-flex ftr space-right2">@if ($list['order_status']==-1) 失败 @elseif ($list['order_status']==2)成功 @else 待执行 @endif</p>
+										  </div>
+										</a>
+									</li>
+								@endforeach
+								</ul>
 							</div>
 						</div>
 

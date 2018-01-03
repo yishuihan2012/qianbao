@@ -191,8 +191,9 @@
           $res=json_decode($res,true);
           $result=base64_decode($res['params']);
           $result=json_decode($result,true);
-          if($result['merchId'])
-            $res=MemberNet::where(['net_member_id'=>$this->member->member_id])->setField($this->passway->passageway_no, $data['merchno']);
+          // var_dump($result);die;
+          if($result['resCode']=='00')
+            $res=MemberNet::where(['net_member_id'=>$this->member->member_id])->setField($this->passway->passageway_no, $result['merchId']);
           return $result;
       } 
  }

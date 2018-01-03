@@ -33,6 +33,11 @@ class Generation extends Model{
       {
            return $this->hasMany('Reimbur','reimbur_generation','generation_id')->setEagerlyType(0);
       }
+       #关联模型 一对多关联 (creditcard) 关联还款卡表
+      public function creditcard()
+      {
+           return $this->hasOne('MemberCreditcard','card_bankno','generation_card')->bind('card_bankicon,card_bankname')->setEagerlyType(0);
+      }
       #关联模型 一对多关联 (generation_order) 关联文章分类表
       public function generationOrder()
       {
