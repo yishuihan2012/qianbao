@@ -73,7 +73,7 @@
       @endforeach
 </div>
 
-{!! $member_list->render() !!}
+{!! $member_list->render() !!}<em>当前共{{$count}}条</em>
  <script type="text/javascript">
  $(document).ready(function(){
       $('table.datatable').datatable({sortable: true});

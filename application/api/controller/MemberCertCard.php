@@ -216,7 +216,7 @@
                     return ['code'=>353];
 
 
-            $passageway=Passageway::where('passageway_status=1 and passageway_also=1')->find();
+            $passageway=Passageway::where('passageway_status=1 and passageway_also=2')->find();
 
 
             $member_net=MemberNet::where('net_member_id='.$this->param['uid'])->find();
@@ -270,7 +270,7 @@
            if($cert_card['card_name']!=$member_cert['cert_member_name'] ||  $cert_card['card_idcard']!=$member_cert['cert_member_idcard'])
                  return ['code'=>443];
 
-            $passageway=Passageway::where('passageway_status=1 and passageway_also=1')->find();
+            $passageway=Passageway::where('passageway_status=1 and passageway_also=2')->find();
             $member_net=MemberNet::where('net_member_id='.$this->param['uid'])->find();
             $url='http://pay.mishua.cn/zhonlinepay/service/rest/creditTrans/unbindCard';
             $params=array(

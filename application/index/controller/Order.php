@@ -32,8 +32,16 @@ class Order extends Common{
 			$endTime=strtotime(request()->param('endTime'))+24*3600;
 			$where['member_creat_time']=["between time",[request()->param('beginTime'),$endTime]];
 		}
+		#身份证查询
+		$wheres = array();
+		 if( request()->param('cert_member_idcard')){
+			$wheres['m.cert_member_idcard'] = ['like',"%".request()->param('cert_member_idcard')."%"];
+		}else{
+			$r['cert_member_idcard'] = '';
+		}
 	 	 // #查询订单列表分页
-	 	 $order_lists = Orders::haswhere('member',$where)->field('wt_member.member_nick')->paginate(Config::get('page_size'),false, ['query'=>Request::instance()->param()]);
+	 	$order_lists = Orders::haswhere('member',$where)->join("wt_member_cert m", "m.cert_member_id=Member.member_id","left")->where($wheres)->field('wt_member.member_nick')->paginate(Config::get('page_size'),false, ['query'=>Request::instance()->param()]);
+	 	 // dump(Orders::getLastsql());
 	 	 #统计订单条数
 	 	 $count['count_size']=Orders::count();
 		$this->assign('order_lists', $order_lists);
@@ -63,16 +71,25 @@ class Order extends Common{
 	 #提现订单
 	 public function withdraw(){
 
-	 	#如果有查询条件
-	 	$where=array();
-	 	 if(Request::instance()->param('member_nick')){
-	 	 	$where['member_nick']=Request::instance()->param('member_nick');
-	 	 }
-	 	 if(Request::instance()->param('member_mobile')){
-	 	 	$where['member_mobile']=Request::instance()->param('member_mobile');
-	 	 }
+	 	$r=request()->param();
+	 	 #搜索条件
+	 	$data = memberwhere($r);
+	 	$r = $data['r'];
+	 	$where = $data['where'];
+	 	 //注册时间
+		if(request()->param('beginTime') && request()->param('endTime')){
+			$endTime=strtotime(request()->param('endTime'))+24*3600;
+			$where['member_creat_time']=["between time",[request()->param('beginTime'),$endTime]];
+		}
+		#身份证查询
+		$wheres = array();
+		 if( request()->param('cert_member_idcard')){
+			$wheres['m.cert_member_idcard'] = ['like',"%".request()->param('cert_member_idcard')."%"];
+		}else{
+			$r['cert_member_idcard'] = '';
+		}
 	 	 // #查询订单列表分页
-	 	 $order_lists = Withdraw::haswhere('member',$where)->paginate(Config::get('page_size'), false, ['query'=>Request::instance()->param()]);
+	 	 $order_lists = Withdraw::haswhere('member',$where)->join("wt_member_cert m", "m.cert_member_id=Member.member_id","left")->where($wheres)->paginate(Config::get('page_size'), false, ['query'=>Request::instance()->param()]);
 
 
 	 	 #统计订单条数
@@ -81,13 +98,10 @@ class Order extends Common{
 		 $this->assign('order_lists', $order_lists);
 		 $this->assign('countmoney', $countmoney);
 		 $this->assign('count', $count);
-		 if(!Request::instance()->param('member_nick')){
-		 	$where['member_nick']='';
-		 }
-		 if(!Request::instance()->param('member_mobile')){
-		 	$where['member_mobile']='';
-		 }
-		 $this->assign('where', $where);
+		 #获取用户分组
+		$member_group=MemberGroup::all();
+		$this->assign('member_group', $member_group);
+		$this->assign('r', $r);
 		 #渲染视图
 	 	return view('admin/order/withdraw');
 	 }
@@ -116,15 +130,25 @@ class Order extends Common{
 
 	  #套现订单
 	 public function cash(){
-	 	$where=array();
-	 	 if(Request::instance()->param('member_nick')){
-	 	 	$where['member_nick']=Request::instance()->param('member_nick');
-	 	 }
-	 	 if(Request::instance()->param('member_mobile')){
-	 	 	$where['member_mobile']=Request::instance()->param('member_mobile');
-	 	 }
+	 	$r=request()->param();
+	 	 #搜索条件
+	 	$data = memberwhere($r);
+	 	$r = $data['r'];
+	 	$where = $data['where'];
+	 	 //注册时间
+		if(request()->param('beginTime') && request()->param('endTime')){
+			$endTime=strtotime(request()->param('endTime'))+24*3600;
+			$where['member_creat_time']=["between time",[request()->param('beginTime'),$endTime]];
+		}
+		#身份证查询
+		$wheres = array();
+		 if( request()->param('cert_member_idcard')){
+			$wheres['mc.cert_member_idcard'] = ['like',"%".request()->param('cert_member_idcard')."%"];
+		}else{
+			$r['cert_member_idcard'] = '';
+		}
 	 	 // #查询订单列表分页
-	 	 $order_lists = CashOrder::with('passageway')->join('wt_member',"wt_member.member_id=wt_cash_order.order_member")->where($where)->paginate(Config::get('page_size'), false, ['query'=>Request::instance()->param()]);
+	 	 $order_lists = CashOrder::with('passageway')->join('wt_member m',"m.member_id=wt_cash_order.order_member")->where($where)->join("wt_member_cert mc", "mc.cert_member_id=m.member_id","left")->where($wheres)->paginate(Config::get('page_size'), false, ['query'=>Request::instance()->param()]);
 	 	
 	 	 #统计订单条数
 	 	 $count['count_size']=CashOrder::count();
@@ -136,7 +160,9 @@ class Order extends Common{
 		 if(!Request::instance()->param('member_mobile')){
 		 	$where['member_mobile']='';
 		 }
-		 $this->assign('where', $where);
+		 $member_group=MemberGroup::all();
+		$this->assign('member_group', $member_group);
+		$this->assign('r', $r);
 		 #渲染视图
 	 	return view('admin/order/cash');
 	 }
@@ -145,15 +171,26 @@ class Order extends Common{
 	 public function recomment(){
 	 	 // #查询订单列表分页
 	 	  #如果有查询条件
-	 	 $where=array();
-	 	 if(Request::instance()->param('member_nick')){
-	 	 	$where['member_nick']=Request::instance()->param('member_nick');
-	 	 }
-	 	 if(Request::instance()->param('member_mobile')){
-	 	 	$where['member_mobile']=Request::instance()->param('member_mobile');
-	 	 }
+	 	 $r=request()->param();
+	 	 #搜索条件
+	 	$data = memberwhere($r);
+	 	$r = $data['r'];
+	 	$where = $data['where'];
+	 	 //注册时间
+		if(request()->param('beginTime') && request()->param('endTime')){
+			$endTime=strtotime(request()->param('endTime'))+24*3600;
+			$where['member_creat_time']=["between time",[request()->param('beginTime'),$endTime]];
+		}
+		#身份证查询
+		$wheres = array();
+		 if( request()->param('cert_member_idcard')){
+			$wheres['m.cert_member_idcard'] = ['like',"%".request()->param('cert_member_idcard')."%"];
+		}else{
+			$r['cert_member_idcard'] = '';
+		}
+
 	 	 // #查询订单列表分页
-	 	 $order_lists = Recomment::haswhere('member',$where)->paginate(Config::get('page_size'), false, ['query'=>Request::instance()->param()]);
+	 	 $order_lists = Recomment::haswhere('member',$where)->join("wt_member_cert m", "m.cert_member_id=Member.member_id","left")->where($wheres)->paginate(Config::get('page_size'), false, ['query'=>Request::instance()->param()]);
 	 	 foreach ($order_lists as $key => $value) {
 	 	 		$order_lists[$key]['recomment_member_name']=Member::where(['member_id'=>$value['recomment_member_id']])->value('member_nick');
 	 	 		$order_lists[$key]['recomment_children_name']=Member::where(['member_id'=>$value['recomment_children_member']])->value('member_nick');
@@ -164,13 +201,11 @@ class Order extends Common{
 			 $this->assign('countmoney', $countmoney);
 			 $this->assign('order_lists', $order_lists);
 			 $this->assign('count', $count);
-		 if(!Request::instance()->param('member_nick')){
-		 	$where['member_nick']='';
-		 }
-		 if(!Request::instance()->param('member_mobile')){
-		 	$where['member_mobile']='';
-		 }
-		 $this->assign('where', $where);
+		 #获取用户分组
+		$member_group=MemberGroup::all();
+		$this->assign('member_group', $member_group);
+	
+		 $this->assign('r', $r);
 		 #渲染视图
 	 	return view('admin/order/recomment');
 	 }

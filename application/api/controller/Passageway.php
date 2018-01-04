@@ -32,7 +32,7 @@
       **/ 
       public function passageway_lists()
       {
-        $this->param['passageway_also']=1;
+        // $this->param['passageway_also']=1;
          #可用支付通道
          $passageway_lists=Passageways::with('cashout')->where('passageway_state=1 and passageway_also='.$this->param['passageway_also'])->select();
          foreach ($passageway_lists as $key => $value) {

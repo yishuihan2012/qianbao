@@ -30,4 +30,9 @@ class Order extends Model
     {
         return $this->hasOne('Member', 'member_id', 'order_member', '', 'left')->bind('member_nick,member_id,member_image,member_mobile,member_creat_time')->setEagerlyType(0);
     }
+   
+    public function MemberCash()
+    {
+        return $this->belongsToMany('MemberCash');
+    }
 }

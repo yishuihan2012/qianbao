@@ -14,14 +14,42 @@
    <form action="" method="post">
     <div class="input-group" style="width: 200px;float: left;margin-right: 20px;">
     <span class="input-group-addon">名称</span>
-    <input type="text" class="form-control" name="member_nick" value="{{$where['member_nick']}}" placeholder="名称">
+    <input type="text" class="form-control" name="member_nick" value="{{$r['member_nick']}}" placeholder="名称">
   </div>
 
   <div class="input-group" style="width: 200px;float: left;margin-right: 20px;">
     <span class="input-group-addon">手机号</span>
-    <input type="text" class="form-control" name="member_mobile" value="{{$where['member_mobile']}}" placeholder="手机号">
+    <input type="text" class="form-control" name="member_mobile" value="{{$r['member_mobile']}}" placeholder="手机号">
+  </div>
+   <div class="input-group" style="width: 180px;float: left;margin-right: 10px;">
+    <span class="input-group-addon">身份号</span>
+    <input type="text" class="form-control" name="cert_member_idcard" value="{{$r['cert_member_idcard']}}" placeholder="身份号">
+  </div>
+  <div class="input-group" style="width: 150px;float: left;margin-right: 10px;">
+     <span class="input-group-addon">实名状态</span>
+  <select name="member_cert" class="form-control">
+    <option value="" >全部</option>
+    <option value="1" @if($r['member_cert']==1) selected @endif>已认证</option>
+    <option value="2" @if($r['member_cert']==2) selected @endif>未认证</option>
+  </select>
+ 
+  </div>
+  <div class="input-group" style="width: 180px;float: left;margin-right: 10px;">
+     <span class="input-group-addon">会员级别</span>
+  <select name="member_group_id" class="form-control">
+      <option value="" @if ($r['member_group_id']=='') selected="" @endif>全部</option>
+    @foreach($member_group as $v)
+      <option value="{{$v['group_id']}}" @if ($r['member_group_id']==$v['group_id']) selected @endif>{{$v['group_name']}}</option>
+    @endforeach
+  </select>
   </div>
 
+  <div class="input-group" style="width: 200px;float: left; margin-right: 10px;">
+      <input type="text" class="form-control date-picker" id="dateTimeRange" placeholder="注册时间查询" />
+      <input type="hidden" name="beginTime" id="beginTime" value="" />
+      <input type="hidden" name="endTime" id="endTime" value="" />
+      <z class='clearTime'>X</z>
+  </div>
   <button class="btn btn-primary" type="submit">搜索</button>
 </form>
   <div class="items items-hover">
