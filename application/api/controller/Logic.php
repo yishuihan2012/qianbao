@@ -100,4 +100,13 @@ class Logic extends Controller
   public function web_freshman_guide(){
     return view("api/logic/web_freshman_guide");
   }
+   /**
+   * @Author   杨成志(3115317085@qq.com)
+   * [particulars 收支明细]
+   * @return [type] [description]
+   */
+
+  public function particulars(){
+    return view("api/web/particulars");
+  }
 }

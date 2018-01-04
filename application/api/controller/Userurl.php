@@ -141,13 +141,9 @@ class Userurl extends Controller
 	 * @version  [用户还款计划]
 	 * @return   [type]
 	 */
-<<<<<<< HEAD
-	public function repayment_plan_list($id){
 
-=======
 	public function repayment_plan_list(){
->>>>>>> 3c065b0d688265ba12732f07d449382fa642d27c
-		// $this->checkToken();
+		$this->checkToken();
 		#全部
 		$order=GenerationOrder::where(['order_member'=>$this->param['uid']])->select();
 
@@ -205,14 +201,10 @@ class Userurl extends Controller
 	 * @version  [还款计划详情]
 	 * @return   [type]
 	 */
-<<<<<<< HEAD
-	public function repayment_plan_detail($order_no){
-		$this->checkToken();
-=======
+
 	public function repayment_plan_detail(){
-		// $this->checkToken();
+		$this->checkToken();
 		$order_no=$this->param['order_no'];
->>>>>>> 3c065b0d688265ba12732f07d449382fa642d27c
 		$order=array();
 		$generation=Generation::with('creditcard')->where(['generation_id'=>$order_no])->find();
 		$order=GenerationOrder::where(['order_no'=>$order_no])->order('order_time','asc')->select();
