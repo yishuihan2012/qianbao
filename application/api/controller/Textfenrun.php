@@ -11,7 +11,7 @@ class Textfenrun
 	public function demo()
 	{
 		 $fenrun= new \app\api\controller\Commission();
-	 	 $fenrun_result=$fenrun->MemberFenRun(12,'10000',1,1,'套现手续费分润');
+	 	 $fenrun_result=$fenrun->MemberFenRun(12,'10000',1,1,'交易手续费分润');
 	 	 //$fenrun_result=$fenrun->MemberCommis(9,'980','会员升级');
 	 	 dump($fenrun_result);
 	}
