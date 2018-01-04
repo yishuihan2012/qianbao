@@ -41,10 +41,10 @@ hr{margin:0 5px!important;}
                 </div>
 </form>
 <div class="alert">
-  
+    <span class="hint">ppppppp</span>
 
 </div>
- <script src="/static/js/jquery-labelauty.js"></script>
+
  <script type="text/javascript">
   //验证form表单
   function verification(){
@@ -75,9 +75,20 @@ hr{margin:0 5px!important;}
       height:200px;
       position:absolute;
       border: 1px solid #ccc;
-      
+      margin:auto;
+      top:0;
+      left:0;
+      right: 0;
+      bottom:0;
+      background: #484891;
+      border-radius:5px;
    }
-
+   .hint{
+     color:#ffffff;
+     font-size:20px;
+     text-align:center;
+     line-height: 20px;
+   }
  </style>
  <!---->
  @endsection

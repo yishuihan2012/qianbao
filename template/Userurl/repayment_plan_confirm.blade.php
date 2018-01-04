@@ -31,10 +31,12 @@
 		<script src="/static/js/jquery-2.1.4.min.js"></script>
 		<script src="/static/js/mui.min.js"></script>
 		<script type="text/javascript">
+			var res='';
 			$(function(){
 				mui(document).on('tap','#sub',function(){
 					var url='/api/userurl/confirmPlan/uid/{{$uid}}/token/{{$token}}/id/{{$generationorder["order_no"]}}';
 					$.post(url,'',function(res){
+						res=JSON.parse(res);
 						if(res.code==200){
 							window.location='/api/userurl/repayment_plan_detail/uid/{{$uid}}/token/{{$token}}/order_no/{{$generationorder["order_no"]}}';
 						}else{
