@@ -205,8 +205,8 @@
           'orderNo'=>uniqid(), //提现流水号 必填  机构订单流水号，需唯一 64
           'orderTime'=>$orderTime,//  提现时间点 必填  格式：yyyyMMddHHmmss 14
           'depositAmt'=>$pay['order_money']*100,  //提现金额  必填  单位：分  整型(9,0)
-          'feeRatio'=>$also,  //提现费率  必填  需与用户入网信息保持一致  数值(5,2)
-          'feeAmt'=>$daikou,//提现单笔手续费   需与用户入网信息保持一致  整型(4,0)
+          'feeRatio'=>0,  //提现费率  必填  需与用户入网信息保持一致  数值(5,2)
+          'feeAmt'=>0,//提现单笔手续费   需与用户入网信息保持一致  整型(4,0)
         );
         $income=repay_request($params,$merch->passageway_mech,'http://pay.mishua.cn/zhonlinepay/service/rest/creditTrans/transferApply',$merch->iv,$merch->secretkey,$merch->signkey);
         if($income['code']=='200'){
