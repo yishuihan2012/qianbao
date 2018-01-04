@@ -124,31 +124,34 @@
                  'timestamp'  =>date("Y-m-d H:i:s",time())
             );
            // var_dump($array);die;
-           ksort($array);//自然排序 
+           // ksort($array);//自然排序 
+           $array=SortByASCII($array);//自然排序 SortByASCII
            $str="";
            //循环组成键值对
            // var_dump($array);die;
            foreach ($array as $key => $value){
-              $str.='+'.$value;
+              $str.=$value;
            }  
             // var_dump($str);die;
-           $signature=md5($this->passway->passageway_pwd_key.trim($str).'+'.$this->passway->passageway_pwd_key); //生成签名
-           $array['sign']=$signature;
-           // $str1="";
-           // foreach ($array as $key => $value)
-           //       $str1.=$key."=".$value."&";
-           // $str1.="sign=".$signature; //拼接请求体参数
-           // $getData=$this->passway->cashout->cashout_url."?".$str1;
-           // //dump($getData);exit;
-           // $curl = curl_init();
-           // curl_setopt($curl, CURLOPT_URL, $getData);
-           // curl_setopt($curl, CURLOPT_HEADER, 0);
-           // curl_setopt($curl, CURLOPT_RETURNTRANSFER, 1);
+           $signature=md5($this->passway->passageway_pwd_key.trim($str).$this->passway->passageway_pwd_key); //生成签名
+           // $array['sign']=$signature;
+           $str1="";
+           foreach ($array as $key => $value){
+              $str1.=$key."=".$value."&";
+           }
+                 
+           $str1.="sign=".$signature; //拼接请求体参数
+           $getData=$this->passway->cashout->cashout_url."?".trim($str1);
+           //dump($getData);exit;
+           $curl = curl_init();
+           curl_setopt($curl, CURLOPT_URL, $getData);
+           curl_setopt($curl, CURLOPT_HEADER, 0);
+           curl_setopt($curl, CURLOPT_RETURNTRANSFER, 1);
            // curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, FALSE); // https请求 不验证证书和hosts
            // curl_setopt($curl, CURLOPT_SSL_VERIFYHOST, FALSE);
-           // $result = curl_exec($curl);
-           $result=curl_post($this->passway->cashout->cashout_url,'post',$array);
-           dump($result);
+           $result = curl_exec($curl);
+           // $result=curl_post($this->passway->cashout->cashout_url,'post',$array);
+           dump($result);die;
 
       }
 

@@ -41,8 +41,8 @@ hr{margin:0 5px!important;}
                 </div>
 </form>
 <div class="alert">
-    <span class="hint">ppppppp</span>
-
+    <span class="hint">ppppppp</span><br>
+    <button class="determine">确定</button>
 </div>
 
  <script type="text/javascript">
@@ -82,12 +82,19 @@ hr{margin:0 5px!important;}
       bottom:0;
       background: #484891;
       border-radius:5px;
+
    }
    .hint{
      color:#ffffff;
      font-size:20px;
      text-align:center;
      line-height: 20px;
+     border-bottom:1px solid #ffffff;
+     width:100%;
+   }
+   .determine{
+     margin-top:100px;
+     margin-left: 110px
    }
  </style>
  <!---->
