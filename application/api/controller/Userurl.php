@@ -118,9 +118,8 @@ class Userurl extends Controller
 	 * @version  [用户还款计划]
 	 * @return   [type]
 	 */
-	public function repayment_plan_list($id){
+	public function repayment_plan_list(){
 		// $this->checkToken();
-		$this->param['uid']=$id;
 		#全部
 		$order=GenerationOrder::where(['order_member'=>$this->param['uid']])->select();
 
@@ -141,7 +140,7 @@ class Userurl extends Controller
 	 * @version  [还款计划已完成列表]
 	 * @return   [type]
 	 */
-	public function repayment_history($id){
+	public function repayment_history(){
 		$this->checkToken();
 		#进行中
 		$generation=Generation::with('creditcard')->where(['generation_member'=>$this->param['uid'],'generation_state'=>2])->select();
@@ -178,8 +177,9 @@ class Userurl extends Controller
 	 * @version  [还款计划详情]
 	 * @return   [type]
 	 */
-	public function repayment_plan_detail($order_no){
+	public function repayment_plan_detail(){
 		// $this->checkToken();
+		$order_no=$this->param['order_no'];
 		$order=array();
 		$generation=Generation::with('creditcard')->where(['generation_id'=>$order_no])->find();
 		$order=GenerationOrder::where(['order_no'=>$order_no])->order('order_time','asc')->select();
