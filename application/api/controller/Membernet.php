@@ -89,10 +89,13 @@
        if($list){
             foreach ($list as $k => $v) {
                 $value=$v->toArray();
-                if($value['order_type']==1){ //消费
-                    $this->payBindCard($value);
-                }else if($value['order_type']==2){//提现
-                    $this->transferApply($value);
+                $card_status=Generation::where(['generation_id'=>$value['order_no']])->value('generation_state');
+                if($card_status==2){
+                     if($value['order_type']==1){ //消费
+                          $this->payBindCard($value);
+                      }else if($value['order_type']==2){//提现
+                          $this->transferApply($value);
+                      }
                 }
              }
         }
