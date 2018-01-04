@@ -26,7 +26,6 @@
  use app\index\model\RegionProvince;
  use app\index\model\RegionCity;
  use app\index\model\RegionArea;
-
  class MemberCert 
  {
       protected $param;
