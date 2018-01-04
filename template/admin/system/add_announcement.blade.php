@@ -21,7 +21,7 @@ hr{margin:0 5px!important;}
 
 <div class="tab-content">
                 <div class="tab-pane fade active in" id="tab2Content1">
-                  <form action="" method="post" class="form-horizontal" id="myform">
+                  <form action="" method="post" class="form-horizontal" id="myform"  onsubmit="return verification()">
 
                      <div class="row form-group">
                       <label for="announcement_title" class="col-sm-2 text-right"><b>标题</b></label>
@@ -40,25 +40,26 @@ hr{margin:0 5px!important;}
                 </div>
                 </div>
 </form>
+<div class="alert">
+  
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+</div>
  <script src="/static/js/jquery-labelauty.js"></script>
  <script type="text/javascript">
+  //验证form表单
+  function verification(){
+  var announcement_title = $("[name='announcement_title']").val();
+  var announcement_content = $("[name='announcement_content']").val();
+  if(announcement_title == ''){
+    alert("标题不能为空");
+    return false;
+  }
+  if(announcement_content==''){
+    alert("内容不能为空");
+    return false;
+  }
+  
+ }
  $(document).ready(function(){
     $('.menu .nav .active').removeClass('active');
     $('.menu .nav li.service').addClass('active');
@@ -68,5 +69,15 @@ hr{margin:0 5px!important;}
     $(':input').labelauty();
  });
  </script>
+ <style type="text/css">
+   .alert{
+      width:300px;
+      height:200px;
+      position:absolute;
+      border: 1px solid #ccc;
+      
+   }
+
+ </style>
  <!---->
  @endsection
