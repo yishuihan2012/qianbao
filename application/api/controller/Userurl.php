@@ -141,7 +141,7 @@ class Userurl extends Controller
 	 * @return   [type]
 	 */
 	public function repayment_history(){
-		$this->checkToken();
+		// $this->checkToken();
 		#进行中
 		$generation=Generation::with('creditcard')->where(['generation_member'=>$this->param['uid'],'generation_state'=>2])->select();
 
