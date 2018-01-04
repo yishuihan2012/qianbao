@@ -101,9 +101,10 @@
       //http://pay.mishua.cn/zhonlinepay/service/rest/creditTrans/payBindCard
       public function payBindCard($pay){
         #1获取费率
+        // print_r($pay);die;
         $member_group_id=Member::where(['member_id'=>$pay['order_member']])->value('member_group_id');
         $rate=PassagewayItem::where(['item_passageway'=>$pay['order_passageway'],'item_group'=>$member_group_id])->find();
-        $also=($rate->item_also)/1000;
+        $also=($rate->item_also)*10;
         $daikou=($rate->item_charges);
         #2获取通道信息
         $merch=Passageway::where(['passageway_id'=>$pay['order_passageway']])->find();
@@ -186,7 +187,7 @@
         #1获取费率
         $member_group_id=Member::where(['member_id'=>$pay['order_member']])->value('member_group_id');
         $rate=PassagewayItem::where(['item_passageway'=>$pay['order_passageway'],'item_group'=>$member_group_id])->find();
-        $also=($rate->item_also)/1000;
+        $also=($rate->item_also)*10;
         $daikou=($rate->item_charges);
         #2获取通道信息
         $merch=Passageway::where(['passageway_id'=>$pay['order_passageway']])->find();
@@ -257,4 +258,22 @@
           'depositDate'=>$depositDate,  //交易日期  可填
         );
       }
+      //3余额查询
+      //http://pay.mishua.cn/zhonlinepay/service/rest/creditTrans/accountQuery
+      public function accountQuery($uid){
+        $passageway=Passageway::where(['passageway_id'=>8])->find();
+        #4获取用户信息
+        $member=MemberNets::where(['net_member_id'=>$uid])->find();
+        // print_r($member);die;
+        $orderTime=date('YmdHis',time()+60);
+        $params=array(
+          'mchNo'=>$passageway->passageway_mech, //机构号 必填  由平台统一分配 16
+          'userNo'=>$member->LkYQJ,  //平台用户标识  必填  平台下发用户标识  32
+        );
+        // var_dump($params);die;
+        $income=repay_request($params,$passageway->passageway_mech,'http://pay.mishua.cn/zhonlinepay/service/rest/creditTrans/accountQuery',$passageway->iv,$passageway->secretkey,$passageway->signkey);
+        echo json_encode($income);
+        // var_dump($income);die;
+      }
+
  }
