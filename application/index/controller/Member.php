@@ -31,23 +31,20 @@ class Member extends Common{
 			$endTime=strtotime(request()->param('endTime'))+24*3600;
 			$where['member_creat_time']=["between time",[request()->param('beginTime'),$endTime]];
 		}
-	 	 //获取会员等级
-	 	 $member_group=MemberGroup::all();
-	 	 #获取会员列表 
-	 	 $member_list=Members::with('memberLogin,membergroup,membercert')->where($where)->order('member_id','desc')->paginate('12', false, ['query'=>Request::instance()->param()]);
-	 	 #用户身份证号码
-	 	 if( request()->param('cert_member_idcard')){
-			foreach ($member_list as $key => $value) {
-				if(strstr($value['cert_member_idcard'],$r['cert_member_idcard'])){
-					$member_list[$key] = $value;
-				}else{
-					unset($member_list[$key]);
-				}
-			}
+		#身份证查询
+		$wheres = array();
+		 if( request()->param('cert_member_idcard')){
+			$where['m.cert_member_idcard'] = ['like',"%".request()->param('cert_member_idcard')."%"];
 		}else{
 			$r['cert_member_idcard'] = '';
 		}
-	 	
+	 	 //获取会员等级
+	 	 $member_group=MemberGroup::all();
+	 	 #获取会员列表 
+	 	 $member_list=Members::with('memberLogin,membergroup,membercert')->join("wt_member_cert m", "m.cert_member_id=member_id","left")->where($wheres)->where($where)->order('member_id','desc')->paginate('12', false, ['query'=>Request::instance()->param()]);
+	 	 #用户身份证号码
+		$count = Members::with('memberLogin,membergroup,membercert')->join("wt_member_cert m", "m.cert_member_id=member_id","left")->where($wheres)->where($where)->count();
+	 	 $this->assign('count', $count);
 	 	 $this->assign('r', $r);
 	 	 $this->assign('member_list', $member_list);
 	 	 $this->assign('member_group', $member_group);
