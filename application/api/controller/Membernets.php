@@ -109,7 +109,7 @@
                  "bankcardtype"    =>"1",
                  'mobilephone'      =>$this->membercard->card_phone,
                  'idcardno'            =>$this->membercard->card_idcard,
-                 //'address'             =>
+                 'address'             =>"山东省济南市天桥区泺口皮革城",
            );
            // dump($arr);die;
            $passParam=urlsafe_b64encode(AESencode(json_encode($arr),$this->passway->passageway_pwd_key,$this->passway->passageway_pwd_key));
@@ -120,12 +120,12 @@
                  'data'        =>$passParam,//请求报文加密
                  'v'             =>"2.0",//接口版本号
                  'session'  =>$this->passway->passageway_key,
-                 'target_appid' =>$this->passway->passageway_mech,
-                 'timestamp'  =>date("Y-m-d H:i:s",time())
+                 // 'target_appid' =>$this->passway->passageway_mech,
+                 'timestamp'  =>date("Y-m-d H:i:s",time()),
             );
            // var_dump($array);die;
-           // ksort($array);//自然排序 
-           $array=SortByASCII($array);//自然排序 SortByASCII
+           ksort($array);//自然排序 
+           // $array=SortByASCII($array);//自然排序 SortByASCII
            $str="";
            //循环组成键值对
            // var_dump($array);die;
@@ -139,16 +139,16 @@
            foreach ($array as $key => $value){
               $str1.=$key."=".$value."&";
            }
-                 
+                 // var_dump(rtrim($str1,'&'));die;
            $str1.="sign=".$signature; //拼接请求体参数
-           $getData=$this->passway->cashout->cashout_url."?".trim($str1);
+           $getData="https://test.masget.com:7373/openapi/rest?".rtrim($str1,'&');
            //dump($getData);exit;
            $curl = curl_init();
            curl_setopt($curl, CURLOPT_URL, $getData);
            curl_setopt($curl, CURLOPT_HEADER, 0);
            curl_setopt($curl, CURLOPT_RETURNTRANSFER, 1);
-           // curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, FALSE); // https请求 不验证证书和hosts
-           // curl_setopt($curl, CURLOPT_SSL_VERIFYHOST, FALSE);
+           curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, FALSE); // https请求 不验证证书和hosts
+           curl_setopt($curl, CURLOPT_SSL_VERIFYHOST, FALSE);
            $result = curl_exec($curl);
            // $result=curl_post($this->passway->cashout->cashout_url,'post',$array);
            dump($result);die;

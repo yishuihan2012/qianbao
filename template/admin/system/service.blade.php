@@ -28,9 +28,8 @@
 	      	<td>
 	      		<div class="btn-group">
 	  				<a type="button" class="btn btn-sm" data-remote="{{url('/index/system/show_service/service_id/'.$val->service_id)}}" data-size='lg' data-toggle="modal" href="#">查看</a>
-
-	  				<a type="button" class="btn btn-sm" data-remote="{{url('/index/system/service_edit/service_id/'.$val->service_id)}}" data-size='lg' data-toggle="modal" href="#">删除</a>
-
+	  				
+	  				<a type="button" class="btn btn-sm" href="{{url('/index/system/service_remove/service_id/'.$val->service_id)}}">删除</a>
 				</div>
 	      	</td>
 	    </tr>

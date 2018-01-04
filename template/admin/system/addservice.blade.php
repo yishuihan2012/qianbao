@@ -21,7 +21,7 @@ hr{margin:0 5px!important;}
 
 <div class="tab-content">
                 <div class="tab-pane fade active in" id="tab2Content1">
-                  <form action="" method="post" class="form-horizontal" id="myform">
+                  <form action="" method="post" class="form-horizontal" id="myform" onsubmit="return verification()">
                     <div class="row form-group">
                       <label for="service_title" class="col-sm-2 text-right"><b>客服类型:</b></label>
                       <div id="service_title" class="col-sm-6"><input type="text" class="form-control service_title" name="service_title" placeholder="客服类型" value=""></div>
@@ -34,7 +34,7 @@ hr{margin:0 5px!important;}
 
                      <div class="row form-group">
                       <label for="service_time" class="col-sm-2 text-right"><b>客服时间:</b></label>
-                      <div id="service_time" class="col-sm-6"><input type="text" class="form-control service_time" name="service_time" placeholder="联系方式" value=""></div>
+                      <div id="service_time" class="col-sm-6"><input type="text" class="form-control service_time" name="service_time" placeholder="客服时间" value=""></div>
                      </div>
 
                      <div class="row form-group">
@@ -56,22 +56,37 @@ hr{margin:0 5px!important;}
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
+<div class="bodys"></div>
+<div class="alert">
+    <span class="hint">ppppppp</span><br>
+    <button class="determine">确定</button>
+</div>
 
 
  <script src="/static/js/jquery-labelauty.js"></script>
  <script type="text/javascript">
+  //验证form表单
+  function verification(){
+  var service_title = $("[name='service_title']").val();
+  var service_contact = $("[name='service_contact']").val();
+  var service_time = $("[name='service_time']").val();
+  if(service_title == ''){
+    $("[name='service_title']").css("border","1px solid red");
+
+    return false;
+  }
+  if(service_contact==''){
+      $("[name='service_contact']").css("border","1px solid red");
+    return false;
+  }
+  if(service_time==''){
+     $("[name='service_time']").css("border","1px solid red");
+    return false;
+  }
+ }
+ $("input").click(function(){
+    $(this).css("border","1px solid #3280fc");
+ })
  $(document).ready(function(){
     $('.menu .nav .active').removeClass('active');
     $('.menu .nav li.service').addClass('active');

@@ -21,7 +21,7 @@ hr{margin:0 5px!important;}
 
   <div class="tab-content">
                 <div class="tab-pane fade active in" id="tab2Content1">
-                  <form action="{{url('/index/server_model/add_service')}}" method="post" class="form-horizontal" id="myform">
+                  <form action="{{url('/index/server_model/add_service')}}" method="post" class="form-horizontal" id="myform"  onsubmit="return verification()">
                      <div class="row form-group">
                       <label for="announcement_title" class="col-sm-2 text-right"><b>名称</b></label>
                       <div id="announcement_title" class="col-sm-6">
@@ -96,9 +96,28 @@ hr{margin:0 5px!important;}
                 </div>
            </form>
                 </div>
+
+      
+
  <script src="/static/js/jquery-labelauty.js"></script>
   
  <script type="text/javascript">
+  //验证form表单
+  function verification(){
+  var list_name = $("[name='list_name']").val();
+  var list_icon = $("[name='list_icon']").val();
+  if(list_name == ''){
+    $("[name='list_name']").css("border","1px solid red");
+   
+
+    return false;
+  }
+ 
+ }
+ $("input").click(function(){
+    $(this).css("border","1px solid #3280fc");
+ })
+
   $(".save").click(function(){  
   if(!$(".generalize_title").val()){
      $(".generalize_title").parent().addClass("has-error");

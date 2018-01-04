@@ -123,7 +123,7 @@
                        }
                        //写入主计划表
                         $Generation_result=new Generation([
-                             'generation_no'          =>uniqid(),//TODO 生成随机代号
+                             'generation_no'          =>uniqidNumber(),//TODO 生成随机代号
                              'generation_count'     =>$this->param['payCount'],
                              'generation_member'    =>$this->param['uid'],
                              'generation_card'      =>$card_info->card_bankno,
@@ -215,7 +215,7 @@
                        }
                         //写入主计划表
                         $Generation_result=new Generation([
-                             'generation_no'          =>uniqid(),//TODO 生成随机代号
+                             'generation_no'          =>uniqidNumber(),//TODO 生成随机代号
                              'generation_count'     =>$this->param['payCount'],
                              'generation_member'    =>$this->param['uid'],
                              'generation_card'      =>$card_info->card_bankno,

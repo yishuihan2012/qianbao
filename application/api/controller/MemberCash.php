@@ -82,6 +82,7 @@
                 return ['code'=>$cashObject->error];
               // var_dump($method);die;
            $DaoLong=$cashObject->$method(make_order(),$this->param['money']);
+           // var_dump(123);die;
            return $DaoLong;
       }
 

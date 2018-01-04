@@ -40,62 +40,37 @@ hr{margin:0 5px!important;}
                 </div>
                 </div>
 </form>
+<div class="bodys"></div>
 <div class="alert">
-    <span class="hint">ppppppp</span><br>
+    <span class="hint"></span><br>
     <button class="determine">确定</button>
 </div>
 
  <script type="text/javascript">
   //验证form表单
   function verification(){
-  var announcement_title = $("[name='announcement_title']").val();
-  var announcement_content = $("[name='announcement_content']").val();
-  if(announcement_title == ''){
-    alert("标题不能为空");
+  if($("[name='announcement_title']").val() == ''){
+   $("[name='announcement_title']").css("border","1px solid red");
+
     return false;
   }
-  if(announcement_content==''){
-    alert("内容不能为空");
+  if($("[name='announcement_content']").val()==''){
+     $("[name='announcement_content']").css("border","1px solid red");
     return false;
   }
-  
  }
+  $("input").click(function(){
+    $(this).css("border","1px solid #3280fc");
+ })
  $(document).ready(function(){
     $('.menu .nav .active').removeClass('active');
-    $('.menu .nav li.service').addClass('active');
+    $('.menu .nav li.setting-announcement').addClass('active');
     $('.menu .nav li.service').addClass('show');
  });
  $(function(){
     $(':input').labelauty();
  });
  </script>
- <style type="text/css">
-   .alert{
-      width:300px;
-      height:200px;
-      position:absolute;
-      border: 1px solid #ccc;
-      margin:auto;
-      top:0;
-      left:0;
-      right: 0;
-      bottom:0;
-      background: #484891;
-      border-radius:5px;
-
-   }
-   .hint{
-     color:#ffffff;
-     font-size:20px;
-     text-align:center;
-     line-height: 20px;
-     border-bottom:1px solid #ffffff;
-     width:100%;
-   }
-   .determine{
-     margin-top:100px;
-     margin-left: 110px
-   }
- </style>
+ 
  <!---->
  @endsection

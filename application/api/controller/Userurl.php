@@ -204,7 +204,7 @@ class Userurl extends Controller
 
 	public function repayment_plan_detail(){
 		$this->checkToken();
-		$order_no=$this->param['order_no'];
+		$order_no=$this->param['order_no']=53;
 		$order=array();
 		$generation=Generation::with('creditcard')->where(['generation_id'=>$order_no])->find();
 		$order=GenerationOrder::where(['order_no'=>$order_no])->order('order_time','asc')->select();
@@ -222,15 +222,17 @@ class Userurl extends Controller
 		}
 		// print_r($data);die;
 		$sum=[];
-        // foreach($data as $k=>$v){
-        // 	foreach ($v as $key => $vv) {
-        // 		if($vv['order_type']==1){
-        // 		  $sum[$k]['pay']+=$vv['order_money'];
-        // 		}else if($vv['order_type']==2){
-        // 		  $sum[$k]['get']=$vv['order_money'];
-        // 		}
-        // 	}
-        // }
+        foreach($data as $k=>$v){
+        		$sum[$k]=[];
+        		$sum[$k]['pay']=0;
+        	foreach ($v as $key => $vv) {
+        		if($vv['order_type']==1){
+        		  $sum[$k]['pay']+=$vv['order_money'];
+        		}else if($vv['order_type']==2){
+        		  $sum[$k]['get']=$vv['order_money'];
+        		}
+        	}
+        }
         // print_r($sum);die;
         $this->assign('sum',$sum);
 		$this->assign('generation',$generation);
@@ -255,7 +257,7 @@ class Userurl extends Controller
 	 */
 	public function notify_list(){
 		$this->checkToken();
-		$Announcement=Announcement::all(['announcement_status'=>1]);
+		$Announcement=Announcement::where(['announcement_status'=>1])->order('announcement_id desc')->select();
 		$this->assign('announcement',$Announcement);
 	  	return view("Userurl/notify_list");
 	}

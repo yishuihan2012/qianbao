@@ -7,7 +7,7 @@
  */
  namespace app\api\controller;
  use app\index\model\Member as Members;
- use app\index\model\MemberCert;
+ use app\index\model\MemberCert as MemberCerts;
  use app\index\model\MemberCashcard;
  use app\index\model\Passageway;
  use app\index\model\System;
@@ -33,7 +33,7 @@
                       $this->error=314;
                  if($this->member->member_cert!='1')
                       $this->error=356;
-                 $this->membercert=MemberCert::get(['cert_member_id'=>$memberId]);
+                 $this->membercert=MemberCerts::get(['cert_member_id'=>$memberId]);
                  if(!$this->membercert)
                       $this->error=367;
                  #获取用户结算卡信息

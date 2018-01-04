@@ -122,7 +122,14 @@
 		 #渲染视图
 		 return view('admin/system/showservice');
 	 }
-
+	 #删除服务内容
+	 public function service_remove(){
+	 	 $CustomerService =CustomerService::get(Request::instance()->param('service_id'));
+		 $result= $CustomerService->delete();
+		 $content = ($result===false) ? ['type'=>'error','msg'=>'删除失败'] : ['type'=>'success','msg'=>'删除成功'];
+		 Session::set('jump_msg', $content);
+		 $this->redirect('system/customer_service');
+	 }
 	/**
 	 * 系统公告
 	 * @Author   Star(794633291@qq.com)

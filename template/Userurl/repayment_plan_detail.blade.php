@@ -55,7 +55,7 @@
 								@if($v['order_type']==1)
 								<span class="my-badge-inpro">消费</span>
 								@elseif($v['order_type']==2)
-								<span class="my-badge-inpro">还款</span>
+								<span class="my-badge-success">还款</span>
 								@endif
 								<span class="invalid-color space-lr2">{{date('H:i',strtotime($v['order_time']))}}</span>
 								<span><strong>{{$v['order_money']}}元</strong></span>
@@ -70,9 +70,9 @@
 						<div class="dis-flex-be wrap-bt bor-bot">
 							<p class="f15">
 								@if($v['order_type']==1)
-								<span class="my-badge-err">消费</span>
+								<span class="my-badge-inpro">消费</span>
 								@elseif($v['order_type']==2)
-								<span class="my-badge-err">还款</span>
+								<span class="my-badge-success">还款</span>
 								@endif
 								<span class="invalid-color space-lr2">{{date('H:i',strtotime($v['order_time']))}}</span>
 								<span><strong>{{$v['order_money']}}元</strong></span>
@@ -87,7 +87,7 @@
 						<div class="dis-flex-be wrap-bt bor-bot">
 							<p class="f15">
 								@if($v['order_type']==1)
-								<span class="my-badge-success">消费</span>
+								<span class="my-badge-inpro">消费</span>
 								@elseif($v['order_type']==2)
 								<span class="my-badge-success">还款</span>
 								@endif
@@ -103,7 +103,7 @@
 						<div class="dis-flex-be wrap-bt bor-bot">
 							<p class="f15">
 								@if($v['order_type']==1)
-								<span class="my-badge-cancel">消费</span>
+								<span class="my-badge-cancel  green">消费</span>
 								@elseif($v['order_type']==2)
 								<span class="my-badge-cancel">还款</span>
 								@endif
@@ -128,5 +128,9 @@
 			mui.init();
 		</script>
 	</body>
-
+<style type="text/css">
+	.green{
+		color: green;
+	}
+</style>
 </html>

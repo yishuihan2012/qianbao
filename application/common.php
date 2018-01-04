@@ -891,3 +891,7 @@ function pad_or_unpad($str, $ext,$pad='pkcs5')
        return ['r'=>$r, 'where' => $where];
     }
 
+    #生成日期格式的纯数字随机单号
+    function uniqidNumber(){
+      return date('YmdHis').mt_rand(10000,99999);
+    }

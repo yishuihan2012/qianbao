@@ -43,7 +43,7 @@ class Member extends Common{
 	 	 #获取会员列表 
 	 	 $member_list=Members::with('memberLogin,membergroup,membercert')->join("wt_member_cert m", "m.cert_member_id=member_id","left")->where($wheres)->where($where)->order('member_id','desc')->paginate('12', false, ['query'=>Request::instance()->param()]);
 	 	 #用户身份证号码
-		$count = Members::with('memberLogin,membergroup,membercert')->join("wt_member_cert m", "m.cert_member_id=member_id","left")->where($wheres)->where($where)->count();
+		 $count = Members::with('memberLogin,membergroup,membercert')->join("wt_member_cert m", "m.cert_member_id=member_id","left")->where($wheres)->where($where)->count();
 	 	 $this->assign('count', $count);
 	 	 $this->assign('r', $r);
 	 	 $this->assign('member_list', $member_list);

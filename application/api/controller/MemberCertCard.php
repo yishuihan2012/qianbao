@@ -46,6 +46,7 @@
  use app\index\model\PassagewayItem;
  use app\index\model\BankIdent;
  use app\index\model\SmsCode as SmsCodes;
+ use app\index\model\GenerationOrder;
 
  class MemberCertCard 
  {
@@ -302,8 +303,11 @@
            $data=MemberCreditcard::with("repayment")->where('card_member_id='.$this->param['uid'].' and bindStatus=01')->select();
 
            foreach ($data as $key => $value) {
-                 $data[$key]['card_banktitle']=$value['card_bankname'].'(尾号'.substr($value['card_bankno'],-4).')';
-                 $data[$key]['isInRepaySchedule']=empty($value['repayment_repayment']) ? 0 : 1 ;
+             $data[$key]['card_banktitle']=$value['card_bankname'].'(尾号'.substr($value['card_bankno'],-4).')';
+             //查找当前执行计划表中状态为等待执行的数据
+             $tmp=GenerationOrder::where(['order_card'=>$value['card_bankno'],'order_status'=>1])->find();
+             // $data[$key]['isInRepaySchedule']=empty($value['repayment_repayment']) ? 0 : 1 ;
+             $data[$key]['isInRepaySchedule']=empty($tmp) ? 0 : 1 ;
             }
            return ['code'=>200, 'msg'=>'获取信用卡列表成功~', 'data'=>$data];
       }
