@@ -137,20 +137,25 @@
           $arr['back_statusDesc']=$income['statusDesc'];
           $arr['back_status']=$income['status'];
           $arr['order_status']='2';
+          $generation['generation_state']=3;
         }else{
           $arr['back_statusDesc']=$income['message'];
           $arr['back_status']='FAIL';
           $arr['order_status']='-1';
+          $generation['generation_state']=-1;
         }
         //添加执行记录
         GenerationOrder::where(['order_id'=>$pay['order_id']])->update($arr);
         //更新卡计划
+        // Generation::where(['generation_id'=>$pay['order_no']])->update($generation);
+        
       }
       //8:支付回调
       public function payCallback(){
         $data = file_get_contents("php://input");
            if ($data['code'] == 0) {
-                $datas = AESdecrypt($result['payload'],$this->iv,$this->secretkey);
+                $merch=Passageway::where(['passageway_no'=>'LkYQJ'])->find();
+                $datas = AESdecrypt($result['payload'],$merch->secretkey,$merch->iv);
                 $datas = trim($datas);
                 $datas = substr($datas, 0, strpos($datas, '}') + 1);
                 $resul = json_decode($datas, true);
@@ -158,12 +163,18 @@
                 $arr['back_statusDesc']=$resul['statusDesc'];
                 if($resul['status']=="SUCCESS"){
                   $arr['order_status']='2';
+                  $generation['generation_state']=3;
                 }else{
                   $arr['order_status']='-1';
+                   $generation['generation_state']=-1;
                 }
             }
-            GenerationOrder::where(['order_id'=>$pay['order_id']])->update($arr);
-            file_put_contents('paycallback.txt', 'save success');
+            //更新计划表
+            GenerationOrder::where(['back_tradeNo'=>$resul['tradeNo']])->update($arr);
+            //更新卡计划
+            // $id=GenerationOrder::where(['back_tradeNo'=>$resul['tradeNo']])->value('order_no');
+            // Generation::where(['generation_id'=>$pay['order_no']])->update($generation);
+            file_put_contents('paycallback.txt', json_encode($resul));
             if($resul['status']=="SUCCESS"){
               echo "success";die;
             }
@@ -229,7 +240,8 @@
         $data = file_get_contents("php://input");
             $result = json_decode($data, true);
             if ($result['code'] == 0) {
-               $datas = AESdecrypt($result['payload'],$this->iv,$this->secretkey);
+                $merch=Passageway::where(['passageway_no'=>'LkYQJ'])->find();
+                $datas = AESdecrypt($result['payload'],$merch->secretkey,$merch->iv);
                 $datas = trim($datas);
                 $datas = substr($datas, 0, strpos($datas, '}') + 1);
                 $resul = json_decode($datas, true);
@@ -241,7 +253,8 @@
                   $arr['order_status']='-1';
                 }
             }
-            GenerationOrder::where(['order_id'=>$pay['order_id']])->update($arr);
+            file_put_contents('cashcallback.txt', json_encode($resul));
+            GenerationOrder::where(['back_tradeNo'=>$resul['tradeNo']])->update($arr);
             if($resul['status']=="SUCCESS"){
               echo "success";die;
             }
