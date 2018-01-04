@@ -33,4 +33,7 @@ class Test
 			    }
 			dump(json_decode(curl_exec($curl)));    
 		}
+		public function test(){
+			return 1;
+		}
 }

@@ -11,20 +11,25 @@
     <span class="input-group-addon">昵称</span>
     <input type="text" class="form-control" name="member_nick" value="{{$r['member_nick']}}" placeholder="昵称">
   </div>
+  <div class="input-group" style="width: 180px;float: left;margin-right: 10px;">
+    <span class="input-group-addon">身份号</span>
+    <input type="text" class="form-control" name="cert_member_idcard" value="{{$r['cert_member_idcard']}}" placeholder="身份号">
+  </div>
   <div class="input-group" style="width: 150px;float: left;margin-right: 10px;">
      <span class="input-group-addon">实名状态</span>
   <select name="member_cert" class="form-control">
-    <option value="" @if ($r['member_cert']=='') selected="" @endif>全部</option>
-    <option value="1" @if ($r['member_cert']=='1') selected="" @endif>已认证</option>
-    <option value="0" @if ($r['member_cert']=='0') selected="" @endif>未认证</option>
+    <option value="" >全部</option>
+    <option value="1" @if($r['member_cert']==1) selected @endif>已认证</option>
+    <option value="2" @if($r['member_cert']==2) selected @endif>未认证</option>
   </select>
+ 
   </div>
   <div class="input-group" style="width: 180px;float: left;margin-right: 10px;">
      <span class="input-group-addon">会员级别</span>
-  <select name="member_cert" class="form-control">
+  <select name="member_group_id" class="form-control">
       <option value="" @if ($r['member_group_id']=='') selected="" @endif>全部</option>
     @foreach($member_group as $v)
-      <option value="{{$v['group_id']}}" @if ($r['member_group_id']==$v['group_id']) selected="" @endif>{{$v['group_name']}}</option>
+      <option value="{{$v['group_id']}}" @if ($r['member_group_id']==$v['group_id']) selected @endif>{{$v['group_name']}}</option>
     @endforeach
   </select>
   </div>
@@ -68,7 +73,7 @@
       @endforeach
 </div>
 
-
+{!! $member_list->render() !!}
  <script type="text/javascript">
  $(document).ready(function(){
       $('table.datatable').datatable({sortable: true});

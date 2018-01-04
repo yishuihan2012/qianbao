@@ -23,49 +23,38 @@ class Member extends Common{
 	 	//传入参数
 	 	$r=request()->param();
 	 	 #搜索条件
-	 	 $where=array();
-	 	 //手机号
-	 	 if(request()->param('member_mobile') ){
-	 	 	$where['member_mobile']=["like","%".$r['member_mobile']."%"];
-	 	 }else{
-	 	 	$r['member_mobile']='';
-	 	 }
-	 	 //昵称
-	 	 if(request()->param('member_nick') ){
-	 	 	$where['member_nick']=["like","%".$r['member_nick']."%"];
-	 	 }else{
-	 	 	$r['member_nick']='';
-	 	 }
-	 	 //是否实名
-	 	 if(request()->param('member_cert')){
-	 	 	$where['member_cert']=request()->param('member_cert');
-	 	 }else{
-	 	 	$r['member_cert']='';
-	 	 }
-	 	 //会员等级
-	 	 if(request()->param('member_group_id')){
-	 	 	$where['member_group_id']=request()->param('member_group_id');
-	 	 }else{
-	 	 	$r['member_group_id']='';
-	 	 }
+	 	$data = memberwhere($r);
+	 	$r = $data['r'];
+	 	$where = $data['where'];
 	 	 //注册时间
 		if(request()->param('beginTime') && request()->param('endTime')){
 			$endTime=strtotime(request()->param('endTime'))+24*3600;
 			$where['member_creat_time']=["between time",[request()->param('beginTime'),$endTime]];
 		}
-		
-
 	 	 //获取会员等级
 	 	 $member_group=MemberGroup::all();
 	 	 #获取会员列表 
-	 	 $member_list=Members::with('memberLogin,membergroup')->where($where)->order('member_id','desc')->paginate('12', false, ['query'=>Request::instance()->param()]);
-	 	 dump(Members::getLastsql());
+	 	 $member_list=Members::with('memberLogin,membergroup,membercert')->where($where)->order('member_id','desc')->paginate('12', false, ['query'=>Request::instance()->param()]);
+	 	 #用户身份证号码
+	 	 if( request()->param('cert_member_idcard')){
+			foreach ($member_list as $key => $value) {
+				if(strstr($value['cert_member_idcard'],$r['cert_member_idcard'])){
+					$member_list[$key] = $value;
+				}else{
+					unset($member_list[$key]);
+				}
+			}
+		}else{
+			$r['cert_member_idcard'] = '';
+		}
+	 	
 	 	 $this->assign('r', $r);
 	 	 $this->assign('member_list', $member_list);
 	 	 $this->assign('member_group', $member_group);
 		 #渲染视图
 		 return view('admin/member/index');
 	 }
+	
 
 	 #会员详细信息
 	 public function info(Request $request)

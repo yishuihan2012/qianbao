@@ -87,7 +87,7 @@
 
 
            #判断需要入网的通道
-           $passageway=Passageway::where('passageway_status=1 and passageway_also=1')->find();
+           $passageway=Passageway::where('passageway_status=1 and passageway_also=2')->find();
 
 
             $member_net=MemberNet::where('net_member_id='.$this->param['uid'])->find();

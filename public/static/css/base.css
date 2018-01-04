@@ -1,10 +1,10 @@
 @charset "utf-8";
 /*页面公共部分*/
 html,body{
-	font: 17px/1.4 "苹方","微软雅黑","\5b8b\4f53",Arial,sans-serif;
-	background-color:#f0f3f5;
-	color: #333;
-	word-break: normal;
+  font: 17px/1.4 "苹方","微软雅黑","\5b8b\4f53",Arial,sans-serif;
+  background-color:#f0f3f5;
+  color: #333;
+  word-break: normal;
     text-align: justify;
 }
 .f-tex-l{text-align:left;word-break: break-all;}
@@ -25,7 +25,7 @@ html,body{
 .mui-input-row .mui-input-clear~.mui-icon-clear{top:17px !important;}
 /*toast*/
 .mui-toast-container{
-	position: absolute;
+  position: absolute;
     top: 50%;
     -webkit-transform: translateY(-50%);
     transform: translateY(-50%);}
@@ -65,8 +65,10 @@ table th{font-weight:normal;}
 .bor-rig span{display:block;width:1px;height:50px;}
 .pic-container{width:30%;margin:0px auto 30px;padding-top:30px;}
 .pic-container2{width:80%;margin:30px auto 0;}
+.pic-container3{width:50%;margin:80px auto 30px;}
 .pic-container img{width:100%;height:auto;border-radius:5px;}
 .pic-container2 img{width:100%;height:auto;}
+.pic-container3 img{width:100%;height:auto;}
 .clear {
     clear: both;
 }
@@ -121,7 +123,7 @@ table th{font-weight:normal;}
   text-align:center;
 }
 .ftl{
-	text-align:left;
+  text-align:left;
 }
 .ftr{
   text-align:right;
@@ -136,7 +138,7 @@ table th{font-weight:normal;}
   border-radius:5%;
 }
 .f-br2{
-	border-radius:2%;
+  border-radius:2%;
 }
 .f-br-top{border-radius: 5px 5px 0px 0px;}
 .f-br-bot{border-radius: 0px 0px 5px 5px;}
@@ -144,7 +146,7 @@ table th{font-weight:normal;}
     font-weight: bold;
 }
 .f-normal{
-	font-weight:normal;
+  font-weight:normal;
 }
 .por {
     position: relative;

@@ -138,3 +138,7 @@
 .card-desc th,td{width:25%;padding:8px 0;}
 .card-desc th{border-left:1px solid #e5e5e5;border-top:1px solid #e5e5e5}
 .card-desc td{border-left:1px solid #e5e5e5;border-top:1px solid #e5e5e5;}
+/*确认提交*/
+.conf-space-bot{margin-bottom:130px;}
+.confirm-box{display:inline-block;width:20%;vertical-align: middle;}
+.confirm-box img{width:80%;vertical-align: middle;}

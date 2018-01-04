@@ -25,13 +25,17 @@
 		</div>
 		<script src="/static/js/mui.min.js"></script>
 		<script type="text/javascript">
+			  var u = navigator.userAgent;
+		      var isAndroid = u.indexOf('Android') > -1 || u.indexOf('Adr') > -1; //android终端
+		      var isiOS = !!u.match(/\(i[^;]+;( U;)? CPU.+Mac OS X/); //ios终端
 			mui.init();
 			mui.ready(function(){
 				document.getElementById('seeDetails').addEventListener('tap',function(){
-					mui.openWindow({
-						url:'repayment_history.html',
-						id:'repayment_history'
-					});
+				      if(!isAndroid){
+				        window.webkit.messageHandlers.shareUrl.paySus();
+				      }else{
+				        android.paySus();
+				      }
 				});
 			});
 		</script>

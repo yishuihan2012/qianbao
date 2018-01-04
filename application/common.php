@@ -798,6 +798,7 @@ function pad_or_unpad($str, $ext,$pad='pkcs5')
       );
       $url='http://pay.mishua.cn/zhonlinepay/service/rest/creditTrans/createMerchant';
       $income=repay_request($params,$passageway['passageway_mech'],$url,$passageway['iv'],$passageway['secretkey'],$passageway['signkey']);
+      // var_dump($income)
       $arr=array(
         'net_member_id'=>$member_info['cert_member_id'],
         "{$passageway['passageway_no']}"=>$income['userNo']
@@ -806,6 +807,7 @@ function pad_or_unpad($str, $ext,$pad='pkcs5')
     }
     //米刷入网修改方法
     function mishuaedit($passageway, $rate, $member_info, $phone, $userno){
+      // var_dump($rate['item_also']);die;
       $params=array(
         'versionNo'=>'1',//接口版本号 必填  值固定为1 
         'mchNo'=>$passageway['passageway_mech'], //mchNo 商户号 必填  由米刷统一分配 
@@ -818,9 +820,10 @@ function pad_or_unpad($str, $ext,$pad='pkcs5')
         'drawFeeRatio'=>'0',//提现费率
         'drawFeeAmt'=>'0',//单笔提现易手续费
       );
-      var_dump($params);die;
+      // var_dump($params);die;
       $url='http://pay.mishua.cn/zhonlinepay/service/rest/creditTrans/updateMerchant';
       $income=repay_request($params,$passageway['passageway_mech'],$url,$passageway['iv'],$passageway['secretkey'],$passageway['signkey']);
+      // var_dump($income);die;
       $arr=array(
         'net_member_id'=>$member_info['cert_member_id'],
         "{$passageway['passageway_no']}"=>$income['userNo']
@@ -851,9 +854,40 @@ function pad_or_unpad($str, $ext,$pad='pkcs5')
         return $jpush->sign_push();
       }
     }
+    #截取中文字符串
     function msubstr($str = '',$start = 0, $length = 10){
-      
      return  mb_substr( $str, $start, $length ) ;
+    }
+    #搜索条件
+       function memberwhere($r){
+       $where=array();
+      
+       //手机号
+       if(!empty($r['member_mobile'] )) {
+        $where['member_mobile']=["like","%".$r['member_mobile']."%"];
+       }else{
+        $r['member_mobile']='';
+       }
+       //昵称
+       if(!empty($r['member_nick']) ){
+        $where['member_nick']=["like","%".$r['member_nick']."%"];
+       }else{
+        $r['member_nick']='';
+       }
+       //是否实名
+       if(!empty($r['member_cert'])){
+        $where['member_cert'] = $r['member_cert']==2?0:1;
+       }else{
+        $r['member_cert']='';
+       }
 
+       //会员等级
+       if(!empty($r['member_group_id'])){
+        $where['member_group_id'] = $r['member_group_id'];
+       }else{
+        $r['member_group_id']='';
+       }
+       
+       return ['r'=>$r, 'where' => $where];
     }
 

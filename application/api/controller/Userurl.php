@@ -22,6 +22,7 @@ use app\index\model\PassagewayItem;
 use app\index\model\MemberGroup; 
 use app\index\model\MemberRelation; 
 use app\index\model\CreditCard;
+use app\index\model\MemberCreditcard;
 use app\index\model\Generation;
 use app\index\model\GenerationOrder;
 /**
@@ -33,25 +34,25 @@ class Userurl extends Controller
       public $error=0;
       
       //验证token
-  //     protected function checkToken(){
-  //      $this->param=request()->param();
-  //       try{
-  //            if(!isset($this->param['uid']) || empty($this->param['uid']) || !isset($this->param['token']) ||empty($this->param['token']))
-  //                  $this->error=314;
-  //            #查找到当前用户
-  //            $member=Members::haswhere('memberLogin',['login_token'=>$this->param['token']])->where('member_id', $this->param['uid'])->find();
-  //            if(!$member && !$this->error)
-  //                  $this->error=317;
-  //       }catch (\Exception $e) {
-  //            $this->error=317;
-  //       }
-  //       if($this->error){
-		// 	$msg=Config::get('response.'.$this->error) ? Config::get('response.'.$this->error) : "系统错误~";
-  //           exit(json_encode(['code'=>$this->error, 'msg'=>$msg, 'data'=>'']));
-  //       }
-		// $this->assign('uid',$this->param['uid']);
-		// $this->assign('token',$this->param['token']);
-  //     }
+      protected function checkToken(){
+       $this->param=request()->param();
+        try{
+             if(!isset($this->param['uid']) || empty($this->param['uid']) || !isset($this->param['token']) ||empty($this->param['token']))
+                   $this->error=314;
+             #查找到当前用户
+             $member=Members::haswhere('memberLogin',['login_token'=>$this->param['token']])->where('member_id', $this->param['uid'])->find();
+             if(!$member && !$this->error)
+                   $this->error=317;
+        }catch (\Exception $e) {
+             $this->error=317;
+        }
+        if($this->error){
+			$msg=Config::get('response.'.$this->error) ? Config::get('response.'.$this->error) : "系统错误~";
+            exit(json_encode(['code'=>$this->error, 'msg'=>$msg, 'data'=>'']));
+        }
+		$this->assign('uid',$this->param['uid']);
+		$this->assign('token',$this->param['token']);
+      }
 
       #专属二维码列表
 	public function exclusive_code(){
@@ -115,10 +116,33 @@ class Userurl extends Controller
 	/**
 	 * @Author   Star(794633291@qq.com)
 	 * @DateTime 2017-12-25T14:10:55+0800
+	 * @version  [用户还款计划确认提交页]
+	 * param   $id  为generation表主键 generation_id
+	 * @return   [type]
+	 */
+	public function repayment_plan_confirm($id){
+		$this->checkToken();
+		$GenerationOrder=GenerationOrder::order('order_money desc')->where('order_no',$id)->find();
+		$creaditcard=MemberCreditcard::where('card_bankno',$GenerationOrder->order_card)->find();
+		$this->assign('generationorder',$GenerationOrder);
+		$this->assign('creaditcard',$creaditcard);
+		return view("Userurl/repayment_plan_confirm");
+	}
+	  //确认执行还款计划
+	  //$id  为generation表主键 generation_id
+	  public function confirmPlan($id){
+		$this->checkToken();
+		$res=Generation::update(['generation_id'=>$id,'generation_state'=>2]);
+		return json_encode($res ? ['code'=>200] : ['code'=>472,'msg'=>get_status_text(472)]);
+	  }
+	/**
+	 * @Author   Star(794633291@qq.com)
+	 * @DateTime 2017-12-25T14:10:55+0800
 	 * @version  [用户还款计划]
 	 * @return   [type]
 	 */
 	public function repayment_plan_list($id){
+
 		// $this->checkToken();
 		$this->param['uid']=$id;
 		#全部
@@ -179,7 +203,7 @@ class Userurl extends Controller
 	 * @return   [type]
 	 */
 	public function repayment_plan_detail($order_no){
-		// $this->checkToken();
+		$this->checkToken();
 		$order=array();
 		$generation=Generation::with('creditcard')->where(['generation_id'=>$order_no])->find();
 		$order=GenerationOrder::where(['order_no'=>$order_no])->order('order_time','asc')->select();
@@ -254,7 +278,8 @@ class Userurl extends Controller
 	 * @return   [type]
 	 */
 	public function deal_list(){
-		$this->checkToken();
+		// $this->checkToken();
+		// $this->param['uid']=11;
 		//取MemberCash内容
 		$MemberCash=MemberCash::where(['cash_member_id'=>$this->param['uid'],'cash_state'=>1])->order('cash_create_at desc')->select();
 		$data=[];
@@ -297,7 +322,9 @@ class Userurl extends Controller
 			$data[$i]['order_creditcard']=substr($v['order_creditcard'],-4);
 			$data[$i++]['order_update_time']=$v['order_update_time'];
 		}
-		// var_dump($data);die;
+		if(!$data){
+			return view("Userurl/no_data");
+		}
 		$this->assign('data',$data);
 	  	return view("Userurl/deal_list");
 	}

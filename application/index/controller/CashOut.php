@@ -93,8 +93,8 @@ class CashOut
 	            'description' 	=> $description, //交易描述
 	            'orderDate'   => date('YmdHis', time()), //订单日期
 	            'tradeNo'     	=> $tradeNo, //商户平台内部流水号，请确保唯一 TOdo
-	            'notifyUrl'   	=> $this->passway_info->cashout->cashout_callback/*HOST . "/index.php?s=/Api/Quckpayment/qucikPayCallBack"*/, //异步通知URL
-	            'callbackUrl' 	=>'123'/*HOST . "/index.php?s=/Api/Quckpayment/turnurl"*/, //页面回跳地址
+	            'notifyUrl'   	=> $this->passway_info->cashout->cashout_callback,/*HOST . "/index.php?s=/Api/Quckpayment/qucikPayCallBack"*/ //异步通知URL
+	            'callbackUrl' 	=>$_SERVER['HTTP_HOST'].'/api/Userurl/calllback_success',/*HOST . "/index.php?s=/Api/Quckpayment/turnurl"*/ //页面回跳地址
 	            'payCardNo' => $this->card_info->card_bankno, //信用卡卡号
 	            'accName'    => $this->card_info->card_name, //持卡人姓名 必填
 	            'accIdCard'   => $this->card_info->card_idcard, //卡人身份证  必填

@@ -66,8 +66,6 @@ class Passageway extends Common{
 	 	 	 	 	 continue;
 	 	 	 }
 
-
-
 		 	 $content = $result ? ['type'=>'success','msg'=>'税率调整成功'] : ['type'=>'warning','msg'=>'税率调整失败'];
 		 	 Session::set('jump_msg', $content);
 		 	 $this->redirect($this->history['0']);

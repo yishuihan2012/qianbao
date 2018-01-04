@@ -24,7 +24,7 @@
 	 @foreach($group as $group)
 	 <div class="row form-group">
 		 <label for="bank_name" class="col-sm-2 text-right"><b>{{$group['group_name']}}:</b></label>
-		 <div class="col-sm-2 input-group" id="bank_name">
+		 <div class="col-sm-3 input-group" id="bank_name">
 		 	 <span class="input-group-addon">套现</span>
 		 	 <input type="number" class="form-control bank_name" name="rate_{{$group['group_id']}}" placeholder="{{$group['group_name']}}组此通道的套现税率" 
 		 	 @foreach($list as $lists) 
@@ -33,13 +33,23 @@
 		 	 <span class="input-group-addon">%</span>
 		 </div>	
 		 <div class="ts">
-			 <div class="col-sm-2 input-group " id="item_also">
-			 	 <span class="input-group-addon">代还</span>
+			 <div class="col-sm-3 input-group " id="item_also">
+			 	 <span class="input-group-addon">代还税率</span>
 			 	 <input type="number" class="form-control item_also" name="also_{{$group['group_id']}}" placeholder="{{$group['group_name']}}组此通道的代还税率" 
 			 	 @foreach($list as $lists) 
 			 	 	@if($lists['item_group']==$group['group_id']) value="{{$lists['item_also'] or '0.00'}}" @endif 
 			 	 @endforeach >
 			 	 <span class="input-group-addon">%</span>
+			 </div>	
+		  </div>
+		 <div class="ts">
+			 <div class="col-sm-3 input-group " id="item_also">
+			 	 <span class="input-group-addon">代还定额</span>
+			 	 <input type="number" class="form-control item_also" name="charges_{{$group['group_id']}}" placeholder="{{$group['group_name']}}组此通道的代还税率" 
+			 	 @foreach($list as $lists) 
+			 	 	@if($lists['item_group']==$group['group_id']) value="{{$lists['item_charges'] or '0.00'}}" @endif 
+			 	 @endforeach >
+			 	 <span class="input-group-addon">分</span>
 			 </div>	
 		  </div>
 	 </div>
