@@ -103,8 +103,8 @@
         #1获取费率
         $member_group_id=Member::where(['member_id'=>$pay['order_member']])->value('member_group_id');
         $rate=PassagewayItem::where(['item_passageway'=>$pay['order_passageway'],'item_group'=>$member_group_id])->find();
-        $also=($rate->item_also)/100;
-        $daikou=($rate->item_charges)*100;
+        $also=($rate->item_also)/1000;
+        $daikou=($rate->item_charges);
         #2获取通道信息
         $merch=Passageway::where(['passageway_id'=>$pay['order_passageway']])->find();
         // print_r($merch->passageway_mech);die;
@@ -143,6 +143,7 @@
         }
         //添加执行记录
         GenerationOrder::where(['order_id'=>$pay['order_id']])->update($arr);
+        //更新卡计划
       }
       //8:支付回调
       public function payCallback(){
@@ -185,8 +186,8 @@
         #1获取费率
         $member_group_id=Member::where(['member_id'=>$pay['order_member']])->value('member_group_id');
         $rate=PassagewayItem::where(['item_passageway'=>$pay['order_passageway'],'item_group'=>$member_group_id])->find();
-        $also=($rate->item_also)/100;
-        $daikou=($rate->item_charges)*100;
+        $also=($rate->item_also)/1000;
+        $daikou=($rate->item_charges);
         #2获取通道信息
         $merch=Passageway::where(['passageway_id'=>$pay['order_passageway']])->find();
         // print_r($merch->passageway_mech);die;
@@ -218,7 +219,9 @@
           $arr['order_status']='-1';
           
         }
+        //更新订单状态
         GenerationOrder::where(['order_id'=>$pay['order_id']])->update($arr);
+        //更新卡计划
       }
       //提现回调
       public function cashCallback(){

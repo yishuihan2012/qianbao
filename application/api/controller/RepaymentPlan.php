@@ -73,7 +73,7 @@
            #定义税率  
            $also=($rate->item_also)/100;
            #定义代扣费
-           $daikou=($rate->item_charges)*100;
+           $daikou=($rate->item_charges)/100;
            //$total_money=$this->param['billMoney']+$this->param['billMoney']*$also+$this->param['payCount']*$daikou;
            #定义一个空数组, 用于存放最后的结果集 方便写入数据库
            $data=array();
