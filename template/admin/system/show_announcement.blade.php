@@ -43,6 +43,9 @@
  </div>
 
  <script>
+ function verification(){
+  alert();
+ }
  $(".save").click(function(){ 
    $("#myform").submit()
  })

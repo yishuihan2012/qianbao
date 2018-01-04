@@ -146,12 +146,15 @@
 	{
 		 if(Request::instance()->isPost())
 		 {
-		 	$_POST['announcement_adminid']=session('adminster.id');
-		 	 $Announcement = new Announcement($_POST);
-			 $result = $Announcement->allowField(true)->save();
-			 $content = ($result===false) ? ['type'=>'error','msg'=>'保存失败'] : ['type'=>'success','msg'=>'保存成功'];
-			 Session::set('jump_msg', $content);
-			 $this->redirect('System/announcement');
+		 	$content = array();
+		 	
+		 		$_POST['announcement_adminid']=session('adminster.id');
+			 	$Announcement = new Announcement($_POST);
+				$result = $Announcement->allowField(true)->save();
+				$content = ($result===false) ? ['type'=>'error','msg'=>'保存失败'] : ['type'=>'success','msg'=>'保存成功'];
+			
+			Session::set('jump_msg', $content);
+			$this->redirect('System/announcement');
 		 }
 		 #渲染视图
 		 return view('admin/system/add_announcement');
