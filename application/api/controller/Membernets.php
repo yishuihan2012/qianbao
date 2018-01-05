@@ -99,7 +99,7 @@
       {
            #定义请求报文组装
            $arr=array(
-                 'companyname'    =>"快捷支付",//$this->membercard->card_name.rand(1000,9999),山东联硕支付技术有限公司济南分公司（无积分快捷）
+                 'companyname'    =>"山东联硕支付技术有限公司济南分公司（无积分快捷）",//$this->membercard->card_name.rand(1000,9999),山东联硕支付技术有限公司济南分公司（无积分快捷）
                  'companycode'     =>$this->passway->passageway_mech,
                  'accountname'      =>$this->membercard->card_name,
                  'bankaccount'       =>$this->membercard->card_bankno,
@@ -111,8 +111,13 @@
                  'idcardno'            =>$this->membercard->card_idcard,
                  'address'             =>"山东省济南市天桥区泺口皮革城",
            );
-           // dump($arr);die;
-           $passParam=urlsafe_b64encode(AESencode(json_encode($arr),$this->passway->passageway_pwd_key,$this->passway->passageway_pwd_key));
+           #aes加密并且urlsafe base64编码
+           $encrypted = mcrypt_encrypt(MCRYPT_RIJNDAEL_128, $this->passway->passageway_pwd_key, json_encode($arr,JSON_UNESCAPED_UNICODE|JSON_PRETTY_PRINT), MCRYPT_MODE_CBC, $this->passway->passageway_pwd_key);
+           $base64str= base64_encode($encrypted);
+           $base64str = str_replace("+", "-",  $base64str);
+           $passParam = str_replace("/","_",  $base64str);
+           $passParam = str_replace("=",".",  $passParam);
+
            $array=array(
                  'appid'      =>'400467885', //APPID
                  'method'   =>"masget.webapi.com.subcompany.add",//进件接口
@@ -120,37 +125,40 @@
                  'data'        =>$passParam,//请求报文加密
                  'v'             =>"2.0",//接口版本号
                  'session'  =>'d0hidia512nuh1nv787pz0zideacfuew',
-                 'target_appid' =>'400467885',
-                 'timestamp'  =>date("Y-m-d H:i:s",time()),
+                 // 'target_appid' =>'400467885',
+                 'timestamp'  =>time(),
             );
-           // var_dump($array);die;
-           ksort($array);//自然排序
-           // $array=SortByASCII($array);//自然排序 SortByASCII
-           $str="";
-           //循环组成键值对
+           #连接键值生成sign
+           $str='';
            foreach ($array as $key => $value){
               $str.=$value;
-           } 
-           var_dump($this->passway->passageway_pwd_key.trim($str).$this->passway->passageway_pwd_key);die;
-           $signature=md5($this->passway->passageway_pwd_key.trim($str).$this->passway->passageway_pwd_key); //生成签名
-           $array['sign']=$signature;
+           }
+           $signature=md5('xpsj69LRllld5Q74'.trim($str).'xpsj69LRllld5Q74'); //生成签名
 
-           // $str1="";
-           // foreach ($array as $key => $value){
-           //    $str1.=$key."=".$value."&";
-           // }
-           // $str1.="sign=".$signature; //拼接请求体参数
-           // $getData="https://test.masget.com:7373/openapi/rest?".rtrim($str1,'&');
-           // //dump($getData);exit;
-           // $curl = curl_init();
-           // curl_setopt($curl, CURLOPT_URL, $getData);
-           // curl_setopt($curl, CURLOPT_HEADER, 0);
-           // curl_setopt($curl, CURLOPT_RETURNTRANSFER, 1);
-           // curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, FALSE); // https请求 不验证证书和hosts
-           // curl_setopt($curl, CURLOPT_SSL_VERIFYHOST, FALSE);
-           // $result = curl_exec($curl);
-           $result=curl_post('https://test.masget.com:7373/openapi/rest','post',$array);
-           dump($result);die;
+           // $signature=md5('xpsj69LRllld5Q74'.$array['appid'].$array['method'].$array['format'].$array['data'].$array['v'].$array['timestamp'].$array['session'].'xpsj69LRllld5Q74');
+
+           #拼接请求参数
+           $str1="";
+           foreach ($array as $key => $value){
+              $str1.=$key."=".$value."&";
+           }
+
+           // $str1="appid=".$array['appid']."&method=".$array['method']."&format=".$array['format']."&data=".$array['data']."&v=".$array['v']."&timestamp=".$array['timestamp']."&session=".$array['session']."&sign=" .$signature;
+
+           $str1.="sign=".$signature; //拼接请求体参数
+           $getData="https://test.masget.com:7373/openapi/rest?".$str1;
+
+           $curl = curl_init();
+            curl_setopt($curl, CURLOPT_URL, $getData);
+            curl_setopt($curl, CURLOPT_HEADER, 0);
+            curl_setopt($curl, CURLOPT_RETURNTRANSFER, 1);
+            curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, FALSE); // https请求 不验证证书和hosts
+            curl_setopt($curl, CURLOPT_SSL_VERIFYHOST, FALSE);
+            $data = curl_exec($curl);
+            $httpCode = curl_getinfo($curl,CURLINFO_HTTP_CODE);
+            curl_close($curl);
+            var_dump($data);die;
+            return $httpCode;
 
       }
 

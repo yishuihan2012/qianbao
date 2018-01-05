@@ -44,7 +44,7 @@
 						<span class="iconfont icon-jihua blue-color-th f16"></span>
 				        <span class="blue-color-th f14">{{$key}}</span>
 				       </p>
-				       <p class="invalid-color f-tex-l f14"><span>还款:123元</span><span class="space-lr">|</span><span>消费:1234元</span></p>
+				       <p class="invalid-color f-tex-l f14"><span>还款:{{$list['get']}}元</span><span class="space-lr">|</span><span>消费:{{$list['pay']}}元</span></p>
 					</div>
 					@foreach($list as $v)
 						 
@@ -81,7 +81,7 @@
 							  <span class="">执行失败</span>
 							  <span class="iconfont icon-zhifuyouwenti f20 v-m"></span>
 					        </p>
-						</div>
+ 					</div>
 						@elseif($v['order_status']==2)
 						<!-- 取消还款 -->
 						<div class="dis-flex-be wrap-bt bor-bot">
@@ -96,7 +96,7 @@
 							</p>
 							<p class="f16 green-color2">
 							  <span>执行成功</span>
-							  <span class="iconfont icon-quxiao f20 v-m"></span>
+							  <span class="iconfont icon-successful f20 v-m"></span>
 					        </p>
 						</div>
 						@elseif($v['order_status']==3)

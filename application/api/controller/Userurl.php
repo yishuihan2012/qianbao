@@ -26,6 +26,7 @@ use app\index\model\CreditCard;
 use app\index\model\MemberCreditcard;
 use app\index\model\Generation;
 use app\index\model\GenerationOrder;
+use app\index\model\NoviceClass as NoviceClasss; 
 /**
  *  此处放置一些固定的web地址
  */
@@ -148,10 +149,18 @@ class Userurl extends Controller
 		#进行中
 		// $this->param['uid']=16;
 		$generation=Generation::with('creditcard')->where(['generation_member'=>$this->param['uid'],'generation_state'=>2])->select();
-
 		foreach ($generation as $key => $value) {
+			//判断自动执行表 是否全部完成执行 取未执行的计划
+			$haventDone=GenerationOrder::where(['order_no'=>$value['generation_id'],'order_status'=>1])->find();
+			if(!$haventDone){
+				//若全部完成执行 更改主表计划执行状态
+				Generation::where(['generation_member'=>$this->param['uid'],'generation_id'=>$value['generation_id']])->update(['generation_state'=>3]);
+				unset($generation['$key']);
+				continue;
+			}else{
 				$generation[$key]['generation_card']=substr($value['generation_card'], -4);
 				$generation[$key]['count']=GenerationOrder::where(['order_no'=>$value['generation_id']])->count();
+			}
 		}
 
 		#待确认
@@ -187,7 +196,9 @@ class Userurl extends Controller
 		$this->checkToken();
 		$order_no=$this->param['order_no'];
 		$order=array();
+		//主计划
 		$generation=Generation::with('creditcard')->where(['generation_id'=>$order_no])->find();
+		//执行计划表
 		$order=GenerationOrder::where(['order_no'=>$order_no])->order('order_time','asc')->select();
 		foreach ($order as $key => $value) {
 			$value=$value->toArray();
@@ -197,24 +208,23 @@ class Userurl extends Controller
 			$list[$key]['current_time']=date("H:i",strtotime($value['order_time']));
 		}
 		$data=[];
+		//以日期为键
 		foreach ($list as $key => $value) {
 			$data[$value['day_time']][]=$value;
 		}
 		// print_r($data);die;
-		$sum=[];
+		//处理每日累计金额
         foreach($data as $k=>$v){
-        		$sum[$k]=[];
-        		$sum[$k]['pay']=0;
+        		$data[$k]['pay']=0;
+        		$data[$k]['get']=0;
         	foreach ($v as $key => $vv) {
         		if($vv['order_type']==1){
-        		  $sum[$k]['pay']+=$vv['order_money'];
+        		  $data[$k]['pay']+=$vv['order_money'];
         		}else if($vv['order_type']==2){
-        		  $sum[$k]['get']=$vv['order_money'];
+        		  $data[$k]['get']+=$vv['order_money'];
         		}
         	}
         }
-        // print_r($sum);die;
-        $this->assign('sum',$sum);
 		$this->assign('generation',$generation);
 		$this->assign('order',$data);
 	  	return view("Userurl/repayment_plan_create_detail");
@@ -259,7 +269,9 @@ class Userurl extends Controller
 		$this->checkToken();
 		$order_no=$this->param['order_no'];
 		$order=array();
+		//主计划
 		$generation=Generation::with('creditcard')->where(['generation_id'=>$order_no])->find();
+		//执行计划表
 		$order=GenerationOrder::where(['order_no'=>$order_no])->order('order_time','asc')->select();
 		foreach ($order as $key => $value) {
 			$value=$value->toArray();
@@ -269,24 +281,23 @@ class Userurl extends Controller
 			$list[$key]['current_time']=date("H:i",strtotime($value['order_time']));
 		}
 		$data=[];
+		//以日期为键
 		foreach ($list as $key => $value) {
 			$data[$value['day_time']][]=$value;
 		}
 		// print_r($data);die;
-		$sum=[];
+		//处理每日累计金额
         foreach($data as $k=>$v){
-        		$sum[$k]=[];
-        		$sum[$k]['pay']=0;
+        		$data[$k]['pay']=0;
+        		$data[$k]['get']=0;
         	foreach ($v as $key => $vv) {
         		if($vv['order_type']==1){
-        		  $sum[$k]['pay']+=$vv['order_money'];
+        		  $data[$k]['pay']+=$vv['order_money'];
         		}else if($vv['order_type']==2){
-        		  $sum[$k]['get']=$vv['order_money'];
+        		  $data[$k]['get']+=$vv['order_money'];
         		}
         	}
         }
-        // print_r($sum);die;
-        $this->assign('sum',$sum);
 		$this->assign('generation',$generation);
 		$this->assign('order',$data);
 	  	return view("Userurl/repayment_plan_detail");
@@ -312,7 +323,10 @@ class Userurl extends Controller
 	public function notify_list(){
 		$this->checkToken();
 		// $Announcement=Announcement::where(['announcement_status'=>1])->order('announcement_id desc')->select();
-		$notice=Notice::where(['notice_recieve'=>$this->param['uid']])->order('notice_status,notice_createtime')->select();
+		$notice=Notice::where(['notice_recieve'=>$this->param['uid']])->order('notice_createtime desc')->select();
+		if(!$notice){
+			return view("Userurl/no_data");
+		}
 		$this->assign('notice',$notice);
 	  	return view("Userurl/notify_list");
 	}
@@ -403,6 +417,9 @@ class Userurl extends Controller
 			$data[$k]['recomment_money']=$v['recomment_money'];
 			$data[$k]['recomment_desc']=$v['recomment_desc'];
 			$data[$k]['recomment_creat_time']=$v['recomment_creat_time'];
+		}
+		if(!$data){
+			return view("Userurl/no_data");
 		}
 		//Todo 对应事件数据 被推荐用户  操作
 		$this->assign('data',$data);
@@ -565,12 +582,12 @@ class Userurl extends Controller
    * @return [type] [description]
    */
    public function web_freshman_guide(){
+   		$class = NoviceClasss::all();
    		#还款列表
-   		$repaymentList = MemberNovice::list(1);
-   		$this->assign("repaymentList",$repaymentList);
-   		#收款列表
-   		$receivablesList = MemberNovice::list();
-   		$this->assign("receivablesList",$receivablesList);
+   		foreach ($class as $key => $value) {
+   			$class[$key]['repaymentList'] = MemberNovice::list($value['novice_class_id']);
+   		}
+   		$this->assign("class",$class);
     	return view("api/logic/web_freshman_guide");
   }
   #信用卡说明

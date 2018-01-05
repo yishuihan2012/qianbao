@@ -14,50 +14,40 @@
 		<div class="mui-content repayment-history">
 			<!--还款计划列表-->
 			<div id="slider" class="mui-slider">
+				
 				<div id="sliderSegmentedControl" class="mui-slider-indicator mui-segmented-control mui-segmented-control-inverted bg-w">
-					<a class="mui-control-item mui-active" href="#item1mobile">
-						自动还款
-					</a>
-					<a class="mui-control-item" href="#item2mobile">
-						收款
-					</a>
+					@foreach($class as $key=>$value)
+						<a class="mui-control-item @if($key==0) mui-active @endif" href="#item{{$key+1}}mobile">
+							{{$value['novice_class_title']}}
+						</a>
+					@endforeach
+					
 				</div>
-				<div id="sliderProgressBar" class="mui-slider-progress-bar mui-col-xs-6"></div>
+
+				<!-- <div id="sliderProgressBar" class="mui-slider-progress-bar mui-col-xs-6"></div> -->
+				<div id="sliderProgressBar" class="mui-slider mui-col-xs-6"></div>
 				<div class="mui-slider-group">
 					<!--执行中-->
-					<div id="item1mobile" class="mui-slider-item mui-control-content mui-active">
-						<div id="scroll1" class="mui-scroll-wrapper">
+					@foreach($class as $key=>$value)
+					<div id="item{{$key+1}}mobile" class="mui-slider-item mui-control-content @if($key==0) mui-active @endif">
+						<div id="scroll{{$key+1}}" class="mui-scroll-wrapper">
 							<div class="mui-scroll">
 								<ul class="mui-table-view bg-color">
-									@foreach($repaymentList as $k => $v )
-									<li class="mui-table-view-cell mui-collapse bor-bot">
-									  <a class="mui-navigate-right bg-w f16" href="#">
-									  	<span class="bor-left-blue wrap-lr"></span>{{$v['novice_name']}}</a>
-							            <div class="mui-collapse-content">
-							                {!!$v['novice_contents']!!}
-							            </div>
-									</li>
+									@foreach($value['repaymentList'] as $k => $v )
+										<li class="mui-table-view-cell mui-collapse bor-bot">
+										  <a class="mui-navigate-right bg-w f16" href="#">
+										  	<span class="bor-left-blue wrap-lr"></span>{{$v['novice_name']}}</a>
+								            <div class="mui-collapse-content">
+								                {!!$v['novice_contents']!!}
+								            </div>
+										</li>
 									@endforeach
 								</ul>
 							</div>
 						</div>
 					</div>
-					<div id="item2mobile" class="mui-slider-item mui-control-content">
-						<div id="scroll2" class="mui-scroll-wrapper">
-							<div class="mui-scroll">
-								@foreach($receivablesList as $k => $v )
-								<li class="mui-table-view-cell mui-collapse bor-bot">
-								  <a class="mui-navigate-right bg-w f16" href="">
-								  	<span class="bor-left-blue wrap-lr"></span>{{$v['novice_name']}}</a>
-						            <div class="mui-collapse-content">
-						                {!!$v['novice_contents']!!}
-						            </div>
-								</li>
-								@endforeach
-									
-							</div>
-						</div>
-					</div>
+					@endforeach
+					
 				</div>
 			</div>
 		</div>

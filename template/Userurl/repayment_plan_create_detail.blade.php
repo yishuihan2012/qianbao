@@ -44,9 +44,10 @@
 						<span class="iconfont icon-jihua blue-color-th f16"></span>
 				        <span class="blue-color-th f14">{{$key}}</span>
 				       </p>
-				       <p class="invalid-color f-tex-l f14"><span>还款:123元</span><span class="space-lr">|</span><span>消费:1234元</span></p>
+				       <p class="invalid-color f-tex-l f14"><span>还款:{{$list['get']}}元</span><span class="space-lr">|</span><span>消费:{{$list['pay']}}元</span></p>
 					</div>
 					@foreach($list as $v)
+						@if(isset($v['order_status']))
 						<div class="dis-flex-be wrap-bt bor-bot">
 							<p class="f15">
 								@if($v['order_type']==1)
@@ -62,6 +63,7 @@
 							  <span class="iconfont icon-shijian-copy-copy f20 v-m"></span>
 					        </p>
  -->						</div>
+ 						@endif
 					@endforeach
 					
 				</li>

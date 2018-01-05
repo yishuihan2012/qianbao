@@ -31,8 +31,10 @@
 		 <label for="passageway_state" class="col-sm-3 text-right"><b>类型:</b></label>
 		 <div id="passageway_state" class="col-sm-6">
 			 <select name="novice_class" class="form-control">
-				 <option value="0"   @if($info['novice_class'] ==0) selected @endif>收款</option>
-				 <option value="1" @if($info['novice_class'] ==1) selected @endif>自动还款</option>
+			 	@foreach($noviceclass as $k => $v)
+				 <option value="{{$v['novice_class_id']}}" @if($info['novice_class'] == $v['novice_class_id']) selected @endif>{{$v['novice_class_title']}}</option>
+				
+				@endforeach
 			 </select>
 		 </div>		
 	 </div>

@@ -147,7 +147,7 @@ class Article extends Common{
 
 	 #新手指引
 	 public function memberNovice(){
-	 	 $MemberNovice=MemberNovice::paginate(Config::get('page_size'), false, ['query'=>Request::instance()->param()]);
+	 	 $MemberNovice=MemberNovice::with("noviceclass")->paginate(Config::get('page_size'), false, ['query'=>Request::instance()->param()]);
 	 	 $this->assign('button', ['text'=>'新增指引', 'link'=>url('/index/article/noviceCreat')]);
 	 	 $this->assign('MemberNovice',$MemberNovice);
 	 	 return view('admin/article/memberNovice');
@@ -194,7 +194,8 @@ class Article extends Common{
 		 }
 		$id = input("novice_id");
 		$info = MemberNovice::get(Request::instance()->param('novice_id'));
-
+		$noviceclass = NoviceClasss::all();
+	 	$this->assign("noviceclass",$noviceclass);
 		$this->assign("info",$info);
 		return view("admin/article/noviceSave");
 	}

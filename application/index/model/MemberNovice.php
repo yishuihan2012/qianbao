@@ -32,4 +32,10 @@ class MemberNovice extends Model{
       public static function list($data = 0){
         return $list = Db::table("wt_member_novice")->where(['novice_class' => $data])->select();
       }
+
+      #关联模型 一对一关联 (MemberCertification) 用户实名表
+      public function noviceclass()
+      {
+           return $this->hasOne('NoviceClass','novice_class_id','novice_class')->bind('novice_class_title');
+      }
 }

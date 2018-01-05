@@ -28,12 +28,11 @@
 			 <label for="article_show" class="col-sm-2 text-right"><b>内容类型:</b></label>
 			 <div class="col-sm-6" id="article_show">
 				 <ul class="dowebok tags">
-				 	@foreach($noviceclass as $k => $v)
-					  <select name="novice_class" class="form-control">
-				 <option value="0" >收款</option>
-				 <option value="1" >自动还款</option>
-			 </select>
-					@endforeach
+				 <select name="novice_class" class="form-control">
+				@foreach($noviceclass as $k => $v)
+				  	<option value="{{$v->novice_class_id}}" >{{$v->novice_class_title}}</option>
+				@endforeach
+				 </select>
 					 <!-- <li><input type="radio" name="novice_class" @if( !isset($article['article_show']) or $article['article_show']=='1') checked  @endif value="0" data-labelauty="收款" /></li> -->
 				 </ul>
 			 </div>
@@ -60,7 +59,7 @@ $(document).ready(function(){
     $('.menu .nav li.articles-manager').addClass('show');
     //获取二级分类
 	$(".save").click(function(){
-		alert('123');
+		// alert('123');
 /*		if(!$(".article_title").val()){
 			$(".article_title").parent().addClass("has-error");
 			return false;

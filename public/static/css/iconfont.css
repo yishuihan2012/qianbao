@@ -1,6 +1,6 @@
 
 @font-face {font-family: "iconfont";
-  src: url('../fonts/iconfont.ttf?t=1513926288423') format('truetype'); /* chrome, firefox, opera, Safari, Android, iOS 4.2+*/
+  src: url('/static/fonts/iconfont.ttf?t=1514336958920') format('truetype'); /* chrome, firefox, opera, Safari, Android, iOS 4.2+*/
 }
 
 .iconfont {
@@ -10,6 +10,10 @@
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
+
+.icon-android:before { content: "\e617"; }
+
+.icon-quxiao:before { content: "\e634"; }
 
 .icon-my-phone:before { content: "\e60d"; }
 
@@ -25,6 +29,12 @@
 
 .icon-qq:before { content: "\e64e"; }
 
+.icon-gonggao01:before { content: "\e894"; }
+
+.icon-fuli:before { content: "\e6a4"; }
+
+.icon-ios:before { content: "\e629"; }
+
 .icon-icon104:before { content: "\e665"; }
 
 .icon-rili:before { content: "\e657"; }
@@ -39,7 +49,11 @@
 
 .icon-weixin:before { content: "\e616"; }
 
+.icon-Group:before { content: "\e625"; }
+
 .icon-shijian-copy-copy:before { content: "\e600"; }
+
+.icon-zhifuyouwenti:before { content: "\e621"; }
 
 .icon-fuzhi:before { content: "\e9bb"; }
 
