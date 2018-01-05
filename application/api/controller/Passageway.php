@@ -35,10 +35,11 @@
         // $this->param['passageway_also']=1;
          #可用支付通道
          $passageway_lists=Passageways::with('cashout')->where(['passageway_state'=>1,'passageway_also'=>$this->param['passageway_also']])->select();
-         if($this->param['passageway_also']==2){
+         if($this->param['passageway_also']==2){ 
             foreach ($passageway_lists as $key => $value) {
-              $passageway[$key]['item_rate']=PassagewayItem::where(['item_passageway'=>$value['passageway_id']])->order('item_also asc')->value('item_also');
-              $passageway[$key]['item_rate'].="%";
+              $rate=PassagewayItem::where(['item_passageway'=>$value['passageway_id']])->order('item_rate asc')->find();
+              $passageway[$key]['item_rate']=$rate->item_rate.'% + '.$rate->item_charges/100;
+              
               $passageway[$key]['cashout']='单笔交易额度在200-20000之间';
               $passageway[$key]['passageway_id']=$value['passageway_id'];
               $passageway[$key]['passageway_name']=$value['passageway_name'];
@@ -51,8 +52,7 @@
          }else{
             foreach ($passageway_lists as $key => $value) {
               $rate=PassagewayItem::where(['item_passageway'=>$value['passageway_id']])->order('item_rate asc')->find();
-              $passageway[$key]['item_rate']=$rate->item_rate.'+'.$rate->item_charges/100;
-              $passageway[$key]['item_rate'].="%";
+              $passageway[$key]['item_rate']=$rate->item_rate.'% + '.$rate->item_charges/100;
               $passageway[$key]['cashout']='最大交易额度：'.$value['cashout_max'].'最小交易额度：'.$value['cashout_min'];
               $passageway[$key]['passageway_id']=$value['passageway_id'];
               $passageway[$key]['passageway_name']=$value['passageway_name'];
