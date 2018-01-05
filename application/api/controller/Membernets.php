@@ -131,8 +131,10 @@
            foreach ($array as $key => $value){
               $str.=$value;
            } 
+           var_dump($this->passway->passageway_pwd_key.trim($str).$this->passway->passageway_pwd_key);die;
            $signature=md5($this->passway->passageway_pwd_key.trim($str).$this->passway->passageway_pwd_key); //生成签名
-           // $array['sign']=$signature;
+           $array['sign']=$signature;
+
            // $str1="";
            // foreach ($array as $key => $value){
            //    $str1.=$key."=".$value."&";

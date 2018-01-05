@@ -20,7 +20,7 @@
 			      <p class="f24 space-up3 space-bot"><strong>{{$generation['generation_total']}}</strong></p>
 			    </div>
 			    <div class="dis-flex fc">
-			      <p class="invalid-color f16">还款笔数</p>
+			      <p class="invalid-color f16">消费笔数</p>
 			      <p class="f24 space-up3 space-bot"><strong>{{$generation['generation_count']}}</strong></p>
 			    </div>
 			  </div>

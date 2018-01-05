@@ -28,8 +28,13 @@
 			 <label for="article_show" class="col-sm-2 text-right"><b>内容类型:</b></label>
 			 <div class="col-sm-6" id="article_show">
 				 <ul class="dowebok tags">
-					 <li><input type="radio" name="novice_class" @if( isset($article['article_show']) && $article['article_show']=='0') checked  @endif value="1" data-labelauty="自动还款" /></li>
-					 <li><input type="radio" name="novice_class" @if( !isset($article['article_show']) or $article['article_show']=='1') checked  @endif value="0" data-labelauty="收款" /></li>
+				 	@foreach($noviceclass as $k => $v)
+					  <select name="novice_class" class="form-control">
+				 <option value="0" >收款</option>
+				 <option value="1" >自动还款</option>
+			 </select>
+					@endforeach
+					 <!-- <li><input type="radio" name="novice_class" @if( !isset($article['article_show']) or $article['article_show']=='1') checked  @endif value="0" data-labelauty="收款" /></li> -->
 				 </ul>
 			 </div>
 		 </div>
