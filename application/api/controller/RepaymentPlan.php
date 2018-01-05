@@ -155,7 +155,7 @@
                             $data[$key]['range']=substr(sprintf("%.3f", ($value/10)* $also)+$daikou,0,-1);
                             $data[$key]['daikou']=$daikou;
                        }
-                       print_r($data);die;
+                       // print_r($data);die;
                        //写入主计划表
                         $Generation_result=new Generation([
                              'generation_no'          =>uniqidNumber(),//TODO 生成随机代号
@@ -257,7 +257,7 @@
                                  $data[$key]['list'][$k]['dz_money']=round($xiaofei-$xiaofei*$also-$daikou,1, PHP_ROUND_HALF_DOWN);
                             }
                        }
-                       print_r($data);die;
+                       // print_r($data);die;
                         //写入主计划表
                         $Generation_result=new Generation([
                              'generation_no'          =>uniqidNumber(),//TODO 生成随机代号
