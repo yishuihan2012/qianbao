@@ -23,19 +23,21 @@ class Alipaycallback
 
 	 public function callback()
 	 {
-	   //   $data = file_get_contents("php://input");
-    //      // var_dump($data);die;
-    //      file_put_contents('datas0.txt', $data);
-	 	 // $data = trim($data);
-	 	 // file_put_contents('datas1.txt', $data);
-    // 	 $data = json_decode($data, true);
-    // 	 file_put_contents('success.txt',$data['state']);
-    //      var_dump(123);die;
+	     $data = file_get_contents("php://input");
+         file_put_contents('datas0.txt', $data);
+	 	 $data = trim($data);
+	 	 file_put_contents('datas1.txt', $data);
+    	 $data = json_decode($data, true);
+    	 file_put_contents('success.txt',$data['state']);
+         var_dump(123);die;
 	 	 $post['upgrade_member_id']=3;
 	 	 $post['upgrade_group_id']=3;
          // var_dump($post);die;
          // $Alipay=new \app\index\controller\Alipay();
          // $Alipay->callback($data);
+
+         // $Alipay=new \app\index\controller\Alipay();
+         // $data['signedStr']=$Alipay->callback($params);
 
     	 #修改会员等级
     	 $member=Member::where('member_id='.$post['upgrade_member_id'])->update(['member_group_id'=>$post['upgrade_group_id']]);

@@ -41,6 +41,22 @@
 		        	</div>	
 			    </li>-->
 			    <!--收支明细列表-->
+			    @foreach($list as $v)
+			    <li class="mui-table-view-cell bor-bot">
+			        <a href="bills_detail.html">
+			        	<div class="dis-flex-be">
+			        		<div>
+			        			<p class="f16">{{$v['log_form']}}</p>
+			        			<p class="f14 invalid-color space-up3">{{$v['log_add_time']}}</p>
+			        		</div>
+			        		<div class="ftr">
+			        			<p class="f20">{{$v['log_wallet_type']==1 ? '' : '-'}}{{substr($v['log_wallet_amount'],0,-2)}}</p>
+			        			<p class="f14 yellow-color">申请中</p>
+			        		</div>
+			        	</div>
+			        </a>
+			    </li>
+			    @endforeach
 			    <li class="mui-table-view-cell bor-bot">
 			        <a href="bills_detail.html">
 			        	<div class="dis-flex-be">

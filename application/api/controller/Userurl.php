@@ -285,6 +285,8 @@ class Userurl extends Controller
 		foreach ($list as $key => $value) {
 			$data[$value['day_time']][]=$value;
 		}
+		//手续费
+		$order_pound=0;
 		// print_r($data);die;
 		//处理每日累计金额
         foreach($data as $k=>$v){
@@ -296,8 +298,10 @@ class Userurl extends Controller
         		}else if($vv['order_type']==2){
         		  $data[$k]['get']+=$vv['order_money'];
         		}
+        		$order_pound+=$vv['order_pound'];
         	}
         }
+		$this->assign('order_pound',$order_pound);
 		$this->assign('generation',$generation);
 		$this->assign('order',$data);
 	  	return view("Userurl/repayment_plan_detail");
@@ -600,8 +604,13 @@ class Userurl extends Controller
   #收支明细
   public function particulars(){
 	$this->checkToken();
+	$month=date('Y-m');
   	// $withdraw=db('withdraw')->where(['withdraw_member'=>$this->param['uid']])->select();
-  	$wallet_log=db('wallet_log')->where([]);
+  	$list=db('wallet_log')->alias('l')
+  		->join('wallet w','l.log_wallet_id=w.wallet_id')
+  		->where(['w.wallet_member'=>$this->param['uid'],'log_add_time'=>$month])
+  		->select();
+  	$this->assign('list',$list);
   	return view("Userurl/particulars");
   }
 }
