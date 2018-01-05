@@ -43,7 +43,7 @@
 			    <!--收支明细列表-->
 			    @foreach($list as $v)
 			    <li class="mui-table-view-cell bor-bot">
-			        <a href="bills_detail.html">
+			        <a href="" id="{{$v['log_id']}}">
 			        	<div class="dis-flex-be">
 			        		<div>
 			        			<p class="f16">{{$v['log_form']}}</p>
@@ -126,7 +126,7 @@
 		<script type="text/javascript">
 			mui.init();
 			mui('.mui-table-view-cell').on('tap','a',function(){
-		      // window.top.location.href=this.href;
+			  location.href=location.origin+"/api/userurl/bills_detail/log_id/"+this.id+location.search;
 		    });
 			mui.ready(function(){
 				var currYear = (new Date()).getFullYear();	
@@ -145,7 +145,7 @@
 					endYear: currYear + 1, //结束年份
 					onSelect:function(textVale,inst){ //选中时间时触发事件
 					  var checkedMonth = $("#month").val();
-					  location.href=location.origin+location.pathname+'?month='+checkedMonth;
+					  location.href=location.origin+"/api/userurl/particulars/month/"+checkedMonth+location.search;
 					 }
 				};
 			$(".input-reset").mobiscroll($.extend(opt['date'], opt['default']));

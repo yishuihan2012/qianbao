@@ -70,7 +70,8 @@
 		@endforeach
 
 			</ul>
-			<a class="my-btn-blue2" id='sub'>下一步</a>
+			<a class="my-btn-blue2" id='sub' style="position: fixed;bottom: 50px;left: 5%;">下一步</a>
+			<div style="height: 100px"></div>
 		</div>
 		<script src="/static/js/jquery-2.1.4.min.js"></script>
 		<script src="/static/js/mui.min.js"></script>

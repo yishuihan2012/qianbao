@@ -51,7 +51,7 @@
 	      	<td>{{$v['generation_pound']}}</td>
 	      	<td>@if($v['generation_state']==2) 还款中 @elseif($v['generation_state']==3)还款结束 @elseif($v['generation_state']==-1)还款失败 @endif</td>
 	      	
-	      	<td><button class="btn btn-sm" data-toggle="modal" data-remote="/index/Plan/info/id/28.html" type="button">查看详情</button></td>
+	      	<td><button class="btn btn-sm" data-toggle="modal" data-remote="{{url('/index/Plan/info/id/'.$v['order_id'])}}" type="button">查看详情</button></td>
 	    </tr>
 	    	@endforeach
   	</tfoot>

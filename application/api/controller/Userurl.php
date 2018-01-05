@@ -613,6 +613,7 @@ class Userurl extends Controller
   public function particulars($month=null){
 	$this->checkToken();
 	if(!$month)$month=date('Y-m');
+	$month='2017-12';
 	//月初
 	$monthstart=strtotime($month);
 	//月末
@@ -657,6 +658,25 @@ class Userurl extends Controller
   	$this->assign('data',$data);
   	$this->assign('list',$list);
   	return view("Userurl/particulars");
+  }
+  #账单详情
+  # log_id  wallet_log_id
+  public function bills_detail($log_id){
+  	$this->checkToken();
+  	$wallet_log=db('wallet_log')->where('log_id',$log_id)->find();
+  	switch ($wallet_log['log_relation_type']) {
+  		//提现操作
+  		case 2:
+  			$withdraw=db('withdraw')->where('withdraw_id',$v['log_relation_id'])->find();
+  			$this->assign('withdraw',$withdraw);
+  			break;
+  		
+  		default:
+  			# code...
+  			break;
+  	}
+  	$this->assign('wallet_log',$wallet_log);
+  	return view("Userurl/bills_detail");
   }
   #新版本查询 for安卓
   public function check_version($code){
