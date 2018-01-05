@@ -145,25 +145,7 @@
 					endYear: currYear + 1, //结束年份
 					onSelect:function(textVale,inst){ //选中时间时触发事件
 					  var checkedMonth = $("#month").val();
-					  console.log(checkedMonth);
-					  return;
-				      $("#monthContainer").text(checkedMonth);//月份赋值
-				      $("#income").text(222);//收入
-				      $("#expend").text(222);//支出
-				      //选中月份后第一个列表更改
-				      $("#particularsList").html("<li class='mui-table-view-cell bor-bot'>"+
-					        "<a href='bills_detail.html'>"+
-					        	"<div class='dis-flex-be'>"+
-					        		"<div>"+
-					        			"<p class='f16'>邀请注册奖励</p>"+
-					        			"<p class='f14 invalid-color space-up3'>今天10:24</p>"+
-					        		"</div>"+
-					        		"<div>"+
-					        			"<p class='f20'>+2.00</p>"+
-					        		"</div>"+
-					        	"</div>"+
-					        "</a>"+
-					    "</li>");
+					  location.href=location.origin+location.pathname+'?month='+checkedMonth;
 					 }
 				};
 			$(".input-reset").mobiscroll($.extend(opt['date'], opt['default']));

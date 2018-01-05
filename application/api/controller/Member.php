@@ -306,7 +306,7 @@
             'upgrade_type'=>'Alipay',
             'upgrade_no'=>make_order(),
             'upgrade_money'=>$price_diff,
-            'upgrade_bak'=>System::getName('sitename').'会员付费升级成为'.$member_group->group_name,
+            'upgrade_bak'=>System::getName('sitename').$member->member_mobile.'付费升级成为'.$member_group->group_name,
             'upgrade_creat_time'=>date("Y-m-d H:i:s",time())
            );
            Upgrade::insert($params);

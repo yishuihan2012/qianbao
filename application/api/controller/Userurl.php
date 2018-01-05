@@ -610,8 +610,9 @@ class Userurl extends Controller
   	return view("api/logic/card_description");
   }
   #收支明细
-  public function particulars(){
+  public function particulars($month=null){
 	$this->checkToken();
+	if(!$month)$month=date('Y-m');
 	//月初
 	$monthstart=strtotime(date('Y-m'));
 	//月末

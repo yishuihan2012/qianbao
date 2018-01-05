@@ -27,6 +27,8 @@
 	      	<th>剩余总额</th>
 	      	<th>手续费</th>
 	      	<th>计划状态</th>
+	      	<th>订单状态</th>
+	      	<th>订单类型</th>
 	    </tr>
  	</thead>
   	<tbody>
@@ -47,8 +49,8 @@
 	      	<td >{{$v['generation_has']}}</td>
 	      	<td >{{$v['generation_left']}}</td>
 	      	<td >{{$v['generation_pound']}}</td>
-	      	<td >@if($v['generation_pound']==2)还款中 @elseif($v['generation_state']==3)还款结束 @elseif($v['generation_state']==-1)还款失败 @endif</td>
-
+	      	<td >@if($v['generation_state']==2) 还款中 @elseif($v['generation_state']==3)还款结束 @elseif($v['generation_state']==-1)还款失败 @endif</td>
+	      	<td></td>
 	      
 	    </tr>
 	    	@endforeach
