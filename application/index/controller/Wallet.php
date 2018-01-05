@@ -21,6 +21,9 @@ class Wallet extends Common
 		#查询出会员列表
 		$list = Wallets::with('member')->order('wallet_id', 'desc')->paginate(Config::get('page_size'), false, ['query'=>Request::instance()->param()]);
 		$this->assign('list', $list);
+		#统计数据总条数
+		$count =  Wallets::with('member')->order('wallet_id', 'desc')->count();
+		$this->assign("count",$count);
 		return view('admin/wallet/index');
 	}
 

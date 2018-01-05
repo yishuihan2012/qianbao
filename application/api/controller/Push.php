@@ -156,7 +156,7 @@ class Push
             $push->setNotificationAlert($this->message_title);
             $push->iosNotification($this->message_title, [
                     // 'sound' => 'sound.caf', //音频文件
-                    'badge' => '-1', //角标
+                    'badge' => '+1', //角标
                     // 'content-available' => false, //表示推送唤醒
                     // 'mutable-content' => true, //表示通知扩展
                     // 'category' => 'jiguang', //设置 APNs payload 中的 'category' 字段值

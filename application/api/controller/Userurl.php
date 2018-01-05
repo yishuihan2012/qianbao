@@ -16,6 +16,7 @@ use app\index\model\CashOrder;
 use app\index\model\Exclusive;
 use app\index\model\Recomment;
 use app\index\model\Announcement;
+use app\index\model\Notice;
 use app\index\model\MemberNovice; 
 use app\index\model\Passageway; 
 use app\index\model\PassagewayItem; 
@@ -116,28 +117,6 @@ class Userurl extends Controller
 	/**
 	 * @Author   Star(794633291@qq.com)
 	 * @DateTime 2017-12-25T14:10:55+0800
-	 * @version  [用户还款计划确认提交页]
-	 * param   $id  为generation表主键 generation_id
-	 * @return   [type]
-	 */
-	public function repayment_plan_confirm($id){
-		$this->checkToken();
-		$GenerationOrder=GenerationOrder::order('order_money desc')->where('order_no',$id)->find();
-		$creaditcard=MemberCreditcard::where('card_bankno',$GenerationOrder->order_card)->find();
-		$this->assign('generationorder',$GenerationOrder);
-		$this->assign('creaditcard',$creaditcard);
-		return view("Userurl/repayment_plan_confirm");
-	}
-	  //确认执行还款计划
-	  //$id  为generation表主键 generation_id
-	  public function confirmPlan($id){
-		$this->checkToken();
-		$res=Generation::update(['generation_id'=>$id,'generation_state'=>2]);
-		return json_encode($res ? ['code'=>200] : ['code'=>472,'msg'=>get_status_text(472)]);
-	  }
-	/**
-	 * @Author   Star(794633291@qq.com)
-	 * @DateTime 2017-12-25T14:10:55+0800
 	 * @version  [用户还款计划]
 	 * @return   [type]
 	 */
@@ -165,8 +144,9 @@ class Userurl extends Controller
 	 * @return   [type]
 	 */
 	public function repayment_history(){
-		// $this->checkToken();
+		$this->checkToken();
 		#进行中
+		// $this->param['uid']=16;
 		$generation=Generation::with('creditcard')->where(['generation_member'=>$this->param['uid'],'generation_state'=>2])->select();
 
 		foreach ($generation as $key => $value) {
@@ -198,13 +178,14 @@ class Userurl extends Controller
 	/**
 	 * @Author   Star(794633291@qq.com)
 	 * @DateTime 2017-12-25T14:10:55+0800
-	 * @version  [还款计划详情]
+	 * @version  [还款计划创建 #1]
+	 * @version  [还款计划创建下一步后显示的详情页]
 	 * @return   [type]
 	 */
 
-	public function repayment_plan_detail(){
+	public function repayment_plan_create_detail(){
 		$this->checkToken();
-		$order_no=$this->param['order_no']=53;
+		$order_no=$this->param['order_no'];
 		$order=array();
 		$generation=Generation::with('creditcard')->where(['generation_id'=>$order_no])->find();
 		$order=GenerationOrder::where(['order_no'=>$order_no])->order('order_time','asc')->select();
@@ -214,7 +195,78 @@ class Userurl extends Controller
 			$list[$key]=$value;
 			$list[$key]['day_time']=date("m月d日",strtotime($value['order_time']));
 			$list[$key]['current_time']=date("H:i",strtotime($value['order_time']));
+		}
+		$data=[];
+		foreach ($list as $key => $value) {
+			$data[$value['day_time']][]=$value;
+		}
+		// print_r($data);die;
+		$sum=[];
+        foreach($data as $k=>$v){
+        		$sum[$k]=[];
+        		$sum[$k]['pay']=0;
+        	foreach ($v as $key => $vv) {
+        		if($vv['order_type']==1){
+        		  $sum[$k]['pay']+=$vv['order_money'];
+        		}else if($vv['order_type']==2){
+        		  $sum[$k]['get']=$vv['order_money'];
+        		}
+        	}
+        }
+        // print_r($sum);die;
+        $this->assign('sum',$sum);
+		$this->assign('generation',$generation);
+		$this->assign('order',$data);
+	  	return view("Userurl/repayment_plan_create_detail");
+	}
+	/**
+	 * @Author   Star(794633291@qq.com)
+	 * @DateTime 2017-12-25T14:10:55+0800
+	 * @version  [还款计划创建 #2]
+	 * @version  [用户还款计划确认提交页]
+	 * param   $id  为generation表主键 generation_id
+	 * @return   [type]
+	 */
+	public function repayment_plan_confirm($id){
+		$this->checkToken();
+		$GenerationOrder=GenerationOrder::order('order_money desc')->where('order_no',$id)->find();
+		$creaditcard=MemberCreditcard::where('card_bankno',$GenerationOrder->order_card)->find();
+		$this->assign('generationorder',$GenerationOrder);
+		$this->assign('creaditcard',$creaditcard);
+		return view("Userurl/repayment_plan_confirm");
+	}
+	  //确认执行还款计划
+	  //$id  为generation表主键 generation_id
+	  public function confirmPlan($id){
+		$this->checkToken();
+		$res=Generation::update(['generation_id'=>$id,'generation_state'=>2]);
+		return json_encode($res ? ['code'=>200] : ['code'=>472,'msg'=>get_status_text(472)]);
+	  }
+	  #还款计划提交成功提示页
+	  #@version  [还款计划创建 #3]
+	  #
+	  public function repayment_plan_success(){
+		return view("Userurl/repayment_plan_success");
+	  }
+	/**
+	 * @Author   Star(794633291@qq.com)
+	 * @DateTime 2017-12-25T14:10:55+0800
+	 * @version  [还款计划详情]
+	 * @return   [type]
+	 */
 
+	public function repayment_plan_detail(){
+		$this->checkToken();
+		$order_no=$this->param['order_no'];
+		$order=array();
+		$generation=Generation::with('creditcard')->where(['generation_id'=>$order_no])->find();
+		$order=GenerationOrder::where(['order_no'=>$order_no])->order('order_time','asc')->select();
+		foreach ($order as $key => $value) {
+			$value=$value->toArray();
+			// print_r($value);die;
+			$list[$key]=$value;
+			$list[$key]['day_time']=date("m月d日",strtotime($value['order_time']));
+			$list[$key]['current_time']=date("H:i",strtotime($value['order_time']));
 		}
 		$data=[];
 		foreach ($list as $key => $value) {
@@ -247,6 +299,8 @@ class Userurl extends Controller
 	 */
 	 public function notify(){
 		 $this->checkToken();
+	 	$count=Notice::where(['notice_recieve'=>$this->param['uid'],'notice_status'=>0])->count();
+		$this->assign('count',$count);
 	  	return view("Userurl/notify");
 	 }
 	/**
@@ -257,8 +311,9 @@ class Userurl extends Controller
 	 */
 	public function notify_list(){
 		$this->checkToken();
-		$Announcement=Announcement::where(['announcement_status'=>1])->order('announcement_id desc')->select();
-		$this->assign('announcement',$Announcement);
+		// $Announcement=Announcement::where(['announcement_status'=>1])->order('announcement_id desc')->select();
+		$notice=Notice::where(['notice_recieve'=>$this->param['uid']])->order('notice_status,notice_createtime')->select();
+		$this->assign('notice',$notice);
 	  	return view("Userurl/notify_list");
 	}
 	/**
@@ -270,8 +325,9 @@ class Userurl extends Controller
 	 */
 	public function notify_list_detail($id){
 		$this->checkToken();
-		$Announcement=Announcement::get($id);
-		$this->assign('announcement',$Announcement);
+		$notice=Notice::get($id);
+		$notice->save(['notice_status'=>1]);
+		$this->assign('notice',$notice);
 	  	return view("Userurl/notify_list_detail");
 	}
 	/**

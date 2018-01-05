@@ -308,6 +308,7 @@
              $tmp=GenerationOrder::where(['order_card'=>$value['card_bankno'],'order_status'=>1])->find();
              // $data[$key]['isInRepaySchedule']=empty($value['repayment_repayment']) ? 0 : 1 ;
              $data[$key]['isInRepaySchedule']=empty($tmp) ? 0 : 1 ;
+             $data[$key]['order_no']=empty($tmp) ? 0 : $tmp['order_no'] ;
             }
            return ['code'=>200, 'msg'=>'获取信用卡列表成功~', 'data'=>$data];
       }

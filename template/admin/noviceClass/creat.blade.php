@@ -25,14 +25,10 @@ hr{margin:0 5px!important;}
 
                      <div class="row form-group">
                       <label for="announcement_title" class="col-sm-2 text-right"><b>标题</b></label>
-                      <div id="announcement_title" class="col-sm-6"><input type="text" class="form-control announcement_title" name="announcement_title" placeholder="标题" value=""></div>
+                      <div id="announcement_title" class="col-sm-6"><input type="text" class="form-control announcement_title" name="novice_class_title" placeholder="标题" value=""></div>
                      </div>
 
-                     <div class="row form-group">
-                      <label for="announcement_content" class="col-sm-2 text-right"><b>内容</b></label>
-                      <div id="announcement_content" class="col-sm-6"><textarea type="text" class="form-control announcement_content" name="announcement_content" placeholder="内容" value=""></textarea>
-                      </div>
-                     </div>
+                     
                     
                   <div class="row">
                 <h4></h4>
@@ -54,10 +50,7 @@ hr{margin:0 5px!important;}
 
     return false;
   }
-  if($("[name='announcement_content']").val()==''){
-     $("[name='announcement_content']").css("border","1px solid red");
-    return false;
-  }
+  
  }
   $("input").click(function(){
     $(this).css("border","1px solid #3280fc");

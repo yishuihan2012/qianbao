@@ -118,8 +118,6 @@
         $member=MemberNets::where(['net_member_id'=>$pay['order_member']])->find();
         // print_r($member);die;
         // print_r($pay);die;
-        #5:获取用户基本信息
-        $member_base=Member::where(['member_id'=>$pay['order_member']])->find();
         $params=array(
           'mchNo'=>$merch->passageway_mech, //机构号 必填  由平台统一分配 16
           'userNo'=>$member->LkYQJ,  //平台用户标识  必填  平台下发用户标识  32
@@ -137,23 +135,17 @@
         // print_r($params);die;
         // $params,$mechid,$url,$iv,$secretkey,$signkey,$type=0
         $income=repay_request($params,$merch->passageway_mech,'http://pay.mishua.cn/zhonlinepay/service/rest/creditTrans/payBindCard',$merch->iv,$merch->secretkey,$merch->signkey);
-        //后四位银行卡尾号
-        $card_num=substr($pay['order_card'],-4);
         if($income['code']=='200'){
           $arr['back_tradeNo']=$income['tradeNo'];
           $arr['back_statusDesc']=$income['statusDesc'];
           $arr['back_status']=$income['status'];
           $arr['order_status']='2';
           $generation['generation_state']=3;
-          //成功极光推送。
-          jpush($pay['order_member'],'还款计划扣款成功通知',"您制定的尾号{$card_num}的还款计划成功扣款{$pay['order_money']}元，在APP内还款计划里即可查看详情。");
         }else{
           $arr['back_statusDesc']=$income['message'];
           $arr['back_status']='FAIL';
           $arr['order_status']='-1';
           $generation['generation_state']=-1;
-          // 失败，短信通知
-          send_sms($member_base->member_mobile,"您制定的尾号{$card_num}的还款计划执行失败，在APP内还款计划里即可查看详情。");
         }
         //添加执行记录
         GenerationOrder::where(['order_id'=>$pay['order_id']])->update($arr);
@@ -231,20 +223,16 @@
           'feeAmt'=>0,//提现单笔手续费   需与用户入网信息保持一致  整型(4,0)
         );
         $income=repay_request($params,$merch->passageway_mech,'http://pay.mishua.cn/zhonlinepay/service/rest/creditTrans/transferApply',$merch->iv,$merch->secretkey,$merch->signkey);
-        $card_num=substr($pay['order_card'],-4);
         if($income['code']=='200'){
           $arr['back_tradeNo']=$income['orderNo'];
           $arr['back_status']=$income['status'];
           $arr['back_statusDesc']=$income['statusDesc'];
           $arr['order_status']='2';
-           //成功极光推送。
-          jpush($pay['order_member'],'还款成功通知',"您制定的尾号{$card_num}的还款计划成功还款{$pay['order_money']}元，在APP内还款计划里即可查看详情。");
         }else{
           $arr['back_status']='FAIL';
           $arr['back_statusDesc']=$income['message'];
           $arr['order_status']='-1';
-          // 失败，短信通知
-          send_sms($member_base->member_mobile,"您制定的尾号{$card_num}的还款计划还款失败，在APP内还款计划里即可查看详情。");
+          
         }
         //更新订单状态
         GenerationOrder::where(['order_id'=>$pay['order_id']])->update($arr);

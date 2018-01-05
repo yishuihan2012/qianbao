@@ -16,9 +16,11 @@
 			    <li class="mui-table-view-cell mui-media bor-bot">
 			        <a class="mui-navigate-right" id="toNotifyList" href="/api/userurl/notify_list/uid/{{$uid}}/token/{{$token}}">
 			        	<img class="mui-media-object mui-pull-left" src="/static/images/message_notice.png">
-			        	<div class="mui-media-body">平台公告</div>
+			        	<div class="mui-media-body">系统通知</div>
 			        	<!--有消息通知时显示-->
-			        	<span class="mui-badge  mui-badge-red">1</span>
+			        	@if($count!=0)
+			        	<span class="mui-badge  mui-badge-red">{{$count}}</span>
+			        	@endif
 			        </a>
 			    </li>
 			    <li class="mui-table-view-cell mui-media bor-bot">

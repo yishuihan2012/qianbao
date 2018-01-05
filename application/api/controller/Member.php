@@ -30,6 +30,7 @@
  use app\index\model\Recomment;
  use app\index\model\Commission;
  use app\index\model\Upgrade;
+ use app\index\model\Notice;
  use app\index\model\Announcement;
  
  class Member 
@@ -93,7 +94,9 @@
            #查询用户储蓄卡
            $CashCard=MemberCashcard::where(['card_member_id'=>$this->param['uid'],'card_state'=>1])->find();
            $data['cashcardinfo']=$CashCard['card_bankname'].' 尾号'.substr($CashCard['card_bankno'], -4); 
-           $data['hasmessage']=1; 
+           //是否存在未读消息
+           $msg=Notice::where(['notice_recieve'=>$member['member_id'],'notice_status'=>0])->find();
+           $data['hasmessage']=$msg ? 1 : 0 ; 
            return ['code'=>200, 'msg'=>'获取成功~', 'data'=>$data];
       }
 
@@ -462,7 +465,10 @@
       **/
       public function get_team()
       { 
+
+      	$membercert=Members::where(['member_id'=>$this->param['uid']])->find();
            $group=MemberGroup::select();
+           // var_dump($group);die;
            $data['totalChildAmount']=0;
            foreach ($group as $key => $value) {
              $data['list'][$key]['levelName']=$value['group_name'];
@@ -470,16 +476,18 @@
              $data['list'][$key]['levelIcon']=$value['group_thumb'];
              $data['list'][$key]['childAmount']=0;
              $data['list'][$key]['grandChildAmount']=0;
-             $MemberRelation_1rd=MemberRelation::where("relation_parent_id={$this->param['uid']}")->select();
+             $MemberRelation_1rd=MemberRelation::where(["relation_parent_id"=>$this->param['uid']])->select();
+
              foreach ($MemberRelation_1rd as $k => $val) {
-                $member[$k]=Members::with('membergroup')->where('member_id='.$val['relation_member_id'])->find();
+                $member[$k]=Members::with('membergroup')->where(['member_id'=>$val['relation_member_id']])->find();
+                             // return ['code'=>200, 'msg'=>'信息反馈成功~','data'=>$member];
                 if($member[$k]['group_id']==$value['group_id']){
                   $data['list'][$key]['childAmount']+=1;
                 } 
 
-                $member_2rd[$k]=MemberRelation::where('relation_parent_id='.$member[$k]['member_id'])->select();
+                $member_2rd[$k]=MemberRelation::where(['relation_parent_id'=>$member[$k]['member_id']])->select();
                 foreach ($member_2rd[$k] as $k1 => $val1) {
-                    $member_3rd[$k1]=Members::with('membergroup')->where('member_id='.$val1['relation_member_id'])->find();
+                    $member_3rd[$k1]=Members::with('membergroup')->where(['member_id'=>$val1['relation_member_id']])->find();
                     if($member_3rd[$k1]['group_id']==$value['group_id']){
                     $data['list'][$key]['grandChildAmount']+=1;
                   } 
@@ -490,6 +498,7 @@
              $data['list'][$key]['grossChildAmount']=$data['list'][$key]['grandChildAmount']+$data['list'][$key]['childAmount'];
              #总人数
              $data['totalChildAmount']+=$data['list'][$key]['grossChildAmount'];
+             $data['member_cert']=$membercert['member_cert'];
            }
           
          return ['code'=>200, 'msg'=>'信息反馈成功~','data'=>$data];
@@ -505,8 +514,6 @@
       public function get_team_info()
       { 
 
-
-
         if(!isset($this->param['group_id']) || empty($this->param['group_id']) || !isset($this->param['member_cert']))
             $this->error=314;
 
@@ -516,7 +523,7 @@
           if($array['member_cert']=='all'){
             $member_info=array();
             #查询出我的所有下级
-            $MemberRelation_1rd=MemberRelation::with('memberp')->where("relation_parent_id={$this->param['uid']}")->select();
+            $MemberRelation_1rd=MemberRelation::haswhere('memberp',['member_group_id'=>$this->param['group_id']])->where(['relation_parent_id'=>$this->param['uid']])->select();
             if(!empty($MemberRelation_1rd)){
             foreach ($MemberRelation_1rd as $key => $value) {
                   $member_1rd=Members::where(['member_id'=>$value['relation_member_id']])->field('member_id,member_image, member_mobile, member_creat_time, member_cert')->find();
@@ -526,7 +533,9 @@
                     $member_1rd['member_cert']='已认证';
                   }
                   $member_info[]=$member_1rd;
-                  $MemberRelation_2rd=MemberRelation::with('memberp')->where('relation_parent_id='.$member_1rd['member_id'])->select();
+                  $MemberRelation_2rd=MemberRelation::haswhere('memberp',['member_group_id'=>$this->param['group_id']])->where('relation_parent_id='.$member_1rd['member_id'])->select();
+
+
                     if(!empty($MemberRelation_2rd)){
                       foreach ($MemberRelation_2rd as $k => $val) {
                            $member_2rd=Members::where(['member_id'=>$val['relation_member_id']])->field('member_id,member_image, member_mobile, member_creat_time, member_cert')->find();
@@ -538,12 +547,13 @@
                            $member_info[]=$member_2rd;
                       }
                     } 
+
             }
             }
           }else{
              $member_info=array();
              #查询出我的所有下级
-             $MemberRelation_1rd=MemberRelation::with('memberp')->where("relation_parent_id={$this->param['uid']}")->select();
+             $MemberRelation_1rd=MemberRelation::haswhere('memberp',['member_group_id'=>$this->param['group_id']])->where("relation_parent_id={$this->param['uid']}")->select();
              if(!empty($MemberRelation_1rd)){
                foreach ($MemberRelation_1rd as $key => $value) {
                    $member_1rd=Members::where(['member_id'=>$value['relation_member_id']])->field('member_id,member_image, member_mobile, member_creat_time, member_cert')->find();
@@ -557,10 +567,12 @@
 
                      $member_info[]=$member_1rd;
                       }
-                     $MemberRelation_2rd=MemberRelation::with('memberp')->where('relation_parent_id='.$member_1rd['member_id'])->select();
+                     $MemberRelation_2rd=MemberRelation::haswhere('memberp',['member_group_id'=>$this->param['group_id']])->where('relation_parent_id='.$member_1rd['member_id'])->select();
                     if(!empty($MemberRelation_2rd)){
                       foreach ($MemberRelation_2rd as $k => $val) {
                            $member_2rd=Members::where(['member_id'=>$val['relation_member_id'],'member_cert'=>$array['member_cert']])->field('member_id,member_image, member_mobile, member_creat_time, member_cert')->find();
+
+
                            if($member_2rd['member_cert']==$array['member_cert']){
                              if($member_2rd['member_cert']==0){
                                 $member_2rd['member_cert']='未认证';

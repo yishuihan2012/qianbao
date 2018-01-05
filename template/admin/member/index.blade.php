@@ -45,8 +45,51 @@
 </form>
 </blockquote>
  <hr/>
-
- <div class="row">
+<div class="items items-hover">
+     
+<table class="table table-striped table-hover">
+    <thead>
+      <tr>
+          <th>ID</th>
+          <th>用户名</th>
+          <th>手机号码</th>
+          <th>用户头像</th>
+          <th>是否实名</th>
+          <th>会员等级</th>
+          <th>注册时间</th>
+          <th>登录状态</th>
+          <th>操作</th>
+      </tr>
+  </thead>
+    <tbody>
+    @foreach($member_list as $val)
+      <tr>
+          <td>{{$val->member_id}}</td>
+          <td>{{$val->member_nick}}</td>
+          <td>{{$val->member_mobile}}</td>
+          <td><img src="{{$val->member_image}}" data-toggle="lightbox"  class="img-circle" style="max-width: 50px;"></td>
+          <td>{{state_preg($val->member_cert,1,'实名')}}</td>
+          <td>{{$val->group_name}}</td>
+          <td>{{$val->member_creat_time}}</td>
+          <td>@if($val->login_state==1)正常@else封停@endif
+                </td>
+          <td>
+            <div class="btn-group">
+            <button class="btn btn-sm" data-toggle="modal" data-remote="{{url('/index/member/info/id/'.$val->member_id)}}"  type="button">查看详情</button>
+                <button class="btn btn-sm" type="button">升级会员</button>
+        </div>
+          </td>
+      </tr>
+  @endforeach
+    </tbody>
+    <tfoot>
+      <tr>
+          <td colspan="7">{!! $member_list->render() !!}</td>
+          <td colspan="7" style="line-height: 55px">当前共<em style="font-size: 20px;color:red">{{$count}}</em>条记录</td>
+      </tr>
+    </tfoot>
+</table>
+<!--  <div class="row">
       @foreach ($member_list as $list)
       <div class="col-sm-2">
            <a class="card" href="###" class="btn btn-default btn-sm">
@@ -71,9 +114,9 @@
            </a>
       </div>
       @endforeach
-</div>
+</div> -->
 
-{!! $member_list->render() !!}<em>当前共{{$count}}条</em>
+<!-- {!! $member_list->render() !!}<em>当前共{{$count}}条</em> -->
  <script type="text/javascript">
  $(document).ready(function(){
       $('table.datatable').datatable({sortable: true});
@@ -155,5 +198,6 @@ $('.clearTime').click(begin_end_time_clear);
     font-size: .6rem;
     padding: 0 5px;
    }
+
  </style>
  @endsection

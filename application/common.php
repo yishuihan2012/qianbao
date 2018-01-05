@@ -230,9 +230,9 @@
  // @datatime 2018-1-1 14:08
  // @description 返回24小时制的小时
  //-----------------------------------------------------------
- function get_hours($begin=9,$end=19)
+ function get_hours()
  {
-      $hours=rand($begin,$end);
+      $hours=rand(9,19);
       return $hours<10 ? '0'.$hours : $hours;
  }
  //-----------------------------------------------------------
@@ -241,9 +241,9 @@
  // @datatime 2018-1-1 14:08
  // @description 返回60分钟内的随机分钟
  //-----------------------------------------------------------
- function get_minites($begin=1,$end=59)
+ function get_minites()
  {
-      $minites=rand($begin,$end);
+      $minites=rand(1,59);
       return $minites<10 ? '0'.$minites : $minites;
  }
 
@@ -831,8 +831,8 @@ function pad_or_unpad($str, $ext,$pad='pkcs5')
       return $arr;
     }
     //极光推送  指定用户单条推送
-    // uid 用户id   title 标题  content 内容  [item 链接]
-    function jpush($uid=null,$title=null,$content=null,$item=null){
+    // uid 用户id   title 标题  content 内容  [item 链接] [type 类型]
+    function jpush($uid=null,$title=null,$content=null,$item=null,$type=null){
       $jpush=new con\Push();
       if($uid && $title && $content){
         //获取registration_id
@@ -894,4 +894,8 @@ function pad_or_unpad($str, $ext,$pad='pkcs5')
     #生成日期格式的纯数字随机单号
     function uniqidNumber(){
       return date('YmdHis').mt_rand(10000,99999);
+    }
+    #判断图片地址是否存在
+    function  judgeimg($url){
+      return @file_get_contents($url);
     }

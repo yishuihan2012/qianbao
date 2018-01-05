@@ -357,7 +357,7 @@ return [
         'sign_type'    =>"RSA2",
         'format'       =>"json",
         'timeout_express' =>"30m",
-        'notify_url'       =>"http://gongke.iask.in:21339/index/Alipaycallback/callback",
+        'notify_url'       =>"http://huiqianbao.lianshuopay.com/index/Alipaycallback/callback",
         'login_url'       =>"http://gongke.iask.in:21339/api/Alipay/users",
         'product_code'    =>"QUICK_MSECURITY_PAY",
         'pid'             =>"2088421433746925",

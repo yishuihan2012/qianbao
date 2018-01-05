@@ -20,6 +20,9 @@
 	 {
 		 #查询出会员用户组列表
 	 	 $list = MemberGroups::order('group_id', 'desc')->paginate(Config::get('page_size'));
+	 	 #统计数据
+	 	 $count = MemberGroups::order('group_id')->count();
+	 	 $this->assign("count",$count);
 		 #查询出所有用户组
 		 $lists = MemberGroups::all();
 	      #数据传递给视图

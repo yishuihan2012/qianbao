@@ -2,7 +2,7 @@
 <html>
 	<head>
 		<meta charset="UTF-8">
-		<title>公告详情</title>
+		<title>通知详情</title>
 		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
 		<link href="/static/css/mui.min.css" rel="stylesheet" />
 		<link href="/static/css/iconfont.css" rel="stylesheet" />
@@ -13,10 +13,10 @@
 	<body>
 		<div class='mui-content wrap3'>
 			<div class="wrap3 bg-w bor f-br2">
-				<h4>{{$announcement['announcement_title']}}</h4>
-				<p>{{$announcement['announcement_createtime']}}</p>
+				<h4>{{$notice['notice_title']}}</h4>
+				<p>{{$notice['notice_createtime']}}</p>
 				<div class="space-up">
-					{{$announcement['announcement_content']}}
+					{{$notice['notice_content']}}
 				</div>
 			</div>
 			<!--div class="wrap3 bg-w bor f-br2">
