@@ -23,19 +23,19 @@ class Alipaycallback
 
 	 public function callback()
 	 {
-	     $data = file_get_contents("php://input");
-         // var_dump($data);die;
-         file_put_contents('datas0.txt', $data);
-	 	 $data = trim($data);
-	 	 file_put_contents('datas1.txt', $data);
-    	 $data = json_decode($data, true);
-    	 file_put_contents('success.txt',$data['state']);
-         var_dump(123);die;
-	 	 $post['upgrade_member_id']=16;
+	   //   $data = file_get_contents("php://input");
+    //      // var_dump($data);die;
+    //      file_put_contents('datas0.txt', $data);
+	 	 // $data = trim($data);
+	 	 // file_put_contents('datas1.txt', $data);
+    // 	 $data = json_decode($data, true);
+    // 	 file_put_contents('success.txt',$data['state']);
+    //      var_dump(123);die;
+	 	 $post['upgrade_member_id']=3;
 	 	 $post['upgrade_group_id']=3;
          // var_dump($post);die;
-         $Alipay=new \app\index\controller\Alipay();
-         $Alipay->callback($data);
+         // $Alipay=new \app\index\controller\Alipay();
+         // $Alipay->callback($data);
 
     	 #修改会员等级
     	 $member=Member::where('member_id='.$post['upgrade_member_id'])->update(['member_group_id'=>$post['upgrade_group_id']]);
@@ -53,12 +53,12 @@ class Alipaycallback
     	 $member_info=MemberCert::where('cert_member_id='.$post['upgrade_member_id'])->find();
 
     	 #执行修改入网信息
-    	 $arr=mishuaedit($passageway, $rate, $member_info, $member['member_mobile'], $member_net[$passageway['passageway_no']]);
+    	 // $arr=mishuaedit($passageway, $rate, $member_info, $member['member_mobile'], $member_net[$passageway['passageway_no']]);
          // var_dump($arr);die;
-    	 $add_net=MemberNet::where('net_member_id='.$post['upgrade_member_id'])->update($arr);
+    	 // $add_net=MemberNet::where('net_member_id='.$post['upgrade_member_id'])->update($arr);
 
          $commission=new \app\api\controller\Commission();
-         $commission->MemberCommis($post['upgrade_member_id'],$post['price'],'会员付费升级');
+         $commission->MemberCommis($post['upgrade_member_id'],'100','会员付费升级');
 
 	 }
 

@@ -2,7 +2,7 @@
 <html>
 	<head>
 		<meta charset="UTF-8">
-		<title>暂无数据</title>
+		<title>动账交易列表</title>
 		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
 		<link href="/static/css/mui.min.css" rel="stylesheet" />
 		<link href="/static/css/iconfont.css" rel="stylesheet" />

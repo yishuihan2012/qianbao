@@ -120,7 +120,7 @@
                  'data'        =>$passParam,//请求报文加密
                  'v'             =>"2.0",//接口版本号
                  'session'  =>'d0hidia512nuh1nv787pz0zideacfuew',
-                 // 'target_appid' =>$this->passway->passageway_mech,
+                 'target_appid' =>'400467885',
                  'timestamp'  =>date("Y-m-d H:i:s",time()),
             );
            // var_dump($array);die;
@@ -132,7 +132,7 @@
               $str.=$value;
            } 
            $signature=md5($this->passway->passageway_pwd_key.trim($str).$this->passway->passageway_pwd_key); //生成签名
-           $array['sign']=$signature;
+           // $array['sign']=$signature;
            // $str1="";
            // foreach ($array as $key => $value){
            //    $str1.=$key."=".$value."&";
@@ -147,7 +147,6 @@
            // curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, FALSE); // https请求 不验证证书和hosts
            // curl_setopt($curl, CURLOPT_SSL_VERIFYHOST, FALSE);
            // $result = curl_exec($curl);
-           dump($array);die;
            $result=curl_post('https://test.masget.com:7373/openapi/rest','post',$array);
            dump($result);die;
 

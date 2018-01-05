@@ -8,7 +8,8 @@
 namespace app\index\controller;
 use app\index\model\Article as Articles;
 use app\index\model\ArticleCategory as ArticleCategorys;
-use app\index\model\MemberNovice; 
+use app\index\model\MemberNovice;
+use app\index\model\NoviceClass as NoviceClasss; 
 use think\Controller;
 use think\Request;
 use think\Session;
@@ -155,7 +156,8 @@ class Article extends Common{
 	 #新增新手指引
 	 public function noviceCreat(){
 	 	 if(Request::instance()->isPost()){
-	 	 	dump("!23");
+	 	 	// dump("!23");
+
 	 		 $MemberNovice = new MemberNovice($_POST);
 			 $result = $MemberNovice->allowField(true)->save();
 			 #数据是否提交成功
@@ -164,6 +166,8 @@ class Article extends Common{
 			 #重定向控制器 跳转到列表页
 			 $this->redirect('/index/article/memberNovice');die;
 	 	 }
+	 	 $noviceclass = NoviceClasss::all();
+	 	 $this->assign("noviceclass",$noviceclass);
 	 	 return view('admin/article/noviceCreat');
 	 }
 	/**

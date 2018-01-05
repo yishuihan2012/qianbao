@@ -1,69 +1,70 @@
-@extends('admin/layout/layout_main')
-@section('title','添加公告')
-@section('wrapper')
-  <!--dialog Title-->
-<link rel="stylesheet" href="/static/css/jquery-labelauty.css">
-<style>
-input.labelauty + label > span.labelauty-unchecked-image{background-image: url( /static/images/input-unchecked.png );}
-input.labelauty + label > span.labelauty-checked-image{background-image: url( /static/images/input-checked.png );}
-.dowebok {padding-left: 3px;}
-.dowebok ul { list-style-type: none;}
-.dowebok li { display: inline-block;}
-.dowebok li { margin: -3px 20px -10px 0px}
-.dowebok label{margin-bottom: 0}
-input.labelauty + label { font: 12px "Microsoft Yahei";}
-.input-group{padding-left: 30px!important;}
-.input-group input,.input-group select{width:auto!important; height: 28px; font-size: 12px; padding: 0 5px;}
-.input-group-btn{font-size: 14px;}
-.form-group{margin-bottom: 10px; margin-top: 10px}
-hr{margin:0 5px!important;}
-</style>
+ <!--dialog Title-->
+ <div class="modal-header animated fadeInLeft">
+   <div class="row">
+           <div class="col-sm-8"><h4></h4></div>
+           <div class="col-sm-4">
+               <div class="text-right">
+                   <span class="label label-dot"></span>
+                   <span class="label label-dot label-primary"></span>
+                   <span class="label label-dot label-success"></span>
+                   <span class="label label-dot label-info"></span>
+                   <span class="label label-dot label-warning"></span>
+                   <span class="label label-dot label-danger"></span>
+               </div>
+           </div>
+       </div>
+ </div>
 
-<div class="tab-content">
-                <div class="tab-pane fade active in" id="tab2Content1">
-                  <form action="" method="post" class="form-horizontal" id="myform"  onsubmit="return verification()">
-
-                     <div class="row form-group">
-                      <label for="announcement_title" class="col-sm-2 text-right"><b>标题</b></label>
-                      <div id="announcement_title" class="col-sm-6"><input type="text" class="form-control announcement_title" name="novice_class_title" placeholder="标题" value=""></div>
-                     </div>
-
-                     
-                    
-                  <div class="row">
-                <h4></h4>
-                 <div class="col-sm-7 text-center"><button type="submit" class="btn btn-primary save">保存</button></div>
-                </div>
-                </div>
-</form>
-<div class="bodys"></div>
-<div class="alert">
-    <span class="hint"></span><br>
-    <button class="determine">确定</button>
+ <!--dialog Content-->
+ <div class="modal-content animated fadeInLeft">
+   <form action="{{url('/index/novice_class/creat')}}" method="post" class="form-horizontal" id="myform">
+   <h2></h2>
+   <div class="row form-group">
+     <label for="generalize_title" class="col-sm-3 text-right"><b>标题:</b></label>
+     <div class="col-sm-6" id="generalize_title">
+       <input type="text" class="form-control generalize_title" name="novice_class_title" placeholder="请填写标题" value="">
+     </div>   
+   </div>
+   <h2></h2>
+   </form>
 </div>
 
- <script type="text/javascript">
-  //验证form表单
-  function verification(){
-  if($("[name='announcement_title']").val() == ''){
-   $("[name='announcement_title']").css("border","1px solid red");
+ <!--dialog Button-->
+ <div class="modal-footer animated fadeInLeft">
+   <button type="button" class="btn btn-primary save">保存</button>
+      <button type="button" class="btn" data-dismiss="modal">关闭</button>
+ </div>
 
-    return false;
-  }
-  
- }
-  $("input").click(function(){
-    $(this).css("border","1px solid #3280fc");
- })
- $(document).ready(function(){
-    $('.menu .nav .active').removeClass('active');
-    $('.menu .nav li.setting-announcement').addClass('active');
-    $('.menu .nav li.system-setting').addClass('show');
+ <script>
+
+ //上传文件设置
+ $('#uploaderExample3').uploader({
+      url: "{{url('/index/Tool/upload_one')}}",
+   file_data_name:'generalize',
+   filters:{ max_file_size: '10mb',},
+   limitFilesCount:3,
+   onFileUploaded(file, responseObject) {
+
+         attr=eval('('+responseObject.response+")");
+         console.log(attr);
+         // attr.code ?  bootbox.alert({ message: attr.msg, size: 'small' }): $(".generalize_thumb").val('attr.url');
+         var generalize_thumb = $(".generalize_thumb").val()
+         if( generalize_thumb == ''){
+          $(".generalize_thumb").val(attr.url);
+          bootbox.alert({ message: attr.msg, size: 'small' })
+         }else{
+          $(".generalize_thumb").val(generalize_thumb+"#"+attr.url);
+          bootbox.alert({ message: attr.msg, size: 'small' })
+         }
+   }
+
  });
- // $(function(){
- //    $(':input').labelauty();
- // });
- </script>
- 
- <!---->
- @endsection
+
+  $(".save").click(function(){  
+  if(!$(".generalize_title").val()){
+     $(".generalize_title").parent().addClass("has-error");
+     return;
+   }
+   $("#myform").submit()
+ })
+</script>

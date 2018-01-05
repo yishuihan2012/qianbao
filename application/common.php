@@ -849,7 +849,7 @@ function pad_or_unpad($str, $ext,$pad='pkcs5')
         // $jpush->set_audience('all');
         $jpush->set_registration_id($member_token);
         $jpush->set_message_sort_desc($content);
-        $jpush->set_message_info_type(2);
+        if($item)$jpush->set_message_info_type($type);
         if($item)$jpush->set_message_info_item($item);
         return $jpush->sign_push();
       }

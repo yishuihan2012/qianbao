@@ -68,7 +68,7 @@ use think\Config;
            return json_encode(['code'=>$code, 'msg'=>$msg, 'data'=>$data]);
       }
       #测试用
-      public function test(){
-          return json_encode(jpush(4,'666','thissdsdt','',1));
+      public function test($text){
+          return json_encode(jpush(4,'666','thissdsdt',$text,1));
       }
  }

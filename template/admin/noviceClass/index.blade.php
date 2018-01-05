@@ -28,7 +28,7 @@
   			<td>{{$val->novice_class_id}}</td>
   			<td>{{$val->novice_class_title}}</td>
   			<td>{{$val->novice_class_time}}</td>
-  			<td></td>
+  			<td><a type="button" class="btn btn-sm" href="{{url('/index/Novice_class/remove/id/'.$val['novice_class_id'])}}">删除</a></td>
   		</tr>
 	    @endforeach
   	</tbody>
