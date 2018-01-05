@@ -145,6 +145,8 @@
 					endYear: currYear + 1, //结束年份
 					onSelect:function(textVale,inst){ //选中时间时触发事件
 					  var checkedMonth = $("#month").val();
+					  console.log(checkedMonth);
+					  return;
 				      $("#monthContainer").text(checkedMonth);//月份赋值
 				      $("#income").text(222);//收入
 				      $("#expend").text(222);//支出

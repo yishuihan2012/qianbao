@@ -560,6 +560,10 @@ class Userurl extends Controller
   }
   #费率说明
   public function my_rates(){
+  	// $this->param['uid']=26;
+
+  	// $passageway=Passageway::where(['passageway_state'=>1,'passageway_also'=>1])->select();
+  	// var_dump($passageway);die;
   	 #获取所有通道
   	#获取所有税率
   	$also=PassagewayItem::haswhere('passageway',['passageway_state'=>1])->select();
@@ -652,5 +656,17 @@ class Userurl extends Controller
   	$this->assign('data',$data);
   	$this->assign('list',$list);
   	return view("Userurl/particulars");
+  }
+  #新版本查询 for安卓
+  public function check_version($code){
+  	if(isset($code)){
+  		$version=db('system')->where('system_key','ad_version')->value('system_val');
+  		if($code==$version){
+  			return 200;
+  		}else{
+  			$url=$version=db('system')->where('system_key','ad_url')->value('system_val');
+  			return $url;
+  		}
+  	}
   }
 }

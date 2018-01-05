@@ -244,14 +244,4 @@
            $data['uid']=$memberLogin['member']['member_id'];
            return ['code'=>200,'msg'=>'获取成功~', 'data'=>$data];
       }
-      #登出 删除极光设备id
-      public function loginout(){
-         $memberLogin=MemberLogin::where("login_member_id={$this->param['uid']} and login_token='{$this->param['token']}'")->find();
-         // var_dump($user);die;
-         if(empty($memberLogin)){
-            return ['code'=>304];
-         }
-         $result=Member::update(['member_id'=>$this->param['uid'],'member_token'=>'']);
-         return ['code'=>$result ? 200 : 400];
-      }
  }

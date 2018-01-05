@@ -36,50 +36,13 @@ class GenerationOrder extends Model{
       #获取还款列表
       public static function list($page = 1){
         //查询数据总条数
-        $count = Db::view("GenerationOrder")
-            ->view("Generation","","Generation.generation_id=GenerationOrder.order_no")
-            ->view("Member m","","m.member_id=GenerationOrder.order_member")
-            ->view("Member","","Member.member_id=Generation.generation_member")
-            ->where("generation_state",">",1)
-            ->count();
-        $start =  ($page-1)*10;
         $list = Db::view("GenerationOrder")
             ->view("Generation","*","Generation.generation_id=GenerationOrder.order_no")
             ->view("Member m","member_nick as o_member_nick,member_mobile as o_member_mobile","m.member_id=GenerationOrder.order_member")
             ->view("Member","member_nick,member_mobile","Member.member_id=Generation.generation_member")
             ->where("generation_state",">",1)->order("order_id  desc")
-            ->limit($start,10)->select();
-         $pages =  self::Pages($count,$page);
-            return array('list' =>$list,'page' => $pages);
+            ->paginate(10);
+            return $list;
       }
-      #分页
-      public static function Pages($count=0,$p){
-        
-        $page = ceil($count/10);#计算总共多少页
-        #获取连接地址
-        $http_host = $_SERVER['PATH_INFO'];
-        $upper = ($p-1>=0)?1:($p--);
-        $lower = ($p+1>=$page)?$page:($p++);
-        $str = '<ul class="pager">';
-        if($upper==1){
-          $str .= '<li class="disabled"><span>«</span></li> ';
-        }else{
-          $str .= '<li><a href="/index/member/index.html?page='.$upper.'">«</a></li>';
-        }
-        for($i = 1; $i <=$page ; $i++ ){
-          if($p!=$i){
-           $str .= '<li><a href="'.$http_host.'?page='.$i.'">'.$i .'</a></li> ';
-          }else{
-            $str .= '<li class="active"><span>'.$i .'</span>
-                    </li>';
-          }
-        }
-        if($lower == $page){
-          $str .= '<li class="disabled"><span>»</span></li>';
-        }else{
-          $str .= '<li><a href="/index/member/index.html?page='.$lower.'">»</a></li>';
-        }
-        $str .= '</ul>';
-        return $str;
-      }
+    
 }

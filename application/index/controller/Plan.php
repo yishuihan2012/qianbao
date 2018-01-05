@@ -22,11 +22,12 @@ use think\Db;
 
 class Plan extends Common{
 	public function index(){
-		$page = input('page');
+		$page = empty(input('page'))?1:input('page');
 		$data = GenerationOrder::list($page);
-		
-		$this->assign("list",$data['list']);
-		$this->assign("page",$data['page']);
+		 
+            // dump($list);
+		$this->assign("list",$data);
+		// $this->assign("page",$data['page']);
 		return view("/admin/Plan/index");
 	}
 }

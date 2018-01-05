@@ -23,10 +23,10 @@
 	      	<th>需还款信用卡</th>
 	      	<th>需还款总额</th>
 	      	<th>还款次数</th>
-	      	<th>代还会员</th>
 	      	<th>已还款总额</th>
 	      	<th>剩余总额</th>
 	      	<th>手续费</th>
+	      	<th>计划状态</th>
 	    </tr>
  	</thead>
   	<tbody>
@@ -41,20 +41,20 @@
 	      	<td >{{$v['o_member_mobile']}}</td>
 	      	<td >{{$v['member_nick']}}</td>
 	      	<td >{{$v['member_mobile']}}</td>
-	      	<td ></td>
-	      	<td ></td>
-	      	<td ></td>
-	      	<td ></td>
-	      	<td ></td>
-	      	<td ></td>
-	      	<td ></td>
+	      	<td >{{$v['generation_card']}}</td>
+	      	<td >{{$v['generation_total']}}</td>
+	      	<td >{{$v['generation_count']}}</td>
+	      	<td >{{$v['generation_has']}}</td>
+	      	<td >{{$v['generation_left']}}</td>
+	      	<td >{{$v['generation_pound']}}</td>
+	      	<td >@if($v['generation_pound']==2)还款中 @elseif($v['generation_state']==3)还款结束 @elseif($v['generation_state']==-1)还款失败 @endif</td>
 
 	      
 	    </tr>
 	    	@endforeach
   	</tfoot>
 </table>
-{!!$page!!}
+{!!$list->render()!!}
 <script type="text/javascript">
 $(document).ready(function(){
     $('.menu .nav .active').removeClass('active');
