@@ -83,14 +83,16 @@ class Tool
 		 #TODO 后台可配置 上传大小以及各式 和 目录
 		 try { 
 		 	 #开始上传
-
-	    		 $info = $file->move($_SERVER['HTTP_HOST'] . 'public' . DS . 'uploads'. DS . $path);
+	    		 $info = $file->move(ROOT_PATH . 'public' . DS . 'uploads'. DS . $path);
 	    		 //return $info;
 	    		 if($info){ 
 	    		 	 #上传成功 上传oss
-				 $data = json_encode(['code'=>'200', 'msg'=>'上传成功', 'data'=>['link'=>Request::instance()->domain(). DS . 'uploads'. DS . $path. DS .$info->getSaveName()]]);
+				 // $data = json_encode(['code'=>'200', 'msg'=>'上传成功', 'data'=>['link'=>Request::instance()->domain(). DS . 'uploads'. DS . $path. DS .$info->getSaveName()]]);
+				 $savename=str_replace('\\', '/', $info->getSaveName());
+				 $data = json_encode(['code'=>'200', 'msg'=>'上传成功', 'data'=>['link'=>Request::instance()->domain().'/uploads/'. $path.'/' .$savename]]);
 				 if(System::getName('ossopen')){
 					 $result = $this->upload_oss($info,$path);
+					 $result = str_replace('\\', '/', $result);
 					 $data = json_encode(['code'=>'200', 'msg'=>'上传成功', 'data'=>['link'=>$result]]);
 				 }
 	    		 }else{

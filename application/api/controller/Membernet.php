@@ -146,7 +146,7 @@
           $arr['order_status']='2';
           $generation['generation_state']=3;
           //成功极光推送。
-          jpush($pay['order_member'],'还款计划扣款成功通知',"您制定的尾号{$card_num}的还款计划成功扣款{$pay['order_money']}元，在APP内还款计划里即可查看详情。");
+          jpush($pay['order_member'],'还款计划扣款成功通知',"您制定的尾号{$card_num}的还款计划成功扣款".$pay['order_money']."元，在APP内还款计划里即可查看详情。");
         }else{
           $arr['back_statusDesc']=$income['message'];
           $arr['back_status']='FAIL';
@@ -238,7 +238,7 @@
           $arr['back_statusDesc']=$income['statusDesc'];
           $arr['order_status']='2';
            //成功极光推送。
-          jpush($pay['order_member'],'还款成功通知',"您制定的尾号{$card_num}的还款计划成功还款{$pay['order_money']}元，在APP内还款计划里即可查看详情。");
+          jpush($pay['order_member'],'还款成功通知',"您制定的尾号{$card_num}的还款计划成功还款".$pay['order_money']."元，在APP内还款计划里即可查看详情。");
         }else{
           $arr['back_status']='FAIL';
           $arr['back_statusDesc']=$income['message'];

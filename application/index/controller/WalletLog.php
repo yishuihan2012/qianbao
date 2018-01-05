@@ -25,7 +25,7 @@ class WalletLog extends Common
 	{
 
 		#查询出会员列表
-		$list = WalletLogs::with('wallet')->order('log_id', 'desc')->paginate(Config::get('page_size'), false, ['query'=>Request::instance()->param()]);
+		$list = WalletLogs::with('wallet')->join("wt_member m" , "m.member_id=Wallet.wallet_member")->order('log_id', 'desc')->paginate(Config::get('page_size'), false, ['query'=>Request::instance()->param()]);
 		
 		$this->assign('list', $list);
 

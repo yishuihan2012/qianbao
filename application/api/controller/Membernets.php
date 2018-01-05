@@ -99,7 +99,7 @@
       {
            #定义请求报文组装
            $arr=array(
-                 'companyname'    =>"山东联硕支付技术有限公司济南分公司（无积分快捷）",//$this->membercard->card_name.rand(1000,9999),山东联硕支付技术有限公司济南分公司（无积分快捷）
+                 'companyname'    =>"商户名称已经存在",//$this->membercard->card_name.rand(1000,9999),山东联硕支付技术有限公司济南分公司（无积分快捷）
                  'companycode'     =>$this->passway->passageway_mech,
                  'accountname'      =>$this->membercard->card_name,
                  'bankaccount'       =>$this->membercard->card_bankno,
@@ -112,11 +112,11 @@
                  'address'             =>"山东省济南市天桥区泺口皮革城",
            );
            #aes加密并且urlsafe base64编码
-           $encrypted = mcrypt_encrypt(MCRYPT_RIJNDAEL_128, $this->passway->passageway_pwd_key, json_encode($arr,JSON_UNESCAPED_UNICODE|JSON_PRETTY_PRINT), MCRYPT_MODE_CBC, $this->passway->passageway_pwd_key);
+           $encrypted = mcrypt_encrypt(MCRYPT_RIJNDAEL_128, 'xpsj69LRllld5Q74', json_encode($arr,JSON_UNESCAPED_UNICODE|JSON_PRETTY_PRINT), MCRYPT_MODE_CBC, 'xpsj69LRllld5Q74');
            $base64str= base64_encode($encrypted);
            $base64str = str_replace("+", "-",  $base64str);
            $passParam = str_replace("/","_",  $base64str);
-           $passParam = str_replace("=",".",  $passParam);
+           // $passParam = str_replace("=",".",  $passParam);
 
            $array=array(
                  'appid'      =>'400467885', //APPID
@@ -129,24 +129,24 @@
                  'timestamp'  =>time(),
             );
            #连接键值生成sign
-           $str='';
-           foreach ($array as $key => $value){
-              $str.=$value;
-           }
-           $signature=md5('xpsj69LRllld5Q74'.trim($str).'xpsj69LRllld5Q74'); //生成签名
+           // $str='';
+           // foreach ($array as $key => $value){
+           //    $str.=$value;
+           // }
+           // $signature=md5('xpsj69LRllld5Q74'.trim($str).'xpsj69LRllld5Q74'); //生成签名
+            #拼接请求参数
+           // $str1="";
+           // foreach ($array as $key => $value){
+           //    $str1.=$key."=".$value."&";
+           // }
+           //$str1.="sign=".$signature; //拼接请求体参数
+           $signature = md5('xpsj69LRllld5Q74'.$array['appid'].$passParam.$array['format'].$array['method'].$array['session'].$array['timestamp'].$array['v'].'xpsj69LRllld5Q74');
 
-           // $signature=md5('xpsj69LRllld5Q74'.$array['appid'].$array['method'].$array['format'].$array['data'].$array['v'].$array['timestamp'].$array['session'].'xpsj69LRllld5Q74');
+          
 
-           #拼接请求参数
-           $str1="";
-           foreach ($array as $key => $value){
-              $str1.=$key."=".$value."&";
-           }
+           $str1="appid=".$array['appid']."&method=".$array['method']."&format=".$array['format']."&data=".$array['data']."&v=".$array['v']."&amp;timestamp=".$array['timestamp']."&session=".$array['session']."&sign=" .$signature;
 
-           // $str1="appid=".$array['appid']."&method=".$array['method']."&format=".$array['format']."&data=".$array['data']."&v=".$array['v']."&timestamp=".$array['timestamp']."&session=".$array['session']."&sign=" .$signature;
-
-           $str1.="sign=".$signature; //拼接请求体参数
-           $getData="https://test.masget.com:7373/openapi/rest?".$str1;
+           $getData="https://gw.masget.com:27373/openapi/rest?".$str1;
 
            $curl = curl_init();
             curl_setopt($curl, CURLOPT_URL, $getData);
@@ -158,8 +158,6 @@
             $httpCode = curl_getinfo($curl,CURLINFO_HTTP_CODE);
             curl_close($curl);
             var_dump($data);die;
-            return $httpCode;
-
       }
 
 
