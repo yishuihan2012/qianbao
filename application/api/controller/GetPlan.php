@@ -7,7 +7,7 @@
         public  $rewardNum="10";           #总消费次数
 
         #执行生成还款额算法
-public function splitReward($rewardMoney, $rewardNum, $max, $min)
+    public function splitReward($rewardMoney, $rewardNum, $max, $min)
     {
         #传入红包金额和数量，因为小数在计算过程中会出现很大误差，所以我们直接把金额放大100倍，后面的计算全部用整数进行
         $min = $min * 10;
@@ -145,5 +145,46 @@ public function splitReward($rewardMoney, $rewardNum, $max, $min)
                 return;
         else 
                 $this->add($rewardArr, $min);
+    }
+    //根据总金额和次数随机每次金额is_int为空带小数点
+    public function get_random_money($money,$num,$is_int=''){
+        $count=$num;
+        for ($i=0; $i <$num; $i++) { 
+            if($i==$num-1){
+                $arr[]=$money;
+            }else{
+                $avage=$money/$count;
+                //判断奇偶，
+                if($is_int){
+                    if($i%2==0){//偶数随机在平均值上
+                        $get=ceil(rand($avage,$avage*1.2));
+                    }else{//奇数随机在平均值下
+                        $get=ceil(rand($avage*0.8,$avage));
+                    }
+                }else{
+                    if($i%2==0){//偶数随机在平均值上
+                        $get=ceil(rand($avage,$avage*1.2)).'.'.rand(0,99);
+                    }else{//奇数随机在平均值下
+                        $get=ceil(rand($avage*0.8,$avage)).'.'.rand(0,99);
+                    }
+                }
+                //判断十百千三位不能相同
+                $int_num=intval($get);
+                if(strlen($int_num)>2){
+                    $first=substr($int_num,-1,1);
+                    $second=substr($int_num,-2,1);
+                    $third=substr($int_num,-3,1);
+
+                    if($first==$second &&$first==$third){
+                        $this->get_random_money($num,$money);
+                    }
+                }
+
+                $count=$count-1;
+                $money=$money-$get;
+                $arr[]=$get;
+            }
         }
+        return $arr;
+    }
 }
