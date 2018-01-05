@@ -207,9 +207,9 @@
 			        if(pageHeight - viewportHeight - scrollHeight < 60){
 			            page++;
 			            if(page<=allpage){
-			                showAjax(page);
+			                // showAjax(page);
 			            }else{
-			                $(".load-more").text("已无数据");
+			                // $(".load-more").text("已无数据");
 			            }
 			        }
 			    }

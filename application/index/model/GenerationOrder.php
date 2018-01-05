@@ -33,5 +33,9 @@ class GenerationOrder extends Model{
       {
            return $this->belongsTo('Generation','generation_id','order_no')->setEagerlyType(0);
       }
+      #获取还款列表
+      public function list(){
+        
+      }
 
 }

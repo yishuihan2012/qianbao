@@ -49,7 +49,7 @@ class Generation extends Model{
       }
       #关联还款会员名称
       public function members(){
-        return $this->hasManyThrough("GenerationOrder","Member","member_id","order_member")->field("member_nick o_member_nick, member_mobile o_member_mobile");
+        return $this->hasManyThrough("GenerationOrder","Member","member_id","order_member")->field("member_nick as o_member_nick, member_mobile as o_member_mobile");
       }
      
 }

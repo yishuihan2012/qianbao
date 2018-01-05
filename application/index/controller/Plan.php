@@ -22,6 +22,7 @@ use think\Db;
 class Plan extends Common{
 	public function index(){
 		$list = Generation::with("generationOrder,member,members")->paginate(Config::get('page_size'), false, ['query'=>Request::instance()->param()]);
+		dump($list);
 		$this->assign("list",$list);
 		return view("/admin/Plan/index");
 	}

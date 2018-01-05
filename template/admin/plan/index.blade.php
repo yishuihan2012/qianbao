@@ -16,11 +16,17 @@
 <table class="table table-striped table-hover">
   	<thead>
 	    <tr>
-	      	<th>#</th>
-	      	<th>标题</th>
-	      	<th>添加时间</th>
-	      	
-	      	<th>操作</th>
+	      	<th>还款会员</th>
+	      	<th>还款会员手机号</th>
+	      	<th>代还会员</th>
+	      	<th>代还会员手机号</th>
+	      	<th>需还款信用卡</th>
+	      	<th>需还款总额</th>
+	      	<th>还款次数</th>
+	      	<th>代还会员</th>
+	      	<th>已还款总额</th>
+	      	<th>剩余总额</th>
+	      	<th>手续费</th>
 	    </tr>
  	</thead>
   	<tbody>
@@ -28,9 +34,24 @@
 	    
   	</tbody>
   	<tfoot>
+  		@foreach($list as $k => $v)
 	    <tr>
-	      	<td colspan="15"></td>
+	    	
+	      	<td ></td>
+	      	<td ></td>
+	      	<td ></td>
+	      	<td ></td>
+	      	<td ></td>
+	      	<td ></td>
+	      	<td ></td>
+	      	<td ></td>
+	      	<td ></td>
+	      	<td ></td>
+	      	<td ></td>
+
+	      
 	    </tr>
+	    	@endforeach
   	</tfoot>
 </table>
 <script type="text/javascript">

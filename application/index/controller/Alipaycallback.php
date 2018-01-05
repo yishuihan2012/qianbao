@@ -24,35 +24,32 @@ class Alipaycallback
 	 public function callback()
 	 {
 	     $data = file_get_contents("php://input");
-         file_put_contents('datas0.txt', $data);
-	 	 $data = trim($data);
-	 	 file_put_contents('datas1.txt', $data);
-    	 $data = json_decode($data, true);
-    	 file_put_contents('success.txt',$data['state']);
-         var_dump(123);die;
-	 	 $post['upgrade_member_id']=3;
-	 	 $post['upgrade_group_id']=3;
          // var_dump($post);die;
-         // $Alipay=new \app\index\controller\Alipay();
-         // $Alipay->callback($data);
-
-         // $Alipay=new \app\index\controller\Alipay();
+         $Alipay=new \app\index\controller\Alipay();
+         $success=$Alipay->callback($data);
+         if($success!="SUCCESS")
+            echo "FAIL";
+        
+        $order=Upgrade::get(['upgrade_no'=>$data['out_trade_no']]);
+        $post['upgrade_member_id']=$order['upgrade_member_id'];
+        $post['total_amount']=$order['total_amount'];
+         // $Alipay=new \app\index\controller\Alipay();total_amount
          // $data['signedStr']=$Alipay->callback($params);
 
     	 #修改会员等级
     	 $member=Member::where('member_id='.$post['upgrade_member_id'])->update(['member_group_id'=>$post['upgrade_group_id']]);
 
     	 #修改入网
-         $member_net=MemberNet::where('net_member_id='.$post['upgrade_member_id'])->find();
+      //    $member_net=MemberNet::where('net_member_id='.$post['upgrade_member_id'])->find();
 
-    	 $member=Member::where('member_id='.$post['upgrade_member_id'])->find();
+    	 // $member=Member::where('member_id='.$post['upgrade_member_id'])->find();
 
-    	 $passageway=Passageway::where('passageway_status=1 and passageway_also=2')->find();
+    	 // $passageway=Passageway::where('passageway_status=1 and passageway_also=2')->find();
 
-    	 #查询费率
-    	 $rate=PassagewayItem::where('item_passageway='.$passageway['passageway_id'].' and item_group='.$post['upgrade_group_id'])->find();
+    	 // #查询费率
+    	 // $rate=PassagewayItem::where('item_passageway='.$passageway['passageway_id'].' and item_group='.$post['upgrade_group_id'])->find();
 
-    	 $member_info=MemberCert::where('cert_member_id='.$post['upgrade_member_id'])->find();
+    	 // $member_info=MemberCert::where('cert_member_id='.$post['upgrade_member_id'])->find();
 
     	 #执行修改入网信息
     	 // $arr=mishuaedit($passageway, $rate, $member_info, $member['member_mobile'], $member_net[$passageway['passageway_no']]);
@@ -60,7 +57,7 @@ class Alipaycallback
     	 // $add_net=MemberNet::where('net_member_id='.$post['upgrade_member_id'])->update($arr);
 
          $commission=new \app\api\controller\Commission();
-         $commission->MemberCommis($post['upgrade_member_id'],'100','会员付费升级');
+         $commission->MemberCommis($post['upgrade_member_id'],$post['total_amount'],'会员付费升级');
 
 	 }
 
