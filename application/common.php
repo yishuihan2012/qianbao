@@ -205,7 +205,7 @@
       $days = ceil(abs($date_one - $date_two)/86400);
       return $days;
  }
-
+ 
  //-----------------------------------------------------------
  // @version  取得日期
  // @author   $bill$

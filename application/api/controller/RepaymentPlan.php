@@ -58,7 +58,7 @@
            // $this->param['startDate']="2018-01-01";
            // $this->param['endDate']="2018-01-03";
            // $this->param['passageway']=8;
-           #获取需要参数
+           #获取需要参数 
           $member_info=MemberCerts::where('cert_member_id='.$this->param['uid'])->find();
           if(empty($member_info)){
             $this->error=356;
