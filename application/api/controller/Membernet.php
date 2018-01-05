@@ -22,12 +22,12 @@
  */
  class MemberNet
  {
- 	  public $error;
+    public $error;
       private $member; //会员信息
       private $membercert; //会员认证信息
       private $membercard; //会员结算卡信息
       private $passway; //通道信息
- 	// function __construct($memberId,$passwayId,$phone){
+  // function __construct($memberId,$passwayId,$phone){
   //          try{
   //                #根据memberId获取会员信息和会员的实名认证信息还有会员银行卡信息
   //                $this->member=Member::get($memberId);
@@ -53,15 +53,15 @@
 
 
 
-	 /**
-	 *  @version bind_creditcard controller / Api 米刷绑定信用卡入网 废弃
-	 *  @author $bill$(755969423@qq.com)
-	 *   @datetime    2017-12-08 10:13:05
-	 *   @return 
-	 */
- 	 public function mishuadaihuan($phone)
- 	 {
- 	 	$params=array(
+   /**
+   *  @version bind_creditcard controller / Api 米刷绑定信用卡入网 废弃
+   *  @author $bill$(755969423@qq.com)
+   *   @datetime    2017-12-08 10:13:05
+   *   @return 
+   */
+   public function mishuadaihuan($phone)
+   {
+    $params=array(
         'versionNo'=>'1',//接口版本号 必填  值固定为1 
         'mchNo'=>$passageway->passageway_mech, //mchNo 商户号 必填  由米刷统一分配 
         'mercUserNo'=>$member->member_id, //用户标识,下级机构对用户身份唯一标识。
@@ -80,7 +80,7 @@
         "{$passageway->passageway_no}"=>$income['userNo']
       );
       return ['code'=>200,'data'=>$arr];
- 	 }
+   }
     //执行计划
     public function action_repay_plan(){
       $where['order_status']='1';
@@ -118,6 +118,8 @@
         $member=MemberNets::where(['net_member_id'=>$pay['order_member']])->find();
         // print_r($member);die;
         // print_r($pay);die;
+        #5:获取用户基本信息
+        $member_base=Member::where(['member_id'=>$pay['order_member']])->find();
         $params=array(
           'mchNo'=>$merch->passageway_mech, //机构号 必填  由平台统一分配 16
           'userNo'=>$member->LkYQJ,  //平台用户标识  必填  平台下发用户标识  32
@@ -135,17 +137,23 @@
         // print_r($params);die;
         // $params,$mechid,$url,$iv,$secretkey,$signkey,$type=0
         $income=repay_request($params,$merch->passageway_mech,'http://pay.mishua.cn/zhonlinepay/service/rest/creditTrans/payBindCard',$merch->iv,$merch->secretkey,$merch->signkey);
+        //后四位银行卡尾号
+        $card_num=substr($pay['order_card'],-4);
         if($income['code']=='200'){
           $arr['back_tradeNo']=$income['tradeNo'];
           $arr['back_statusDesc']=$income['statusDesc'];
           $arr['back_status']=$income['status'];
           $arr['order_status']='2';
           $generation['generation_state']=3;
+          //成功极光推送。
+          jpush($pay['order_member'],'还款计划扣款成功通知',"您制定的尾号{$card_num}的还款计划成功扣款{$pay['order_money']}元，在APP内还款计划里即可查看详情。");
         }else{
           $arr['back_statusDesc']=$income['message'];
           $arr['back_status']='FAIL';
           $arr['order_status']='-1';
           $generation['generation_state']=-1;
+          // 失败，短信通知
+          send_sms($member_base->member_mobile,"您制定的尾号{$card_num}的还款计划执行失败，在APP内还款计划里即可查看详情。");
         }
         //添加执行记录
         GenerationOrder::where(['order_id'=>$pay['order_id']])->update($arr);
@@ -223,16 +231,20 @@
           'feeAmt'=>0,//提现单笔手续费   需与用户入网信息保持一致  整型(4,0)
         );
         $income=repay_request($params,$merch->passageway_mech,'http://pay.mishua.cn/zhonlinepay/service/rest/creditTrans/transferApply',$merch->iv,$merch->secretkey,$merch->signkey);
+        $card_num=substr($pay['order_card'],-4);
         if($income['code']=='200'){
           $arr['back_tradeNo']=$income['orderNo'];
           $arr['back_status']=$income['status'];
           $arr['back_statusDesc']=$income['statusDesc'];
           $arr['order_status']='2';
+           //成功极光推送。
+          jpush($pay['order_member'],'还款成功通知',"您制定的尾号{$card_num}的还款计划成功还款{$pay['order_money']}元，在APP内还款计划里即可查看详情。");
         }else{
           $arr['back_status']='FAIL';
           $arr['back_statusDesc']=$income['message'];
           $arr['order_status']='-1';
-          
+          // 失败，短信通知
+          send_sms($member_base->member_mobile,"您制定的尾号{$card_num}的还款计划还款失败，在APP内还款计划里即可查看详情。");
         }
         //更新订单状态
         GenerationOrder::where(['order_id'=>$pay['order_id']])->update($arr);
