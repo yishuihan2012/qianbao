@@ -224,15 +224,15 @@
       return $date;
  }
 
- //-----------------------------------------------------------
+  //-----------------------------------------------------------
  // @version  取得随机小时 模拟人工消费
  // @author   $bill$
  // @datatime 2018-1-1 14:08
  // @description 返回24小时制的小时
  //-----------------------------------------------------------
- function get_hours()
+ function get_hours($begin=9,$end=19)
  {
-      $hours=rand(9,19);
+      $hours=rand($begin,$end);
       return $hours<10 ? '0'.$hours : $hours;
  }
  //-----------------------------------------------------------
@@ -241,11 +241,12 @@
  // @datatime 2018-1-1 14:08
  // @description 返回60分钟内的随机分钟
  //-----------------------------------------------------------
- function get_minites()
+ function get_minites($begin=1,$end=59)
  {
-      $minites=rand(1,59);
+      $minites=rand($begin,$end);
       return $minites<10 ? '0'.$minites : $minites;
  }
+
 
 
 
