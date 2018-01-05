@@ -62,7 +62,7 @@
 			        </a>
 			    </li>
 			    @endforeach
-			    <li class="mui-table-view-cell bor-bot">
+<!-- 			    <li class="mui-table-view-cell bor-bot">
 			        <a href="bills_detail.html">
 			        	<div class="dis-flex-be">
 			        		<div>
@@ -117,7 +117,7 @@
 			        	</div>
 			        </a>
 			    </li>
-			</ul>
+ -->			</ul>
 		</div>
 		<script src="/static/js/mui.min.js"></script>
 		<script src="/static/js/jquery-2.1.4.min.js"></script>
@@ -196,9 +196,9 @@
 			        if(pageHeight - viewportHeight - scrollHeight < 60){
 			            page++;
 			            if(page<=allpage){
-			                showAjax(page);
+			                // showAjax(page);
 			            }else{
-			                $(".load-more").text("已无数据");
+			                // $(".load-more").text("已无数据");
 			            }
 			        }
 			    }
