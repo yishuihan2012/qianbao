@@ -12,7 +12,7 @@
  use app\index\model\Passageway as Passageways;
  use app\index\model\PassagewayItem;
  use app\index\model\CashOut;
- use app\index\model\Member;
+ // use app\index\model\Member;
 
  class Passageway 
  {
