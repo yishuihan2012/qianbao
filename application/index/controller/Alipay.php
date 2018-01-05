@@ -65,25 +65,23 @@ use app\index\model\CallbackLog as CallbackLogs;
       public function callback($post)
       {
             try {
-                 // $callbackLogs=new CallbackLogs;
-                 // $callbackLogs->callback_type="Alipay";
-                 // $callbackLogs->callback_info=json_encode($post);
-                 // $callbackLogs->callback_notify_id=$post['notify_id'];
-                 // $callbackLogs->callback_time = date("Y-m-d H:i:s");
-                 // $callbackLogs->save();
-              // var_dump($post['out_trade_no']);die;
-                 if (!$this->aop->rsaCheckV1($post, null,"RSA2"))
-                    echo "FAIL1";die;
-                 if ($post['trade_status']=='WAIT_BUYER_PAY')
+              // var_dump($post);die;
+              // var_dump($this->aop->rsaCheckV1($post, null,"RSA2"));die;
+                 if (!$this->aop->rsaCheckV1($post, null,"RSA2")){
+                    echo "FAIL33";
+                 }
+                 if ($post['trade_status']=='WAIT_BUYER_PAY'){
                     echo "FAIL";die;
-                 if ($post['trade_status']=='TRADE_CLOSED')
+                 }
+                 if ($post['trade_status']=='TRADE_CLOSED'){
                     echo "FAIL";die;
-                 if ($post['trade_status']=='TRADE_FINISHED')
+                 }
+                 if ($post['trade_status']=='TRADE_FINISHED'){
                     echo "FAIL";die;
-                 
+                 }
+
                  if ($post['trade_status']=='TRADE_SUCCESS') {
                       $order=Upgrades::get(['upgrade_no'=>$post['out_trade_no']]); //订单信息
-
                       if ($order->upgrade_state>0)//判断当前订单状态已支付 结束
                            return "FAIL";
                       if ($post['total_amount']!=($order->upgrade_money)) //回调金额（元） 与订单金额不符（分） 结束

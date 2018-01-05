@@ -126,7 +126,7 @@
 		<script type="text/javascript">
 			mui.init();
 			mui('.mui-table-view-cell').on('tap','a',function(){
-		      window.top.location.href=this.href;
+		      // window.top.location.href=this.href;
 		    });
 			mui.ready(function(){
 				var currYear = (new Date()).getFullYear();	
@@ -212,9 +212,9 @@
 			        if(pageHeight - viewportHeight - scrollHeight < 60){
 			            page++;
 			            if(page<=allpage){
-			                // showAjax(page);
+			                showAjax(page);
 			            }else{
-			                // $(".load-more").text("已无数据");
+			                $(".load-more").text("已无数据");
 			            }
 			        }
 			    }

@@ -54,6 +54,7 @@
 	    	@endforeach
   	</tfoot>
 </table>
+{!!$page!!}
 <script type="text/javascript">
 $(document).ready(function(){
     $('.menu .nav .active').removeClass('active');

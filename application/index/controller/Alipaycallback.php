@@ -24,12 +24,13 @@ class Alipaycallback
 	 public function callback()
 	 {
          $data=$_POST;
-         $str = var_export($data,TRUE);
-         file_put_contents('ceshi.txt',$str);
+         // $str = var_export($data,TRUE);
+         // file_put_contents('ceshi.txt',$str);
+        // var_dump($data);die;
          $Alipay=new \app\index\controller\Alipay();
          $success=$Alipay->callback($data);
          if($success!="SUCCESS")
-            echo "FAIL";
+            echo "FAIL777";
 
         $order=Upgrade::get(['upgrade_no'=>$data['out_trade_no']]);
         $post['upgrade_member_id']=$order->upgrade_member_id;
