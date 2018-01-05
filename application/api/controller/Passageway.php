@@ -12,7 +12,7 @@
  use app\index\model\Passageway as Passageways;
  use app\index\model\PassagewayItem;
  use app\index\model\CashOut;
-
+ use app\index\model\Member;
 
  class Passageway 
  {
@@ -32,12 +32,15 @@
       **/ 
       public function passageway_lists()
       {
-        // $this->param['passageway_also']=1;
          #可用支付通道
+         #获取会员等级
+        // $this->param['uid']=16;
+        // $this->param['passageway_also']=2;
+         $member_group=Member::where(['member_id'=>$this->param['uid']])->value('member_group_id');
          $passageway_lists=Passageways::with('cashout')->where(['passageway_state'=>1,'passageway_also'=>$this->param['passageway_also']])->select();
          if($this->param['passageway_also']==2){ 
             foreach ($passageway_lists as $key => $value) {
-              $rate=PassagewayItem::where(['item_passageway'=>$value['passageway_id']])->order('item_rate asc')->find();
+              $rate=PassagewayItem::where(['item_passageway'=>$value['passageway_id'],'item_group'=>$member_group])->find();
               $passageway[$key]['item_rate']=$rate->item_also.'%';
               if($rate->item_charges){
                 $passageway[$key]['item_rate'].="+".$rate->item_charges/100;
@@ -53,7 +56,7 @@
 
          }else{
             foreach ($passageway_lists as $key => $value) {
-              $rate=PassagewayItem::where(['item_passageway'=>$value['passageway_id']])->order('item_rate asc')->find();
+              $rate=PassagewayItem::where(['item_passageway'=>$value['passageway_id'],'item_group'=>$member_group])->find();
               $passageway[$key]['item_rate']=$rate->item_rate.'%';
               if($rate->item_charges){
                 $passageway[$key]['item_rate'].="+".$rate->item_charges/100;
@@ -66,7 +69,7 @@
               $passageway[$key]['cashout_min']=$value['cashout_min'];
            }
          }
-
+         // var_dump($passageway);die;
          return ['code'=>200, 'msg'=>'获取成功~', 'data'=>$passageway];
 
 
