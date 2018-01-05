@@ -919,3 +919,22 @@ function pad_or_unpad($str, $ext,$pad='pkcs5')
      $getData=$url."?".$str1;
      return $getData;
     }
+
+    #订单状态代码转换为文字
+    #目前已知的 可用于
+    # withdraw_->withdraw_state
+    function state_info($code){
+      switch ($code) {
+        case 11:
+          return '申请已提交';
+        case -11:
+          return '申请未提交';
+        case 12:
+          return '审核通过';
+        case -12:
+          return '审核未通过';
+        default:
+            return '默认状态';
+          break;
+      }
+    }

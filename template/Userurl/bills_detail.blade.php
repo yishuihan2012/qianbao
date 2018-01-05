@@ -16,41 +16,49 @@
 			  <p class="f24 f-bold">{{substr($wallet_log['log_wallet_amount'],0,-2)}}</p>
 			</div>
 			<ul class="mui-table-view">
-				@if($wallet_log['log_relation_type']==1)
+				@if($wallet_log['log_relation_type']==1)//分润分佣
+					
+				@elseif($wallet_log['log_relation_type']==2)//提现
+					@if($withdraw)
+				    <li class="mui-table-view-cell dis-flex-be">
+				    	<p class="invalid-color">交易状态</p>
+				    	<p>{{$withdraw['info']}}</p>
+				    </li>
+				    <li class="mui-table-view-cell dis-flex-be">
+				    	<p class="invalid-color">实际到账</p>
+				    	<p>{{$withdraw['withdraw_amount']}}元</p>
+				    </li>
+				    <li class="mui-table-view-cell dis-flex-be">
+				    	<p class="invalid-color">收款方式</p>
+				    	<p>{{$withdraw['withdraw_method']}}</p>
+				    </li>
+<!-- 				    <li class="mui-table-view-cell dis-flex-be bor-bot">
+				    	<p class="invalid-color">支付通道</p>
+				    	<p></p>
+				    </li>
+ -->				    <li class="mui-table-view-cell dis-flex-be">
+				    	<p class="invalid-color">交易时间</p>
+				    	<p>{{$withdraw['withdraw_update_time']}}</p>
+				    </li>
+				    <li class="mui-table-view-cell dis-flex-be">
+				    	<p class="invalid-color">订单号</p>
+				    	<p>{{$withdraw['withdraw_no']}}</p>
+				    </li>
+				    @endif
+				@elseif($wallet_log['log_relation_type']==3)
+				@elseif($wallet_log['log_relation_type']==4)
+				@elseif($wallet_log['log_relation_type']==5)
+				@elseif($wallet_log['log_relation_type']==6)
 				@endif
-			    <li class="mui-table-view-cell dis-flex-be">
-			    	<p class="invalid-color">交易状态</p>
-			    	<p>已成功</p>
-			    </li>
-			    <li class="mui-table-view-cell dis-flex-be">
-			    	<p class="invalid-color">实际到账</p>
-			    	<p>19998.56元</p>
-			    </li>
-			    <li class="mui-table-view-cell dis-flex-be">
-			    	<p class="invalid-color">收款方式</p>
-			    	<p>银联快捷</p>
-			    </li>
-			    <li class="mui-table-view-cell dis-flex-be bor-bot">
-			    	<p class="invalid-color">支付通道</p>
-			    	<p>银联支付通道一</p>
-			    </li>
-			    <li class="mui-table-view-cell dis-flex-be">
-			    	<p class="invalid-color">付款信用卡</p>
-			    	<p>工商银行(尾号2586)</p>
-			    </li>
-			    <li class="mui-table-view-cell dis-flex-be">
-			    	<p class="invalid-color">到账储蓄卡</p>
-			    	<p>建设银行（尾号7821）</p>
-			    </li>
-			    <li class="mui-table-view-cell dis-flex-be">
-			    	<p class="invalid-color">交易时间</p>
-			    	<p>2017-12-06 18:52:04</p>
-			    </li>
-			    <li class="mui-table-view-cell dis-flex-be">
-			    	<p class="invalid-color">订单号</p>
-			    	<p>2017120618520485462</p>
-			    </li>
-			    
+<!-- 				    <li class="mui-table-view-cell dis-flex-be">
+				    	<p class="invalid-color">付款信用卡</p>
+				    	<p>工商银行(尾号2586)</p>
+				    </li>
+				    <li class="mui-table-view-cell dis-flex-be">
+				    	<p class="invalid-color">到账储蓄卡</p>
+				    	<p>建设银行（尾号7821）</p>
+				    </li>
+ -->			    
 			    <!--对此账单有疑问？跳转至客服页面-->
 			    <li class="mui-table-view-cell">
 			    	<a class="mui-navigate-right" id="toConsult">对此账单有疑问?</a>

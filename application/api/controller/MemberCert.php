@@ -160,16 +160,18 @@
                                  'recomment_money'=>$realname_wallet,
                                  'recomment_desc'=>'推荐下级'.$this->param['card_name'].'注册并实名认证成功',
                             ]);
-                           $wallet_log=new WalletLog([
-                                 'log_wallet_id'          =>$wallet['wallet_id'],
-                                 'log_wallet_amount'  =>$realname_wallet,
-                                 'log_wallet_type' =>1,
-                                 'log_relation_id'  =>0,
-                                 'log_relation_type' => 5,
-                                 'log_form' => '邀请红包',
-                                 'log_desc' => '邀请好友'.$this->param['card_name'].'注册并完成实名认证,获得红包'.$realname_wallet."元",
-                           ]);
-                           if($wallet->save()===false || $wallet_log->save()===false || $recomment->save()===false)
+                            if($recomment->save()){
+                               $wallet_log=new WalletLog([
+                                     'log_wallet_id'          =>$wallet['wallet_id'],
+                                     'log_wallet_amount'  =>$realname_wallet,
+                                     'log_wallet_type' =>1,
+                                     'log_relation_id'  =>$recomment->recomment_id,
+                                     'log_relation_type' => 5,
+                                     'log_form' => '邀请红包',
+                                     'log_desc' => '邀请好友'.$this->param['card_name'].'注册并完成实名认证,获得红包'.$realname_wallet."元",
+                               ]);
+                             }
+                           if($wallet->save()===false || $wallet_log->save()===false )
                            {
                                  Db::rollback();
                                  return ['code'=>350,'上级钱包余额更新失败~'];
@@ -252,18 +254,18 @@
            #验证器验证 验证参数合法性
            $validate = Loader::validate('Membervalidation');
            #如果验证不通过 返回错误代码 及提示信息
-           // if(!$validate->scene('edit')->check($this->param))
-           //       return ['code'=>322, 'msg'=>$validate->getError()];
-           // #验证码验证规则 读取本手机号最后一条没有使用的验证码 并且在系统设置的有效时间内
-           // $code_info=SmsCodes::where(['sms_send'=>$this->param['card_phone'],'sms_log_state'=>1])->whereTime('sms_log_add_time', "-".System::getName('code_timeout').' minutes')->find();
-           // if(!$code_info || ($code_info['sms_log_content']!=$this->param['smsCode']))
-           //       return ['code'=>404];
-           // #改变验证码使用状态
-           // $code_info->sms_log_state=2;
-           // $result=$code_info->save();
-           // #验证是否成功
-           // if(!$result)
-           //       return ['code'=>404];
+           if(!$validate->scene('edit')->check($this->param))
+                 return ['code'=>322, 'msg'=>$validate->getError()];
+           #验证码验证规则 读取本手机号最后一条没有使用的验证码 并且在系统设置的有效时间内
+           $code_info=SmsCodes::where(['sms_send'=>$this->param['card_phone'],'sms_log_state'=>1])->whereTime('sms_log_add_time', "-".System::getName('code_timeout').' minutes')->find();
+           if(!$code_info || ($code_info['sms_log_content']!=$this->param['smsCode']))
+                 return ['code'=>404];
+           #改变验证码使用状态
+           $code_info->sms_log_state=2;
+           $result=$code_info->save();
+           #验证是否成功
+           if(!$result)
+                 return ['code'=>404];
            #验证用户是否绑定储蓄卡
            $cashcard=MemberCashcard::where('card_member_id='.$this->param['uid'])->find();
            if(!$cashcard)

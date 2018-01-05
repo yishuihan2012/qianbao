@@ -69,6 +69,12 @@
 			 <textarea name="passageway_desc" class="form-control passageway_desc" >{{$passageways['passageway_desc']}}</textarea>
 		 </div>		
 	 </div>
+	 <div class="row form-group">
+		 <label for="passageway_limit" class="col-sm-3 text-right"><b>额度说明:</b></label>
+		 <div class="col-sm-6" id="passageway_limit">
+			 <textarea name="passageway_limit" class="form-control passageway_limit" >{{$passageways['passageway_limit']}}</textarea>
+		 </div>		
+	 </div>
 
 	 <div class="row form-group">
 		 <label for="passageway_avatar" class="col-sm-3 text-right"><b>通道图标:</b></label>

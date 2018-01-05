@@ -84,11 +84,15 @@
 		 </tr>
 		  <tr>
 			 <td>订单状态</td>
-			 <td>@if($info['order_status']==1) 待执行 @elseif($info['generation_state']==3)还款结束 @elseif($info['generation_state']==-1)还款失败 @endif</td>
+			 <td>@if($info['order_status']==1) 待执行 @elseif($info['generation_state']==-1)失败 @elseif($info['generation_state']==2)成功 @else 取消 @endif</td>
 		 </tr>
 		 <tr>
-			 <td>订单类型</td>
-			 <td>@if($info['order_type']==2) 还款中 @elseif($info['order_type']==3)还款结束 @elseif($info['order_type']==-1)还款失败 @endif</td>
+			 <td>订单描述</td>
+			 <td>{{$info['order_desc']}}</td>
+		 </tr>
+		  <tr>
+			 <td>执行时间</td>
+			 <td>{{$info['order_time']}}</td>
 		 </tr>
 	 </table>
 	 

@@ -12,35 +12,43 @@
 	<body>
 		<div class="mui-content my-rates">
 			<div id="myRatesList">
+				@foreach($also as $v)
 			<table class="f16">
-			  <caption>快捷支付一</caption>
+			  <caption>【{{$v['passageway_also']==1 ? '交易' : '代还'}}类】{{$v['passageway_name']}}</caption>
 			  <thead class="bg-table" align="center">
 			    <tr>
 			      <th>&nbsp;</th>
-			      <th>普通商户</th>
+			      @foreach($v['details'] as $d)
+			      	<th>{{$d['group_name']}}</th>
+			      @endforeach
+<!-- 			      <th>普通商户</th>
 			      <th>银牌商户</th>
 			      <th>金牌商户</th>
 			      <th>代理商</th>
-			    </tr>
+ -->			    </tr>
 			  </thead>
 			  <tbody  class="bg-w" align="center">
 			    <tr>
 			      <td>费率</td>
-			      <td>0.49%</td>
+			      @foreach($v['details'] as $d)
+			      	<td>{{$d['item_rate']}}</td>
+			      @endforeach
+<!-- 			      <td>0.49%</td>
 			      <td>0.45%</td>
 			      <td>0.42%</td>
 			      <td>0.35%</td>
-			    </tr>
+ -->			    </tr>
 			    <tr>
 			      <td>额度</td>
-			      <td colspan="4" align="left"><span class="space-left">100-50000元/笔</span></td>
+			      <td colspan="4" align="left"><span class="space-left">{{$v['passageway_desc']}}</span></td>
 			    </tr>
 			    <tr>
 			      <td>提示</td>
-			      <td colspan="4" align="left"><span class="space-left">终消费率固定0.35%，差额会以分润形式补偿</span></td>
+			      <td colspan="4" align="left"><span class="space-left">{{$v['passageway_limit']}}</span></td>
 			    </tr>
 			  </tbody>
 			</table>
+			@endforeach
 			</div>
 		</div>
 <!-- 		<nav class="mui-bar mui-bar-tab">

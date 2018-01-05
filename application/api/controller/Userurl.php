@@ -163,13 +163,12 @@ class Userurl extends Controller
 			}
 		}
 
-		#待确认
-		$generation1=Generation::with('creditcard')->where(['generation_member'=>$this->param['uid'],'generation_state'=>1])->select();
-		// var_dump($generation1);die;
-		foreach ($generation1 as $key => $value) {
-				$generation1[$key]['generation_card']=substr($value['generation_card'], -4);
-				$generation1[$key]['count']=GenerationOrder::where(['order_no'=>$value['generation_id']])->count();
-		}
+		#待确认 不需要了
+		// $generation1=Generation::with('creditcard')->where(['generation_member'=>$this->param['uid'],'generation_state'=>1])->select();
+		// foreach ($generation1 as $key => $value) {
+		// 		$generation1[$key]['generation_card']=substr($value['generation_card'], -4);
+		// 		$generation1[$key]['count']=GenerationOrder::where(['order_no'=>$value['generation_id']])->count();
+		// }
 
 		#完成
 		$generation3=Generation::with('creditcard')->where(['generation_member'=>$this->param['uid'],'generation_state'=>3])->select();
@@ -181,7 +180,6 @@ class Userurl extends Controller
 
 		$this->assign('generation',$generation);
 		$this->assign('generation3',$generation3);
-		$this->assign('generation1',$generation1);
 	  	return view("Userurl/repayment_history");
 	}
 	/**
@@ -566,9 +564,13 @@ class Userurl extends Controller
   	// var_dump($passageway);die;
   	 #获取所有通道
   	#获取所有税率
-  	$also=PassagewayItem::haswhere('passageway',['passageway_state'=>1])->select();
-
-
+  	// $also=PassagewayItem::haswhere('passageway',['passageway_state'=>1])->select();
+  	$also=db('passageway')->where(['passageway_state'=>1])->order('passageway_also')->select();
+  	foreach ($also as $k => $v) {
+  		$also[$k]['details']=db('passageway_item')->alias('i')
+  			->join('member_group g','i.item_group=g.group_id')
+  			->where('i.item_passageway',$v['passageway_id'])->select();
+  	}
   	$this->assign('also',$also);
   	return view("Userurl/my_rates");
   }
@@ -639,15 +641,7 @@ class Userurl extends Controller
 			//提现操作
 			case 2:
 				$state=db('withdraw')->where('withdraw_id',$v['log_relation_id'])->value('withdraw_state');
-				if($state==11){
-					$list['k']['info']='申请已提交';
-				}elseif($state==-11){
-					$list['k']['info']='申请未提交';
-				}elseif($state==12){
-					$list['k']['info']='审核通过';
-				}elseif($state==-12){
-					$list['k']['info']='审核未通过';
-				}
+				if($state)$list['k']['info']=state_info($state);
 				break;
 			
 			default:
@@ -665,9 +659,13 @@ class Userurl extends Controller
   	$this->checkToken();
   	$wallet_log=db('wallet_log')->where('log_id',$log_id)->find();
   	switch ($wallet_log['log_relation_type']) {
+  		//分润分佣
+  		case 1:
+  			// $commission=db('commission');
   		//提现操作
   		case 2:
   			$withdraw=db('withdraw')->where('withdraw_id',$v['log_relation_id'])->find();
+  			if($withdraw)$withdraw['info']=state_info($withdraw['withdraw_state']);
   			$this->assign('withdraw',$withdraw);
   			break;
   		

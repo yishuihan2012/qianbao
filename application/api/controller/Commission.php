@@ -249,7 +249,7 @@
 	 	      	 	 'log_wallet_id'		=>$wallet->wallet_id,
 	 	      	 	 'log_wallet_amount'	=>$comPrice,
 	 	      	 	 'log_wallet_type'		=>1,
-	 	      	 	 'log_relation_id'		=>0,
+	 	      	 	 'log_relation_id'		=>$commission->commission_id,
 	 	      	 	 'log_relation_type'	=>1,
 	 	      	 	 'log_form'				=>$action.'收益~',
 	 	      	 	 'log_desc'			=>$desc

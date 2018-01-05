@@ -18,14 +18,11 @@
 					<a class="mui-control-item mui-active" href="#item1mobile">
 						进行中
 					</a>
-					<a class="mui-control-item" href="#item2mobile">
-						已取消
-					</a>
 					<a class="mui-control-item" href="#item3mobile">
 						已完成
 					</a>
 				</div>
-				<div id="sliderProgressBar" class="mui-slider-progress-bar mui-col-xs-4"></div>
+				<div id="sliderProgressBar" class="mui-slider-progress-bar mui-col-xs-6"></div>
 				<div class="mui-slider-group">
 					<!--执行中-->
 					<div id="item1mobile" class="mui-slider-item mui-control-content mui-active">
@@ -39,7 +36,7 @@
 										<div class="dis-flex-be wrap bor-bot-das">
 											<div class="dis-flex-fs">
 												<p class="card-pic-container">
-													<img src="/static/images/card.png">
+													<img src="{{$list['card_bankicon']}}">
 												</p>
 												<span class="f16">{{$list['card_bankname']}}(尾号{{$list['generation_card']}})</span>
 											</div>
@@ -62,41 +59,6 @@
 							</div>
 						</div>
 					</div>
-					<div id="item2mobile" class="mui-slider-item mui-control-content">
-						<div id="scroll2" class="mui-scroll-wrapper">
-							<div class="mui-scroll">
-								<ul class="mui-table-view bg-color wrap">
-
-								@foreach($generation1 as $list)
-									<li class="mui-table-view-cell bg-w space-up f-br2">
-									  <a href="/api/Userurl/repayment_plan_detail/order_no/{{$list['generation_id']}}">	
-										<div class="dis-flex-be wrap bor-bot-das">
-											<div class="dis-flex-fs">
-												<p class="card-pic-container">
-													<img src="/static/images/card.png">
-												</p>
-												<span class="f16">{{$list['card_bankname']}}(尾号{{$list['generation_card']}})</span>
-											</div>
-											<div class="green-color"><span class="iconfont icon-shijian-copy-copy space-right"></span><span class="f16">@if($list['generation_state']==2)执行中@elseif($list['generation_state']==1)待确认@elseif($list['generation_state']==3)还款结束@elseif($list['generation_state']==-1)还款失败@endif</span></div>
-										</div>
-										<div class="wrap">
-											<p class="invalid-color f15">还款总金额(含手续费{{$list['generation_pound']}}元)</p>
-											<p class="f24 space-up3"><strong>{{$list['generation_total']}}</strong><span class="f15">元</span></p>
-											<p class="invalid-color f15 space-up3 f-tex-n">还款计划时间：<span class="blue-color-th space-right">{{date('m月d日',strtotime($list['generation_start']))}}-{{date('m月d日',strtotime($list['generation_end']))}}  </span><span class="blue-color-th">{{$list['count']}}笔</span></p>
-										</div>
-										<div class="dis-flex-be invalid-color wrap bor-top-das">
-											<span class="f16">查看详情</span>
-											<span class="mui-icon mui-icon-arrowright f20"></span>
-										</div>
-									  </a>
-									</li>
-								@endforeach
-
-								</ul>
-							</div>
-						</div>
-
-					</div>
 					<div id="item3mobile" class="mui-slider-item mui-control-content">
 						<div id="scroll3" class="mui-scroll-wrapper">
 							<div class="mui-scroll">
@@ -108,7 +70,7 @@
 										<div class="dis-flex-be wrap bor-bot-das">
 											<div class="dis-flex-fs">
 												<p class="card-pic-container">
-													<img src="/static/images/card.png">
+													<img src="{{$list['card_bankicon']}}">
 												</p>
 												<span class="f16">{{$list['card_bankname']}}(尾号{{$list['generation_card']}})</span>
 											</div>
@@ -145,7 +107,6 @@
 				var _h =  window.screen.availHeight;
 				var topH = document.getElementById("sliderSegmentedControl").offsetHeight;
 				document.getElementById("item1mobile").style.minHeight = _h-topH-100 + 'px';
-				document.getElementById("item2mobile").style.minHeight = _h-topH-100 + 'px';
 				document.getElementById("item3mobile").style.minHeight = _h-topH-100 + 'px';
 				mui('.mui-scroll-wrapper').scroll({
 					indicators: false //是否显示滚动条
@@ -200,24 +161,24 @@
 									  "</a>"+
 									"</li>"+
 								"</ul>";
-				var item2 = document.getElementById('item2mobile');
+				// var item2 = document.getElementById('item2mobile');
 				var item3 = document.getElementById('item3mobile');
 				//
-				document.getElementById('slider').addEventListener('slide', function(e) {
-					if (e.detail.slideNumber === 1) {
-						if (item2.querySelector('.mui-loading')) {
-							setTimeout(function() {
-								item2.querySelector('.mui-scroll').innerHTML = html2;
-							}, 500);
-						}
-					} else if (e.detail.slideNumber === 2) {
-						if (item3.querySelector('.mui-loading')) {
-							setTimeout(function() {
-								item3.querySelector('.mui-scroll').innerHTML = html3;
-							}, 500);
-						}
-					}
-				});
+				// document.getElementById('slider').addEventListener('slide', function(e) {
+				// 	if (e.detail.slideNumber === 1) {
+				// 		if (item2.querySelector('.mui-loading')) {
+				// 			setTimeout(function() {
+				// 				item2.querySelector('.mui-scroll').innerHTML = html2;
+				// 			}, 500);
+				// 		}
+				// 	} else if (e.detail.slideNumber === 2) {
+				// 		if (item3.querySelector('.mui-loading')) {
+				// 			setTimeout(function() {
+				// 				item3.querySelector('.mui-scroll').innerHTML = html3;
+				// 			}, 500);
+				// 		}
+				// 	}
+				// });
 				var sliderSegmentedControl = document.getElementById('sliderSegmentedControl');
 				mui('.mui-input-group').on('change', 'input', function() {
 					if (this.checked) {
