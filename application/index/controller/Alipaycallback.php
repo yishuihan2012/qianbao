@@ -23,22 +23,22 @@ class Alipaycallback
 
 	 public function callback()
 	 {
-    //     var_dump(123);die;
-	   //   $data = file_get_contents("php://input");
-    //      file_put_contents('datas0.txt', $data);
-	 	 // $data = trim($data);
-	 	 // file_put_contents('datas1.txt', $data);
-    // 	 $data = json_decode($data, true);
-    // 	 file_put_contents('success.txt',$data['state']);
-    //      var_dump(123);die;
+	     $data = file_get_contents("php://input");
+         // var_dump($data);die;
+         file_put_contents('datas0.txt', $data);
+	 	 $data = trim($data);
+	 	 file_put_contents('datas1.txt', $data);
+    	 $data = json_decode($data, true);
+    	 file_put_contents('success.txt',$data['state']);
+         var_dump(123);die;
 	 	 $post['upgrade_member_id']=16;
 	 	 $post['upgrade_group_id']=3;
          // var_dump($post);die;
-         // $Alipay=new \app\index\controller\Alipay();
-         // $Alipay->callback($data);
+         $Alipay=new \app\index\controller\Alipay();
+         $Alipay->callback($data);
 
     	 #修改会员等级
-    	 // $member=Member::where('member_id='.$post['upgrade_member_id'])->update(['member_group_id'=>$post['upgrade_group_id']]);
+    	 $member=Member::where('member_id='.$post['upgrade_member_id'])->update(['member_group_id'=>$post['upgrade_group_id']]);
 
     	 #修改入网
          $member_net=MemberNet::where('net_member_id='.$post['upgrade_member_id'])->find();
@@ -54,8 +54,11 @@ class Alipaycallback
 
     	 #执行修改入网信息
     	 $arr=mishuaedit($passageway, $rate, $member_info, $member['member_mobile'], $member_net[$passageway['passageway_no']]);
-         var_dump($arr);die;
-    	 // $add_net=MemberNet::where('net_member_id='.$post['upgrade_member_id'])->update($arr);
+         // var_dump($arr);die;
+    	 $add_net=MemberNet::where('net_member_id='.$post['upgrade_member_id'])->update($arr);
+
+         $commission=new \app\api\controller\Commission();
+         $commission->MemberCommis($post['upgrade_member_id'],$post['price'],'会员付费升级');
 
 	 }
 

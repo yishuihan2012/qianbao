@@ -2,7 +2,7 @@
 <html class="bg-w">
 	<head>
 		<meta charset="UTF-8">
-		<title>还款计划详情</title>
+		<title>还款计划提交成功</title>
 		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
 		<link href="/static/css/mui.min.css" rel="stylesheet" />
 		<link href="/static/css/iconfont.css" rel="stylesheet" />
@@ -14,13 +14,13 @@
 		<div class="mui-content bg-w repay-suc">
 			<div class="fc">
 		    	<span class="mui-icon iconfont icon-successful f48"></span>
-		    	<p class="space-up2">交易成功</p>
-		    	<!-- <p class="space-up2 invalid-color">自助还款计划已设置成功</p>
+		    	<p class="space-up2">还款计划提交成功</p>
+		    	<p class="space-up2 invalid-color">自助还款计划已设置成功</p>
 		    	<p class="invalid-color">还款期间，请务必保持卡余额不变，</p>
-		    	<p class="invalid-color">否则会影响还款成功率</p> -->
+		    	<p class="invalid-color">否则会影响还款成功率</p>
 		    </div>
 		    <div class="fc my-btn-container">
-		    	<a class="my-btn-blue2 space-right2 f18" id="seeDetails">完成</a>
+		    	<a class="my-btn-blue2 space-right2 f18 " id="seeDetails">完成</a>
 		    </div>
 		</div>
 		<script src="/static/js/mui.min.js"></script>
@@ -30,12 +30,12 @@
 		      var isiOS = !!u.match(/\(i[^;]+;( U;)? CPU.+Mac OS X/); //ios终端
 			mui.init();
 			mui.ready(function(){
-				document.getElementById('seeDetails').addEventListener('tap',function(){
-				      if(!isAndroid){
-				        window.webkit.messageHandlers.shareUrl.paySus();
-				      }else{
-				        android.paySus();
-				      }
+				mui(document).on('tap','#seeDetails',function(){
+			      if(!isAndroid){
+			        window.webkit.messageHandlers.returnIndex.postMessage();
+			      }else{
+			        android.returnIndex();
+			      }
 				});
 			});
 		</script>

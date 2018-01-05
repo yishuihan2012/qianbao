@@ -9,12 +9,15 @@
  use app\index\model\System as Systems;
  use app\index\model\CustomerService;
  use app\index\model\Announcement;
+ use app\index\model\Member;
+ use app\index\model\Notice;
  use app\index\model\Page;
  use think\Controller;
  use think\Request;
  use think\Session;
  use think\Config;
  use think\Loader;
+ use think\Db;
 
 
  class System extends Common
@@ -139,7 +142,7 @@
 	 */
 	 public function announcement()
 	 {
-		 $list=Announcement::with('adminster')->where('announcement_status',1)->paginate(Config::get('page_size'));
+		 $list=Announcement::with('adminster')->paginate(Config::get('page_size'));
 		 $this->assign('button', 
  		 	 [
  		 		 ['text'=>'新增公告', 'link'=>url('/index/System/add_announcement')],
@@ -153,12 +156,45 @@
 	{
 		 if(Request::instance()->isPost())
 		 {
+		 	$param=request()->param();
 		 	$content = array();
-		 	
-		 		$_POST['announcement_adminid']=session('adminster.id');
-			 	$Announcement = new Announcement($_POST);
+	 		$param['announcement_adminid']=session('adminster.id');
+	 		$msg='增加失败';
+           Db::startTrans();             
+           try{
+           	//写入系统通知表
+			 	$Announcement = new Announcement($param);
 				$result = $Announcement->allowField(true)->save();
-				$content = ($result===false) ? ['type'=>'error','msg'=>'保存失败'] : ['type'=>'success','msg'=>'保存成功'];
+				if($result!=false){
+					//批量写入用户通知表
+					$members=Member::all()->column('member_id');
+					$data=[];
+					foreach ($members as $k => $v) {
+						$data[]=[
+							'notice_title'=>$param['announcement_title'],
+							'notice_content'=>$param['announcement_content'],
+							'notice_adminid'=>$param['announcement_adminid'],
+							'notice_announcement_id'=>$Announcement->announcement_id,
+							'notice_recieve'=>$v,
+						];
+					}
+					$Notice=new Notice();
+					$result=$Notice->saveAll($data);
+					if($result!=false){
+						Db::commit();
+					}else{
+						$msg='批量写入用户通知表失败';
+					}
+				}else{
+					$msg='写入系统通知表失败';
+				}
+				if(!$result)Db::rollback();   
+           } catch (\Exception $e) {                  
+                 Db::rollback();                 
+	             $result=false;
+	             $msg='异常错误';   
+           }       
+			$content = ($result===false) ? ['type'=>'error','msg'=>$msg] : ['type'=>'success','msg'=>'增加成功'];
 			
 			Session::set('jump_msg', $content);
 			$this->redirect('System/announcement');
@@ -187,9 +223,21 @@
 	 #删除公告
 	 public function del_announcement()
 	 {
-		
-	 	 $Announcement =Announcement::get(Request::instance()->param('announcement_id'));
-		 $result= $Announcement->allowField(true)->save(['announcement_status'=>0]);
+	 	$param=request()->param();
+       Db::startTrans();             
+       try{
+       	//系统通知表删除
+		 	$result = Announcement::destroy($param['announcement_id']);
+			if($result){
+				//用户通知表批量删除
+				$result=Notice::destroy(['notice_announcement_id'=>$param['announcement_id']]);
+				if($result)Db::commit();
+			}
+			if(!$result)Db::rollback();   
+       } catch (\Exception $e) {                 
+             Db::rollback();                 
+             $result=false;           
+       }       
 		 $content = ($result===false) ? ['type'=>'error','msg'=>'删除失败'] : ['type'=>'success','msg'=>'删除成功'];
 		 Session::set('jump_msg', $content);
 		 $this->redirect('System/announcement');

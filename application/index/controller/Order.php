@@ -43,7 +43,7 @@ class Order extends Common{
 	 	$order_lists = Orders::haswhere('member',$where)->join("wt_member_cert m", "m.cert_member_id=Member.member_id","left")->where($wheres)->field('wt_member.member_nick')->paginate(Config::get('page_size'),false, ['query'=>Request::instance()->param()]);
 	 	 // dump(Orders::getLastsql());
 	 	 #统计订单条数
-	 	 $count['count_size']=Orders::count();
+	 	 $count['count_size']=Orders::haswhere('member',$where)->join("wt_member_cert m", "m.cert_member_id=Member.member_id","left")->where($wheres)->count();
 		$this->assign('order_lists', $order_lists);
 	    $this->assign('count', $count);
 		 
@@ -94,7 +94,7 @@ class Order extends Common{
 
 	 	 #统计订单条数
 	 	 $countmoney=Withdraw::where('withdraw_state=12')->sum('withdraw_amount');
-	 	 $count['count_size']=Withdraw::count();
+	 	 $count['count_size']=Withdraw::haswhere('member',$where)->join("wt_member_cert m", "m.cert_member_id=Member.member_id","left")->where($wheres)->count();
 		 $this->assign('order_lists', $order_lists);
 		 $this->assign('countmoney', $countmoney);
 		 $this->assign('count', $count);
@@ -151,7 +151,7 @@ class Order extends Common{
 	 	 $order_lists = CashOrder::with('passageway')->join('wt_member m',"m.member_id=wt_cash_order.order_member")->where($where)->join("wt_member_cert mc", "mc.cert_member_id=m.member_id","left")->where($wheres)->paginate(Config::get('page_size'), false, ['query'=>Request::instance()->param()]);
 	 	
 	 	 #统计订单条数
-	 	 $count['count_size']=CashOrder::count();
+	 	 $count['count_size']=CashOrder::with('passageway')->join('wt_member m',"m.member_id=wt_cash_order.order_member")->where($where)->join("wt_member_cert mc", "mc.cert_member_id=m.member_id","left")->where($wheres)->count();
 			 $this->assign('order_lists', $order_lists);
 			 $this->assign('count', $count);
 		if(!Request::instance()->param('member_nick')){
@@ -197,7 +197,7 @@ class Order extends Common{
 	 	 }
 	 	 $countmoney=Recomment::sum('recomment_money');
 	 	 #统计订单条数
-	 	 $count['count_size']=Recomment::count();
+	 	 $count['count_size']=Recomment::haswhere('member',$where)->join("wt_member_cert m", "m.cert_member_id=Member.member_id","left")->where($wheres)->count();
 			 $this->assign('countmoney', $countmoney);
 			 $this->assign('order_lists', $order_lists);
 			 $this->assign('count', $count);

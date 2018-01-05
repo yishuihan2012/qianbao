@@ -32,13 +32,16 @@
 		<script src="/static/js/mui.min.js"></script>
 		<script type="text/javascript">
 			var res='';
+	      var u = navigator.userAgent;
+	      var isAndroid = u.indexOf('Android') > -1 || u.indexOf('Adr') > -1; //android终端
+	      var isiOS = !!u.match(/\(i[^;]+;( U;)? CPU.+Mac OS X/); //ios终端
 			$(function(){
 				mui(document).on('tap','#sub',function(){
 					var url='/api/userurl/confirmPlan/uid/{{$uid}}/token/{{$token}}/id/{{$generationorder["order_no"]}}';
 					$.post(url,'',function(res){
 						res=JSON.parse(res);
 						if(res.code==200){
-							window.location='/api/userurl/repayment_plan_detail/uid/{{$uid}}/token/{{$token}}/order_no/{{$generationorder["order_no"]}}';
+							window.top.location.href='/api/userurl/repayment_plan_success/uid/{{$uid}}/token/{{$token}}';
 						}else{
 							alert(res.msg);
 						}

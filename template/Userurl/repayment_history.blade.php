@@ -139,7 +139,7 @@
 		<script type="text/javascript">
 			mui.init();
 			mui('.mui-table-view-cell').on('tap','a',function(){
-		      window.top.location.href=this.href;
+		      window.top.location.href=this.href+window.location.search;
 		    });
 			mui.ready(function(){
 				var _h =  window.screen.availHeight;

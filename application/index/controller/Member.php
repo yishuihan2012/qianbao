@@ -38,10 +38,11 @@ class Member extends Common{
 		}else{
 			$r['cert_member_idcard'] = '';
 		}
+		// dump(@file_get_contents("http://huiqianbao.lianshuopay.com/uploads/avatar/20171230/92ec98cd4c5ed80b525897e4a6a44110.jpg"));
 	 	 //获取会员等级
 	 	 $member_group=MemberGroup::all();
 	 	 #获取会员列表 
-	 	 $member_list=Members::with('memberLogin,membergroup,membercert')->join("wt_member_cert m", "m.cert_member_id=member_id","left")->where($wheres)->where($where)->order('member_id','desc')->paginate('12', false, ['query'=>Request::instance()->param()]);
+	 	 $member_list=Members::with('memberLogin,membergroup,membercert')->join("wt_member_cert m", "m.cert_member_id=member_id","left")->where($wheres)->where($where)->order('member_id','desc')->paginate(Config::get('page_size'), false, ['query'=>Request::instance()->param()]);
 	 	 #用户身份证号码
 		 $count = Members::with('memberLogin,membergroup,membercert')->join("wt_member_cert m", "m.cert_member_id=member_id","left")->where($wheres)->where($where)->count();
 	 	 $this->assign('count', $count);

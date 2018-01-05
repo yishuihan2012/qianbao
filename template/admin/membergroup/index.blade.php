@@ -69,7 +69,8 @@
   	</tbody>
   	<tfoot>
 	    <tr>
-	      	<td colspan="15">{!! $list->render() !!}</td>
+	      	<td colspan="8">{!! $list->render() !!}</td>
+          <td colspan="2" style="line-height: 55px">当前共<em style="font-size: 20px;color:red">{{$count}}</em>条记录</td>
 	    </tr>
   	</tfoot>
 </table>

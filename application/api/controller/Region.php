@@ -167,7 +167,8 @@
       **/ 
       public function advertisement()
       {
-        $announcement=Announcement::where(['announcement_status'=>1])->field('announcement_title')->select();
+        $announcement=new Announcement();
+        $announcement=$announcement->select();
 
         foreach ($announcement as $key => $value) {
           $data[$key]=$value['announcement_title'];

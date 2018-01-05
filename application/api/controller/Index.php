@@ -69,6 +69,6 @@ use think\Config;
       }
       #测试用
       public function test(){
-          return json_encode(jpush(13,'aaa','thissdsdt'));
+          return json_encode(jpush(4,'666','thissdsdt','',1));
       }
  }

@@ -99,7 +99,7 @@
       {
            #定义请求报文组装
            $arr=array(
-                 'companyname'    =>"山东联硕支付技术有限公司济南分公司（无积分快捷）",//$this->membercard->card_name.rand(1000,9999),
+                 'companyname'    =>"快捷支付",//$this->membercard->card_name.rand(1000,9999),山东联硕支付技术有限公司济南分公司（无积分快捷）
                  'companycode'     =>$this->passway->passageway_mech,
                  'accountname'      =>$this->membercard->card_name,
                  'bankaccount'       =>$this->membercard->card_bankno,
@@ -114,43 +114,41 @@
            // dump($arr);die;
            $passParam=urlsafe_b64encode(AESencode(json_encode($arr),$this->passway->passageway_pwd_key,$this->passway->passageway_pwd_key));
            $array=array(
-                 'appid'      =>$this->passway->passageway_mech, //APPID
+                 'appid'      =>'400467885', //APPID
                  'method'   =>"masget.webapi.com.subcompany.add",//进件接口
                  'format'     =>"json",//响应格式
                  'data'        =>$passParam,//请求报文加密
                  'v'             =>"2.0",//接口版本号
-                 'session'  =>$this->passway->passageway_key,
+                 'session'  =>'d0hidia512nuh1nv787pz0zideacfuew',
                  // 'target_appid' =>$this->passway->passageway_mech,
                  'timestamp'  =>date("Y-m-d H:i:s",time()),
             );
            // var_dump($array);die;
-           ksort($array);//自然排序 
+           ksort($array);//自然排序
            // $array=SortByASCII($array);//自然排序 SortByASCII
            $str="";
            //循环组成键值对
-           // var_dump($array);die;
            foreach ($array as $key => $value){
               $str.=$value;
-           }  
-            // var_dump($str);die;
+           } 
            $signature=md5($this->passway->passageway_pwd_key.trim($str).$this->passway->passageway_pwd_key); //生成签名
-           // $array['sign']=$signature;
-           $str1="";
-           foreach ($array as $key => $value){
-              $str1.=$key."=".$value."&";
-           }
-                 // var_dump(rtrim($str1,'&'));die;
-           $str1.="sign=".$signature; //拼接请求体参数
-           $getData="https://test.masget.com:7373/openapi/rest?".rtrim($str1,'&');
-           //dump($getData);exit;
-           $curl = curl_init();
-           curl_setopt($curl, CURLOPT_URL, $getData);
-           curl_setopt($curl, CURLOPT_HEADER, 0);
-           curl_setopt($curl, CURLOPT_RETURNTRANSFER, 1);
-           curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, FALSE); // https请求 不验证证书和hosts
-           curl_setopt($curl, CURLOPT_SSL_VERIFYHOST, FALSE);
-           $result = curl_exec($curl);
-           // $result=curl_post($this->passway->cashout->cashout_url,'post',$array);
+           $array['sign']=$signature;
+           // $str1="";
+           // foreach ($array as $key => $value){
+           //    $str1.=$key."=".$value."&";
+           // }
+           // $str1.="sign=".$signature; //拼接请求体参数
+           // $getData="https://test.masget.com:7373/openapi/rest?".rtrim($str1,'&');
+           // //dump($getData);exit;
+           // $curl = curl_init();
+           // curl_setopt($curl, CURLOPT_URL, $getData);
+           // curl_setopt($curl, CURLOPT_HEADER, 0);
+           // curl_setopt($curl, CURLOPT_RETURNTRANSFER, 1);
+           // curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, FALSE); // https请求 不验证证书和hosts
+           // curl_setopt($curl, CURLOPT_SSL_VERIFYHOST, FALSE);
+           // $result = curl_exec($curl);
+           dump($array);die;
+           $result=curl_post('https://test.masget.com:7373/openapi/rest','post',$array);
            dump($result);die;
 
       }
