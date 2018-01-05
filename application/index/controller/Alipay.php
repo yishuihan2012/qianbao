@@ -64,28 +64,27 @@ use app\index\model\CallbackLog as CallbackLogs;
        */
       public function callback($post)
       {
-        file_put_contents('datas456.txt',json_encode($post));
             try {
-                 // $callbackLogs=new CallbackLogs;
-                 // $callbackLogs->callback_type="Alipay";
-                 // $callbackLogs->callback_info=json_encode($post);
-                 // $callbackLogs->callback_notify_id=$post['notify_id'];
-                 // $callbackLogs->callback_time = date("Y-m-d H:i:s");
-                 // $callbackLogs->save();
-                 if (!$this->aop->rsaCheckV1($post, null))
-                    echo "FAIL";
-                 if ($post['trade_status']=='WAIT_BUYER_PAY')
-                    echo "FAIL";
-                 if ($post['trade_status']=='TRADE_CLOSED')
-                    echo "FAIL";
-                 if ($post['trade_status']=='TRADE_FINISHED')
-                    echo "FAIL";
+              // var_dump($post);die;
+              // var_dump($this->aop->rsaCheckV1($post, null,"RSA2"));die;
+                 if (!$this->aop->rsaCheckV1($post, null,"RSA2")){
+                    echo "FAIL33";
+                 }
+                 if ($post['trade_status']=='WAIT_BUYER_PAY'){
+                    echo "FAIL";die;
+                 }
+                 if ($post['trade_status']=='TRADE_CLOSED'){
+                    echo "FAIL";die;
+                 }
+                 if ($post['trade_status']=='TRADE_FINISHED'){
+                    echo "FAIL";die;
+                 }
 
                  if ($post['trade_status']=='TRADE_SUCCESS') {
                       $order=Upgrades::get(['upgrade_no'=>$post['out_trade_no']]); //订单信息
-                      if ($order->order_state>0)//判断当前订单状态已支付 结束
+                      if ($order->upgrade_state>0)//判断当前订单状态已支付 结束
                            return "FAIL";
-                      if ($post['total_amount']!=($order->order_total_amount/100)) //回调金额（元） 与订单金额不符（分） 结束
+                      if ($post['total_amount']!=($order->upgrade_money)) //回调金额（元） 与订单金额不符（分） 结束
                            return "FAIL";
                       $order->upgrade_state=1; //更改状态为已支付
                       $order->upgrade_type="Alipay";

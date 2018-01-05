@@ -102,21 +102,6 @@
                  #用户钱包信息更改~
                  $memberwallet->wallet_amount=$meyyue;
                  $memberwallet->wallet_total_withdraw=$memberwallet['wallet_total_withdraw']+$total;  
-                 #写入提现记录 提现申请 订单表
-                 $drawlog=new WalletLog([
-                      'log_wallet_id' =>$memberwallet['wallet_id'],
-                      'log_wallet_amount'=>$total,
-                      'log_wallet_type'    =>2,
-                      'log_relation_id'     =>0,
-                      'log_relation_type' =>2,
-                      'log_form'              =>'会员提现',
-                      'log_desc'  =>'申请提现: 申请金额:'.$this->param['money']."元,手续费:".$charge."元,实际到账:".$prac."元。"
-                 ]);
-                 if($drawlog->save()===false || $memberwallet->save()===false)
-                 {
-                      Db::rollback();
-                      return ['code'=>371];
-                 }
                  #写入提现审核表
                  $withdraws=new Withdraws;
                  $withdraws->withdraw_no = make_order();
@@ -155,6 +140,21 @@
                  $content=[];
                  $content['type']=2;
                  $content['item']=$message;
+                 #写入提现记录 提现申请 订单表
+                 $drawlog=new WalletLog([
+                      'log_wallet_id' =>$memberwallet['wallet_id'],
+                      'log_wallet_amount'=>$total,
+                      'log_wallet_type'    =>2,
+                      'log_relation_id'     =>$withdraws->withdraw_id,
+                      'log_relation_type' =>2,
+                      'log_form'              =>'会员提现',
+                      'log_desc'  =>'申请提现: 申请金额:'.$this->param['money']."元,手续费:".$charge."元,实际到账:".$prac."元。"
+                 ]);
+                 if($drawlog->save()===false || $memberwallet->save()===false)
+                 {
+                      Db::rollback();
+                      return ['code'=>371];
+                 }
                  Db::commit();
 /*                 if($member->member_device) //非空 
                       message_push('提现申请',$content,$member->member_id,$member->member_device,1);*/

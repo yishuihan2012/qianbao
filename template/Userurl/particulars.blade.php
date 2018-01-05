@@ -51,9 +51,11 @@
 			        		</div>
 			        		<div class="ftr">
 			        			<p class="f20">{{$v['log_wallet_type']==1 ? '' : '-'}}{{substr($v['log_wallet_amount'],0,-2)}}</p>
-			        			<!-- 提现操作 -->
+			        			<!-- 提现操作 此处显示状态-->
 			        			@if($v['log_relation_type']==2)
-			        			<p class="f14 yellow-color">申请中</p>
+			        				@if(isset($v['info']))
+			        			<p class="f14 yellow-color">$v['info']</p>
+			        				@endif
 			        			@endif
 			        		</div>
 			        	</div>
@@ -124,7 +126,7 @@
 		<script type="text/javascript">
 			mui.init();
 			mui('.mui-table-view-cell').on('tap','a',function(){
-		      window.top.location.href=this.href;
+		      // window.top.location.href=this.href;
 		    });
 			mui.ready(function(){
 				var currYear = (new Date()).getFullYear();	
@@ -210,9 +212,9 @@
 			        if(pageHeight - viewportHeight - scrollHeight < 60){
 			            page++;
 			            if(page<=allpage){
-			                // showAjax(page);
+			                showAjax(page);
 			            }else{
-			                // $(".load-more").text("已无数据");
+			                $(".load-more").text("已无数据");
 			            }
 			        }
 			    }
