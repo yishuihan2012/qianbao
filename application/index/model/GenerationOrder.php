@@ -35,10 +35,14 @@ class GenerationOrder extends Model{
       }
       #获取还款列表
       public static function list(){
-          $list = Db::view("GenerationOrder")
-            ->view("Generation","Generation.*","Generation.generation_id=GenerationOrder.order_no")
-            ->paginate(Config::get('page_size'), false, ['query'=>Request::instance()->param()]);
-            dump($list);
+         return $list = Db::view("GenerationOrder")
+            ->view("Generation","*","Generation.generation_id=GenerationOrder.order_no")
+            ->view("Member m","member_nick as o_member_nick,member_mobile as o_member_mobile","m.member_id=GenerationOrder.order_member")
+            ->view("Member","member_nick,member_mobile","Member.member_id=Generation.generation_member")
+            ->where("generation_state",">",1)
+            ->limit(1,10)->select();
+
+            
 
       }
 

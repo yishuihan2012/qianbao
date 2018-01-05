@@ -37,10 +37,10 @@
   		@foreach($list as $k => $v)
 	    <tr>
 	    	
-	      	<td ></td>
-	      	<td ></td>
-	      	<td ></td>
-	      	<td ></td>
+	      	<td >{{$v['o_member_nick']}}</td>
+	      	<td >{{$v['o_member_mobile']}}</td>
+	      	<td >{{$v['member_nick']}}</td>
+	      	<td >{{$v['member_mobile']}}</td>
 	      	<td ></td>
 	      	<td ></td>
 	      	<td ></td>

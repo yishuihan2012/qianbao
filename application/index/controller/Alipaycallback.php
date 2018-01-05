@@ -24,18 +24,16 @@ class Alipaycallback
 	 public function callback()
 	 {
          $data=$_POST;
-	     // $data = file_get_contents("php://input");
-         file_put_contents('datas11111.txt',$data);
-         $str = var_export($data,TRUE);
-        file_put_contents('datas123.txt',$str);
+
          $Alipay=new \app\index\controller\Alipay();
          $success=$Alipay->callback($data);
          if($success!="SUCCESS")
             echo "FAIL";
 
         $order=Upgrade::get(['upgrade_no'=>$data['out_trade_no']]);
-        $post['upgrade_member_id']=$order['upgrade_member_id'];
-        $post['total_amount']=$order['total_amount'];
+        $post['upgrade_member_id']=$order->upgrade_member_id;
+        $post['upgrade_money']=$order->upgrade_money;
+        $post['upgrade_group_id']=$order->upgrade_group_id;
          // $Alipay=new \app\index\controller\Alipay();total_amount
          // $data['signedStr']=$Alipay->callback($params);
 
@@ -60,7 +58,8 @@ class Alipaycallback
     	 // $add_net=MemberNet::where('net_member_id='.$post['upgrade_member_id'])->update($arr);
 
          $commission=new \app\api\controller\Commission();
-         $commission->MemberCommis($post['upgrade_member_id'],$post['total_amount'],'会员付费升级');
+         $commission->MemberCommis($post['upgrade_member_id'],$post['upgrade_money'],'会员付费升级');
+         echo 111;
 
 	 }
 

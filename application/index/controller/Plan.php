@@ -24,7 +24,7 @@ class Plan extends Common{
 	public function index(){
 		// $list = Generation::with("generationOrder,member,members")->paginate(Config::get('page_size'), false, ['query'=>Request::instance()->param()]);
 		$list = GenerationOrder::list();
-		dump($list);die;
+		
 		$this->assign("list",$list);
 		return view("/admin/Plan/index");
 	}

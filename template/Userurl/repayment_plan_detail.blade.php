@@ -14,12 +14,12 @@
 		<div class="mui-content repayment-detail">
 			<!--还款详情头部-->
 			<div class="wrap bg-w">
-			  <div class="dis-flex-be bor-bot">
-			    <div class="dis-flex">
+			  <div class=" bor-bot">
+			    <div class="" style="flex:0;width: 70vw">
 			      <p class="invalid-color f16">还款总金额(含手续费{{$order_pound}})</p>
 			      <p class="f24 space-up3 space-bot"><strong>{{$generation['generation_total']+$order_pound}}</strong></p>
 			    </div>
-			    <div class="dis-flex fc">
+			    <div class=" fc" style="flex:0;width: 25vw">
 			      <p class="invalid-color f16">消费笔数</p>
 			      <p class="f24 space-up3 space-bot"><strong>{{$generation['generation_count']}}</strong></p>
 			    </div>

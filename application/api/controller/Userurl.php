@@ -632,7 +632,16 @@ class Userurl extends Controller
 		switch ($v['log_relation_type']) {
 			//提现操作
 			case 2:
-				// $list['k']['info']=
+				$state=db('withdraw')->where('withdraw_id',$v['log_relation_id'])->value('withdraw_state');
+				if($state==11){
+					$list['k']['info']='申请已提交';
+				}elseif($state==-11){
+					$list['k']['info']='申请未提交';
+				}elseif($state==12){
+					$list['k']['info']='审核通过';
+				}elseif($state==-12){
+					$list['k']['info']='审核未通过';
+				}
 				break;
 			
 			default:
