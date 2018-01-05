@@ -34,7 +34,7 @@ class GenerationOrder extends Model{
            return $this->belongsTo('Generation','generation_id','order_no')->setEagerlyType(0);
       }
       #获取还款列表
-      public static function list($page = 1){
+      public static function list(){
         //查询数据总条数
         $list = Db::view("GenerationOrder")
             ->view("Generation","*","Generation.generation_id=GenerationOrder.order_no")
@@ -44,5 +44,17 @@ class GenerationOrder extends Model{
             ->paginate(10);
             return $list;
       }
-    
+     #获取还款详情
+      public static function info($where){
+        //查询数据总条数
+
+        $list = Db::view("GenerationOrder")
+            ->view("Generation","*","Generation.generation_id=GenerationOrder.order_no")
+            ->view("Member m","member_nick as o_member_nick,member_mobile as o_member_mobile","m.member_id=GenerationOrder.order_member")
+            ->view("Member","member_nick,member_mobile","Member.member_id=Generation.generation_member")
+            ->where($where)
+            ->find();
+           
+            return $list;
+      }
 }
