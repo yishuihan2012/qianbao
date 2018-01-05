@@ -70,8 +70,8 @@ use think\Config;
       #测试用
       public function test($text){
           return json_encode(jpush(4,$text,$text,$text,1));
-          $result='http://gongke.iask.in:21339\uploads\avatar\20180105\36837c01e5a28963614ee6d8943a263e.jpg';
-          $result = str_replace('\\', '/', $result);
-          return $result;
+      }
+      public function test2($text){
+          return json_encode(jpush(3,$text,$text,$text,1));
       }
  }

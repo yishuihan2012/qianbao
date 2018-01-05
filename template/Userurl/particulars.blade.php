@@ -19,7 +19,7 @@
 			<div class="dis-flex-be wrap">
         		<div>
         			<p class="f15 invalid-color" id="monthContainer">{{$data['month']}}</p>
-        			<p class="f15 invalid-color space-up3">共收入<span id="income">{{$data['month']}}</span>元 支出<span id="expend">{{$data['month']}}</span>元</p>
+        			<p class="f15 invalid-color space-up3">共收入<span id="income">{{$data['in']}}</span>元 支出<span id="expend">{{$data['out']}}</span>元</p>
         		</div> 
         		<div class="ftr por">
         			<span class="mui-icon iconfont icon-rili normal-color f24">

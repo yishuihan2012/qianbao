@@ -35,7 +35,7 @@ class GenerationOrder extends Model{
       }
       #获取还款列表
       public static function list(){
-          $list = Db::view("GenerationOrder as go", "go.*")
+          $list = Db::view("GenerationOrder")
             ->paginate(Config::get('page_size'), false, ['query'=>Request::instance()->param()]);
             dump($list);
 
