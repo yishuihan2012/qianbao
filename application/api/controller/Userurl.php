@@ -613,12 +613,24 @@ class Userurl extends Controller
 	//月末
 	$monthend=strtotime(date('Y-m',strtotime('+1 month')));
   	// $withdraw=db('withdraw')->where(['withdraw_member'=>$this->param['uid']])->select();
+  	//表头数据
+  	$data=[];
+  	$data['month']=date('Y-m');
+  	$data['in']=0;
+  	$data['out']=0;
   	$list=db('wallet_log')->alias('l')
   		->join('wallet w','l.log_wallet_id=w.wallet_id')
-  		->where(['w.wallet_member'=>$this->param['uid'],'log_add_time'=>$month])
-  		->fetchSql()
+  		->where(['w.wallet_member'=>$this->param['uid']])
+  		->where('log_add_time','between time',[$monthstart,$monthend])
   		->select();
-  		halt($list);
+	foreach ($list as $k => $v) {
+		if($v['log_wallet_type']==1){
+			$data['in']+=$v['log_wallet_amount'];
+		}else{
+			$data['out']+=$v['log_wallet_amount'];
+		}
+	}
+  	$this->assign('data',$data);
   	$this->assign('list',$list);
   	return view("Userurl/particulars");
   }

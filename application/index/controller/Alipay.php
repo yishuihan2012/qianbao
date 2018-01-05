@@ -64,6 +64,7 @@ use app\index\model\CallbackLog as CallbackLogs;
        */
       public function callback($post)
       {
+        file_put_contents('datas123.txt',json_encode($post));
             try {
                  // $callbackLogs=new CallbackLogs;
                  // $callbackLogs->callback_type="Alipay";

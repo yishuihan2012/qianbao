@@ -18,8 +18,8 @@
 			<!--注：只第一个月份头部信息有id,其他不加id-->
 			<div class="dis-flex-be wrap">
         		<div>
-        			<p class="f15 invalid-color" id="monthContainer">2017-12</p>
-        			<p class="f15 invalid-color space-up3">共收入<span id="income">856.10</span>元 支出<span id="expend">581.24</span>元</p>
+        			<p class="f15 invalid-color" id="monthContainer">{{$data['month']}}</p>
+        			<p class="f15 invalid-color space-up3">共收入<span id="income">{{$data['month']}}</span>元 支出<span id="expend">{{$data['month']}}</span>元</p>
         		</div> 
         		<div class="ftr por">
         			<span class="mui-icon iconfont icon-rili normal-color f24">

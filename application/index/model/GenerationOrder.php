@@ -9,7 +9,7 @@ namespace app\index\model;
 use think\Db;
 use think\Model;
 use think\Config;
-
+use think\Request;
 class GenerationOrder extends Model{
       #定义模型数据表 默认为Class名加前缀 如不一样 可自己定义
       #protected $table = 'wt_generation_order';
@@ -34,8 +34,11 @@ class GenerationOrder extends Model{
            return $this->belongsTo('Generation','generation_id','order_no')->setEagerlyType(0);
       }
       #获取还款列表
-      public function list(){
-        
+      public static function list(){
+          $list = Db::view("GenerationOrder as go", "go.*")
+            ->paginate(Config::get('page_size'), false, ['query'=>Request::instance()->param()]);
+            dump($list);
+
       }
 
 }
