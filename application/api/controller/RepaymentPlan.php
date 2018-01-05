@@ -55,8 +55,8 @@
            // $this->param['cardId']=18;
            // $this->param['billMoney']=2000;
            // $this->param['payCount']=4;
-           // $this->param['startDate']="2018-01-05";
-           // $this->param['endDate']="2018-01-08";
+           // $this->param['startDate']="2018-01-06";
+           // $this->param['endDate']="2018-01-09";
            // $this->param['passageway']=8;
            #1判断开始日期和结束日期
            //开始日期不能大于结束日期
@@ -146,6 +146,7 @@
                        //取得每天消费多少钱
                        $result=new \app\api\controller\GetPlan();
                        $res=$result->splitReward($this->param['billMoney'],$this->param['payCount'],$this->param['billMoney']/$this->param['payCount']+100,$this->param['billMoney']/$this->param['payCount']-100);
+                       $res1=$result->get_random_money($this->param['billMoney'],$this->param['payCount'],1);
                        #循环消费数组 关联到日期数组  阙值为0.1元 为保证四舍五入后还可以足够额度
                        sort($data);
                        foreach ($res as $key => $value) {
