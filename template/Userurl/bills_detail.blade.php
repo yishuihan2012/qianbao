@@ -16,6 +16,8 @@
 			  <p class="f24 f-bold">{{substr($wallet_log['log_wallet_amount'],0,-2)}}</p>
 			</div>
 			<ul class="mui-table-view">
+				@if($wallet_log['log_relation_type']==1)
+				@endif
 			    <li class="mui-table-view-cell dis-flex-be">
 			    	<p class="invalid-color">交易状态</p>
 			    	<p>已成功</p>

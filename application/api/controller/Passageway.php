@@ -39,7 +39,7 @@
             foreach ($passageway_lists as $key => $value) {
               $passageway[$key]['item_rate']=PassagewayItem::where(['item_passageway'=>$value['passageway_id']])->order('item_also asc')->value('item_also');
               $passageway[$key]['item_rate'].="%";
-              $passageway[$key]['cashout']='最大交易额度：'.$value['cashout_max'].'最小交易额度：'.$value['cashout_min'];
+              $passageway[$key]['cashout']='单笔交易额度在200-20000之间';
               $passageway[$key]['passageway_id']=$value['passageway_id'];
               $passageway[$key]['passageway_name']=$value['passageway_name'];
               $passageway[$key]['passageway_desc']=$value['passageway_desc'];

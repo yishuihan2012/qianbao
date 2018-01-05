@@ -83,8 +83,8 @@
 			 <td>{{$info['order_pound']}}</td>
 		 </tr>
 		  <tr>
-			 <td>最近还款时间</td>
-			 <td>{{$info['generation_edit_time']}}</td>
+			 <td>订单状态</td>
+			 <td>@if($info['order_status']==1) 待执行 @elseif($info['generation_state']==3)还款结束 @elseif($info['generation_state']==-1)还款失败 @endif</td>
 		 </tr>
 		 <tr>
 			 <td>订单类型</td>
