@@ -11,8 +11,10 @@
 	</head>
 	<body>
 		<div class="mui-content bg-w wrap">
-
-			{{$page_content}}
+			<textarea  style="width: 100vw;height: 100vh;border: none;margin-left:-2vw" readonly="">
+				{{$page_content}}
+			</textarea>
+				
 		
 		    <!-- <div class="f-t-in">本协议是用户 (仅指自然人)与付赢钱包公司（以下简称“付赢钱包”）之间关于“付赢钱包客户端”软件产品及其提供的服务所拟定的法律协议。本协议在用户和付赢钱包间具有合同上的法律效力。付赢钱包在此特别提醒用户认真阅读、充分理解本协议各条款，特别是其中所涉及的免除、限制付赢钱包责任的条款、对用户权利限制条款、争议解决和法律适用条款等。一旦安装、复制或以其他方式使用本软件产品，即表示同意接受协议各项条件的约束。如果用户不同意本协议中的条款，请勿复制、下载、安装或以其他方式使用本软件产品。</div>
 			<div class="main-color">

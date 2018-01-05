@@ -101,7 +101,14 @@
            //判断卡号是否在计划内
            $plan=Generation::where(['generation_card'=>$card_info->card_bankno,'generation_state'=>2])->find();
            if($plan){
-                exit(json_encode(['code'=>111,'msg'=>'此卡已经在还款计划内，请先删除原计划再重新制定计划。']));
+                //判断当前计划是否执行结束
+                $notover=GenerationOrder::where(['order_no'=>$plan['generation_id'],'order_status'=>1])->find();
+                if($notover){
+                  exit(json_encode(['code'=>111,'msg'=>'此卡已经在还款计划内，请先删除原计划再重新制定计划。']));
+                }else{
+                  //若没有未执行的则更新主计划表状态为3
+                  Generation::update(['generation_id'=>$plan['generation_id'],'generation_state'=>3]);
+                }
            }
            Db::startTrans();
            try

@@ -80,7 +80,9 @@
 		 $result=input('post.result');
 		 #删除用户组之前要转移会员所属的用户组 首先应查找到符合条件的数据
 		 $member = new Members;
-	 	 $remove	= $member->save(['member_group'  => $result],['member_group' => $id]);
+
+	 	 $remove	= $member->save(['member_group_id'  => $result],['member_group_id' => $id]);
+	 	 
 	      $remove = MemberGroups::destroy($id);
 		 #返回状态
 		 $context=$remove ? '1' : '0';

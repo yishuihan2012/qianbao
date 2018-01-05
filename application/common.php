@@ -900,3 +900,22 @@ function pad_or_unpad($str, $ext,$pad='pkcs5')
     function  judgeimg($url){
       return @file_get_contents($url);
     }
+
+
+    #荣邦支付加密
+    function rongbang_aes($key,$arr){
+      $encrypted = mcrypt_encrypt(MCRYPT_RIJNDAEL_128, $key, json_encode($arr,JSON_UNESCAPED_UNICODE|JSON_PRETTY_PRINT), MCRYPT_MODE_CBC, $key);
+       $base64str= base64_encode($encrypted);
+       $base64str = str_replace("+", "-",  $base64str);
+       $passParam = str_replace("/","_",  $base64str);
+       return $passParam;
+    }
+
+    #荣邦支付生成sign
+    function rongbang_sign($key,$array,$url){
+     $signature = md5($key.$array['appid'].$array['data'].$array['format'].$array['method'].$array['session'].$array['timestamp'].$array['v'].$key);
+     $str1="appid=".$array['appid']."&method=".$array['method']."&format=".$array['format']."&data=".$array['data']."&v=".$array['v']."&amp;timestamp=".$array['timestamp']."&session=".$array['session']."&sign=" .$signature;
+
+     $getData=$url."?".$str1;
+     return $getData;
+    }

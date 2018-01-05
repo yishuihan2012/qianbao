@@ -18,7 +18,7 @@ class Suggestion extends Common{
 	 #会员反馈
 	 public function index()
 	 {
-	 	$lists=MemberSuggestion::with('member')->paginate(Config::get('page_size'), false, ['query'=>Request::instance()->param()]);
+	 	$lists=MemberSuggestion::with('member')->order('suggestion_creat_time desc')->paginate(Config::get('page_size'), false, ['query'=>Request::instance()->param()]);
 	 	// $lists=MemberSuggestion::paginate(Config::get('page_size'), false, ['query'=>Request::instance()->param()]);
 	 	$this->assign('lists', $lists);
 	 	$this->assign('count', count($lists));

@@ -48,7 +48,7 @@
       	 $memberLogin=MemberLogin::phone_exit($this->param['phone']);
       	 #能否查找到手机号码
       	 if(!$memberLogin)
-      	 	 return ['code'=>403,'msg'=>'未查找到手机号'];
+      	 	 return ['code'=>403,'msg'=>'该手机号尚未注册'];
       	 #验证最大尝试次数 TODO: 验证多久时间内最大的登录次数
            if($memberLogin['login_attempts']>=System::getName('is_locking'))
            {
@@ -116,10 +116,13 @@
            }else{
               $data['cashcardinfo']=$CashCard['card_bankname'].' 尾号'.substr($CashCard['card_bankno'], -4); 
            }
-            
-           $data['hasmessage']=1; 
+           $newToken=get_token();
+           MemberLogin::update(['login_id'=>$memberLogin['login_id'],'login_token'=>$newToken]);
+           //是否有未读消息
+          $hasmsg=db('notice')->where(['notice_recieve'=>$memberLogin['member']['member_id'],'notice_status'=>0])->find();
+           $data['hasmessage']=$hasmsg ? 1 : 0; 
 
-           $data['token']=$memberLogin['login_token'];
+           $data['token']=$newToken;
            $data['uid']=$memberLogin['member']['member_id'];
 
            return ['code'=>200,'msg'=>'登录成功~', 'data'=>$data];

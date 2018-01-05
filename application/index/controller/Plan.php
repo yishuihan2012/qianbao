@@ -11,6 +11,7 @@ use app\index\model\PassagewayItem;
 use app\index\model\MemberGroup;
 use app\index\model\Cashout;
 use app\index\model\CreditCard;
+use app\index\model\Generation;
 use think\Controller;
 use think\Request;
 use think\Session;
@@ -20,6 +21,8 @@ use think\Db;
 
 class Plan extends Common{
 	public function index(){
+		$list = Generation::with("generationOrder")->paginate(Config::get('page_size'), false, ['query'=>Request::instance()->param()]);
+		
 		return view("/admin/Plan/index");
 	}
 }

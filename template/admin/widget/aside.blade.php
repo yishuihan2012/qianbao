@@ -24,7 +24,7 @@
                 <li class="order"><a href="{{url('/index/order/index')}}"><i class="icon icon-sliders"></i> 升级订单列表</a></li>
                 <li class="withdraw"><a href="{{url('/index/order/Withdraw')}}"><i class="icon icon-sliders"></i> 提现订单</a></li>
                 <li class="recomment"><a href="{{url('/index/order/recomment')}}"><i class="icon icon-sliders"></i> 实名红包列表</a></li>
-                <li class="cash"><a href="{{url('/index/order/cash')}}"><i class="icon icon-sliders"></i> 套现订单</a></li>
+                <li class="cash"><a href="{{url('/index/order/cash')}}"><i class="icon icon-sliders"></i> 交易订单</a></li>
             </ul>
         </li>
         <li class="nav-parent passageway-manager">
