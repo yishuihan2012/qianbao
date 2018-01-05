@@ -35,14 +35,23 @@ class GenerationOrder extends Model{
       }
       #获取还款列表
       public static function list(){
-         return $list = Db::view("GenerationOrder")
+        //查询数据总条数
+        $count = Db::view("GenerationOrder")
+            ->view("Generation","","Generation.generation_id=GenerationOrder.order_no")
+            ->view("Member m","","m.member_id=GenerationOrder.order_member")
+            ->view("Member","","Member.member_id=Generation.generation_member")
+            ->where("generation_state",">",1)
+            ->count();
+
+        $list = Db::view("GenerationOrder")
             ->view("Generation","*","Generation.generation_id=GenerationOrder.order_no")
             ->view("Member m","member_nick as o_member_nick,member_mobile as o_member_mobile","m.member_id=GenerationOrder.order_member")
             ->view("Member","member_nick,member_mobile","Member.member_id=Generation.generation_member")
-            ->where("generation_state",">",1)
+            ->where("generation_state",">",1)->order("order_id  Desc")
             ->limit(1,10)->select();
-
+          
             
+            return $list;
 
       }
 
