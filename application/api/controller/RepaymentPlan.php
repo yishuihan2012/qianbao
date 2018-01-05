@@ -53,10 +53,10 @@
            // $this->param['uid']=16;
            // $this->param['token']=16;
            // $this->param['cardId']=18;
-           // $this->param['billMoney']=4000;
-           // $this->param['payCount']=12;
+           // $this->param['billMoney']=2000;
+           // $this->param['payCount']=4;
            // $this->param['startDate']="2018-01-05";
-           // $this->param['endDate']="2018-01-07";
+           // $this->param['endDate']="2018-01-08";
            // $this->param['passageway']=8;
            #1判断开始日期和结束日期
            //开始日期不能大于结束日期
@@ -115,14 +115,14 @@
            {
                  #计算开始还款日期到最后还款日期之间的间隔天数
                  //如果制定计划时间为当天，且超过晚上8点，从第二天开始执行
-                 if($this->param['startDate']==date('Y-m-d',time()) && date('H',time()>20)){
-                    $days=days_between_dates($this->param['startDate']+1,$this->param['endDate'])+1;
-                    $date=prDates($this->param['startDate']+1,$this->param['endDate']);
+                 if($this->param['startDate']==date('Y-m-d',time()) && date('H',time()>19)){
+                    $days=days_between_dates($this->param['startDate'],$this->param['endDate']);
+                    $date=prDates(date('Y-m-d',strtotime($this->param['startDate'])+3600*24),$this->param['endDate']);
                  }else{
-                    $days=days_between_dates($this->param['startDate'],$this->param['endDate']+1);
+                    $days=days_between_dates($this->param['startDate'],$this->param['endDate'])+1;
                     $date=prDates($this->param['startDate'],$this->param['endDate']);
                  }
-                 // var_dump($days);die;
+                 // var_dump($date);die;
                  #取得开始日期与结束日期之间的所有日期 并且打乱顺序
                 
                  #如果总还款次数小于日期间隔天数 则随机日期 每天消费一次 并且保证不重复;
@@ -152,9 +152,10 @@
                             $xiaofei=substr(sprintf("%.2f",(($value/10)+0.1)/(1-$also)+$daikou),0,-1);
                             $data[$key]['xf_money']=$xiaofei;
                             $data[$key]['dz_money']=round($xiaofei-$xiaofei*$also-$daikou,1, PHP_ROUND_HALF_DOWN);
-                            $data[$key]['range']=substr(sprintf("%.3f", ($value/10)* $also)+0.01,0,-1);
+                            $data[$key]['range']=substr(sprintf("%.3f", ($value/10)* $also)+$daikou,0,-1);
                             $data[$key]['daikou']=$daikou;
                        }
+                       print_r($data);die;
                        //写入主计划表
                         $Generation_result=new Generation([
                              'generation_no'          =>uniqidNumber(),//TODO 生成随机代号
@@ -226,11 +227,12 @@
                  }
                  if($this->param['payCount']>$days)
                  {
-                       if($this->param['startDate']==date('Y-m-d',time()) && date('H',time()>12)){
-                          $days=days_between_dates($this->param['startDate']+1,$this->param['endDate'])+1;
-                          $date=prDates($this->param['startDate']+1,$this->param['endDate']);
+                       if($this->param['startDate']==date('Y-m-d',time()) && date('H',time())>12){
+                          $days=days_between_dates($this->param['startDate'],$this->param['endDate']);
+                          $date=prDates(date('Y-m-d',strtotime($this->param['startDate'])+3600*24),$this->param['endDate']);
+
                        }else{
-                          $days=days_between_dates($this->param['startDate'],$this->param['endDate']+1);
+                          $days=days_between_dates($this->param['startDate'],$this->param['endDate'])+1;
                           $date=prDates($this->param['startDate'],$this->param['endDate']);
                        }
                        #计算出每天消费几次 总和等于总消费次数
@@ -250,11 +252,12 @@
                                  $xiaofei=substr(sprintf("%.2f",(($v/10)+0.1)/(1-$also)+$daikou),0,-1);
                                  $data[$key]['list'][$k]['time']=$date[$key]." ".get_hours().":".get_minites();
                                  $data[$key]['list'][$k]['xf_money']=$xiaofei;
-                                 $data[$key]['list'][$k]['range']=substr(sprintf("%.3f", ($v/10)* $also),0,-1)+0.01;
+                                 $data[$key]['list'][$k]['range']=substr(sprintf("%.3f", ($v/10)* $also),0,-1)+$daikou;
                                  $data[$key]['list'][$k]['daikou']=$daikou;
                                  $data[$key]['list'][$k]['dz_money']=round($xiaofei-$xiaofei*$also-$daikou,1, PHP_ROUND_HALF_DOWN);
                             }
                        }
+                       print_r($data);die;
                         //写入主计划表
                         $Generation_result=new Generation([
                              'generation_no'          =>uniqidNumber(),//TODO 生成随机代号
