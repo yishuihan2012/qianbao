@@ -29,7 +29,7 @@
   	@foreach($list as $log)
 	    <tr>
 	      	<td>{{$log['log_id']}}</td>
-	      	<td></td>
+	      	<td>{{$log->wallet->member->member_nick}}</td>
 	      	<td><code></code></td>
 	      	<td>{{format_money($log['log_wallet_amount'])}}</td>
 	      	<td class="text-ellipsis" title="{{$log->log_desc}}">{{$log['log_desc']}}</td>

@@ -112,19 +112,19 @@
                  'address'             =>"山东省济南市天桥区泺口皮革城",
            );
            #aes加密并且urlsafe base64编码
-           $encrypted = mcrypt_encrypt(MCRYPT_RIJNDAEL_128, 'xpsj69LRllld5Q74', json_encode($arr,JSON_UNESCAPED_UNICODE|JSON_PRETTY_PRINT), MCRYPT_MODE_CBC, 'xpsj69LRllld5Q74');
+           $encrypted = mcrypt_encrypt(MCRYPT_RIJNDAEL_128, $this->passway->passageway_key, json_encode($arr,JSON_UNESCAPED_UNICODE|JSON_PRETTY_PRINT), MCRYPT_MODE_CBC, $this->passway->passageway_key);
            $base64str= base64_encode($encrypted);
            $base64str = str_replace("+", "-",  $base64str);
            $passParam = str_replace("/","_",  $base64str);
            // $passParam = str_replace("=",".",  $passParam);
 
            $array=array(
-                 'appid'      =>'400467885', //APPID
+                 'appid'      =>$this->passway->passageway_mech, //APPID
                  'method'   =>"masget.webapi.com.subcompany.add",//进件接口
                  'format'     =>"json",//响应格式
                  'data'        =>$passParam,//请求报文加密
                  'v'             =>"2.0",//接口版本号
-                 'session'  =>'d0hidia512nuh1nv787pz0zideacfuew',
+                 'session'  =>$this->passway->passageway_key,
                  // 'target_appid' =>'400467885',
                  'timestamp'  =>time(),
             );
@@ -140,7 +140,7 @@
            //    $str1.=$key."=".$value."&";
            // }
            //$str1.="sign=".$signature; //拼接请求体参数
-           $signature = md5('xpsj69LRllld5Q74'.$array['appid'].$passParam.$array['format'].$array['method'].$array['session'].$array['timestamp'].$array['v'].'xpsj69LRllld5Q74');
+           $signature = md5($this->passway->passageway_key.$array['appid'].$passParam.$array['format'].$array['method'].$array['session'].$array['timestamp'].$array['v'].$this->passway->passageway_key);
 
           
 
@@ -157,7 +157,7 @@
             $data = curl_exec($curl);
             $httpCode = curl_getinfo($curl,CURLINFO_HTTP_CODE);
             curl_close($curl);
-            var_dump($data);die;
+            return $data;
       }
 
 
@@ -210,77 +210,5 @@
             $res=MemberNet::where(['net_member_id'=>$this->member->member_id])->setField($this->passway->passageway_no, $result['merchId']);
           return $result;
       } 
-
-
-
-        /**
-      *  @version ronghe / Api 融合支付商户入网接口
-      *  @author $bill$(755969423@qq.com)
-      *  @datetime    2017-12-25 14:36:05
-      *  @param   $member=要入网的会员   ☆☆☆::使用中
-      **/
-      public function ronghe()
-      {
-          $memberAlso=PassagewayItem::where(['item_group'=>$this->member->member_group_id,'item_passageway'=>$this->passway->passageway_id])->value('item_rate');
-
-          $member=Member::get($this->param['uid']);
-          $params=array(
-            'companyname'=>$this->member->member_mobile,//商户名称
-            'companycode'=>$this->membercard->card_member_id,//商户编码(由机构管理，保证唯一)
-            'accountname'=>$this->membercard->card_name,//账户名
-            'bankaccount'=>$this->membercard->card_bankno,//卡号
-            'bank'=>$this->membercard->card_bank_address,//开户支行名称
-            'accounttype'=>'1',//账户类型1=个人账户0=企业账户
-            'bankcardtype'=>'1',//银行卡类型,默认1,1=储蓄卡2=信用卡
-            'mobilephone'=>$this->member->member_mobile,//手机号
-            'idcardno'=>$this->membercard->card_idcard,//身份证号
-            'address'=>'1',//商户地址
-          );
-
-          $aes_params=AESencode($params,'xpsj69LRllld5Q74');
-
-           $arr=array( 
-                 'appid' => '400467885',//发送请求的公司id，由银联供应链综合服务平台统一分发
-                 'method'      => '',//API接口名称
-                 'format'  => 'json',//指定响应格式。默认json,目前支持格式为json
-                 'data'          => $this->member->member_mobile,//业务数据经过AES加密后，进行urlsafe base64编码
-                 'v'               => '2.0',//API协议版本，可选值：2.0
-                 'timestamp'      => date("Y-m-d H:i:s",time()),//时间戳，格式为yyyy-MM-dd HH:mm:ss，时区为GMT+8，例如：2016-01-01 12:00:00
-                 'city'           =>  "370100",//结算卡所在市编码
-                 'bizTypes'                 => "4301" ,// 开通业务类型
-                 '5001_fee'           => $memberAlso/100,//5001交易手续费例:0.0038  10000元交易手续费38（业务类型包含时必填）
-                 '5001_tzAddFee'              => 2, //5001T0额外手续费例:2  提现额外收取2元提现费（业务类型包含时必填）
-                 '4301_fee'         => $memberAlso/100, //4401交易手续费例:0.0038  10000元交易手续费38（业务类型包含时必填）
-                 '4301_tzAddFee'   => 2,//4401T0额外手续费例:2  提现额外收取2元提现费（业务类型包含时必填）
-           );
-           // var_dump($arr);die;
-
-           #1排序
-          $arr=SortByASCII($arr);
-
-          #2签名
-          $sign=jinyifu_getSign($arr,$this->passway->passageway_key);
-          $arr['sign']=$sign;
-          // echo $sign;die;
-          #3参数
-          $params=base64_encode(json_encode($arr));
-          #4请求字符串
-          $urls='https://hydra.scjinepay.com/jk/BranchMerchAction_add?params='.urlencode($params);
-          // echo $urls;
-          #请求
-          $res=curl_post($urls);
-          // var_dump($res);die;
-          $res=json_decode($res,true);
-          $result=base64_decode($res['params']);
-          $result=json_decode($result,true);
-          // var_dump($result);die;
-          if($result['resCode']=='00')
-            $res=MemberNet::where(['net_member_id'=>$this->member->member_id])->setField($this->passway->passageway_no, $result['merchId']);
-          return $result;
-      } 
-
-
-
-
 
  }
