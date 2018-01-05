@@ -15,7 +15,7 @@
  */
 if (!defined("AOP_SDK_WORK_DIR"))
 {
-	define("AOP_SDK_WORK_DIR", "D:/wallet/extend/alipay/tmp");
+	define("AOP_SDK_WORK_DIR", "../extend/alipay/tmp");
 }
 /**
  * 是否处于开发模式

@@ -41,6 +41,12 @@ class Generation extends Model{
       #关联模型 一对多关联 (generation_order) 关联文章分类表
       public function generationOrder()
       {
-           return $this->hasOne('GenerationOrder','order_no','generation_id','','left')->join("wt_member m","wt_generation_order.order_member=m.member_id","left")->bind("order_type,order_card,order_money,order_pound,order_status,order_desc,order_time,member_nick,member_mobile");
+           return $this->hasOne('GenerationOrder','order_no','generation_id','','left')->bind("order_type,order_card,order_money,order_pound,order_status,order_desc,order_time");
       }
+      #关联代还用户名
+      public function member(){
+        return $this->hasOne("Member","member_id","generation_member")->bind("member_nick  g_member_nick");
+      }
+      #
+     
 }

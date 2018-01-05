@@ -597,4 +597,11 @@ class Userurl extends Controller
   	$this->assign('list',$list);
   	return view("api/logic/card_description");
   }
+  #收支明细
+  public function particulars(){
+	$this->checkToken();
+  	// $withdraw=db('withdraw')->where(['withdraw_member'=>$this->param['uid']])->select();
+  	$wallet_log=db('wallet_log')->where([]);
+  	return view("Userurl/particulars");
+  }
 }
