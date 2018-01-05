@@ -614,13 +614,13 @@ class Userurl extends Controller
 	$this->checkToken();
 	if(!$month)$month=date('Y-m');
 	//月初
-	$monthstart=strtotime(date('Y-m'));
+	$monthstart=strtotime($month);
 	//月末
-	$monthend=strtotime(date('Y-m',strtotime('+1 month')));
+	$monthend=strtotime(date('Y-m',strtotime('+1 month',strtotime($month))));
   	// $withdraw=db('withdraw')->where(['withdraw_member'=>$this->param['uid']])->select();
   	//表头数据
   	$data=[];
-  	$data['month']=date('Y-m');
+  	$data['month']=$month;
   	$data['in']=0;
   	$data['out']=0;
   	$list=db('wallet_log')->alias('l')
