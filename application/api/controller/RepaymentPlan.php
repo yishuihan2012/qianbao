@@ -25,48 +25,60 @@
       public $error;
       protected $param;
       private $member;//会员
-      public function __construct($param)
-      {
-           $this->param=$param;
-           try{
-                 if(!isset($this->param['uid']) || empty($this->param['uid']) || !isset($this->param['token']) ||empty($this->param['token']))
-                       $this->error=314;
-                 #查找到当前用户
-                 $member=Member::haswhere('memberLogin',['login_token'=>$this->param['token']])->where('member_id', $this->param['uid'])->find();
-                 if($member['member_cert']!='1')
-                      $this->error=356;
-                 if(empty($member))
-                       $this->error=314;
-                 #查找实名认证信息
-                 $member_cert=MemberCert::get(['cert_member_id'=>$member['member_id']]);
-                 if(empty($member_cert) && !$this->error )
-                      $this->error=356;
-                 $this->member=$member;
-            }catch (\Exception $e) {
-                 $this->error=317;
-           }
-      }
+      // public function __construct($param)
+      // {
+      //      $this->param=$param;
+      //      try{
+      //            if(!isset($this->param['uid']) || empty($this->param['uid']) || !isset($this->param['token']) ||empty($this->param['token']))
+      //                  $this->error=314;
+      //            #查找到当前用户
+      //            $member=Member::haswhere('memberLogin',['login_token'=>$this->param['token']])->where('member_id', $this->param['uid'])->find();
+      //            if($member['member_cert']!='1')
+      //                 $this->error=356;
+      //            if(empty($member))
+      //                  $this->error=314;
+      //            #查找实名认证信息
+      //            $member_cert=MemberCert::get(['cert_member_id'=>$member['member_id']]);
+      //            if(empty($member_cert) && !$this->error )
+      //                 $this->error=356;
+      //            $this->member=$member;
+      //       }catch (\Exception $e) {
+      //            $this->error=317;
+      //      }
+      // }
       //创建还款计划
       public function creatPlan()
       {
         // 测试数据
            // $this->param['uid']=16;
            // $this->param['token']=16;
-           // $this->param['cardId']=12;
-           // $this->param['billMoney']=5000;
+           // $this->param['cardId']=18;
+           // $this->param['billMoney']=4000;
            // $this->param['payCount']=12;
-           // $this->param['startDate']="2018-01-01";
-           // $this->param['endDate']="2018-01-03";
+           // $this->param['startDate']="2018-01-05";
+           // $this->param['endDate']="2018-01-07";
            // $this->param['passageway']=8;
+           #1判断开始日期和结束日期
+           //开始日期不能大于结束日期
+           if($this->param['endDate']<$this->param['startDate']){
+              exit(json_encode(['code'=>111,'msg'=>'还款结束日期不能小于开始日期']));
+           }
+           if($this->param['startDate']<date('Y-m-d',time())){
+               exit(json_encode(['code'=>111,'msg'=>'开始日期不能小于今天']));
+           }
+           if(date('H',time())>20 && $this->param['startDate']==$this->param['endDate'] ){
+               exit(json_encode(['code'=>111,'msg'=>'今天已超过还款时间，无法为您制定还款计划']));
+           }
            #获取需要参数
           $member_info=MemberCerts::where('cert_member_id='.$this->param['uid'])->find();
           if(empty($member_info)){
-            $this->error=356;
+             exit(json_encode(['code'=>111,'msg'=>'当前登录已失效，请重新登录']));
           }
           // print_r($member_info);die;
+          #卡详情
           $card_info=MemberCreditcard::where('card_id='.$this->param['cardId'])->find();
-          if(empty($member_info)){
-            $this->error=473;
+          if(!$card_info){
+              exit(json_encode(['code'=>111,'msg'=>'获取信用卡信息失败，请重试。']));
           }
           #获取后台费率
           $member_group_id=Member::where(['member_id'=>$this->param['uid']])->value('member_group_id');
@@ -76,27 +88,36 @@
            #定义代扣费
            $daikou=($rate->item_charges)/100; 
            //$total_money=$this->param['billMoney']+$this->param['billMoney']*$also+$this->param['payCount']*$daikou;
+
            #定义一个空数组, 用于存放最后的结果集 方便写入数据库
            $data=array();
+           ###还款区间在200-20000之间
            #判断总账单是否小于某个值,否则不执行, 比如还款10块20块的 执行没有必要,浪费资源
-           if($this->param['billMoney']<100)
-                 exit(json_encode(['code'=>111,'msg'=>'还款金额不能低于100元']));
+           if($this->param['billMoney']/ $this->param['payCount']<200)
+                 exit(json_encode(['code'=>111,'msg'=>'单笔还款金额太小，请减小还款次数']));
            #总账单除以消费次数得到每次消费AVG平均值  如果平均值小于某个值 则不进行还款  也是浪费资源
-           if($this->param['billMoney']/$this->param['payCount'] <50)
-                  exit(json_encode(['code'=>111,'msg'=>'单次还款额太小啦,请调整次数到'.intval($this->param['billMoney']/50).'次以下~']));
+           if($this->param['billMoney']/$this->param['payCount'] >20000)
+                  exit(json_encode(['code'=>111,'msg'=>'单笔还款金额过大，请增加还款次数']));
            //判断卡号是否在计划内
-           $plan=Generation::where(['generation_card'=>$card_info->card_bankno,'generation_state'=>1])->find();
+           $plan=Generation::where(['generation_card'=>$card_info->card_bankno,'generation_state'=>2])->find();
            if($plan){
                 exit(json_encode(['code'=>111,'msg'=>'此卡已经在还款计划内，请先删除原计划再重新制定计划。']));
            }
            Db::startTrans();
            try
            {
-
                  #计算开始还款日期到最后还款日期之间的间隔天数
-                 $days=days_between_dates($this->param['startDate'],$this->param['endDate'])+1;
+                 //如果制定计划时间为当天，且超过晚上8点，从第二天开始执行
+                 if($this->param['startDate']==date('Y-m-d',time()) && date('H',time()>20)){
+                    $days=days_between_dates($this->param['startDate']+1,$this->param['endDate'])+1;
+                    $date=prDates($this->param['startDate']+1,$this->param['endDate']);
+                 }else{
+                    $days=days_between_dates($this->param['startDate'],$this->param['endDate']+1);
+                    $date=prDates($this->param['startDate'],$this->param['endDate']);
+                 }
+                 // var_dump($days);die;
                  #取得开始日期与结束日期之间的所有日期 并且打乱顺序
-                 $date=prDates($this->param['startDate'],$this->param['endDate']);
+                
                  #如果总还款次数小于日期间隔天数 则随机日期 每天消费一次 并且保证不重复;
                  if($this->param['payCount']<=$days)
                  {
@@ -105,9 +126,15 @@
                        #消费几次就取几个随机日期
                        $randDate=array_slice($date,0,$this->param['payCount']);
                        #循环消费日期 拼接随机的消费小时和分钟 人工消费模拟 早8点-晚7点 24小时制
+                       // var_dump($randDate);die;
                        foreach ($randDate as $key => $value) {
-                            $data[$key]['time']=$value." ".get_hours().":".get_minites();
-                            $data[$key]['endtime']=$value." 20:".get_minites();
+                            //如果是今天，则执行时间从下个小时开始.
+                            if($value==date('Y-m-d',time())){
+                                $data[$key]['time']=$value." ".get_hours(date('H',time()),19).":".get_minites();
+                            }else{
+                                $data[$key]['time']=$value." ".get_hours().":".get_minites();
+                            }
+                            $data[$key]['endtime']=$value." 20:".get_minites(1,30);
                        }
                        //取得每天消费多少钱
                        $result=new \app\api\controller\GetPlan();
@@ -133,6 +160,7 @@
                              'generation_start'     =>$this->param['startDate'],
                              'generation_end'      =>$this->param['endDate'],
                         ]);
+                        // print_r($data);die;
                         if($Generation_result->save()!==false)
                         {
                              //写入还款卡表
@@ -191,6 +219,13 @@
                  }
                  if($this->param['payCount']>$days)
                  {
+                       if($this->param['startDate']==date('Y-m-d',time()) && date('H',time()>12)){
+                          $days=days_between_dates($this->param['startDate']+1,$this->param['endDate'])+1;
+                          $date=prDates($this->param['startDate']+1,$this->param['endDate']);
+                       }else{
+                          $days=days_between_dates($this->param['startDate'],$this->param['endDate']+1);
+                          $date=prDates($this->param['startDate'],$this->param['endDate']);
+                       }
                        #计算出每天消费几次 总和等于总消费次数
                        $result=$this->get_day_count($this->param['payCount'],$days);
                        #计算出每天总消费金额 再加上手续费
@@ -201,7 +236,7 @@
                             $CurrentCount=$result[$key];//当天总消费次数
                             $data[$key]['count']=$CurrentCount;
                             $data[$key]['countMoney']=round($CurrentMoney,2);//当天总还款额
-                            $data[$key]['endtime']=$value." 20:".get_minites();
+                            $data[$key]['endtime']=$value." 20:".get_minites(1,30);
                             //计算出平均每天每次需还款多少钱
                             $everyCountMoney=$dayM->splitReward($CurrentMoney,$CurrentCount,$CurrentMoney/$CurrentCount*1.3,$CurrentMoney/$CurrentCount*0.7);
                             foreach ($everyCountMoney as $k => $v) {
