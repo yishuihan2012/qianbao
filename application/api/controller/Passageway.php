@@ -40,7 +40,7 @@
               $rate=PassagewayItem::where(['item_passageway'=>$value['passageway_id']])->order('item_rate asc')->find();
               $passageway[$key]['item_rate']=$rate->item_also.'%';
               if($rate->item_charges){
-                $passageway[$key]['item_rate'].="+".$rate->item_charges/100
+                $passageway[$key]['item_rate'].="+".$rate->item_charges/100;
               }
               $passageway[$key]['cashout']='单笔交易额度在200-20000之间';
               $passageway[$key]['passageway_id']=$value['passageway_id'];
@@ -56,7 +56,7 @@
               $rate=PassagewayItem::where(['item_passageway'=>$value['passageway_id']])->order('item_rate asc')->find();
               $passageway[$key]['item_rate']=$rate->item_rate.'%';
               if($rate->item_charges){
-                $passageway[$key]['item_rate'].="+".$rate->item_charges/100
+                $passageway[$key]['item_rate'].="+".$rate->item_charges/100;
               }
               $passageway[$key]['cashout']='最大交易额度：'.$value['cashout_max'].'最小交易额度：'.$value['cashout_min'];
               $passageway[$key]['passageway_id']=$value['passageway_id'];
