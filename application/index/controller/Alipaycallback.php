@@ -23,8 +23,9 @@ class Alipaycallback
 
 	 public function callback()
 	 {
-
-	     $data = file_get_contents("php://input");
+         $data=$_POST;
+	     // $data = file_get_contents("php://input");
+         file_put_contents('datas11111.txt',$data);
          $str = var_export($data,TRUE);
         file_put_contents('datas123.txt',$str);
          $Alipay=new \app\index\controller\Alipay();

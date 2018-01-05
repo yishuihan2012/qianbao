@@ -36,6 +36,7 @@ class GenerationOrder extends Model{
       #获取还款列表
       public static function list(){
           $list = Db::view("GenerationOrder")
+            ->view("Generation","Generation.*","Generation.generation_id=GenerationOrder.order_no")
             ->paginate(Config::get('page_size'), false, ['query'=>Request::instance()->param()]);
             dump($list);
 

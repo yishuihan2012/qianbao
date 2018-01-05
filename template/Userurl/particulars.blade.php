@@ -51,7 +51,10 @@
 			        		</div>
 			        		<div class="ftr">
 			        			<p class="f20">{{$v['log_wallet_type']==1 ? '' : '-'}}{{substr($v['log_wallet_amount'],0,-2)}}</p>
+			        			<!-- 提现操作 -->
+			        			@if($v['log_relation_type']==2)
 			        			<p class="f14 yellow-color">申请中</p>
+			        			@endif
 			        		</div>
 			        	</div>
 			        </a>

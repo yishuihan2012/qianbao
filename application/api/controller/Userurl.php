@@ -629,6 +629,16 @@ class Userurl extends Controller
 		}else{
 			$data['out']+=$v['log_wallet_amount'];
 		}
+		switch ($v['log_relation_type']) {
+			//提现操作
+			case 2:
+				// $list['k']['info']=
+				break;
+			
+			default:
+				# code...
+				break;
+		}
 	}
   	$this->assign('data',$data);
   	$this->assign('list',$list);
