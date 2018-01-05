@@ -12,7 +12,7 @@
  use app\index\model\Passageway as Passageways;
  use app\index\model\PassagewayItem;
  use app\index\model\CashOut;
- // use app\index\model\Member;
+
 
  class Passageway 
  {
@@ -34,12 +34,10 @@
       {
         // $this->param['passageway_also']=1;
          #可用支付通道
-         #获取会员等级
-         // $member_group=Member::where(['member_group_id']=>$this->param['uid'])->value('member_group_id');
          $passageway_lists=Passageways::with('cashout')->where(['passageway_state'=>1,'passageway_also'=>$this->param['passageway_also']])->select();
          if($this->param['passageway_also']==2){ 
             foreach ($passageway_lists as $key => $value) {
-              $rate=PassagewayItem::where(['item_passageway'=>$value['passageway_id'])->find();
+              $rate=PassagewayItem::where(['item_passageway'=>$value['passageway_id']])->order('item_rate asc')->find();
               $passageway[$key]['item_rate']=$rate->item_also.'%';
               if($rate->item_charges){
                 $passageway[$key]['item_rate'].="+".$rate->item_charges/100;
