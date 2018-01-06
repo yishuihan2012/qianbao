@@ -9,7 +9,7 @@ return [
     'notify_url'       =>"http://huiqianbao.lianshuopay.com/index/Alipaycallback/callback",
     'login_url'       =>"http://huiqianbao.lianshuopay.com/api/Alipay/users",
     'product_code'    =>"QUICK_MSECURITY_PAY",
-    'pid'             =>"2088421433746925",
+    'pid'             =>"2088122739775795",
     'rsa_public_key'    =>"MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAt0UwDpyne+hDFjS7PzAZgPompNwimVU/Fhzpz+HQF3RTWvbirV28pt+hX9eyL+Y+cUBT0tLr4gG2tQS+vmN5ZqSbTBKkV38G/QFqdLV/6U8+opWzKMkt9HoD3+22Idk/9uL4v5dKqBRDe5D5dnRcVuUxpMFVbLZZv+O4VuU1KKd/AfJbcSGANrLcO7FVgjAfl59VWSI/3UWz2+M+de6csRGWso3H3wQ9KeaO82+USQu2120OSux+ghgifbIvT4dLZyfOvr6/oDX8+KgR6etsQ+DtQFzD+8S9HGDivtEex4PASbepxj4pCpoDtJno9N23eKLGjkMrngTybE9dLcO6qwIDAQAB",
     
 
