@@ -110,6 +110,10 @@
         }
     }
     public function action_single_plan($id){
+        // $merch=Passageway::where(['passageway_no'=>'LkYQJ'])->find();
+        // $datas = AESdecrypt('KRzQQIehaK51Vmym+4DzlR+7GKvblLEtXwMcMHeRje5ydeeaghK+iZro+PVz4vsS34LZsiz7TmQ//Vi7dnS4H13sVxqCOb50wHMB9OMOBGB7fKfWnKC4B3KTq8F5zF0V06a2zkgFD9+JfdJb4ycQ8xOp4vrRd1VRSTqG7ybDKoqWE8l5RiO3BffIaCGqm/ECOfojwZwLygWIGETVYf+GDwJRjCYwJmFPpmXBuxTKjXkgPsUSB4LuhgGBYqzDKKBMh3vOYlNhE+ce733EbEMkNybnE6oiTzLPtLQ5vgceKVBd5W4aIcICzASL645rxkZxZif7i3hTjzU7LdJhV8KUD5tCbN1yfHjzWfvjuJkFxb0\\u003d',$merch->secretkey,$merch->iv);
+        // print_r($datas);die;
+
         $value=GenerationOrder::where(['order_id'=>$id])->find();
         // print_r($value);die;
         if($value['order_type']==1){ //消费
@@ -152,9 +156,9 @@
           'feeRatio'=>$also,  //交易费率  必填  需与用户入网信息保持一致  数值(5,2)
           'feeAmt'=>$daikou, //交易单笔手续费   需与用户入网信息保持一致  整型(4,0)
         );  
-        print_r($params);
+        // print_r($params);
         $income=repay_request($params,$merch->passageway_mech,'http://pay.mishua.cn/zhonlinepay/service/rest/creditTrans/payBindCard',$merch->iv,$merch->secretkey,$merch->signkey);
-        print_r($income);
+        // print_r($income);
         //后四位银行卡尾号
         $card_num=substr($pay['order_card'],-4);
         if($income['code']=='200'){
@@ -263,6 +267,7 @@
           'feeAmt'=>0,//提现单笔手续费   需与用户入网信息保持一致  整型(4,0)
         );
         $income=repay_request($params,$merch->passageway_mech,'http://pay.mishua.cn/zhonlinepay/service/rest/creditTrans/transferApply',$merch->iv,$merch->secretkey,$merch->signkey);
+        print_r($income);
         $card_num=substr($pay['order_card'],-4);
         if($income['code']=='200'){
           $arr['back_tradeNo']=$income['orderNo'];
@@ -292,9 +297,12 @@
       }
       //提现回调
       public function cashCallback(){
-        $data = file_get_contents("php://input");
+            $data = file_get_contents("php://input");
+            file_put_contents('cashcallback00.txt', var_export($data,TRUE));
+            $data2=$_POST;
+            file_put_contents('cashcallback01.txt', var_export($data2,TRUE));
             $result = json_decode($data, true);
-            file_put_contents('cashcallback0.txt', $result);
+            file_put_contents('cashcallback0.txt', var_export($result,TRUE));
             if ($result['code'] == 0) {
                file_put_contents('cashcallback1.txt', $result);
                 $merch=Passageway::where(['passageway_no'=>'LkYQJ'])->find();
