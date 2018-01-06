@@ -53,10 +53,10 @@
            // $this->param['uid']=16;
            // $this->param['token']=16;
            // $this->param['cardId']=18;
-           // $this->param['billMoney']=2000;
-           // $this->param['payCount']=4;
+           // $this->param['billMoney']=500;
+           // $this->param['payCount']=1;
            // $this->param['startDate']="2018-01-06";
-           // $this->param['endDate']="2018-01-09";
+           // $this->param['endDate']="2018-01-06";
            // $this->param['passageway']=8;
            #1判断开始日期和结束日期
            //开始日期不能大于结束日期
@@ -115,7 +115,7 @@
            {
                  #计算开始还款日期到最后还款日期之间的间隔天数
                  //如果制定计划时间为当天，且超过晚上8点，从第二天开始执行
-                 if($this->param['startDate']==date('Y-m-d',time()) && date('H',time()>19)){
+                 if($this->param['startDate']==date('Y-m-d',time()) && date('H',time())>19){
                     $days=days_between_dates($this->param['startDate'],$this->param['endDate']);
                     $date=prDates(date('Y-m-d',strtotime($this->param['startDate'])+3600*24),$this->param['endDate']);
                  }else{

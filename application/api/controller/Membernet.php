@@ -109,6 +109,19 @@
              }
         }
     }
+    public function action_single_plan($id){
+        // $merch=Passageway::where(['passageway_no'=>'LkYQJ'])->find();
+        // $datas = AESdecrypt('KRzQQIehaK51Vmym+4DzlR+7GKvblLEtXwMcMHeRje5ydeeaghK+iZro+PVz4vsS34LZsiz7TmQ//Vi7dnS4H13sVxqCOb50wHMB9OMOBGB7fKfWnKC4B3KTq8F5zF0V06a2zkgFD9+JfdJb4ycQ8xOp4vrRd1VRSTqG7ybDKoqWE8l5RiO3BffIaCGqm/ECOfojwZwLygWIGETVYf+GDwJRjCYwJmFPpmXBuxTKjXkgPsUSB4LuhgGBYqzDKKBMh3vOYlNhE+ce733EbEMkNybnE6oiTzLPtLQ5vgceKVBd5W4aIcICzASL645rxkZxZif7i3hTjzU7LdJhV8KUD5tCbN1yfHjzWfvjuJkFxb0\\u003d',$merch->secretkey,$merch->iv);
+        // print_r($datas);die;
+
+        $value=GenerationOrder::where(['order_id'=>$id])->find();
+        // print_r($value);die;
+        if($value['order_type']==1){ //消费
+            $this->payBindCard($value);
+        }else if($value['order_type']==2){//提现
+            $this->transferApply($value);
+        }
+    }
      //7绑卡支付
       //http://pay.mishua.cn/zhonlinepay/service/rest/creditTrans/payBindCard
       public function payBindCard($pay){
@@ -133,7 +146,7 @@
           'mchNo'=>$merch->passageway_mech, //机构号 必填  由平台统一分配 16
           'userNo'=>$member->LkYQJ,  //平台用户标识  必填  平台下发用户标识  32
           'payCardId'=>$card_info->bindId, //支付卡签约ID 必填  支付签约ID，传入签约返回的平台签约ID  32
-          'notifyUrl'=>$_SERVER['SERVER_NAME'].'/Api/Membernet/payCallback',  //异步通知地址  可填  异步回调地址，为空时不起推送  200
+          'notifyUrl'=>'http://huiqianbao.lianshuopay.com/Api/Membernet/payCallback',  //异步通知地址  可填  异步回调地址，为空时不起推送  200
           'orderNo'=>uniqid(), //订单流水号 必填  机构订单流水号，需唯一 64
           'orderTime'=>date('YmdHis',time()+60),  //订单时间  必填  格式：yyyyMMddHHmmss 14
           'goodsName'=>'虚拟商品',  //商品名称  必填    50
@@ -143,7 +156,9 @@
           'feeRatio'=>$also,  //交易费率  必填  需与用户入网信息保持一致  数值(5,2)
           'feeAmt'=>$daikou, //交易单笔手续费   需与用户入网信息保持一致  整型(4,0)
         );  
+        // print_r($params);
         $income=repay_request($params,$merch->passageway_mech,'http://pay.mishua.cn/zhonlinepay/service/rest/creditTrans/payBindCard',$merch->iv,$merch->secretkey,$merch->signkey);
+        // print_r($income);
         //后四位银行卡尾号
         $card_num=substr($pay['order_card'],-4);
         if($income['code']=='200'){
@@ -160,7 +175,7 @@
                 $arr['order_status']='-1';
                 send_sms($member_base->member_mobile,"您制定的尾号{$card_num}的还款计划还款失败，在APP内还款计划里即可查看详情。");
             }else{
-                $arr['order_status']='4';
+                $arr['order_status']='2';
                 //带查证或者支付中。。。
             }
         }else{
@@ -180,13 +195,16 @@
       //8:支付回调
       public function payCallback(){
         $data = file_get_contents("php://input");
+        $result = json_decode($data, true);
            if ($data['code'] == 0) {
                 $merch=Passageway::where(['passageway_no'=>'LkYQJ'])->find();
                 $datas = AESdecrypt($result['payload'],$merch->secretkey,$merch->iv);
                 $datas = trim($datas);
+                 file_put_contents('paycallback0.txt', $datas);
                 $datas = substr($datas, 0, strpos($datas, '}') + 1);
+                file_put_contents('paycallback1.txt', $datas);
                 $resul = json_decode($datas, true);
-                file_put_contents('paycallback.txt', $datas);
+                file_put_contents('paycallback2.txt', $resul);
                 $arr['back_status']=$resul['status'];
                 $arr['back_statusDesc']=$resul['statusDesc'];
                 if($resul['status']=="SUCCESS"){
@@ -241,7 +259,7 @@
           'mchNo'=>$merch->passageway_mech, //机构号 必填  由平台统一分配 16
           'userNo'=>$member->LkYQJ,  //平台用户标识  必填  平台下发用户标识  32
           'settleBindId'=>$card_info->bindId,  //提现卡签约ID 必填  提现结算的卡，传入签约返回的平台签约ID  32
-          'notifyUrl'=>$_SERVER['SERVER_NAME'].'/index.php?s=/Api/Membernet/cashCallback',// 异步通知地址  可填  异步通知的目标地址,为空时平台不发起推送  200
+          'notifyUrl'=>'http://huiqianbao.lianshuopay.com/index.php?s=/Api/Membernet/cashCallback',// 异步通知地址  可填  异步通知的目标地址,为空时平台不发起推送  200
           'orderNo'=>uniqid(), //提现流水号 必填  机构订单流水号，需唯一 64
           'orderTime'=>$orderTime,//  提现时间点 必填  格式：yyyyMMddHHmmss 14
           'depositAmt'=>$pay['order_money']*100,  //提现金额  必填  单位：分  整型(9,0)
@@ -249,6 +267,7 @@
           'feeAmt'=>0,//提现单笔手续费   需与用户入网信息保持一致  整型(4,0)
         );
         $income=repay_request($params,$merch->passageway_mech,'http://pay.mishua.cn/zhonlinepay/service/rest/creditTrans/transferApply',$merch->iv,$merch->secretkey,$merch->signkey);
+        print_r($income);
         $card_num=substr($pay['order_card'],-4);
         if($income['code']=='200'){
           $arr['back_tradeNo']=$income['orderNo'];
@@ -263,7 +282,7 @@
                 $arr['order_status']='-1';
                 send_sms($member_base->member_mobile,"您制定的尾号{$card_num}的还款计划还款失败，在APP内还款计划里即可查看详情。");
             }else{
-                $arr['order_status']='4';
+                $arr['order_status']='2';
             }
         }else{
           $arr['back_status']='FAIL';
@@ -278,15 +297,24 @@
       }
       //提现回调
       public function cashCallback(){
-        $data = file_get_contents("php://input");
+            $data = file_get_contents("php://input");
+            file_put_contents('cashcallback00.txt', var_export($data,TRUE));
+            $data2=$_POST;
+            file_put_contents('cashcallback01.txt', var_export($data2,TRUE));
             $result = json_decode($data, true);
+            file_put_contents('cashcallback0.txt', var_export($result,TRUE));
             if ($result['code'] == 0) {
+               file_put_contents('cashcallback1.txt', $result);
                 $merch=Passageway::where(['passageway_no'=>'LkYQJ'])->find();
+                 file_put_contents('cashcallback2.txt', $result);
                 $datas = AESdecrypt($result['payload'],$merch->secretkey,$merch->iv);
+                file_put_contents('cashcallback3.txt', $datas);
                 $datas = trim($datas);
+                file_put_contents('cashcallback4.txt', $datas);
                 $datas = substr($datas, 0, strpos($datas, '}') + 1);
-                file_put_contents('cashcallback.txt', $datas);
+                file_put_contents('cashcallback5.txt', $datas);
                 $resul = json_decode($datas, true);
+                file_put_contents('cashcallback6.txt', $resul);
                 $arr['back_status']=$resul['status'];
                 $arr['back_statusDesc']=$resul['statusDesc'];
                 if($resul['status']=="SUCCESS"){
@@ -297,7 +325,10 @@
                    echo "success";die;
                 }
                 GenerationOrder::where(['back_tradeNo'=>$resul['tradeNo']])->update($arr);
+            }else{
+              file_put_contents('cashcallback7.txt', $result);
             }
+
       }
       //提现状态查询 unfinished
       //http://pay.mishua.cn/zhonlinepay/service/rest/creditTrans/transferQuery
@@ -328,5 +359,17 @@
         echo json_encode($income);
         // var_dump($income);die;
       }
-
+      public function mishuaedit($uid=16,$passageway='8'){
+         #1实名信息
+         $member_info=MemberCert::where('cert_member_id='.$uid)->find();
+         #2j基本信息
+         $member=Member::where('member_id='.$uid)->find();
+         #3通道信息
+         $passageway=Passageway::where(['passageway_id'=>$passageway])->find();
+         #4会员费率
+         $rate=PassagewayItem::where('item_passageway='.$passageway.' and item_group='.$member['member_group_id'])->find();
+         #5商户入网信息
+         $member_net=MemberNet::where('net_member_id='.$uid)->find();
+         mishuaedit($passageway, $rate, $member_info, $member['member_mobile'], $member_net[$passageway['passageway_no']]);
+      }
  }
