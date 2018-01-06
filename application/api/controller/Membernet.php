@@ -81,6 +81,15 @@
       );
       return ['code'=>200,'data'=>$arr];
    }
+   //删除待确认的代还计划
+   public function delete_nouse_plan(){
+      $plan_card=Generation::where(["generation_state"=>1])->select();
+      foreach ($plan_card as $k => $card) {
+          $res=Generation::where(["generation_id"=>$card['generation_id']])->delete();
+          $order=GenerationOrder::where(["order_no"=>$card['generation_id']])->delete();
+      }
+      echo 'success';
+   }
     //执行计划
     public function action_repay_plan(){
       $where['order_status']='1';
@@ -90,7 +99,7 @@
             foreach ($list as $k => $v) {
                 $value=$v->toArray();
                 $card_status=Generation::where(['generation_id'=>$value['order_no']])->value('generation_state');
-                if($card_status==2){
+                if($card_status==2){//如果是执行中的卡
                      if($value['order_type']==1){ //消费
                           $this->payBindCard($value);
                       }else if($value['order_type']==2){//提现
