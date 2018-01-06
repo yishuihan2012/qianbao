@@ -1,27 +1,32 @@
 @extends('admin/layout/layout_main')
-@section('title','套现列表管理~')
+@section('title','还款计划~')
 @section('wrapper')
 <style>
-	 h4 > a,.pull-right > a{color:#145ccd;}
+	.text-ellipsis{cursor: pointer;}
 </style>
+<div class="panel">
+  	<div class="panel-body">
+  		<form action="" name="myform" class="form-group" method="get">
 
-<section>
-<hr/>
+		</form>
+
+  	</div>
+</div>
 <div class="list">
   <header>
-    <h3><i class="icon-list-ul"></i> 交易订单 <small>共 <strong class="text-danger">{{$count['count_size']}}</strong> 条</small></h3>
+    <h3><i class="icon-list-ul"></i> 订单列表 <small>共 <strong class="text-danger">{{$count}}</strong> 条</small></h3>
   </header>
    <form action="" method="post">
-    <div class="input-group" style="width: 200px;float: left;margin-right: 20px;">
+    <div class="input-group" style="width: 140px;float: left;margin-right: 20px;">
     <span class="input-group-addon">名称</span>
-    <input type="text" class="form-control" name="member_nick" value="{{$r['member_nick']}}" placeholder="名称">
+    <input type="text" class="form-control" name="member_nick" value="{{$r['member_nick']}}" placeholder="名称" >
   </div>
 
   <div class="input-group" style="width: 200px;float: left;margin-right: 20px;">
     <span class="input-group-addon">手机号</span>
     <input type="text" class="form-control" name="member_mobile" value="{{$r['member_mobile']}}" placeholder="手机号">
   </div>
-   <div class="input-group" style="width: 180px;float: left;margin-right: 10px;">
+  <div class="input-group" style="width: 240px;float: left;margin-right: 10px;">
     <span class="input-group-addon">身份号</span>
     <input type="text" class="form-control" name="cert_member_idcard" value="{{$r['cert_member_idcard']}}" placeholder="身份号">
   </div>
@@ -44,75 +49,89 @@
   </select>
   </div>
 
-  <div class="input-group" style="width: 200px;float: left; margin-right: 10px;">
-      <input type="text" class="form-control date-picker" id="dateTimeRange" placeholder="注册时间查询" />
-      <input type="hidden" name="beginTime" id="beginTime" value="" />
-      <input type="hidden" name="endTime" id="endTime" value="" />
-      <z class='clearTime'>X</z>
-  </div>
+<div class="input-group" style="width: 200px;float: left; margin-right: 10px;">
+    <input type="text" class="form-control date-picker" id="dateTimeRange" placeholder="注册时间查询" />
+    <input type="hidden" name="beginTime" id="beginTime" value="" />
+    <input type="hidden" name="endTime" id="endTime" value="" />
+    <z class='clearTime'>X</z>
+</div>
   <button class="btn btn-primary" type="submit">搜索</button>
 </form>
-  <div class="items items-hover">
-      <!-- HTML 代码 -->
-          <table class="table datatable">
-           <thead>
-                 <tr>
-                 <!-- 以下两列左侧固定 -->
-                      <th>#</th>
-                      <th>交易流水号</th>
-                      <th>用户</th>
-                      <th>结算卡</th>
-                      <th>信用卡</th>
-                      <th class="flex-col">总金额</th>
-                      <th class="flex-col">分润消耗</th> 
-                      <th class="flex-col">手续费</th> 
-                      <th class="flex-col">费率</th> 
-                      <th>订单状态</th>
-                      <th>备注</th>
-                      <th>创建时间</th>
-                      <th>操作</th>
-                 </tr>
-      </thead>
-      <tbody>
-           @foreach ($order_lists as $list)
-           <tr>
-                 <td>{{$list->order_id}}</td>
-                 <td><code>{{$list->order_no}}</code></td>
-                 <td>{{$list->order_name}}</td>
-                 <td>{{$list->order_card}}</td>
-                 <td>{{$list->order_creditcard}}</td>
-
-                 <td>{{$list->order_money}}</td>
-                 <td>{{$list->order_fen}}</td>
-                 <td>{{$list->order_charge}}</td>
-                 <td>{{$list->order_also}}%</td>
-
-                 <td>@if($list->order_state==1)待支付@elseif($list->order_state==2)成功@elseif($list->order_state==-1)失败@else 超时@endif</td>
-                 <td>{{$list->order_desc}}</td>
-                 <td>{{$list->order_add_time}}</td>
-                 <td>
-                      <div class="btn-group">
-                           <button type="button" data-toggle="modal" data-remote="{{url('/index/order/showcash/id/'.$list->order_id)}}" class="btn btn-default btn-sm">详细信息</button>
-                      </div>
-                      <div class="btn-group">
-                           <button type="button" data-toggle="modal" data-remote="{{url('/index/order/showcash/id/'.$list->order_id)}}" class="btn btn-default btn-sm">审核</button>
-                      </div>
-                 </td>
-           </tr>
-           @endforeach
-      </tbody>
+<table class="table table-striped table-hover">
+  	<thead>
+	    <tr>
+	      	<th>还款会员</th>
+	      	<th>还款会员手机号</th>
+	      	<th>代还会员</th>
+	      	<th>代还会员手机号</th>
+	      	<th>需还款信用卡</th>
+	      	<th>需还款总额</th>
+	      	<th>还款次数</th>
+	      	<th>已还款总额</th>
+	      	<th>剩余总额</th>
+	      	<th>手续费</th>
+	      	<th>计划状态</th>
+	      	<th>操作</th>
+	      
+	    </tr>
+ 	</thead>
+  	<tbody>
+  
+	    
+  	</tbody>
+  	<tfoot>
+  		@foreach($list as $k => $v)
+	    <tr>
+	    	
+	      	<td>{{$v['o_member_nick']}}</td>
+	      	<td>{{$v['o_member_mobile']}}</td>
+	      	<td>{{$v['member_nick']}}</td>
+	      	<td>{{$v['member_mobile']}}</td>
+	      	<td>{{$v['generation_card']}}</td>
+	      	<td>{{$v['generation_total']}}</td>
+	      	<td>{{$v['generation_count']}}</td>
+	      	<td>{{$v['generation_has']}}</td>
+	      	<td>{{$v['generation_left']}}</td>
+	      	<td>{{$v['generation_pound']}}</td>
+	      	<td>@if($v['generation_state']==2) 还款中 @elseif($v['generation_state']==3)还款结束 @elseif($v['generation_state']==-1)还款失败 @endif</td>
+	      	
+	      	<td><button class="btn btn-sm" data-toggle="modal" data-remote="{{url('/index/Plan/info/id/'.$v['order_id'])}}" type="button">查看详情</button></td>
+	    </tr>
+	    	@endforeach
+  	</tfoot>
 </table>
-  </div>
-{!! $order_lists->render() !!}
-</div>
-</section>
-<script>
-  $(document).ready(function(){
-       $('.menu .nav .active').removeClass('active');
-       $('.menu .nav li.cash').addClass('active');
-       $('.menu .nav li.order-manager').addClass('show');
- })
-  $('#dateTimeRange').daterangepicker({
+{!!$list->render()!!}
+<script type="text/javascript">
+$(document).ready(function(){
+    $('.menu .nav .active').removeClass('active');
+    $('.menu .nav li.plan_fail').addClass('active');
+    $('.menu .nav li.plan-manager').addClass('show');
+    $(".freezing").click(function(){
+    	var id = $(this).attr('data-id');
+    	var explain = $(this).attr('explain');
+		bootbox.prompt({
+		    title: "请输入要"+explain+"的原因",
+		    inputType: 'text',
+		    callback: function (result) {
+		        if(result!=null){
+		        	$.ajax({
+		        		url : "{{url('/index/wallet/freezing')}}",
+		        		data : {id:id,wallet_desc:result},
+		        		type : 'POST',
+		        		dataType : 'Json',
+		        		success:function(data){
+		    				explain+=data ? '成功' : '失败';
+		    				type= data ? 'success' : 'error';
+							new $.zui.Messager(explain, { type: type, close: true, }).show();
+							window.location.reload();
+		        		}
+		        	})
+		        }
+		    }
+		});
+    })
+});
+$('#dateTimeRange').daterangepicker({
         applyClass : 'btn-sm btn-success',
         cancelClass : 'btn-sm btn-default',
         locale: {
@@ -157,9 +176,8 @@ $('.clearTime').click(begin_end_time_clear);
         $('#beginTime').val('');
         $('#endTime').val('');
     }
-
 </script>
- <style type="text/css">
+<style type="text/css">
    .clearTime{
     position: absolute;
     right: 5px;
@@ -170,6 +188,6 @@ $('.clearTime').click(begin_end_time_clear);
     font-size: .6rem;
     padding: 0 5px;
    }
-
  </style>
+<!---->
 @endsection

@@ -141,7 +141,7 @@
 
         
            $info=System::where("system_key='min_withdrawals'")->find();
-           $data['minWithdraw']=$info['system_val'];
+           $data['minWithdraw']='注：最低提现金额为'.$info['system_val'].'元';
            $info=System::where("system_key='max_withdrawals'")->find();
            $data['max_withdrawals']=$info['system_val'];
            $service=CustomerService::order('service_id desc')->select();

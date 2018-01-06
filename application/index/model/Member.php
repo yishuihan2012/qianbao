@@ -51,7 +51,7 @@ class Member extends Model{
       #关联模型 一对一关联 (MemberGroup) 用户等级表
       public function membergroup()
       {
-           return $this->hasOne('MemberGroup','group_id','member_group_id')->bind('group_name,group_id');
+           return $this->hasOne('MemberGroup','group_id','member_group_id')->bind('group_name,group_id,group_salt');
       }
 
       #关联模型 一对一关联 (MemberRelation) 用户推荐表

@@ -34,15 +34,25 @@ class GenerationOrder extends Model{
            return $this->belongsTo('Generation','generation_id','order_no')->setEagerlyType(0);
       }
       #获取还款列表
-      public static function list(){
+      public static function list($where=array()){
         //查询数据总条数
         $list = Db::view("GenerationOrder")
             ->view("Generation","*","Generation.generation_id=GenerationOrder.order_no")
-            ->view("Member m","member_nick as o_member_nick,member_mobile as o_member_mobile","m.member_id=GenerationOrder.order_member")
-            ->view("Member","member_nick,member_mobile","Member.member_id=Generation.generation_member")
-            ->where("generation_state",">",1)->order("order_id  desc")
+            ->view("Member","member_nick as o_member_nick,member_mobile as o_member_mobile","member_id=GenerationOrder.order_member")
+            ->view("Member m","member_nick,member_mobile","m.member_id=Generation.generation_member")
+            ->view("MemberCert","cert_member_id","cert_member_id=Member.member_id")
+            ->where("generation_state","<>",1)->where($where)->order("order_id  desc")
             ->paginate(10);
-            return $list;
+
+        $count =  Db::view("GenerationOrder")
+            ->view("Generation","*","Generation.generation_id=GenerationOrder.order_no")
+            ->view("Member","member_nick as o_member_nick,member_mobile as o_member_mobile","member_id=GenerationOrder.order_member")
+            ->view("Member m","member_nick,member_mobile","m.member_id=Generation.generation_member")
+            ->view("MemberCert","cert_member_id","cert_member_id=Member.member_id")
+            ->where("generation_state","<>",1)->where($where)
+            ->count(10);
+
+            return ['list' => $list ,"count" => $count];
       }
      #获取还款详情
       public static function info($where){
@@ -57,4 +67,5 @@ class GenerationOrder extends Model{
            
             return $list;
       }
+     
 }

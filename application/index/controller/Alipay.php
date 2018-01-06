@@ -9,6 +9,7 @@ namespace app\index\controller;
 use think\Loader;
 use think\Config;
 use app\index\model\Order as Orders;
+use app\index\model\System;
 use app\index\model\Upgrade as Upgrades;
 use app\index\model\Wallet as Wallets;
 use app\index\model\Withdraw as Withdraws;
@@ -22,14 +23,15 @@ use app\index\model\CallbackLog as CallbackLogs;
       {
            Loader::import('alipay.AopSdk');
            $this->aop = new \AopClient();
-           $this->aop->appId                        = Config::get('alipay.app_id');
+           $this->aop->appId                        = System::getName('Alipay_appid');
            $this->aop->format                       = Config::get('alipay.format');
            $this->aop->signType                     = Config::get('alipay.sign_type');
            $this->aop->gatewayUrl                   = Config::get('alipay.gateway_url');
            $this->aop->apiVersion                   = Config::get('alipay.app_version');
            $this->aop->postCharset                  = Config::get('alipay.post_charset');
-           $this->aop->rsaPrivateKey                = Config::get('alipay.rsa_private_key');
-           $this->aop->alipayrsaPublicKey           = Config::get('alipay.rsa_public_key');
+           $this->aop->rsaPrivateKey                = System::getName('Alipay_secretkey');
+           $this->aop->alipayrsaPublicKey           = System::getName('Alipay_key');
+           $this->aop->alipaycallback               = System::getName('system_url').System::getName('Alipay_callback');
       }
 
       /**
@@ -48,7 +50,7 @@ use app\index\model\CallbackLog as CallbackLogs;
                       . "\"total_amount\": \"".($order['upgrade_money'])."\"," //支付宝支付 单位为 元
                       . "\"product_code\":\"".Config::get('alipay.product_code')."\""
                       . "}";
-                 $request->setNotifyUrl(Config::get('alipay.notify_url'));
+                 $request->setNotifyUrl($this->aop->alipaycallback);
                  $request->setBizContent($bizcontent);
                  $response = $this->aop->sdkExecute($request);
                  return $response;

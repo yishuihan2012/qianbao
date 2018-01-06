@@ -109,7 +109,7 @@
 <script>
   $(document).ready(function(){
        $('.menu .nav .active').removeClass('active');
-       $('.menu .nav li.cash').addClass('active');
+       $('.menu .nav li.successcash').addClass('active');
        $('.menu .nav li.order-manager').addClass('show');
  })
   $('#dateTimeRange').daterangepicker({

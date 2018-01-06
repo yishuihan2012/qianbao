@@ -255,18 +255,18 @@
            #验证器验证 验证参数合法性
            $validate = Loader::validate('Membervalidation');
            #如果验证不通过 返回错误代码 及提示信息
-           // if(!$validate->scene('edit')->check($this->param))
-           //       return ['code'=>322, 'msg'=>$validate->getError()];
-           // #验证码验证规则 读取本手机号最后一条没有使用的验证码 并且在系统设置的有效时间内
-           // $code_info=SmsCodes::where(['sms_send'=>$this->param['card_phone'],'sms_log_state'=>1])->whereTime('sms_log_add_time', "-".System::getName('code_timeout').' minutes')->find();
-           // if(!$code_info || ($code_info['sms_log_content']!=$this->param['smsCode']))
-           //       return ['code'=>404];
-           // #改变验证码使用状态
-           // $code_info->sms_log_state=2;
-           // $result=$code_info->save();
-           // #验证是否成功
-           // if(!$result)
-           //       return ['code'=>404];
+           if(!$validate->scene('edit')->check($this->param))
+                 return ['code'=>322, 'msg'=>$validate->getError()];
+           #验证码验证规则 读取本手机号最后一条没有使用的验证码 并且在系统设置的有效时间内
+           $code_info=SmsCodes::where(['sms_send'=>$this->param['card_phone'],'sms_log_state'=>1])->whereTime('sms_log_add_time', "-".System::getName('code_timeout').' minutes')->find();
+           if(!$code_info || ($code_info['sms_log_content']!=$this->param['smsCode']))
+                 return ['code'=>404];
+           #改变验证码使用状态
+           $code_info->sms_log_state=2;
+           $result=$code_info->save();
+           #验证是否成功
+           if(!$result)
+                 return ['code'=>404];
            #验证用户是否绑定储蓄卡
            $cashcard=MemberCashcard::where('card_member_id='.$this->param['uid'])->find();
            if(!$cashcard)

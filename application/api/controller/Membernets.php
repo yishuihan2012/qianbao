@@ -87,7 +87,7 @@
                  $res=MemberNet::where(['net_member_id'=>$this->member->member_id])->setField($this->passway->passageway_no, $data['merchno']);
            // return ($data['respCode']=="00" || $res) ? true :  false;
            return $data;
-      } 
+      }
       
       /**
       *  @version rongbangnet / Api 荣邦快捷支付入网接口
@@ -97,65 +97,62 @@
       **/
       public function rongbangnet()
       {
-           // #定义请求报文组装
-           // $arr=array(
-           //       'companyname'    =>"cehis1",//$this->membercard->card_name.rand(1000,9999),山东联硕支付技术有限公司济南分公司（无积分快捷）
-           //       'companycode'     =>$this->member->member_mobile,
-           //       'accountname'      =>$this->membercard->card_name,
-           //       'bankaccount'       =>$this->membercard->card_bankno,
-           //       'bank'                   =>$this->membercard->card_bank_address,
-           //       "bankcode"          =>$this->membercard->card_bank_lang,
-           //       "accounttype"      =>"1",
-           //       "bankcardtype"    =>"1",
-           //       'mobilephone'      =>$this->membercard->card_phone,
-           //       'idcardno'            =>$this->membercard->card_idcard,
-           //       'address'             =>"山东省济南市天桥区泺口皮革城",
-           // );
-           // #aes加密并且urlsafe base64编码
-           // $passParam=rongbang_aes($this->passway->passageway_pwd_key,$arr);
-           // $array=array(
-           //       'appid'      =>$this->passway->passageway_mech, //APPID
-           //       'method'   =>"masget.webapi.com.subcompany.add",//进件接口
-           //       'format'     =>"json",//响应格式
-           //       'data'        =>$passParam,//请求报文加密
-           //       'v'             =>"2.0",//接口版本号
-           //       'session'  =>$this->passway->passageway_key,
-           //       // 'target_appid' =>'400467885',
-           //       'timestamp'  =>time(),
-           //  );
-           // #连接键值生成sign
-           // // $str='';
-           // // foreach ($array as $key => $value){
-           // //    $str.=$value;
-           // // }
-           // // $signature=md5('xpsj69LRllld5Q74'.trim($str).'xpsj69LRllld5Q74'); //生成签名
-           //  #拼接请求参数
-           // // $str1="";
-           // // foreach ($array as $key => $value){
-           // //    $str1.=$key."=".$value."&";
-           // // }
-           // //$str1.="sign=".$signature; //拼接请求体参数
-           //  $getData=rongbang_sign($this->passway->passageway_pwd_key,$array,'https://gw.masget.com:27373/openapi/rest');
-           // $curl = curl_init();
-           //  curl_setopt($curl, CURLOPT_URL, $getData);
-           //  curl_setopt($curl, CURLOPT_HEADER, 0);
-           //  curl_setopt($curl, CURLOPT_RETURNTRANSFER, 1);
-           //  curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, FALSE); // https请求 不验证证书和hosts
-           //  curl_setopt($curl, CURLOPT_SSL_VERIFYHOST, FALSE);
-           //  $data = json_decode(curl_exec($curl),true);
-           //  $httpCode = curl_getinfo($curl,CURLINFO_HTTP_CODE);
-           //  curl_close($curl);
-           //  var_dump($data);die;
-           //  if($data['ret']==0){
-           //    $passageway_no=$data['data']['companycode'];
-           //    $res=MemberNet::where(['net_member_id'=>$this->member->member_id])->setField($this->passway->passageway_no, $passageway_no);
-           //  }
+        /*
+           #定义请求报文组装
+           $arr=array(
+                 'companyname'    =>"test".time(),//$this->membercard->card_name.rand(1000,9999),山东联硕支付技术有限公司济南分公司（无积分快捷）
+                 // 'companycode'     =>$this->member->member_mobile,
+                 'companycode'     =>time(),
+                 'accountname'      =>$this->membercard->card_name,
+                 'bankaccount'       =>$this->membercard->card_bankno,
+                 'bank'                   =>$this->membercard->card_bank_address,
+                 "bankcode"          =>$this->membercard->card_bank_lang,
+                 "accounttype"      =>"1",
+                 "bankcardtype"    =>"1",
+                 'mobilephone'      =>$this->membercard->card_phone,
+                 'idcardno'            =>$this->membercard->card_idcard,
+                 'address'             =>"山东省济南市天桥区泺口皮革城",
+           );
+           #aes加密并且urlsafe base64编码
+           $passParam=rongbang_aes($this->passway->passageway_pwd_key,$arr);
+           $array=array(
+                 'appid'      =>$this->passway->passageway_mech, //APPID
+                 'method'   =>"masget.webapi.com.subcompany.add",//进件接口
+                 'format'     =>"json",//响应格式
+                 'data'        =>$passParam,//请求报文加密
+                 'v'             =>"2.0",//接口版本号
+                 'session'  =>$this->passway->passageway_key,
+                 // 'target_appid' =>'400467885',
+                 'timestamp'  =>time(),
+            );
+           #连接键值生成sign
+           //拼接请求体参数
+            $getData=rongbang_sign($this->passway->passageway_pwd_key,$array,'https://gw.masget.com:27373/openapi/rest');
+           $curl = curl_init();
+            curl_setopt($curl, CURLOPT_URL, $getData);
+            curl_setopt($curl, CURLOPT_HEADER, 0);
+            curl_setopt($curl, CURLOPT_RETURNTRANSFER, 1);
+            curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, FALSE); // https请求 不验证证书和hosts
+            curl_setopt($curl, CURLOPT_SSL_VERIFYHOST, FALSE);
+            $data = json_decode(curl_exec($curl),true);
+            $httpCode = curl_getinfo($curl,CURLINFO_HTTP_CODE);
+            curl_close($curl);
 
+            //进件完成
+            
+            // var_dump($data);die;
+            if($data['ret']==0){
+              $passageway_no=$data['data']['companyid'];
+              $res=MemberNet::where(['net_member_id'=>$this->member->member_id])->setField($this->passway->passageway_no, $passageway_no);
+            }else{
+              return false;
+            }
+*/
 
             $arr=array(
-              'companyid'   =>'400467885'
+              'companyid'   =>'402560662'
             );
-
+            
           $passParam=rongbang_aes($this->passway->passageway_pwd_key,$arr);
           $array=array(
             'appid'      =>$this->passway->passageway_mech, //APPID

@@ -25,6 +25,7 @@
                 <li class="withdraw"><a href="<?php echo e(url('/index/order/Withdraw')); ?>"><i class="icon icon-sliders"></i> 提现订单</a></li>
                 <li class="recomment"><a href="<?php echo e(url('/index/order/recomment')); ?>"><i class="icon icon-sliders"></i> 实名红包列表</a></li>
                 <li class="cash"><a href="<?php echo e(url('/index/order/cash')); ?>"><i class="icon icon-sliders"></i> 交易订单</a></li>
+                 <li class="successcash"><a href="<?php echo e(url('/index/order/successCash')); ?>"><i class="icon icon-sliders"></i> 成功交易订单</a></li>
             </ul>
         </li>
         <li class="nav-parent passageway-manager">
@@ -37,6 +38,7 @@
             <a href="javascript:;"><i class="icon icon-user"></i> 还款计划</a>
             <ul class="nav">
                 <li class="plan"><a href="<?php echo e(url('/index/plan/index')); ?>"><i class="icon icon-sliders"></i> 计划列表</a></li>
+                  <li class="plan_fail"><a href="<?php echo e(url('/index/plan/fail')); ?>"><i class="icon icon-sliders"></i> 失败计划列表</a></li>
             </ul>
         </li>
         <li class="nav-parent suggestion">
