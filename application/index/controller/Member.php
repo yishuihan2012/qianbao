@@ -88,5 +88,12 @@ class Member extends Common{
 		 #重定向控制器 跳转到列表页
 		 $this->redirect($this->history['1']);
 	 }
+	 #升级会员
+	 public function upgrade(){
+	 	// $where['member_id'] = input('id');
+	 	// $Member = new Members();
+	 	// $info = $Member ->join("MemberGroup","Member.member_group_id=MemberGroup.group_id")->find();//->field("group_salt")->where($where)->find();
+	 	// dump($info);
 
+	}
 }

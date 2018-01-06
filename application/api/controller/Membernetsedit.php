@@ -92,12 +92,11 @@
                  'version'      => "v1.2",//接口固定版本号
            );
         }
-           
-        //dump($arr);
         $param=get_signature($arr,$this->passway->passageway_key);
         //dump($param);
         $result=curl_post("http://api.ekbuyclub.com:6001/quick.do?m=modifymerch",'post',$param,'Content-Type: application/x-www-form-urlencoded; charset=gbk');
         $data=json_decode(mb_convert_encoding($result, 'utf-8', 'GBK,UTF-8,ASCII'),true);
+        var_dump($data);die;
         return $data;
       } 
 

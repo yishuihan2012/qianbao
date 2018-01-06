@@ -620,7 +620,6 @@ class Userurl extends Controller
 	$monthstart=strtotime($month);
 	//月末
 	$monthend=strtotime(date('Y-m',strtotime('+1 month',strtotime($month))));
-  	// $withdraw=db('withdraw')->where(['withdraw_member'=>$this->param['uid']])->select();
   	//表头数据
   	$data=[];
   	$data['month']=$month;
@@ -661,14 +660,33 @@ class Userurl extends Controller
   	switch ($wallet_log['log_relation_type']) {
   		//分润分佣
   		case 1:
-  			// $commission=db('commission');
+  			$commission=db('commission')->alias('c')
+  				->join('member m','c.commission_childen_member=m.member_id')
+  				->where('c.commission_id',$wallet_log['log_relation_id'])
+  				->find();
+  			if($commission){
+	  			$tel=$commission['member_mobile'];
+	  			$commission['member_mobile']=substr($tel,0,3).'****'.substr($tel,7);
+	  			$this->assign('commission',$commission);
+  			}
+  			break;
   		//提现操作
   		case 2:
-  			$withdraw=db('withdraw')->where('withdraw_id',$v['log_relation_id'])->find();
+  			$withdraw=db('withdraw')->where('withdraw_id',$wallet_log['log_relation_id'])->find();
   			if($withdraw)$withdraw['info']=state_info($withdraw['withdraw_state']);
   			$this->assign('withdraw',$withdraw);
   			break;
-  		
+  			//推荐红包
+  		case 5:
+  			$recomment=db('recomment')->alias('r')
+  				->join('member m','r.recomment_children_member=m.member_id')
+  				->where('r.recomment_id',$wallet_log['log_relation_id'])
+  				->find();
+  			if($recomment){
+	  			$tel=$recomment['member_mobile'];
+	  			$recomment['member_mobile']=substr($tel,0,3).'****'.substr($tel,7);
+	 			$this->assign('recomment',$recomment);
+  			}
   		default:
   			# code...
   			break;
@@ -681,10 +699,10 @@ class Userurl extends Controller
   	if(isset($code)){
   		$version=db('system')->where('system_key','ad_version')->value('system_val');
   		if($code==$version){
-  			return 200;
+  			return json_encode(['code'=>400]);
   		}else{
   			$url=$version=db('system')->where('system_key','ad_url')->value('system_val');
-  			return $url;
+  			return json_encode(['code'=>200,'url'=>$url]);
   		}
   	}
   }

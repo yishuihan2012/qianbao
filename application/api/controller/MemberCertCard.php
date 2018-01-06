@@ -114,7 +114,7 @@
            $passageway=Passageway::where('passageway_status=1 and passageway_also=2')->find();
 
 
-            $member_net=MemberNet::where('net_member_id='.$this->param['uid'])->find();
+            $member_net=MemberNet::where('net_member_id='.$this->param['uid'])->find();//168f4e4c10024dbf8d85b53d607a3b13
 
             if(empty($member_net[$passageway['passageway_no']])){
 
@@ -145,7 +145,7 @@
               if($income['bindStatus']=='01'){
                 return ['code'=>463];//此卡已签约
               }
-                 $card=MemberCreditcard::where("card_bankno={$this->param['creditCardNo']}")->find();
+                 $card=MemberCreditcard::where(["card_bankno"=>$this->param['creditCardNo']])->find();
                 if(empty($card)){
                   $ident_code=substr($this->param['creditCardNo'],0,6);
                   $ident_icon=BankIdent::where(['ident_code'=>$ident_code])->value('ident_icon');
@@ -284,6 +284,7 @@
                 return ['code'=>444];
            if($cert_card->delete()===false)
                  return ['code'=>444];
+            MemberNet::where(['net_member_id'=>$this->param['uid']])->update([$passageway['passageway_no']=>'']);
                
            return ['code'=>200, 'msg'=>'解绑成功~', 'data'=>''];
       }

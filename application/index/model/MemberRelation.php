@@ -40,7 +40,12 @@
         #相对父级信息(memberp)
         public function memberp()
         {
-            return $this->hasOne('Member', 'member_id','relation_parent_id')->bind('member_cert,member_group_id')->setEagerlyType(0);
+            return $this->hasOne('Member', 'member_id','relation_member_id')->bind('member_cert,member_group_id')->setEagerlyType(0);
+        } 
+        #相对子级信息(memberc)
+        public function memberc()
+        {
+            return $this->hasOne('Member', 'member_id','relation_member_id')->bind('member_cert,member_group_id')->setEagerlyType(0);
         } 
 
 }

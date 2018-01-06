@@ -61,6 +61,8 @@
       public function info()
       {
            $member=Members::get($this->param['uid']);
+           // echo "<pre>";
+           // print_r($member);
            $data=array();
            $data['authState']=$member['member_cert'];
            $data['name']=$member['member_cert']==1 ? $member['member_nick'] : '';
@@ -82,6 +84,8 @@
 
            $data['memberLevelId']=$member['member_group_id'];
            $data['memberLevelName']=$member->memberGroup->group_name;
+           #判断普通会员，
+           // $data['memberLevelgroup_salt'] = ($member->memberGroup->group_salt==1)?0:1;
            #查询信用卡绑定数量
            $data['numberOfCreditCard']=MemberCreditcard::where(['card_member_id'=>$this->param['uid'],'card_state'=>'1'])->count();
            $data['alipayBindState']=MemberAccount::where(['account_user'=>$this->param['uid'],'account_type'=>'Alipay'])->find() ? 1 : 0;
@@ -344,7 +348,7 @@
       public function unbind_devince()
       {
            $member=Members::where('member_id', $this->param['uid'])->find();
-           $member->member_token='';
+           $member->member_token=null;
            if($member->save()===false)
                  return ['code'=>447];
            return ['code'=>200, 'msg'=>'解绑成功~', 'data'=>'']; 
@@ -517,13 +521,14 @@
         if(!isset($this->param['group_id']) || empty($this->param['group_id']) || !isset($this->param['member_cert']))
             $this->error=314;
 
-           $array['member_cert']=(empty($this->param['member_cert']) && $this->param['member_cert']!=="0") ? 'all' : $this->param['member_cert'] ;
+          $array['member_cert']=(empty($this->param['member_cert']) && $this->param['member_cert']!=="0") ? 'all' : $this->param['member_cert'] ;
 
           #查询全部
           if($array['member_cert']=='all'){
             $member_info=array();
             #查询出我的所有下级
             $MemberRelation_1rd=MemberRelation::haswhere('memberp',['member_group_id'=>$this->param['group_id']])->where(['relation_parent_id'=>$this->param['uid']])->select();
+            // return ['code'=>200, 'msg'=>'信息反馈成功~','data'=>$MemberRelation_1rd];
             if(!empty($MemberRelation_1rd)){
             foreach ($MemberRelation_1rd as $key => $value) {
                   $member_1rd=Members::where(['member_id'=>$value['relation_member_id']])->field('member_id,member_image, member_mobile, member_creat_time, member_cert')->find();
@@ -689,9 +694,14 @@
 
           $this->param['type']=$this->param['type'] ? $this->param['type'] : 1;
            
-          $Commission=Commission::with('member')->where('commission_member_id='.$this->param['uid'].' and commission_type='.$this->param['type'])->select();
+          $Commission=Commission::with('member')->where('commission_member_id='.$this->param['uid'].' and commission_type='.$this->param['type'])->order('commission_id desc')->select();
           foreach ($Commission as $key => $value) {
             $Commission[$key]['member_mobile']=Members::where(['member_id'=>$value['commission_childen_member']])->value('member_mobile');
+            if(!$value['commission_money']==0){
+              unset($Commission[$key]);
+
+            }
+            
           }
 
            return ['code'=>200, 'msg'=>'获取成功~', 'data'=>$Commission];

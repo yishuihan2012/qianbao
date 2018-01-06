@@ -1,6 +1,6 @@
 <?php
  /**
- *  @version MemberCash controller / Api 会员套现
+ *  @version MemberCash controller / Api 会员取现
  *  @author $bill$(755969423@qq.com)
  *   @datetime    2017-12-19 16:53:05
  *   @return 
@@ -47,10 +47,10 @@
       }
 
       /**
-       *  @version cardcash method / Api 信用卡套现
+       *  @version cardcash method / Api 信用卡取现
        *  @author $bill$(755969423@qq.com)
        *  @datetime    2017-12-13 09:03:05
-       *  @param $member=套现的会员  $token=令牌验证  $cardid=信用卡  $money 套现金额 $passwayid 通道ID
+       *  @param $member=取现的会员  $token=令牌验证  $cardid=信用卡  $money 取现金额 $passwayid 通道ID
       **/ 
       public function cardcash()
       {

@@ -41,32 +41,80 @@ class Passageway extends Common{
 	 	 	 #获取提交的数据
 	 	 	 $post=Request::instance()->post();
 	 	 	 $result=true;
-	 	 	 foreach ($post as $key => $value) {
-	 	 		 #拆分Key键
-	 	 	 	 $group_id=strrev(strstr(strrev($key),strrev('_'),true));
-	 	 	 	 $key_fix=strtok($key,'_');
-	 	 	 	 $field='item_'.$key_fix;
-	 	 	 	 #查询库中是否存在本条数据
-	 	 	 	 $passage=PassagewayItem::where(['item_passageway'=>Request::instance()->param('id'),'item_group'=>$group_id])->find();
-	 	 	 	 if($passage){
-	 	 	 	 	 #如果存在的话 对比一下之前和之后的值 如果不一致 则进行修改
-	 	 	 	 	 if($passage[$field]!=$value)
-	 	 	 	 	 	 PassagewayItem::where(['item_passageway'=>Request::instance()->param('id'),'item_group'=>$group_id])->setField($field, $value);
-	 	 	 	 }else{
-	 	 	 	 	 $data=array(
-	 	 	 	 	 	'item_passageway'	=>Request::instance()->param('id'),
-	 	 	 	 	 	'item_group'			=>$group_id,
-	 	 	 	 	 	'item_rate'			=>$post['rate_'.$group_id],
-	 	 	 	 	 	'item_also'			=>$post['also_'.$group_id]
-	 	 	 	 	 );
-	 	 	 	 	 $newpass=new PassagewayItem($data);
-	 	 	 	 	 $result = $newpass->allowField(true)->save();
-	 	 	 	 }
-	 	 	 	 if(!$result)
-	 	 	 	 	 continue;
-	 	 	 }
-
-		 	 $content = $result ? ['type'=>'success','msg'=>'税率调整成功'] : ['type'=>'warning','msg'=>'税率调整失败'];
+ 	 	 	//取出通道信息
+ 	 	 	$passageway=Passageways::get(Request::instance()->param('id'));
+ 	 	 	$data=[];
+ 	 	 	//遍历提交数据
+ 	 	 	foreach ($post as $k => $v) {
+	 	 		#拆分Key键
+	 	 	 	$group_id=strrev(strstr(strrev($k),strrev('_'),true));
+	 	 	 	$key_fix=strtok($k,'_');
+	 	 	 	//该通道为套现 则丢弃 代还数据 否则 丢弃 套现数据
+	 	 	 	if($passageway->passageway_also==1){
+	 	 	 		if($key_fix=='also')continue;
+	 	 	 	}else{
+	 	 	 		if($key_fix=='rate')continue;
+	 	 	 	}
+	 	 	 	//以用户组为键 转储到data
+	 	 	 	$data[$group_id]['item_'.$key_fix]=$v;
+ 	 	 	}
+ 	 	 	halt($passageway->passageway_mech);
+ 	 	 	 #查询库中是否存在数据
+ 	 	 	 $passage=PassagewayItem::where(['item_passageway'=>Request::instance()->param('id')])->select();
+ 	 	 	 if($passage){
+ 	 	 	 	//针对每条数据执行 (每条对应一个用户组)
+ 	 	 	 	foreach ($passage as $k => $v) {
+ 	 	 	 		//若该条对应的用户组 在post中存在 (正常情况会存在)
+ 	 	 	 		if(isset($data[$v['item_group']])){
+ 	 	 	 			$haschange=false;
+ 	 	 	 			//遍历该用户组post数据
+ 	 	 	 			foreach ($data[$v['item_group']] as $key => $value) {
+ 	 	 	 				//若与数据库中的数据不一致，则需要更新
+ 	 	 	 				if($value!=$v[$key])
+ 	 	 	 					$haschange=true;
+ 	 	 	 			}
+ 	 	 	 			//开始更新
+ 	 	 	 			if($haschange){
+ 	 	 	 				$passage->allowField(true)->save($data[$v['item_group']]);
+ 	 	 	 				//取出该用户组下所有会员
+ 	 	 	 				$members=db('member')->alias('m')
+ 	 	 	 					->join('member_cert c','m.member_id=c.cert_member_id')
+ 	 	 	 					->where('m.member_group_id',$k)
+ 	 	 	 					->select();
+ 	 	 	 				//遍历进行 第三方资料变更 
+ 	 	 	 				foreach($members as $member){
+ 	 	 	 					$membernet=db('member_net')->where('net_member_id',$member['member_id'])->find();
+ 	 	 	 					//暂不启用
+ 	 	 	 					// continue;
+ 	 	 	 					//套现接口 米刷
+					 	 	 	if($passageway->passageway_also==1 && $passageway->passageway_id==1){
+					                $membernetObject=new Membernetsedit($member['member_id'],$passageway->passageway_id,'M03');
+					                $res=$membernetObject->quickNet();
+					 	 	 		//通过是否存在返回更新
+					 	 	 		if(isset($res['merchno'])){
+					 	 	 			db('member_net')->where('net_member_id',$member['member_id'])->update([$passageway['passageway_no']=>$res['merchno']]);
+					 	 	 		}else{
+					 	 	 			$content=['type'=>'warning','msg'=>'member_id为'.$member['member_id'].'的用户调用资料变更接口失败'];
+					 	 	 			break;
+					 	 	 		}
+					 	 	 	//代还接口 米刷
+					 	 	 	}elseif($passageway->passageway_also==2 && $passageway->passageway_id==8){
+					 	 	 		$res=mishuaedit($passageway,$data[$v['item_group']],$member,$member['member_mobile'],$membernet[$passageway['passageway_no']]);
+					 	 	 		//通过是否存在返回更新
+					 	 	 		if(isset($res[$passageway['passageway_no']])){
+					 	 	 			db('member_net')->where('net_member_id',$member['member_id'])->update([$passageway['passageway_no']=>$res[$passageway['passageway_no']]]);
+					 	 	 		}else{
+					 	 	 			$content=['type'=>'warning','msg'=>'member_id为'.$member['member_id'].'的用户调用资料变更接口失败'];
+					 	 	 			break;
+					 	 	 		}
+					 	 	 	}
+ 	 	 	 				}
+ 	 	 	 			}
+ 	 	 	 		}
+ 	 	 	 	}
+ 	 	 	 }
+		 	 $content = isset($content) ? $content : ['type'=>'success','msg'=>'税率调整成功'];
+		 	  // ['type'=>'warning','msg'=>'税率调整失败'];
 		 	 Session::set('jump_msg', $content);
 		 	 $this->redirect($this->history['0']);
 	 	 }
@@ -246,5 +294,11 @@ class Passageway extends Common{
 		 Session::set('jump_msg', $content);
 		 #重定向控制器 跳转到列表页
 		 $this->redirect($this->history['1']);
+	}
+	#获取银行名称
+	public function getbank(){
+		$where['card_bank'] = ['like',"%".Request::instance()->param('bankname')."%"];
+		$list = Db::table("wt_bank_card")->distinct(true)->field("card_bank")->where($where)->select();
+		echo json_encode($list);
 	}
 }

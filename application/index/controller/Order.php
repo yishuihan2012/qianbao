@@ -166,7 +166,49 @@ class Order extends Common{
 		 #渲染视图
 	 	return view('admin/order/cash');
 	 }
-
+	 #银行交易信息
+	 public function showcash(){
+	 	// $info = $order_lists = CashOrder::with('passageway')->join('wt_member m',"m.member_id=wt_cash_order.order_member")->where($where)->join("wt_member_cert mc", "mc.cert_member_id=m.member_id","left")->where($wheres)->paginate(Config::get('page_size'), false, ['query'=>Request::instance()->param()]);
+	 }
+	  #成功交易订单
+	 public function successCash(){
+	 	$r=request()->param();
+	 	 #搜索条件
+	 	$data = memberwhere($r);
+	 	$r = $data['r'];
+	 	$where = $data['where'];
+	 	 //注册时间
+		if(request()->param('beginTime') && request()->param('endTime')){
+			$endTime=strtotime(request()->param('endTime'))+24*3600;
+			$where['member_creat_time'] = ["between time",[request()->param('beginTime'),$endTime]];
+		}
+		#身份证查询
+		$wheres = array();
+		 if( request()->param('cert_member_idcard')){
+			$wheres['mc.cert_member_idcard'] = ['like',"%".request()->param('cert_member_idcard')."%"];
+		}else{
+			$r['cert_member_idcard'] = '';
+		}
+		$where['order_state'] = 2;
+	 	 // #查询订单列表分页
+	 	 $order_lists = CashOrder::with('passageway')->join('wt_member m',"m.member_id=wt_cash_order.order_member")->where($where)->join("wt_member_cert mc", "mc.cert_member_id=m.member_id","left")->where($wheres)->paginate(Config::get('page_size'), false, ['query'=>Request::instance()->param()]);
+	 	
+	 	 #统计订单条数
+	 	 $count['count_size']=CashOrder::with('passageway')->join('wt_member m',"m.member_id=wt_cash_order.order_member")->where($where)->join("wt_member_cert mc", "mc.cert_member_id=m.member_id","left")->where($wheres)->count();
+			 $this->assign('order_lists', $order_lists);
+			 $this->assign('count', $count);
+		if(!Request::instance()->param('member_nick')){
+		 	$where['member_nick']='';
+		 }
+		 if(!Request::instance()->param('member_mobile')){
+		 	$where['member_mobile']='';
+		 }
+		 $member_group=MemberGroup::all();
+		$this->assign('member_group', $member_group);
+		$this->assign('r', $r);
+		 #渲染视图
+	 	return view('admin/order/successCash');
+	 }
 	   #实名红包订单
 	 public function recomment(){
 	 	 // #查询订单列表分页

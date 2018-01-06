@@ -138,7 +138,7 @@ class Push
             $extras = [
                 'type'  =>$this->message_type,
                 'info'  =>[
-                    'type'  =>$this->message_info_type,
+                    'type'  =>$this->message_type,
                     'item'  =>$this->message_info_item,
                 ]
             ];

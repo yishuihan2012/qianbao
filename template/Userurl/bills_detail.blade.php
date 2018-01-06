@@ -12,14 +12,58 @@
 	<body>
 		<div class="mui-content bills-detail">
 			<div class="bg-w fc bills-detail-tit">
+				<!-- 分润分佣 -->
+				@if($wallet_log['log_relation_type']==1)
+			  <p class="f14 space-bot">
+					@if(isset($commission))
+						{{$commission['commission_type']==1 ? '分润' : '分佣'}}
+					@endif
+			  奖励</p>
+			  <p class="f24 f-bold">{{substr($wallet_log['log_wallet_amount'],0,-2)}}</p>
+
+			  	<!-- 提现 -->
+				@elseif($wallet_log['log_relation_type']==2)
+
 			  <p class="f14 space-bot">{{$wallet_log['log_wallet_type']==1 ? '收款' : '出款'}}交易金额</p>
 			  <p class="f24 f-bold">{{substr($wallet_log['log_wallet_amount'],0,-2)}}</p>
+			  
+				@elseif($wallet_log['log_relation_type']==3)
+				@elseif($wallet_log['log_relation_type']==4)
+
+				<!-- 推荐奖励 -->
+				@elseif($wallet_log['log_relation_type']==5)
+
+			  <p class="f14 space-bot">推荐奖励</p>
+			  <p class="f24 f-bold">{{substr($wallet_log['log_wallet_amount'],0,-2)}}</p>
+
+				@elseif($wallet_log['log_relation_type']==6)
+				@endif
 			</div>
 			<ul class="mui-table-view">
-				@if($wallet_log['log_relation_type']==1)//分润分佣
-					
-				@elseif($wallet_log['log_relation_type']==2)//提现
-					@if($withdraw)
+				<!-- 分润分佣 -->
+				@if($wallet_log['log_relation_type']==1)
+					@if(isset($commission))
+				    <li class="mui-table-view-cell dis-flex-be">
+				    	<p class="invalid-color">交易状态</p>
+				    	<p>{{$commission['commission_state']==1 ? '正常' : '异常需审核'}}</p>
+				    </li>
+				    <li class="mui-table-view-cell dis-flex-be">
+				    	<p class="invalid-color">下级人员</p>
+				    	<p>{{$commission['member_mobile']}}</p>
+				    </li>
+				    <li class="mui-table-view-cell dis-flex-be">
+				    	<p class="invalid-color">交易时间</p>
+				    	<p>{{$commission['commission_creat_time']}}</p>
+				    </li>
+				    <li class="mui-table-view-cell dis-flex-be">
+				    	<p class="invalid-color">交易描述</p>
+				    	<p>{{$commission['commission_desc']}}</p>
+				    </li>
+					@endif
+
+				<!-- 提现 -->
+				@elseif($wallet_log['log_relation_type']==2)
+					@if(isset($withdraw))
 				    <li class="mui-table-view-cell dis-flex-be">
 				    	<p class="invalid-color">交易状态</p>
 				    	<p>{{$withdraw['info']}}</p>
@@ -47,7 +91,23 @@
 				    @endif
 				@elseif($wallet_log['log_relation_type']==3)
 				@elseif($wallet_log['log_relation_type']==4)
+
+				<!-- 推荐红包 -->
 				@elseif($wallet_log['log_relation_type']==5)
+					@if(isset($recomment))
+				    <li class="mui-table-view-cell dis-flex-be">
+				    	<p class="invalid-color">推荐人员</p>
+				    	<p>{{$recomment['member_mobile']}}</p>
+				    </li>
+				    <li class="mui-table-view-cell dis-flex-be">
+				    	<p class="invalid-color">交易时间</p>
+				    	<p>{{$recomment['recomment_creat_time']}}</p>
+				    </li>
+				    <li class="mui-table-view-cell dis-flex-be">
+				    	<p class="invalid-color">红包描述</p>
+				    	<p>{{$recomment['recomment_desc']}}</p>
+				    </li>
+					@endif
 				@elseif($wallet_log['log_relation_type']==6)
 				@endif
 <!-- 				    <li class="mui-table-view-cell dis-flex-be">
