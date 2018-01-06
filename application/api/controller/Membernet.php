@@ -27,29 +27,29 @@
       private $membercert; //会员认证信息
       private $membercard; //会员结算卡信息
       private $passway; //通道信息
-  function __construct($memberId,$passwayId,$phone){
-           try{
-                 #根据memberId获取会员信息和会员的实名认证信息还有会员银行卡信息
-                 $this->member=Member::get($memberId);
-                 if(! $this->member)
-                      $this->error=314;
-                 if($this->member->member_cert!='1')
-                      $this->error=356;
-                 $this->membercert=MemberCert::get(['cert_member_id'=>$memberId]);
-                 if(!$this->membercert)
-                      $this->error=367;
-                 #获取用户结算卡信息
-                 $this->membercard=MemberCashcard::get(['card_member_id'=>$memberId]);
-                 if(!$this->membercard)
-                      $this->error=459;
-                 #获取通道信息
-                 $this->passway=Passageway::get($passwayId);
-                 if(!$this->passway)
-                      $this->error=454; 
-           }catch (\Exception $e) {
-                 $this->error=460; //TODO 更改错误码 入网失败错误码
-           }
-      }
+  // function __construct($memberId,$passwayId,$phone){
+  //          try{
+  //                #根据memberId获取会员信息和会员的实名认证信息还有会员银行卡信息
+  //                $this->member=Member::get($memberId);
+  //                if(! $this->member)
+  //                     $this->error=314;
+  //                if($this->member->member_cert!='1')
+  //                     $this->error=356;
+  //                $this->membercert=MemberCert::get(['cert_member_id'=>$memberId]);
+  //                if(!$this->membercert)
+  //                     $this->error=367;
+  //                #获取用户结算卡信息
+  //                $this->membercard=MemberCashcard::get(['card_member_id'=>$memberId]);
+  //                if(!$this->membercard)
+  //                     $this->error=459;
+  //                #获取通道信息
+  //                $this->passway=Passageway::get($passwayId);
+  //                if(!$this->passway)
+  //                     $this->error=454; 
+  //          }catch (\Exception $e) {
+  //                $this->error=460; //TODO 更改错误码 入网失败错误码
+  //          }
+  //     }
 
 
 
