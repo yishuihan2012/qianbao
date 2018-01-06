@@ -14,6 +14,7 @@
  use app\index\model\GenerationOrder;
  use app\index\model\MemberNet as MemberNets;
  use app\index\model\MemberCreditcard;
+ use app\index\model\System;
  /**
  *  @version MemberNet controller / Api 代还入网
  *  @author $bill$(755969423@qq.com)
@@ -146,7 +147,7 @@
           'mchNo'=>$merch->passageway_mech, //机构号 必填  由平台统一分配 16
           'userNo'=>$member->LkYQJ,  //平台用户标识  必填  平台下发用户标识  32
           'payCardId'=>$card_info->bindId, //支付卡签约ID 必填  支付签约ID，传入签约返回的平台签约ID  32
-          'notifyUrl'=>'http://huiqianbao.lianshuopay.com/Api/Membernet/payCallback',  //异步通知地址  可填  异步回调地址，为空时不起推送  200
+          'notifyUrl'=>System::getName('system_url').'/Api/Membernet/payCallback',  //异步通知地址  可填  异步回调地址，为空时不起推送  200
           'orderNo'=>uniqid(), //订单流水号 必填  机构订单流水号，需唯一 64
           'orderTime'=>date('YmdHis',time()+60),  //订单时间  必填  格式：yyyyMMddHHmmss 14
           'goodsName'=>'虚拟商品',  //商品名称  必填    50
@@ -196,15 +197,13 @@
       public function payCallback(){
         $data = file_get_contents("php://input");
         $result = json_decode($data, true);
-           if ($data['code'] == 0) {
+           if ($result['code'] == 0) {
                 $merch=Passageway::where(['passageway_no'=>'LkYQJ'])->find();
                 $datas = AESdecrypt($result['payload'],$merch->secretkey,$merch->iv);
                 $datas = trim($datas);
-                 file_put_contents('paycallback0.txt', $datas);
                 $datas = substr($datas, 0, strpos($datas, '}') + 1);
-                file_put_contents('paycallback1.txt', $datas);
+                file_put_contents("payCallback.txt", $datas);
                 $resul = json_decode($datas, true);
-                file_put_contents('paycallback2.txt', $resul);
                 $arr['back_status']=$resul['status'];
                 $arr['back_statusDesc']=$resul['statusDesc'];
                 if($resul['status']=="SUCCESS"){
@@ -221,7 +220,6 @@
             //更新卡计划
             // $id=GenerationOrder::where(['back_tradeNo'=>$resul['tradeNo']])->value('order_no');
             // Generation::where(['generation_id'=>$pay['order_no']])->update($generation);
-            file_put_contents('paycallback.txt', json_encode($resul));
             if($resul['status']=="SUCCESS"){
               echo "success";die;
             }
@@ -259,7 +257,7 @@
           'mchNo'=>$merch->passageway_mech, //机构号 必填  由平台统一分配 16
           'userNo'=>$member->LkYQJ,  //平台用户标识  必填  平台下发用户标识  32
           'settleBindId'=>$card_info->bindId,  //提现卡签约ID 必填  提现结算的卡，传入签约返回的平台签约ID  32
-          'notifyUrl'=>'http://huiqianbao.lianshuopay.com/index.php?s=/Api/Membernet/cashCallback',// 异步通知地址  可填  异步通知的目标地址,为空时平台不发起推送  200
+          'notifyUrl'=>System::getName('system_url').'/Api/Membernet/cashCallback',// 异步通知地址  可填  异步通知的目标地址,为空时平台不发起推送  200
           'orderNo'=>uniqid(), //提现流水号 必填  机构订单流水号，需唯一 64
           'orderTime'=>$orderTime,//  提现时间点 必填  格式：yyyyMMddHHmmss 14
           'depositAmt'=>$pay['order_money']*100,  //提现金额  必填  单位：分  整型(9,0)
@@ -267,7 +265,7 @@
           'feeAmt'=>0,//提现单笔手续费   需与用户入网信息保持一致  整型(4,0)
         );
         $income=repay_request($params,$merch->passageway_mech,'http://pay.mishua.cn/zhonlinepay/service/rest/creditTrans/transferApply',$merch->iv,$merch->secretkey,$merch->signkey);
-        print_r($income);
+        // print_r($income);
         $card_num=substr($pay['order_card'],-4);
         if($income['code']=='200'){
           $arr['back_tradeNo']=$income['orderNo'];
@@ -298,23 +296,14 @@
       //提现回调
       public function cashCallback(){
             $data = file_get_contents("php://input");
-            file_put_contents('cashcallback00.txt', var_export($data,TRUE));
-            $data2=$_POST;
-            file_put_contents('cashcallback01.txt', var_export($data2,TRUE));
             $result = json_decode($data, true);
-            file_put_contents('cashcallback0.txt', var_export($result,TRUE));
             if ($result['code'] == 0) {
-               file_put_contents('cashcallback1.txt', $result);
                 $merch=Passageway::where(['passageway_no'=>'LkYQJ'])->find();
-                 file_put_contents('cashcallback2.txt', $result);
                 $datas = AESdecrypt($result['payload'],$merch->secretkey,$merch->iv);
-                file_put_contents('cashcallback3.txt', $datas);
                 $datas = trim($datas);
-                file_put_contents('cashcallback4.txt', $datas);
                 $datas = substr($datas, 0, strpos($datas, '}') + 1);
-                file_put_contents('cashcallback5.txt', $datas);
+                file_put_contents("cashCallback.txt", $datas);
                 $resul = json_decode($datas, true);
-                file_put_contents('cashcallback6.txt', $resul);
                 $arr['back_status']=$resul['status'];
                 $arr['back_statusDesc']=$resul['statusDesc'];
                 if($resul['status']=="SUCCESS"){
@@ -325,10 +314,7 @@
                    echo "success";die;
                 }
                 GenerationOrder::where(['back_tradeNo'=>$resul['tradeNo']])->update($arr);
-            }else{
-              file_put_contents('cashcallback7.txt', $result);
             }
-
       }
       //提现状态查询 unfinished
       //http://pay.mishua.cn/zhonlinepay/service/rest/creditTrans/transferQuery
