@@ -14,7 +14,6 @@
  use app\index\model\GenerationOrder;
  use app\index\model\MemberNet as MemberNets;
  use app\index\model\MemberCreditcard;
- use app\index\model\System;
  /**
  *  @version MemberNet controller / Api 代还入网
  *  @author $bill$(755969423@qq.com)
