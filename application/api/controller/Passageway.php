@@ -34,8 +34,6 @@
       {
          #可用支付通道
          #获取会员等级
-        // $this->param['uid']=16;
-        // $this->param['passageway_also']=2;
          $member_group=Member::where(['member_id'=>$this->param['uid']])->value('member_group_id');
          $passageway_lists=Passageways::with('cashout')->where(['passageway_state'=>1,'passageway_also'=>$this->param['passageway_also']])->select();
          if($this->param['passageway_also']==2){ 
