@@ -39,8 +39,13 @@
  	 	 	 {
  	 	 	 	 $fatherMoney=$total_money*(System::getName('direct_total')/100);
  	 	 	 	 $leftmoney+=$fatherMoney;
- 	 	 	 	 if(!$this->commissionOrder($memberId,$member_fater_id,$fatherMoney,2,$desction."-直接分佣"))
+ 	 	 	 	 if(!$this->commissionOrder($memberId,$member_fater_id,$fatherMoney,2,$desction."-直接分佣")){
  	 	 	 	 	 return ['code'=>465];
+ 	 	 	 	  }
+ 	 	 	 	 //j极光推送分佣提醒
+ 	 	 	 	 $str="-直接分佣:邀请的".$memberInfo['member_nick']."付费升级成功,获得收益".$fatherMoney."元~";
+ 	 	 	 	 jpush($member_fater_id,'直接分佣收益到账提醒~',$str,$str);
+
  	 	 	 	 #查询间接上级
  	 	 	 	 $member_grandFater_id=MemberRelation::where('relation_member_id',$member_fater_id)->value('relation_parent_id');
  	 	 	 	 $member_grandFaterInfo= Member::get($member_grandFater_id);
@@ -51,8 +56,12 @@
  	 	 	 	 {
  	 	 	 	 	 $grandFatherMoney=$total_money*(System::getName('indirect_total')/100);
  	 	 	 	 	 $leftmoney+=$grandFatherMoney;
-	 	 	 	 	 if(!$this->commissionOrder($memberId,$member_grandFater_id,$grandFatherMoney,2,$desction."-间接分佣"))
+	 	 	 	 	 if(!$this->commissionOrder($memberId,$member_grandFater_id,$grandFatherMoney,2,$desction."-间接分佣")){
 	 	 	 	 	 	 return ['code'=>465];
+	 	 	 	 	 }
+	 	 	 	 	  //j极光推送分佣提醒
+	 	 	 	 	 $str="-间接分佣:邀请的".$memberInfo['member_nick']."付费升级成功,获得收益".$grandFatherMoney."元~";
+	 	 	 	 	 jpush($member_grandFater_id,'间接分佣收益到账提醒~',$str,$str);
 	 	 	 	 	 #查询三级上级
 	 	 	 	 	 $member_endFather_id=MemberRelation::where('relation_member_id',$member_grandFater_id)->value('relation_parent_id');
 	 	 	 	 	 $member_endFatherInfo= Member::get($member_endFather_id);
@@ -60,10 +69,14 @@
 	 	 	 	 	 	 return ['code'=>200,'leftmoney'=>$leftmoney];
 	 	 	 	 	 if($member_endFatherInfo)
 	 	 	 	 	 {
-	 	 	 	 	 	 $endFatherMoney=$total_money*(System::getName('indirect_total')/100);
+	 	 	 	 	 	 $endFatherMoney=$total_money*(System::getName('indirect_3rd_total')/100);
 	 	 	 	 	 	 $leftmoney+=$endFatherMoney;
-		 	 	 	 	 if(!$this->commissionOrder($memberId,$member_endFather_id,$endFatherMoney,2,$desction."-三级分佣"))
+		 	 	 	 	 if(!$this->commissionOrder($memberId,$member_endFather_id,$endFatherMoney,2,$desction."-三级分佣")){
 		 	 	 	 	 	 return ['code'=>465];
+		 	 	 	 	 }
+		 	 	 	 	 //j极光推送分佣提醒
+		 	 	 	 	 $str="-三级分佣:邀请的".$memberInfo['member_nick']."付费升级成功,获得收益".$endFatherMoney."元~";
+		 	 	 	 	 jpush($member_endFather_id,'三级分佣收益到账提醒~',$str,$str);
 		 	 	 	 	 return ['code'=>200,'leftmoney'=>$leftmoney];
 	 	 	 	 	 }
  	 	 	 	 }	
@@ -124,7 +137,7 @@
  	 	 	 	 $leftmoney+=$member_fatherAlsoMoney;
  	 	 	 	 $str=$desction."-直接分润:邀请的".$memberInfo['member_nick'].$action."成功,获得收益".$member_fatherAlsoMoney."元~";
  	 	 	 	 $father_result=$this->commissionOrder($memberId,$member_faterId,$member_fatherAlsoMoney,1,$str);
- 	 	 	 	 jpush($member_faterId,'分润收益到账提醒~',$str);
+ 	 	 	 	 jpush($member_faterId,'分润收益到账提醒~',$str,$str);
  	 	 	 }
  	 	 }
 
@@ -162,7 +175,7 @@
 	 	 	 	 $leftmoney+=$member_grandFatherAlsoMoney;
 	 	 	 	 $str1=$desction."-间接分润:邀请的".$memberInfo['member_nick'].$action."成功,获得收益".$member_grandFatherAlsoMoney."元~";
 	 	 	 	 $grandResult=$this->commissionOrder($memberId,$member_grandFaterId,$member_grandFatherAlsoMoney,1,$str1);
-	 	 	 	  jpush($member_grandFaterId,'分润收益到账提醒~',$str1);
+	 	 	 	  jpush($member_grandFaterId,'分润收益到账提醒~',$str1,$str1);
  	 	 	 }
  	 	 }
 
@@ -202,7 +215,7 @@
  	 	 	 	 $leftmoney+=$member_endFatherAlsoMoney;
  	 	 	 	 $str2=$desction."-三级分润:邀请的".$memberInfo['member_nick'].$action."成功,获得收益".$member_endFatherAlsoMoney."元~";
  	 	 	 	 $endFather_result=$this->commissionOrder($memberId,$member_endFatherId,$member_endFatherAlsoMoney,1,$str2);
- 	 	 	 	  jpush($member_endFatherId,'分润收益到账提醒~',$str2);
+ 	 	 	 	  jpush($member_endFatherId,'分润收益到账提醒~',$str2,$str2);
  	 	 	 }
  	 	 }
  	 	 #查询第三季上级税率和用户组是否允许分润
@@ -263,6 +276,9 @@
 		 	 	 	 Db::rollback();
 		                 return false;
 		           }
+ 	 	 	 }else{
+ 	 	 	 	Db::rollback();
+                 return false;
  	 	 	 }
  	 	 }catch (\Exception $e) {
  	 	 	 Db::rollback();

@@ -806,6 +806,10 @@ function pad_or_unpad($str, $ext,$pad='pkcs5')
       );
       return $arr;
     }
+
+
+
+    
     //米刷入网修改方法
     function mishuaedit($passageway, $rate, $member_info, $phone, $userno){
       // var_dump($rate['item_also']);die;
@@ -832,8 +836,16 @@ function pad_or_unpad($str, $ext,$pad='pkcs5')
       return $arr;
     }
     //极光推送  指定用户单条推送
-    // uid 用户id   title 标题  content 内容  [item 链接] [type 类型]
-    function jpush($uid=null,$title=null,$content=null,$item=null,$type=null){
+    // uid 用户id   title 标题  content 内容  
+    // 
+    // [item 语音内容] 配合 type使用
+    // 
+    //  [type 类型 ]
+    //   1.刷卡，代还每一笔交易成功消息推送。
+    //   2.分润分佣到账通知。（语音提示）
+    //   3.邀请会员成功注册语音提示。
+    //   4.平台公告铃声提示。
+    function jpush($uid=null,$title=null,$content=null,$item=null,$type='2'){
       $jpush=new con\Push();
       if($uid && $title && $content){
         //获取registration_id
