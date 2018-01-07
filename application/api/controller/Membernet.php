@@ -168,6 +168,12 @@
             if($income['status']=="SUCCESS"){
                 $arr['order_status']='2';
                 // $generation['generation_state']=3;
+                //成功-分润
+                 #先判断有没有分润
+                 if($pay['is_commission']=='0'){
+                    $fenrun= new \app\api\controller\Commission();
+                    $fenrun_result=$fenrun->MemberFenRun($pay['order_member'],$pay['order_money'],$merch->passageway_id,2,'代还分润');
+                 }
                 //成功极光推送。
                 jpush($pay['order_member'],'还款计划扣款成功通知',"您制定的尾号{$card_num}的还款计划成功扣款".$pay['order_money']."元，在APP内还款计划里即可查看详情。");
             }else if($income['status']=="FAIL"){
@@ -208,8 +214,13 @@
                 if($resul['status']=="SUCCESS"){
                   $arr['order_status']='2';
                   $generation['generation_state']=3;
-                  // 极光推送
                   $pay=GenerationOrder::where(['back_tradeNo'=>$resul['tradeNo']])->find();
+                   //成功-分润先判断有没有分润
+                   if($pay['is_commission']=='0'){
+                      $fenrun= new \app\api\controller\Commission();
+                      $fenrun_result=$fenrun->MemberFenRun($pay['order_member'],$pay['order_money'],$merch->passageway_id,2,'代还分润');
+                   }
+                  // 极光推送
                   $card_num=substr($pay['order_card'],-4);
                   jpush($pay['order_member'],'还款计划扣款成功通知',"您制定的尾号{$card_num}的还款计划成功扣款".$pay['order_money']."元，在APP内还款计划里即可查看详情。");
                 }
