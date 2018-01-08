@@ -53,9 +53,9 @@ use app\index\model\CallbackLog as CallbackLogs;
                  $request->setNotifyUrl($this->aop->alipaycallback);
                  $request->setBizContent($bizcontent);
                  $response = $this->aop->sdkExecute($request);
-                 return $response;
+                 return ['code'=>200,"msg"=>'获取成功','data'=>$response];
            } catch (\Exception $e) {
-                 return ['code'=>344];
+                 return ['code'=>344,"msg"=>$e->getMessage()];
            }
       }
 

@@ -317,8 +317,9 @@
 
            #支付宝支付
            $Alipay=new \app\index\controller\Alipay();
-           $data['signedStr']=$Alipay->pay($params);
-           return ['code'=>200, 'msg'=>'获取成功~', 'data'=>$data];
+           $res=$Alipay->pay($params);
+           return $res;
+           // return ['code'=>200, 'msg'=>'获取成功~', 'data'=>$data];
       }
 
       /**
