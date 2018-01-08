@@ -51,7 +51,7 @@
 .exc-code-list li{width:33.33%;margin:5px 0;}
 .exc-code-list li div{width:90%;margin:0 auto;}
 .exc-code-list img{width:100%;}
-.exc-code-list p{width:90%;height:40px;margin:0 auto;overflow:hidden;text-overflow:ellipsis;display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:2;}
+.exc-code-list p{width:90%;height:38px;margin:0 auto;overflow:hidden;text-overflow:ellipsis;display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:2;}
 /*专属二维码*/
 .exc-code{background:url("../images/exclusice_code_bg.png") no-repeat;background-size:100%;}
 .code-container{width:140px;height:140px;position:absolute;top:52%;left:50%;margin-left:-65px;}
