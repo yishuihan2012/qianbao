@@ -124,7 +124,7 @@
                  'v'             =>"2.0",//接口版本号
                  'session'  =>$this->passway->passageway_key,
                  // 'target_appid' =>'400467885',
-                 'timestamp'  =>time(),
+                 'timestamp'  =>date('Y-m-d H:i:s'),
             );
            #连接键值生成sign
            //拼接请求体参数
@@ -132,7 +132,7 @@
 
             parse_str(preg_replace('/^.+?\?/', '', $getData), $arr);
             $data=curl_post('https://gw.masget.com:27373/openapi/rest','post',$arr);
-          var_dump($arr); die;
+          // var_dump($arr); die;
           var_dump($data); die;
             dump($getData);die;
            $curl = curl_init();
