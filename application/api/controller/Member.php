@@ -61,8 +61,6 @@
       public function info()
       {
            $member=Members::get($this->param['uid']);
-           // echo "<pre>";
-           // print_r($member);
            $data=array();
            $data['authState']=$member['member_cert'];
            $data['name']=$member['member_cert']==1 ? $member['member_nick'] : '';
@@ -85,7 +83,7 @@
            $data['memberLevelId']=$member['member_group_id'];
            $data['memberLevelName']=$member->memberGroup->group_name;
            #判断普通会员，
-           // $data['memberLevelgroup_salt'] = ($member->memberGroup->group_salt==1)?0:1;
+           $data['memberLevelgroup_salt'] = ($member->memberGroup->group_salt==1)?0:1;
            #查询信用卡绑定数量
            $data['numberOfCreditCard']=MemberCreditcard::where(['card_member_id'=>$this->param['uid'],'card_state'=>'1'])->count();
            $data['alipayBindState']=MemberAccount::where(['account_user'=>$this->param['uid'],'account_type'=>'Alipay'])->find() ? 1 : 0;

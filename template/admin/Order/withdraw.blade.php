@@ -89,19 +89,35 @@
                  <td>{{$list->withdraw_amount}}</td>
                  <td>{{$list->withdraw_charge}}</td>
 
-                 <td>@if($list->withdraw_state==11)申请已提交@elseif($list->withdraw_state==-11)申请未提交@elseif($list->withdraw_state==12)审核通过@else 审核未通过@endif</td>
+                 <td>@if($list->withdraw_state==11)
+                    申请已提交
+                    @elseif($list->withdraw_state==-11)
+                    申请未提交
+                    @elseif($list->withdraw_state==12)
+                    审核通过
+                    @else
+                     审核未通过
+                     @endif
+                 </td>
                  <td>{{$list->withdraw_bak}}</td>
-                 <td>@if($list->withdraw_option==0)小额自动到账@else {{$list->adminster_login}} @endif</td>
+                 <td>@if($list->withdraw_option===0 && $list->withdraw_state==12)
+                      小额自动到账
+                    @elseif($list->withdraw_option!==0 && $list->withdraw_state==12)
+                       {{$list->withdraw_option}}
+                    @else
+                       无
+                      @endif
+                    </td>
                  <td>{{$list->withdraw_add_time}}</td>
                  <td>
                       <div class="btn-group">
                            <button type="button" data-toggle="modal" data-remote="{{url('/index/order/showwithdraw/id/'.$list->withdraw_id)}}" class="btn btn-default btn-sm">详细信息</button>
                       </div>
-                      @if($list->withdraw_option==0)
-                      @else
+                      @if($list->withdraw_state==11)
                       <div class="btn-group">
                            <button type="button" data-toggle="modal" data-remote="{{url('/index/order/toexminewithdraw/id/'.$list->withdraw_id)}}" class="btn btn-default btn-sm">审核</button>
                       </div>
+                      @else
                       @endif
                  </td>
            </tr>

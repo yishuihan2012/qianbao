@@ -926,7 +926,9 @@ function pad_or_unpad($str, $ext,$pad='pkcs5')
     #荣邦支付生成sign
     function rongbang_sign($key,$array,$url){
      $signature = md5($key.$array['appid'].$array['data'].$array['format'].$array['method'].$array['session'].$array['timestamp'].$array['v'].$key);
-     $str1="appid=".$array['appid']."&method=".$array['method']."&format=".$array['format']."&data=".$array['data']."&v=".$array['v']."&amp;timestamp=".$array['timestamp']."&session=".$array['session']."&sign=" .$signature;
+     // $signature = md5($key.$array['appid'].$array['data'].$array['format'].$array['session'].$array['timestamp'].$array['v'].$key);
+     $str1="appid=".$array['appid']."&method=".$array['method']."&format=".$array['format']."&data=".$array['data']."&v=".$array['v']."&timestamp=".$array['timestamp']."&session=".$array['session']."&sign=" .$signature;
+     // $str1="appid=".$array['appid']."&format=".$array['format']."&data=".$array['data']."&v=".$array['v']."&timestamp=".$array['timestamp']."&session=".$array['session']."&sign=" .$signature;
 
      $getData=$url."?".$str1;
      return $getData;

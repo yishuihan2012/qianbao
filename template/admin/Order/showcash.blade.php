@@ -23,77 +23,70 @@
 	 <div style="margin-bottom: 5px">
 	 <table class="table table-bordered table-hover table-striped" style="width:60%;float: left;margin-bottom: 0;margin-left: 30px">
 		 <tr>
-			 <td>还款会员</td>
-			 <td>{{$info['o_member_nick']}}</td>
+			 <td>订单号</td>
+			 <td>{{$info['order_no']}}</td>
 		 </tr>
 		 <tr>
-			 <td>还款会员手机号</td>
-			 <td>{{$info['o_member_mobile']}}</td>
+			 <td>第三方订单编号</td>
+			 <td>{{$info['order_thead_no']}}</td>
 		 </tr>
 		 <tr>
-			 <td>代还会员</td>
+			 <td>会员名称</td>
 			 <td>{{$info['member_nick']}}</td>
 		 </tr>
 		 <tr>
-			 <td>代还会员手机号</td>
+			 <td>会员手机号</td>
 			 <td>{{$info['member_mobile']}}</td>
 		 </tr>
 		  <tr>
-			 <td>需还款信用卡</td>
-			 <td>{{$info['generation_card']}}</td>
+			 <td>交易通道</td>
+			 <td>{{$info['passageway_name']}}</td>
 		 </tr>
 		 <tr>
-			 <td>需还款总额</td>
-			 <td>{{$info['generation_total']}}</td>
-		 </tr>
-		 <tr>
-			 <td>还款次数</td>
-			 <td>{{$info['generation_count']}}</td>
-		 </tr>
-		 <tr>
-			 <td>已还款总额</td>
-			 <td>{{$info['generation_has']}}</td>
-		 </tr>
-		  <tr>
-			 <td>剩余总额</td>
-			 <td>{{$info['generation_left']}}</td>
-		 </tr>
-		 <tr>
-			 <td>手续费</td>
-			 <td>{{$info['generation_pound']}}</td>
-		 </tr>
-		 <tr>
-			 <td>计划状态</td>
-			 <td>@if($info['generation_state']==2) 还款中 @elseif($info['generation_state']==3)还款结束 @elseif($info['generation_state']==-1)还款失败 @endif</td>
-		 </tr>
-		  <tr>
-			 <td>最近还款时间</td>
-			 <td>{{$info['generation_edit_time']}}</td>
-		 </tr>
-		 <tr>
-			 <td>订单类型</td>
-			 <td>@if($info['order_type']==1) 消费  @else 还款 @endif</td>
-		 </tr>
-		 <tr>
-			 <td>订单金额</td>
+			 <td>交易金额</td>
 			 <td>{{$info['order_money']}}</td>
 		 </tr>
 		 <tr>
-			 <td>订单手续费</td>
-			 <td>{{$info['order_pound']}}</td>
+			 <td>手续费</td>
+			 <td>{{$info['order_charge']}}</td>
+		 </tr>
+		 <tr>
+			 <td>费率</td>
+			 <td>{{$info['order_also']}}%</td>
 		 </tr>
 		  <tr>
+			 <td>分润分佣消耗</td>
+			 <td>{{$info['order_fen']}}</td>
+		 </tr>
+		 <tr>
+			 <td>身份证号</td>
+			 <td>{{$info['order_idcard']}}</td>
+		 </tr>
+		 <tr>
+			 <td>信用卡号</td>
+			 <td>{{$info['order_creditcard']}}</td>
+		 </tr>
+		  <tr>
+			 <td>结算卡号</td>
+			 <td>{{$info['order_card']}}</td>
+		 </tr>
+		 <tr>
 			 <td>订单状态</td>
-			 <td>@if($info['order_status']==1) 待执行 @elseif($info['generation_state']==-1)失败 @elseif($info['generation_state']==2)成功 @else 取消 @endif</td>
+			 <td>@if($info['order_state']==1) 待支付  @elseif($info['order_state']==2) 成功 @elseif($info['order_state']==-1) 失败 @else 超时 @endif</td>
 		 </tr>
 		 <tr>
 			 <td>订单描述</td>
 			 <td>{{$info['order_desc']}}</td>
 		 </tr>
-		  <tr>
-			 <td>执行时间</td>
-			 <td>{{$info['order_time']}}</td>
+		 <tr>
+			 <td>更新时间</td>
+			 <td>{{$info['order_update_time']}}</td>
 		 </tr>
+		  <tr>
+			 <td>创建时间</td>
+			 <td>{{$info['order_add_time']}}</td>
+		 </tr>
+		 
 	 </table>
 	 
 	 

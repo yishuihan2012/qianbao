@@ -8,6 +8,7 @@
 namespace app\index\controller;
 
 use app\index\model\Wallet as Wallets;
+use app\index\model\WalletLog;
 use think\Controller;
 use think\Request;
 use think\Session;
@@ -48,8 +49,12 @@ class Wallet extends Common
 	public function look_log(Request $request)
 	{
 		$wallet = Wallets::get(Request::instance()->param('id'));
-		
+		$where['log_wallet_id'] = Request::instance()->param('id');
+
+		$WalletLog =WalletLog::where($where)->select();
+
 		$this->assign('wallet', $wallet);
+		$this->assign('WalletLog', $WalletLog);
 		return view('admin/wallet/log');
 	}
 }

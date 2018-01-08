@@ -18,17 +18,17 @@
  <!--dialog Content-->
  <div class="modal-content animated fadeInLeft">
 	 <form action="{{url('/index/order/toexminewithdraw')}}" method="post" class="form-group" id="myform">
-	 <input type="hidden" name="id" value="{{$id}}">
+	 <input type="hidden" name="withdraw_id" value="{{$id}}">
 	 <table class="table table-bordered table-hover table-striped" style="width:90%; margin:0 auto;">
 		 <tr>
 			 <th>通过</th>	
-			 <td><input type="radio" name="withdraw_total_money" checked value="12"></td>	
+			 <td><input type="radio" name="withdraw_state" checked value="12"></td>	
 			 <th>未通过</th>	
-			 <td><input type="radio" name="withdraw_total_money" class="not" value="-12"></td>	 	
+			 <td><input type="radio" name="withdraw_state" class="not" value="-12"></td>	 	
 		 </tr>	
 	 </table>
 	 <div class="help-block" style="display:none;"><code>(说明原因)</code>
-		<textarea rows="3"></textarea>
+		<textarea rows="3" name='withdraw_information'></textarea>
 	 </div>
 	 </form>
  </div>

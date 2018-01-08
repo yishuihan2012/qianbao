@@ -186,6 +186,7 @@ class Article extends Common{
 	public function noviceSave(){
 		if(Request::instance()->isPost()){
 		 	 $MemberNovice =MemberNovice::get(Request::instance()->param('novice_id'));
+		 	 dump($_POST);die;
 			 $result= $MemberNovice->allowField(true)->save($_POST);
 			 $content = ($result===false) ? ['type'=>'error','msg'=>'修改失败'] : ['type'=>'success','msg'=>'修改成功'];
 			 Session::set('jump_msg', $content);

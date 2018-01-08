@@ -45,7 +45,7 @@
         <b>会员专属</b>
       </label>
       <div id="announcement_content" class="col-sm-6">
-        <input type="checkbox" name="list_authority" {{$data['list_authority'] ? 'checked=""' :''}}></div>
+        <input type="checkbox" name="list_authority" {{$data['list_authority'] ? 'checked=""' :''}} value="1"></div>
     </div>
 
     <div class="row form-group">
@@ -96,7 +96,7 @@
                  </select>
             </div>
       </div>
-  
+  </form>
  <!--dialog Button-->
  <div class="modal-footer animated fadeInLeft">
    <button type="button" class="btn btn-primary save">保存</button>

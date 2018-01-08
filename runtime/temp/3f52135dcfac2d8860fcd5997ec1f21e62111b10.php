@@ -23,7 +23,7 @@
     </div>
     <div class="z-card">
       当前还款总量:
-      <span><?php echo e($data['Todaycount']); ?></span>
+      <span><?php echo e($GenerationOrdercount); ?></span>
     </div>
     
   </div>
