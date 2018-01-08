@@ -281,7 +281,7 @@
            if(!isset($this->param['targetLevelId']) || empty($this->param['targetLevelId']))
                  return ['code'=>448];
            $member=Members::get($this->param['uid']);
-           $member_group=MemberGroup::get(['group_salt'=>$this->param['targetLevelId']]);
+           $member_group=MemberGroup::get(['group_id'=>$this->param['targetLevelId']]);
            if(!$member_group)
                  return ['code'=>449];
            #验证目标组是否可以升级
@@ -295,6 +295,7 @@
            if($member_group['group_salt']<=$currentgroup['group_salt'])
                  return ['code'=>452];
            #计算差价
+           // $price_diff=$this->get_diff_price($this->param['uid'],$this->param['targetLevelId']);
            $price_diff  =$member_group['group_level_money']-$currentgroup['group_level_money'];
            if($price_diff<0)
                  return ['code'=>453];
@@ -315,8 +316,14 @@
 
            #支付宝支付
            $Alipay=new \app\index\controller\Alipay();
-           $data['signedStr']=$Alipay->pay($params);
-           return ['code'=>200, 'msg'=>'获取成功~', 'data'=>$data];
+           if($Alipay){
+              $data['signedStr']=$Alipay->pay($params);
+               return ['code'=>200, 'msg'=>'获取成功~', 'data'=>$data];
+           }else{
+               return ['code'=>344];
+           }
+           
+          
       }
 
       /**
@@ -618,6 +625,7 @@
                 $data['group'][$key]['group_level_money']=$price;
                 $data['group'][$key]['price_desc']='普通会员升级到此用户组需要的价格￥'.$price.'元';
                 $data['group'][$key]['group_url']=$value['group_url'];
+                $data['group'][$key]['up_price']=$this->get_diff_price($this->param['uid'],$value['group_id']);
                 #获取每个用户等级的最低费率
                 $passageway=Passageway::where(['passageway_state'=>1])->select();
                 foreach ($passageway as $k => $val) {
@@ -644,8 +652,14 @@
             $data['current_salt']=$current['group_salt'];
             return ['code'=>200, 'msg'=>'信息反馈成功~','data'=>$data];
       }
-
-
+      //计算会员升级级别间的差价
+      public function get_diff_price($uid,$up_level){
+           $member=Members::get($uid);
+           $member_group=MemberGroup::get(['group_id'=>$member['member_group_id']]);
+           $new_group=MemberGroup::get(['group_id'=>$up_level]);
+           $diff_price=$new_group['group_level_money']-$member_group['group_level_money'];
+           return $diff_price;
+      }
       /**
    *  @version get_wallet method / Api 会员资产信息
    *  @author $bill$(755969423@qq.com)

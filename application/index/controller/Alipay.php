@@ -55,7 +55,8 @@ use app\index\model\CallbackLog as CallbackLogs;
                  $response = $this->aop->sdkExecute($request);
                  return $response;
            } catch (\Exception $e) {
-                 return ['code'=>344];
+                  return false;
+                 // return ['code'=>344,"msg"=>$e->getMessage()];
            }
       }
 
