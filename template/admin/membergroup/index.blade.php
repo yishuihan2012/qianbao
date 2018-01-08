@@ -12,7 +12,7 @@
 	      	<th>用户组</th>
 	      	<th>组级别</th>
 	      	<th>组 升 级</th>
-	      	<th>升级方式</th>
+	      	<th>是否能够推荐升级</th>
 	      	<th>升级条件</th>
 	      	<th>分佣</th>
 	      	<th>分润</th>
@@ -28,10 +28,10 @@
 	      	<td>{{$group['group_salt']}} 级</td>
 	      	<td>{{$group['group_level']=='1' ? '可以升级' :  '禁止升级'}}</td>
 	      	<td>
-	      	@if($group['group_level_type']=='-1')
-	      		不限
+	      	@if($group['group_level_type']=='0')
+	      		不可以
 	      	@elseif($group['group_level_type']=='1')
-				总推荐人数
+				可以
 	      	@elseif($group['group_level_type']=='2')
 	      		总刷卡额
 	      	@elseif($group['group_level_type']=='3')
@@ -40,13 +40,15 @@
 	      	</td>
 	      	<td>
 	      	@if($group['group_level_type']=='1')
-				总推荐人数>{{$group['group_level_invite']}} 人
+				付费升级 或 总推荐人数>{{$group['group_level_invite']}} 人
 	      	@elseif($group['group_level_type']=='2')
 				总刷卡额>{{$group['group_level_transact']}} 元
 	      	@elseif($group['group_level_type']=='3')
 				付费金额>{{$group['group_level_money']}} 元
 	      	@elseif($group['group_level_type']=='-1')
 				推荐人数>{{$group['group_level_invite']}} 人| 刷卡额 > {{$group['group_level_transact']}} 元 | 付费金额>{{$group['group_level_money']}} 元
+			@else
+				付费升级
 	      	@endif
 	      	</td>
 	      	<td>{{$group['group_cent']=='1' ? '允许' :  '不允许'}}</td>
