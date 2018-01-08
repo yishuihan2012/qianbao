@@ -32,7 +32,7 @@ use app\index\model\CallbackLog as CallbackLogs;
            $this->aop->rsaPrivateKey                = System::getName('Alipay_secretkey');
            $this->aop->alipayrsaPublicKey           = System::getName('Alipay_key');
            $this->aop->alipaycallback               = System::getName('system_url').System::getName('Alipay_callback');
-           print_r($this->aop);die;
+           // print_r($this->aop);die;
       }
 
       /**
