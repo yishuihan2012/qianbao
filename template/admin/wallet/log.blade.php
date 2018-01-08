@@ -23,7 +23,7 @@
 <div class="modal-content animated fadeInLeft" style="max-height: 400px; overflow-x: hidden; overflow-y: auto;">
 <h2></h2>
 
-@foreach($wallet->walletLog as $log)
+@foreach($WalletLog as $log)
 <div class="row">
     <div class="col-sm-2 text-center"><strong>{{$log->log_add_time}}</strong></div>
     <div class="col-sm-2 text-center">

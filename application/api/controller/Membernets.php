@@ -97,10 +97,10 @@
       **/
       public function rongbangnet()
       {
-        /*
            #定义请求报文组装
            $arr=array(
                  'companyname'    =>"test".time(),//$this->membercard->card_name.rand(1000,9999),山东联硕支付技术有限公司济南分公司（无积分快捷）
+                 'companyname'    =>"这是测试公司",//$this->membercard->card_name.rand(1000,9999),山东联硕支付技术有限公司济南分公司（无积分快捷）
                  // 'companycode'     =>$this->member->member_mobile,
                  'companycode'     =>time(),
                  'accountname'      =>$this->membercard->card_name,
@@ -113,6 +113,7 @@
                  'idcardno'            =>$this->membercard->card_idcard,
                  'address'             =>"山东省济南市天桥区泺口皮革城",
            );
+           // return json_encode($arr);
            #aes加密并且urlsafe base64编码
            $passParam=rongbang_aes($this->passway->passageway_pwd_key,$arr);
            $array=array(
@@ -128,6 +129,12 @@
            #连接键值生成sign
            //拼接请求体参数
             $getData=rongbang_sign($this->passway->passageway_pwd_key,$array,'https://gw.masget.com:27373/openapi/rest');
+
+            parse_str(preg_replace('/^.+?\?/', '', $getData), $arr);
+            $data=curl_post('https://gw.masget.com:27373/openapi/rest','post',$arr);
+          var_dump($arr); die;
+          var_dump($data); die;
+            dump($getData);die;
            $curl = curl_init();
             curl_setopt($curl, CURLOPT_URL, $getData);
             curl_setopt($curl, CURLOPT_HEADER, 0);
@@ -139,15 +146,13 @@
             curl_close($curl);
 
             //进件完成
-            
-            // var_dump($data);die;
+            var_dump($data);die;
             if($data['ret']==0){
               $passageway_no=$data['data']['companyid'];
               $res=MemberNet::where(['net_member_id'=>$this->member->member_id])->setField($this->passway->passageway_no, $passageway_no);
             }else{
               return false;
             }
-*/
 
             $arr=array(
               'companyid'   =>'402560662'

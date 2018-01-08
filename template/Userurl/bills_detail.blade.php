@@ -69,12 +69,18 @@
 				    	<p>{{$withdraw['info']}}</p>
 				    </li>
 				    <li class="mui-table-view-cell dis-flex-be">
-				    	<p class="invalid-color">实际到账</p>
-				    	<p>{{$withdraw['withdraw_amount']}}元</p>
+				    	<p class="invalid-color">提现方式</p>
+				    	<p>
+				    		@if($withdraw['withdraw_method']=='Alipay')
+				    			支付宝
+				    		@elseif
+
+				    		@endif
+				    	</p>
 				    </li>
 				    <li class="mui-table-view-cell dis-flex-be">
-				    	<p class="invalid-color">收款方式</p>
-				    	<p>{{$withdraw['withdraw_method']}}</p>
+				    	<p class="invalid-color">实际到账</p>
+				    	<p>{{$withdraw['withdraw_amount']}}元</p>
 				    </li>
 <!-- 				    <li class="mui-table-view-cell dis-flex-be bor-bot">
 				    	<p class="invalid-color">支付通道</p>

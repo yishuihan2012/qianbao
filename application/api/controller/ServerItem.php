@@ -12,6 +12,7 @@
  use app\index\model\System;
  use app\index\model\ServiceItem;
  use app\index\model\ServiceItemList;
+ use app\index\model\Member as Members;
  class ServerItem
  {
       protected $param;
@@ -29,6 +30,10 @@
       **/
       public function list()
       {
+          $where['member_id'] = $this->param['uid'];
+          $userinfo = Members::with("membergroup")->where($where)->find();
+          
+
            try{
                  $data=array();
                  #获取到所有显示的模块
@@ -37,7 +42,16 @@
                        $data[$key]['serviceName']=$value['item_name'];
                        $data[$key]['serviceIcon']=$value['item_icon'];
                        $data[$key]['serviceItems']=ServiceItemList::where(['list_state'=>'1','list_item_id'=>$value['item_id']])->order('list_weight','asc')->limit(6)->select();
+                       foreach ($data[$key]['serviceItems'] as $k => $v) {
+                          if($v['list_authority'] == 0){
+                            $data[$key]['serviceItems'][$k]['list_status'] = 0;
+                          }else{
+                            $data[$key]['serviceItems'][$k]['list_status'] = ($userinfo['group_salt']==1)?1:0;
+                          }
+                       }
+                     
                  }
+
                   return ['code'=>200, 'msg'=>'获取成功~', 'data'=>$data];
            } catch (\Exception $e) {
                  Db::rollback();

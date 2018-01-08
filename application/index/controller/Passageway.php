@@ -88,8 +88,9 @@ class Passageway extends Common{
  	 	 	 					// continue;
  	 	 	 					//套现接口 米刷
 					 	 	 	if($passageway->passageway_also==1 && $passageway->passageway_id==1){
-					                $membernetObject=new Membernetsedit($member['member_id'],$passageway->passageway_id,'M03');
-					                $res=$membernetObject->quickNet();
+					                // $membernetObject=new Membernetsedit($member['member_id'],$passageway->passageway_id,'M03');
+					                // $res=$membernetObject->quickNet();
+					 	 	 		$res=mishuaedit($passageway,$data[$v['item_group']],$member,$member['member_mobile'],$membernet[$passageway['passageway_no']]);
 					 	 	 		//通过是否存在返回更新
 					 	 	 		if(isset($res['merchno'])){
 					 	 	 			db('member_net')->where('net_member_id',$member['member_id'])->update([$passageway['passageway_no']=>$res['merchno']]);

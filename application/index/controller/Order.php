@@ -40,7 +40,10 @@ class Order extends Common{
 			$r['cert_member_idcard'] = '';
 		}
 	 	 // #查询订单列表分页
-	 	$order_lists = Orders::haswhere('member',$where)->join("wt_member_cert m", "m.cert_member_id=Member.member_id","left")->where($wheres)->field('wt_member.member_nick')->paginate(Config::get('page_size'),false, ['query'=>Request::instance()->param()]);
+	 	$order_lists = Orders::haswhere('member',$where)
+	 		->join("wt_member_cert m", "m.cert_member_id=Member.member_id","left")
+	 		->where($wheres)->field('wt_member.member_nick')
+	 		->paginate(Config::get('page_size'),false, ['query'=>Request::instance()->param()]);
 	 	 // dump(Orders::getLastsql());
 	 	 #统计订单条数
 	 	 $count['count_size']=Orders::haswhere('member',$where)->join("wt_member_cert m", "m.cert_member_id=Member.member_id","left")->where($wheres)->count();
@@ -70,7 +73,6 @@ class Order extends Common{
 
 	 #提现订单
 	 public function withdraw(){
-
 	 	$r=request()->param();
 	 	 #搜索条件
 	 	$data = memberwhere($r);
@@ -88,9 +90,18 @@ class Order extends Common{
 		}else{
 			$r['cert_member_idcard'] = '';
 		}
+		//管理员列表
+		$admins=db('adminster')->column('adminster_id,adminster_login');
 	 	 // #查询订单列表分页
-	 	 $order_lists = Withdraw::haswhere('member',$where)->join("wt_member_cert m", "m.cert_member_id=Member.member_id","left")->where($wheres)->paginate(Config::get('page_size'), false, ['query'=>Request::instance()->param()]);
-
+	 	 $order_lists = Withdraw::haswhere('member',$where)
+	 	 	->join("wt_member_cert m", "m.cert_member_id=Member.member_id","left")
+	 	 	->where($wheres)
+	 	 	->paginate(Config::get('page_size'), false, ['query'=>Request::instance()->param()]);
+	 	//取出审批人姓名替换
+	 	foreach ($order_lists as $k => $v) {
+	 		if($v['withdraw_option']!=0)
+	 			$order_lists[$k]['withdraw_option']=$admins[$v['withdraw_option']];
+	 	}
 
 	 	 #统计订单条数
 	 	 $countmoney=Withdraw::where('withdraw_state=12')->sum('withdraw_amount');
@@ -121,8 +132,31 @@ class Order extends Common{
 	 }
 	 #审核提现列表
 	 public function toexminewithdraw(){
-	 	if($_POST){
-	 		
+	 	if(request()->isPost()){
+	 		$param=$request->param();
+	 		//审核通过
+	 		if($param['withdraw_total_money']==12){
+	 			$Withdraw = Withdraw::get($param['withdraw_id']);
+	 			//调用支付接口
+              $payMethod="\app\index\controller\\".$Withdraw->withdraw_method;
+              $payment=new $payMethod();
+              $return=$payment->transfer($Withdraw); //转账
+              if ($return['code'] != "200") {
+               	$result=false;
+              }else{
+              	$result=true;
+              	$param['withdraw_option']=session('adminster.id');
+              	$Withdraw->allowField(['withdraw_state','withdraw_option'])->save($param);
+              }
+              $message="您的提现已经处理,请查收~";
+	 		//审核不通过
+	 		}else{
+				$Withdraw = new Withdraw($_POST);
+				$result = $Withdraw->allowField(['withdraw_state','withdraw_information'])->save();
+	 		}
+			$content = $result ? ['type'=>'success','msg'=>'审核成功，提现已到帐'] : ['type'=>'warning','msg'=>'审核失败'];
+			Session::set('jump_msg', $content);
+			$this->redirect('member_group/index');
 	 	}
 	 	$this->assign("id",input("id"));
 	 	return view("admin/order/toexminewithdraw");
@@ -166,9 +200,12 @@ class Order extends Common{
 		 #渲染视图
 	 	return view('admin/order/cash');
 	 }
-	 #银行交易信息
+	 #银行交易信息详情
 	 public function showcash(){
-	 	// $info = $order_lists = CashOrder::with('passageway')->join('wt_member m',"m.member_id=wt_cash_order.order_member")->where($where)->join("wt_member_cert mc", "mc.cert_member_id=m.member_id","left")->where($wheres)->paginate(Config::get('page_size'), false, ['query'=>Request::instance()->param()]);
+	 	$where['order_id'] = request()->param("id");
+	 	$info =  CashOrder::with('passageway')->join('wt_member m',"m.member_id=wt_cash_order.order_member")->field("member_nick,member_mobile")->where($where)->find();
+	 	$this->assign("info",$info);
+	 	return view("admin/order/showcash");
 	 }
 	  #成功交易订单
 	 public function successCash(){

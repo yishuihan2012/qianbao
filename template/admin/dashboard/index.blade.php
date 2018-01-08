@@ -24,7 +24,7 @@
     </div>
     <div class="z-card">
       当前还款总量:
-      <span>{{$data['Todaycount']}}</span>
+      <span>{{$GenerationOrdercount}}</span>
     </div>
     
   </div>

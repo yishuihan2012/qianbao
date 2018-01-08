@@ -85,7 +85,7 @@
 		 if(Request::instance()->isPost()){
 		 	 $ServiceItemList =ServiceItemList::get(Request::instance()->param('list_id'));
 			 $result= $ServiceItemList->allowField(true)->save($_POST);
-			 dump($ServiceItemList->getLastSql());
+
 			 $content = ($result===false) ? ['type'=>'error','msg'=>'修改失败'] : ['type'=>'success','msg'=>'修改成功'];
 			 Session::set('jump_msg', $content);
 			 $this->redirect('server_model/service_list');
