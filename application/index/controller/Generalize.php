@@ -136,7 +136,7 @@ class Generalize extends Common{
 		$this->assign("Exclusive",$Exclusive);
 		#渲染视图
 	 	
-		return view("admin/generalize/exclusive_list");
+		return view("admin/Generalize/exclusive_list");
 	}
 	#新增专属
 	public function exclusiveCreat(){
