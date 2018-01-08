@@ -624,7 +624,7 @@
                 $data['group'][$key]['group_salt']=$value['group_salt'];
                 $data['group'][$key]['id']=$value['group_id'];
                 $data['group'][$key]['icon']=$value['group_thumb'];
-                $data['group'][$key]['group_level_money']=$this->get_diff_price($this->param['uid'],$value['group_id']);
+                $data['group'][$key]['group_level_money']=$price;
                 $data['group'][$key]['price_desc']='普通会员升级到此用户组需要的价格￥'.$price.'元';
                 $data['group'][$key]['group_url']=$value['group_url'];
                 $data['group'][$key]['up_price']=$this->get_diff_price($this->param['uid'],$value['group_id']);
