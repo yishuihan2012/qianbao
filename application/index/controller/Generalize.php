@@ -63,7 +63,7 @@ class Generalize extends Common{
 		 $info = Generalizes::edits($id);
 		 $this->assign("info",$info);
 
-		 return view("admin/generalize/edit");
+		 return view("admin/Generalize/edit");
 	 }
 
 	 /**
@@ -151,7 +151,7 @@ class Generalize extends Common{
 			 #重定向控制器 跳转到列表页
 			 $this->redirect('/index/Generalize/exclusive_list');
 	 	}
-		return view("admin/generalize/exclusiveCreat");
+		return view("admin/Generalize/exclusiveCreat");
 	}
 	#删除专属
 	public function del_exclusive(){
