@@ -34,4 +34,12 @@
  	public function update_passway_rate($params){
  		$Passageway_detail=Passageway::where(['passageway_id'=>]);
  	}
+ 	//推荐会员自动升级任务
+ 	public function self_update(){
+ 		#1取出所有会员，获得升级条件
+ 		$member_group=MemberGroup::where(['group_level'=>1])->select();
+ 		
+ 		#2查询MemberRelation表，查询每个人直推的用户总数
+ 		#3循环这些
+ 	}
  }

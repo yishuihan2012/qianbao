@@ -32,6 +32,7 @@ use app\index\model\CallbackLog as CallbackLogs;
            $this->aop->rsaPrivateKey                = System::getName('Alipay_secretkey');
            $this->aop->alipayrsaPublicKey           = System::getName('Alipay_key');
            $this->aop->alipaycallback               = System::getName('system_url').System::getName('Alipay_callback');
+           print_r($this->aop);die;
       }
 
       /**
@@ -126,6 +127,7 @@ use app\index\model\CallbackLog as CallbackLogs;
        */
       public function transfer(Withdraws $withdraws)
       {
+           $system_name=System::getName('sitename').$withdraws->withdraw_name.'提现';
            $request = new \AlipayFundTransToaccountTransferRequest();
            // 判断账户信息
            $payee_type ="ALIPAY_USERID"; //默认转账方式
@@ -136,9 +138,9 @@ use app\index\model\CallbackLog as CallbackLogs;
                  "\"payee_type\":\"".$payee_type."\"," .
                  "\"payee_account\":\"".$withdraws->withdraw_account."\"," .
                  "\"amount\":\"".($withdraws->withdraw_amount)."\"," . //转账金额 单位 元
-                 "\"payer_show_name\":\"测试喜家钱包2.0提现\"," .
+                 "\"payer_show_name\":\"{$system_name}\"," .
                  "\"payee_real_name\":\"".$withdraws->withdraw_name."\"," .
-                 "\"remark\":\"测试喜家钱包2.0提现\"" .
+                 "\"remark\":\"{$system_name}\"" .
             "  }");
            $result = $this->aop->execute($request);
            $responseNode = str_replace(".", "_", $request->getApiMethodName()) . "_response";
