@@ -288,8 +288,8 @@
            if($member_group['group_level']!='1')
                  return ['code'=>450];
            #验证目标组是否可以通过付费方式升级
-           if($member_group['group_level_type']!=-1 && $member_group['group_level_type']!=3)
-                 return ['code'=>451];
+           // if($member_group['group_level_type']!=-1 && $member_group['group_level_type']!=3)
+           //       return ['code'=>451];
            $currentgroup=MemberGroup::get($member['member_group_id']);
            #验证目标组是否比当前组级别高
            if($member_group['group_salt']<=$currentgroup['group_salt'])
