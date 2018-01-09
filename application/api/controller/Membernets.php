@@ -14,6 +14,7 @@
  use app\index\model\System;
  use app\index\model\MemberNet;
  use app\index\model\PassagewayItem;
+ use app\api\controller\Commission;
 
  class Membernets{ 
       public $error;
@@ -190,8 +191,6 @@
       }
       #荣邦 1.6.3.查询快捷协议
       public function rongbang_check($treatycode){
-        $arr=make_order();
-           var_dump($arr);die;
       //提取转换存储的商户信息
           #信息顺序 0、appid 1、companycode 2、secretkey 3、session
         $userdata=db('member_net')->where(['net_member_id'=>$this->member->member_id])->value($this->passway->passageway_no);
@@ -227,7 +226,7 @@
           'paymenttypeid'=>25,
           'subpaymenttypeid'=>25,
           'businesstime'=>date('YmdHis'),
-          "backurl"=>"http://14.18.207.75:8004/pay/compay/router/back/report/test",
+          "backurl"=>request()->domain(). "/api/Userurl/passway_rongbang_paycallback/passageway_id/".$this->passway->passageway_id . "/member_id/" . $this->member->member_id,
           'payextraparams'=>[
             'treatycode'=>'701318010911012302',
           ],
@@ -242,7 +241,29 @@
             return false;
           }
       }
-
+      #荣邦 1.5.3.确认支付
+      public function rongbang_confirm_pay($ordercode,$card_id,$authcode){
+        $arr=[
+          'ordercode'=>$ordercode,
+          'authcode'=>$authcode,
+        ];
+        $data=rongbang_curl($this->passway,$arr,'masget.pay.compay.router.confirmpay');
+        if($data['ret']==0){
+          $data=$data['data'];
+          //支付成功 更新套现订单表状态
+          $order=db('cash_order')->where('order_no',$data['ordernumber'])->find();
+          //仅在待支付情况下操作
+          if($order['order_state']==1){
+            db('cash_order')->where('order_no',$data['ordernumber'])->update(['order_state'=>2]);
+            //进行分润
+            $fenrun= new \app\api\controller\Commission();
+            $fenrun_result=$fenrun->MemberFenRun($this->member->member_id,$order['order_money'],$this->passway->passageway_id,'交易手续费分润');
+          }
+          return true;
+        }else{
+          return false;
+        }
+      }
 
         /**
       *  @version jinyifu / Api 金易付商户入网接口

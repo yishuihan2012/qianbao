@@ -22,7 +22,7 @@
 			    </div>
 			</form>
 			<div class="space-up">
-				<p><a class="my-btn-blue4" id="regBtn">注册</a></p>
+				<p><a class="my-btn-blue4" id="regBtn">立即开通</a></p>
 			</div>
 		</div>
 		<script src="/static/js/mui.min.js"></script>

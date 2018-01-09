@@ -22,7 +22,7 @@
 			    </div>
 			</form>
 			<div class="space-up">
-				<p><a class="my-btn-blue4" id="regBtn">注册</a></p>
+				<p><a class="my-btn-blue4" id="regBtn">立即申请</a></p>
 			</div>
 		</div>
 		<script src="/static/js/mui.min.js"></script>
@@ -39,18 +39,18 @@
 					if(authcode){
 						var data={
 							authcode:authcode,
-							treatycode:"{{$treatycode}}",
-							smsseq:"{{$smsseq}}",
+							ordercode:"{{$ordercode}}",
+							card_id:"{{$card_id}}",
 							memberId:"{{$memberId}}",
 							passwayId:"{{$passwayId}}",
 						};
 						$.post('',data,function(res){
 							if(res==1){
-								alert('成功开通快捷支付！')
+								alert('成功申请快捷支付！')
 							}elseif(res==2){
 								alert('验证码异常！')
 							}else{
-								alert('开通快捷支付失败！')
+								alert('申请快捷支付失败！')
 							}
 					      if(!isAndroid){
 					        window.webkit.messageHandlers.returnIndex.postMessage(1);

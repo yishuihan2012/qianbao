@@ -724,12 +724,12 @@ class Userurl extends Controller
   # 荣邦 申请快捷支付订单不返回html时 调用本页面 
   # memberId 用户id passwayId 通道id
   # treatycode 协议号 smsseq 短信验证码流水号
-  public function passway_rongbang_openpay($memberId,$passwayId,$ordercode,$card_id){
+  public function passway_rongbang_pay($memberId,$passwayId,$ordercode,$card_id){
   	if(request()->ispost()){
   		$authcode=request()->param()['authcode'];
   		if($authcode){
 		  	$Membernets=new con\Membernets($memberId,$passwayId);
-		  	$result=$Membernets->rongbang_confirm_openpay($treatycode,$smsseq,$authcode);
+		  	$result=$Membernets->rongbang_confirm_pay($ordercode,$card_id,$authcode);
 		  	return $result ? 1 : 3;
 		  }else{
 		  	return 2;
@@ -739,11 +739,27 @@ class Userurl extends Controller
 	$this->assign('passwayId',$passwayId);
 	$this->assign('treatycode',$treatycode);
 	$this->assign('smsseq',$smsseq);
-  	return view("Userurl/passway_rongbang_openpay");
+  	return view("Userurl/passway_rongbang_pay");
   }
   #荣邦支付回调
   public function passway_rongbang_paycallback(){
   	$param=request()->param();
+  	$key=db('passageway')->where('passageway_id',$param['passageway_id'])->value('passageway_pwd_key');
+  	$data=rongbang_aes_decode($key,$param['data']);
+  	$data=json_decode($data,1);
+
+  	if($data['respcode']==2){
+  		//支付完成
+  		db('cash_order')->where('order_no',$data['ordernumber'])->update(['order_state'=>2]);
+  		//分润
+        $fenrun= new \con\Commission();
+        $fenrun_result=$fenrun->MemberFenRun($param['member_id'],$data['amount'],$param['passageway_id'],'交易手续费分润');
+  	}else{
+  		//支付失败
+  		db('cash_order')->where('order_no',$data['ordernumber'])->update(['order_state'=>-1]);
+  	}
+  	//按文档要求返回
+  	return json_encode(['message'=>'ok','response'=>'00']);
   }
   #为无需短信确认的情况 直接显示一个成功页面
   public function passway_success(){

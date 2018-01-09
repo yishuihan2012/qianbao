@@ -178,6 +178,31 @@ class Generalize extends Common{
 	 	}
 		return view("admin/Generalize/exclusiveCreat");
 	}
+	#编辑专属
+	public function exclusiveedit(){
+		if($_POST){
+	 		
+	 		if(empty($_POST['exclusive_thumb'])){
+	 			unset($_POST['exclusive_thumb']);
+	 		}
+
+	 		$Share =Exclusive::get(Request::instance()->param('exclusive_id'));
+	 		
+			 $result= $Share->allowField(true)->save($_POST);
+
+	 		$content = ($result===false) ? ['type'=>'error','msg'=>'修改失败'] : ['type'=>'success','msg'=>'修改成功'];
+			 Session::set('jump_msg', $content);
+			 #重定向控制器 跳转到列表页
+			 $this->redirect('/index/Generalize/share');die;
+	 	}
+		 $id = input("id");
+		 // print_r(input());die;
+		 $info = Exclusive::where(["Exclusive_id" => $id])->find();
+
+		 $this->assign("info",$info);
+
+		 return view("admin/Generalize/exclusive_list");
+	}
 	#删除专属
 	public function del_exclusive(){
 		$id = input("id");

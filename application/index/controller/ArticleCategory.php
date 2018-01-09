@@ -19,6 +19,7 @@ class ArticleCategory extends Common{
 	 public function index()
 	 {
 	 	 $array=ArticleCategorys::all();
+	 	 dump(ArticleCategorys::getLastsql());
 	 	 $tree = $this->getTree($array,'0');
 	 	 if($tree)
 	 	 	$tree=collection($tree)->toArray();
