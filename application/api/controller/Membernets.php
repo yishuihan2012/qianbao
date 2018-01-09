@@ -95,8 +95,7 @@
       *  @datetime    2017-12-25 14:36:05
       *  @param   $member=要入网的会员   ☆☆☆::使用中
       **/
-      public function rongbangnet()
-      {
+      public function rongbangnet(){
          #定义请求报文组装
          $arr=array(
                'companyname'    =>$this->member->member_nick,//$this->membercard->card_name.rand(1000,9999),山东联硕支付技术有限公司济南分公司（无积分快捷）
@@ -133,7 +132,7 @@
         var_dump($data);die;
       }
       #荣邦1.6.1.申请开通快捷协议
-      public function rongbangOpenQuickPay(){
+      public function rongbang_openpay(){
        $credit=db('member_creditcard')->where('card_member_id',$this->member->member_id)->find();
         $arr=[
           'mobilephone'=>$this->member->member_mobile,
@@ -147,11 +146,12 @@
           'cvv2'=>$credit['card_Ident'],
           'expirationdate'=>$credit['card_expireDate'],
         ];
+           // var_dump($arr);die;
           $data=rangbang_curl($this->passway,$arr,'masget.pay.collect.router.treaty.apply');
            var_dump($data);die;
       }
       #荣邦1.6.2.确认开通快捷协议
-      public function rongbangOpenQuickPay(){
+      public function rongbang_confirm_openpay(){
         $arr=[
           'treatycode'=>'从 rongbangOpenQuickPay 获得',
           'smsseq'=>'从 rongbangOpenQuickPay 获得',
@@ -222,7 +222,7 @@
           if($result['resCode']=='00')
             $res=MemberNet::where(['net_member_id'=>$this->member->member_id])->setField($this->passway->passageway_no, $result['merchId']);
           return $result;
-      } 
+      }
 
 
 
@@ -290,7 +290,7 @@
           if($result['resCode']=='00')
             $res=MemberNet::where(['net_member_id'=>$this->member->member_id])->setField($this->passway->passageway_no, $result['merchId']);
           return $result;
-      } 
+      }
 
 
 

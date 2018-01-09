@@ -40,7 +40,10 @@ class Appversion extends Controller
 	  {
 	    	 $this->param=$param;
 	  }
-   	#版本号接口
+   /**
+   *杨成志[3115317085@QQ.com]
+   *app版本接口
+   **/
    	public function index(){
    			
 		    if($this->param['type'] == "ios"){

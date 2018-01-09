@@ -58,7 +58,7 @@ class Passageway extends Common{
 	 	 	 	//以用户组为键 转储到data
 	 	 	 	$data[$group_id]['item_'.$key_fix]=$v;
  	 	 	}
- 	 	 	halt($passageway->passageway_mech);
+ 	 	 	// halt($passageway->passageway_mech);
  	 	 	 #查询库中是否存在数据
  	 	 	 $passage=PassagewayItem::where(['item_passageway'=>Request::instance()->param('id')])->select();
  	 	 	 if($passage){
@@ -113,6 +113,19 @@ class Passageway extends Common{
  	 	 	 			}
  	 	 	 		}
  	 	 	 	}
+ 	 	 	 	//没有数据的时候 就新增数据
+ 	 	 	 }else{
+ 	 	 	 	$newData=[];
+ 	 	 	 	foreach ($data as $k => $v) {
+ 	 	 	 		//组合单条数据
+ 	 	 	 		$v['item_group']=$k;
+ 	 	 	 		$v['item_passageway']=$passageway->passageway_id;
+ 	 	 	 		$newData[]=$v;
+ 	 	 	 	}
+ 	 	 	 	$PassagewayItem=new PassagewayItem();
+ 	 	 	 	$result=$PassagewayItem->allowField(true)->saveAll($newData);
+ 	 	 	 	if(!$result)
+ 	 	 	 		$content=['type'=>'warning','msg'=>'税率新增失败'];
  	 	 	 }
 		 	 $content = isset($content) ? $content : ['type'=>'success','msg'=>'税率调整成功'];
 		 	  // ['type'=>'warning','msg'=>'税率调整失败'];
