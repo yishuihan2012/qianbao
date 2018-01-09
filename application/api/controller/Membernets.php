@@ -164,13 +164,13 @@
           'cvv2'=>$credit['card_Ident'],
           'expirationdate'=>$credit['card_expireDate'],
         ];
-           // var_dump($arr);die;
-          $data=rongbang_curl(rongbang_foruser($this->member,$this->passway),$arr,'masget.pay.collect.router.treaty.apply');
-           if($data['ret']==0){
-            return $data['data'];
-           }else{
-            return false;
-           }
+         // var_dump($arr);die;
+        $data=rongbang_curl(rongbang_foruser($this->member,$this->passway),$arr,'masget.pay.collect.router.treaty.apply');
+         if($data['ret']==0){
+          return $data['data'];
+         }else{
+          return false;
+         }
       }
       #荣邦1.6.2.确认开通快捷协议
       public function rongbang_confirm_openpay($treatycode,$smsseq,$authcode){
@@ -179,17 +179,19 @@
           'smsseq'=>$smsseq,
           'authcode'=>$authcode,
         ];
-          $data=rongbang_curl($this->passway,$arr,'masget.pay.collect.router.treaty.apply');
-            if($data['ret']==0){
-              //将快捷支付状态改为已开通
-              db('member_credit_pas')->where(['member_credit_pas_info'=>$treatycode,'member_credit_pas_pasid'=>$this->passway->passageway_id])->update(['member_credit_pas_status'=>1]);
-            return true;
-          }else{
-            return false;
-          }
+        $data=rongbang_curl($this->passway,$arr,'masget.pay.collect.router.treaty.apply');
+        if($data['ret']==0){
+          //将快捷支付状态改为已开通
+          db('member_credit_pas')->where(['member_credit_pas_info'=>$treatycode,'member_credit_pas_pasid'=>$this->passway->passageway_id])->update(['member_credit_pas_status'=>1]);
+          return true;
+        }else{
+          return false;
+        }
       }
       #荣邦 1.6.3.查询快捷协议
       public function rongbang_check($treatycode){
+        $arr=make_order();
+           var_dump($arr);die;
       //提取转换存储的商户信息
           #信息顺序 0、appid 1、companycode 2、secretkey 3、session
         $userdata=db('member_net')->where(['net_member_id'=>$this->member->member_id])->value($this->passway->passageway_no);
@@ -210,14 +212,18 @@
          }
       }
       #荣邦 1.5.1.订单支付(后台)
-      public function rongbang_pay($card_id){
+      public function rongbang_pay($card_id,$tradeNo,$price,$description){
+        //取出该用户的荣邦商户信息
+        $userinfo=db('member_net')->where(['net_member_id'=>$this->member->member_id])->value($this->passway->passageway_no);
+        $userinfo=explode(',', $userinfo);
+        $companyid=$userinfo[0];
        $credit=db('member_creditcard')->where('card_id',$card_id)->find();
         $arr=[
-          'ordernumber'=>66,
-          'body'=>'test',
-          'amount'=>4,
+          'ordernumber'=>$tradeNo,
+          'body'=>$description,
+          'amount'=>$price*100,//单位分
           'businesstype'=>1001,
-          'companyid'=>402587655,
+          'companyid'=>$companyid,
           'paymenttypeid'=>25,
           'subpaymenttypeid'=>25,
           'businesstime'=>date('YmdHis'),
@@ -229,9 +235,12 @@
           // 'accounttype'=>1,//对私
           // 'bankaccount'=>1,//对私
         ];
-           var_dump($arr);die;
           $data=rongbang_curl(rongbang_foruser($this->member,$this->passway),$arr,'masget.pay.collect.router.treaty.apply');
-           var_dump($data);die;
+          if($data['net']==0){
+            return $data['data'];
+          }else{
+            return false;
+          }
       }
 
 

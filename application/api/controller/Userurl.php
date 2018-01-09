@@ -721,4 +721,8 @@ class Userurl extends Controller
 	$this->assign('smsseq',$smsseq);
   	return view("Userurl/passway_rongbang_openpay");
   }
+  #荣邦支付回调
+  public function passway_rongbang_paycallback(){
+  	$param=request()->param();
+  }
 }

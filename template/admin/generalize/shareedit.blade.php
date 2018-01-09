@@ -21,10 +21,10 @@ hr{margin:0 5px!important;}
 
   <div class="tab-content">
                 <div class="tab-pane fade active in" id="tab2Content1">
-                  <form action="{{url('/index/Generalize/edit')}}" method="post" class="form-horizontal" id="myform">
+                  <form action="{{url('/index/Generalize/shareedit')}}" method="post" class="form-horizontal" id="myform">
                      <div class="row form-group">
                       <label for="announcement_title" class="col-sm-2 text-right"><b>名称</b></label>
-                      <div id="announcement_title" class="col-sm-6"><input type="text" class="form-control announcement_title" name="generalize_title" placeholder="名称" value="{{$info['share_title']}}">
+                      <div id="announcement_title" class="col-sm-6"><input type="text" class="form-control announcement_title" name="share_title" placeholder="名称" value="{{$info['share_title']}}">
                       	<input type="hidden" class="form-control announcement_title" name="share_id" placeholder="名称" value="{{$info['share_id']}}">
                       </div>
                      </div>
@@ -40,9 +40,9 @@ hr{margin:0 5px!important;}
 				               <button type="button" class="close">×</button>
 				           </div>
 				           <div class="uploader-files file-list file-list-grid">
-								@foreach($info['arrImg'] as $k=>$v)
-									<img src="{{$v}}" width="200" height="200">
-								@endforeach
+							
+									<img src="{{$info['share_thumb']}}" width="200" height="200">
+								
 				           </div>
 				         <div>
 				           <hr class="divider">
@@ -51,7 +51,7 @@ hr{margin:0 5px!important;}
 				           <button type="button" class="btn btn-link uploader-btn-start"><i class="icon icon-cloud-upload"></i> 开始上传</button>
 				         </div>
 				       </div>
-				       <input type="hidden" class="form-control generalize_thumb" name="generalize_thumb" value="">
+				       <input type="hidden" class="form-control generalize_thumb" name="share_thumb" value="">
 				     </div>   
 				                      </div>
                   <div class="row">

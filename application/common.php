@@ -344,7 +344,6 @@
                  return    $dates.str_pad($ms, 4, 0, STR_PAD_LEFT);
            }
       }
-      return getOrderId();
  }
 
  //-----------------------------------------------------------

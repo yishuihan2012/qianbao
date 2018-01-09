@@ -17,7 +17,7 @@
 				<div class="bg-w f-br-top">
 				    <div class="mui-input-row">
 				        <label>验证码:</label>
-				    	<input type="tel" name="phone" class="mui-input-clear" placeholder="请输入验证码">
+				    	<input type="text" name="authcode" class="mui-input-clear authcode" placeholder="请输入验证码">
 				    </div>
 			    </div>
 			</form>
@@ -30,7 +30,38 @@
 		<script src="/static/js/common.js"></script>
 		<script type="text/javascript">
 			$(function(){
-
+		      var u = navigator.userAgent;
+			// new QRCode(document.getElementById("qrcode"), "{{$url}}");
+		      var isAndroid = u.indexOf('Android') > -1 || u.indexOf('Adr') > -1; //android终端
+		      var isiOS = !!u.match(/\(i[^;]+;( U;)? CPU.+Mac OS X/); //ios终端
+				mui(document).on('tap','#regBtn',function(){
+					var authcode=$('.authcode').val();
+					if(authcode){
+						var data={
+							authcode:authcode,
+							treatycode:"{{$treatycode}}",
+							smsseq:"{{$smsseq}}",
+							memberId:"{{$memberId}}",
+							passwayId:"{{$passwayId}}",
+						};
+						$.post('',data,function(res){
+							if(res==1){
+								alert('成功开通快捷支付！')
+							}elseif(res==2){
+								alert('验证码异常！')
+							}else{
+								alert('开通快捷支付失败！')
+							}
+					      if(!isAndroid){
+					        window.webkit.messageHandlers.returnIndex.postMessage(1);
+					      }else{
+					        android.returnIndex();
+					      }
+						})
+					}else{
+						alert('请输入验证码！');
+					}
+				})
 			})
 		</script>
 	</body>

@@ -30,7 +30,7 @@
                <a href="{{url('/index/Generalize/shareedit/id/'.$list['share_id'])}}"><i class="icon-pencil"></i> 编辑</a> &nbsp;
                <a class="remove" href="#" data-url="{{url('/index/Generalize/shareRemove/id/'.$list['share_id'])}}"><i class="icon-remove"></i> 删除</a>
              </div>
-                      <div class="card-heading"><strong>{{$list['share_title']}}</strong></div>
+                      <div class="card-heading"><strong>{{msubstr($list['share_title'],0,4)}}...</strong></div>
                      
                  </a>
            </div>

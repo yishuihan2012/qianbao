@@ -289,9 +289,31 @@ class CashOut
 	 	 	}
 	 	 }
 	 	 //开始调用支付接口
-	 	 $result=$membernetObject->rongbang_pay($this->card_info->card_id);
-	 	 #获取用户入网信息
-	 	 $member_net=MemberNet::where('net_member_id',$this->member_infos->member_id)->find();
+	 	 $result=$membernetObject->rongbang_pay($this->card_info->card_id,$tradeNo,$price,$description);
+	 	 if($result){
+            $res= [
+              	'code'=>200,
+              	'msg'=>'荣邦快捷支付订单调用成功',
+            ];
+	 	 	if($result['ishtml']==1){
+            	$res['data']=[
+            		'type'=>2,
+            		'url'=>base64_decode($result['html']),
+            	];
+	 	 	}else{
+	 	 		if($result['sendmessage']==1){
+
+	 	 		}else{
+	 	 			//无需短信验证的情况 返回一个成功提示页
+	            	$res['data']=[
+	            		'type'=>1,
+	            		'url'=>base64_decode($result['html']),
+	            	];
+	 	 		}
+	 	 	}
+	 	 }else{
+	 	 	return ['code'=>501];
+	 	 }
 	 }
 
 

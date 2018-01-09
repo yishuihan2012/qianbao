@@ -130,13 +130,18 @@ class Generalize extends Common{
 	public function shareedit(){
 		if($_POST){
 	 		
+	 		if(empty($_POST['share_thumb'])){
+	 			unset($_POST['share_thumb']);
+	 		}
+
+	 		$Share =Share::get(Request::instance()->param('share_id'));
 	 		
-	 		$ServiceItemList =ServiceItemList::get(Request::instance()->param('share_id'));
-			 $result= $ServiceItemList->allowField(true)->save($_POST);
+			 $result= $Share->allowField(true)->save($_POST);
+
 	 		$content = ($result===false) ? ['type'=>'error','msg'=>'修改失败'] : ['type'=>'success','msg'=>'修改成功'];
 			 Session::set('jump_msg', $content);
 			 #重定向控制器 跳转到列表页
-			 $this->redirect('/index/Generalize/index');die;
+			 $this->redirect('/index/Generalize/share');die;
 	 	}
 		 $id = input("id");
 		 // print_r(input());die;

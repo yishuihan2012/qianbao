@@ -90,6 +90,6 @@ use think\Config;
           return json_encode(jpush(4,$text,$text,$text,1));
       }
       public function test2($text){
-          return json_encode(jpush(3,$text,$text,$text,1));
+          return json_encode(jpush(46,$text,$text,$text,1));
       }
  }
