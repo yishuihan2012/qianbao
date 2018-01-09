@@ -81,9 +81,13 @@
                       return ['code'=>355];
            }
            #去实名认证库查找当前条件的信息
-           $cert_where=MemberCashcard::get(['card_bankno'=>$this->param['card_bankno'],'card_name'=>$this->param['card_name'],'card_idcard'=>$this->param['card_idcard'],'card_phone'=>$this->param['card_phone']]);
+           $cert_where=MemberCashcard::get(['card_idcard'=>$this->param['card_idcard']]);
            if($cert_where)
-                 return $cert_where['card_state'] ? ['code'=>354] : ['code'=>352];
+                 return ['code'=>601];
+
+            $cert_card_bankno=MemberCashcard::get(['card_bankno'=>$this->param['card_bankno']]);
+           if($cert_card_bankno)
+                 return ['code'=>602];
            #判断用户是否超过实名认证的最大次数 超过后将不予受理
            //if($member['member_check_count']>=)
 
@@ -271,33 +275,46 @@
            $cashcard=MemberCashcard::where('card_member_id='.$this->param['uid'])->find();
            if(!$cashcard)
                  return ['code'=>435];
+
            $bankInfo=SystemBank::get($this->param['card_bank_addressId']);
            if(!$bankInfo)
                  return ['code'=>430];
            #银行卡实名验证
-           $card_validate=BankCert($this->param['card_bankno'],$this->param['card_phone'],$cashcard['card_idcard'],$cashcard['card_name']);
+          if($cashcard['card_bankno']!=$this->param['card_bankno'] && $cashcard['card_phone']!=$this->param['card_phone']){
 
-           if($card_validate['reason']!='成功')
-                 return ['code'=>351];
-           $state=$card_validate['result']['result']=='T' ? '1' : '0';
-           $card=array(
+             $card_validate=BankCert($this->param['card_bankno'],$this->param['card_phone'],$cashcard['card_idcard'],$cashcard['card_name']);
+             if($card_validate['reason']!='成功')
+                   return ['code'=>351];
+             $state=$card_validate['result']['result']=='T' ? '1' : '0';
+             if($card_validate['result']['result']=='F')
+                   return ['code'=>352];
+             if($card_validate['result']['result']=='N')
+                   return ['code'=>353];
+
+              $card=array(
+             'card_bankno'=>$this->param['card_bankno'],
+             'card_phone'=>$this->param['card_phone'],
+             'card_bank_province'=>$this->param['card_bank_province'],
+             'card_bank_city'=>$this->param['card_bank_city'],
+             'card_bank_area'=>$this->param['card_bank_addressId'],
+             'card_bank_address' => $bankInfo['bank_name'],
+             'card_bank_lang'   => $bankInfo['bank_code'],
+             'card_bankname'=>$this->param['card_bankname'],
+             'card_state'          => $state,
+             'card_return'        =>json_encode($card_validate),
+             );
+          }else{
+            $card=array(
                  'card_bankno'=>$this->param['card_bankno'],
                  'card_phone'=>$this->param['card_phone'],
                  'card_bank_province'=>$this->param['card_bank_province'],
                  'card_bank_city'=>$this->param['card_bank_city'],
                  'card_bank_area'=>$this->param['card_bank_addressId'],
-                'card_bank_address' => $bankInfo['bank_name'],
-                'card_bank_lang'   => $bankInfo['bank_code'],
+                 'card_bank_address' => $bankInfo['bank_name'],
+                 'card_bank_lang'   => $bankInfo['bank_code'],
                  'card_bankname'=>$this->param['card_bankname'],
-                 'card_state'          => $state,
-                 'card_return'        =>json_encode($card_validate),
            );
-           if($card_validate['result']['result']=='F')
-                 return ['code'=>352];
-           if($card_validate['result']['result']=='N')
-                 return ['code'=>353];
-
-
+          }
               #修改入网信息M02修改结算卡信息
             // $passageway=Passageway::where(['passageway_state'=>1,'passageway_also'=>1])->select();
             // foreach ($passageway as $key => $value) {

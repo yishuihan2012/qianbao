@@ -70,6 +70,7 @@
            if(empty($member_cert) || empty($membercashcard))
                  return ['code'=>367];
            #判断是否满足后台设置的最小提现额 或者该通道的最小提现额
+               // var_dump(System::getName('min_withdrawals'));die;
            if($this->param['money']<System::getName('min_withdrawals'))
                  return ['code'=>368];
            #判断用户钱包状态是否正常
