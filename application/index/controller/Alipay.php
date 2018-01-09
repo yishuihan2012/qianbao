@@ -24,8 +24,8 @@ use app\index\model\CallbackLog as CallbackLogs;
            Loader::import('alipay.AopSdk');
            $this->aop = new \AopClient();
            $this->aop->appId                        = System::getName('Alipay_appid');
-           $this->aop->format                       = Config::get('alipay.format');
-           // $this->aop->format                       = System::getName('Alipay_format')
+           // $this->aop->format                       = Config::get('alipay.format');
+           $this->aop->format                       = System::getName('Alipay_format')
            $this->aop->signType                     = Config::get('alipay.sign_type');
            // $this->aop->signType                     = System::getName('Alipay_sign_type');
            $this->aop->gatewayUrl                   = Config::get('alipay.gateway_url');
