@@ -280,7 +280,8 @@
            if(!$bankInfo)
                  return ['code'=>430];
            #银行卡实名验证
-          if($cashcard['card_bankno']!=$this->param['card_bankno'] && $cashcard['card_phone']!=$this->param['card_phone']){
+               #如果银行卡号与手机号有变动执行认证操作
+          if($cashcard['card_bankno']!=$this->param['card_bankno'] || $cashcard['card_phone']!=$this->param['card_phone']){
 
              $card_validate=BankCert($this->param['card_bankno'],$this->param['card_phone'],$cashcard['card_idcard'],$cashcard['card_name']);
              if($card_validate['reason']!='成功')
@@ -304,6 +305,8 @@
              'card_return'        =>json_encode($card_validate),
              );
           }else{
+
+            #如果手机号和银行卡号都没有变动直接修改储蓄卡信息
             $card=array(
                  'card_bankno'=>$this->param['card_bankno'],
                  'card_phone'=>$this->param['card_phone'],

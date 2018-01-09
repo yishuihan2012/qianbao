@@ -6,6 +6,7 @@ use think\Config;
 use think\Loader;
 use think\Controller;
 use app\index\model\CustomerService;
+use app\api\controller as con;
 use app\index\model\Share;
 use app\index\model\Page;
 use app\index\model\Generalize;
@@ -534,6 +535,7 @@ class Userurl extends Controller
 	$url='http://'.$_SERVER['HTTP_HOST'].'/api/userurl/gotoregister/recomment/'.$phone;
 	$this->assign('url',$url);
     $list = Share::all();
+    $this->assign("name",System::getName("sitename"));
     $this->assign("list",$list);
     return view("api/logic/share_link_list");
   }
@@ -699,16 +701,24 @@ class Userurl extends Controller
   	$this->assign('wallet_log',$wallet_log);
   	return view("Userurl/bills_detail");
   }
-  #新版本查询 for安卓 --弃用
-  public function check_version(){
-  	if(isset($code)){
-  		$version=db('system')->where('system_key','ad_version')->value('system_val');
-  		if($code==$version){
-  			return json_encode(['code'=>400]);
-  		}else{
-  			$url=$version=db('system')->where('system_key','ad_url')->value('system_val');
-  			return json_encode(['code'=>200,'url'=>$url]);
-  		}
+  # 荣邦 开通快捷支付不返回html时 调用本页面 
+  # memberId 用户id passwayId 通道id
+  # treatycode 协议号 smsseq 短信验证码流水号
+  public function passway_rongbang_openpay($memberId,$passwayId,$treatycode,$smsseq){
+  	if(request()->ispost()){
+  		$authcode=request()->param()['authcode'];
+  		if($authcode){
+		  	$Membernets=new con\Membernets($memberId,$passwayId);
+		  	$result=$Membernets->rongbang_confirm_openpay($treatycode,$smsseq,$authcode);
+		  	return $result ? 1 : 3;
+		  }else{
+		  	return 2;
+		  }
   	}
+	$this->assign('memberId',$memberId);
+	$this->assign('passwayId',$passwayId);
+	$this->assign('treatycode',$treatycode);
+	$this->assign('smsseq',$smsseq);
+  	return view("Userurl/passway_rongbang_openpay");
   }
 }

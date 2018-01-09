@@ -14,7 +14,7 @@
 			 <ul class="bg-w exc-code-list">
 				@foreach($list as $k => $v)
 				 <li class="fl">
-					 <a href="share_link.html" s="{{$v['share_thumb']}}"><div ><img src="{{$v['share_thumb']}}"></div><p class="f14 fc">{{$v['share_title']}}</p></a>
+					 <a href="share_link.html" s="{{$v['share_thumb']}}"><div ><img src="{{$v['share_thumb']}}"></div><p class="f14 fc">【{{$name}}】{{$v['share_title']}}</p></a>
 				 </li>
 				@endforeach
 			 </ul>

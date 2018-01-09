@@ -126,6 +126,26 @@ class Generalize extends Common{
 		 #重定向控制器 跳转到列表页
 		 $this->redirect('/index/Generalize/share');die;
 	}
+	#编辑注册邀请链接
+	public function shareedit(){
+		if($_POST){
+	 		
+	 		
+	 		$ServiceItemList =ServiceItemList::get(Request::instance()->param('share_id'));
+			 $result= $ServiceItemList->allowField(true)->save($_POST);
+	 		$content = ($result===false) ? ['type'=>'error','msg'=>'修改失败'] : ['type'=>'success','msg'=>'修改成功'];
+			 Session::set('jump_msg', $content);
+			 #重定向控制器 跳转到列表页
+			 $this->redirect('/index/Generalize/index');die;
+	 	}
+		 $id = input("id");
+		 // print_r(input());die;
+		 $info = Share::where(["share_id" => $id])->find();
+
+		 $this->assign("info",$info);
+
+		 return view("admin/Generalize/shareedit");
+	}
 	#专属二维码列表
 	public function exclusive_list(){
 		$Exclusive = Exclusive::paginate(Config::get('page_size'), false, ['query'=>Request::instance()->param()]);

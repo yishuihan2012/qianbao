@@ -27,7 +27,7 @@
                            <a class="right carousel-control" href="#myNiceCarousel_{{$list['share_id']}}" data-slide="next"><span class="icon icon-chevron-right"></span></a>
                       </div>
                       <div class="pull-right">
-             
+               <a href="{{url('/index/Generalize/shareedit/id/'.$list['share_id'])}}"><i class="icon-pencil"></i> 编辑</a> &nbsp;
                <a class="remove" href="#" data-url="{{url('/index/Generalize/shareRemove/id/'.$list['share_id'])}}"><i class="icon-remove"></i> 删除</a>
              </div>
                       <div class="card-heading"><strong>{{$list['share_title']}}</strong></div>

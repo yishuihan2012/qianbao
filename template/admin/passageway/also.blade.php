@@ -19,7 +19,7 @@
 </style>
  <!--dialog Content-->
  <div class="modal-content animated fadeInLeft">
-	 <form action="{{url('/index/Passageway/cashout/id/')}}" method="post" class="form-horizontal" id="myform">
+	 <form action="{{url('/index/Passageway/also/id/')}}" method="post" class="form-horizontal" id="myform">
 		<input type="hidden" name="cashout_id" value="">
 	 <div style="margin-left: 100px; ">
 		 
@@ -31,34 +31,34 @@
 		  <!-- <input type="checkbox" name="cashout_open" value="1">
 		  <label>是否开启</label> -->
 		</div>
+		<input type="hidden" name="item_passageway" value="{{$item_passageway}}">
 		<div class="input-group"  style="margin-top:10px;">
 			<span class="input-group-addon">用户分组</span>
-			
 				<select class="form-control" name="item_group" style="width:200px">
 					@foreach($member_group_info as $k => $v)
-				  	    <option value="{{$v['group_id']}}" selected="">{{$v['group_name']}}</option>
+				  	    <option value="{{$v['group_id']}}" >{{$v['group_name']}}</option>
 				  	@endforeach
 				</select>
 			
 		</div>
 		<div class="input-group" style="margin-top:10px;">
 		  <span class="input-group-addon">套现税率</span>
-		  <input type="text" class="form-control" style="width: 200px;" name="item_rate" value="{{$data['item_rate']}}">
+		  <input type="text" class="form-control" style="width: 200px;" name="item_rate" value="">
 		</div>
 
 		<div class="input-group" style="margin-top:10px;">
 		  <span class="input-group-addon">代还费率</span>
-		  <input type="text" class="form-control" style="width: 200px;" name="item_also" value="{{$data['item_also']}}">
+		  <input type="text" class="form-control" style="width: 200px;" name="item_also" value="">
 		</div>
 
 		<div class="input-group" style="margin-top:10px;">
 		  <span class="input-group-addon">固定收费单位分</span>
-		  <input type="text" class="form-control" style="width: 200px;" name="item_charges" value="{{$data['item_charges']}}">
+		  <input type="text" class="form-control" style="width: 200px;" name="item_charges" value="">
 		</div>
 
 		<div class="input-group" style="margin-top:10px;">
 		  <span class="input-group-addon">封顶值</span>
-		  <input type="text" class="form-control" style="width: 200px;" name="item_max" value="{{$data['item_max']}}">
+		  <input type="text" class="form-control" style="width: 200px;" name="item_max" value="">
 		</div>
 
 	 </div>

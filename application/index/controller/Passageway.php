@@ -326,24 +326,24 @@ class Passageway extends Common{
 	 	// 		'cashout_add_time'=>date("Y-m-d H:i:s",time())
 	 	// 	);
 	 	// 	$result= Cashout::insert($data);
-	 	// }elseif(Request::instance()->isPost()){
-	 	// 	if(Request::instance()->param('cashout_open')!=1){
-	 	// 		$_POST['cashout_open']=0;
-	 	// 	}
-	 	// 	$cashout =Cashout::get(Request::instance()->param('cashout_id'));
-
-			//  $result= $cashout->allowField(true)->save($_POST);
-			//  #数据是否提交成功
-			//  $content = ($result===false) ? ['type'=>'error','msg'=>'修改失败'] : ['type'=>'success','msg'=>'修改成功'];
-			//  Session::set('jump_msg', $content);
-			//  #重定向控制器 跳转到列表页
-			//  $this->redirect('/index/Passageway/index');die;
-	 	// }
-
+	 	// }else
+	 	if(Request::instance()->isPost()){
+	 		$cashout = new PassagewayItem();
+			 $result = $cashout->allowField(true)->save($_POST);
+			 #数据是否提交成功
+			 $content = ($result===false) ? ['type'=>'error','msg'=>'修改失败'] : ['type'=>'success','msg'=>'修改成功'];
+			 Session::set('jump_msg', $content);
+			 #重定向控制器 跳转到列表页
+			 $this->redirect('/index/Passageway/index');die;
+	 	}
+	 	$this->assign("item_passageway",Request::instance()->param('id'));
 	 	$data = PassagewayItem::with('passageway')->where('item_passageway='.Request::instance()->param('id'))->find();
-	 	$member_group_info = MemberGroup::order("group_salt desc")->select();//用户分组数据
+	 	$member_group_info = MemberGroup::order("group_salt asc")->select();//用户分组数据
 	 	$this->assign("member_group_info",$member_group_info);
 	 	$this->assign('data',$data);
 	 	return view('admin/Passageway/also');
+	}
+	public function shareedit(){
+		
 	}
 }

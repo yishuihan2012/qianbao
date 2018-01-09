@@ -333,8 +333,8 @@ return [
         'Weipay'     =>"微信",
     ],
     "jpush"      =>[ //推送信息
-        'api_key'       =>"7d4ac5734cd932f101a64aa5",
-        'api_master'     =>"153d5507fc2f6869509b6d80",
+        'api_key'       =>"f7104d032b431bc449d1a20d",
+        'api_master'     =>"3b6c1e5e49eb1744b5bccf2c",
     ],
     'page_size'             =>  '10', // 默认每页大小
     'default_groups'        =>  1,//默认用户组（管理员）

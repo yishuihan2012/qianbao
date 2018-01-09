@@ -264,9 +264,10 @@
            $cert_card=MemberCreditcard::get($this->param['creditCardId']);
            if(empty($cert_card))
                  return ['code'=>442];
-           // $generation=Generation::where(['generation_card'=>$cert_card['card_bankno'],'generation_state'=>3])->select();
-           // if($generation)
-           //       return ['code'=>469];
+            #查询信用卡是否在还款计划中
+           $generation=GenerationOrder::where(['order_card'=>$cert_card['card_bankno'],'order_status'=>1])->select();
+           if($generation)
+                 return ['code'=>469];
            #查找出会员的实名信息
            $member_cert=MemberCerts::get(['cert_member_id'=>$this->param['uid']]);
            #进行和当前会员信息比对
