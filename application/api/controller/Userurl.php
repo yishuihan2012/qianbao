@@ -42,23 +42,23 @@ class Userurl extends Controller
        $this->param=request()->param();
         try{
              if(!isset($this->param['uid']) || empty($this->param['uid']) || !isset($this->param['token']) ||empty($this->param['token'])){
-             	echo '<li style="margin-top:40rem;text-align:center;list-style:none;font-size:3rem;color:#999;">当前登录已过期，请重新登录</li>';die;
+             	echo '<li style="margin-top:10rem;text-align:center;list-style:none;font-size:1.4rem;color:#999;">当前登录已过期，请重新登录</li>';die;
              }
              	 
                    // $this->error=314;
              #查找到当前用户
              $member=Members::haswhere('memberLogin',['login_token'=>$this->param['token']])->where('member_id', $this->param['uid'])->find();
              if(!$member && !$this->error){
-             	echo '<li style="margin-top:40rem;text-align:center;list-style:none;font-size:3rem;color:#999;">当前登录已过期，请重新登录</li>';die;
+             	echo '<li style="margin-top:10rem;text-align:center;list-style:none;font-size:1.4rem;color:#999;">当前登录已过期，请重新登录</li>';die;
              }
         }catch (\Exception $e) {
-        	 echo '<li style="margin-top:40rem;text-align:center;list-style:none;font-size:3rem;color:#999;">当前登录已过期，请重新登录</li>';die;
+        	echo '<li style="margin-top:10rem;text-align:center;list-style:none;font-size:1.4rem;color:#999;">当前登录已过期，请重新登录</li>';die;
         	  $this->assign('msg','当前登录已过期，请重新登录');
              // $this->error=317;
         }
         if($this->error){
 			$msg=Config::get('response.'.$this->error) ? Config::get('response.'.$this->error) : "系统错误~";
-				echo "<li style='margin-top:40rem;text-align:center;list-style:none;font-size:3rem;color:#999;'>{$msg}}</li>";die;
+				echo "<li style='margin-top:10rem;text-align:center;list-style:none;font-size:1.4rem;color:#999;'>{$msg}}</li>";die;
             // exit(json_encode(['code'=>$this->error, 'msg'=>$msg, 'data'=>[]]));
         }
 		$this->assign('uid',$this->param['uid']);
