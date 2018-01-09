@@ -724,7 +724,7 @@ class Userurl extends Controller
   # 荣邦 申请快捷支付订单不返回html时 调用本页面 
   # memberId 用户id passwayId 通道id
   # treatycode 协议号 smsseq 短信验证码流水号
-  public function passway_rongbang_openpay($memberId,$passwayId,$ordercode,$card_id){
+  public function passway_rongbang_openpay1($memberId,$passwayId,$ordercode,$card_id){
   	if(request()->ispost()){
   		$authcode=request()->param()['authcode'];
   		if($authcode){
