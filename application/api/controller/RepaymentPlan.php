@@ -61,7 +61,7 @@
            #1判断开始日期和结束日期
            //开始日期不能大于结束日期
            if($this->param['endDate']<$this->param['startDate']){
-              exit(json_encode(['code'=>111,'msg'=>'还款结束日期不能小于开始日期']));
+              // exit(json_encode(['code'=>111,'msg'=>'还款结束日期不能小于开始日期']));
               return['code'=>474]; //开始日期不能小于今天
            }
            if($this->param['startDate']<date('Y-m-d',time())){
