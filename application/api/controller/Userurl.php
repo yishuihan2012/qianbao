@@ -50,7 +50,7 @@ class Userurl extends Controller
         }
         if($this->error){
 			$msg=Config::get('response.'.$this->error) ? Config::get('response.'.$this->error) : "系统错误~";
-            exit(json_encode(['code'=>$this->error, 'msg'=>$msg, 'data'=>'']));
+            exit(json_encode(['code'=>$this->error, 'msg'=>$msg, 'data'=>[]]));
         }
 		$this->assign('uid',$this->param['uid']);
 		$this->assign('token',$this->param['token']);

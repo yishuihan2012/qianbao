@@ -600,7 +600,7 @@ function SortByASCII($arr){
         $newrr=[];
         foreach ($keys as $k => $v) {
             if(!$v){
-                exit(json_encode(['code'=>101,'msg'=>'参数'.$k.'获取失败','data'=>'']));
+                exit(json_encode(['code'=>101,'msg'=>'参数'.$k.'获取失败','data'=>[]]));
             }
             $newrr[$k]['asc']=ord($v);
             $newrr[$k]['key']=$v;

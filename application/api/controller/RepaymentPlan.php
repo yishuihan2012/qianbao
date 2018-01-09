@@ -62,23 +62,24 @@
            //开始日期不能大于结束日期
            if($this->param['endDate']<$this->param['startDate']){
               exit(json_encode(['code'=>111,'msg'=>'还款结束日期不能小于开始日期']));
+              return['code'=>474]; //开始日期不能小于今天
            }
            if($this->param['startDate']<date('Y-m-d',time())){
-               exit(json_encode(['code'=>111,'msg'=>'开始日期不能小于今天']));
+               return ['code'=>475];//开始日期不能小于今天
            }
            if(date('H',time())>20 && $this->param['startDate']==$this->param['endDate'] ){
-               exit(json_encode(['code'=>111,'msg'=>'今天已超过还款时间，无法为您制定还款计划']));
+               return ['code'=>476];//今天已超过还款时间，无法为您制定还款计划
            }
            #获取需要参数
           $member_info=MemberCerts::where('cert_member_id='.$this->param['uid'])->find();
           if(empty($member_info)){
-             exit(json_encode(['code'=>111,'msg'=>'当前登录已失效，请重新登录']));
+                return ['code'=>317];//当前登录已失效，请重新登录
           }
           // print_r($member_info);die;
           #卡详情
           $card_info=MemberCreditcard::where('card_id='.$this->param['cardId'])->find();
           if(!$card_info){
-              exit(json_encode(['code'=>111,'msg'=>'获取信用卡信息失败，请重试。']));
+              return ['code'=>442]
           }
           #获取后台费率
           $member_group_id=Member::where(['member_id'=>$this->param['uid']])->value('member_group_id');
@@ -94,17 +95,17 @@
            ###还款区间在200-20000之间
            #判断总账单是否小于某个值,否则不执行, 比如还款10块20块的 执行没有必要,浪费资源
            if($this->param['billMoney']/ $this->param['payCount']<200)
-                 exit(json_encode(['code'=>111,'msg'=>'单笔还款金额太小，请减小还款次数']));
+                return['code'=>477];//单笔还款金额太小，请减小还款次数
            #总账单除以消费次数得到每次消费AVG平均值  如果平均值小于某个值 则不进行还款  也是浪费资源
            if($this->param['billMoney']/$this->param['payCount'] >20000)
-                  exit(json_encode(['code'=>111,'msg'=>'单笔还款金额过大，请增加还款次数']));
+                  return['code'=>478];//单笔还款金额过大，请增加还款次数
            //判断卡号是否在计划内
            $plan=Generation::where(['generation_card'=>$card_info->card_bankno,'generation_state'=>2])->find();
            if($plan){
                 //判断当前计划是否执行结束
                 $notover=GenerationOrder::where(['order_no'=>$plan['generation_id'],'order_status'=>1])->find();
                 if($notover){
-                  exit(json_encode(['code'=>111,'msg'=>'此卡已经在还款计划内，请先删除原计划再重新制定计划。']));
+                  return['code'=>479];//此卡已经在还款计划内，请先删除原计划再重新制定计划。
                 }else{
                   //若没有未执行的则更新主计划表状态为3
                   Generation::update(['generation_id'=>$plan['generation_id'],'generation_state'=>3]);
@@ -319,8 +320,7 @@
                              if($order_result && $order_result1 && $reimbur_result->save()!==false)
                              { 
                                    Db::commit();
-
-                                   exit(json_encode(['code'=>200, 'msg'=> '计划创建成功~','data'=>['repaymentScheduleId'=>$Generation_result->generation_id,'repaymentScheduleUrl'=>$_SERVER['SERVER_NAME'].'/api/Userurl/repayment_plan_detail/order_no/'.$Generation_result->generation_id]]));
+                                   return[['code'=>200, 'msg'=> '计划创建成功~','data'=>['repaymentScheduleId'=>$Generation_result->generation_id,'repaymentScheduleUrl'=>$_SERVER['SERVER_NAME'].'/api/Userurl/repayment_plan_detail/order_no/'.$Generation_result->generation_id]]];
                              }else{
                                    Db::rollback();
                                    return ['code'=>472];      

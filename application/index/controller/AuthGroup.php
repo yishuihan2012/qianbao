@@ -104,9 +104,9 @@ class AuthGroup extends Common {
         $authAdminster=$authGroupAccesss::get(Request::instance()->post('id'));
         $authAdminster->group_id=Config::get('default_groups');
         $authAdminster->save();
-        exit(json_encode(['code'=>200,'msg'=>'用户已经移除~','data'=>'']));
+        exit(json_encode(['code'=>200,'msg'=>'用户已经移除~','data'=>[]]));
       }
-      echo json_encode(['code'=>104,'msg'=>'非法请求~','data'=>'']);
+      echo json_encode(['code'=>104,'msg'=>'非法请求~','data'=>[]]);
     }
     public function change_state(){
         if(!Request::instance()->isGet()){
