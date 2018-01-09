@@ -174,15 +174,15 @@
       	 if(!isset($this->param['smsCode']) || empty($this->param['smsCode']) || !isset($this->param['newPhone']) || empty($this->param['newPhone']) )
       	 	 return ['code'=>423] ;
            #验证码验证规则 读取本手机号最后一条没有使用的验证码 并且在系统设置的有效时间内
-           $code_info=SmsCode::where(['sms_send'=>$this->param['newPhone'],'sms_log_state'=>1])->whereTime('sms_log_add_time', "-".System::getName('code_timeout').' minutes')->find();
-           if(!$code_info || $code_info['sms_log_content']!=$this->param['smsCode'])
-                 return ['code'=>404];
-           #改变验证码使用状态
-           $code_info->sms_log_state=2;
-           $result=$code_info->save();
-           #验证是否成功
-           if(!$result)
-                 return ['code'=>404];
+           // $code_info=SmsCode::where(['sms_send'=>$this->param['newPhone'],'sms_log_state'=>1])->whereTime('sms_log_add_time', "-".System::getName('code_timeout').' minutes')->find();
+           // if(!$code_info || $code_info['sms_log_content']!=$this->param['smsCode'])
+           //       return ['code'=>404];
+           // #改变验证码使用状态
+           // $code_info->sms_log_state=2;
+           // $result=$code_info->save();
+           // #验证是否成功
+           // if(!$result)
+           //       return ['code'=>404];
            #判断原手机号和新手机号是否相同 首先获取会员信息
       	 $member_info=Members::hasWhere('memberLogin',['login_token'=>$this->param['token']])->where('member_id',$this->param['uid'])->find();
          	 if(!$member_info)
@@ -288,15 +288,15 @@
            if($member_group['group_level']!='1')
                  return ['code'=>450];
            #验证目标组是否可以通过付费方式升级
-           if($member_group['group_level_type']!=-1 && $member_group['group_level_type']!=3)
-                 return ['code'=>451];
+           // if($member_group['group_level_type']!=-1 && $member_group['group_level_type']!=3)
+           //       return ['code'=>451];
            $currentgroup=MemberGroup::get($member['member_group_id']);
            #验证目标组是否比当前组级别高
            if($member_group['group_salt']<=$currentgroup['group_salt'])
                  return ['code'=>452];
            #计算差价
-           // $price_diff=$this->get_diff_price($this->param['uid'],$this->param['targetLevelId']);
-           $price_diff  =$member_group['group_level_money']-$currentgroup['group_level_money'];
+           $price_diff=$this->get_diff_price($this->param['uid'],$this->param['targetLevelId']);
+           // $price_diff  =$member_group['group_level_money']-$currentgroup['group_level_money'];
            if($price_diff<0)
                  return ['code'=>453];
            $data['money']=$price_diff;

@@ -16,7 +16,7 @@
 					<li class="fl">
 					  <a h="{{$v['exclusive_id']}}">
 						<div ><img src="{{$v['exclusive_thumb']}}"></div>
-						<p class="f14 fc">{{$v['exclusive_name']}}</p>
+						<p class="f14 fc">【{{$name}}】</p>
 					  </a>
 					</li>
 				@endforeach

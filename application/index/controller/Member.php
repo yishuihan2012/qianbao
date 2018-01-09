@@ -95,24 +95,27 @@ class Member extends Common{
 	 public function upgrade(){
 	 	if(Request::instance()->isPost()){
 	 		$where['member_id'] = request()->param("member_id");
+
 	 		$Member = new Members();
 	 		#获取用户信息
-	 		$info = $Member->join("wt_member_group","member_group_id=group_id")->join("wt_member_relation","relation_member_id=member_id")->where($where)->find();
+	 		$info = $Member->join("wt_member_relation","relation_member_id=member_id")->where($where)->find();
+	 		
 	 		#获取用户分组最大会员级别
 	 		$group_salt = Db::table("wt_member_group")->field("group_salt")->order("group_salt desc")->find();
 	 		$content = array();
 	 		//判断用户有没有实名
+
 	 		if($info['member_cert']==1){
 	 			#判断用户是不是最大级会员级别
-	 			if($info['group_salt']>=$group_salt['group_salt']){
-		 			$content =  ['type'=>'error','msg'=>'用户已是最大级别会员，不用在升级了。'] ;
-		 		}else{
-		 			$group_where['group_salt'] = $info['group_salt']+1;
-		 			#获取用户组要升级的级别id
-		 			$group_id = Db::table("wt_member_group")->field("group_salt,group_id,group_level_money")->where($group_where)->find();
-		 			$data['member_group_id'] = $group_id['group_id'];
-		 			#更新用户的分组id
-		 			$re = $Member->where($where)->update($data);
+	 			$group_where['group_id'] = request()->param("member_group_id");
+	 			#获取用户组要升级的级别id
+	 			$group_id = Db::table("wt_member_group")->field("group_salt,group_id,group_level_money")->where($group_where)->find();
+	 			$data['member_group_id'] = $group_id['group_id'];
+	 			#更新用户的分组id
+	 			if($info['member_group_id'] == request()->param("member_group_id")){
+	 				$content = ['type'=>'error','msg'=>'等同当前等级'];
+	 			}else{
+	 				$re = $Member->where($where)->update($data);
 		 			if($re){
 		 				$status = request()->param("status");
 			 			$upgrade_data['upgrade_member_id'] = $where['member_id'];
@@ -136,20 +139,19 @@ class Member extends Common{
 			 			$content = ($result===false) ? ['type'=>'error','msg'=>'升级会员失败'] : ['type'=>'success','msg'=>'升级会员成功'];
 		 			}else{
 		 				$content = ['type'=>'error','msg'=>'升级会员失败'];
-		 			}
-		 			
+		 			}	
 		 		}
 	 		}else{
 	 			$content =  ['type'=>'error','msg'=>'该用户还没有实名认证，不可以升级。'] ;		
 	 		}
-	 		 Session::set('jump_msg', $content);
-	 		
+	 		Session::set('jump_msg', $content);
 	 		$this->redirect("member/index");
-	 		die;
-	 		
+	 		die;	
 	 	}
-	 	
+	 	$member_group_info = MemberGroup::order("group_salt desc")->select();//用户分组数据
+	 	$this->assign("member_group_id", request()->param("member_group_id"));
 	 	$this->assign("id",request()->param("id"));
+	 	$this->assign('member_group_info',$member_group_info);
 	 	return view("admin/member/upgrade");
 	}
 }

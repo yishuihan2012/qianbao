@@ -51,12 +51,18 @@
 
  <!--dialog Button-->
  <div class="modal-footer animated fadeInLeft">
+ 	<!-- <input type="button" name="getHtml" value="取得HTML" /> -->
 	 <button type="button" class="btn btn-primary save">保存</button>
       <button type="button" class="btn" data-dismiss="modal">关闭</button>
  </div>
 
  <script>
-
+//  	 var editor;
+//  KindEditor.ready(function (K) {
+//            K('input[name=getHtml]').click(function (e) {
+//                 alert(editor.html());
+//            });
+// });
  //上传文件设置
  $('#uploaderExample3').uploader({
       url: "{{url('/index/Tool/upload_one')}}",

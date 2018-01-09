@@ -216,6 +216,8 @@ class CashOut
 	 */
 	 public function rongbangcash($tradeNo,$price,$description='荣邦快捷支付')
 	 {
+	 	// 初始化类
+ 	 	 $membernetObject=new Membernets($this->member_infos->member_id, $this->passway_info->passageway_id);
 	 	 #检测通道是否需要入网
 	 	 if($this->passway_info->passageway_status=="1")
 	 	 {
@@ -225,14 +227,43 @@ class CashOut
 		 	 if(!$member_net || $member_net[$this->passway_info->passageway_no]=="")
 		 	 {
 		 	 	 $method=$this->passway_info->passageway_method;
-		 	 	 $membernetObject=new Membernets($this->member_infos->member_id, $this->passway_info->passageway_id);
-		 	 	 if(!$membernetObject->$method())
+		 	 	 $userinfo=$membernetObject->$method();
+		 	 	 if(!$userinfo)
 		 	 	 	 return  ['code'=>462]; //入网失败
-		 	 }	 
+		 	 }else{
+		 	 	$userinfo=$member_net[$this->passway_info->passageway_no];
+		 	 }
+	 	 }
+	 	 #查询用户是否开通快捷支付
+	 	 $member_credit_pas=db('member_credit_pas')->where(['member_credit_pas_pasid'=>$this->passway_info->passageway_id,'member_credit_pas_creditid'=>$this->card_info->card_id])->find();
+	 	 //从数据库检查是否开通
+	 	 if(!$member_credit_pas ||$member_credit_pas['member_credit_pas_info'] || $member_credit_pas['member_credit_pas_status']==0){
+	 	 	//调用接口检查是否开通
+	 	 	$result=$membernetObject->rongbang_check($this->card_info->card_id);
+	 	 	if($result){
+	 	 		//接口有数据，更新本地数据库
+	 	 		$data=[
+	 	 			'member_credit_pas_creditid'=>$this->card_info->card_id,
+	 	 			'member_credit_pas_pasid'=>$this->passway_info->passageway_id,
+	 	 			'member_credit_pas_info'=>$result['treatycode'],
+	 	 			'member_credit_pas_status'=>1,
+	 	 		];
+	 	 		if($member_credit_pas){
+	 	 			db('member_credit_pas')->where(['member_credit_pas_pasid'=>$this->passway_info->passageway_id,'member_credit_pas_creditid'=>$this->card_info->card_id])->update($data);
+	 	 		}else{
+	 	 			db('member_credit_pas')->insert($data);
+	 	 		}
+	 	 	}else{
+	 	 		//没有数据，调用开通快捷支付接口
+		 	 	$result=$membernetObject->rongbang_openpay($this->card_info->card_id);
+	 	 	}
+	 	 }
+	 	 //调用
+	 	 if($result==false){
+
 	 	 }
 	 	 #获取用户入网信息
 	 	 $member_net=MemberNet::where('net_member_id',$this->member_infos->member_id)->find();
-	 	 
 	 }
 
 

@@ -40,7 +40,10 @@ class Appversion extends Controller
 	  {
 	    	 $this->param=$param;
 	  }
-   	#版本号接口
+   /**
+   *杨成志[3115317085@QQ.com]
+   *app版本接口
+   **/
    	public function index(){
    			
 		    if($this->param['type'] == "ios"){
@@ -52,11 +55,11 @@ class Appversion extends Controller
 		    }
 
 		    if($versions['version_code']>$this->param['version_code']){
-		         return json_encode(['code'=>100,'msg'=>'发现新的版本！','data'=>['link'=>$versions['version_link'],'info'=>$versions['version_desc'],"version_code" => $versions['version_code'],"version_name" => $versions['version_name'],"version_force"=>$versions['versions_force']]]);
+		         return['code'=>100,'msg'=>'发现新的版本！','data'=>['link'=>$versions['version_link'],'info'=>$versions['version_desc'],"version_code" => $versions['version_code'],"version_name" => $versions['version_name'],"version_force"=>$versions['versions_force']]];
 		      }else if($versions['version_code']<$this->param['version_code']){
-		         return json_encode(['code'=>300,'msg'=>'正在审核中','data'=>[]]);
+		         return ['code'=>300,'msg'=>'正在审核中','data'=>[]];
 		      }else if($versions['version_code']==$this->param['version_code']){
-		          return json_encode(['code'=>200,'msg'=>'已经是最新版本！','data'=>''];
+		          return ['code'=>200,'msg'=>'已经是最新版本！','data'=>[]];
 		      }
 		  // die;
    	}

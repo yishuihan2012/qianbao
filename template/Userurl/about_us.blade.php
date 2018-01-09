@@ -97,16 +97,16 @@
 		            	<div class="my-pad2">
 		            		<dl class="space-bot">
 		            			<dt><h4><span class="mui-icon iconfont icon-icon104 blue-color-th v-m space-right"></span>公司地址</dt>
-		            			<dd>山东省济南市天桥区济泺路71号齐鲁云商大厦20层</dd>
+		            			<dd>{{$server['company_address']['system_val']}}</dd>
 		            		</dl>
 		            		<ul class="dis-flex-be">
 		            			<li>
 		            				<h4><span class="mui-icon iconfont icon-my-phone blue-color-th v-m space-right"></span>商务合作</h4>
-		            				<p class="f14">18756853348</p>
+		            				<p class="f14">{{$server['tel']['service_contact']}}</p>
 		            			</li>
 		            			<li>
 		            				<h4><span class="mui-icon iconfont icon-shijian-copy-copy blue-color-th v-m space-right"></span>工作时间</h4>
-		            				<p class="f14">08:00-18:00 周一至周六</p>
+		            				<p class="f14">{{$server['working_hours']['system_val']}}</p>
 		            			</li>
 		            		</ul>
 		            	</div>

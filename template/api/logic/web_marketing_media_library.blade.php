@@ -18,7 +18,7 @@
 			<ul class="bg-w wrap material-list">
 				@foreach($generalizelist as $k=>$v)
 				<li>
-					<div class="material-info block-hide space-up f16" id="biao1">【{{$v['generalize_title']}}】{{$v['generalize_contents']}}</div>
+					<div class="material-info block-hide space-up f16" id="biao1">【{{$name}}】{{$v['generalize_contents']}}</div>
 					<div class="btn-con f14">
 						<a class="show-more bth-show">显示更多</a>
 					</div>

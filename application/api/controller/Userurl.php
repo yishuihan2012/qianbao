@@ -26,6 +26,7 @@ use app\index\model\CreditCard;
 use app\index\model\MemberCreditcard;
 use app\index\model\Generation;
 use app\index\model\GenerationOrder;
+use app\index\model\System;
 use app\index\model\NoviceClass as NoviceClasss; 
 /**
  *  此处放置一些固定的web地址
@@ -58,6 +59,7 @@ class Userurl extends Controller
 
       #专属二维码列表
 	public function exclusive_code(){
+		$this->assign("name",System::getName("sitename"));
 	    $list = Exclusive::all();
 	    $this->assign("list",$list);
 	    return view("api/logic/share_code_list");
@@ -482,6 +484,7 @@ class Userurl extends Controller
    * @return   [type]
    */
   public function web_marketing_media_library(){
+  	$this->assign("name",System::getName("sitename"));
     $generalizelist =  Generalize::generalizelist();
     $this->assign("generalizelist",$generalizelist);
     return view("api/logic/web_marketing_media_library");
@@ -586,7 +589,9 @@ class Userurl extends Controller
   	$server['qq']=CustomerService::where('service_title','QQ')->find();
 
   	$server['tel']=CustomerService::where('service_title','电话')->find();
-  
+  	$server['company_address'] = System::where(['system_value' => "公司地址"])->find();
+  	$server['working_hours'] = System::where(['system_value' => "工作时间"])->find();
+  	// dump($server['company_address']) ;
   	$this->assign('data', $data);
   	$this->assign('server', $server);
   	return view("Userurl/about_us");
@@ -695,7 +700,7 @@ class Userurl extends Controller
   	return view("Userurl/bills_detail");
   }
   #新版本查询 for安卓 --弃用
-  public function check_version($code){
+  public function check_version(){
   	if(isset($code)){
   		$version=db('system')->where('system_key','ad_version')->value('system_val');
   		if($code==$version){

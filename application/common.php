@@ -933,11 +933,26 @@ function pad_or_unpad($str, $ext,$pad='pkcs5')
      return $getData;
     }
 
+    #荣邦 将passway部分数据替换为商户自己的，用于需要使用商户数据的接口
+    #返回 替换好的passway 
+    function rongbang_foruser($member,$passway){
+      //提取转换存储的商户信息
+          #信息顺序 0、appid 1、companycode 2、secretkey 3、session
+      $userdata=db('member_net')->where(['net_member_id'=>$member->member_id])->value($passway->passageway_no);
+      if($userdata){
+        $userdata=explode(',', $userdata);
+      }
+      $passway->passageway_mech=$userdata[0];//$userdata['appid'];
+      $passway->passageway_key=$userdata[3];//$userdata['session'];
+      $passway->passageway_pwd_key=$userdata[2];//$userdata['secretkey'];
+      return $passway;
+    }
+
     #荣邦数据传输封装
     # $passway  通道
     # $arr  数据
     # $method 接口
-    function rangbang_curl($passway,$arr,$method){
+    function rongbang_curl($passway,$arr,$method){
            #aes加密并且urlsafe base64编码
       $passParam=rongbang_aes($passway->passageway_pwd_key,$arr);
       $array=array(
@@ -953,7 +968,7 @@ function pad_or_unpad($str, $ext,$pad='pkcs5')
       );
            #连接键值生成sign
       $getData=rongbang_sign($passway->passageway_pwd_key,$array,'https://gw.masget.com:27373/openapi/rest');
-
+           // var_dump($getData);die;
        $curl = curl_init();
         curl_setopt($curl, CURLOPT_URL, $getData);
         curl_setopt($curl, CURLOPT_HEADER, 0);
@@ -983,4 +998,16 @@ function pad_or_unpad($str, $ext,$pad='pkcs5')
             return '默认状态';
           break;
       }
+    }
+
+    #保存变量到文件
+    function w_log($content){
+      static $count=0;
+      $content=var_export($content,1);
+      $content=$count." : ".$content;
+      if(file_exists(APP_PATH . 'w_log.log')){
+        $file=file_get_contents(APP_PATH . 'w_log.log');
+        $content=$file."\n\n".$content;
+      }
+      file_put_contents(APP_PATH . 'w_log.log', $content);
     }

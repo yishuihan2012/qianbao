@@ -58,7 +58,7 @@ class Passageway extends Common{
 	 	 	 	//以用户组为键 转储到data
 	 	 	 	$data[$group_id]['item_'.$key_fix]=$v;
  	 	 	}
- 	 	 	halt($passageway->passageway_mech);
+ 	 	 	// halt($passageway->passageway_mech);
  	 	 	 #查询库中是否存在数据
  	 	 	 $passage=PassagewayItem::where(['item_passageway'=>Request::instance()->param('id')])->select();
  	 	 	 if($passage){
@@ -113,6 +113,19 @@ class Passageway extends Common{
  	 	 	 			}
  	 	 	 		}
  	 	 	 	}
+ 	 	 	 	//没有数据的时候 就新增数据
+ 	 	 	 }else{
+ 	 	 	 	$newData=[];
+ 	 	 	 	foreach ($data as $k => $v) {
+ 	 	 	 		//组合单条数据
+ 	 	 	 		$v['item_group']=$k;
+ 	 	 	 		$v['item_passageway']=$passageway->passageway_id;
+ 	 	 	 		$newData[]=$v;
+ 	 	 	 	}
+ 	 	 	 	$PassagewayItem=new PassagewayItem();
+ 	 	 	 	$result=$PassagewayItem->allowField(true)->saveAll($newData);
+ 	 	 	 	if(!$result)
+ 	 	 	 		$content=['type'=>'warning','msg'=>'税率新增失败'];
  	 	 	 }
 		 	 $content = isset($content) ? $content : ['type'=>'success','msg'=>'税率调整成功'];
 		 	  // ['type'=>'warning','msg'=>'税率调整失败'];
@@ -234,6 +247,7 @@ class Passageway extends Common{
 
 	 #提现设置
 	 public function cashout(){
+
 	 	$data = Cashout::with('passageway')->where('cashout_passageway_id='.Request::instance()->param('id'))->find();
 
 	 	if(empty($data)){
@@ -301,5 +315,35 @@ class Passageway extends Common{
 		$where['card_bank'] = ['like',"%".Request::instance()->param('bankname')."%"];
 		$list = Db::table("wt_bank_card")->distinct(true)->field("card_bank")->where($where)->select();
 		echo json_encode($list);
+	}
+	#代还设置
+	public function also(){
+		// $data = Cashout::with('passageway')->where('cashout_passageway_id='.Request::instance()->param('id'))->find();
+
+	 	// if(empty($data)){
+	 	// 	$data=array(
+	 	// 		'cashout_passageway_id'=>Request::instance()->param('id'),
+	 	// 		'cashout_add_time'=>date("Y-m-d H:i:s",time())
+	 	// 	);
+	 	// 	$result= Cashout::insert($data);
+	 	// }elseif(Request::instance()->isPost()){
+	 	// 	if(Request::instance()->param('cashout_open')!=1){
+	 	// 		$_POST['cashout_open']=0;
+	 	// 	}
+	 	// 	$cashout =Cashout::get(Request::instance()->param('cashout_id'));
+
+			//  $result= $cashout->allowField(true)->save($_POST);
+			//  #数据是否提交成功
+			//  $content = ($result===false) ? ['type'=>'error','msg'=>'修改失败'] : ['type'=>'success','msg'=>'修改成功'];
+			//  Session::set('jump_msg', $content);
+			//  #重定向控制器 跳转到列表页
+			//  $this->redirect('/index/Passageway/index');die;
+	 	// }
+
+	 	$data = PassagewayItem::with('passageway')->where('item_passageway='.Request::instance()->param('id'))->find();
+	 	$member_group_info = MemberGroup::order("group_salt desc")->select();//用户分组数据
+	 	$this->assign("member_group_info",$member_group_info);
+	 	$this->assign('data',$data);
+	 	return view('admin/Passageway/also');
 	}
 }
