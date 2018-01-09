@@ -32,7 +32,7 @@
 		  <label>是否开启</label> -->
 		</div>
 		<div class="input-group"  style="margin-top:10px;">
-			<span class="input-group-addon">是否能推荐升级:</span>
+			<span class="input-group-addon">用户分组:</span>
 			
 				<select class="form-control" name="item_group" style="width:200px">
 					@foreach($member_group_info as $k => $v)

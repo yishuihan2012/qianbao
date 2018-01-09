@@ -76,7 +76,7 @@
           <td>
             <div class="btn-group">
             <button class="btn btn-sm" data-toggle="modal" data-remote="{{url('/index/member/info/id/'.$val->member_id)}}"  type="button">查看详情</button>
-                <button class="btn btn-sm" data-toggle="modal" data-remote="{{url('/index/member/upgrade/id/'.$val->member_id)}}" type="button">升级会员</button>
+                <button class="btn btn-sm" data-toggle="modal" data-remote="{{url('/index/member/upgrade/id/'.$val->member_id.'/member_group_id/'.$val->member_group_id)}}" type="button">升级会员</button>
         </div>
           </td>
       </tr>

@@ -320,25 +320,25 @@ class Passageway extends Common{
 	public function also(){
 		// $data = Cashout::with('passageway')->where('cashout_passageway_id='.Request::instance()->param('id'))->find();
 
-	 // 	if(empty($data)){
-	 // 		$data=array(
-	 // 			'cashout_passageway_id'=>Request::instance()->param('id'),
-	 // 			'cashout_add_time'=>date("Y-m-d H:i:s",time())
-	 // 		);
-	 // 		$result= Cashout::insert($data);
-	 // 	}elseif(Request::instance()->isPost()){
-	 // 		if(Request::instance()->param('cashout_open')!=1){
-	 // 			$_POST['cashout_open']=0;
-	 // 		}
-	 // 		$cashout =Cashout::get(Request::instance()->param('cashout_id'));
+	 	// if(empty($data)){
+	 	// 	$data=array(
+	 	// 		'cashout_passageway_id'=>Request::instance()->param('id'),
+	 	// 		'cashout_add_time'=>date("Y-m-d H:i:s",time())
+	 	// 	);
+	 	// 	$result= Cashout::insert($data);
+	 	// }elseif(Request::instance()->isPost()){
+	 	// 	if(Request::instance()->param('cashout_open')!=1){
+	 	// 		$_POST['cashout_open']=0;
+	 	// 	}
+	 	// 	$cashout =Cashout::get(Request::instance()->param('cashout_id'));
 
-		// 	 $result= $cashout->allowField(true)->save($_POST);
-		// 	 #数据是否提交成功
-		// 	 $content = ($result===false) ? ['type'=>'error','msg'=>'修改失败'] : ['type'=>'success','msg'=>'修改成功'];
-		// 	 Session::set('jump_msg', $content);
-		// 	 #重定向控制器 跳转到列表页
-		// 	 $this->redirect('/index/Passageway/index');die;
-	 // 	}
+			//  $result= $cashout->allowField(true)->save($_POST);
+			//  #数据是否提交成功
+			//  $content = ($result===false) ? ['type'=>'error','msg'=>'修改失败'] : ['type'=>'success','msg'=>'修改成功'];
+			//  Session::set('jump_msg', $content);
+			//  #重定向控制器 跳转到列表页
+			//  $this->redirect('/index/Passageway/index');die;
+	 	// }
 
 	 	$data = PassagewayItem::with('passageway')->where('item_passageway='.Request::instance()->param('id'))->find();
 	 	$member_group_info = MemberGroup::order("group_salt desc")->select();//用户分组数据

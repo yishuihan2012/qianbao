@@ -27,7 +27,16 @@
 	  <input type="hidden" name="member_id" value="{{$id}}">
 	 </form>
  </div>
-
+<div class="input-group"  style="margin-top:10px;">
+			<span class="input-group-addon">用户分组</span>
+			
+				<select class="form-control" name="member_group_id" style="width:200px">
+					@foreach($member_group_info as $k => $v)
+				  	    <option value="{{$v['group_id']}}" @if($member_group_id==$v['group_id']) selected="" @endif>{{$v['group_name']}}</option>
+				  	@endforeach
+				</select>
+			
+		</div>
  <!--dialog Button-->
  <div class="modal-footer animated fadeInLeft">
 	  <button type="button" class="btn btn-primary save" >升级会员</button>

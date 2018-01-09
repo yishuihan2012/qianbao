@@ -110,14 +110,14 @@ class Member extends Common{
 		 			$group_where['group_salt'] = $info['group_salt']+1;
 		 			#获取用户组要升级的级别id
 		 			$group_id = Db::table("wt_member_group")->field("group_salt,group_id,group_level_money")->where($group_where)->find();
-		 			$data['member_group_id'] = $group_id['group_id'];
+		 			$data['member_group_id'] = request()->param("member_group_id");
 		 			#更新用户的分组id
 		 			$re = $Member->where($where)->update($data);
 		 			if($re){
 		 				$status = request()->param("status");
 			 			$upgrade_data['upgrade_member_id'] = $where['member_id'];
 			 			$upgrade_data['upgrade_before_group'] = $info['member_group_id'];
-			 			$upgrade_data['upgrade_group_id'] = $group_id['group_id'];
+			 			$upgrade_data['upgrade_group_id'] = request()->param("member_group_id");
 			 			$upgrade_data['upgrade_type'] = "后台升级";
 			 			$upgrade_data['upgrade_no'] = make_order();
 			 			$upgrade_data['upgrade_money'] = 0;
@@ -142,14 +142,14 @@ class Member extends Common{
 	 		}else{
 	 			$content =  ['type'=>'error','msg'=>'该用户还没有实名认证，不可以升级。'] ;		
 	 		}
-	 		 Session::set('jump_msg', $content);
-	 		
+	 		Session::set('jump_msg', $content);
 	 		$this->redirect("member/index");
-	 		die;
-	 		
+	 		die;	
 	 	}
-	 	
+	 	$member_group_info = MemberGroup::order("group_salt desc")->select();//用户分组数据
+	 	$this->assign("member_group_id", request()->param("member_group_id"));
 	 	$this->assign("id",request()->param("id"));
+	 	$this->assign('member_group_info',$member_group_info);
 	 	return view("admin/member/upgrade");
 	}
 }
