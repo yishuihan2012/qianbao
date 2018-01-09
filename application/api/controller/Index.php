@@ -63,7 +63,7 @@ use think\Config;
       }
 
       #返回json
-      private function return_json($code, $data="")
+      private function return_json($code, $data=[])
       {
            $msg=$this->get_code_message($code) ? $this->get_code_message($code) : "系统错误~";
            if ($data){

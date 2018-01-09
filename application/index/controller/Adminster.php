@@ -174,13 +174,13 @@ class Adminster extends Common {
 	 #更改用户组
 	 public function change_group(){
 		 if(!Request::instance()->isAjax() || !Request::instance()->has('adminster_id','post') || !Request::instance()->has('group_id','post'))
-			 exit(json_encode(['code'=>'104','msg'=>'非法请求~','data'=>'']));
+			 exit(json_encode(['code'=>'104','msg'=>'非法请求~','data'=>[]]));
 		 $authGroupAccesss=new AuthGroupAccesss;
 		 foreach(Request::instance()->post('adminster_id/a') as $key=>$val){
 			 $adminsterAuth=$authGroupAccesss::get($val);
 			 $adminsterAuth->group_id=Request::instance()->post('group_id');
 			 $adminsterAuth->save();
 		 }
-		 echo json_encode(['code'=>200,'msg'=>'','data'=>'']);
+		 echo json_encode(['code'=>200,'msg'=>'','data'=>[]]);
 	 }
 }
