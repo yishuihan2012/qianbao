@@ -198,6 +198,9 @@
       }
       #荣邦 1.6.3.查询快捷协议
       public function rongbang_check($treatycode){
+        request()->filter(['stripslashes','htmlentities','htmlspecialchars','strip_tags']);
+        $r=request()->param();
+           var_dump($r);die;
       //提取转换存储的商户信息
           #信息顺序 0、appid 1、companycode 2、secretkey 3、session
         $userdata=db('member_net')->where(['net_member_id'=>$this->member->member_id])->value($this->passway->passageway_no);
