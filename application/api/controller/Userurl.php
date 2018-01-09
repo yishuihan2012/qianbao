@@ -469,6 +469,9 @@ class Userurl extends Controller
 	 * @return   [type]
 	 */
 	public function download(){
+		$data['android_url']="http://www.baidu.com";
+		$data['ios_url']="http://www.sina.com";
+		$this->assign('data',$data);
 	  	return view("Userurl/download");
 	}
 
