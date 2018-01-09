@@ -112,14 +112,30 @@
                'idcardno'            =>$this->membercard->card_idcard,
                'address'             =>"山东省济南市天桥区泺口皮革城",
          );
-        $data=rangbang_curl($this->passway,$arr,'masget.webapi.com.subcompany.add');
+        $data=rongbang_curl($this->passway,$arr,'masget.webapi.com.subcompany.add');
         var_dump($data);die;
         if($data['ret']==0){
+          #储存商户信息到memberNet关联字段中，因为信息有多条，以,分割后存储。
+          #信息顺序 0、appid 1、companycode 2、secretkey 3、session
           $passageway_no=$data['data']['companyid'];
           $res=MemberNet::where(['net_member_id'=>$this->member->member_id])->setField($this->passway->passageway_no, $passageway_no);
         }else{
           return false;
         }
+      }
+      #荣邦 1.4.2.子商户秘钥下载 用于判断该用户是否已经在荣邦存在商户信息
+      #已存在 返回data字段 不存在返回false
+      public function rongbang_getinfo(){
+        $arr=[
+          'companycode'=>$this->member->member_mobile,
+        ];
+           // var_dump($arr);die;
+          $data=rongbang_curl($this->passway,$arr,'masget.webapi.com.subcompany.get');
+          if($data['ret']!=0){
+            return false;
+          }else{
+            return $data['data'];
+          }
       }
       #荣邦1.4.3.商户通道入驻接口
       public function rongbangIn(){
@@ -128,7 +144,7 @@
           'accounttype'   =>1,
           'bankaccount'   =>1,
         );
-        $data=rangbang_curl($this->passway,$arr,'masget.pay.collect.router.treaty.apply');
+        $data=rongbang_curl($this->passway,$arr,'masget.pay.collect.router.treaty.apply');
         var_dump($data);die;
       }
       #荣邦1.6.1.申请开通快捷协议
@@ -147,8 +163,12 @@
           'expirationdate'=>$credit['card_expireDate'],
         ];
            // var_dump($arr);die;
-          $data=rangbang_curl($this->passway,$arr,'masget.pay.collect.router.treaty.apply');
-           var_dump($data);die;
+          $data=rongbang_curl(rongbang_foruser($this->member,$this->passway),$arr,'masget.pay.collect.router.treaty.apply');
+           if($data['ret']==0){
+
+           }else{
+            return false;
+           }
       }
       #荣邦1.6.2.确认开通快捷协议
       public function rongbang_confirm_openpay(){
@@ -157,20 +177,20 @@
           'smsseq'=>'从 rongbangOpenQuickPay 获得',
           'authcode'=>'验证码',
         ];
-          $data=rangbang_curl($this->passway,$arr,'masget.pay.collect.router.treaty.apply');
+          $data=rongbang_curl(rongbang_foruser($this->member,$this->passway),$arr,'masget.pay.collect.router.treaty.apply');
            var_dump($data);die;
       }
       #荣邦 1.5.1.订单支付(后台)
-      public function rongbangPay(){
+      public function rongbang_pay(){
         $arr=[
           'ordernumber'=>time(),
           'body'=>'test',
-          'amount'=>6666,
+          'amount'=>5001,
           'businesstype'=>1001,
           'paymenttypeid'=>25,
-          'treatycode'=>'从 rongbangOpenQuickPay 获得',
+          'treatycode'=>'701318010911012302',
         ];
-          $data=rangbang_curl($this->passway,$arr,'masget.pay.collect.router.treaty.apply');
+          $data=rongbang_curl($this->passway,$arr,'masget.pay.collect.router.treaty.apply');
            var_dump($data);die;
       }
 
