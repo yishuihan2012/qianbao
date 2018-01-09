@@ -117,7 +117,7 @@
               $data['cashcardinfo']=$CashCard['card_bankname'].' 尾号'.substr($CashCard['card_bankno'], -4); 
            }
            $newToken=get_token();
-           MemberLogin::update(['login_id'=>$memberLogin['login_id'],'login_token'=>$newToken]);
+           MemberLogin::update(['login_id'=>$memberLogin['login_id'],'login_token'=>$newToken,'login_attempts'=>0]);
            //是否有未读消息
           $hasmsg=db('notice')->where(['notice_recieve'=>$memberLogin['member']['member_id'],'notice_status'=>0])->find();
            $data['hasmessage']=$hasmsg ? 1 : 0; 

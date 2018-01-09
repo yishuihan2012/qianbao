@@ -41,18 +41,25 @@ class Userurl extends Controller
       protected function checkToken(){
        $this->param=request()->param();
         try{
-             if(!isset($this->param['uid']) || empty($this->param['uid']) || !isset($this->param['token']) ||empty($this->param['token']))
-                   $this->error=314;
+             if(!isset($this->param['uid']) || empty($this->param['uid']) || !isset($this->param['token']) ||empty($this->param['token'])){
+             	echo '<li style="margin-top:13rem;text-align:center;list-style:none;font-size:1.4rem;color:#999;">当前登录已过期，请重新登录</li>';die;
+             }
+             	 
+                   // $this->error=314;
              #查找到当前用户
              $member=Members::haswhere('memberLogin',['login_token'=>$this->param['token']])->where('member_id', $this->param['uid'])->find();
-             if(!$member && !$this->error)
-                   $this->error=317;
+             if(!$member && !$this->error){
+             	echo '<li style="margin-top:13rem;text-align:center;list-style:none;font-size:1.4rem;color:#999;">当前登录已过期，请重新登录</li>';die;
+             }
         }catch (\Exception $e) {
-             $this->error=317;
+        	echo '<li style="margin-top:13rem;text-align:center;list-style:none;font-size:1.4rem;color:#999;">当前登录已过期，请重新登录</li>';die;
+        	  $this->assign('msg','当前登录已过期，请重新登录');
+             // $this->error=317;
         }
         if($this->error){
 			$msg=Config::get('response.'.$this->error) ? Config::get('response.'.$this->error) : "系统错误~";
-            exit(json_encode(['code'=>$this->error, 'msg'=>$msg, 'data'=>[]]));
+				echo "<li style='margin-top:13rem;text-align:center;list-style:none;font-size:1.4rem;color:#999;'>{$msg}}</li>";die;
+            // exit(json_encode(['code'=>$this->error, 'msg'=>$msg, 'data'=>[]]));
         }
 		$this->assign('uid',$this->param['uid']);
 		$this->assign('token',$this->param['token']);
@@ -331,7 +338,6 @@ class Userurl extends Controller
 	 */
 	public function notify_list(){
 		$this->checkToken();
-		// $Announcement=Announcement::where(['announcement_status'=>1])->order('announcement_id desc')->select();
 		$notice=Notice::where(['notice_recieve'=>$this->param['uid']])->order('notice_createtime desc')->select();
 		if(!$notice){
 			return view("Userurl/no_data");
@@ -724,7 +730,8 @@ class Userurl extends Controller
   # 荣邦 申请快捷支付订单不返回html时 调用本页面 
   # memberId 用户id passwayId 通道id
   # treatycode 协议号 smsseq 短信验证码流水号
-  public function passway_rongbang_pay($memberId,$passwayId,$ordercode,$card_id){
+
+  public function passway_rongbang_openpay1($memberId,$passwayId,$ordercode,$card_id){
   	if(request()->ispost()){
   		$authcode=request()->param()['authcode'];
   		if($authcode){

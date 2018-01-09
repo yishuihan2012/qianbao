@@ -154,7 +154,7 @@
            $data['CSTel']=$tel['service_contact'];
 
            #支付平台信息
-           $Payplatform=Payplatform::where('payplatform_state=1')->field('payplatform_id, payplatform_name, payplatform_icon')->select();
+           $Payplatform=Payplatform::where('payplatform_state=1')->field('payplatform_id, payplatform_name, payplatform_icon,payplatform_state')->select();
            $data['payPlatforms']=$Payplatform;
            return ['code'=>200, 'msg'=>'获取信息成功', 'data'=>$data];
       }

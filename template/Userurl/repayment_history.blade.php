@@ -29,7 +29,7 @@
 						<div id="scroll1" class="mui-scroll-wrapper">
 							<div class="mui-scroll">
 								<ul class="mui-table-view bg-color wrap">
-
+								@if($generation)
 								@foreach($generation as $list)
 									<li class="mui-table-view-cell bg-w space-up f-br2">
 									  <a href="/api/Userurl/repayment_plan_detail/order_no/{{$list['generation_id']}}">	
@@ -54,16 +54,19 @@
 									  </a>
 									</li>
 								@endforeach
-
+								@else
+									<li style="margin-top:13rem;text-align:center;list-style:none;font-size:1.4rem;color:#999;">暂无数据</li>
+								@endif
 								</ul>
 							</div>
 						</div>
 					</div>
+
 					<div id="item3mobile" class="mui-slider-item mui-control-content">
 						<div id="scroll3" class="mui-scroll-wrapper">
 							<div class="mui-scroll">
 								<ul class="mui-table-view bg-color wrap">
-
+								@if($generation3)
 								@foreach($generation3 as $list)
 									<li class="mui-table-view-cell bg-w space-up f-br2">
 									  <a href="/api/Userurl/repayment_plan_detail/order_no/{{$list['generation_id']}}">	
@@ -88,7 +91,9 @@
 									  </a>
 									</li>
 								@endforeach
-
+								@else
+									<li style="margin-top:13rem;text-align:center;list-style:none;font-size:1.4rem;color:#999;">暂无数据</li>
+								@endif
 								</ul>
 							</div>
 						</div>

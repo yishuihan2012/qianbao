@@ -64,7 +64,7 @@
                        $this->error=314;
                  #查找到当前用户
                  $member=Member::haswhere('memberLogin',['login_token'=>$this->param['token']])->where('member_id', $this->param['uid'])->find();
-                 if($member['member_cert']!='1')
+                 if($member['member_cert']!=1)
                       $this->error=356;
                  if(empty($member))
                        $this->error=314;
@@ -194,7 +194,7 @@
            $creditcard=MemberCreditcard::where("bindId='{$this->param['bindId']}' and card_member_id={$this->param['uid']}")->find();
            // return ['code'=>441,'msg'=>'13','data'=>$creditcard];
            if(empty($creditcard))
-              return ['code'=>356];
+              return ['code'=>353];
             if($creditcard['bindStatus']=='01')
               return ['code'=>463];
 
@@ -250,7 +250,7 @@
       }
  
       /**
-      *  @version addition_card method / Api 解绑信用卡
+      *  @version ubind_card method / Api 添加信用卡信用卡
       *  @author $bill$(755969423@qq.com)
       *  @datetime    2017-12-15 09:22:05
       *  @param uid=会员ID token=登录令牌  creditCardId='信用卡ID'

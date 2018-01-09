@@ -357,7 +357,8 @@
  function certification_ID($ID, $name, $member_id)
  {
       $member=Members::get($member_id);
-      $total_count = Config::get("certification_count");
+      $total_count=System::getName('certification_count');
+      // $total_count = Config::get("certification_count");
       $left_count = ($total_count-$member->member_ID_count);
       if (!preg_match("/^[1-9]\d{5}[1-9]\d{3}((0\d)|(1[0-2]))(([0|1|2]\d)|3[0-1])\d{3}(\d|x|X)$/", $ID)) return ['code'=>349,'data'=>$left_count];
       if ($member->member_ID_state>0)  return ['code'=>355,'data'=>$left_count];
