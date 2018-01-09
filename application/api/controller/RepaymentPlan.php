@@ -61,7 +61,7 @@
            #1判断开始日期和结束日期
            //开始日期不能大于结束日期
            if($this->param['endDate']<$this->param['startDate']){
-              exit(json_encode(['code'=>111,'msg'=>'还款结束日期不能小于开始日期']));
+              return['code'=>474]; //开始日期不能小于今天
            }
            if($this->param['startDate']<date('Y-m-d',time())){
                exit(json_encode(['code'=>111,'msg'=>'开始日期不能小于今天']));
@@ -78,7 +78,7 @@
           #卡详情
           $card_info=MemberCreditcard::where('card_id='.$this->param['cardId'])->find();
           if(!$card_info){
-              exit(json_encode(['code'=>111,'msg'=>'获取信用卡信息失败，请重试。']));
+              return ['code'=>442];
           }
           #获取后台费率
           $member_group_id=Member::where(['member_id'=>$this->param['uid']])->value('member_group_id');

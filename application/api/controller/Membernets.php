@@ -213,7 +213,7 @@
       public function rongbang_pay($card_id){
        $credit=db('member_creditcard')->where('card_id',$card_id)->find();
         $arr=[
-          'ordernumber'=>time(),
+          'ordernumber'=>66,
           'body'=>'test',
           'amount'=>4,
           'businesstype'=>1001,

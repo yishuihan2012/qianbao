@@ -24,14 +24,14 @@ hr{margin:0 5px!important;}
                   <form action="{{url('/index/Generalize/edit')}}" method="post" class="form-horizontal" id="myform">
                      <div class="row form-group">
                       <label for="announcement_title" class="col-sm-2 text-right"><b>名称</b></label>
-                      <div id="announcement_title" class="col-sm-6"><input type="text" class="form-control announcement_title" name="generalize_title" placeholder="名称" value="{{$info['generalize_title']}}">
-                      	<input type="hidden" class="form-control announcement_title" name="generalize_id" placeholder="名称" value="{{$info['generalize_id']}}">
+                      <div id="announcement_title" class="col-sm-6"><input type="text" class="form-control announcement_title" name="generalize_title" placeholder="名称" value="{{$info['share_title']}}">
+                      	<input type="hidden" class="form-control announcement_title" name="share_id" placeholder="名称" value="{{$info['share_id']}}">
                       </div>
                      </div>
 
          
                      <div class="row form-group">
-                      <label for="generalize_thumb" class="col-sm-2 text-right"><b>素材图标</b></label>
+                      <label for="generalize_thumb" class="col-sm-2 text-right"><b>分享链接图标</b></label>
                       <!-- <div id="announcement_title" class="col-sm-6"><input type="text" class="form-control announcement_title" name="list_icon" placeholder="图标url" value=""></div> -->
 				     <div id="generalize_thumb" class="col-sm-6">
 				       <div id='uploaderExample3' class="uploader">
@@ -54,13 +54,6 @@ hr{margin:0 5px!important;}
 				       <input type="hidden" class="form-control generalize_thumb" name="generalize_thumb" value="">
 				     </div>   
 				                      </div>
-                      
-                    
-
-                     
-                      
-                     
-                    
                   <div class="row">
                 <h4></h4>
                  <div class="col-sm-7 text-center"><button type="submit" class="btn btn-primary save">保存</button></div>
