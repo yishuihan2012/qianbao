@@ -29,6 +29,7 @@ use app\index\model\Generation;
 use app\index\model\GenerationOrder;
 use app\index\model\System;
 use app\index\model\NoviceClass as NoviceClasss; 
+use app\index\model\Appversion; 
 /**
  *  此处放置一些固定的web地址
  */
@@ -469,8 +470,8 @@ class Userurl extends Controller
 	 * @return   [type]
 	 */
 	public function download(){
-		$data['android_url']="http://www.baidu.com";
-		$data['ios_url']="http://www.sina.com";
+		$data['android_url']=Appversion::where(['version_type'=>'android','version_state'=>1])->value('vrsion_link');
+		$data['ios_url']=Appversion::where(['version_type'=>'ios','version_state'=>1])->value('vrsion_link');
 		$this->assign('data',$data);
 	  	return view("Userurl/download");
 	}
