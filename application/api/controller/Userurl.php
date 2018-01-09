@@ -42,13 +42,19 @@ class Userurl extends Controller
        $this->param=request()->param();
         try{
              if(!isset($this->param['uid']) || empty($this->param['uid']) || !isset($this->param['token']) ||empty($this->param['token']))
-                   $this->error=314;
+             	   $this->assign('msg','当前登录已过期，请重新登录');
+             	   echo '当前登录已过期，请重新登录';die;
+                   // $this->error=314;
              #查找到当前用户
              $member=Members::haswhere('memberLogin',['login_token'=>$this->param['token']])->where('member_id', $this->param['uid'])->find();
              if(!$member && !$this->error)
-                   $this->error=317;
+             		echo '当前登录已过期，请重新登录';die;
+             		$this->assign('msg','当前登录已过期，请重新登录');
+                   // $this->error=317;
         }catch (\Exception $e) {
-             $this->error=317;
+        	  echo '当前登录已过期，请重新登录';die;
+        	  $this->assign('msg','当前登录已过期，请重新登录');
+             // $this->error=317;
         }
         if($this->error){
 			$msg=Config::get('response.'.$this->error) ? Config::get('response.'.$this->error) : "系统错误~";
@@ -331,7 +337,6 @@ class Userurl extends Controller
 	 */
 	public function notify_list(){
 		$this->checkToken();
-		// $Announcement=Announcement::where(['announcement_status'=>1])->order('announcement_id desc')->select();
 		$notice=Notice::where(['notice_recieve'=>$this->param['uid']])->order('notice_createtime desc')->select();
 		if(!$notice){
 			return view("Userurl/no_data");
