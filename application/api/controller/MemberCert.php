@@ -61,15 +61,15 @@
                  return ['code'=>350, 'msg'=>$validate->getError()];
 
            #验证码验证规则 读取本手机号最后一条没有使用的验证码 并且在系统设置的有效时间内
-           $code_info=SmsCodes::where(['sms_send'=>$this->param['card_phone'],'sms_log_state'=>1])->whereTime('sms_log_add_time', "-".System::getName('code_timeout').' minutes')->order('sms_log_id','desc')->find();
-           if(!$code_info || ($code_info['sms_log_content']!=$this->param['smsCode']))
-                 return ['code'=>404];
-           #改变验证码使用状态
-           $code_info->sms_log_state=2;
-           $result=$code_info->save();
-           #验证是否成功
-           if(!$result)
-                 return ['code'=>404];
+           // $code_info=SmsCodes::where(['sms_send'=>$this->param['card_phone'],'sms_log_state'=>1])->whereTime('sms_log_add_time', "-".System::getName('code_timeout').' minutes')->order('sms_log_id','desc')->find();
+           // if(!$code_info || ($code_info['sms_log_content']!=$this->param['smsCode']))
+           //       return ['code'=>404];
+           // #改变验证码使用状态
+           // $code_info->sms_log_state=2;
+           // $result=$code_info->save();
+           // #验证是否成功
+           // if(!$result)
+           //       return ['code'=>404];
            #查询当前用户信息 查看是否实名过
            $member=Member::haswhere('memberLogin',['login_token'=>$this->param['token']])->where('member_id', $this->param['uid'])->find();
            #如果用户已经实名 或者绑定已了一张结算卡 则不进行实名认证
@@ -92,7 +92,7 @@
                  return ['code'=>430];
            #银行卡实名验证
            $card_validate=BankCert($this->param['card_bankno'],$this->param['card_phone'],$this->param['card_idcard'],$this->param['card_name']);
-           //dump($card_validate);exit;
+           // dump($card_validate);exit;
            // return ['code'=>200,'msg'=>'实名认证成功~', 'data'=>$card_validate];
            if($card_validate['reason']!='成功')
                  return ['code'=>351];

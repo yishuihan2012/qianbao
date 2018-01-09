@@ -155,6 +155,7 @@
           'accountname'=>$this->member->member_nick,
           'certificateno'=>$this->membercert->cert_member_idcard,
           'accounttype'=>1,
+          'ishtml'=>1,
           'certificatetype'=>1,
           'collecttype'=>1,
           // 'expirationdate'=>1,
@@ -165,6 +166,7 @@
            // var_dump($arr);die;
           $data=rongbang_curl(rongbang_foruser($this->member,$this->passway),$arr,'masget.pay.collect.router.treaty.apply');
            if($data['ret']==0){
+            db('member_credit_pas')->insert();
 
            }else{
             return false;
@@ -178,19 +180,34 @@
           'authcode'=>'验证码',
         ];
           $data=rongbang_curl(rongbang_foruser($this->member,$this->passway),$arr,'masget.pay.collect.router.treaty.apply');
-           var_dump($data);die;
+           if($data['ret']==0){
+           }else{
+            return false;
+           }
       }
       #荣邦 1.5.1.订单支付(后台)
       public function rongbang_pay(){
+       $credit=db('member_creditcard')->where('card_member_id',$this->member->member_id)->find();
         $arr=[
           'ordernumber'=>time(),
           'body'=>'test',
-          'amount'=>5001,
+          'amount'=>4,
           'businesstype'=>1001,
+          'companyid'=>402587655,
           'paymenttypeid'=>25,
-          'treatycode'=>'701318010911012302',
+          'subpaymenttypeid'=>25,
+          'businesstime'=>date('YmdHis'),
+          "backurl"=>"http://14.18.207.75:8004/pay/compay/router/back/report/test",
+          'payextraparams'=>[
+            'treatycode'=>'701318010911012302',
+          ],
+          // 'bankaccount'=>$this->membercard->card_bankno,
+          // 'accounttype'=>1,//对私
+          // 'bankaccount'=>1,//对私
         ];
-          $data=rongbang_curl($this->passway,$arr,'masget.pay.collect.router.treaty.apply');
+        w_log(debug_backtrace());
+           var_dump($arr);die;
+          $data=rongbang_curl(rongbang_foruser($this->member,$this->passway),$arr,'masget.pay.collect.router.treaty.apply');
            var_dump($data);die;
       }
 

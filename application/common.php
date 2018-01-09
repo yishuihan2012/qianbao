@@ -968,6 +968,7 @@ function pad_or_unpad($str, $ext,$pad='pkcs5')
       );
            #连接键值生成sign
       $getData=rongbang_sign($passway->passageway_pwd_key,$array,'https://gw.masget.com:27373/openapi/rest');
+           // var_dump($getData);die;
        $curl = curl_init();
         curl_setopt($curl, CURLOPT_URL, $getData);
         curl_setopt($curl, CURLOPT_HEADER, 0);
@@ -997,4 +998,16 @@ function pad_or_unpad($str, $ext,$pad='pkcs5')
             return '默认状态';
           break;
       }
+    }
+
+    #保存变量到文件
+    function w_log($content){
+      static $count=0;
+      $content=var_export($content,1);
+      $content=$count." : ".$content;
+      if(file_exists(APP_PATH . 'w_log.log')){
+        $file=file_get_contents(APP_PATH . 'w_log.log');
+        $content=$file."\n\n".$content;
+      }
+      file_put_contents(APP_PATH . 'w_log.log', $content);
     }

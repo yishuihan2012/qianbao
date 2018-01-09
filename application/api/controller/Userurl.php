@@ -695,7 +695,7 @@ class Userurl extends Controller
   	return view("Userurl/bills_detail");
   }
   #新版本查询 for安卓 --弃用
-  public function check_version($code){
+  public function check_version(){
   	if(isset($code)){
   		$version=db('system')->where('system_key','ad_version')->value('system_val');
   		if($code==$version){

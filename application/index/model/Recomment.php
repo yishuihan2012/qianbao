@@ -10,7 +10,7 @@ use think\Db;
 use think\Model;
 use think\Config;
 
-class MemberRecommend extends Model{
+class Recomment extends Model{
       #定义模型数据表 默认为Class名加前缀 如不一样 可自己定义
       #protected $table = 'wt_article';
       #定义主键信息  可留空 默认主键
