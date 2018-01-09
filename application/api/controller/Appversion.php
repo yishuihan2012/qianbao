@@ -41,8 +41,8 @@ class Appversion extends Controller
 	    	 $this->param=$param;
 	  }
    	#版本号接口
-   	public function index (){
-   			$versions =array();
+   	public function index(){
+   			
 		    if($this->param['type'] == "ios"){
 
 		      $versions= Appversions::where(['version_state'=>1,'version_type'=>$this->param['type']])->find();
@@ -52,12 +52,12 @@ class Appversion extends Controller
 		    }
 
 		    if($versions['version_code']>$this->param['version_code']){
-		         exit(json_encode(['code'=>100,'msg'=>'发现新的版本！','data'=>['link'=>$versions['version_link'],'info'=>$versions['version_desc'],"version_code" => $versions['version_code'],"version_name" => $versions['version_name']]]));
+		         return json_encode(['code'=>100,'msg'=>'发现新的版本！','data'=>['link'=>$versions['version_link'],'info'=>$versions['version_desc'],"version_code" => $versions['version_code'],"version_name" => $versions['version_name'],"version_force"=>$versions['versions_force']]]);
 		      }else if($versions['version_code']<$this->param['version_code']){
-		         exit(json_encode(['code'=>300,'msg'=>'正在审核中','data'=>[]]));
+		         return json_encode(['code'=>300,'msg'=>'正在审核中','data'=>[]]);
 		      }else if($versions['version_code']==$this->param['version_code']){
-		          echo json_encode(['code'=>200,'msg'=>'已经是最新版本！','data'=>'']);
+		          return json_encode(['code'=>200,'msg'=>'已经是最新版本！','data'=>''];
 		      }
-		  die;
+		  // die;
    	}
 }

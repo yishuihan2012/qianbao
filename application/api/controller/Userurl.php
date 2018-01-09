@@ -694,7 +694,7 @@ class Userurl extends Controller
   	$this->assign('wallet_log',$wallet_log);
   	return view("Userurl/bills_detail");
   }
-  #新版本查询 for安卓
+  #新版本查询 for安卓 --弃用
   public function check_version($code){
   	if(isset($code)){
   		$version=db('system')->where('system_key','ad_version')->value('system_val');

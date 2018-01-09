@@ -53,13 +53,14 @@ input.labelauty + label { font: 12px "Microsoft Yahei";}
 		</div>
 
 		<div class="row">
-			<label for="group_type" class="col-sm-2 text-right"><b>升级方式:</b></label>
+			<label for="group_type" class="col-sm-2 text-right"><b>是否能推荐升级:</b></label>
 			<div id="group_name" class="col-sm-6">
 				<select class="form-control" name="group_level_type">
-				  	<option value="-1" {{ $group->group_level_type=='-1' ? 'selected' : '' }}>不限</option>
-				  	<option value="1" {{ $group->group_level_type=='3' ? 'selected' : '' }}>推荐人</option>
-				  	<option value="2" {{ $group->group_level_type=='3' ? 'selected' : '' }}>刷卡量</option>
-				  	<option value="3" {{ $group->group_level_type=='3' ? 'selected' : '' }}>付费升级</option>
+				  	<!-- <option value="-1" {{ $group->group_level_type=='-1' ? 'selected' : '' }}>不限</option> -->
+				  	<option value="0" {{ $group->group_level_type=='0' ? 'selected' : '' }}>否</option>
+				  	<option value="1" {{ $group->group_level_type=='1' ? 'selected' : '' }}>是</option>
+				  	<!-- <option value="2" {{ $group->group_level_type=='3' ? 'selected' : '' }}>刷卡量</option>
+				  	<option value="3" {{ $group->group_level_type=='3' ? 'selected' : '' }}>付费升级</option>-->
 				</select>
 			</div>
 		</div>

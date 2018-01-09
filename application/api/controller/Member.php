@@ -657,7 +657,11 @@
            $member=Members::get($uid);
            $member_group=MemberGroup::get(['group_id'=>$member['member_group_id']]);
            $new_group=MemberGroup::get(['group_id'=>$up_level]);
-           $diff_price=$new_group['group_level_money']-$member_group['group_level_money'];
+           if($member_group['group_salt']<$new_group['group_salt']){
+              $diff_price=$new_group['group_level_money']-$member_group['group_level_money'];
+           }else{
+              $diff_price=0;
+           }
            return $diff_price;
       }
       /**

@@ -21,8 +21,11 @@ use think\Config;
  	 	 	 #获取请求参数
  	 	 	 $data=$Request->only('data');
  	 	 	 $data=$data['data'];
-                 if(!is_array($data))
-                      $data = json_decode($data, true);
+       $result=$this->decryption_data($data['data']); //解密
+       // $data = json_decode($result, true);
+       if(!is_array($data)){
+           $data = json_decode($data, true);
+       }
  	 	 	 #解密data请求参数 TODO:解密方式 非对称解密
  	 	 	 #if request action and method is not exit
  	 	 	 if(!isset($data['action']) or !isset($data['method']))
@@ -42,8 +45,8 @@ use think\Config;
             	 $return['msg']=isset($return['msg']) ? $return['msg'] : $this->get_code_message($return['code']);
             	 #如果方法有返回值 或者返回的data不为空 则进行加密 返回给App TODo :返回值加密方法 非对称加密
             	 if (isset($return['data']) && !empty($return['data'])) {
-                	 //$return['data']=$this->encryption_data($return['data']);
-                	 $return['data']=$return['data'];// //需要解密的时候放开
+                	 $return['data']=$this->encryption_data($return['data']);
+                	 $return['data']=$return['data'];// //需要加密的时候放开
             	 } else
                  	 $return['data']=""; //需要加密的时候放开
             	 echo json_encode($return);
@@ -63,9 +66,24 @@ use think\Config;
       private function return_json($code, $data="")
       {
            $msg=$this->get_code_message($code) ? $this->get_code_message($code) : "系统错误~";
-           if ($data)
-                 $data=$this->encryption_data($data);
+           if ($data){
+               $data=$this->encryption_data($data);
+           } 
            return json_encode(['code'=>$code, 'msg'=>$msg, 'data'=>$data]);
+      }
+      //加密data
+      private function encryption_data($data)
+      {
+          $aesEncryption=new AesEncryption;
+          $return = $aesEncryption->aes128cbcEncrypt(json_encode($data));
+          return $return;
+      }
+      //解密data
+      private function decryption_data($data)
+      {
+          $aesEncryption=new AesEncryption;
+          $return = $aesEncryption->aes128cbcHexDecrypt($data);
+          return $return;
       }
       #测试用
       public function test($text){
