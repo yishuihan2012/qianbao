@@ -12,8 +12,8 @@ use think\Request;
 
 class AesEncryption
 {
-    const KEY ='xijiakeji';
-    const IV ='xijujituan';
+    const KEY ='stcsrwfqsnviicqv';
+    const IV ='ggdwilibbzffygiu';
  /**
   * pkcs7补码
   * @param string $string  明文
