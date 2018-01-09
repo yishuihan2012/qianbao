@@ -24,16 +24,16 @@ use app\index\model\CallbackLog as CallbackLogs;
            Loader::import('alipay.AopSdk');
            $this->aop = new \AopClient();
            $this->aop->appId                        = System::getName('Alipay_appid');
-           // $this->aop->format                       = Config::get('alipay.format');
-           $this->aop->format                       = System::getName('Alipay_format')
-           // $this->aop->signType                     = Config::get('alipay.sign_type');
-           $this->aop->signType                     = System::getName('Alipay_sign_type');
-           // $this->aop->gatewayUrl                   = Config::get('alipay.gateway_url');
-           $this->aop->gatewayUrl                   = System::getName('alipay_gateway_url');
-           // $this->aop->apiVersion                   = Config::get('alipay.app_version');
-           $this->aop->apiVersion                   = System::getName('alipay_app_version');
-           // $this->aop->postCharset                  = Config::get('alipay.post_charset');
-           $this->aop->postCharset                  = System::getName('alipay_post_charset');
+           $this->aop->format                       = Config::get('alipay.format');
+           // $this->aop->format                       = System::getName('Alipay_format')
+           $this->aop->signType                     = Config::get('alipay.sign_type');
+           // $this->aop->signType                     = System::getName('Alipay_sign_type');
+           $this->aop->gatewayUrl                   = Config::get('alipay.gateway_url');
+           // $this->aop->gatewayUrl                   = System::getName('alipay_gateway_url');
+           $this->aop->apiVersion                   = Config::get('alipay.app_version');
+           // $this->aop->apiVersion                   = System::getName('alipay_app_version');
+           $this->aop->postCharset                  = Config::get('alipay.post_charset');
+           // $this->aop->postCharset                  = System::getName('alipay_post_charset');
            $this->aop->rsaPrivateKey                = System::getName('Alipay_secretkey');
            $this->aop->alipayrsaPublicKey           = System::getName('Alipay_key');
            $this->aop->alipaycallback               = System::getName('system_url').System::getName('Alipay_callback');
@@ -166,7 +166,8 @@ use app\index\model\CallbackLog as CallbackLogs;
                       'method'        => 'alipay.open.auth.sdk.code.get',
                       'app_name'      => 'mc',
                       'biz_type'      => 'openservice',
-                      'pid'           => System::getName('alipay_pid'),
+                      // 'pid'           => System::getName('alipay_pid'),
+                      'pid'           =>Config::get('alipay.pid'),
                       'product_id'    => 'APP_FAST_LOGIN',
                       'scope'         => 'kuaijie',
                       'target_id'     => get_token(),
