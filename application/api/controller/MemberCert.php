@@ -130,12 +130,23 @@
                  #写入到实名认证表
                  if($card_validate['result']['result']=='T' && $card_validate['result']['result']!='P')
                  {
-                      $member_certs=new MemberCerts([
+                      $member_certs_array=[
                            'cert_member_id' =>$this->param['uid'],
                            'cert_card_id'       =>$member_cashcard->card_id,
                            'cert_member_name' => $this->param['card_name'],
-                           'cert_member_idcard' => $this->param['card_idcard']
-                      ]);
+                           'cert_member_idcard' => $this->param['card_idcard'],
+                      ];
+                      //如果最后上传照片，也一起更新
+                      if($this->param['IdPositiveImgUrl']){
+                          $member_certs_array['IdPositiveImgUrl']=$this->param['IdPositiveImgUrl'];
+                      }
+                      if($this->param['IdNegativeImgUrl']){
+                          $member_certs_array['IdNegativeImgUrl']=$this->param['IdNegativeImgUrl'];
+                      }
+                      if($this->param['IdPortraitImgUrl']){
+                          $member_certs_array['IdPortraitImgUrl']=$this->param['IdPortraitImgUrl'];
+                      }
+                      $member_certs=new MemberCerts($member_certs_array);
                       #更改数据表
                       $member_result=new Member;
                       $result=$member_result->where(['member_id'=>$this->param['uid']])->update(['member_cert'=>'1','member_nick'=>$this->param['card_name']]);
