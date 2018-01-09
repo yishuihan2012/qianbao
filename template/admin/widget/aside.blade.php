@@ -103,6 +103,7 @@
                 <li class="setting-page"><a href="{{url('/index/system/page')}}"><i class="icon icon-sliders"></i> 内置页面</a></li>
                 <li class="setting-customer_service service"><a href="{{url('/index/system/customer_service')}}"><i class="icon icon-sliders"></i> 客服管理</a></li>
                 <li class="setting-announcement"><a href="{{url('/index/system/announcement')}}"><i class="icon icon-sliders"></i> 公告管理</a></li>
+                <li class="setting-Appversion"><a href="{{url('/index/appversion/index')}}"><i class="icon icon-sliders"></i> APP版本号</a></li>
             </ul>
         </li>
 

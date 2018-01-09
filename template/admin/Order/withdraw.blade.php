@@ -104,6 +104,8 @@
                       小额自动到账
                     @elseif($list->withdraw_option!==0 && $list->withdraw_state==12)
                        {{$list->withdraw_option}}
+                    @elseif($list->withdraw_option!==0 && $list->withdraw_state==-12)
+                       {{$list->withdraw_option}}
                     @else
                        无
                       @endif

@@ -615,7 +615,6 @@ class Userurl extends Controller
   public function particulars($month=null){
 	$this->checkToken();
 	if(!$month)$month=date('Y-m');
-	$month='2017-12';
 	//月初
 	$monthstart=strtotime($month);
 	//月末
@@ -629,6 +628,7 @@ class Userurl extends Controller
   		->join('wallet w','l.log_wallet_id=w.wallet_id')
   		->where(['w.wallet_member'=>$this->param['uid']])
   		->where('log_add_time','between time',[$monthstart,$monthend])
+  		->order('log_add_time desc')
   		->select();
 	foreach ($list as $k => $v) {
 		if($v['log_wallet_type']==1){
@@ -640,7 +640,7 @@ class Userurl extends Controller
 			//提现操作
 			case 2:
 				$state=db('withdraw')->where('withdraw_id',$v['log_relation_id'])->value('withdraw_state');
-				if($state)$list['k']['info']=state_info($state);
+				if($state)$list[$k]['info']=state_info($state);
 				break;
 			
 			default:

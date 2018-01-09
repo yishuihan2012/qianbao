@@ -189,9 +189,8 @@
       // #获取与登录相同的信息
       public function get_info(){
            $memberLogin=MemberLogin::where("login_member_id={$this->param['uid']} and login_token='{$this->param['token']}'")->find();
-           // var_dump($user);die;
            if(empty($memberLogin)){
-              return ['code'=>304];
+              return ['code'=>317];
            }
            $member=Member::get($memberLogin['login_member_id']);
            $data=array();

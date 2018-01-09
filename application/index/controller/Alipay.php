@@ -136,9 +136,9 @@ use app\index\model\CallbackLog as CallbackLogs;
                  "\"payee_type\":\"".$payee_type."\"," .
                  "\"payee_account\":\"".$withdraws->withdraw_account."\"," .
                  "\"amount\":\"".($withdraws->withdraw_amount)."\"," . //转账金额 单位 元
-                 "\"payer_show_name\":\"喜家钱包2.0提现\"," .
+                 "\"payer_show_name\":\"喜家钱包提现\"," .
                  "\"payee_real_name\":\"".$withdraws->withdraw_name."\"," .
-                 "\"remark\":\"喜家钱包2.0提现\"" .
+                 "\"remark\":\"喜家钱包提现\"" .
             "  }");
            $result = $this->aop->execute($request);
            $responseNode = str_replace(".", "_", $request->getApiMethodName()) . "_response";

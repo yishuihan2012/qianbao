@@ -41,7 +41,7 @@
 	<div class="row form-group">
 		 <label for="data_text" class="col-sm-2 text-right"><b>文章内容:</b></label>
 		 <div class="col-sm-6" id="data_text">
-			 <textarea name="novice_contents" cols="30" id="content" class="form-control kindeditor" rows="15" value="">{{$info->novice_contents}}</textarea>
+			 <textarea name="novice_contents" cols="30" id="content" class="form-control kindeditor" rows="15">{{$info->novice_contents}}</textarea>
 		 </div>
 	 </div>
 
@@ -51,7 +51,6 @@
 
  <!--dialog Button-->
  <div class="modal-footer animated fadeInLeft">
- 	 <span  class="cesji" onclick="ceshi()">ceshi</span>
 	 <button type="button" class="btn btn-primary save">保存</button>
       <button type="button" class="btn" data-dismiss="modal">关闭</button>
  </div>
@@ -74,14 +73,15 @@
 	 }
  });
 
-
   $(".save").click(function(){	
+  	// console.log($('#content').val());return;
 	if(!$(".generalize_title").val()){
 		 $(".generalize_title").parent().addClass("has-error");
 		 return;
 	 }
 	 $("#myform").submit()
  })
+  
   //编辑器初始化
       KindEditor.ready(function(K) {
             window.editor = K.create('#editor_id');
@@ -93,4 +93,5 @@
 	 $(".goHistory").click(function(){
 	 	 window.history.go(-1);
 	 })
+
 </script>

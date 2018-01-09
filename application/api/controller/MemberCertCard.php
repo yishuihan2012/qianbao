@@ -124,8 +124,6 @@
 
            }
 
-
-
             $member_net=MemberNet::where('net_member_id='.$this->param['uid'])->find();
             
             #绑定信用卡签约

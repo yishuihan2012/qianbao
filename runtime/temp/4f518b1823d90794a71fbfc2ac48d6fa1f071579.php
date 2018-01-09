@@ -103,6 +103,7 @@
                 <li class="setting-page"><a href="<?php echo e(url('/index/system/page')); ?>"><i class="icon icon-sliders"></i> 内置页面</a></li>
                 <li class="setting-customer_service service"><a href="<?php echo e(url('/index/system/customer_service')); ?>"><i class="icon icon-sliders"></i> 客服管理</a></li>
                 <li class="setting-announcement"><a href="<?php echo e(url('/index/system/announcement')); ?>"><i class="icon icon-sliders"></i> 公告管理</a></li>
+                <li class="setting-Appversion"><a href="<?php echo e(url('/index/appversion/index')); ?>"><i class="icon icon-sliders"></i> APP版本号</a></li>
             </ul>
         </li>
 

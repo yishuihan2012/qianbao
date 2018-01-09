@@ -130,7 +130,7 @@ class Member extends Common{
 			 			$result = $Upgrade->allowField(true)->save();
 			 			$Commission = new Commission();
 			 			//判断用户有没有上级，或者是判断后台有没有设置分佣。
-			 			if($info['relation_parent_id']!=0 || $status==1){
+			 			if($info['relation_parent_id']!=0 && $status==1){
 			 				$results = $Commission->MemberCommis(request()->param("member_id"),$upgrade_data['upgrade_commission'],"后台管理员升级"); 
 			 			}
 			 			$content = ($result===false) ? ['type'=>'error','msg'=>'升级会员失败'] : ['type'=>'success','msg'=>'升级会员成功'];

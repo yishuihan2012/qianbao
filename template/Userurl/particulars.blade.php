@@ -54,7 +54,7 @@
 			        			<!-- 提现操作 此处显示状态-->
 			        			@if($v['log_relation_type']==2)
 			        				@if(isset($v['info']))
-			        			<p class="f14 yellow-color">$v['info']</p>
+			        			<p class="f14 yellow-color">{{$v['info']}}</p>
 			        				@endif
 			        			@endif
 			        		</div>

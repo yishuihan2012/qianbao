@@ -926,12 +926,44 @@ function pad_or_unpad($str, $ext,$pad='pkcs5')
     #荣邦支付生成sign
     function rongbang_sign($key,$array,$url){
      $signature = md5($key.$array['appid'].$array['data'].$array['format'].$array['method'].$array['session'].$array['timestamp'].$array['v'].$key);
-     // $signature = md5($key.$array['appid'].$array['data'].$array['format'].$array['session'].$array['timestamp'].$array['v'].$key);
+     // $str1="appid=".$array['appid']."&method=".$array['method']."&format=".$array['format']."&data=".$array['data']."&v=".$array['v']."&amp;timestamp=".$array['timestamp']."&session=".$array['session']."&sign=" .$signature;
      $str1="appid=".$array['appid']."&method=".$array['method']."&format=".$array['format']."&data=".$array['data']."&v=".$array['v']."&timestamp=".$array['timestamp']."&session=".$array['session']."&sign=" .$signature;
-     // $str1="appid=".$array['appid']."&format=".$array['format']."&data=".$array['data']."&v=".$array['v']."&timestamp=".$array['timestamp']."&session=".$array['session']."&sign=" .$signature;
 
      $getData=$url."?".$str1;
      return $getData;
+    }
+
+    #荣邦数据传输封装
+    # $passway  通道
+    # $arr  数据
+    # $method 接口
+    function rangbang_curl($passway,$arr,$method){
+           #aes加密并且urlsafe base64编码
+      $passParam=rongbang_aes($passway->passageway_pwd_key,$arr);
+      $array=array(
+        'appid'      =>$passway->passageway_mech, //APPID
+         // 'method'   =>"masget.pay.compay.router.samename.open",//进件接口
+         'method'   =>$method,//进件接口
+         'format'     =>"json",//响应格式
+         'data'        =>$passParam,//请求报文加密
+         'v'             =>"2.0",//接口版本号
+         'session'  =>$passway->passageway_key,
+         // 'target_appid' =>'400467885',
+         'timestamp'  =>time(),
+      );
+           #连接键值生成sign
+      $getData=rongbang_sign($passway->passageway_pwd_key,$array,'https://gw.masget.com:27373/openapi/rest');
+
+       $curl = curl_init();
+        curl_setopt($curl, CURLOPT_URL, $getData);
+        curl_setopt($curl, CURLOPT_HEADER, 0);
+        curl_setopt($curl, CURLOPT_RETURNTRANSFER, 1);
+        curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, FALSE); // https请求 不验证证书和hosts
+        curl_setopt($curl, CURLOPT_SSL_VERIFYHOST, FALSE);
+        $data = json_decode(curl_exec($curl),true);
+        $httpCode = curl_getinfo($curl,CURLINFO_HTTP_CODE);
+        curl_close($curl);
+        return $data;
     }
 
     #订单状态代码转换为文字

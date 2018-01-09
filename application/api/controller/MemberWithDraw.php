@@ -136,7 +136,7 @@
                       $withdraws->withdraw_bak  = "需审核提现";  //备注信息
                       $withdraws->save();
                       $message="您的提现申请已经提交,等待审核~";
-                 }            
+                 }         
                  $content=[];
                  $content['type']=2;
                  $content['item']=$message;

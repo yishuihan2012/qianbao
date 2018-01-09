@@ -6,12 +6,15 @@
  *   @return 
  */
 namespace app\index\controller;
+ use think\Db;
 use app\index\model\Order as Orders;
 use app\index\model\Withdraw;
+use app\index\model\WalletLog;
 use app\index\model\CashOrder;
 use app\index\model\Recomment;
 use app\index\model\Member;
 use app\index\model\MemberGroup;
+use app\index\model\Wallet;
 use think\Controller;
 use think\Request;
 use think\Session;
@@ -96,6 +99,7 @@ class Order extends Common{
 	 	 $order_lists = Withdraw::haswhere('member',$where)
 	 	 	->join("wt_member_cert m", "m.cert_member_id=Member.member_id","left")
 	 	 	->where($wheres)
+	 	 	->order('withdraw_add_time desc')
 	 	 	->paginate(Config::get('page_size'), false, ['query'=>Request::instance()->param()]);
 	 	//取出审批人姓名替换
 	 	foreach ($order_lists as $k => $v) {
@@ -133,30 +137,58 @@ class Order extends Common{
 	 #审核提现列表
 	 public function toexminewithdraw(){
 	 	if(request()->isPost()){
-	 		$param=$request->param();
+	 		$param=request()->param();
+ 			$Withdraw = Withdraw::get($param['withdraw_id']);
+			$result=true;
 	 		//审核通过
-	 		if($param['withdraw_total_money']==12){
-	 			$Withdraw = Withdraw::get($param['withdraw_id']);
+	 		if($param['withdraw_state']==12){
+	 			//支付宝仅支持小数点后2位，数据库中存储的为小数点后4位，转换
+              $Withdraw->withdraw_amount=substr($Withdraw->withdraw_amount, 0,-2);
 	 			//调用支付接口
               $payMethod="\app\index\controller\\".$Withdraw->withdraw_method;
               $payment=new $payMethod();
               $return=$payment->transfer($Withdraw); //转账
               if ($return['code'] != "200") {
+              	trace($return);
                	$result=false;
               }else{
-              	$result=true;
               	$param['withdraw_option']=session('adminster.id');
               	$Withdraw->allowField(['withdraw_state','withdraw_option'])->save($param);
+	              $message="您的提现已经通过,请查收~";
+	              jpush($Withdraw->withdraw_member,$message,$message,$message,4);
               }
-              $message="您的提现已经处理,请查收~";
 	 		//审核不通过
 	 		}else{
-				$Withdraw = new Withdraw($_POST);
-				$result = $Withdraw->allowField(['withdraw_state','withdraw_information'])->save();
+	           Db::startTrans();
+	           try{
+					$Withdraw->withdraw_state=-12;
+					$Withdraw->withdraw_information=$param['withdraw_information'];
+					$Withdraw->withdraw_option=session('adminster.id');
+
+					//恢复用户钱包数据
+					$Wallet=Wallet::get(['wallet_member'=>$Withdraw->withdraw_member]);
+					$Wallet->wallet_total_withdraw=$Wallet['wallet_total_withdraw']-$Withdraw['withdraw_total_money'];
+					$Wallet->wallet_amount=$Wallet['wallet_amount']+$Withdraw['withdraw_total_money'];
+					//对钱包日志修改描述说明
+					$wallet_log=WalletLog::get(['log_wallet_id'=>$Wallet->wallet_id,'log_relation_type'=>2,'log_relation_id'=>$Withdraw->withdraw_id]);
+					// trace($wallet_log);
+					$wallet_log->log_desc="您的提现已驳回,驳回原因：".$param['withdraw_information'];
+					if($Wallet->save()===false || $Withdraw->save()===false || $wallet_log->save()===false){
+                      Db::rollback();
+                      $result=false;
+					}else{
+						Db::commit();
+						jpush($Withdraw->withdraw_member,$wallet_log->log_desc,$wallet_log->log_desc,$wallet_log->log_desc,4);
+					}
+	           } catch (\Exception $e) {
+	                 Db::rollback();
+	           	trace($e->getMessage());
+	                 $result=false;
+	           }
 	 		}
-			$content = $result ? ['type'=>'success','msg'=>'审核成功，提现已到帐'] : ['type'=>'warning','msg'=>'审核失败'];
+			$content = $result ? ['type'=>'success','msg'=>'审核成功'] : ['type'=>'warning','msg'=>'审核失败'];
 			Session::set('jump_msg', $content);
-			$this->redirect('member_group/index');
+			$this->redirect('order/withdraw');
 	 	}
 	 	$this->assign("id",input("id"));
 	 	return view("admin/order/toexminewithdraw");

@@ -71,11 +71,7 @@
 				    <li class="mui-table-view-cell dis-flex-be">
 				    	<p class="invalid-color">提现方式</p>
 				    	<p>
-				    		@if($withdraw['withdraw_method']=='Alipay')
-				    			支付宝
-				    		@elseif
-
-				    		@endif
+				    		{{$withdraw['withdraw_method']=='Alipay' ? '支付宝' : '微信'}}
 				    	</p>
 				    </li>
 				    <li class="mui-table-view-cell dis-flex-be">

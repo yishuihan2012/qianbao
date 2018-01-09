@@ -90,101 +90,89 @@
       }
       
       /**
-      *  @version rongbangnet / Api 荣邦快捷支付入网接口
+      *  @version rongbangnet / Api 荣邦1.4.1.快速进件
       *  @author $bill$(755969423@qq.com)
       *  @datetime    2017-12-25 14:36:05
       *  @param   $member=要入网的会员   ☆☆☆::使用中
       **/
       public function rongbangnet()
       {
-           #定义请求报文组装
-           $arr=array(
-                 'companyname'    =>"test".time(),//$this->membercard->card_name.rand(1000,9999),山东联硕支付技术有限公司济南分公司（无积分快捷）
-                 'companyname'    =>"这是测试公司",//$this->membercard->card_name.rand(1000,9999),山东联硕支付技术有限公司济南分公司（无积分快捷）
-                 // 'companycode'     =>$this->member->member_mobile,
-                 'companycode'     =>time(),
-                 'accountname'      =>$this->membercard->card_name,
-                 'bankaccount'       =>$this->membercard->card_bankno,
-                 'bank'                   =>$this->membercard->card_bank_address,
-                 "bankcode"          =>$this->membercard->card_bank_lang,
-                 "accounttype"      =>"1",
-                 "bankcardtype"    =>"1",
-                 'mobilephone'      =>$this->membercard->card_phone,
-                 'idcardno'            =>$this->membercard->card_idcard,
-                 'address'             =>"山东省济南市天桥区泺口皮革城",
-           );
-           // return json_encode($arr);
-           #aes加密并且urlsafe base64编码
-           $passParam=rongbang_aes($this->passway->passageway_pwd_key,$arr);
-           $array=array(
-                 'appid'      =>$this->passway->passageway_mech, //APPID
-                 'method'   =>"masget.webapi.com.subcompany.add",//进件接口
-                 'format'     =>"json",//响应格式
-                 'data'        =>$passParam,//请求报文加密
-                 'v'             =>"2.0",//接口版本号
-                 'session'  =>$this->passway->passageway_key,
-                 // 'target_appid' =>'400467885',
-                 'timestamp'  =>date('Y-m-d H:i:s'),
-            );
-           #连接键值生成sign
-           //拼接请求体参数
-            $getData=rongbang_sign($this->passway->passageway_pwd_key,$array,'https://gw.masget.com:27373/openapi/rest');
-
-            parse_str(preg_replace('/^.+?\?/', '', $getData), $arr);
-            $data=curl_post('https://gw.masget.com:27373/openapi/rest','post',$arr);
-          // var_dump($arr); die;
-          var_dump($data); die;
-            dump($getData);die;
-           $curl = curl_init();
-            curl_setopt($curl, CURLOPT_URL, $getData);
-            curl_setopt($curl, CURLOPT_HEADER, 0);
-            curl_setopt($curl, CURLOPT_RETURNTRANSFER, 1);
-            curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, FALSE); // https请求 不验证证书和hosts
-            curl_setopt($curl, CURLOPT_SSL_VERIFYHOST, FALSE);
-            $data = json_decode(curl_exec($curl),true);
-            $httpCode = curl_getinfo($curl,CURLINFO_HTTP_CODE);
-            curl_close($curl);
-
-            //进件完成
-            var_dump($data);die;
-            if($data['ret']==0){
-              $passageway_no=$data['data']['companyid'];
-              $res=MemberNet::where(['net_member_id'=>$this->member->member_id])->setField($this->passway->passageway_no, $passageway_no);
-            }else{
-              return false;
-            }
-
-            $arr=array(
-              'companyid'   =>'402560662'
-            );
-            
-          $passParam=rongbang_aes($this->passway->passageway_pwd_key,$arr);
-          $array=array(
-            'appid'      =>$this->passway->passageway_mech, //APPID
-             'method'   =>"masget.pay.compay.router.samename.open",//进件接口
-             'format'     =>"json",//响应格式
-             'data'        =>$passParam,//请求报文加密
-             'v'             =>"2.0",//接口版本号
-             'session'  =>$this->passway->passageway_key,
-             // 'target_appid' =>'400467885',
-             'timestamp'  =>time(),
-          );
-
-          $getData=rongbang_sign($this->passway->passageway_pwd_key,$array,'https://gw.masget.com:27373/openapi/rest');
-
-           $curl = curl_init();
-            curl_setopt($curl, CURLOPT_URL, $getData);
-            curl_setopt($curl, CURLOPT_HEADER, 0);
-            curl_setopt($curl, CURLOPT_RETURNTRANSFER, 1);
-            curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, FALSE); // https请求 不验证证书和hosts
-            curl_setopt($curl, CURLOPT_SSL_VERIFYHOST, FALSE);
-            $data = json_decode(curl_exec($curl),true);
-            $httpCode = curl_getinfo($curl,CURLINFO_HTTP_CODE);
-            curl_close($curl);
-            var_dump($data);die;
-                 
+         #定义请求报文组装
+         $arr=array(
+               'companyname'    =>$this->member->member_nick,//$this->membercard->card_name.rand(1000,9999),山东联硕支付技术有限公司济南分公司（无积分快捷）
+               // 'companyname'    =>"test".time(),
+               // 'companycode'     =>$this->member->member_mobile,
+               'companycode'     =>$this->member->member_mobile,
+               'accountname'      =>$this->membercard->card_name,
+               'bankaccount'       =>$this->membercard->card_bankno,
+               'bank'                   =>$this->membercard->card_bank_address,
+               "bankcode"          =>$this->membercard->card_bank_lang,
+               "accounttype"      =>"1",
+               "bankcardtype"    =>"1",
+               'mobilephone'      =>$this->membercard->card_phone,
+               'idcardno'            =>$this->membercard->card_idcard,
+               'address'             =>"山东省济南市天桥区泺口皮革城",
+         );
+        $data=rangbang_curl($this->passway,$arr,'masget.webapi.com.subcompany.add');
+        var_dump($data);die;
+        if($data['ret']==0){
+          $passageway_no=$data['data']['companyid'];
+          $res=MemberNet::where(['net_member_id'=>$this->member->member_id])->setField($this->passway->passageway_no, $passageway_no);
+        }else{
+          return false;
+        }
       }
-
+      #荣邦1.4.3.商户通道入驻接口
+      public function rongbangIn(){
+        $arr=array(
+          'companyid'   =>'402587655',
+          'accounttype'   =>1,
+          'bankaccount'   =>1,
+        );
+        $data=rangbang_curl($this->passway,$arr,'masget.pay.collect.router.treaty.apply');
+        var_dump($data);die;
+      }
+      #荣邦1.6.1.申请开通快捷协议
+      public function rongbangOpenQuickPay(){
+       $credit=db('member_creditcard')->where('card_member_id',$this->member->member_id)->find();
+        $arr=[
+          'mobilephone'=>$this->member->member_mobile,
+          'accountname'=>$this->member->member_nick,
+          'certificateno'=>$this->membercert->cert_member_idcard,
+          'accounttype'=>1,
+          'certificatetype'=>1,
+          'collecttype'=>1,
+          // 'expirationdate'=>1,
+          'bankaccount'=>$credit['card_bankno'],
+          'cvv2'=>$credit['card_Ident'],
+          'expirationdate'=>$credit['card_expireDate'],
+        ];
+          $data=rangbang_curl($this->passway,$arr,'masget.pay.collect.router.treaty.apply');
+           var_dump($data);die;
+      }
+      #荣邦1.6.2.确认开通快捷协议
+      public function rongbangOpenQuickPay(){
+        $arr=[
+          'treatycode'=>'从 rongbangOpenQuickPay 获得',
+          'smsseq'=>'从 rongbangOpenQuickPay 获得',
+          'authcode'=>'验证码',
+        ];
+          $data=rangbang_curl($this->passway,$arr,'masget.pay.collect.router.treaty.apply');
+           var_dump($data);die;
+      }
+      #荣邦 1.5.1.订单支付(后台)
+      public function rongbangPay(){
+        $arr=[
+          'ordernumber'=>time(),
+          'body'=>'test',
+          'amount'=>6666,
+          'businesstype'=>1001,
+          'paymenttypeid'=>25,
+          'treatycode'=>'从 rongbangOpenQuickPay 获得',
+        ];
+          $data=rangbang_curl($this->passway,$arr,'masget.pay.collect.router.treaty.apply');
+           var_dump($data);die;
+      }
 
 
         /**
