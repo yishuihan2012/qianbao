@@ -79,7 +79,7 @@
           #卡详情
           $card_info=MemberCreditcard::where('card_id='.$this->param['cardId'])->find();
           if(!$card_info){
-              return ['code'=>442]
+              return ['code'=>442];
           }
           #获取后台费率
           $member_group_id=Member::where(['member_id'=>$this->param['uid']])->value('member_group_id');
