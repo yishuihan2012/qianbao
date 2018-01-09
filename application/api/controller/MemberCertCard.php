@@ -64,7 +64,7 @@
                        $this->error=314;
                  #查找到当前用户
                  $member=Member::haswhere('memberLogin',['login_token'=>$this->param['token']])->where('member_id', $this->param['uid'])->find();
-                 if($member['member_cert']!='1')
+                 if($member['member_cert']!=1)
                       $this->error=356;
                  if(empty($member))
                        $this->error=314;
