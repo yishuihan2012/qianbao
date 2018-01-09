@@ -22,7 +22,7 @@ use think\Config;
  	 	 	 $data=$Request->only('data');
  	 	 	 $data=$data['data'];
        $result=$this->decryption_data($data); //解密
-       // $data = json_decode($result, true);
+       $data = json_decode($result, true);
        if(!is_array($data)){
            $data = json_decode($data, true);
        }
@@ -46,7 +46,7 @@ use think\Config;
             	 #如果方法有返回值 或者返回的data不为空 则进行加密 返回给App TODo :返回值加密方法 非对称加密
             	 if (isset($return['data']) && !empty($return['data'])) {
                 	 $return['data']=$this->encryption_data($return['data']);
-                	 // $return['data']=$return['data'];// //需要加密的时候放开
+                	 // $return['data']=$return['data'];// //不需要加密的时候放开
             	 } else
                  	 $return['data']=""; //需要加密的时候放开
             	 echo json_encode($return);
