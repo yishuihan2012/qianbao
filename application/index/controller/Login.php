@@ -5,7 +5,7 @@ use think\Session;
 use think\Request;
 use think\Config;
 use think\Controller;
-
+use app\index\model\System;
 use app\index\model\Adminster;
 class Login extends Controller
 {
@@ -16,6 +16,8 @@ class Login extends Controller
             $data=['jump_msg'=>['type'=>Session::get('jump_msg.type'),'msg'=>Session::get('jump_msg.msg')]];
             Session::delete('jump_msg');
         }
+        $site_name=System::GetName('sitename');
+        $this->assign('site_name',$site_name);
         return view('admin/login/index',$data);
     }
     //管理员登录
