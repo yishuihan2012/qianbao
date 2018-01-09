@@ -338,7 +338,7 @@ return [
     ],
     'page_size'             =>  '10', // 默认每页大小
     'default_groups'        =>  1,//默认用户组（管理员）
-    'default_title'         =>'喜家钱包',
+    'default_title'         =>'惠钱包',
 
 
     'default_member_group'    =>'12',   //默认用户组（会员）

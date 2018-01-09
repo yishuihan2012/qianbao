@@ -1,7 +1,7 @@
 <!doctype html>
 <html>
 	<head>
-		<!-- 荣邦快捷支付开通 ishtml=2 时调用本页面 填入验证码调用确认接口 -->
+		<!-- 荣邦申请快捷支付 ishtml=2 时调用本页面 填入验证码调用确认接口 -->
 		<meta charset="UTF-8">
 		<title>请输入验证码</title>
 		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />

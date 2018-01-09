@@ -721,8 +721,32 @@ class Userurl extends Controller
 	$this->assign('smsseq',$smsseq);
   	return view("Userurl/passway_rongbang_openpay");
   }
+  # 荣邦 申请快捷支付订单不返回html时 调用本页面 
+  # memberId 用户id passwayId 通道id
+  # treatycode 协议号 smsseq 短信验证码流水号
+  public function passway_rongbang_openpay($memberId,$passwayId,$ordercode,$card_id){
+  	if(request()->ispost()){
+  		$authcode=request()->param()['authcode'];
+  		if($authcode){
+		  	$Membernets=new con\Membernets($memberId,$passwayId);
+		  	$result=$Membernets->rongbang_confirm_openpay($treatycode,$smsseq,$authcode);
+		  	return $result ? 1 : 3;
+		  }else{
+		  	return 2;
+		  }
+  	}
+	$this->assign('memberId',$memberId);
+	$this->assign('passwayId',$passwayId);
+	$this->assign('treatycode',$treatycode);
+	$this->assign('smsseq',$smsseq);
+  	return view("Userurl/passway_rongbang_openpay");
+  }
   #荣邦支付回调
   public function passway_rongbang_paycallback(){
   	$param=request()->param();
+  }
+  #为无需短信确认的情况 直接显示一个成功页面
+  public function passway_success(){
+  	return view("Userurl/passway_success");
   }
 }

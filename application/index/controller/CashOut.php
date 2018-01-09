@@ -302,15 +302,19 @@ class CashOut
             	];
 	 	 	}else{
 	 	 		if($result['sendmessage']==1){
-
+	            	$res['data']=[
+	            		'type'=>1,
+	            		'url'=>request()->domain() . "/api/Userurl/passway_success/ordercode/".$result['ordercode']."/card_id/".$this->card_info->card_id."/memberId/" . $this->member_infos->member_id . "/passwayId/" . $this->passway_info->passageway_id],
+	            	];
 	 	 		}else{
 	 	 			//无需短信验证的情况 返回一个成功提示页
 	            	$res['data']=[
 	            		'type'=>1,
-	            		'url'=>base64_decode($result['html']),
+	            		'url'=>request()->domain() . "/api/Userurl/passway_success",
 	            	];
 	 	 		}
 	 	 	}
+	 	 	return $result;
 	 	 }else{
 	 	 	return ['code'=>501];
 	 	 }

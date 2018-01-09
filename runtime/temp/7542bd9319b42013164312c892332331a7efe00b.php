@@ -27,13 +27,13 @@
             </ul> -->
             <!-- 右侧的导航项目 -->
             <ul class="nav navbar-nav navbar-right">
-                <li><a href="#">红包审批</a></li>
-                <li><a href="#">提现审批</a></li>
+                <!-- <li><a href="#">红包审批</a></li> -->
+                <li><a href="/index/order/Withdraw.html">提现审批</a></li>
                 <li><a href="<?php echo e(url('/index/index/help')); ?>">使用说明</a></li>
                 <li class="dropdown">
                     <a href="#" class="dropdown-toggle" data-toggle="dropdown"><?php echo e($name); ?> <b class="caret"></b></a>
                     <ul class="dropdown-menu" role="menu">
-                        <li><a href="#">个人信息</a></li>
+                        <!-- <li><a href="#">个人信息</a></li> -->
                         <li class="divider"></li>
                         <li><a href="<?php echo e(url('/index/login/logout')); ?>">登出</a></li>
                     </ul>
