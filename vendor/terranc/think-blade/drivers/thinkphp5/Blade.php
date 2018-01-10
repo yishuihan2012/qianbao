@@ -37,7 +37,7 @@ class Blade
         'tpl_end'   => '}}',
         'tpl_raw_begin'   => '{!!',
         'tpl_raw_end'   => '!!}',
-        'view_cache_path'   => RUNTIME_PATH . 'temp/', // 模板缓存目录
+        'view_cache_path'   =>  '../runtime/temp/', // 模板缓存目录
         // 模板文件后缀
         'view_suffix' => 'blade.php',
     ];
