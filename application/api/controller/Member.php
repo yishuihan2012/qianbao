@@ -718,7 +718,7 @@
 
           foreach ($Commission as $key => $value) {
             $Commission[$key]['member_mobile']=Members::where(['member_id'=>$value['commission_childen_member']])->value('member_mobile');
-            if($value['commission_money']==0){
+            if($value['commission_money']<0.01){
               unset($Commission[$key]);
 
             }

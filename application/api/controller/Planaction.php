@@ -34,6 +34,10 @@
  	public function update_passway_rate($params){
  		$Passageway_detail=Passageway::where(['passageway_id'=>8]);
  	}
+ 	//刷卡或者代还完成后调用此方法，记录为上级有效推荐一人
+ 	public function recommend_record($uid){
+
+ 	}
  	//推荐会员自动升级任务
  	public function self_update(){
  		#1取出所有会员，获得升级条件
