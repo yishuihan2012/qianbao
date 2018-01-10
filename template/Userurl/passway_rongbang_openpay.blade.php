@@ -13,7 +13,8 @@
 	</head>
 	<body>
 		<div class="mui-content wrap3">
-			<form class="mui-input-group bg-color">
+			<h1 style="text-align: center;">请输入验证码</h1>
+			<form class="mui-input-group bg-color" style="margin-top: 50vh">
 				<div class="bg-w f-br-top">
 				    <div class="mui-input-row">
 				        <label>验证码:</label>

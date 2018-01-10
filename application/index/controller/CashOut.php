@@ -217,6 +217,7 @@ class CashOut
 	 public function rongbangcash($tradeNo,$price,$description='荣邦快捷支付')
 	 {
 	 	// 初始化类
+		 	 		w_log(111);
  	 	 $membernetObject=new Membernets($this->member_infos->member_id, $this->passway_info->passageway_id);
 	 	 #检测通道是否需要入网
 	 	 if($this->passway_info->passageway_status=="1")
@@ -227,11 +228,11 @@ class CashOut
 		 	 if(!$member_net || $member_net[$this->passway_info->passageway_no]=="")
 		 	 {
 		 	 	 $method=$this->passway_info->passageway_method;
-		 	 	 $userinfo=$membernetObject->$method();
-		 	 	 if(!$userinfo)
-		 	 	 	 return  ['code'=>462]; //入网失败
+		 	 	 $res=$membernetObject->$method();
+		 	 	 if($res!==true)
+		 	 	 	 return  ['code'=>462,'msg'=>$res]; //入网失败
 		 	 }else{
-		 	 	$userinfo=$member_net[$this->passway_info->passageway_no];
+		 	 	// $userinfo=$member_net[$this->passway_info->passageway_no];
 		 	 }
 	 	 }
 	 	 //封顶的这个APPID无需开通快捷支付即可使用
@@ -242,8 +243,10 @@ class CashOut
 		 	 $member_credit_pas=db('member_credit_pas')->where($pas_where)->find();
 		 	 //从数据库检查是否开通
 		 	 if(!$member_credit_pas ||$member_credit_pas['member_credit_pas_info'] || $member_credit_pas['member_credit_pas_status']==0){
+		 	 		w_log(666);
 		 	 	//调用接口检查是否开通
 		 	 	$result=$membernetObject->rongbang_check($this->card_info->card_id);
+		 	 		w_log($result);
 		 	 	//通用数据
 	 	 		$data=[
 	 	 			'member_credit_pas_creditid'=>$this->card_info->card_id,
@@ -251,8 +254,8 @@ class CashOut
 	 	 		];
 		 	 	if($result){
 		 	 		//接口有数据，更新本地数据库 这个用户已经开通了快捷支付
-		 	 		$data=['member_credit_pas_info']=$result['treatycode'];
-		 	 		$data=['member_credit_pas_status']=1;
+		 	 		$data['member_credit_pas_info']=$result['treatycode'];
+		 	 		$data['member_credit_pas_status']=1;
 		 	 		if($member_credit_pas){
 		 	 			db('member_credit_pas')->where($pas_where)->update($data);
 		 	 		}else{
@@ -261,9 +264,9 @@ class CashOut
 		 	 	}else{
 		 	 		//没有数据，调用开通快捷支付接口
 			 	 	$result=$membernetObject->rongbang_openpay($this->card_info->card_id);
-			 	 	if(!result)
-			 	 		return  ['code'=>500]; 
-		 	 		$data=['member_credit_pas_info']=$result['treatycode'];
+			 	 	if(is_string($result))
+			 	 		return  ['code'=>500,'msg'=>$result]; 
+		 	 		$data['member_credit_pas_info']=$result['treatycode'];
 		 	 		//将返回的数据，更新本地数据库
 		 	 		if($member_credit_pas){
 		 	 			db('member_credit_pas')->where($pas_where)->update($data);
@@ -284,7 +287,7 @@ class CashOut
 		              //返回我们自己建的html
 			            $res['data']=[
 	            			'type'=>2,
-	            			'url'=>request()->domain() . "/api/Userurl/passway_rongbang_openpay/treatycode/".$result['treatycode']."/smsseq/".$result['smsseq']."/memberId/" . $this->member_infos->member_id . "/passwayId/" . $this->passway_info->passageway_id],
+	            			'url'=>request()->domain() . "/api/Userurl/passway_rongbang_openpay/treatycode/".$result['treatycode']."/smsseq/".$result['smsseq']."/memberId/" . $this->member_infos->member_id . "/passwayId/" . $this->passway_info->passageway_id,
 		            	];
 		            }
 		            return $res;

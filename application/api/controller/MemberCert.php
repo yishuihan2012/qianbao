@@ -137,14 +137,20 @@
                            'cert_member_idcard' => $this->param['card_idcard'],
                       ];
                       //如果最后上传照片，也一起更新
-                      if($this->param['IdPositiveImgUrl']){
+                      if(isset($this->param['IdPositiveImgUrl'])){
                           $member_certs_array['IdPositiveImgUrl']=$this->param['IdPositiveImgUrl'];
+                      }else{
+                          $member_certs_array['IdPositiveImgUrl']='';
                       }
-                      if($this->param['IdNegativeImgUrl']){
+                      if(isset($this->param['IdNegativeImgUrl'])){
                           $member_certs_array['IdNegativeImgUrl']=$this->param['IdNegativeImgUrl'];
+                      }else{
+                          $member_certs_array['IdNegativeImgUrl']='';
                       }
-                      if($this->param['IdPortraitImgUrl']){
+                      if(isset($this->param['IdPortraitImgUrl'])){
                           $member_certs_array['IdPortraitImgUrl']=$this->param['IdPortraitImgUrl'];
+                      }else{
+                          $member_certs_array['IdPortraitImgUrl']='';
                       }
                       $member_certs=new MemberCerts($member_certs_array);
                       #更改数据表

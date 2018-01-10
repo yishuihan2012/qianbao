@@ -54,7 +54,11 @@
 .exc-code-list img{width:100%;}
 .exc-code-list p{width:90%;margin:0 auto;overflow:hidden;text-overflow:ellipsis;display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:2;}
 /*专属二维码*/
-.exc-code{background:url("../images/exclusice_code_bg.png") no-repeat;background-size:100%;}
+.exc-code{width:100%;overflow-y:scroll;}
+.exc-code img{width:100%;height:auto;}
+.exc-code2{width:100%;height:100%;}
+.exc-code2 img{width:100%;height:auto;}
+.my-btn-r{position:fixed;bottom:100px;left:50%;-webkit-transform: translateX(-50%);transform: translateX(-50%);display:inline-block;width:35%;height:40px;line-height:40px;border-radius:5px;background-color:#dd524d;color:#fff;text-align:center;}
 .code-container{width:140px;height:140px;position:absolute;top:52%;left:50%;margin-left:-65px;}
 .code-container img{width:100%;border-radius:5%;}
 #muiBarTab{box-shadow: 0 0 0;}
@@ -143,3 +147,4 @@
 .conf-space-bot{margin-bottom:130px;}
 .confirm-box{display:inline-block;width:20%;vertical-align: middle;}
 .confirm-box img{width:80%;vertical-align: middle;}
+.next-btn{height: 50px;padding: 15px 0;}

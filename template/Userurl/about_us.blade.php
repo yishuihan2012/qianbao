@@ -97,16 +97,16 @@
 		            	<div class="my-pad2">
 		            		<dl class="space-bot">
 		            			<dt><h4><span class="mui-icon iconfont icon-icon104 blue-color-th v-m space-right"></span>公司地址</dt>
-		            			<dd>{{$server['company_address']['system_val']}}</dd>
+		            			<dd>{{$server['company_address']}}</dd>
 		            		</dl>
 		            		<ul class="dis-flex-be">
 		            			<li>
 		            				<h4><span class="mui-icon iconfont icon-my-phone blue-color-th v-m space-right"></span>商务合作</h4>
-		            				<p class="f14">{{$server['tel']['service_contact']}}</p>
+		            				<p class="f14">{{$server['phone']}}</p>
 		            			</li>
 		            			<li>
 		            				<h4><span class="mui-icon iconfont icon-shijian-copy-copy blue-color-th v-m space-right"></span>工作时间</h4>
-		            				<p class="f14">{{$server['working_hours']['system_val']}}</p>
+		            				<p class="f14">{{$server['working_hours']}}</p>
 		            			</li>
 		            		</ul>
 		            	</div>

@@ -1,7 +1,7 @@
  <!--dialog Title-->
  <div class="modal-header animated fadeInLeft">
    <div class="row">
-           <div class="col-sm-8"><h4>修改公告</h4></div>
+           <div class="col-sm-8"><h4>添加App版本号</h4></div>
            <div class="col-sm-4">
                <div class="text-right">
                    <span class="label label-dot"></span>
@@ -31,10 +31,14 @@
        <input type="text" class="form-control announcement_title" name="version_code" placeholder="版本code" value="">
      </div>   
    </div>
+ 
    <div class="row form-group">
-     <label for="announcement_title" class="col-sm-3 text-right"><b>类型</b></label>
-     <div class="col-sm-6" id="announcement_title">
-       <input type="text" class="form-control announcement_title" name="version_type" placeholder="类型" value="">
+     <label for="bank_state" class="col-sm-3 text-right"><b>类型</b></label>
+     <div id="bank_state" class="col-sm-6">
+       <select name="version_type" class="form-control">
+         <option value="android">android</option>
+         <option value="ios">ios</option>
+       </select>
      </div>   
    </div>
    <div class="row form-group">
