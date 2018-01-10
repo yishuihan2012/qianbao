@@ -223,18 +223,20 @@
           'companyid'=>$userdata[0],
           'treatycode'=>$treatycode,
         ];
-          $data=rongbang_curl($this->passway,$arr,'masget.pay.collect.router.treaty.query');
+          $data=rongbang_curl(rongbang_foruser($this->member,$this->passway),$arr,'masget.pay.collect.router.treaty.query');
          if($data['ret']==0){
           //返回商户信息
           return $data['data'];
          }else{
-          return false;
+          return $data['message'];
          }
       }
       #荣邦 1.5.1.订单支付(后台)
       public function rongbang_pay($card_id,$tradeNo,$price,$description){
         //取出该用户的荣邦商户信息
         $userinfo=db('member_net')->where(['net_member_id'=>$this->member->member_id])->value($this->passway->passageway_no);
+        //取出支付凭据
+        $treatycode=db('member_credit_pas')->where(['member_credit_pas_creditid'=>$card_id,'member_credit_pas_pasid'=>$this->passway->passageway_id])->value('member_credit_pas_info');
         $userinfo=explode(',', $userinfo);
         $companyid=$userinfo[0];
        $credit=db('member_creditcard')->where('card_id',$card_id)->find();
@@ -245,21 +247,25 @@
           'businesstype'=>1001,
           'companyid'=>$companyid,
           'paymenttypeid'=>25,
-          'subpaymenttypeid'=>25,
+          // 'bankaccount'=>$this->membercard->card_bankno,
+          // 'accounttype'=>1,
+          'certificatetype'=>1,
+          // 'subpaymenttypeid'=>25,
+          // 'mobilephone'=>$this->member->member_mobile,
           'businesstime'=>date('YmdHis'),
           "backurl"=>request()->domain(). "/api/Userurl/passway_rongbang_paycallback/passageway_id/".$this->passway->passageway_id . "/member_id/" . $this->member->member_id,
           'payextraparams'=>[
-            'treatycode'=>'701318010911012302',
+            'treatycode'=>$treatycode,
           ],
-          // 'bankaccount'=>$this->membercard->card_bankno,
           // 'accounttype'=>1,//对私
           // 'bankaccount'=>1,//对私
         ];
-          $data=rongbang_curl(rongbang_foruser($this->member,$this->passway),$arr,'masget.pay.collect.router.treaty.apply');
-          if($data['net']==0){
+        echo (json_encode($arr));die;
+          $data=rongbang_curl(rongbang_foruser($this->member,$this->passway),$arr,'masget.pay.compay.router.back.pay');
+          if($data['ret']==0){
             return $data['data'];
           }else{
-            return false;
+            return $data['message'];
           }
       }
       #荣邦 1.5.3.确认支付

@@ -59,9 +59,10 @@
           <th>用户头像</th>
           <th>是否实名</th>
           <th>会员等级</th>
-          <th>注册时间</th>
           <th>登录状态</th>
+          <th>注册时间</th>
           <th>操作</th>
+          
       </tr>
   </thead>
     <tbody>
@@ -73,16 +74,23 @@
           <td><img src="{{$val->member_image}}" data-toggle="lightbox"  class="img-circle" style="max-width: 40px;"></td>
           <td>{{state_preg($val->member_cert,1,'实名')}}</td>
           <td>{{$val->group_name}}</td>
-          <td>{{$val->member_creat_time}}</td>
           <td>{{$val->login_state==1 ? '正常' : '封停'}}</td>
+          <td>{{$val->member_creat_time}}</td>
           <td>
-            <div class="btn-group">
-            <button class="btn btn-sm" data-toggle="modal" data-remote="{{url('/index/member/info/id/'.$val->member_id)}}"  type="button">查看详情</button>
-                <button class="btn btn-sm" data-toggle="modal" data-remote="{{url('/index/member/upgrade/id/'.$val->member_id.'/member_group_id/'.$val->member_group_id)}}" type="button">升级会员</button>
-        </div>
+                <div class="btn-group">
+                     <button type="button" data-toggle="modal" data-remote="{{url('/index/member/info/id/'.$val->member_id)}}" class="btn btn-sm">查看详情</button>
+                     <div class="btn-group">
+                           <button type="button" class="btn btn-sm dropdown-toggle" data-toggle="dropdown"><span class="caret"></span></button>
+                           <ul class="dropdown-menu" role="menu">
+                                <li><a data-toggle="modal" data-remote="{{url('/index/member/upgrade/id/'.$val->member_id.'/member_group_id/'.$val->member_group_id)}}" href="#">升级会员</a></li>
+                                <li><a data-toggle="modal" data-remote="{{url('/index/member/walletInfo',['memberId'=>$val->member_id])}}" href="#">钱包信息</a></li>
+                                <li><a data-toggle="modal" data-remote="{{url('/index/member/upgrade/id/'.$val->member_id.'/member_group_id/'.$val->member_group_id)}}" href="#">分佣分润</a></li>
+                           </ul>
+                     </div>
+                </div>
           </td>
       </tr>
-  @endforeach
+      @endforeach
     </tbody>
     <tfoot>
       <tr>

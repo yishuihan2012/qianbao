@@ -4,6 +4,7 @@ namespace app\api\controller;
 use think\Db;
 use think\Config;
 use think\Loader;
+use think\Request;
 use think\Controller;
 use app\index\model\CustomerService;
 use app\api\controller as con;
@@ -629,7 +630,7 @@ class Userurl extends Controller
   #信用卡说明
   public function card_description(){
   	$CreditCard = new CreditCard();
-  	$list = $CreditCard->where(['bank_passageway_id'=>$this->param['id']])->select();
+  	$list = $CreditCard->where(['bank_passageway_id'=>Request::instance()->param('id')])->select();
   	$this->assign('list',$list);
   	return view("api/logic/card_description");
   }
@@ -740,7 +741,7 @@ class Userurl extends Controller
   # memberId 用户id passwayId 通道id
   # treatycode 协议号 smsseq 短信验证码流水号
 
-  public function passway_rongbang_openpay1($memberId,$passwayId,$ordercode,$card_id){
+  public function passway_rongbang_pay($memberId,$passwayId,$ordercode,$card_id){
   	if(request()->ispost()){
   		$authcode=request()->param()['authcode'];
   		if($authcode){

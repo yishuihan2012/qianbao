@@ -40,11 +40,11 @@
  -->			    </tr>
 			    <tr>
 			      <td>额度</td>
-			      <td colspan="4" align="left"><span class="space-left">{{$v['passageway_desc']}}</span></td>
+			      <td colspan="{{count($v['details'])}}" align="left"><span class="space-left">{{$v['passageway_desc']}}</span></td>
 			    </tr>
 			    <tr>
 			      <td>提示</td>
-			      <td colspan="4" align="left"><span class="space-left">{{$v['passageway_limit']}}</span></td>
+			      <td colspan="{{count($v['details'])}}" align="left"><span class="space-left">{{$v['passageway_limit']}}</span></td>
 			    </tr>
 			  </tbody>
 			</table>

@@ -154,4 +154,24 @@ class Member extends Common{
 	 	$this->assign('member_group_info',$member_group_info);
 	 	return view("admin/member/upgrade");
 	}
+
+ 	 /**
+	 *  @version walletInfo method / 会员钱包信息基本方法
+	 *  @author $bill$(755969423@qq.com) 后台优化功能
+	 *   @datetime    2018-1-10 14:23
+	 *   @return  为统一代码方式,增加执行效率 所有方法摒弃原DB类关联查询 使用对象的与载入查询或关联查询
+	 */
+	 public function walletInfo(Request $request)
+	 {
+	 	 if(!$request->param('memberId'))
+	 	 {
+			 Session::set('jump_msg', ['type'=>'error','msg'=>'参数错误']);
+			 $this->redirect($this->history['1']);
+	 	 }
+	      #如果会员ID存在的话 则查询会员的钱包详细信息
+	 	      $memberWalletInfo=Member::with('Wallet')->get($request->param('memberId'));
+	 	      dump($memberWalletInfo);
+	 
+
+	 }
 }

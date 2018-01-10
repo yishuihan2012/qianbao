@@ -11,7 +11,7 @@
 		<link href="/static/css/themes.css" rel="stylesheet"/>
 	</head>
 	<body>
-		<div class="mui-content repayment-detail">
+		<div class="mui-content generate-plan">
 			<!--还款详情头部-->
 			<div class="wrap bg-w">
 			  <div class="dis-flex-be bor-bot">

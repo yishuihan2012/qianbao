@@ -174,15 +174,15 @@
       	 if(!isset($this->param['smsCode']) || empty($this->param['smsCode']) || !isset($this->param['newPhone']) || empty($this->param['newPhone']) )
       	 	 return ['code'=>423] ;
            #验证码验证规则 读取本手机号最后一条没有使用的验证码 并且在系统设置的有效时间内
-           // $code_info=SmsCode::where(['sms_send'=>$this->param['newPhone'],'sms_log_state'=>1])->whereTime('sms_log_add_time', "-".System::getName('code_timeout').' minutes')->find();
-           // if(!$code_info || $code_info['sms_log_content']!=$this->param['smsCode'])
-           //       return ['code'=>404];
-           // #改变验证码使用状态
-           // $code_info->sms_log_state=2;
-           // $result=$code_info->save();
-           // #验证是否成功
-           // if(!$result)
-           //       return ['code'=>404];
+           $code_info=SmsCode::where(['sms_send'=>$this->param['newPhone'],'sms_log_state'=>1])->whereTime('sms_log_add_time', "-".System::getName('code_timeout').' minutes')->find();
+           if(!$code_info || $code_info['sms_log_content']!=$this->param['smsCode'])
+                 return ['code'=>404];
+           #改变验证码使用状态
+           $code_info->sms_log_state=2;
+           $result=$code_info->save();
+           #验证是否成功
+           if(!$result)
+                 return ['code'=>404];
            #判断原手机号和新手机号是否相同 首先获取会员信息
       	 $member_info=Members::hasWhere('memberLogin',['login_token'=>$this->param['token']])->where('member_id',$this->param['uid'])->find();
          	 if(!$member_info)
@@ -623,7 +623,8 @@
                 $data['group'][$key]['id']=$value['group_id'];
                 $data['group'][$key]['icon']=$value['group_thumb'];
                 $data['group'][$key]['group_level_money']=$price;
-                $data['group'][$key]['price_desc']='普通会员升级到'.$value['group_name'].'此用户组需要的价格￥'.$price.'元';
+                // $data['group'][$key]['price_desc']='普通会员升级到此用户组需要的价格￥'.$price.'元';
+                 $data['group'][$key]['price_desc']='普通会员升级到'.$value['group_name'].'此用户组需要的价格￥'.$price.'元';
                 $data['group'][$key]['group_url']=$value['group_url'];
                 $data['group'][$key]['up_price']=$this->get_diff_price($this->param['uid'],$value['group_id']);
                 #获取每个用户等级的最低费率
@@ -634,7 +635,8 @@
                 $passageway=Passageway::where(['passageway_state'=>1,'passageway_id'=>$passagewayItem['item_passageway']])->find();
                 #如果不为空
                 if(!empty($passageway)){
-                  $data['group'][$key]['rate']='刷卡费率：'.$passagewayItem['item_rate'].'% 代还费率：'.$passagewayItem['item_also'].'%';
+                  // $data['group'][$key]['rate']='刷卡费率：'.$passagewayItem['item_rate'].'% 代还费率：'.$passagewayItem['item_also'].'%';
+                   $data['group'][$key]['rate']='刷卡费率低至：'.$passagewayItem['item_rate'].'% 代还费率低至：'.$passagewayItem['item_also'].'%'.$passagewayItem['item_also']."笔";
                   $data['group'][$key]['des']=$passageway['passageway_desc'];
                   $data['group'][$key]['icon']=$value['group_thumb'];
                 }
@@ -705,21 +707,24 @@
       **/ 
       public function commission_list()
       {
+     
           if(!isset($this->param['type']))
              $this->error=314;
 
           $this->param['type']=$this->param['type'] ? $this->param['type'] : 1;
            
           $Commission=Commission::with('member')->where('commission_member_id='.$this->param['uid'].' and commission_type='.$this->param['type'])->order('commission_id desc')->select();
+      
+
           foreach ($Commission as $key => $value) {
             $Commission[$key]['member_mobile']=Members::where(['member_id'=>$value['commission_childen_member']])->value('member_mobile');
-            if(!$value['commission_money']==0){
+            if($value['commission_money']==0){
               unset($Commission[$key]);
 
             }
             
           }
-
+        
            return ['code'=>200, 'msg'=>'获取成功~', 'data'=>$Commission];
       }
       
