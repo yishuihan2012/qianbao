@@ -188,8 +188,8 @@
          
             //$arr=urlsafe_b64decode($data['data']['html']);
            //$arr=base64_decode($data['data']['html']);
-           var_dump($data['data']['html']);die;
-          // return $data['data'];
+           // var_dump($data['data']['html']);die;
+          return $data['data'];
          }else{
           return $data['message'];
          }

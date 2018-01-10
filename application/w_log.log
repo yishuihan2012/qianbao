@@ -1,15 +1,3 @@
-0 : array (
-  'ordernumber' => 1515470123,
-  'body' => 'test',
-  'amount' => 4,
-  'businesstype' => 1001,
-  'companyid' => 402587655,
-  'paymenttypeid' => 25,
-  'subpaymenttypeid' => 25,
-  'businesstime' => '20180109115523',
-  'backurl' => 'http://14.18.207.75:8004/pay/compay/router/back/report/test',
-  'payextraparams' => 
-  array (
-    'treatycode' => '701318010911012302',
-  ),
-)
+
+
+0 : 111

@@ -1,6 +1,6 @@
 <?php $__env->startSection('title','管理员登录~'); ?>
 <?php $__env->startSection('wrapper'); ?>
- <h2>用户登录 - <small>喜家钱包后台管理系统</small></h2>
+ <h2>用户登录 - <small><?php echo e($site_name); ?>后台管理系统</small></h2>
      <form action="<?php echo e(url('/index/Login/do_login')); ?>" method="post" class="login_form">
         <div class="input-group"><input type="text" class="form-control" name="login_name" placeholder="用户名" value="john"></div>
         <div class="input-group"><input type="password" class="form-control" name="login_passwd" placeholder="密码" value="123456"></div>
