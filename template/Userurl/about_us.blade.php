@@ -151,7 +151,8 @@
 		            if (/(iPhone|iPad|iPod|iOS)/i.test(navigator.userAgent)) {  //判断iPhone|iPad|iPod|iOS
 		                 window.webkit.messageHandlers.drialPhone.postMessage(tel);
 		            } else if (/(Android)/i.test(navigator.userAgent)) {   //判断Android
-		                 window.AndroidMessage.call(tel);
+		                 // window.AndroidMessage.call(tel);
+		                 android.drialPhone(tel);
 		            }
 	                  
 		            

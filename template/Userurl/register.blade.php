@@ -46,7 +46,7 @@
 			</form>
 			<div class="space-up">
 				<p><a class="my-btn-blue4" id="regBtn">注册</a></p>
-				<p class="space-up"><a class="my-btn-blue4">下载APP</a></p>
+				<p class="space-up"><a class="my-btn-blue4" id="#download_app" href="/api/userurl/download">下载APP</a></p>
 			</div>
 		</div>
 		<script src="/static/js/mui.min.js"></script>
@@ -56,6 +56,10 @@
 			mui.init();
 			mui.ready(function(){
 				//下载APP
+				$("#download_app").click(function(){
+					var	url=$this.attr('href');
+					window.location.href=url;
+				})
 				//点击注册
 				$('#regBtn').click(function(){
 					var phone = $("input[name='phone']").val();
@@ -80,6 +84,8 @@
 		            $.post(url,data,function(data){
 		              if(data.code==200){
 		              	mui.toast(data.msg); 
+		              	var	url=$('#download_app').attr('href');
+		              	window.location.href=url;
 		              }else{
 		              	mui.toast("注册失败"); 
 		              }

@@ -21,8 +21,8 @@
 			<div class="pic-container">
 			  <img src="/static/images/logo.png">
 		    </div>
-		    <p class="fc"><a href="javascript:void(0);" class="my-btn-blue5" id="android"><span class="mui-icon iconfont icon-android space-right f20"></span>安卓版本下载</a></p>
-		    <p class="fc space-up-down"><a href="javascript:void(0);" class="my-btn-blue5" id="ios"><span class="mui-icon iconfont icon-ios space-right f20"></span>iOS版本下载</a></p>
+		    <p class="fc"><a href="{{$data['android_url']}}" class="my-btn-blue5" id="android"><span class="mui-icon iconfont icon-android space-right f20"></span>安卓版本下载</a></p>
+		    <p class="fc space-up-down"><a href="{{$data['ios_url']}};" class="my-btn-blue5" id="ios"><span class="mui-icon iconfont icon-ios space-right f20"></span>iOS版本下载</a></p>
 		    <div class="pic-container2"><img src="/static/images/home_pic.png" style="width:100%;"></div>
 		</div>
 		<script src="/static/js/mui.min.js"></script>
