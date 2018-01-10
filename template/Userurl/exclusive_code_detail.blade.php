@@ -32,7 +32,7 @@
 			mui.init();
 			mui.ready(function(){
 				var _h =  window.screen.availHeight;
-				// document.getElementById("excCode").style.height = _h - 150 +"px";
+			    document.getElementById("excCode").style.height = _h - 150 +"px";
 			});
 				imgarr=["{{$url}}"];
 			$(function(){

@@ -620,7 +620,7 @@ class Userurl extends Controller
   #信用卡说明
   public function card_description(){
   	$CreditCard = new CreditCard();
-  	$list = $CreditCard->select();
+  	$list = $CreditCard->where(['bank_passageway_id'=>$this->param['id']])->select();
   	$this->assign('list',$list);
   	return view("api/logic/card_description");
   }

@@ -122,9 +122,21 @@
           $passageway_no=$data['data']['appid'].','.$data['data']['companycode'].','.$data['data']['secretkey'].','.$data['data']['session'];
           $res=MemberNet::where(['net_member_id'=>$this->member->member_id])->setField($this->passway->passageway_no, $passageway_no);
           return $passageway_no;
+        }elseif($data['ret']==34){
+          //34 为该商户商户名称已存在 调用该商户的信息
+          $data=$this->rongbang_getinfo();
+          if($data){
+            //存储拉取的商户信息
+            $passageway_no=$data['appid'].','.$data['companycode'].','.$data['secretkey'].','.$data['session'];
+            $res=MemberNet::where(['net_member_id'=>$this->member->member_id])->setField($this->passway->passageway_no, $passageway_no);
+            return $passageway_no;
+          }else{
+            
+          }
         }else{
-          return false;
+          // return false;
         }
+        var_dump($data);die;
       }
       #荣邦 1.4.2.子商户秘钥下载 用于判断该用户是否已经在荣邦存在商户信息
       #已存在 返回data字段 不存在返回false
@@ -135,6 +147,7 @@
            // var_dump($arr);die;
           $data=rongbang_curl($this->passway,$arr,'masget.webapi.com.subcompany.get');
           if($data['ret']!=0){
+        var_dump($data);die;
             return false;
           }else{
             return $data['data'];

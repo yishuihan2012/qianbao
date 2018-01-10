@@ -124,22 +124,6 @@
     	 $('.menu .nav li.member').addClass('active');
     	 $('.menu .nav li.member-manager').addClass('show');
 
-    	 $(".remove").click(function(){
-    	 	 var url=$(this).attr('data-url');
-		 bootbox.confirm({
-		    title: "删除文章确认",
-		    message: "确定删除这篇文章吗? 删除后不可恢复!",
-		    buttons: {
-		        cancel: {label: '<i class="fa fa-times"></i> 点错了'},
-		        confirm: {label: '<i class="fa fa-check"></i> 确定'}
-		    },
-		    callback: function (result) {
-		    	 if(result)
-		    	 	window.location.href=url;
-		    }
-		 });
-    	 })
-
 $('#dateTimeRange').daterangepicker({
         applyClass : 'btn-sm btn-success',
         cancelClass : 'btn-sm btn-default',
