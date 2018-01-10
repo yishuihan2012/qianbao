@@ -25,7 +25,7 @@ use app\index\model\CallbackLog as CallbackLogs;
            $this->aop = new \AopClient();
            $this->aop->appId                        = System::getName('Alipay_appid');
            // $this->aop->format                       = Config::get('alipay.format');
-           $this->aop->format                       = System::getName('Alipay_format')
+           $this->aop->format                       = System::getName('Alipay_format');
            $this->aop->signType                     = Config::get('alipay.sign_type');
            // $this->aop->signType                     = System::getName('Alipay_sign_type');
            $this->aop->gatewayUrl                   = Config::get('alipay.gateway_url');
@@ -166,8 +166,8 @@ use app\index\model\CallbackLog as CallbackLogs;
                       'method'        => 'alipay.open.auth.sdk.code.get',
                       'app_name'      => 'mc',
                       'biz_type'      => 'openservice',
-                      // 'pid'           => System::getName('alipay_pid'),
-                      'pid'           =>Config::get('alipay.pid'),
+                      'pid'           => System::getName('alipay_pid'),
+                      // 'pid'           =>Config::get('alipay.pid'),
                       'product_id'    => 'APP_FAST_LOGIN',
                       'scope'         => 'kuaijie',
                       'target_id'     => get_token(),
