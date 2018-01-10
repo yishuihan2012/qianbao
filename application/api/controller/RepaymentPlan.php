@@ -357,7 +357,7 @@
 
            } catch (\Exception $e) {
                  Db::rollback();
-                 return ['code'=>308,'msg'=>$e->getMessage()];
+                 return ['code'=>308,'msg'=>$e->getMessage(),'data'=>[]];
            }
           
       }
