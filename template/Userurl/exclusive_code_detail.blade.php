@@ -12,13 +12,9 @@
 	</head>
 	<body>
 		<div class="mui-content wrap bg-w bor-bot" id="excCodeContent">
- 			<img src="{{$url}}" style="width: 100%">
-<!-- 			<div class="exc-code"  id="excCode">
-			<div class="code-container bg-w f-br wrap">
-				<div id="qrcode"></div>
+			<div class="exc-code"  id="excCode">
+			  <img src="{{$url}}">
 			</div>
-			</div>
- -->
  		</div>
 		<nav class="mui-bar mui-bar-tab wrap bg-w dis-flex-ar" id="muiBarTab">
 		  <a class="main-color f16 save"><span class="mui-icon iconfont icon-cloud-download space-right"></span>保存到手机</a>

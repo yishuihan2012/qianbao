@@ -681,6 +681,12 @@ function SortByASCII($arr){
       $data = str_replace(array('+','/','='),array('-','_','.'),$data);
       return $data;
  }
+ #解密
+ function urlsafe_b64decode($string) {
+      $data = base64_decode($string);
+      //$data = str_replace(array('-','_','.'),array('-','_','='),$data);
+      return $data;
+ }
 
  //-----------------------------------------------------------
  // @version  金易付加密加密

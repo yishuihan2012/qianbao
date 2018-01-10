@@ -213,4 +213,25 @@ class Generalize extends Common{
 		 #重定向控制器 跳转到列表页
 		 $this->redirect('/index/Generalize/exclusive_list');die;
 	}
+	#删除图片
+	public function removeimg(){
+		#查出数据表列里的多图值
+		$where['generalize_id'] = input("generalize_id");
+		$generalize = Generalizes::where($where)->find();
+		#把多图转换成数组
+		$imgarr = explode( "#",$generalize['generalize_thumb']);
+		#获取要删除图片的key值
+		$imgkey = input("key");
+		#删除图片
+		@unlink(".".$imgarr[$imgkey]);
+		unset($imgarr[$imgkey]);
+		$data['generalize_thumb'] = implode("#", $imgarr);
+		#修改数据库字段
+		$result = Generalizes::where($where)->update($data);
+		if($result){
+			exit(json_encode(array("code"=>200,"msg"=>"操作成功")));
+		}else{
+			exit(json_encode(array("code"=>400,"msg"=>"操作失败")));
+		}
+	}
 }

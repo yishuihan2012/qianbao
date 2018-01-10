@@ -1,6 +1,9 @@
 @extends('admin/layout/layout_main')
 @section('title','会员列表管理~')  
 @section('wrapper')
+ <style>
+  .content td{vertical-align: middle;}
+ </style>
 <blockquote>
 	<form action="" method="post">
   <div class="input-group" style="width: 180px;float: left;margin-right: 10px;">
@@ -63,16 +66,15 @@
   </thead>
     <tbody>
     @foreach($member_list as $val)
-      <tr>
+      <tr class="content">
           <td>{{$val->member_id}}</td>
           <td>{{$val->member_nick}}</td>
           <td>{{$val->member_mobile}}</td>
-          <td><img src="{{$val->member_image}}" data-toggle="lightbox"  class="img-circle" style="max-width: 50px;"></td>
+          <td><img src="{{$val->member_image}}" data-toggle="lightbox"  class="img-circle" style="max-width: 40px;"></td>
           <td>{{state_preg($val->member_cert,1,'实名')}}</td>
           <td>{{$val->group_name}}</td>
           <td>{{$val->member_creat_time}}</td>
-          <td>@if($val->login_state==1)正常@else封停@endif
-                </td>
+          <td>{{$val->login_state==1 ? '正常' : '封停'}}</td>
           <td>
             <div class="btn-group">
             <button class="btn btn-sm" data-toggle="modal" data-remote="{{url('/index/member/info/id/'.$val->member_id)}}"  type="button">查看详情</button>

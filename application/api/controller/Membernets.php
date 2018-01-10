@@ -96,24 +96,26 @@
       *  @datetime    2017-12-25 14:36:05
       *  @param   $member=要入网的会员   ☆☆☆::使用中
       *  成功 返回 数组 0、appid 1、companycode 2、secretkey 3、session
-      *  失败 返回false
+      *  失败 返回 接口返回的失败说明
       **/
       public function rongbangnet(){
          #定义请求报文组装
          $arr=array(
-               'companyname'    =>$this->member->member_nick,//$this->membercard->card_name.rand(1000,9999),山东联硕支付技术有限公司济南分公司（无积分快捷）
-               // 'companyname'    =>"test".time(),
-               // 'companycode'     =>$this->member->member_mobile,
-               'companycode'     =>$this->member->member_mobile,
-               'accountname'      =>$this->membercard->card_name,
-               'bankaccount'       =>$this->membercard->card_bankno,
-               'bank'                   =>$this->membercard->card_bank_address,
-               "bankcode"          =>$this->membercard->card_bank_lang,
-               "accounttype"      =>"1",
-               "bankcardtype"    =>"1",
-               'mobilephone'      =>$this->membercard->card_phone,
-               'idcardno'            =>$this->membercard->card_idcard,
-               'address'             =>"山东省济南市天桥区泺口皮革城",
+          //全平台唯一 加通道id以区分
+           'companyname'    =>$this->membercard->card_name . $this->passway->passageway_id .rand(100,999),
+           // 'companyname'    =>"test".time(),
+           // 'companycode'     =>$this->member->member_mobile,
+          //全平台唯一 加通道id以区分
+           'companycode'     =>$this->member->member_mobile . $this->passway->passageway_id.rand(100,999),
+           'accountname'      =>$this->membercard->card_name,
+           'bankaccount'       =>$this->membercard->card_bankno,
+           'bank'                   =>$this->membercard->card_bank_address,
+           "bankcode"          =>$this->membercard->card_bank_lang,
+           "accounttype"      =>"1",
+           "bankcardtype"    =>"1",
+           'mobilephone'      =>$this->membercard->card_phone,
+           'idcardno'            =>$this->membercard->card_idcard,
+           'address'             =>"山东省济南市天桥区泺口皮革城",
          );
         $data=rongbang_curl($this->passway,$arr,'masget.webapi.com.subcompany.add');
         if($data['ret']==0){
@@ -121,20 +123,21 @@
           #信息顺序 0、appid 1、companycode 2、secretkey 3、session
           $passageway_no=$data['data']['appid'].','.$data['data']['companycode'].','.$data['data']['secretkey'].','.$data['data']['session'];
           $res=MemberNet::where(['net_member_id'=>$this->member->member_id])->setField($this->passway->passageway_no, $passageway_no);
-          return $passageway_no;
+            return true;
         }elseif($data['ret']==34){
           //34 为该商户商户名称已存在 调用该商户的信息
           $data=$this->rongbang_getinfo();
-          if($data){
+          if(is_array($data)){
             //存储拉取的商户信息
             $passageway_no=$data['appid'].','.$data['companycode'].','.$data['secretkey'].','.$data['session'];
             $res=MemberNet::where(['net_member_id'=>$this->member->member_id])->setField($this->passway->passageway_no, $passageway_no);
-            return $passageway_no;
+        var_dump($data);die;
+            return true;
           }else{
-            
+            return $data;
           }
         }else{
-          // return false;
+          return $data['message'];
         }
         var_dump($data);die;
       }
@@ -147,8 +150,7 @@
            // var_dump($arr);die;
           $data=rongbang_curl($this->passway,$arr,'masget.webapi.com.subcompany.get');
           if($data['ret']!=0){
-        var_dump($data);die;
-            return false;
+            return $data['message'];
           }else{
             return $data['data'];
           }
@@ -180,10 +182,16 @@
         ];
          // var_dump($arr);die;
         $data=rongbang_curl(rongbang_foruser($this->member,$this->passway),$arr,'masget.pay.collect.router.treaty.apply');
+        // var_dump($data);die;
          if($data['ret']==0){
-          return $data['data'];
+            //$arr=$data['data']['html'];
+         
+            //$arr=urlsafe_b64decode($data['data']['html']);
+           //$arr=base64_decode($data['data']['html']);
+           var_dump($data['data']['html']);die;
+          // return $data['data'];
          }else{
-          return false;
+          return $data['message'];
          }
       }
       #荣邦1.6.2.确认开通快捷协议
@@ -199,7 +207,7 @@
           db('member_credit_pas')->where(['member_credit_pas_info'=>$treatycode,'member_credit_pas_pasid'=>$this->passway->passageway_id])->update(['member_credit_pas_status'=>1]);
           return true;
         }else{
-          return false;
+          return $data['message'];
         }
       }
       #荣邦 1.6.3.查询快捷协议

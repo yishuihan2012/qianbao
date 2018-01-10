@@ -227,11 +227,11 @@ class CashOut
 		 	 if(!$member_net || $member_net[$this->passway_info->passageway_no]=="")
 		 	 {
 		 	 	 $method=$this->passway_info->passageway_method;
-		 	 	 $userinfo=$membernetObject->$method();
-		 	 	 if(!$userinfo)
-		 	 	 	 return  ['code'=>462]; //入网失败
+		 	 	 $res=$membernetObject->$method();
+		 	 	 if($res!==true)
+		 	 	 	 return  ['code'=>462,'msg'=>$res]; //入网失败
 		 	 }else{
-		 	 	$userinfo=$member_net[$this->passway_info->passageway_no];
+		 	 	// $userinfo=$member_net[$this->passway_info->passageway_no];
 		 	 }
 	 	 }
 	 	 //封顶的这个APPID无需开通快捷支付即可使用
@@ -261,8 +261,8 @@ class CashOut
 		 	 	}else{
 		 	 		//没有数据，调用开通快捷支付接口
 			 	 	$result=$membernetObject->rongbang_openpay($this->card_info->card_id);
-			 	 	if(!result)
-			 	 		return  ['code'=>500]; 
+			 	 	if(is_string($result))
+			 	 		return  ['code'=>500,'msg'=>$result]; 
 		 	 		$data=['member_credit_pas_info']=$result['treatycode'];
 		 	 		//将返回的数据，更新本地数据库
 		 	 		if($member_credit_pas){

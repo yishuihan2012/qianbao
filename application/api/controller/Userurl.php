@@ -512,6 +512,11 @@ class Userurl extends Controller
     //客服电话信息
     $phoneInfo = CustomerService::customerinfo("电话");
     $this->assign("phoneInfo",$phoneInfo);
+
+  	
+  	$server['working_hours'] =  System::getName('working_hours');
+  	$server['phone'] = System::getName('contact_tel');//公司联系电话
+  	$this->assign("server",$server);
     return $this->fetch("api/logic/web_contact_us");
   }
   /**
@@ -597,9 +602,9 @@ class Userurl extends Controller
   	$server['qq']=CustomerService::where('service_title','QQ')->find();
 
   	$server['tel']=CustomerService::where('service_title','电话')->find();
-  	$server['company_address'] = System::where(['system_value' => "公司地址"])->find();
-  	$server['working_hours'] = System::where(['system_value' => "工作时间"])->find();
-  	// dump($server['company_address']) ;
+  	$server['company_address'] = System::getName('company_address');
+  	$server['working_hours'] = System::getName('working_hours');
+  	$server['phone'] = System::getName('contact_tel');//公司联系电话
   	$this->assign('data', $data);
   	$this->assign('server', $server);
   	return view("Userurl/about_us");
