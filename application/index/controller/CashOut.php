@@ -214,7 +214,7 @@ class CashOut
 	 * @date    2017-12-23 16:25:05
 	 * @version $Bill$
 	 */
-	 public function rongbangcash($tradeNo,$price,$description='荣邦快捷支付')
+	 public function rongbangcash($tradeNo,$price,$description='快捷支付')
 	 {
 	 	// 初始化类
  	 	 $membernetObject=new Membernets($this->member_infos->member_id, $this->passway_info->passageway_id);
@@ -243,14 +243,14 @@ class CashOut
 		 	 //是否需要调用开通快捷支付变量
 		 	 $needToOpen=false;
 		 	 //从数据库检查是否开通
-		 	 if(!$member_credit_pas ||$member_credit_pas['member_credit_pas_info'] || $member_credit_pas['member_credit_pas_status']==0){
+		 	 if(!$member_credit_pas || !$member_credit_pas['member_credit_pas_info'] || $member_credit_pas['member_credit_pas_status']==0){
 		 	 	//通用数据
 	 	 		$data=[
 	 	 			'member_credit_pas_creditid'=>$this->card_info->card_id,
 	 	 			'member_credit_pas_pasid'=>$this->passway_info->passageway_id,
 	 	 		];
 		 	 	//如果有 treatycode 调用查询接口
-		 	 	if(isset($member_credit_pas['member_credit_pas_info']) && $member_credit_pas['member_credit_pas_info']!=''){
+		 	 	if(isset($member_credit_pas['member_credit_pas_info']) && $member_credit_pas['member_credit_pas_info']!=1){
 			 	 	//调用接口检查是否开通
 			 	 	$result=$membernetObject->rongbang_check($member_credit_pas['member_credit_pas_info']);
 			 	 	if(is_array($result)){
@@ -306,26 +306,30 @@ class CashOut
 	 	 if(is_array($result)){
             $res= [
               	'code'=>200,
-              	'msg'=>'荣邦快捷支付订单调用成功',
+              	'msg'=>'快捷支付订单调用成功',
             ];
-	 	 	if($result['ishtml']==1){
-            	$res['data']=[
-            		'type'=>2,
-            		'url'=>base64_decode($result['html']),
-            	];
-	 	 	}else{
-	 	 		if($result['sendmessage']==1){
-	            	$res['data']=[
-	            		'type'=>1,
-	            		'url'=>request()->domain() . "/api/Userurl/passway_success/ordercode/".$result['ordercode']."/card_id/".$this->card_info->card_id."/memberId/" . $this->member_infos->member_id . "/passwayId/" . $this->passway_info->passageway_id,
-	            	];
-	 	 		}else{
+	 	 	if($result['ishtml']==2){
+	 	 		w_log($result);
+	 	 		w_log($result['sendmessage']);
+	 	 		if($result['sendmessage']===2){
 	 	 			//无需短信验证的情况 返回一个成功提示页
 	            	$res['data']=[
 	            		'type'=>1,
 	            		'url'=>request()->domain() . "/api/Userurl/passway_success",
 	            	];
+	 	 		}else{
+	 	 			//需要短信验证的情况 返
+	            	$res['data']=[
+	            		'type'=>1,
+	            		'url'=>request()->domain() . "/api/Userurl/passway_rongbang_pay/ordercode/".$result['ordercode']."/card_id/".$this->card_info->card_id."/memberId/" . $this->member_infos->member_id . "/passwayId/" . $this->passway_info->passageway_id,
+	            	];
 	 	 		}
+	 	 	}else{
+	            //返回网页
+            	$res['data']=[
+            		'type'=>2,
+            		'url'=>base64_decode($result['html']),
+            	];
 	 	 	}
             //写入套现订单
             $order_result=$this->writeorder($tradeNo, $price, $price*($this->also->item_rate/100) ,$description,$result['payorderid']);

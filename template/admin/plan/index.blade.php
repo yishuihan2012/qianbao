@@ -8,14 +8,6 @@
   	<div class="panel-body">
   		<form action="" name="myform" class="form-group" method="get">
 
-		</form>
-
-  	</div>
-</div>
-<div class="list">
-  <header>
-    <h3><i class="icon-list-ul"></i> 订单列表 <small>共 <strong class="text-danger">{{$count}}</strong> 条</small></h3>
-  </header>
    <form action="" method="post">
     <div class="input-group" style="width: 140px;float: left;margin-right: 20px;">
     <span class="input-group-addon">名称</span>
@@ -57,20 +49,32 @@
 </div>
   <button class="btn btn-primary" type="submit">搜索</button>
 </form>
+
+
+		</form>
+  	</div>
+</div>
+<div class="list">
+  <header>
+    <h3><i class="icon-list-ul"></i> 订单列表 <small>共 <strong class="text-danger">{{$count}}</strong> 条</small></h3>
+  </header>
+
 <table class="table table-striped table-hover">
   	<thead>
 	    <tr>
 	      	<th>还款会员</th>
 	      	<th>还款会员手机号</th>
-	      	<th>代还会员</th>
-	      	<th>代还会员手机号</th>
-	      	<th>需还款信用卡</th>
+	      	<th>计划代号</th>
+	      	<th>需还信用卡</th>
 	      	<th>需还款总额</th>
 	      	<th>还款次数</th>
 	      	<th>已还款总额</th>
 	      	<th>剩余总额</th>
 	      	<th>手续费</th>
-	      	<th>计划状态</th>
+	      	<th>开始还款日期</th>
+	      	<th>最后还款日期</th>
+          <th>计划状态</th>
+          <!-- <th>还款失败原因</th> -->
 	      	<th>操作</th>
 	      
 	    </tr>
@@ -83,19 +87,20 @@
   		@foreach($list as $k => $v)
 	    <tr>
 	    	
-	      	<td>{{$v['o_member_nick']}}</td>
-	      	<td>{{$v['o_member_mobile']}}</td>
 	      	<td>{{$v['member_nick']}}</td>
 	      	<td>{{$v['member_mobile']}}</td>
-	      	<td>{{$v['generation_card']}}</td>
+	      	<td>{{$v['generation_no']}}</td>
+	      	<td>{{$v['card_bankno']}}</td>
 	      	<td>{{$v['generation_total']}}</td>
 	      	<td>{{$v['generation_count']}}</td>
 	      	<td>{{$v['generation_has']}}</td>
 	      	<td>{{$v['generation_left']}}</td>
 	      	<td>{{$v['generation_pound']}}</td>
-	      	<td>@if($v['generation_state']==2) 还款中 @elseif($v['generation_state']==3)还款结束 @elseif($v['generation_state']==-1)还款失败 @endif</td>
-	      	
-	      	<td><button class="btn btn-sm" data-toggle="modal" data-remote="{{url('/index/Plan/info/id/'.$v['order_id'])}}" type="button">查看详情</button></td>
+	      	<td>{{$v['generation_start']}}</td>
+          <td>{{$v['generation_end']}}</td>
+	      	<td>@if($v['generation_state']==2) 还款中 @elseif($v['generation_state']==3)还款结束 @elseif($v['generation_state']==-1)还款失败 @else 待确认 @endif</td>
+	      	<!-- <td>{{$v['generation_desc']}}</td> -->
+	      	<td><a class="btn btn-sm"  href="{{url('/index/Plan/info/id/'.$v['generation_id'])}}" >查看详情</a></td>
 	    </tr>
 	    	@endforeach
   	</tfoot>

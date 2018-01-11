@@ -31,7 +31,7 @@ class Push
     {
         try{
             // $this->client = new JPushs(Config::get('jpush.api_key'), Config::get('jpush.api_master'));
-            $this->client =new JPushs(System::getName('jpush_api_key'),System::getName('jpush_api_master'))
+            $this->client =new JPushs(System::getName('jpush_api_key'),System::getName('jpush_api_master'));
             $this->options = [
                 // sendno: 表示推送序号，纯粹用来作为 API 调用标识，
                 // API 返回时被原样返回，以方便 API 调用方匹配请求与返回

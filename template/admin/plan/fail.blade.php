@@ -7,16 +7,7 @@
 <div class="panel">
   	<div class="panel-body">
   		<form action="" name="myform" class="form-group" method="get">
-
-		</form>
-
-  	</div>
-</div>
-<div class="list">
-  <header>
-    <h3><i class="icon-list-ul"></i> 订单列表 <small>共 <strong class="text-danger">{{$count}}</strong> 条</small></h3>
-  </header>
-   <form action="" method="post">
+  <form action="" method="post">
     <div class="input-group" style="width: 140px;float: left;margin-right: 20px;">
     <span class="input-group-addon">名称</span>
     <input type="text" class="form-control" name="member_nick" value="{{$r['member_nick']}}" placeholder="名称" >
@@ -57,6 +48,16 @@
 </div>
   <button class="btn btn-primary" type="submit">搜索</button>
 </form>
+
+
+		</form>
+  	</div>
+</div>
+<div class="list">
+  <header>
+    <h3><i class="icon-list-ul"></i> 订单列表 <small>共 <strong class="text-danger">{{$count}}</strong> 条</small></h3>
+  </header>
+ 
 <table class="table table-striped table-hover">
   	<thead>
 	    <tr>

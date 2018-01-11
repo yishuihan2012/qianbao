@@ -878,7 +878,7 @@ function pad_or_unpad($str, $ext,$pad='pkcs5')
      return  mb_substr( $str, $start, $length ) ;
     }
     #搜索条件
-       function memberwhere($r){
+    function memberwhere($r){
        $where=array();
       
        //手机号
@@ -922,7 +922,12 @@ function pad_or_unpad($str, $ext,$pad='pkcs5')
 
     #荣邦支付加密
     function rongbang_aes($key,$arr){
-      $encrypted = mcrypt_encrypt(MCRYPT_RIJNDAEL_128, $key, json_encode($arr,JSON_UNESCAPED_UNICODE|JSON_PRETTY_PRINT), MCRYPT_MODE_CBC, $key);
+      if(is_array($arr)){
+        // w_log(json_encode($arr,JSON_UNESCAPED_UNICODE|JSON_PRETTY_PRINT));
+        $encrypted = mcrypt_encrypt(MCRYPT_RIJNDAEL_128, $key, json_encode($arr,JSON_UNESCAPED_UNICODE|JSON_PRETTY_PRINT), MCRYPT_MODE_CBC, $key);
+      }else{
+        $encrypted = mcrypt_encrypt(MCRYPT_RIJNDAEL_128, $key, $arr, MCRYPT_MODE_CBC, $key);
+      }
        $base64str= base64_encode($encrypted);
        $base64str = str_replace("+", "-",  $base64str);
        $passParam = str_replace("/","_",  $base64str);
@@ -980,9 +985,10 @@ function pad_or_unpad($str, $ext,$pad='pkcs5')
          // 'target_appid' =>'400467885',
          'timestamp'  =>time(),
       );
+        // echo (json_encode($array));die;
            #连接键值生成sign
       $getData=rongbang_sign($passway->passageway_pwd_key,$array,'https://gw.masget.com:27373/openapi/rest');
-           // var_dump($getData);die;
+       // echo $getData;die;
        $curl = curl_init();
         curl_setopt($curl, CURLOPT_URL, $getData);
         curl_setopt($curl, CURLOPT_HEADER, 0);

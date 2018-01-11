@@ -242,26 +242,64 @@
        $credit=db('member_creditcard')->where('card_id',$card_id)->find();
         $arr=[
           'ordernumber'=>$tradeNo,
-          'body'=>$description,
+          'body'=>'银联快捷支付',
           'amount'=>$price*100,//单位分
+          'subpaymenttypeid'=>25,
           'businesstype'=>1001,
-          'companyid'=>$companyid,
           'paymenttypeid'=>25,
-          // 'bankaccount'=>$this->membercard->card_bankno,
-          // 'accounttype'=>1,
-          'certificatetype'=>1,
-          // 'subpaymenttypeid'=>25,
-          // 'mobilephone'=>$this->member->member_mobile,
-          'businesstime'=>date('YmdHis'),
+          // 'businesstime'=>date('YmdHis'),
           "backurl"=>request()->domain(). "/api/Userurl/passway_rongbang_paycallback/passageway_id/".$this->passway->passageway_id . "/member_id/" . $this->member->member_id,
           'payextraparams'=>[
             'treatycode'=>$treatycode,
           ],
-          // 'accounttype'=>1,//对私
-          // 'bankaccount'=>1,//对私
         ];
-        echo (json_encode($arr));die;
+        // 荣邦发来的demo json
+        $arr='{
+  "amount": "1020",
+  "subpaymenttypeid": "25",
+  "backurl": "http://gongke.iask.in:21339/api/Userurl/passway_rongbang_paycallback/passageway_id/10/member_id/44",
+  "body": "订单收款-3301073122471101",
+  "businesstype": "1001",
+  "payextraparams": "{\"treatycode\":\"701218011013424102\"}",
+  "paymenttypeid": "25",
+  "ordernumber": "test201801101523"
+}';
+        // 拼接版
+        // $arr="{
+        //   ordernumber:".$tradeNo.",
+        //   body:".$description.",
+        //   amount:".$price*100.",
+        //   businesstype:1001,
+        //   companyid:".$companyid",
+        //   paymenttypeid:25,
+        //   businesstime:".date('YmdHis');//.",
+        //   backurl:".request()->domain(). "/api/Userurl/passway_rongbang_paycallback/passageway_id/".$this->passway->passageway_id . "/member_id/" . $this->member->member_id.",
+        //   payextraparams:{
+        //     treatycode:".$treatycode.",
+        //   }
+        // }";
+
+        // $arr="{ordernumber:" . $tradeNo . ",body:" . $description . ",amount:" . $price*100 . ",businesstype:1001,companyid:" . $companyid.",paymenttypeid:25,businesstime:".date('YmdHis').",backurl:".request()->domain(). "/api/Userurl/passway_rongbang_paycallback/passageway_id/".$this->passway->passageway_id . "/member_id/" . $this->member->member_id.",payextraparams:{treatycode:".$treatycode.",}}";
+        
+        // $arr='{"ordernumber":' . $tradeNo . ',"body":' . $description . ',"amount":' . $price*100 . ',"businesstype":1001,"subpaymenttypeid":25,"paymenttypeid":25,"backurl":"'.request()->domain(). '/api/Userurl/passway_rongbang_paycallback/passageway_id/'.$this->passway->passageway_id . '/member_id/' . $this->member->member_id.'","payextraparams":{\"treatycode\":\"'.$treatycode.'\"}}';
+
+        //由demo而来的终极拼接版
+        $arr='{
+          "amount": "'.$price*100 .'",
+          "subpaymenttypeid": "25",
+          "backurl": "'.request()->domain(). '/api/Userurl/passway_rongbang_paycallback/passageway_id/' . $this->passway->passageway_id . '/member_id/' . $this->member->member_id .'",
+          "body": "'.$description.'",
+          "businesstype": "1001",
+          "payextraparams": "{\"treatycode\":\"'.$treatycode.'\"}",
+          "paymenttypeid": "25",
+          "ordernumber": "'.$tradeNo.'"
+        }';
+          // "backurl": "'.request()->domain(). '/api/Userurl/passway_rongbang_paycallback/passageway_id/' . $this->passway->passageway_id . '/member_id/' . $this->member->member_id .'",
+
+        // echo ($arr);die;
+        // echo (json_encode($arr));die;
           $data=rongbang_curl(rongbang_foruser($this->member,$this->passway),$arr,'masget.pay.compay.router.back.pay');
+          // $data=rongbang_curl($this->passway,$arr,'masget.pay.compay.router.back.pay');
           if($data['ret']==0){
             return $data['data'];
           }else{
@@ -275,10 +313,12 @@
           'authcode'=>$authcode,
         ];
         $data=rongbang_curl($this->passway,$arr,'masget.pay.compay.router.confirmpay');
+          w_log($data);
         if($data['ret']==0){
           $data=$data['data'];
           //支付成功 更新套现订单表状态
           $order=db('cash_order')->where('order_no',$data['ordernumber'])->find();
+          dump($order);die;
           //仅在待支付情况下操作
           if($order['order_state']==1){
             db('cash_order')->where('order_no',$data['ordernumber'])->update(['order_state'=>2]);
@@ -286,9 +326,9 @@
             $fenrun= new \app\api\controller\Commission();
             $fenrun_result=$fenrun->MemberFenRun($this->member->member_id,$order['order_money'],$this->passway->passageway_id,'交易手续费分润');
           }
-          return true;
+          return $data['data'];
         }else{
-          return false;
+          return $data['message'];
         }
       }
 

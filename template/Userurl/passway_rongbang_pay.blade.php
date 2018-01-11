@@ -11,8 +11,41 @@
 		<link href="/static/css/page.css" rel="stylesheet" />
 		<link href="/static/css/themes.css" rel="stylesheet"/>
 	</head>
+
 	<body>
-		<div class="mui-content wrap3">
+		<header class="wrap bg-blue dis-flex-be white-color">
+	  	<span></span>
+	  	<span><strong>订单支付</strong></span>
+	  	<img src="/static/images/order_pay.png" class="media-pic">
+	  </header>
+  <div class="mui-content order-payment">
+  	<ul class="mui-table-view bg-color">
+	    <li class="mui-table-view-cell bg-w">
+	    	结算卡号：<span class="orange-color">6215****2971</span>
+	    </li>
+	    <li class="mui-table-view-cell bg-w">
+	    	结算卡持卡人：<span class="invalid-color">许*</span>
+	    </li>
+	    <li class="mui-table-view-cell bg-w">
+	    	身份证号：<span class="invalid-color">370****2832</span>
+	    </li>
+	    <li class="mui-table-view-cell bg-w bor-bot">
+	    	金额：<span class="normal-color">500.00</span>
+	    </li>
+	    <li class="mui-table-view-cell bg-w bor-bot">
+	    	支付卡：<span class="normal-color">6225****8847</span>
+	    </li>
+	    <li class="mui-table-view-cell bg-w bor-bot">
+	    	手机号：<span class="normal-color">175****5504</span>
+	    </li>
+	    <li class="mui-table-view-cell bg-w">
+	    	验证码：
+	    	<input type="text" placeholder="请输入验证码" name="authcode" value="" class="my-code"/>
+	    	<!--<input type="button" class="code-btn mui-pull-right" value="发送验证码" id="sendCode">-->
+	    </li>
+	</ul>
+
+		<!-- <div class="mui-content wrap3">
 			<h1 style="text-align: center;">请输入验证码</h1>
 			<form class="mui-input-group bg-color" style="margin-top: 50vh">
 				<div class="bg-w f-br-top">
@@ -21,18 +54,30 @@
 				    	<input type="text" name="authcode" class="mui-input-clear authcode" placeholder="请输入验证码">
 				    </div>
 			    </div>
-			</form>
+			</form> -->
 			<div class="space-up">
-				<p><a class="my-btn-blue4" id="regBtn">立即申请</a></p>
+				<!-- <p><a class="my-btn-blue4 authcode" id="regBtn">立即申请</a></p> -->
 			</div>
 		</div>
+		 <div id="loading" class="loading-box hid-load">
+    <img src='/static/images/loading.gif'/>
+  </div>
+  <!-- <input type="button" value="确认付款" class="my-confirm" id="myConfirm"> -->
+	<a class="my-confirm" id="regBtn">确认付款</a>
+  </div>
+		<script src="/static/js/mui.min.js"></script>
+		<script type="text/javascript">
+			mui.init()
+		</script>
+	</body>
+
+</html>
 		<script src="/static/js/mui.min.js"></script>
 		<script src="/static/js/jquery-2.1.4.min.js"></script>
 		<script src="/static/js/common.js"></script>
 		<script type="text/javascript">
 			$(function(){
 		      var u = navigator.userAgent;
-			// new QRCode(document.getElementById("qrcode"), "{{$url}}");
 		      var isAndroid = u.indexOf('Android') > -1 || u.indexOf('Adr') > -1; //android终端
 		      var isiOS = !!u.match(/\(i[^;]+;( U;)? CPU.+Mac OS X/); //ios终端
 				mui(document).on('tap','#regBtn',function(){
@@ -48,7 +93,7 @@
 						$.post('',data,function(res){
 							if(res==1){
 								alert('成功申请快捷支付！')
-							}elseif(res==2){
+							}else if(res==2){
 								alert('验证码异常！')
 							}else{
 								alert('申请快捷支付失败！')

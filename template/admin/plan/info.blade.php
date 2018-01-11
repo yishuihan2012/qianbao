@@ -1,125 +1,96 @@
  <!--dialog Title-->
- <div class="modal-header animated fadeInLeft">
-	 <div class="row">
-        	 <div class="col-sm-8"><h4>还款计划详情</h4></div>
-        	 <div class="col-sm-4">
-            	 <div class="text-right">
-	                 <span class="label label-dot label-primary"></span>
-	                 <span class="label label-dot label-success"></span>
-	                 <span class="label label-dot label-info"></span>
-	                 <span class="label label-dot label-warning"></span>
-	                 <span class="label label-dot label-danger"></span>
-            	 </div>
-        	 </div>
-    	 </div>
-    	 
- </div>
+@extends('admin/layout/layout_main')
+@section('title','订单列表管理~')
+@section('wrapper')
+<style>
+	 h4 > a,.pull-right > a{color:#145ccd;}
+</style>
 
- <!--dialog Content-->
- <div class="modal-content animated fadeInLeft">
-	 <form action=" " method="post" class="form-group" id="myform">
-	 <input type="hidden" name="id" value="">
-	
-	 <div style="margin-bottom: 5px">
-	 <table class="table table-bordered table-hover table-striped" style="width:60%;float: left;margin-bottom: 0;margin-left: 30px">
-		 <tr>
-			 <td>还款会员</td>
-			 <td>{{$info['o_member_nick']}}</td>
-		 </tr>
-		 <tr>
-			 <td>还款会员手机号</td>
-			 <td>{{$info['o_member_mobile']}}</td>
-		 </tr>
-		 <tr>
-			 <td>代还会员</td>
-			 <td>{{$info['member_nick']}}</td>
-		 </tr>
-		 <tr>
-			 <td>代还会员手机号</td>
-			 <td>{{$info['member_mobile']}}</td>
-		 </tr>
-		  <tr>
-			 <td>需还款信用卡</td>
-			 <td>{{$info['generation_card']}}</td>
-		 </tr>
-		 <tr>
-			 <td>需还款总额</td>
-			 <td>{{$info['generation_total']}}</td>
-		 </tr>
-		 <tr>
-			 <td>还款次数</td>
-			 <td>{{$info['generation_count']}}</td>
-		 </tr>
-		 <tr>
-			 <td>已还款总额</td>
-			 <td>{{$info['generation_has']}}</td>
-		 </tr>
-		  <tr>
-			 <td>剩余总额</td>
-			 <td>{{$info['generation_left']}}</td>
-		 </tr>
-		 <tr>
-			 <td>手续费</td>
-			 <td>{{$info['generation_pound']}}</td>
-		 </tr>
-		 <tr>
-			 <td>计划状态</td>
-			 <td>@if($info['generation_state']==2) 还款中 @elseif($info['generation_state']==3)还款结束 @elseif($info['generation_state']==-1)还款失败 @endif</td>
-		 </tr>
-		  <tr>
-			 <td>最近还款时间</td>
-			 <td>{{$info['generation_edit_time']}}</td>
-		 </tr>
-		 <tr>
-			 <td>订单类型</td>
-			 <td>@if($info['order_type']==1) 消费  @else 还款 @endif</td>
-		 </tr>
-		 <tr>
-			 <td>订单金额</td>
-			 <td>{{$info['order_money']}}</td>
-		 </tr>
-		 <tr>
-			 <td>订单手续费</td>
-			 <td>{{$info['order_pound']}}</td>
-		 </tr>
-		  <tr>
-			 <td>订单状态</td>
-			 <td>@if($info['order_status']==1) 待执行 @elseif($info['generation_state']==-1)失败 @elseif($info['generation_state']==2)成功 @else 取消 @endif</td>
-		 </tr>
-		 <tr>
-			 <td>订单描述</td>
-			 <td>{{$info['order_desc']}}</td>
-		 </tr>
-		  <tr>
-			 <td>执行时间</td>
-			 <td>{{$info['order_time']}}</td>
-		 </tr>
-	 </table>
-	 
-	 
-	 
+<section>
+<hr/>
+<div class="list">
+  <header>
+    <h3><i class="icon-list-ul"></i> 信用卡列表 <small>共 <strong class="text-danger">{{count($list)}}</strong> 条</small></h3>
+  </header>
+   
 
-	 </form>
- </div>
 
- <!--dialog Button-->
- <div class="modal-footer animated fadeInLeft">
- 	
- </div>
- <script>
-	 $(".save").click(function(){
-		 $("#myform").submit()
-	 })
-	 //移除背景多余遮罩
-	 $('.backdrop').click(function(){
-	 	$('.modal-backdrop').remove();
-	 })
-	 $(function(){
-	 	$('.disables').click(function(){
- 		var url=$(this).attr('data-url');
+</form>
+  <div class="items items-hover">
+      <!-- HTML 代码 -->
+        <table class="table datatable">
+           <thead>
+           	<tr>
+		 		<th>通道</th>
+		 		<th>会员名称</th>
+		 		<th>订单消费类型</th>
+		 		<th>信用卡号</th>
+		 		<th>订单金额</th>
+		 		<th>订单手续费</th>
+		 		<th>订单状态</th>
+		 		<th>订单描述</th>
+		 		<th>订单更新时间</th>
+		 		<th>订单创建时间</th>
+		 		<th>操作</th>
+		 		<!-- <th>返回订单号</th>
+		 		<th>返回结果描述</th>
+		 		<th>返回状态</th> -->
+	 	    </tr>
+	 	</thead>
+	 	 <tbody>
+	 	@foreach($list as $key => $value)
+		 <tr>
+		 	<td>{{$value->passageway_name}}</td>
+			 <td>{{$value->member_nick}}</td>
+			 <td>@if($value->order_type == 1) 消费 @else 还款 @endif</td>
+			 <td>{{$value->order_card}}</td>
+			 <td>{{$value->order_money}}</td>
+			 <td>{{$value->order_pound}}</td>
+			 <td>@if($value->order_status == 1) 待执行 @elseif($value->order_status == 2) 成功 @elseif($value->order_status == 3) 取消 @elseif($value->order_status ==4) 带查证 @else 处理中 @endif </td>
+			 <td>{{$value->order_desc}}</td>
+			 <td>{{$value->order_edit_time}}</td>
+			 <td>{{$value->order_add_time}}</td>
+			 <td>
+			 	@if($value->order_status == 3)
+			  	<a class="remove" href="#" data-url="{{url('index/Plan/order_status')}}"><i class="icon-pencil"></i> 继续执行 </a>
+			  	@endif
+			  	@if($value->order_status == 1)
+			  	<a class="remove" href="#" data-url="{{url('index/Plan/order_status')}}"><i class="icon-pencil"></i> 取消执行 </a>
+			  	@endif
+
+			 </td>
+			 <!-- <td>{{$value->back_tradeNo}}</td>
+			 <td>{{$value->back_statusDesc}}</td>
+			 <td>{{$value->back_status}}</td> -->
+		 </tr>
+		 @endforeach
+	    </tbody>
+	</table>
+  </div>
+  <a  href="{{url('/index/server_model/index')}}" >返回</a>
+</div>
+</section>
+<script>
+ 
+  $(document).ready(function(){
+     	 $('.menu .nav .active').removeClass('active');
+    	 $('.menu .nav li.plan').addClass('active');
+    	 $('.menu .nav li.plan-manager').addClass('show');
+
+    	 $(".parent li a").click(function(){
+    	 	$("input[name='article_parent']").val($(this).attr('data-id'));
+    	 	$("input[name='article_category']").val(0);
+    	 	$("#myform").submit();
+    	 })
+    	 $(".son li a").click(function(){
+    	 	$("input[name='article_category']").val($(this).attr('data-id'));
+    	 	$("#myform").submit();
+    	 })
+    	 $(".remove").click(function(){
+    	 	 var url=$(this).attr('data-url');
 		 bootbox.confirm({
-		    title: "封停用户",
-		    message: "确定封停吗？",
+		    title: "删除信用卡",
+		    message: "确定删除信用卡? 删除后不可恢复!",
 		    buttons: {
 		        cancel: {label: '<i class="fa fa-times"></i> 点错'},
 		        confirm: {label: '<i class="fa fa-check"></i> 确定'}
@@ -129,6 +100,7 @@
 		    	 	window.location.href=url;
 		    }
 		 });
-	 	})
-	 })
- </script>
+    	 })
+});
+</script>
+@endsection

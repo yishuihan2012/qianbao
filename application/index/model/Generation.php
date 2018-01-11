@@ -36,7 +36,7 @@ class Generation extends Model{
        #关联模型 一对多关联 (creditcard) 关联还款卡表
       public function creditcard()
       {
-           return $this->hasOne('MemberCreditcard','card_bankno','generation_card')->bind('card_bankicon,card_bankname')->setEagerlyType(0);
+           return $this->hasOne('MemberCreditcard','card_bankno','generation_card')->bind('card_bankicon,card_bankno,card_bankname,card_idcard')->setEagerlyType(0);
       }
       #关联模型 一对多关联 (generation_order) 关联文章分类表
       public function generationOrder()
@@ -45,7 +45,7 @@ class Generation extends Model{
       }
       #关联代还用户名
       public function member(){
-        return $this->hasOne("Member","member_id","generation_member","m")->bind("member_nick,member_mobile");
+        return $this->hasOne("Member","member_id","generation_member")->bind("member_nick,member_mobile,member_creat_time,member_cert")->setEagerlyType(0);;
       }
       #关联还款会员名称
       public function members(){

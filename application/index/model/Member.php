@@ -33,7 +33,7 @@ class Member extends Model{
       #关联模型 一对一关联 (MemberCertification) 用户实名表
       public function membercert()
       {
-           return $this->hasOne('MemberCert','cert_member_id','member_id')->bind('cert_member_name,cert_member_idcard');
+           return $this->hasOne('MemberCert','cert_member_id','member_id')->bind('cert_member_name,cert_member_idcard,IdPositiveImgUrl,IdNegativeImgUrl,IdPortraitImgUrl');
       }
 
       #关联模型 一对一关联 (MemberLogin) 用户登录表
@@ -57,17 +57,23 @@ class Member extends Model{
       #关联模型 一对一关联 (MemberRelation) 用户推荐表
       public function memberRelation()
       {
-           return $this->hasOne('MemberRelation','relation_member_id','member_id');
+           return $this->hasOne('MemberRelation','relation_member_id','member_id')->bind('relation_member_id,relation_parent_id')->setEagerlyType(0);
       }
 
       #关联模型 一对一关联 (memberWallet) 用户钱包表
       public function memberWallet()
       {
-           return $this->hasOne('Wallet','wallet_member','member_id');
+           return $this->hasOne('Wallet','wallet_member','member_id')->setEagerlyType(0);
       }
 
-
-
+      #关联模型 一对多关联 (Upgrade) 用户升级订单表
+      public function memberUpgrade()
+      {
+           return $this->hasMany('Upgrade','upgrade_id','member_id')->bind('upgrade_state');
+      }
+      // public function memberCashcard(){
+      //   return $this->hasOne("Member")
+      // } 
       /**
        *  @version member_info method /返回会员信息
        *  @author $bill$(755969423@qq.com)

@@ -320,7 +320,7 @@
                              if($order_result && $order_result1 && $reimbur_result->save()!==false)
                              { 
                                    Db::commit();
-                                   return['code'=>200, 'msg'=> '计划创建成功~','data'=>['repaymentScheduleId'=>$Generation_result->generation_id,'repaymentScheduleUrl'=>$_SERVER['SERVER_NAME'].'/api/Userurl/repayment_plan_detail/order_no/'.$Generation_result->generation_id]];
+                                   return ['code'=>200, 'msg'=> '计划创建成功~','data'=>['repaymentScheduleId'=>$Generation_result->generation_id,'repaymentScheduleUrl'=>$_SERVER['SERVER_NAME'].'/api/Userurl/repayment_plan_detail/order_no/'.$Generation_result->generation_id]];
                              }else{
                                    Db::rollback();
                                    return ['code'=>472];      

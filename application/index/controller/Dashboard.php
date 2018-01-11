@@ -16,6 +16,7 @@ use app\index\model\Member;
 use app\index\model\CashOrder;
 use app\index\model\MemberGroup;
 use app\index\model\GenerationOrder;
+use app\index\model\Generation;
 class Dashboard extends Common
 {
 
@@ -37,7 +38,7 @@ class Dashboard extends Common
            $membergrouplist[$key]['membergroupcount'] = Member::where(['member_group_id'=>$value['group_id']])->count();
         }
         $where['generation_state'] = ['<>',1];
-        $this->assign('GenerationOrdercount', GenerationOrder::list( $where)['count']);
+        $this->assign('GenerationOrdercount', Generation::with("member,creditcard")->count());
     	$this->assign('data',$data);
         $this->assign('membergrouplist',$membergrouplist);
         return view('admin/dashboard/index');

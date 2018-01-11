@@ -522,6 +522,7 @@
       **/
       public function get_team_info()
       { 
+        
 
         if(!isset($this->param['group_id']) || empty($this->param['group_id']) || !isset($this->param['member_cert']))
             $this->error=314;
@@ -636,7 +637,7 @@
                 #如果不为空
                 if(!empty($passageway)){
                   // $data['group'][$key]['rate']='刷卡费率：'.$passagewayItem['item_rate'].'% 代还费率：'.$passagewayItem['item_also'].'%';
-                   $data['group'][$key]['rate']='刷卡费率低至：'.$passagewayItem['item_rate'].'% 代还费率低至：'.$passagewayItem['item_also'].'%'.$passagewayItem['item_also']."笔";
+                   $data['group'][$key]['rate']='刷卡费率低至：'.$passagewayItem['item_rate'].'% 代还费率低至：'.$passagewayItem['item_also'].'%'.$passagewayItem['item_also']."/笔";
                   $data['group'][$key]['des']=$passageway['passageway_desc'];
                   $data['group'][$key]['icon']=$value['group_thumb'];
                 }
@@ -715,16 +716,16 @@
            
           $Commission=Commission::with('member')->where('commission_member_id='.$this->param['uid'].' and commission_type='.$this->param['type'])->order('commission_id desc')->select();
       
-
+          
           foreach ($Commission as $key => $value) {
             $Commission[$key]['member_mobile']=Members::where(['member_id'=>$value['commission_childen_member']])->value('member_mobile');
-            if($value['commission_money']==0){
+            if($value['commission_money']<0.01){
               unset($Commission[$key]);
 
             }
             
           }
-        
+    
            return ['code'=>200, 'msg'=>'获取成功~', 'data'=>$Commission];
       }
       

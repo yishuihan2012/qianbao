@@ -83,7 +83,9 @@
               // var_dump($method);die;
            $DaoLong=$cashObject->$method(make_order(),$this->param['money']);
            // var_dump(123);die;
-           return $DaoLong;
+           if($DaoLong['code']=200)
+                return ["code" => 200, "msg" =>"请求成功" , "data" =>$DaoLong['data'] ];
+           return $DaoLong['code'];
       }
 
  }

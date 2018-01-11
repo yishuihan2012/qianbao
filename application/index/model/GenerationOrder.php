@@ -33,39 +33,12 @@ class GenerationOrder extends Model{
       {
            return $this->belongsTo('Generation','generation_id','order_no')->setEagerlyType(0);
       }
-      #获取还款列表
-      public static function list($where=array()){
-        //查询数据总条数
-        $list = Db::view("GenerationOrder")
-            ->view("Generation","*","Generation.generation_id=GenerationOrder.order_no")
-            ->view("Member","member_nick as o_member_nick,member_mobile as o_member_mobile","member_id=GenerationOrder.order_member")
-            ->view("Member m","member_nick,member_mobile","m.member_id=Generation.generation_member")
-            ->view("MemberCert","cert_member_id","cert_member_id=Member.member_id")
-            ->where("generation_state","<>",1)->where($where)->order("order_id  desc")
-            ->paginate(10);
-
-        $count =  Db::view("GenerationOrder")
-            ->view("Generation","*","Generation.generation_id=GenerationOrder.order_no")
-            ->view("Member","member_nick as o_member_nick,member_mobile as o_member_mobile","member_id=GenerationOrder.order_member")
-            ->view("Member m","member_nick,member_mobile","m.member_id=Generation.generation_member")
-            ->view("MemberCert","cert_member_id","cert_member_id=Member.member_id")
-            ->where("generation_state","<>",1)->where($where)
-            ->count(10);
-
-            return ['list' => $list ,"count" => $count];
+      #关联模型 一对一关联 (Passageway) 通道关联表
+      public function passageway(){
+          return $this->hasOne("Passageway","passageway_id","order_passageway")->bind("passageway_name");
       }
-     #获取还款详情
-      public static function info($where){
-        //查询数据总条数
-
-        $list = Db::view("GenerationOrder")
-            ->view("Generation","*","Generation.generation_id=GenerationOrder.order_no")
-            ->view("Member m","member_nick as o_member_nick,member_mobile as o_member_mobile","m.member_id=GenerationOrder.order_member")
-            ->view("Member","member_nick,member_mobile","Member.member_id=Generation.generation_member")
-            ->where($where)
-            ->find();
-           
-            return $list;
+      #关联用户表
+      public function member(){
+         return $this->hasOne("Member","member_id","order_member")->bind("member_nick");
       }
-     
 }

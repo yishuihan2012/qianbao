@@ -229,7 +229,7 @@ class Generalize extends Common{
 		#修改数据库字段
 		$result = Generalizes::where($where)->update($data);
 		if($result){
-			exit(json_encode(array("code"=>200,"msg"=>"操作成功")));
+			exit(json_encode(array("code"=>200,"msg"=>"操作成功","data" => $data['generalize_thumb'])));
 		}else{
 			exit(json_encode(array("code"=>400,"msg"=>"操作失败")));
 		}

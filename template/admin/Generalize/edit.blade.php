@@ -50,7 +50,7 @@ hr{margin:0 5px!important;}
              <button type="button" class="btn btn-link uploader-btn-start"><i class="icon icon-cloud-upload"></i> 开始上传</button>
             </div>
          </div>
-         <input type="hidden" class="form-control generalize_thumb" name="generalize_thumb" value="">
+         <input type="hidden" class="form-control generalize_thumb" name="generalize_thumb" value="{{$info['generalize_thumb']}}">
        </div>   
 		</div>
   </div>
@@ -67,10 +67,10 @@ hr{margin:0 5px!important;}
  <script src="/static/js/jquery-labelauty.js"></script>
   
  <script type="text/javascript">
+  //删除用户信息
   $(".removeimg").click(function(){
     var t = $(this);
-    console.log(t);
-    return ;
+    console.log(t.parent("span"));
     var key = $(this).attr("value");
     var generalize_id = $("input[name='generalize_id']").val();
     var status = '';
@@ -85,7 +85,12 @@ hr{margin:0 5px!important;}
           if(result){
             $.post("{{url('index/generalize/removeimg')}}",{key:key,generalize_id:generalize_id},function(data){
               if(data.code==200){
-                
+                t.parent("span").remove();
+
+                  $(".generalize_thumb").val(data.data);
+         
+              }else{
+                alert("删除失败")
               }
             },"json");
           }

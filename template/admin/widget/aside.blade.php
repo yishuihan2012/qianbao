@@ -35,16 +35,16 @@
             </ul>
         </li>
         <li class="nav-parent plan-manager">
-            <a href="javascript:;"><i class="icon icon-user"></i> 还款计划</a>
+            <a href="javascript:;"><i class="icon icon-user"></i> 自动代还</a>
             <ul class="nav">
-                <li class="plan"><a href="{{url('/index/plan/index')}}"><i class="icon icon-sliders"></i> 计划列表</a></li>
-                  <li class="plan_fail"><a href="{{url('/index/plan/fail')}}"><i class="icon icon-sliders"></i> 失败计划列表</a></li>
+                    <li class="plan"><a href="{{url('/index/plan/index')}}"><i class="icon icon-sliders"></i> 计划列表</a></li>
+                    <li class="plan_fail"><a href="{{url('/index/plan/fail')}}"><i class="icon icon-sliders"></i> 失败计划列表</a></li>
             </ul>
         </li>
-        <li class="nav-parent suggestion">
-            <a href="javascript:;"><i class="icon icon-user"></i> 财务管理</a>
+        <li class="nav-parent financial-manager">
+            <a href="javascript:;"><i class="icon icon-yen"></i> 财务管理</a>
             <ul class="nav">
-                <li class=""><a href="{{url('/index/suggestion/index')}}"><i class="icon icon-sliders"></i> 用户反馈</a></li>
+                  <li class="financial_center"><a href="{{url('/index/financial/index')}}"><i class=""></i> 对账中心</a></li>
             </ul>
         </li>
         <li class="nav-parent model-manager">

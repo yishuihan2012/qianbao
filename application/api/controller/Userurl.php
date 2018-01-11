@@ -94,36 +94,48 @@ class Userurl extends Controller
 		$url='http://'.$_SERVER['HTTP_HOST'].'/api/userurl/register/recomment/'.$tel;
 		//背景图片ID
 		$exclusive_id=$this->param['exclusive_id'];
-		//若已经生成过
-		if(!is_file('autoimg/qrcode_'.$exclusive_id.'_'.$tel.'.png')){
-			Vendor('phpqrcode.phpqrcode');
-			$QRcode=new \QRcode();
-			//生成二维码
-			$QRcode->png($url, 'autoimg/qrcode'.$tel.'.png',0,8);
-			$qrurl=ROOT_PATH.'public/autoimg/qrcode'.$tel.'.png';
-			$logourl=ROOT_PATH.'public/static/images/logo.png';
-			// 二维码加入logo
-			 $QR = imagecreatefromstring(file_get_contents($qrurl)); 
-			 $logo = imagecreatefromstring(file_get_contents($logourl)); 
-			 $logo_width = imagesx($logo);
-			 $logo_height = imagesy($logo);
-			 imagecopyresampled( $QR,$logo, 115, 115, 0, 0, 60, 60, $logo_width, $logo_height); 
-			imagepng($QR, 'autoimg/qrcode'.$tel.'.png'); 
-			// 背景
-			$bg_url=Exclusive::get($exclusive_id);
-			$bg_url=$bg_url->exclusive_thumb;
-			$bg_url=preg_replace('/\\\\/', '/', $bg_url);
-			$bg_url=ROOT_PATH.'public'.$bg_url;
-			// $bg=ROOT_PATH.'public\static\images\exclusice_code_bg.png';
-			//合成专属二维码
-			 $bg = imagecreatefromstring(file_get_contents($bg_url)); 
-			 $QR_width = imagesx($QR);//二维码图片宽度 
-			 $QR_height = imagesy($QR);//二维码图片高度 
-			 imagecopyresampled( $bg,$QR, 240, 710, 0, 0, 296, 296, $QR_width, $QR_height); 
-			imagejpeg($bg, 'autoimg/qrcode_'.$exclusive_id.'_'.$tel.'.png',65); 
+		//调取数据库url
+		$img=db('qrcode')->where(['qrcode_member_id'=>$this->param['uid'],'qrcode_exclusive_id'=>$exclusive_id])->find();
+		if(!$img || !$img['qrcode_url']){
+			$imgurl='autoimg/qrcode_'.$exclusive_id.'_'.$tel.'.png';
+			//若未生成过
+			if(!is_file($imgurl)){
+				Vendor('phpqrcode.phpqrcode');
+				$QRcode=new \QRcode();
+				//生成二维码
+				$QRcode->png($url, 'autoimg/qrcode'.$tel.'.png',0,8);
+				$qrurl=ROOT_PATH.'public/autoimg/qrcode'.$tel.'.png';
+				$logourl=ROOT_PATH.'public/static/images/logo.png';
+				// 二维码加入logo
+				 $QR = imagecreatefromstring(file_get_contents($qrurl)); 
+				 $logo = imagecreatefromstring(file_get_contents($logourl)); 
+				 $logo_width = imagesx($logo);
+				 $logo_height = imagesy($logo);
+				 imagecopyresampled( $QR,$logo, 115, 115, 0, 0, 60, 60, $logo_width, $logo_height); 
+				imagepng($QR, 'autoimg/qrcode'.$tel.'.png'); 
+				// 背景
+				$bg_url=Exclusive::get($exclusive_id);
+				$bg_url=$bg_url->exclusive_thumb;
+				$bg_url=preg_replace('/\\\\/', '/', $bg_url);
+				$bg_url=ROOT_PATH.'public'.$bg_url;
+				// $bg=ROOT_PATH.'public\static\images\exclusice_code_bg.png';
+				//合成专属二维码
+				 $bg = imagecreatefromstring(file_get_contents($bg_url)); 
+				 $QR_width = imagesx($QR);//二维码图片宽度 
+				 $QR_height = imagesy($QR);//二维码图片高度 
+				 imagecopyresampled( $bg,$QR, 240, 710, 0, 0, 296, 296, $QR_width, $QR_height); 
+				imagejpeg($bg, $imgurl,65); 
+			}
+			if(!$img){
+				db('qrcode')->insert(['qrcode_member_id'=>$this->param['uid'],'qrcode_exclusive_id'=>$exclusive_id,'qrcode_url'=>$imgurl]);
+			}else{
+				db('qrcode')->where(['qrcode_member_id'=>$this->param['uid'],'qrcode_exclusive_id'=>$exclusive_id])->update(['qrcode_url'=>$imgurl]);
+			}
+		}else{
+			$imgurl=$img['qrcode_url'];
 		}
 		//返回图片地址
-		$url='http://'.$_SERVER['HTTP_HOST'].'/autoimg/qrcode_'.$exclusive_id.'_'.$tel.'.png';
+		$url='http://'.$_SERVER['HTTP_HOST'].'/'.$imgurl;
 		$this->assign('url',$url);
 	  	return view("Userurl/exclusive_code_detail");
 	}
@@ -739,7 +751,7 @@ class Userurl extends Controller
   }
   # 荣邦 申请快捷支付订单不返回html时 调用本页面 
   # memberId 用户id passwayId 通道id
-  # treatycode 协议号 smsseq 短信验证码流水号
+  # ordercode 订单号 card_id 卡号
 
   public function passway_rongbang_pay($memberId,$passwayId,$ordercode,$card_id){
   	if(request()->ispost()){
@@ -747,15 +759,17 @@ class Userurl extends Controller
   		if($authcode){
 		  	$Membernets=new con\Membernets($memberId,$passwayId);
 		  	$result=$Membernets->rongbang_confirm_pay($ordercode,$card_id,$authcode);
-		  	return $result ? 1 : 3;
+		  	return is_array($result) ? 1 : 3;
 		  }else{
 		  	return 2;
 		  }
   	}
+  	$info = Members::with("membercert")->where(['member_id' => $memberId])->find();
+  	// dump($info);
 	$this->assign('memberId',$memberId);
 	$this->assign('passwayId',$passwayId);
-	$this->assign('treatycode',$treatycode);
-	$this->assign('smsseq',$smsseq);
+	$this->assign('ordercode',$ordercode);
+	$this->assign('card_id',$card_id);
   	return view("Userurl/passway_rongbang_pay");
   }
   #荣邦支付回调
@@ -770,7 +784,7 @@ class Userurl extends Controller
   		db('cash_order')->where('order_no',$data['ordernumber'])->update(['order_state'=>2]);
   		//分润
         $fenrun= new \con\Commission();
-        $fenrun_result=$fenrun->MemberFenRun($param['member_id'],$data['amount'],$param['passageway_id'],'交易手续费分润');
+        $fenrun_result=$fenrun->MemberFenRun($param['member_id'],$data['amount'],$param['passageway_id'],1,'交易手续费分润');
   	}else{
   		//支付失败
   		db('cash_order')->where('order_no',$data['ordernumber'])->update(['order_state'=>-1]);

@@ -10,6 +10,8 @@ use app\index\model\Member as Members;
 use app\index\model\MemberLogin;
 use app\index\model\MemberGroup;
 use app\index\model\MemberRelation;
+use app\index\model\MemberCert;
+use app\index\model\MemberCashcard;
 use app\index\model\Upgrade;
 use app\api\controller\Commission;
 use think\Controller;
@@ -56,17 +58,24 @@ class Member extends Common{
 		 return view('admin/member/index');
 	 }
 	
-
-	 #会员详细信息
+ 	 /**
+	 *  @version info method /  会员详细信息
+	 *  @author $bill$(755969423@qq.com) 后台优化功能
+	 *   @datetime    2018-1-10 14:23
+	 *   @return  为统一代码方式,增加执行效率 所有方法摒弃原DB类关联查询 使用对象的与载入查询或关联查询
+	 */
 	 public function info(Request $request)
 	 {
+	 	 #如果参数(会员ID)不存在 则返回参数出错 或者缺少参数
 	 	 if(!$request->param('id'))
 	 	 {
 			 Session::set('jump_msg', ['type'=>'error','msg'=>'参数错误']);
 			 $this->redirect($this->history['1']);
 	 	 }
+
 	 	 #查询到当前会员的基本信息
-	 	 $member_info=Members::with('memberLogin')->find($request->param('id'));
+	 	 $member_info=Members::with('memberLogin,memberWallet,membercert')->find($request->param('id'));
+
 	 	 #查询上级信息
 	 	 $leadr=db('member_relation')->alias('r')
 	 	 	->where(["r.relation_member_id"=>$member_info->member_id])
@@ -81,6 +90,7 @@ class Member extends Common{
 	 	 $this->assign('team', $team);
 	 	 return view('admin/member/info');
 	 }
+	 
 	 #封停用户
 	 public function disables($id){
 	 	 $MemberLogin = MemberLogin::get(['login_member_id'=>$id]);
@@ -169,9 +179,26 @@ class Member extends Common{
 			 $this->redirect($this->history['1']);
 	 	 }
 	      #如果会员ID存在的话 则查询会员的钱包详细信息
-	 	      $memberWalletInfo=Member::with('Wallet')->get($request->param('memberId'));
-	 	      dump($memberWalletInfo);
-	 
+	 	 $memberWalletInfo=Members::with('memberWallet')->where('member_id',$request->param('memberId'))->find();
+	 	 $this->assign('walletInfo', $memberWalletInfo);
+	 	 return view('admin/member/walletInfo');
+	 	 //dump($memberWalletInfo->memberWallet->wallet_amount);
+	 }
+	 #审核用户信息
+	 public function toexamine(){
+	 	$where['member_id'] = request()->param("id");
+	 	$data['member_cert'] = request()->param("member_cert"); #3是用户没有通过
+	 	$result = Members::where($where)->update($data);
+	 	#删除银行信息
+	 	$wheres['card_member_id'] = request()->param("id");
+	 	$cardresult = MemberCashcard::where($wheres)->delete();
+	 	#删除身份证信息
+	 	$certwhere['cert_member_id'] = request()->param("id");
+	 	$certresult = MemberCert::where($certwhere)->delete();
+	 	$content = ($result===false && $certresult ==false && $cardresult==false) ? ['type'=>'error','msg'=>'修改信息失败'] : ['type'=>'success','msg'=>'修改信息成功'];
 
+
+	 	Session::set('jump_msg', $content);
+	 	$this->redirect("member/index");
 	 }
 }
