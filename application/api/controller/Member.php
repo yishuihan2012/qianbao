@@ -37,20 +37,20 @@
  {
       protected $param;
       public $error;
-      // public function __construct($param)
-      // {
-      //      $this->param=$param;
-      //       try{
-      //            if(!isset($this->param['uid']) || empty($this->param['uid']) || !isset($this->param['token']) ||empty($this->param['token']))
-      //                  $this->error=314;
-      //            #查找到当前用户
-      //            $member=Members::haswhere('memberLogin',['login_token'=>$this->param['token']])->where('member_id', $this->param['uid'])->find();
-      //            if(!$member && !$this->error)
-      //                  $this->error=317;
-      //       }catch (\Exception $e) {
-      //            $this->error=317;
-      //      }
-      // }
+      public function __construct($param)
+      {
+           $this->param=$param;
+            try{
+                 if(!isset($this->param['uid']) || empty($this->param['uid']) || !isset($this->param['token']) ||empty($this->param['token']))
+                       $this->error=314;
+                 #查找到当前用户
+                 $member=Members::haswhere('memberLogin',['login_token'=>$this->param['token']])->where('member_id', $this->param['uid'])->find();
+                 if(!$member && !$this->error)
+                       $this->error=317;
+            }catch (\Exception $e) {
+                 $this->error=317;
+           }
+      }
 
       /**
  	 *  @version info method / Api 会员基础信息 通用接口
@@ -613,9 +613,6 @@
       **/
       public function get_upgrade_price()
       { 
-        $this->param=array(
-          'uid'=>'42',
-        );
         // var_dump("expression");die;
             #获取用户组等级信息
         //$passagewayItem=PassagewayItem::haswhere('passageway',['passageway_state'=>1])->where(['item_group'=>$value['group_id']])->order('item_rate','asc')->find();
@@ -633,18 +630,13 @@
                 $data['group'][$key]['up_price']=$this->get_diff_price($this->param['uid'],$value['group_id']);
                 #获取每个用户等级的最低费率
                 #1获取刷卡最低费率
-                // $cashout=PassagewayItem::haswhere('passageway',['passageway_state'=>1])->where(['item_group'=>$value['group_id'],'passageway_also'=>1])->order('item_rate asc')->find();
-                // #2获取代还最低费率
-                // $repay=PassagewayItem::haswhere('passageway',['passageway_state'=>1])->where(['item_group'=>$value['group_id'],'passageway_also'=>2])->order('item_also','asc')->find();
+                $cashout=PassagewayItem::haswhere('passageway',['passageway_state'=>1,'passageway_also'=>1])->where(['item_group'=>$value['group_id']])->order('item_rate','asc')->find();
+                #2获取代还最低费率
+                $repay=PassagewayItem::haswhere('passageway',['passageway_state'=>1,'passageway_also'=>2])->where(['item_group'=>$value['group_id']])->order('item_also','asc')->find();
                 // print_r($repay);die;
-                // $data['group'][$key]['rate']='刷卡费率低至：'.$cashout['item_rate'].'% 代还费率低至：'.$repay['item_also'].'% + '.$repay['item_charges']."/笔";
-                // $data['group'][$key]['des']=$value['group_des'];
-                // $data['group'][$key]['icon']=$value['group_thumb'];
-
-                 $data['group'][$key]['rate']='11111';
-                $data['group'][$key]['des']='desc';
-                $data['group'][$key]['icon']='http://www.com';
-
+                $data['group'][$key]['rate']='刷卡费率低至：'.$cashout['item_rate'].'% 代还费率低至：'.$repay['item_also'].'% + '.$repay['item_charges']."/笔";
+                $data['group'][$key]['des']=$value['group_des'];
+                $data['group'][$key]['icon']=$value['group_thumb'];
                 // $passageway=Passageway::where(['passageway_state'=>1])->select();
                 // foreach ($passageway as $k => $val) {
                 //     #1获取刷卡最低费率
