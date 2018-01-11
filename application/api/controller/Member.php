@@ -673,7 +673,7 @@
               return ['code'=>314];
 
             $data['current_salt']=$current['group_salt'];
-            return json_encode(['code'=>200, 'msg'=>'信息反馈成功~','data'=>$data]);
+            return ['code'=>200, 'msg'=>'信息反馈成功~','data'=>$data];
       }
       //计算会员升级级别间的差价
       public function get_diff_price($uid,$up_level){
