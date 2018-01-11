@@ -34,6 +34,17 @@
  	public function update_passway_rate($params){
  		$Passageway_detail=Passageway::where(['passageway_id'=>8]);
  	}
+ 	//刷卡或者代还完成后调用此方法，记录为上级有效推荐一人
+ 	public function recommend_record($uid){
+ 		$parent_id=MemberRelation::where(['relation_member_id'=>$uid])->value('relation_parent_id');
+ 		if($parent_id){//如果有上级
+ 			//查询是否已经记录过
+ 			$find=MemberRecommend::where(['recommend_member_id'=>$parent_id,'recommend_reid'=>$uid])->find();
+ 			if(!$find){
+ 				return MemberRecommend::insert(['recommend_member_id'=>$parent_id,'recommend_reid'=>$uid]);
+ 			}
+ 		}
+ 	}
  	//推荐会员自动升级任务
  	public function self_update(){
  		#1取出所有会员，获得升级条件

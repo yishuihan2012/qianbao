@@ -48,7 +48,7 @@ use think\Loader;
                 	 $return['data']=$this->encryption_data($return['data']);
                 	 // $return['data']=$return['data'];// //不需要加密的时候放开
             	 } else
-                 	 $return['data']=""; //需要加密的时候放开
+                 	 $return['data']=[]; //需要加密的时候放开
             	 echo json_encode($return);
  	 	 } catch (\Exception $e) {
             	 echo json_encode(['code'=>'400',"msg"=>$e->getMessage(),"data"=>""]);

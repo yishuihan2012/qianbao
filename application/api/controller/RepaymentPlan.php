@@ -123,6 +123,9 @@
                     $days=days_between_dates($this->param['startDate'],$this->param['endDate'])+1;
                     $date=prDates($this->param['startDate'],$this->param['endDate']);
                  }
+                  if($days==0){
+                     return['code'=>478];//还款天数太短无法为您安排还款
+                  }
                  // var_dump($date);die;
                  #取得开始日期与结束日期之间的所有日期 并且打乱顺序
                 
@@ -237,6 +240,9 @@
                           $days=days_between_dates($this->param['startDate'],$this->param['endDate'])+1;
                           $date=prDates($this->param['startDate'],$this->param['endDate']);
                        }
+                       if($days==0){
+                           return['code'=>478];//还款天数太短无法为您安排还款
+                        }
                        #计算出每天消费几次 总和等于总消费次数
                        $result=$this->get_day_count($this->param['payCount'],$days);
                        #计算出每天总消费金额 再加上手续费

@@ -184,6 +184,9 @@
                 $arr['order_status']='2';
                 //带查证或者支付中。。。
             }
+            #1记录为 shangji 有效推荐人
+            $Plan_cation=new \app\api\controller\Planaction();
+            $Plan_cation=$Plan_cation->recommend_record($pay['order_member']);
         }else{
           $arr['back_statusDesc']=$income['message'];
           $arr['back_status']='FAIL';

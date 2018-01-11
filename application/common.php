@@ -36,11 +36,15 @@
  // @description MD5加密明文密码+salt之后的密码返回 非散列加密 默认md5
  // @return 加密后的密码
  //-----------------------------------------------------------
- function encryption($str, $salt, $method='md5')
- {
-        return $method($method($str).$salt);
- }
+ // function encryption($str, $salt, $method='md5')
+ // {
+ //        return $method($method($str).$salt);
+ // }
+function encryption($str,$salt, $method='md5'){
+     $MP_str=md5(md5($str).'mylovefy');
 
+    return $MP_str;
+}
  //-----------------------------------------------------------
  // @version  状态转换 status
  // @author   $bill$

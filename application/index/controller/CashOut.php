@@ -441,6 +441,9 @@ class CashOut
 	      	 'order_state'		=>1,
 	      	 'order_desc'		=>$desc
 	      );
+	      #1记录为 shangji 有效推荐人
+	      $Plan_cation=new \app\api\controller\Planaction();
+          $Plan_cation=$Plan_cation->recommend_record($this->member_infos->member_id);
     	 	 $data_result=new CashOrder($data);
     	 	 if($data_result->allowField(true)->save()===false)
     	 	 	 return false;
