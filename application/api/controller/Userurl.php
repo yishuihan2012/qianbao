@@ -764,14 +764,19 @@ class Userurl extends Controller
 		  	return 2;
 		  }
   	}
-  	$info = Members::with("membercert")->where(['member_id' => $memberId])->find();
-  	// dump($info);
+  	#用户信息
+  	$info = Members::with("memberCashcard")->where(['member_id' => $memberId])->find();
+
+  	$creditcard = MemberCreditcard::where(['card_id' => $card_id])->find();
+  	$this->assign("creditcard",$creditcard);
+  	$this->assign("member_info",$info);
 	$this->assign('memberId',$memberId);
 	$this->assign('passwayId',$passwayId);
 	$this->assign('ordercode',$ordercode);
 	$this->assign('card_id',$card_id);
   	return view("Userurl/passway_rongbang_pay");
   }
+
   #荣邦支付回调
   public function passway_rongbang_paycallback(){
   	$param=request()->param();

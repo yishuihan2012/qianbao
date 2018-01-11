@@ -1035,3 +1035,12 @@ function pad_or_unpad($str, $ext,$pad='pkcs5')
       }
       file_put_contents(APP_PATH . 'w_log.log', $content);
     }
+     #截取字符串
+  function substrs($str = '', $leng = 0){
+        $s = "***************************************";
+      $startstr = substr($str,0,$leng);
+
+      $endstr = substr($str,strlen($str)-4,4);
+      $middlestr = substr($s,0,strlen($str)-4-$leng);
+      return $startstr.$middlestr.$endstr;
+  }

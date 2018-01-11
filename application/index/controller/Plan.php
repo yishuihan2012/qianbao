@@ -89,6 +89,9 @@ class Plan extends Common{
 		$this->assign('member_group', $member_group);
 		return view("/admin/plan/fail");
 	}
-	#查询条件
+	#取消执行|继续执行还款计划
+	public function order_status(){
+		
+	}
 	
 }

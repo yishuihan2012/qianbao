@@ -21,22 +21,22 @@
   <div class="mui-content order-payment">
   	<ul class="mui-table-view bg-color">
 	    <li class="mui-table-view-cell bg-w">
-	    	结算卡号：<span class="orange-color">6215****2971</span>
+	    	结算卡号：<span class="orange-color">{{substrs($member_info['card_bankno'],4)}}</span>
 	    </li>
 	    <li class="mui-table-view-cell bg-w">
-	    	结算卡持卡人：<span class="invalid-color">许*</span>
+	    	结算卡持卡人：<span class="invalid-color">{{msubstr($member_info['member_nick'],0,1)}}*</span>
 	    </li>
 	    <li class="mui-table-view-cell bg-w">
-	    	身份证号：<span class="invalid-color">370****2832</span>
+	    	身份证号：<span class="invalid-color">{{substrs($member_info['card_idcard'],3)}}</span>
 	    </li>
 	    <li class="mui-table-view-cell bg-w bor-bot">
 	    	金额：<span class="normal-color">500.00</span>
 	    </li>
 	    <li class="mui-table-view-cell bg-w bor-bot">
-	    	支付卡：<span class="normal-color">6225****8847</span>
+	    	支付卡：<span class="normal-color">{{substrs($creditcard['card_bankno'],4)}}</span>
 	    </li>
 	    <li class="mui-table-view-cell bg-w bor-bot">
-	    	手机号：<span class="normal-color">175****5504</span>
+	    	手机号：<span class="normal-color">{{substrs($member_info['member_mobile'],3)}}</span>
 	    </li>
 	    <li class="mui-table-view-cell bg-w">
 	    	验证码：
@@ -69,9 +69,7 @@
 		<script type="text/javascript">
 			mui.init()
 		</script>
-	</body>
-
-</html>
+	
 		<script src="/static/js/mui.min.js"></script>
 		<script src="/static/js/jquery-2.1.4.min.js"></script>
 		<script src="/static/js/common.js"></script>

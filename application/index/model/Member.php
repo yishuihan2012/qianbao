@@ -71,9 +71,9 @@ class Member extends Model{
       {
            return $this->hasMany('Upgrade','upgrade_id','member_id')->bind('upgrade_state');
       }
-      // public function memberCashcard(){
-      //   return $this->hasOne("Member")
-      // } 
+      public function memberCashcard(){
+        return $this->hasOne("MemberCashcard","card_member_id","member_id")->bind("card_bankno,card_idcard");
+      } 
       /**
        *  @version member_info method /返回会员信息
        *  @author $bill$(755969423@qq.com)
