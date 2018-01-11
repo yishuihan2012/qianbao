@@ -64,6 +64,48 @@
 		 </div>		
 	 </div>
 	 <div class="row form-group">
+		 <label for="passageway_pwd_key" class="col-sm-3 text-right"><b>加密KEY（passageway_pwd_key）:</b></label>
+		 <div class="col-sm-6" id="passageway_pwd_key">
+			 <input type="text" class="form-control passageway_pwd_key" name="passageway_pwd_key" placeholder="加密KEY（passageway_pwd_key）" value="{{$passageways['passageway_pwd_key']}}">
+		 </div>		
+	 </div>
+	 <div class="row form-group">
+		 <label for="passageway_also" class="col-sm-3 text-right"><b>是套现还是代还:</b></label>
+		 <div id="passageway_also" class="col-sm-6">
+			 <select name="passageway_also" class="form-control passageway_also">
+				 <option value="1" @if($passageways['passageway_also']==1) selected="" @endif>套现</option>
+				 <option value="2" @if($passageways['passageway_also']==2) selected="" @endif>代还</option>
+			 </select>
+		 </div>		
+	 </div>
+	 <div class="row form-group">
+		 <label for="passageway_rate" class="col-sm-3 text-right"><b>是否套现通道:</b></label>
+		 <div id="passageway_rate" class="col-sm-6">
+			 <select name="passageway_rate" class="form-control passageway_rate">
+				 <option value="1" @if($passageways['passageway_rate']==1) selected="" @endif>是</option>
+				 <option value="0" @if($passageways['passageway_rate']==0) selected="" @endif>否</option>
+			 </select>
+		 </div>		
+	 </div>
+	 <div class="row form-group">
+		 <label for="iv" class="col-sm-3 text-right"><b>加密偏移量:</b></label>
+		 <div class="col-sm-6" id="iv">
+			 <input type="text" class="form-control iv" name="iv" placeholder="加密偏移量" value="{{$passageways['iv']}}">
+		 </div>		
+	 </div>
+	 <div class="row form-group">
+		 <label for="iv" class="col-sm-3 text-right"><b>加密key（secretkey）:</b></label>
+		 <div class="col-sm-6" id="secretkey">
+			 <input type="text" class="form-control secretkey" name="secretkey" placeholder="加密key（secretkey）" value="{{$passageways['secretkey']}}">
+		 </div>		
+	 </div>
+	  <div class="row form-group">
+		 <label for="iv" class="col-sm-3 text-right"><b>签名key:</b></label>
+		 <div class="col-sm-6" id="signkey">
+			 <input type="text" class="form-control signkey" name="signkey" placeholder="签名key" value="{{$passageways['signkey']}}">
+		 </div>		
+	 </div>
+	 <div class="row form-group">
 		 <label for="passageway_desc" class="col-sm-3 text-right"><b>通道描述:</b></label>
 		 <div class="col-sm-6" id="passageway_desc">
 			 <textarea name="passageway_desc" class="form-control passageway_desc" >{{$passageways['passageway_desc']}}</textarea>

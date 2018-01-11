@@ -6,7 +6,7 @@
 <meta name="author" content="Mosaddek">
 <meta name="keyword" content="房投网">
 <!-- <link rel="shortcut icon" href="/static/img/favicon.html"> -->
-<title>喜家钱包 - <?php echo $__env->yieldContent('title'); ?></title>
+<title>钱包 - <?php echo $__env->yieldContent('title'); ?></title>
 <!-- Bootstrap core CSS -->
 <!--<link href="//netdna.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">-->
 <link href="/static/css/zui.min.css" rel="stylesheet">

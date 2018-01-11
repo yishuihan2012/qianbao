@@ -62,6 +62,49 @@
 			 <input type="text" class="form-control passageway_key" name="passageway_key" placeholder="请填写通道的机构KEY" value="">
 		 </div>		
 	 </div>
+	  <div class="row form-group">
+		 <label for="passageway_pwd_key" class="col-sm-3 text-right"><b>加密KEY（passageway_pwd_key）:</b></label>
+		 <div class="col-sm-6" id="passageway_pwd_key">
+			 <input type="text" class="form-control passageway_pwd_key" name="passageway_pwd_key" placeholder="加密KEY（passageway_pwd_key）" value="">
+		 </div>		
+	 </div>
+
+	 <div class="row form-group">
+		 <label for="passageway_also" class="col-sm-3 text-right"><b>是代还还是套现:</b></label>
+		 <div id="passageway_also" class="col-sm-6">
+			 <select name="passageway_also" class="form-control passageway_also">
+				 <option value="1">套现</option>
+				 <option value="2">代还</option>
+			 </select>
+		 </div>		
+	 </div>
+	 <div class="row form-group">
+		 <label for="passageway_rate" class="col-sm-3 text-right"><b>是否套现通道:</b></label>
+		 <div id="passageway_rate" class="col-sm-6">
+			 <select name="passageway_rate" class="form-control passageway_rate">
+				 <option value="1">是</option>
+				 <option value="2">否</option>
+			 </select>
+		 </div>		
+	 </div>
+	 <div class="row form-group">
+		 <label for="iv" class="col-sm-3 text-right"><b>加密偏移量:</b></label>
+		 <div class="col-sm-6" id="iv">
+			 <input type="text" class="form-control iv" name="iv" placeholder="请填加密偏移量" value="">
+		 </div>		
+	 </div>
+	  <div class="row form-group">
+		 <label for="secretkey" class="col-sm-3 text-right"><b>加密KEY（secretkey）:</b></label>
+		 <div class="col-sm-6" id="secretkey">
+			 <input type="text" class="form-control secretkey" name="secretkey" placeholder="请填写通道的机构KEY" value="">
+		 </div>		
+	 </div>
+	 <div class="row form-group">
+		 <label for="secretkey" class="col-sm-3 text-right"><b>签名KEY:</b></label>
+		 <div class="col-sm-6" id="secretkey">
+			 <input type="text" class="form-control secretkey" name="secretkey" placeholder="请填加密KEY（secretkey）" value="">
+		 </div>		
+	 </div>
 	 <div class="row form-group">
 		 <label for="passageway_desc" class="col-sm-3 text-right"><b>通道描述:</b></label>
 		 <div class="col-sm-6" id="passageway_desc">
