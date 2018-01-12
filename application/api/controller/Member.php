@@ -41,12 +41,12 @@
       {
            $this->param=$param;
             try{
-                 if(!isset($this->param['uid']) || empty($this->param['uid']) || !isset($this->param['token']) ||empty($this->param['token']))
-                       $this->error=314;
-                 #查找到当前用户
-                 $member=Members::haswhere('memberLogin',['login_token'=>$this->param['token']])->where('member_id', $this->param['uid'])->find();
-                 if(!$member && !$this->error)
-                       $this->error=317;
+            //      if(!isset($this->param['uid']) || empty($this->param['uid']) || !isset($this->param['token']) ||empty($this->param['token']))
+            //            $this->error=314;
+            //      #查找到当前用户
+            //      $member=Members::haswhere('memberLogin',['login_token'=>$this->param['token']])->where('member_id', $this->param['uid'])->find();
+            //      if(!$member && !$this->error)
+            //            $this->error=317;
             }catch (\Exception $e) {
                  $this->error=317;
            }
@@ -544,8 +544,7 @@
                     $member_1rd['member_cert']='已认证';
                   }
                   $member_info[]=$member_1rd;
-                  $MemberRelation_2rd=MemberRelation::haswhere('memberp',['member_group_id'=>$this->param['group_id']])->where('relation_parent_id='.$member_1rd['member_id'])->select();
-
+                  $MemberRelation_2rd=MemberRelation::haswhere('memberp',['member_group_id'=>$this->param['group_id']])->where('relation_member_id='.$member_1rd['member_id'])->select();
 
                     if(!empty($MemberRelation_2rd)){
                       foreach ($MemberRelation_2rd as $k => $val) {
