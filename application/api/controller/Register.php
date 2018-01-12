@@ -70,7 +70,8 @@
             	 $member_info= new Member([
             	 	 'member_nick'=>$this->param['phone'],
             	 	 'member_mobile'=>$this->param['phone'],
-            	 	 'member_group_id'=>System::getName('open_reg_membertype')
+            	 	 'member_group_id'=>System::getName('open_reg_membertype'),
+                 'member_image'=>System::getName('system_url').'/static/images/logo.png',
             	 ]);
             	 if(!$member_info->save())
             	 {
