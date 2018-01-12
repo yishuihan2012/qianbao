@@ -21,8 +21,8 @@ use think\Loader;
  	 	 	 #获取请求参数
  	 	 	 $data=$Request->only('data');
  	 	 	 $data=$data['data'];
-                // $result=$this->decryption_data($data); //解密
-                // $data = json_decode($result, true);
+                $result=$this->decryption_data($data); //解密
+                $data = json_decode($result, true);
                  if(!is_array($data)){
                      $data = json_decode($data, true);
                  }
