@@ -41,12 +41,12 @@
       {
            $this->param=$param;
             try{
-            //      if(!isset($this->param['uid']) || empty($this->param['uid']) || !isset($this->param['token']) ||empty($this->param['token']))
-            //            $this->error=314;
-            //      #查找到当前用户
-            //      $member=Members::haswhere('memberLogin',['login_token'=>$this->param['token']])->where('member_id', $this->param['uid'])->find();
-            //      if(!$member && !$this->error)
-            //            $this->error=317;
+                 if(!isset($this->param['uid']) || empty($this->param['uid']) || !isset($this->param['token']) ||empty($this->param['token']))
+                       $this->error=314;
+                 #查找到当前用户
+                 $member=Members::haswhere('memberLogin',['login_token'=>$this->param['token']])->where('member_id', $this->param['uid'])->find();
+                 if(!$member && !$this->error)
+                       $this->error=317;
             }catch (\Exception $e) {
                  $this->error=317;
            }
@@ -485,7 +485,7 @@
              $data['list'][$key]['levelIcon']=$value['group_thumb'];
              $data['list'][$key]['childAmount']=0;
              $data['list'][$key]['grandChildAmount']=0;
-             $MemberRelation_1rd=MemberRelation::hasWhere('member',['member_id'=>['gt',0]])->where(["relation_parent_id"=>$this->param['uid']])->select();
+             $MemberRelation_1rd=MemberRelation::where(["relation_parent_id"=>$this->param['uid']])->select();
 
              foreach ($MemberRelation_1rd as $k => $val) {
                 $member[$k]=Members::with('membergroup')->where(['member_id'=>$val['relation_member_id']])->find();
@@ -547,7 +547,7 @@
                   $MemberRelation_2rd=MemberRelation::haswhere('memberp',['member_group_id'=>$this->param['group_id']])->where('relation_parent_id='.$member_1rd['member_id'])->select();
 
 
-                  if(!empty($MemberRelation_2rd)){
+                    if(!empty($MemberRelation_2rd)){
                       foreach ($MemberRelation_2rd as $k => $val) {
                            $member_2rd=Members::where(['member_id'=>$val['relation_member_id']])->field('member_id,member_image, member_mobile, member_creat_time, member_cert')->find();
                            if($member_2rd['member_cert']==0){
@@ -622,7 +622,7 @@
                 $data['group'][$key]['name']=$value['group_name'];
                 $data['group'][$key]['group_salt']=$value['group_salt'];
                 $data['group'][$key]['id']=$value['group_id'];
-                $data['group'][$key]['icon']=System::getName('system_url').$value['group_thumb'];
+                $data['group'][$key]['icon']=$value['group_thumb'];
                 $data['group'][$key]['group_level_money']=$price;
                 // $data['group'][$key]['price_desc']='普通会员升级到此用户组需要的价格￥'.$price.'元';
                 $data['group'][$key]['price_desc']='普通会员升级到'.$value['group_name'].'此用户组需要的价格￥'.$price.'元';
@@ -635,7 +635,7 @@
                 $repay=PassagewayItem::haswhere('passageway',['passageway_state'=>1,'passageway_also'=>2])->where(['item_group'=>$value['group_id']])->order('item_also','asc')->find();
                 $data['group'][$key]['rate']='刷卡费率低至：'.$cashout['item_rate'].'% 代还费率低至：'.$repay['item_also'].'% + '.$repay['item_charges']."/笔";
                 $data['group'][$key]['des']=$value['group_des'];
-                // $data['group'][$key]['icon']=$value['group_thumb'];
+                $data['group'][$key]['icon']=$value['group_thumb'];
                 // $passageway=Passageway::where(['passageway_state'=>1])->select();
                 // foreach ($passageway as $k => $val) {
                 //     #1获取刷卡最低费率
