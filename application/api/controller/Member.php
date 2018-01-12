@@ -41,12 +41,12 @@
       {
            $this->param=$param;
             try{
-            //      if(!isset($this->param['uid']) || empty($this->param['uid']) || !isset($this->param['token']) ||empty($this->param['token']))
-            //            $this->error=314;
-            //      #查找到当前用户
-            //      $member=Members::haswhere('memberLogin',['login_token'=>$this->param['token']])->where('member_id', $this->param['uid'])->find();
-            //      if(!$member && !$this->error)
-            //            $this->error=317;
+                 if(!isset($this->param['uid']) || empty($this->param['uid']) || !isset($this->param['token']) ||empty($this->param['token']))
+                       $this->error=314;
+                 #查找到当前用户
+                 $member=Members::haswhere('memberLogin',['login_token'=>$this->param['token']])->where('member_id', $this->param['uid'])->find();
+                 if(!$member && !$this->error)
+                       $this->error=317;
             }catch (\Exception $e) {
                  $this->error=317;
            }
