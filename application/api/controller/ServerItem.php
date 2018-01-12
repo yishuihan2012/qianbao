@@ -40,7 +40,7 @@
                  $model=ServiceItem::where('item_state','1')->order('item_weight','asc')->select();
                  foreach ($model as $key => $value) {
                        $data[$key]['serviceName']=$value['item_name'];
-                       $data[$key]['serviceIcon']=$value['item_icon'];
+                       $data[$key]['serviceIcon']=System::getName('system_url').$value['item_icon'];
                        $data[$key]['serviceItems']=ServiceItemList::where(['list_state'=>'1','list_item_id'=>$value['item_id']])->order('list_weight','asc')->limit(6)->select();
                        foreach ($data[$key]['serviceItems'] as $k => $v) {
                            $data[$key]['serviceItems'][$k]['list_icon'] =System::getName('system_url').$data[$key]['serviceItems'][$k]['list_icon'];
