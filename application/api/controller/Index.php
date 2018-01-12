@@ -19,8 +19,7 @@ use think\Loader;
  	 	 	 if(!$Request->isPost())
  	 	 	 	 exit($this->return_json('400'));
  	 	 	 #获取请求参数
- 	 	 	 $data=$Request->only('data'); 
-       print_r($data);die;
+ 	 	 	 $data=$Request->only('data');
  	 	 	 $data=$data['data'];
                 // $result=$this->decryption_data($data); //解密
                 // $data = json_decode($result, true);
