@@ -19,10 +19,11 @@ use think\Loader;
  	 	 	 if(!$Request->isPost())
  	 	 	 	 exit($this->return_json('400'));
  	 	 	 #获取请求参数
- 	 	 	 $data=$Request->only('data');
+ 	 	 	 $data=$Request->only('data'); 
+       print_r($data);die;
  	 	 	 $data=$data['data'];
-                $result=$this->decryption_data($data); //解密
-                $data = json_decode($result, true);
+                // $result=$this->decryption_data($data); //解密
+                // $data = json_decode($result, true);
                  if(!is_array($data)){
                      $data = json_decode($data, true);
                  }
@@ -45,7 +46,7 @@ use think\Loader;
             	 $return['msg']=isset($return['msg']) ? $return['msg'] : $this->get_code_message($return['code']);
             	 #如果方法有返回值 或者返回的data不为空 则进行加密 返回给App TODo :返回值加密方法 非对称加密
             	 if (isset($return['data']) && !empty($return['data'])) {
-                	 $return['data']=$this->encryption_data($return['data']);
+                	 // $return['data']=$this->encryption_data($return['data']);
                 	 // $return['data']=$return['data'];// //不需要加密的时候放开
             	 } else
                  	 $return['data']=[]; //需要加密的时候放开
