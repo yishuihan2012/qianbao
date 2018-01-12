@@ -43,10 +43,11 @@
                        $data[$key]['serviceIcon']=$value['item_icon'];
                        $data[$key]['serviceItems']=ServiceItemList::where(['list_state'=>'1','list_item_id'=>$value['item_id']])->order('list_weight','asc')->limit(6)->select();
                        foreach ($data[$key]['serviceItems'] as $k => $v) {
+
                           if($v['list_authority'] == 0){
                             $data[$key]['serviceItems'][$k]['list_status'] = 0;
                           }else{
-                            $data[$key]['serviceItems'][$k]['list_status'] = ($userinfo['group_salt']==1)?1:0;
+                            $data[$key]['serviceItems'][$k]['list_status'] = ($userinfo['group_salt']==1)?0:1;
                           }
                        }
                      
