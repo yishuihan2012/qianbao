@@ -622,7 +622,7 @@
                 $data['group'][$key]['name']=$value['group_name'];
                 $data['group'][$key]['group_salt']=$value['group_salt'];
                 $data['group'][$key]['id']=$value['group_id'];
-                $data['group'][$key]['icon']=$value['group_thumb'];
+                $data['group'][$key]['icon']=System::getName('system_url').$value['group_thumb'];
                 $data['group'][$key]['group_level_money']=$price;
                 // $data['group'][$key]['price_desc']='普通会员升级到此用户组需要的价格￥'.$price.'元';
                 $data['group'][$key]['price_desc']='普通会员升级到'.$value['group_name'].'此用户组需要的价格￥'.$price.'元';

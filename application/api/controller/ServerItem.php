@@ -32,8 +32,6 @@
       {
           $where['member_id'] = $this->param['uid'];
           $userinfo = Members::with("membergroup")->where($where)->find();
-          
-
            try{
                  $data=array();
                  #获取到所有显示的模块
@@ -50,14 +48,12 @@
                             $data[$key]['serviceItems'][$k]['list_status'] = ($userinfo['group_salt']==1)?1:0;
                           }
                        }
-                     
                  }
-
                   return ['code'=>200, 'msg'=>'获取成功~', 'data'=>$data];
-           } catch (\Exception $e) {
+          } catch (\Exception $e) {
                  Db::rollback();
                  return ['code'=>308,'msg'=>$e->getMessage()];
-            }
+          }
       }
 
  }
