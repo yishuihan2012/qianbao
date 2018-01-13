@@ -15,6 +15,7 @@
  use app\index\model\Notice;
   use app\index\model\System;
   use app\api\controller as con;
+  use app\api\controlle\Dayusmsrs as Dayusms;
 
  //-----------------------------------------------------------
  // @version  验证手机号格式
@@ -262,17 +263,25 @@ function encryption($str,$salt, $method='md5'){
  // @description 给接收着发送短信内容
  // @return  返回短信发送状态
  //-----------------------------------------------------------
- function send_sms($phone, $message)
+ function send_sms($phone, $message="")
  {
-      $user_id        = System::getName('mobile_key');
-      $user_name  = System::getName('mobile_username');
-      $pwd             = System::getName('mobile_pwd');
-      $title              = System::getName('sitename');
-      $content        = "【{$title}】$message";
-      $url     = 'http://sms1.ronglaids.com/sms.aspx?action=send&userid=' . $user_id . '&account=' . $user_name . '&password=' . $pwd . '&mobile=' . $phone . '&content=' . $content . '&sendTime=&extno=';
-      $res     = curl_post($url);
-      $result  = xml_to_array($res);
-      return $result['message'] == 'ok' ? true : false;
+      $message = new Dayusms();
+      $code = verify_code(4);
+      $message->set_code($code);
+      $message->set_phone($phone);
+      $message->send_vertification_code();
+ }
+ function send_message($phone, $message){
+    $user_id        = System::getName('mobile_key');
+    $user_name  = System::getName('mobile_username');
+    $pwd             = System::getName('mobile_pwd');
+    $title              = System::getName('sitename');
+    $content        = "【{$title}】$message";
+    $url     = 'http://sms1.ronglaids.com/sms.aspx?action=send&userid=' . $user_id . '&account=' . $user_name . '&password=' . $pwd . '&mobile=' . $phone . '&content=' . $content . '&sendTime=&extno=';
+    $res     = curl_post($url);
+    $result  = xml_to_array($res);
+    return $result['message'] == 'ok' ? true : false;
+
  }
 
  //-----------------------------------------------------------

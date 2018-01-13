@@ -481,7 +481,7 @@
            foreach ($group as $key => $value) {
              $data['list'][$key]['levelName']=$value['group_name'];
              $data['list'][$key]['levelId']=$value['group_id'];
-             $data['list'][$key]['levelIcon']=$value['group_thumb'];
+             $data['list'][$key]['levelIcon']=System::getName('system_url').$value['group_thumb'];
              $data['list'][$key]['childAmount']=0;
              $data['list'][$key]['grandChildAmount']=0;
              $MemberRelation_1rd=MemberRelation::where(["relation_parent_id"=>$this->param['uid']])->select();
