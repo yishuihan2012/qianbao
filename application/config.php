@@ -348,7 +348,14 @@ return [
     'order_validity'         =>'60',   //订单有效期（s）
     'certification_count'    =>'5',     //认证次数
     'everyday_log'           =>'./logs',
-
+    'OSS' => [
+        'accessKeyId'       =>'LTAIn4oprg773emN',
+        'accessKeySecret'   =>'B6m8fnLnq6u2N27CTH7VdAhnTrlrC2',
+        'endpoint'          =>'oss-cn-qingdao.aliyuncs.com',
+        'isCName'           =>false,
+        'securityToken'     =>null,
+        'bucket'            =>'fangtouwang'
+    ],
     'alipay'    =>[
         'gateway_url'  =>"https://openapi.alipay.com/gateway.do",
         'app_id'       =>"2017121500800116",
