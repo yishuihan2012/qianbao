@@ -1110,7 +1110,6 @@ function pad_or_unpad($str, $ext, $pad='pkcs5')
     }
 
     #保存变量到文件
-<<<<<<< HEAD
     function w_log($content){
       static $count=0;
       $content=var_export($content,1);
@@ -1120,18 +1119,6 @@ function pad_or_unpad($str, $ext, $pad='pkcs5')
         $content=$file."\n\n".$content;
       }
       file_put_contents(RUNTIME_PATH  . 'w_log.log', $content);
-=======
-    function w_log($content)
-    {
-        static $count=0;
-        $content=var_export($content, 1);
-        $content=$count." : ".$content;
-        if (file_exists(APP_PATH . 'w_log.log')) {
-            $file=file_get_contents(APP_PATH . 'w_log.log');
-            $content=$file."\n\n".$content;
-        }
-        file_put_contents(APP_PATH . 'w_log.log', $content);
->>>>>>> 408ed85defe2f667e6f0d7307433c86642105026
     }
      #截取字符串
   function substrs($str = '', $leng = 0)
