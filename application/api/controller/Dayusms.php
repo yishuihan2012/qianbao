@@ -59,7 +59,7 @@ class Dayusms
                 throw new \think\Exception($msg);
             }
         }catch(\think\Exception $error){
-            throw new \think\Exception($error->getMessage());
+            throw new \think\Exception($error->getMessage().$error->getfile().$error->getLine());
         }
     }
     #注册验证码模板
