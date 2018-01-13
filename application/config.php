@@ -356,6 +356,17 @@ return [
         'securityToken'     =>null,
         'bucket'            =>'fangtouwang'
     ],
+    'sms_template'  =>[
+        'normal_vert_code'      =>'SMS_119093204',
+        'register_vert_code'    =>'SMS_71055044',//注册验证码
+        'change_info'   =>'SMS_71055041',//信息变更验证码
+        'change_pwd'    =>'SMS_71055042',//密码修改验证码
+        'active_code'   =>'SMS_71055043',//活动确认验证码
+        'login_msg'     =>'SMS_71055045',//登录异常验证码
+        'login_conifrm'  =>'SMS_71055046',//登录确认验证码
+        'check_info'    =>'SMS_71055048',//验证身份
+        'invite_msg'  =>'SMS_119083227',//邀请注册提示信息
+    ],
     'alipay'    =>[
         'gateway_url'  =>"https://openapi.alipay.com/gateway.do",
         'app_id'       =>"2017121500800116",
