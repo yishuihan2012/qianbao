@@ -46,34 +46,24 @@
 
  <!--dialog Button-->
  <div class="modal-footer animated fadeInLeft">
-	 <button type="button" class="btn btn-primary save">保存</button>
+	 <button type="button" class="btn" data-dismiss="modal">保存</button>
       <button type="button" class="btn" data-dismiss="modal">关闭</button>
  </div>
 
  <script>
  $(".save").click(function(){
-	if(!$(".passageway_name").val()){
-		 $(".passageway_name").parent().addClass("has-error");
-		 return;
-	 }
-
-	 	if(!$(".passageway_no").val()){
-		 	$(".passageway_no").parent().addClass("has-error");
-			 return;
-		 }
 
 
 	 $("#myform").submit()
  })
  //上传文件设置
  $('#uploaderExample3').uploader({
-      url: "{{url('/index/Tool/upload_logo')}}",
+      url: "{{url('/index/Tool/logo')}}",
 	 file_data_name:'images',
 	 filters:{ max_file_size: '10mb',},
 	 limitFilesCount:1,
 	 onFileUploaded(file, responseObject) {
 	    	 var attr=eval('('+responseObject.response+")");
-	    	 alert(attr.url)
 	    	 attr.code ? $("input[name=logo]").val(attr.url) : bootbox.alert({ message: attr.msg, size: 'small' });
 	 }
  });

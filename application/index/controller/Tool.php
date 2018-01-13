@@ -29,6 +29,7 @@ class Tool
 		if($_FILES){
 			#循环图片上传属性
 			foreach ($_FILES as $key => $value)
+
 				#获取到上传到服务器的路径
 				$path=$key;
 			#打开这个目录
@@ -79,7 +80,7 @@ class Tool
     //文件上传 logo替换(index)
     //$url
     //-------------------------------------------------------
-	public function upload_logo($path='other')
+	public function logo($path='other',$url='')
 	{
 		#定义返回消息
 		$data = array('code'=>'0', 'msg'=>'没有选择上传文件', 'url'=>'');
@@ -87,14 +88,15 @@ class Tool
 		if($_FILES){
 			#循环图片上传属性
 			foreach ($_FILES as $key => $value)
+
 				#获取到上传到服务器的路径
 				$path=$key;
 			#打开这个目录
-			$file = Request::instance()->file(ROOT_PATH . 'public' . DS . 'static' . DS . $path);
+			$file = Request::instance()->file($path);
 			#移动到目录
-			$info = $file->move(ROOT_PATH . 'public' . DS . 'static' . DS . $path);
+			$info = $file->move(ROOT_PATH . 'public' . DS . 'static' . DS . $path,'logo.png');
 			#图片上传成功与否返回对应的参数
-			$data = $info ? array('code'=>'200', 'msg'=>'上传成功!', 'url'=>"/static/images/logo.png") : array('code'=>'0', 'msg'=>$file->getError(), 'url'=>'');
+			$data = $info ? array('code'=>'200', 'msg'=>'上传成功!', 'url'=>$url."/static/".$path.DS.$info->getSaveName()) : array('code'=>'0', 'msg'=>$file->getError(), 'url'=>'');
 			#如果开启OSS
 			// if(Setting::getName('ossopen'))
 			// {
@@ -131,7 +133,6 @@ class Tool
 			echo json_encode($data);
 		}
 	}
-
 	 /**
 	 * app上传头像使用
 	 * @param  [type] $file [description]
