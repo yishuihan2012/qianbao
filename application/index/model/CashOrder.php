@@ -6,7 +6,8 @@
  * @return  
  */
  namespace app\index\model;
- use think\{Db, Model};
+ use think\Db;
+ use think\Model;
  use app\index\model\System;
 
  class CashOrder extends Model{

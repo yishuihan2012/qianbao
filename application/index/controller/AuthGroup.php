@@ -35,8 +35,8 @@ class AuthGroup extends Common {
                   $auth_group->rules=implode(',',Request::instance()->post('group_rules/a'));
             //删除所有权限 更新权限
             if(false===$auth_group->save()){
-                  Session::set('jump_msg',['type'=>'warning','msg'=>'信息更新失败~请重试','data'=>'']);
-                  $this->redirect($this->history['0']);
+              Session::set('jump_msg',['type'=>'warning','msg'=>'信息更新失败~请重试','data'=>'']);
+              $this->redirect($this->history['0']);
             }
             Session::set('jump_msg',['type'=>'success','msg'=>'信息已更新','data'=>'']);
             $this->redirect($this->history['1']);
@@ -51,8 +51,8 @@ class AuthGroup extends Common {
               $auth_group->rules=implode(',',Request::instance()->post('group_rules/a'));
         //删除所有权限 更新权限
         if(false===$auth_group->save()){
-              Session::set('jump_msg',['type'=>'warning','msg'=>'信息添加失败~请重试','data'=>'']);
-              $this->redirect($this->history['0']);
+          Session::set('jump_msg',['type'=>'warning','msg'=>'信息添加失败~请重试','data'=>'']);
+          $this->redirect($this->history['0']);
         }
         Session::set('jump_msg',['type'=>'success','msg'=>'信息已添加','data'=>'']);
         $this->redirect($this->history['1']);
@@ -133,5 +133,25 @@ class AuthGroup extends Common {
       }
       $this->assign('authGroups',$authGroups);
       return view('/admin/authgroup/list');
+    }
+    #删除用户组管理
+    public function remove(){
+        $where['id'] = request()->param("group_id");
+        $info = AuthGroups::where($where)->find();
+
+        if($info['rules'] == ''){
+            $result = AuthGroups::where($where)->delete();
+            if($result === false){
+               Session::set('jump_msg',['type'=>'warning','msg'=>'操作失败']);  
+               $this->redirect($this->history['1']);
+            }else{
+               Session::set('jump_msg',['type'=>'success','msg'=>'操作成功']);  
+               $this->redirect($this->history['1']); 
+            }
+           
+        }else{
+            Session::set('jump_msg',['type'=>'warning','msg'=>'该数据里还有数据，不能删!']);  
+               $this->redirect($this->history['1']);
+        }
     }
 }

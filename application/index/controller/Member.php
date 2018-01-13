@@ -14,6 +14,7 @@ use app\index\model\MemberCert;
 use app\index\model\MemberCashcard;
 use app\index\model\Upgrade;
 use app\api\controller\Commission;
+use app\index\model\Commission as Commissions;
 use think\Controller;
 use think\Request;
 use think\Session;
@@ -202,9 +203,11 @@ class Member extends Common{
 	 	$this->redirect("member/index");
 	 }
 	 //会员分佣分润
-	 public function commiss(){
+	public function commiss(){
 	 	$commiss = new Commission();
-	 	$list = $commiss->select();
-	 	print_r($list);
-	 }
+	 	$list = Commissions::where(['commission_member_id' => request()->param("memberId")])->select();
+	 	$this->assign("list",$list);
+	 	return view("admin/member/commiss");
+	 	
+	}
 }

@@ -185,6 +185,7 @@
                              $list=array();
                              $lists=array();
                              // print_r($data);die;
+                             $root_id=find_root($this->param['uid']);
                              for ($i=0; $i <count($data) ; $i++) { 
                              // foreach ($data as $key => $value) {
                                    $list[]=array(
@@ -197,6 +198,7 @@
                                         'order_desc'     =>'自动代还消费~',
                                         'order_time'     =>$data[$i]['time'],
                                         'order_passageway'=>$this->param['passageway'],
+                                        'order_root'=>$root_id,
                                    );
                                    $lists[]=array(
                                         'order_no'         =>$Generation_result->generation_id,
@@ -208,6 +210,7 @@
                                         'order_desc'       =>'自动代还还款~',
                                         'order_time'       =>$data[$i]['endtime'],
                                         'order_passageway'=>$this->param['passageway'],
+                                        'order_root'=>$root_id,
                                    );
                              }
                              // var_dump($lists);die;
@@ -221,7 +224,6 @@
                              if($order_result && $order_result1 && $reimbur_result->save()!==false)
                              { 
                                    Db::commit();
-
                                    exit(json_encode(['code'=>200, 'msg'=> '计划创建成功~','data'=>['repaymentScheduleId'=>$Generation_result->generation_id,'repaymentScheduleUrl'=>$_SERVER['SERVER_NAME'].'/api/Userurl/repayment_plan_detail/order_no/'.$Generation_result->generation_id]]));
                              }else{
                                    Db::rollback();

@@ -1130,3 +1130,11 @@ function pad_or_unpad($str, $ext, $pad='pkcs5')
       $middlestr = substr($s, 0, strlen($str)-4-$leng);
       return $startstr.$middlestr.$endstr;
   }
+  #查找用户的祖先关系 (寻找运营商id) relation_parent_id=0
+  #用于写入订单 运营商的id
+  # id  待查找的用户id
+  function find_root($id){
+    if(!$id)return 0;
+    $root_id=db('member_relation')->where('relation_member_id',$id)->value('relation_parent_id');
+    return $root_id ? find_root($root_id) : $id;
+  }

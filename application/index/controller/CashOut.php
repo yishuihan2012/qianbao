@@ -438,7 +438,8 @@ class CashOut
 	      	 'order_creditcard'=>$this->card_info->card_bankno,
 	      	 'order_card'		=>$this->member_card->card_bankno,
 	      	 'order_state'		=>1,
-	      	 'order_desc'		=>$desc
+	      	 'order_desc'		=>$desc,
+	      	 'order_root'		=>find_root($this->member_infos->member_id)
 	      );
 	      #1记录为 shangji 有效推荐人
 	      $Plan_cation=new \app\api\controller\Planaction();

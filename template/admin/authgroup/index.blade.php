@@ -32,7 +32,7 @@
                     <li><a href="{{ url('/index/auth_group/change_state','id='.$auth['id']) }}" data="" explain="用户组{{ get_status_text($auth['status']*-1) }}">{{ get_status_text($auth['status']*-1) }}</a></li>
                     <li class="divider"></li>
                     <li>
-                      <a href="javascript:;" class="auth-group-delete" data-link="{{ url('/index/auth_group/list',['group_id'=>$auth['id']]) }}">删除</a>
+                      <a href="{{ url('/index/auth_group/remove',['group_id'=>$auth['id']]) }}">删除</a>
                     </li>
                 </ul>
               </div>

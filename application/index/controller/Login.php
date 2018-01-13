@@ -48,6 +48,7 @@ class Login extends Controller
             'adminster_email'   =>$adminster['data']['adminster_email'],
             'adminster_update_time'=>$adminster['data']['adminster_update_time'],
             'adminster_state'=>$adminster['data']['adminster_state'],
+            'adminster_user_id'=>$adminster['data']['adminster_user_id'],
         ]);
         $this->redirect('Dashboard/index');
     }

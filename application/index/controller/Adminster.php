@@ -139,6 +139,13 @@ class Adminster extends Common {
 			 $data['adminster_add_time']	=	"";
 		 #获取用户组信息
 		 $authGroups=AuthGroups::all();
+		 $exist_user=db('adminster')->where('adminster_user_id','not null')->column('adminster_user_id');
+		 $users=db('member')->alias('m')
+		 	->join('member_relation r','m.member_id=r.relation_member_id')
+		 	->where('r.relation_parent_id',0)
+		 	->where('m.member_id','not in',$exist_user)
+		 	->select();
+		 $this->assign('users',$users);
 		 $this->assign('data',$data);
     		 $this->assign('auth_groups',$authGroups);
 		 $this->assign('information',$information);
