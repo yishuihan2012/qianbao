@@ -474,7 +474,6 @@
       **/
       public function get_team()
       { 
-
       	$membercert=Members::where(['member_id'=>$this->param['uid']])->find();
            $group=MemberGroup::select();
            // var_dump($group);die;
