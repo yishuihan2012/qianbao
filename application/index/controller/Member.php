@@ -204,7 +204,7 @@ class Member extends Common{
 	 //会员分佣分润
 	 public function commiss(){
 	 	$commiss = new Commission();
-	 	$list = $commiss->where(["Commission_member_id"=>request()->param("memberId")])->select();
+	 	$list = $commiss->select();
 	 	print_r($list);
 	 }
 }

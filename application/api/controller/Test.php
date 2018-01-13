@@ -36,4 +36,8 @@ class Test
 		public function test(){
 			return 1;
 		}
+		public function message_text(){
+			$a=send_sms('17560044406');
+			print_r($a);
+		}
 }

@@ -38,6 +38,10 @@ class ComposerStaticInit478f2749b4766991aa1921b2939f8c6b
         array (
             'GraphQL\\' => 8,
         ),
+        'F' => 
+        array (
+            'Flc\\Dysms\\' => 10,
+        ),
     );
 
     public static $prefixDirsPsr4 = array (
@@ -72,6 +76,10 @@ class ComposerStaticInit478f2749b4766991aa1921b2939f8c6b
         'GraphQL\\' => 
         array (
             0 => __DIR__ . '/..' . '/webonyx/graphql-php/src',
+        ),
+        'Flc\\Dysms\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/flc/dysms/src',
         ),
     );
 

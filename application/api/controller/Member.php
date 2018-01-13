@@ -474,7 +474,6 @@
       **/
       public function get_team()
       { 
-
       	$membercert=Members::where(['member_id'=>$this->param['uid']])->find();
            $group=MemberGroup::select();
            // var_dump($group);die;
@@ -482,7 +481,7 @@
            foreach ($group as $key => $value) {
              $data['list'][$key]['levelName']=$value['group_name'];
              $data['list'][$key]['levelId']=$value['group_id'];
-             $data['list'][$key]['levelIcon']=$value['group_thumb'];
+             $data['list'][$key]['levelIcon']=System::getName('system_url').$value['group_thumb'];
              $data['list'][$key]['childAmount']=0;
              $data['list'][$key]['grandChildAmount']=0;
              $MemberRelation_1rd=MemberRelation::with("members")->where(["relation_parent_id"=>$this->param['uid'],"member_group_id" => $value['group_id']])->select();
@@ -545,8 +544,7 @@
                     $member_1rd['member_cert']='已认证';
                   }
                   $member_info[]=$member_1rd;
-                  $MemberRelation_2rd=MemberRelation::haswhere('memberp',['member_group_id'=>$this->param['group_id']])->where('relation_parent_id='.$member_1rd['member_id'])->select();
-
+                  $MemberRelation_2rd=MemberRelation::haswhere('memberp',['member_group_id'=>$this->param['group_id']])->where('relation_member_id='.$member_1rd['member_id'])->select();
 
                     if(!empty($MemberRelation_2rd)){
                       foreach ($MemberRelation_2rd as $k => $val) {
@@ -623,26 +621,37 @@
                 $data['group'][$key]['name']=$value['group_name'];
                 $data['group'][$key]['group_salt']=$value['group_salt'];
                 $data['group'][$key]['id']=$value['group_id'];
-                $data['group'][$key]['icon']=$value['group_thumb'];
+                $data['group'][$key]['icon']=System::getName('system_url').$value['group_thumb'];
                 $data['group'][$key]['group_level_money']=$price;
                 // $data['group'][$key]['price_desc']='普通会员升级到此用户组需要的价格￥'.$price.'元';
-                 $data['group'][$key]['price_desc']='普通会员升级到'.$value['group_name'].'此用户组需要的价格￥'.$price.'元';
+                $data['group'][$key]['price_desc']='普通会员升级到'.$value['group_name'].'此用户组需要的价格￥'.$price.'元';
                 $data['group'][$key]['group_url']=$value['group_url'];
                 $data['group'][$key]['up_price']=$this->get_diff_price($this->param['uid'],$value['group_id']);
                 #获取每个用户等级的最低费率
-                $passageway=Passageway::where(['passageway_state'=>1])->select();
-                foreach ($passageway as $k => $val) {
-                $passagewayItem=PassagewayItem::haswhere('passageway',['passageway_state'=>1])->where(['item_group'=>$value['group_id'],'item_passageway'=>$val['passageway_id']])->order('item_rate','asc')->find();
-                #获取对应费率的通道信息
-                $passageway=Passageway::where(['passageway_state'=>1,'passageway_id'=>$passagewayItem['item_passageway']])->find();
-                #如果不为空
-                if(!empty($passageway)){
-                  // $data['group'][$key]['rate']='刷卡费率：'.$passagewayItem['item_rate'].'% 代还费率：'.$passagewayItem['item_also'].'%';
-                   $data['group'][$key]['rate']='刷卡费率低至：'.$passagewayItem['item_rate'].'% 代还费率低至：'.$passagewayItem['item_also'].'%'.$passagewayItem['item_also']."/笔";
-                  $data['group'][$key]['des']=$passageway['passageway_desc'];
-                  $data['group'][$key]['icon']=$value['group_thumb'];
-                }
-                }
+                #1获取刷卡最低费率
+                $cashout=PassagewayItem::haswhere('passageway',['passageway_state'=>1,'passageway_also'=>1])->where(['item_group'=>$value['group_id']])->order('item_rate','asc')->find();
+                #2获取代还最低费率
+                $repay=PassagewayItem::haswhere('passageway',['passageway_state'=>1,'passageway_also'=>2])->where(['item_group'=>$value['group_id']])->order('item_also','asc')->find();
+                $data['group'][$key]['rate']='刷卡费率低至：'.$cashout['item_rate'].'% 代还费率低至：'.$repay['item_also'].'% + '.$repay['item_charges']."/笔";
+                $data['group'][$key]['des']=$value['group_des'];
+                $data['group'][$key]['icon']=$value['group_thumb'];
+                // $passageway=Passageway::where(['passageway_state'=>1])->select();
+                // foreach ($passageway as $k => $val) {
+                //     #1获取刷卡最低费率
+                //     $cashout=PassagewayItem::haswhere('passageway',['passageway_state'=>1])->where(['item_group'=>$value['group_id'],'item_passageway'=>$val['passageway_id']])->order('item_rate','asc')->find();
+                //     //获取对应费率的通道信息
+                //     $passageway=Passageway::where(['passageway_state'=>1,'passageway_id'=>$passagewayItem['item_passageway']])->find();
+
+                //     #2获取代还最低费率
+
+                //     #如果不为空
+                //     if(!empty($passageway)){
+                //       // $data['group'][$key]['rate']='刷卡费率：'.$passagewayItem['item_rate'].'% 代还费率：'.$passagewayItem['item_also'].'%';
+                //        $data['group'][$key]['rate']='刷卡费率低至：'.$passagewayItem['item_rate'].'% 代还费率低至：'.$passagewayItem['item_also'].'% +'.$passagewayItem['item_charges']*100."/笔";
+                //       $data['group'][$key]['des']=$passageway['passageway_desc'];
+                //       $data['group'][$key]['icon']=$value['group_thumb'];
+                //     }
+                // }
             }
             $member=Members::where('member_id='.$this->param['uid'])->find();
             if(!$member)
