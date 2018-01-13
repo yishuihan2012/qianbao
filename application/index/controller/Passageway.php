@@ -1,13 +1,13 @@
 <?php
 /**
- *  @version passageway controller / 通道控制器
+ *  @version Passageway controller / 通道控制器
  *  @author $bill$(755969423@qq.com)
  *   @datetime    2017-11-24 10:22:05
  *   @return 
  */
 namespace app\index\controller;
-use app\index\model\passageway as passageways;
-use app\index\model\passagewayItem;
+use app\index\model\Passageway as Passageways;
+use app\index\model\PassagewayItem;
 use app\index\model\MemberGroup;
 use app\index\model\Cashout;
 use app\index\model\CreditCard;
@@ -18,13 +18,13 @@ use think\Config;
 use think\Loader;
 use think\Db;
 
-class passageway extends Common{
+class Passageway extends Common{
 	protected	$order_state=['1'=>'待支付','2'=>'成功','-1'=>'失败','-2'=>'超时'];
 	 #通道列表
 	 public function index()
 	 {
 	 	 #查询通道列表分页
-	 	 $passageway=passageways::order('passageway_id','desc')->paginate(Config::get('page_size'), false, ['query'=>Request::instance()->param()]);
+	 	 $passageway=Passageways::order('passageway_id','desc')->paginate(Config::get('page_size'), false, ['query'=>Request::instance()->param()]);
  		 $this->assign('button', ['text'=>'新增通道', 'link'=>url('/index/passageway/creat'), 'modal'=>'modal']);
  		 $this->assign('passageway_list', $passageway);
 		 #渲染视图
@@ -43,7 +43,7 @@ class passageway extends Common{
 	 	 	 $post=Request::instance()->post();
 	 	 	 $result=true;
  	 	 	//取出通道信息
- 	 	 	$passageway=passageways::get(Request::instance()->param('id'));
+ 	 	 	$passageway=Passageways::get(Request::instance()->param('id'));
  	 	 	$data=[];
  	 	 	//遍历提交数据
  	 	 	foreach ($post as $k => $v) {
@@ -62,7 +62,7 @@ class passageway extends Common{
  	 	 	} 	
  	 	 	// halt($passageway->passageway_mech);
  	 	 	 #查询库中是否存在数据
- 	 	 	 $passage=passagewayItem::where(['item_passageway'=>Request::instance()->param('id')])->select();
+ 	 	 	 $passage=PassagewayItem::where(['item_passageway'=>Request::instance()->param('id')])->select();
  	 	 	 if($passage){
  	 	 	 	//针对每条数据执行 (每条对应一个用户组)
  	 	 	 	foreach ($passage as $k => $v) {
@@ -77,9 +77,9 @@ class passageway extends Common{
  	 	 	 			 }
  	 	 	 			//开始更新
  	 	 	 			if($haschange){
- 	 	 	 				$passagewayItem = new passagewayItem();
+ 	 	 	 				$PassagewayItem = new PassagewayItem();
  	 	 	 				$wheres['item_id'] = $v['item_id'];
- 	 	 	 				$passagewayItem->where($wheres)->update($data[$v['item_group']]);
+ 	 	 	 				$PassagewayItem->where($wheres)->update($data[$v['item_group']]);
  	 	 	 				//取出该用户组下所有会员
  	 	 	 				$members=db('member')->alias('m')
  	 	 	 					->join('member_cert c','m.member_id=c.cert_member_id')
@@ -126,8 +126,8 @@ class passageway extends Common{
  	 	 	 		$v['item_passageway']=$passageway->passageway_id;
  	 	 	 		$newData[]=$v;
  	 	 	 	}
- 	 	 	 	$passagewayItem=new passagewayItem();
- 	 	 	 	$result=$passagewayItem->allowField(true)->saveAll($newData);
+ 	 	 	 	$PassagewayItem=new PassagewayItem();
+ 	 	 	 	$result=$PassagewayItem->allowField(true)->saveAll($newData);
  	 	 	 	if(!$result)
  	 	 	 		$content=['type'=>'warning','msg'=>'税率新增失败'];
  	 	 	 }
@@ -137,7 +137,7 @@ class passageway extends Common{
 		 	 $this->redirect($this->history['0']);
 	 	 }
 	  	 #查询出当前通道对会员组的原始税率
-	  	 $list=passagewayItem::where('item_passageway',Request::instance()->param('id'))->select();
+	  	 $list=PassagewayItem::where('item_passageway',Request::instance()->param('id'))->select();
 	  	 $this->assign('list', $list);
 	  	 #查询出所有的用户组
 	  	 $group=MemberGroup::all();
@@ -182,13 +182,13 @@ class passageway extends Common{
 
 
 
-			 $passageway = new passageways($_POST);
+			 $passageway = new Passageways($_POST);
 			 $result = $passageway->allowField(true)->save();
 			 #数据是否提交成功
 			 $content = $result ? ['type'=>'success','msg'=>'通道添加成功'] : ['type'=>'warning','msg'=>'通道添加失败'];
 			 Session::set('jump_msg', $content);
 			 #重定向控制器 跳转到列表页
-			 $this->redirect('passageway/index');
+			 $this->redirect('Passageway/index');
 	 	 }
 	 	 return view('admin/passageway/creat');
 	 }
@@ -198,7 +198,7 @@ class passageway extends Common{
 	 public function edit(Request $request)
 	 {
 	 	#获取到详细信息
-		 $passageways = passageways::get(Request::instance()->param('id'));
+		 $passageways = Passageways::get(Request::instance()->param('id'));
 		 #提交更改信息
 		 if(Request::instance()->isPost())
 		 {
@@ -216,13 +216,13 @@ class passageway extends Common{
 			      #return view('admin/category/edit');
 			    	 #exit;
 			 #}
-			 $passageways =passageways::get(Request::instance()->param('id'));
-			 $result= $passageways->allowField(true)->save($_POST);
+			 $Passageways =Passageways::get(Request::instance()->param('id'));
+			 $result= $Passageways->allowField(true)->save($_POST);
 			 #数据是否提交成功
 			 $content = ($result===false) ? ['type'=>'error','msg'=>'修改失败'] : ['type'=>'success','msg'=>'修改成功'];
 			 Session::set('jump_msg', $content);
 			 #重定向控制器 跳转到列表页
-			 $this->redirect('/index/passageway/index');
+			 $this->redirect('/index/Passageway/index');
 		 }
 		 #传递当前信息源去视图
 		 $this->assign('passageways', $passageways);
@@ -252,7 +252,7 @@ class passageway extends Common{
 	 #提现设置
 	 public function cashout(){
 
-	 	$data = Cashout::with('passageway')->where('cashout_passageway_id='.Request::instance()->param('id'))->find();
+	 	$data = Cashout::with('Passageway')->where('cashout_passageway_id='.Request::instance()->param('id'))->find();
 
 	 	if(empty($data)){
 	 		$data=array(
@@ -332,7 +332,7 @@ class passageway extends Common{
 	 	// 	$result= Cashout::insert($data);
 	 	// }else
 	 	if(Request::instance()->isPost()){
-	 		$cashout = new passagewayItem();
+	 		$cashout = new PassagewayItem();
 			 $result = $cashout->allowField(true)->save($_POST);
 			 #数据是否提交成功
 			 $content = ($result===false) ? ['type'=>'error','msg'=>'修改失败'] : ['type'=>'success','msg'=>'修改成功'];
@@ -341,7 +341,7 @@ class passageway extends Common{
 			 $this->redirect('/index/passageway/index');die;
 	 	}
 	 	$this->assign("item_passageway",Request::instance()->param('id'));
-	 	$data = passagewayItem::with('passageway')->where('item_passageway='.Request::instance()->param('id'))->find();
+	 	$data = PassagewayItem::with('passageway')->where('item_passageway='.Request::instance()->param('id'))->find();
 	 	$member_group_info = MemberGroup::order("group_salt asc")->select();//用户分组数据
 	 	$this->assign("member_group_info",$member_group_info);
 	 	$this->assign('data',$data);
@@ -349,7 +349,7 @@ class passageway extends Common{
 	}
 	#通道下的交易订单列表
 	public function passageway_details($id){
-		$passageway=passageways::get($id);
+		$passageway=Passageways::get($id);
 		$passageway->sum=db('cash_order')->where(['order_passway'=>$id,'order_state'=>2])->sum('order_money');
 		$passageway->charge=db('cash_order')->where(['order_passway'=>$id,'order_state'=>2])->sum('order_charge');
 		$users=db('member')->column('member_id,member_nick');
