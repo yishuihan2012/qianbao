@@ -966,7 +966,7 @@ abstract class Model implements \JsonSerializable, \ArrayAccess
      * @param string $sequence 自增序列名
      * @return integer|false
      */
-    public function save($data = [], $where = [], $sequence = null)
+    public  function save($data = [], $where = [], $sequence = null)
     {
         if (is_string($data)) {
             $sequence = $data;

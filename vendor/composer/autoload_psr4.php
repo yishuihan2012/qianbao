@@ -14,4 +14,5 @@ return array(
     'OSS\\' => array($vendorDir . '/aliyuncs/oss-sdk-php/src/OSS'),
     'JPush\\' => array($vendorDir . '/jpush/jpush/src/JPush'),
     'GraphQL\\' => array($vendorDir . '/webonyx/graphql-php/src'),
+    'Flc\\Dysms\\' => array($vendorDir . '/flc/dysms/src'),
 );

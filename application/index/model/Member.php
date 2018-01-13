@@ -69,8 +69,9 @@ class Member extends Model{
       #关联模型 一对多关联 (Upgrade) 用户升级订单表
       public function memberUpgrade()
       {
-           return $this->hasMany('Upgrade','upgrade_id','member_id')->bind('upgrade_state');
+           return $this->hasMany('Upgrade','upgrade_id','member_id')->bind('upgrade_state,upgrade_update_time');
       }
+      
       public function memberCashcard(){
         return $this->hasOne("MemberCashcard","card_member_id","member_id")->bind("card_bankno,card_idcard");
       } 

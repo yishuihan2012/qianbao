@@ -25,6 +25,12 @@
 			 <input type="text" class="form-control passageway_name" name="passageway_name" placeholder="请填写通道的名称" value="">
 		 </div>		
 	 </div>
+	 <div class="row form-group">
+		 <label for="passageway_true_name" class="col-sm-3 text-right"><b>真实名称:</b></label>
+		 <div class="col-sm-6" id="passageway_true_name">
+			 <input type="text" class="form-control passageway_true_name" name="passageway_true_name" placeholder="APP不显示，用于后台确认是哪个通道" value="">
+		 </div>		
+	 </div>
 
 	 <div class="row form-group">
 		 <label for="passageway_status" class="col-sm-3 text-right"><b>是否必须入网:</b></label>

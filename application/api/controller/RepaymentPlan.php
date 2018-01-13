@@ -331,6 +331,9 @@
                                    Db::rollback();
                                    return ['code'=>472];      
                              }
+                        }else{
+                             Db::rollback();
+                             return ['code'=>472];      
                         }
                  }
                  
@@ -391,5 +394,9 @@
                  }
            }
            return $arr;
+      }
+      #取消还款计划【整体】
+      public function cancel_repayment($generation_id){
+        
       }
  }

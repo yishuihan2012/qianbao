@@ -19,6 +19,7 @@ use think\Loader;
 use think\Db;
 
 class Passageway extends Common{
+	protected	$order_state=['1'=>'待支付','2'=>'成功','-1'=>'失败','-2'=>'超时'];
 	 #通道列表
 	 public function index()
 	 {
@@ -50,14 +51,15 @@ class Passageway extends Common{
 	 	 	 	$group_id=strrev(strstr(strrev($k),strrev('_'),true));
 	 	 	 	$key_fix=strtok($k,'_');
 	 	 	 	//该通道为套现 则丢弃 代还数据 否则 丢弃 套现数据
-	 	 	 	if($passageway->passageway_also==1){
-	 	 	 		if($key_fix=='also')continue;
-	 	 	 	}else{
-	 	 	 		if($key_fix=='rate')continue;
-	 	 	 	}
+	 	 	 	#杨注释掉的
+	 	 	 	// if($passageway->passageway_also==1){
+	 	 	 	// 	if($key_fix=='also')continue;
+	 	 	 	// }else{
+	 	 	 	// 	if($key_fix=='rate')continue;
+	 	 	 	// }
 	 	 	 	//以用户组为键 转储到data
 	 	 	 	$data[$group_id]['item_'.$key_fix]=$v;
- 	 	 	}
+ 	 	 	} 	
  	 	 	// halt($passageway->passageway_mech);
  	 	 	 #查询库中是否存在数据
  	 	 	 $passage=PassagewayItem::where(['item_passageway'=>Request::instance()->param('id')])->select();
@@ -66,22 +68,24 @@ class Passageway extends Common{
  	 	 	 	foreach ($passage as $k => $v) {
  	 	 	 		//若该条对应的用户组 在post中存在 (正常情况会存在)
  	 	 	 		if(isset($data[$v['item_group']])){
- 	 	 	 			$haschange=false;
- 	 	 	 			//遍历该用户组post数据
- 	 	 	 			foreach ($data[$v['item_group']] as $key => $value) {
- 	 	 	 				//若与数据库中的数据不一致，则需要更新
- 	 	 	 				if($value!=$v[$key])
- 	 	 	 					$haschange=true;
- 	 	 	 			}
+ 	 	 	 			 $haschange=false;
+ 	 	 	 			 //遍历该用户组post数据
+ 	 	 	 			 foreach ($data[$v['item_group']] as $key => $value) {
+ 	 	 	 				 //若与数据库中的数据不一致，则需要更新
+ 	 	 	 				 if($value!=$v[$key])
+ 	 	 	 					 $haschange=true;
+ 	 	 	 			 }
  	 	 	 			//开始更新
  	 	 	 			if($haschange){
- 	 	 	 				$passage->allowField(true)->save($data[$v['item_group']]);
+ 	 	 	 				$PassagewayItem = new PassagewayItem();
+ 	 	 	 				$wheres['item_id'] = $v['item_id'];
+ 	 	 	 				$PassagewayItem->where($wheres)->update($data[$v['item_group']]);
  	 	 	 				//取出该用户组下所有会员
  	 	 	 				$members=db('member')->alias('m')
  	 	 	 					->join('member_cert c','m.member_id=c.cert_member_id')
  	 	 	 					->where('m.member_group_id',$k)
  	 	 	 					->select();
- 	 	 	 				//遍历进行 第三方资料变更 
+ 	 	 	 				 //遍历进行 第三方资料变更 
  	 	 	 				foreach($members as $member){
  	 	 	 					$membernet=db('member_net')->where('net_member_id',$member['member_id'])->find();
  	 	 	 					//暂不启用
@@ -343,7 +347,98 @@ class Passageway extends Common{
 	 	$this->assign('data',$data);
 	 	return view('admin/Passageway/also');
 	}
-	public function shareedit(){
-		
+	#通道下的交易订单列表
+	public function passageway_details($id){
+		$passageway=Passageways::get($id);
+		$passageway->sum=db('cash_order')->where(['order_passway'=>$id,'order_state'=>2])->sum('order_money');
+		$passageway->charge=db('cash_order')->where(['order_passway'=>$id,'order_state'=>2])->sum('order_charge');
+		$users=db('member')->column('member_id,member_nick');
+		$list=[];
+		$where=[];
+		if(request()->ispost()){
+			$r=request()->param();
+			if($r['begin'])
+				$where['order_update_time']=['between time',[$r['begin'],$r['end']]];
+			if($r['order_state'])
+				$where['order_state']=$r['order_state'];
+			if($r['member_mobile'])
+				$where['member_mobile']=['like','%'.$r['member_mobile'].'%'];
+			if($r['member_nick'])
+				$where['member_nick']=['like','%'.$r['member_nick'].'%'];
+		}else{
+			$r=[
+				'begin'=>'',
+				'end'=>'',
+				'order_state'=>'',
+				'member_mobile'=>'',
+				'member_nick'=>'',
+			];
+		}
+		//套现
+		if($passageway->passageway_also==1){
+			$passageway->fenrun=db('cash_order')->alias('o')
+				->join('commission c','o.order_id=c.commission_from')
+				->where('c.commission_type',1)
+				->sum('commission_money');
+			$list=db('cash_order')->alias('o')
+				->join('member m','o.order_member=m.member_id')
+				->where('o.order_passway',$id)
+				->where($where)
+				->order('o.order_id desc')
+		 	 	->paginate(Config::get('page_size'), false, ['query'=>Request::instance()->param()]);
+			// $data=db('commission')->alias('c')
+			// 	->join('cash_order o','c.commission_from=o.order_id')
+			// 	->where('order_passway',$id)
+			// 	->select();
+			// foreach ($data as $k => $v) {
+			// 	//以订单id为键
+			// 	if(isset($list[$v['order_id']])){
+			// 		//区分二级和三级
+			// 		if(isset($list[$v['order_id']]['member2'])){
+			// 			$list[$v['order_id']]['member3']=$users[$v['commission_member_id']];
+			// 			$list[$v['order_id']]['money3']=$v['commission_money'];
+			// 		}else{
+			// 			$list[$v['order_id']]['member2']=$users[$v['commission_member_id']];
+			// 			$list[$v['order_id']]['money2']=$v['commission_money'];
+			// 		}
+			// 	}else{
+			// 		$list[$v['order_id']]=[
+			// 			'order_no'=>$v['order_no'],
+			// 			'order_member'=>$users[$v['order_member']],
+			// 			'order_money'=>$v['order_money'],
+			// 			'order_charge'=>$v['order_charge'],
+			// 			'order_update_time'=>$v['order_update_time'],
+			// 			'member1'=>$users[$v['commission_member_id']],
+			// 			'money1'=>$v['commission_money'],
+			// 		];
+			// 	}
+			// }
+		}else{
+			#代还
+			
+		}
+		$this->assign('r',$r);
+		$this->assign('order_state',$this->order_state);
+		$this->assign('passageway',$passageway);
+		$this->assign('list',$list);
+	 	return view('admin/Passageway/passageway_details');
+	}
+	#通道下单个订单详情 
+	#id 订单id type =1 套现 =3 代还
+	public function passageway_details_info($id,$type){
+		$users=db('member')->column('member_id,member_nick');
+		if($type==1){
+			$order=db('cash_order')->where('order_id',$id)->find();
+			$fenrun=db('commission')->where(['commission_type'=>1,'commission_from'=>$id])->select();
+			$order['order_state']=$this->order_state[$order['order_state']];
+		}
+		$level=['直接','间接','三级'];
+		foreach ($fenrun as $k => $v) {
+			$fenrun[$k]['level']=array_shift($level);
+		}
+		$this->assign('order',$order);
+		$this->assign('users',$users);
+		$this->assign('fenrun',$fenrun);
+	 	return view('admin/Passageway/passageway_details_info');
 	}
 }

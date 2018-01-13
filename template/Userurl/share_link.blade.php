@@ -13,7 +13,7 @@
 	<body>
 		<div class="mui-content" style="padding:0;">
 			<a class="to-share" id="toShare">
-				<img src="/static/images/to_share.png"/>
+				<img src="/static/images/logo.png"/>
 			</a>
 		</div>
 		

@@ -8,8 +8,96 @@
     <h3><i class="icon-list-ul"></i>控制面板 <small>详情</small></h3>
   </header>
   <div class="items items-hover">
+      <div class="row">
+           <div class="col-sm-6" id="memberData" style="width:400px; height: 400px;"></div>
+           <script type="text/javascript">
+                // 基于准备好的dom，初始化echarts实例
+                var myChart = echarts.init(document.getElementById('memberData'));
+                option = {
+                     title : {
+                           text: "会员统计数据,总会员数：{{$member['count']}}",
+                           x:'center',
+                           top: '20'
+                     },
+                     tooltip: {
+                           trigger: 'item',
+                           formatter: "{a} <br/>{b}: {c} ({d}%)"
+                     },
+                     series: [{
+                           name:'会员信息',
+                           type:'pie',
+                           selectedMode: 'single',
+                           radius: [0, '30%'],
+                           label: {
+                                normal: {
+                                     position: 'inner'
+                                }
+                           },
+                           labelLine: {
+                                normal: {
+                                     show: false
+                                }
+                           },
+                           data:[
+                                @foreach($member['group'] as $group)
+                                {value:{{$group['memberCount']}}, name:"{{$group['group_name']}}"},
+                                @endforeach
+                           ]
+                     },
+                     {
+                     name:'会员信息',
+                     type:'pie',
+                     radius: ['40%', '55%'],
+                     label: {
+                           normal: {
+                                formatter: '{a|{a}}{abg|}\n{hr|}\n  {b|{b}：}{c}  {per|{d}%}  ',
+                                backgroundColor: '#eee',
+                                borderColor: '#aaa',
+                                borderWidth: 1,
+                                borderRadius: 4,
+                           rich: {
+                                a: {
+                                     color: '#999',
+                                     lineHeight: 22,
+                                     align: 'center'
+                                },
+                                hr: {
+                                     borderColor: '#aaa',
+                                     width: '100%',
+                                     borderWidth: 0.5,
+                                     height: 0
+                                },
+                                b: {
+                                     fontSize: 16,
+                                     lineHeight: 33
+                                },
+                                per: {
+                                     color: '#eee',
+                                     backgroundColor: '#334455',
+                                     padding: [2, 4],
+                                     borderRadius: 2
+                                }
+                           }
+                     }
+                },
+                data:[
+                     {value:{{$member['cert']}}, name:'实名认证人数'},
+                     {value:{{$member['today']}}, name:'今日注册会员'},
+                ]
+           }
+      ]
+};
+                    // 使用刚指定的配置项和数据显示图表。
+                    myChart.setOption(option);
+                </script>
+            <div class="col-sm-6">
+              
+            </div>
+      </div>
+
+
     <div class="z-card">
-      当前用户总数:
+      用户总数:
       <span>{{$data['count']}}</span>
     </div>
     <div class="z-card">
@@ -19,24 +107,60 @@
   </div>
   <div class="items items-hover">
     <div class="z-card">
-      当前套现总量:
+      交易总次数:
       <span>{{$data['CashOrdercount']}}</span>
     </div>
     <div class="z-card">
-      当前还款总量:
-      <span>{{$GenerationOrdercount}}</span>
+      还款计划总数:
+      <span>{{$data['GenerationOrdercount']}}</span>
+    </div>
+    <div class="z-card">
+      交易总金额:
+      <span>{{$data['CashOrderSum']}}</span>
+    </div>
+    <div class="z-card">
+      还款计划总金额:
+      <span>{{$data['GenerationOrderSum']}}</span>
     </div>
     
   </div>
   <div class="items items-hover">
     @foreach($membergrouplist as $key => $value)
     <div class="z-card">
-      {{$value['group_name']}}总量:
+      {{$value['group_name']}}总数:
       <span>{{$value['membergroupcount']}}</span>
     </div>
     @endforeach
   </div>
 </div>
+ <blockquote> 
+  通道使用详情(仅展示已开启的)
+ </blockquote>
+<div class="list">
+    @foreach($passway as $k => $v)
+  <div class="items items-hover">
+    <div class="z-card">
+      {{$v['passageway_name']}}用量统计
+      <span></span>
+    </div>
+    <div class="z-card">
+      今日:
+      <span>{{$v['todaysum']}}</span>
+    </div>
+    <div class="z-card">
+      昨日:
+      <span>{{$v['yesterdaysum']}}</span>
+    </div>
+    <div class="z-card">
+      本周:
+      <span>{{$v['weeksum']}}</span>
+    </div>
+    <div class="z-card">
+      本月:
+      <span>{{$v['allsum']}}</span>
+    </div>
+  </div>
+    @endforeach
 </div>
 </section>
 <script type="text/javascript">
@@ -49,19 +173,19 @@ $(document).ready(function(){
 <style type="text/css">
   .z-card{
     width: 200px;
-    height: 80px;
-    border-radius: 10px;
+    height: 40px;
+    border-radius: 4px;
     background-color: #3280fc;
     text-align: center;
-    line-height: 70px;
-    font-size: 1.6rem;
+    line-height: 40px;
+    font-size: 1.4rem;
     color: white;
     /*float: left;*/
-    margin: 15px;
+    margin: 2px;
     display: inline-block;
   }
   .z-card span{
-    font-size: 2rem;
+    font-size: 1.8rem;
     font-weight: 800;
   }
 </style>

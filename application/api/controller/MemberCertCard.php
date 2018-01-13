@@ -93,12 +93,11 @@
       **/ 
       public function addition_card()
       {
-         //  $add=new \app\api\controller\MemberNet($this->param['uid'],$this->param['passageway_id'],$this->param['phone']);
-         // return ['code'=>436, 'msg'=>'qwewq','data'=>$add];
+           //  $add=new \app\api\controller\MemberNet($this->param['uid'],$this->param['passageway_id'],$this->param['phone']);
+           // return ['code'=>436, 'msg'=>'qwewq','data'=>$add];
            #验证器验证 验证参数合法性
            $validate = Loader::validate('Memberadditioncard');
            #如果验证不通过 返回错误代码 及提示信息
-
            if(!$validate->check($this->param))
                  return ['code'=>436, 'msg'=>$validate->getError()];
 
@@ -119,10 +118,12 @@
 
             if(empty($member_net[$passageway['passageway_no']])){
 
-                 $rate=PassagewayItem::where('item_passageway='.$passageway['passageway_id'].' and item_group='.$group['member_group_id'])->find();
-                 $arr=mishua($passageway, $rate, $member_info, $this->param['phone']);
-                $add_net=MemberNet::where('net_member_id='.$this->param['uid'])->update($arr);
+                $rate=PassagewayItem::where('item_passageway='.$passageway['passageway_id'].' and item_group='.$group['member_group_id'])->find();
 
+                $arr=mishua($passageway, $rate, $member_info, $this->param['phone']);
+
+
+                $add_net=MemberNet::where('net_member_id='.$this->param['uid'])->update($arr);
            }
 
             $member_net=MemberNet::where('net_member_id='.$this->param['uid'])->find();
@@ -136,6 +137,7 @@
                   'expiredDate'=>$this->param['expireDate'],
                   'cvv'=>$this->param['cvv']
             );
+
 
             $url='http://pay.mishua.cn/zhonlinepay/service/rest/creditTrans/bindCardSms';
             $income=repay_request($params,$passageway['passageway_mech'],$url,$passageway['iv'],$passageway['secretkey'],$passageway['signkey']);

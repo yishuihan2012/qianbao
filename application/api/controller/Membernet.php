@@ -1,6 +1,7 @@
 <?php
  namespace app\api\controller;
- use app\index\model\Member;
+  use think\Db;
+use app\index\model\Member;
  use app\index\model\System;
  use app\index\model\Wallet;
  use app\index\model\WalletLog;
@@ -12,6 +13,7 @@
  use app\index\model\Passageway;
  use app\index\model\Generation;
  use app\index\model\GenerationOrder;
+ use app\index\model\Reimbur;
  use app\index\model\MemberNet as MemberNets;
  use app\index\model\MemberCreditcard;
  /**
@@ -20,7 +22,7 @@
  *   @datetime    2017-12-08 10:13:05
  *   @return 
  */
- class MemberNet
+ class Membernet
  {
     public $error;
       private $member; //会员信息
@@ -172,8 +174,10 @@
                  #先判断有没有分润
                  if($pay['is_commission']=='0'){
                     $fenrun= new \app\api\controller\Commission();
-                    $fenrun_result=$fenrun->MemberFenRun($pay['order_member'],$pay['order_money'],$merch->passageway_id,2,'代还分润');
+                    $fenrun_result=$fenrun->MemberFenRun($pay['order_member'],$pay['order_money'],$merch->passageway_id,3,'代还分润',$pay['order_id']);
                  }
+                 //在此计划的还款卡余额中增加本次的金额 除去手续费
+                 db('reimbur')->where('reimbur_generation',$pay['order_no'])->setInc('reimbur_left',$pay['order_money']-$pay['order_pound']);
                 //成功极光推送。
                 jpush($pay['order_member'],'还款计划扣款成功通知',"您制定的尾号{$card_num}的还款计划成功扣款".$pay['order_money']."元，在APP内还款计划里即可查看详情。");
             }else if($income['status']=="FAIL"){
@@ -221,7 +225,7 @@
                    //成功-分润先判断有没有分润
                    if($pay['is_commission']=='0'){
                       $fenrun= new \app\api\controller\Commission();
-                      $fenrun_result=$fenrun->MemberFenRun($pay['order_member'],$pay['order_money'],$merch->passageway_id,2,'代还分润');
+                      $fenrun_result=$fenrun->MemberFenRun($pay['order_member'],$pay['order_money'],$merch->passageway_id,3,'代还分润',$pay['order_id']);
                    }
                   // 极光推送
                   $card_num=substr($pay['order_card'],-4);
@@ -252,7 +256,7 @@
       }
       //10.余额提现
       //http://pay.mishua.cn/zhonlinepay/service/rest/creditTrans/transferApply
-      public function transferApply($pay){
+      public function transferApply($pay,$isCancel=null){
         #1获取费率
         $member_group_id=Member::where(['member_id'=>$pay['order_member']])->value('member_group_id');
         $rate=PassagewayItem::where(['item_passageway'=>$pay['order_passageway'],'item_group'=>$member_group_id])->find();
@@ -286,6 +290,8 @@
           $arr['back_statusDesc']=$income['statusDesc'];
           if($income['status']=="SUCCESS"){
                $arr['order_status']='2';
+               //在此计划的还款卡余额中减去本次的金额
+               db('reimbur')->where('reimbur_generation',$pay['order_no'])->setDec('reimbur_left',$pay['order_money']);
                //成功极光推送。
               jpush($pay['order_member'],'还款成功通知',"您制定的尾号{$card_num}的还款计划成功还款".$pay['order_money']."元，在APP内还款计划里即可查看详情。");
           }elseif($income['status']=="FAIL"){
@@ -304,7 +310,13 @@
         }
         //更新订单状态
         GenerationOrder::where(['order_id'=>$pay['order_id']])->update($arr);
-        //更新卡计划
+        //更新卡计划 判断是否是最后一次执行还款计划
+        $GenerationOrder=GenerationOrder::where(['order_no'=>$pay['order_no'],'order_status'=>1])->find();
+        if(!$GenerationOrder){
+          #根据传入的isCancel来判断是否是因为主动取消而结束的本次计划
+          $generation_state=$isCancel ? 4 : 3;
+          Generation::update(['generation_id'=>$pay['order_no'],'generation_state'=>$generation_state]);
+        }
       }
       //提现回调
       public function cashCallback(){
@@ -355,8 +367,8 @@
         );
         // var_dump($params);die;
         $income=repay_request($params,$passageway->passageway_mech,'http://pay.mishua.cn/zhonlinepay/service/rest/creditTrans/accountQuery',$passageway->iv,$passageway->secretkey,$passageway->signkey);
-        echo json_encode($income);
-        // var_dump($income);die;
+        return $income;
+        var_dump($income);die;
       }
       public function mishuaedit($uid=16,$passageway='8'){
          #1实名信息
@@ -370,5 +382,51 @@
          #5商户入网信息
          $member_net=MemberNet::where('net_member_id='.$uid)->find();
          mishuaedit($passageway, $rate, $member_info, $member['member_mobile'], $member_net[$passageway['passageway_no']]);
+      }
+
+      #取消还款计划【整体】
+      # generation_id
+      public function cancle_plan($generation_id){
+       Db::startTrans();
+       try{
+        $generation=Generation::get($generation_id);
+        // $generation->generation_state=4;
+        $generation_order=GenerationOrder::where(['order_no'=>$generation_id,'order_status'=>1]);
+        $generation_order->update(['order_status'=>3]);
+        if($generation->generation_state==2){
+          #执行中的，将本次计划还款卡中余额返回信用卡
+          $money=db('reimbur')->where('reimbur_generation',$generation_id)->value('reimbur_left');
+          if($money>0){
+            $userinfo=$this->accountQuery($generation['generation_member']);
+            $realMoney=$userinfo['lastAmt']+$userinfo['availableAmt']-$userinfo['usedAmt'];
+            //判断本次计划还款总金额 是否不大于 商户平台中该用户的余额
+            if($money<=$realMoney){
+              //写入本次取消返还的还款订单
+              $reback_order=GenerationOrder::create([
+                'order_no'=>$generation_id,
+                'order_passageway'=>$generation->order_passageway,
+                'order_member'=>$generation->order_member,
+                'order_type'=>2,
+                'order_card'=>$generation->order_card,
+                'order_money'=>$money,
+                'order_pound'=>0,
+                'order_desc'=>'取消还款计划，自动返还本次计划剩余款项',
+                'order_time'=>date('Y-m-d H:i:s'),
+              ]);
+              $this->transferApply($reback_order->toArray(),true);
+            }else{
+              Db::rollback();
+              return ['code'=>481,'msg'=>get_status_text(481)];
+            }
+          }
+        }
+        Generation::update(['generation_id'=>$generation_id,'generation_state'=>4]);
+         Db::commit();
+         return ['code'=>200];
+       } catch (\Exception $e) {
+             Db::rollback();
+             // return $e->getMessage();
+             return ['code'=>308,'msg'=>$e->getMessage(),'data'=>[]];
+       }
       }
  }

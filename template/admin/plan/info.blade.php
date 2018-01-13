@@ -52,12 +52,11 @@
 			 <td>{{$value->order_add_time}}</td>
 			 <td>
 			 	@if($value->order_status == 3)
-			  	<a class="remove" href="#" data-url="{{url('index/Plan/order_status')}}"><i class="icon-pencil"></i> 继续执行 </a>
+			  	<a class="remove" href="#" data-url="{{url('/index/Plan/order_status/status/1/id/'.$value['order_id'])}}"><i class="icon-pencil"></i> 继续执行 </a>
 			  	@endif
 			  	@if($value->order_status == 1)
-			  	<a class="remove" href="#" data-url="{{url('index/Plan/order_status')}}"><i class="icon-pencil"></i> 取消执行 </a>
+			  	<a class="remove" href="#" data-url="{{url('/index/Plan/order_status/status/3/id/'.$value['order_id'])}}"><i class="icon-pencil"></i> 取消执行 </a>
 			  	@endif
-
 			 </td>
 			 <!-- <td>{{$value->back_tradeNo}}</td>
 			 <td>{{$value->back_statusDesc}}</td>

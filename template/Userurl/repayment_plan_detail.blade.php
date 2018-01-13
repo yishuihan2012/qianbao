@@ -103,15 +103,15 @@
 						<div class="dis-flex-be wrap-bt bor-bot">
 							<p class="f15">
 								@if($v['order_type']==1)
-								<span class="my-badge-cancel  green">消费</span>
+								<span class="my-badge-inpro">消费</span>
 								@elseif($v['order_type']==2)
-								<span class="my-badge-cancel">还款</span>
+								<span class="my-badge-success">还款</span>
 								@endif
 								<span class="invalid-color space-lr2">{{date('H:i',strtotime($v['order_time']))}}</span>
 								<span><strong>{{$v['order_money']}}元</strong></span>
 							</p>
 							<p class="f16 red-color2">
-							  <span>取消计划</span>
+							  <span>计划取消</span>
 							  <span class="iconfont icon-quxiao f20 v-m"></span>
 					        </p>
 						</div>
@@ -122,10 +122,28 @@
 		@endforeach
 
 			</ul>
+		@if(in_array($generation['generation_state'],[1,2]))
+	<a class="my-confirm" id="regBtn">取消整体计划</a>
+		@endif
 		</div>
 		<script src="/static/js/mui.min.js"></script>
+		<script src="/static/js/jquery-2.1.4.min.js"></script>
 		<script type="text/javascript">
 			mui.init();
+	$(function(){
+		$('#regBtn').click(function(){
+			$.post('/api/userurl/cancel_repayment',{generation_id:{{$generation['generation_id']}}},function(res){
+				res=JSON.parse(res);
+				if(res.code==200){
+					alert('取消成功！');
+					location.reload();
+				}else{
+					alert("取消失败！\n"+res.msg);
+				}
+			})
+			console.log(666);
+		})
+	})
 		</script>
 	</body>
 <style type="text/css">

@@ -62,7 +62,7 @@ class Cashoutcallback
 		 	 $order->order_state=2;
 		 	 //进行分润
 		 	 $fenrun= new \app\api\controller\Commission();
-		 	 $fenrun_result=$fenrun->MemberFenRun($order->order_member,$order->order_money,$order->order_passway,1,'套现手续费分润');
+		 	 $fenrun_result=$fenrun->MemberFenRun($order->order_member,$order->order_money,$order->order_passway,1,'套现手续费分润',$order->order_id);
 		 	 if($fenrun_result['code']=="200")
  				 $order->order_fen=$fenrun_result['leftmoney'];
  			else	
@@ -123,7 +123,7 @@ class Cashoutcallback
 		 	 $order->order_state=2;
 		 	 //进行分润
 		 	 $fenrun= new \app\api\controller\Commission();
-		 	 $fenrun_result=$fenrun->MemberFenRun($order->order_member,$order->order_money,$order->order_passway,1,'套现手续费分润');
+		 	 $fenrun_result=$fenrun->MemberFenRun($order->order_member,$order->order_money,$order->order_passway,1,'套现手续费分润',$order->order_id);
 		 	 if($fenrun_result['code']=="200")
  				 $order->order_fen=$fenrun_result['leftmoney'];
  			else	
@@ -186,7 +186,7 @@ class Cashoutcallback
              $order->order_state=2;
              //进行分润
              $fenrun= new \app\api\controller\Commission();
-             $fenrun_result=$fenrun->MemberFenRun($order->order_member,$order->order_money,$order->order_passway,1,'套现手续费分润');
+             $fenrun_result=$fenrun->MemberFenRun($order->order_member,$order->order_money,$order->order_passway,1,'套现手续费分润',$order->order_id);
              if($fenrun_result['code']=="200")
                  $order->order_fen=$fenrun_result['leftmoney'];
             else    

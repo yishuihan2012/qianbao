@@ -422,7 +422,7 @@
                  #加密密码
                  $pwd=encryption(substr($this->param['phone'], -6), $rand_salt);
                  #新增会员基本信息                  
-                 $member_info= new Member([
+                 $member_info= new Members([
                       'member_nick'=>$this->param['phone'],
                       'member_mobile'=>$this->param['phone'],
                       'member_group_id'=>System::getName('open_reg_membertype')]);
@@ -457,7 +457,7 @@
                       return ['code'=>300];                  
                  }                  
                  Db::commit();
-                 $data=Member::member_info($token);                  
+                 $data=Members::member_info($token);                  
                  return  ['code'=>200,'msg'=>'帮扶注册成功~','data'=>$data]; 
                  //请求成功             
            } catch (\Exception $e) {                  
@@ -474,7 +474,6 @@
       **/
       public function get_team()
       { 
-
       	$membercert=Members::where(['member_id'=>$this->param['uid']])->find();
            $group=MemberGroup::select();
            // var_dump($group);die;
@@ -485,8 +484,8 @@
              $data['list'][$key]['levelIcon']=System::getName('system_url').$value['group_thumb'];
              $data['list'][$key]['childAmount']=0;
              $data['list'][$key]['grandChildAmount']=0;
-             $MemberRelation_1rd=MemberRelation::where(["relation_parent_id"=>$this->param['uid']])->select();
-
+             $MemberRelation_1rd=MemberRelation::with("members")->where(["relation_parent_id"=>$this->param['uid'],"member_group_id" => $value['group_id']])->select();
+             // print_r($MemberRelation_1rd);
              foreach ($MemberRelation_1rd as $k => $val) {
                 $member[$k]=Members::with('membergroup')->where(['member_id'=>$val['relation_member_id']])->find();
                              // return ['code'=>200, 'msg'=>'信息反馈成功~','data'=>$member];
@@ -495,6 +494,7 @@
                 } 
 
                 $member_2rd[$k]=MemberRelation::where(['relation_parent_id'=>$member[$k]['member_id']])->select();
+
                 foreach ($member_2rd[$k] as $k1 => $val1) {
                     $member_3rd[$k1]=Members::with('membergroup')->where(['member_id'=>$val1['relation_member_id']])->find();
                     if($member_3rd[$k1]['group_id']==$value['group_id']){
