@@ -89,17 +89,17 @@
 	 *   @author $bill$(755969423@qq.com)
 	 *   @datetime    2017-12-08 10:13:05
 	 *   @param  $memberId='刷卡会员ID'  $price="交易总额" $passwayId="使用通道ID" 
-	 *   @param $type=分润类型 1=快捷支付分润 2=代还分润 $desction="简介描述" 
+	 *   @param $type=分润类型 1=快捷支付分润 2=分佣 3=代还分润 $desction="简介描述"  $order_id 对应订单的id
 	 */
- 	 public function MemberFenRun($memberId,$price,$passwayId, $type ,$desction="会员分润")
+ 	 public function MemberFenRun($memberId,$price,$passwayId, $type ,$desction="会员分润",$order_id)
  	 {
 
  	 	 if($type=='1'){
- 	 	 	 $action="快捷支付";
+ 	 	 	 $action="快捷支付分润";
  	 	 	 $field="item_rate";
  	 	 }
- 	 	 if($type=="2"){
- 	 	 	 $action="代还";
+ 	 	 if($type=="3"){
+ 	 	 	 $action="代还分润";
  	 	 	 $field="item_also";
  	 	 }
  	 	 //消耗的总分润
@@ -127,16 +127,16 @@
  	 	 //判断上级会员用户组是否允许分润
  	 	 $member_fatherGroup=MemberGroup::where(['group_id'=>$member_fatherInfo['member_group_id']])->value('group_run');
  	 	 if($member_fatherGroup=="0"){
- 	 	 	 $father_result=$this->commissionOrder($memberId,$member_faterId,0,1,$desction."-直接分润:您当前用户组不允许获得分润~");
+ 	 	 	 $father_result=$this->commissionOrder($memberId,$member_faterId,0,1,$desction."-直接分润:您当前用户组不允许获得分润~",$order_id);
  	 	 }else{
  	 	 	 //计算税率差 如果上级的税率和本人税率相同或者大于本人税率  则不进行分润
  	 	 	 if($member_also-$member_fatherAlso<=0){
- 	 	 	 	 $father_result=$this->commissionOrder($memberId,$member_faterId,0,1,$desction."-直接分润:与操作人会员级别相同或比操作人级别低,不获得分润~");
+ 	 	 	 	 $father_result=$this->commissionOrder($memberId,$member_faterId,0,1,$desction."-直接分润:与操作人会员级别相同或比操作人级别低,不获得分润~",$order_id);
  	 	 	 }else{
  	 	 	 	 $member_fatherAlsoMoney=$price*(($member_also-$member_fatherAlso)/100);
  	 	 	 	 $leftmoney+=$member_fatherAlsoMoney;
  	 	 	 	 $str=$desction."-直接分润:邀请的".$memberInfo['member_nick'].$action."成功,获得收益".$member_fatherAlsoMoney."元~";
- 	 	 	 	 $father_result=$this->commissionOrder($memberId,$member_faterId,$member_fatherAlsoMoney,1,$str);
+ 	 	 	 	 $father_result=$this->commissionOrder($memberId,$member_faterId,$member_fatherAlsoMoney,1,$str,$order_id);
  	 	 	 	 jpush($member_faterId,'分润收益到账提醒~',$str,$str);
  	 	 	 }
  	 	 }
@@ -158,7 +158,7 @@
 		 $member_grandFatherAlso=PassagewayItem::where(['item_passageway'=>$passwayId,'item_group'=>$member_grandFatherInfo['member_group_id']])->value($field);
  	 	 if($member_grandFatherGroup=="0")
  	 	 {
- 	 	 	 $grandResult=$this->commissionOrder($memberId,$member_grandFaterId,0,1,$desction."-间接分润:您的用户组不允许获得分润~");	
+ 	 	 	 $grandResult=$this->commissionOrder($memberId,$member_grandFaterId,0,1,$desction."-间接分润:您的用户组不允许获得分润~",$order_id);	
  	 	 }else{
  	 	 	 #查询他的上级是否允许分润
  	 	 	if($member_fatherGroup=="0")
@@ -169,12 +169,12 @@
  	 	 	}
  	 	 	 #比对两级的会员费率 如果比最小的费率大 则不进行分佣
  	 	 	 if($total_also_1-$member_grandFatherAlso<=0){
- 	 	 	 	 $grandResult=$this->commissionOrder($memberId,$member_grandFaterId,0,1,$desction."-间接分润:与下级会员级别相同或比下级级别低,不获得分润~");
+ 	 	 	 	 $grandResult=$this->commissionOrder($memberId,$member_grandFaterId,0,1,$desction."-间接分润:与下级会员级别相同或比下级级别低,不获得分润~",$order_id);
  	 	 	 } else{
 	 	 	 	 $member_grandFatherAlsoMoney=$price*(($total_also_1-$member_grandFatherAlso)/100);
 	 	 	 	 $leftmoney+=$member_grandFatherAlsoMoney;
 	 	 	 	 $str1=$desction."-间接分润:邀请的".$memberInfo['member_nick'].$action."成功,获得收益".$member_grandFatherAlsoMoney."元~";
-	 	 	 	 $grandResult=$this->commissionOrder($memberId,$member_grandFaterId,$member_grandFatherAlsoMoney,1,$str1);
+	 	 	 	 $grandResult=$this->commissionOrder($memberId,$member_grandFaterId,$member_grandFatherAlsoMoney,1,$str1,$order_id);
 	 	 	 	  jpush($member_grandFaterId,'分润收益到账提醒~',$str1,$str1);
  	 	 	 }
  	 	 }
@@ -195,7 +195,7 @@
  	 	 $member_endFatherAlso=PassagewayItem::where(['item_passageway'=>$passwayId,'item_group'=>$member_endFatherInfo['member_group_id']])->value($field);
 
  	 	 if($member_endFatherGroup=="0"){
- 	 	 	 $endFather_result=$this->commissionOrder($memberId,$member_endFatherId,0,1,$desction."-三级分润:您的用户组不允许获得分润~");
+ 	 	 	 $endFather_result=$this->commissionOrder($memberId,$member_endFatherId,0,1,$desction."-三级分润:您的用户组不允许获得分润~",$order_id);
  	 	 }else{
  	 	 	 if($member_grandFatherGroup=="0")
  	 	 	 {
@@ -209,12 +209,12 @@
  	 	 	 #进行税率计算 比对 如果想对税率小于0 则不进行分佣
  	 	 	 if($total_also_2-$member_endFatherAlso<=0)
  	 	 	 {
- 	 	 	 	 $endFather_result=$this->commissionOrder($memberId,$member_endFatherId,0,1,$desction."-三级分润:您的会员组级别较低,不获得分润~");
+ 	 	 	 	 $endFather_result=$this->commissionOrder($memberId,$member_endFatherId,0,1,$desction."-三级分润:您的会员组级别较低,不获得分润~",$order_id);
  	 	 	 }else{
  	 	 	 	 $member_endFatherAlsoMoney=$price*(($total_also_2-$member_endFatherAlso)/100);
  	 	 	 	 $leftmoney+=$member_endFatherAlsoMoney;
  	 	 	 	 $str2=$desction."-三级分润:邀请的".$memberInfo['member_nick'].$action."成功,获得收益".$member_endFatherAlsoMoney."元~";
- 	 	 	 	 $endFather_result=$this->commissionOrder($memberId,$member_endFatherId,$member_endFatherAlsoMoney,1,$str2);
+ 	 	 	 	 $endFather_result=$this->commissionOrder($memberId,$member_endFatherId,$member_endFatherAlsoMoney,1,$str2,$order_id);
  	 	 	 	  jpush($member_endFatherId,'分润收益到账提醒~',$str2,$str2);
  	 	 	 }
  	 	 }
@@ -229,17 +229,22 @@
 	 *   @datetime    2017-12-08 10:13:05
 	 *   @param $memberId="购买会员ID"  $fatherId="上级ID"  $comPrice="分佣金额" $type="类型1=分润 2=分佣" $desc="描述"
 	 */
- 	 public function commissionOrder($memberId,$fatherId,$comPrice,$type, $desc)
+ 	 public function commissionOrder($memberId,$fatherId,$comPrice,$type, $desc,$order_id=null)
  	 {
  	 	 if($type=="1")
  	 	 {
- 	 	 	 $action="分润";
+ 	 	 	 $action="快捷支付分润";
  	 	 	 $field="wallet_fenrun";
  	 	 }
  	 	 if($type=="2")
  	 	 {
  	 	 	 $action="分佣";
  	 	 	 $field="wallet_commission";
+ 	 	 }
+ 	 	 if($type=="3")
+ 	 	 {
+ 	 	 	 $action="代还分润";
+ 	 	 	 $field="wallet_fenrun";
  	 	 }
  	 	 try{ 
 	 	      $commission= new Commissions([
@@ -248,7 +253,8 @@
 	 	      	 'commission_type'		=>$type,
 	 	      	 'commission_money'	=>$comPrice,
 	 	      	 'commission_state'		=>1,
-	 	      	 'commission_desc'		=>$desc
+	 	      	 'commission_desc'		=>$desc,
+	 	      	 'commission_from'		=>$order_id,
 	 	      ]);
 	 	      if($commission->save())
 	 	      {

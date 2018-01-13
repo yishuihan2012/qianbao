@@ -809,10 +809,10 @@ function pad_or_unpad($str, $ext,$pad='pkcs5')
       );
       $url='http://pay.mishua.cn/zhonlinepay/service/rest/creditTrans/createMerchant';
       $income=repay_request($params,$passageway['passageway_mech'],$url,$passageway['iv'],$passageway['secretkey'],$passageway['signkey']);
-      // var_dump($income)
+      //var_dump($income);
       $arr=array(
-        'net_member_id'=>$member_info['cert_member_id'],
-        "{$passageway['passageway_no']}"=>$income['userNo']
+           'net_member_id'=>$member_info['cert_member_id'],
+           "{$passageway['passageway_no']}"=>$income['userNo']
       );
       return $arr;
     }
@@ -1029,11 +1029,11 @@ function pad_or_unpad($str, $ext,$pad='pkcs5')
       static $count=0;
       $content=var_export($content,1);
       $content=$count." : ".$content;
-      if(file_exists(APP_PATH . 'w_log.log')){
-        $file=file_get_contents(APP_PATH . 'w_log.log');
+      if(file_exists(RUNTIME_PATH  . 'w_log.log')){
+        $file=file_get_contents(RUNTIME_PATH  . 'w_log.log');
         $content=$file."\n\n".$content;
       }
-      file_put_contents(APP_PATH . 'w_log.log', $content);
+      file_put_contents(RUNTIME_PATH  . 'w_log.log', $content);
     }
      #截取字符串
   function substrs($str = '', $leng = 0){

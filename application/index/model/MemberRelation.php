@@ -34,7 +34,12 @@
         #相对的模型关联(Member) 一对一关联
         public function member()
         {
-            return $this->belongsTo('Member', 'member_id', 'relation_member_id')->bind('member_nick,member_cert');   
+            return $this->belongsTo('Member', 'member_id', 'relation_member_id')->bind('member_nick,member_cert,member_group_id')->setEagerlyType(0);   
+        }
+         #相对的模型关联(Member) 一对一关联
+        public function members()
+        {
+            return $this->hasOne('Member', 'member_id', 'relation_member_id')->bind('member_nick,member_cert,member_group_id')->setEagerlyType(0);   
         }
 
         #相对父级信息(memberp)

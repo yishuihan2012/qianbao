@@ -44,7 +44,9 @@
         <li class="nav-parent financial-manager">
             <a href="javascript:;"><i class="icon icon-yen"></i> 财务管理</a>
             <ul class="nav">
-                  <li class="financial_center"><a href="{{url('/index/financial/index')}}"><i class=""></i> 对账中心</a></li>
+                    <li class="financial_center"><a href="{{url('/index/financial/index')}}"><i class=""></i> 对账中心</a></li>
+                    <li class="commiss_center"><a href="{{url('/index/financial/commiss')}}"><i class=""></i> 分佣统计</a></li>
+                    <li class="fenrun_center"><a href="{{url('/index/financial/fenrun')}}"><i class=""></i> 分润统计</a></li>
             </ul>
         </li>
         <li class="nav-parent model-manager">

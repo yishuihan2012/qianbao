@@ -120,8 +120,8 @@
         $data=rongbang_curl($this->passway,$arr,'masget.webapi.com.subcompany.add');
         if($data['ret']==0){
           #储存商户信息到memberNet关联字段中，因为信息有多条，以,分割后存储。
-          #信息顺序 0、appid 1、companycode 2、secretkey 3、session
-          $passageway_no=$data['data']['appid'].','.$data['data']['companycode'].','.$data['data']['secretkey'].','.$data['data']['session'];
+          #信息顺序 0、appid 1、companycode 2、secretkey 3、session 4、companyname
+          $passageway_no=$data['data']['appid'].','.$data['data']['companycode'].','.$data['data']['secretkey'].','.$data['data']['session'].','.$data['data']['companyname'];
           $res=MemberNet::where(['net_member_id'=>$this->member->member_id])->setField($this->passway->passageway_no, $passageway_no);
             return true;
         }elseif($data['ret']==34){
@@ -129,7 +129,7 @@
           $data=$this->rongbang_getinfo();
           if(is_array($data)){
             //存储拉取的商户信息
-            $passageway_no=$data['appid'].','.$data['companycode'].','.$data['secretkey'].','.$data['session'];
+            $passageway_no=$data['appid'].','.$data['companycode'].','.$data['secretkey'].','.$data['session'].','.$data['companyname'];
             $res=MemberNet::where(['net_member_id'=>$this->member->member_id])->setField($this->passway->passageway_no, $passageway_no);
         var_dump($data);die;
             return true;
@@ -154,6 +154,16 @@
           }else{
             return $data['data'];
           }
+      }
+      #荣邦 1.4.3.根据邀请码，修改商户费率与D0费率
+      public function rongbang_change(){
+        $arr=array(
+          'memberid'   =>'402598069',
+          'membername'   =>'高志勇10163',
+          'loginprefix'   =>526135,
+        );
+        $data=rongbang_curl($this->passway,$arr,'masget.rboperationsmanager.com.ratepackageinfo.queryloginprefix.update');
+        var_dump($data);die;
       }
       #荣邦1.4.3.商户通道入驻接口
       public function rongbangIn(){
@@ -213,7 +223,7 @@
       #荣邦 1.6.3.查询快捷协议
       public function rongbang_check($treatycode){
       //提取转换存储的商户信息
-          #信息顺序 0、appid 1、companycode 2、secretkey 3、session
+          #信息顺序 0、appid 1、companycode 2、secretkey 3、session 4、companyname
         $userdata=db('member_net')->where(['net_member_id'=>$this->member->member_id])->value($this->passway->passageway_no);
         if($userdata){
           $userdata=explode(',', $userdata);
@@ -264,24 +274,6 @@
   "paymenttypeid": "25",
   "ordernumber": "test201801101523"
 }';
-        // 拼接版
-        // $arr="{
-        //   ordernumber:".$tradeNo.",
-        //   body:".$description.",
-        //   amount:".$price*100.",
-        //   businesstype:1001,
-        //   companyid:".$companyid",
-        //   paymenttypeid:25,
-        //   businesstime:".date('YmdHis');//.",
-        //   backurl:".request()->domain(). "/api/Userurl/passway_rongbang_paycallback/passageway_id/".$this->passway->passageway_id . "/member_id/" . $this->member->member_id.",
-        //   payextraparams:{
-        //     treatycode:".$treatycode.",
-        //   }
-        // }";
-
-        // $arr="{ordernumber:" . $tradeNo . ",body:" . $description . ",amount:" . $price*100 . ",businesstype:1001,companyid:" . $companyid.",paymenttypeid:25,businesstime:".date('YmdHis').",backurl:".request()->domain(). "/api/Userurl/passway_rongbang_paycallback/passageway_id/".$this->passway->passageway_id . "/member_id/" . $this->member->member_id.",payextraparams:{treatycode:".$treatycode.",}}";
-        
-        // $arr='{"ordernumber":' . $tradeNo . ',"body":' . $description . ',"amount":' . $price*100 . ',"businesstype":1001,"subpaymenttypeid":25,"paymenttypeid":25,"backurl":"'.request()->domain(). '/api/Userurl/passway_rongbang_paycallback/passageway_id/'.$this->passway->passageway_id . '/member_id/' . $this->member->member_id.'","payextraparams":{\"treatycode\":\"'.$treatycode.'\"}}';
 
         //由demo而来的终极拼接版
         $arr='{
@@ -301,11 +293,29 @@
           $data=rongbang_curl(rongbang_foruser($this->member,$this->passway),$arr,'masget.pay.compay.router.back.pay');
           // $data=rongbang_curl($this->passway,$arr,'masget.pay.compay.router.back.pay');
           if($data['ret']==0){
+        dump($data);die;
             return $data['data'];
           }else{
             return $data['message'];
           }
       }
+      #荣邦 1.5.2.查询交易订单
+      public function rongbang_check_pay($ordernumber){
+        $userinfo=db('member_net')->where('net_member_id',$this->member->member_id)->value('AiqJE');
+        $userinfo=explode(',', $userinfo);
+        $arr=[
+          'ordernumber'=>$ordernumber,
+          'companyid'=>$userinfo[0],
+        ];
+        $data=rongbang_curl($this->passway,$arr,'masget.pay.compay.router.paymentjournal.get');
+        if($data['ret']==0){
+          dump($data);die;
+          return $data['data'];
+        }else{
+          return $data['message'];
+        }
+      }
+
       #荣邦 1.5.3.确认支付
       public function rongbang_confirm_pay($ordercode,$card_id,$authcode){
         $arr=[
@@ -318,13 +328,12 @@
           $data=$data['data'];
           //支付成功 更新套现订单表状态
           $order=db('cash_order')->where('order_no',$data['ordernumber'])->find();
-          dump($order);die;
           //仅在待支付情况下操作
           if($order['order_state']==1){
             db('cash_order')->where('order_no',$data['ordernumber'])->update(['order_state'=>2]);
             //进行分润
             $fenrun= new \app\api\controller\Commission();
-            $fenrun_result=$fenrun->MemberFenRun($this->member->member_id,$order['order_money'],$this->passway->passageway_id,'交易手续费分润');
+            $fenrun_result=$fenrun->MemberFenRun($this->member->member_id,$order['order_money'],$this->passway->passageway_id,1,'交易手续费分润',$order['order_id']);
           }
           return $data['data'];
         }else{

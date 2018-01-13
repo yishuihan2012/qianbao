@@ -201,4 +201,10 @@ class Member extends Common{
 	 	Session::set('jump_msg', $content);
 	 	$this->redirect("member/index");
 	 }
+	 //会员分佣分润
+	 public function commiss(){
+	 	$commiss = new Commission();
+	 	$list = $commiss->where(["Commission_member_id"=>request()->param("memberId")])->select();
+	 	print_r($list);
+	 }
 }

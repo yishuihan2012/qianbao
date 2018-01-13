@@ -20,7 +20,7 @@ class Generalize extends Common{
 	 #素材列表
 	 public function index()
 	 {
-	 	 $generalize=Generalizes::paginate(Config::get('page_size'), false, ['query'=>Request::instance()->param()]);
+	 	 $generalize=Generalizes::paginate(12, false, ['query'=>Request::instance()->param()]);
 	 	 $this->assign('button',['text'=>'新增素材', 'link'=>url('/index/generalize/creat'), 'modal'=>'modal']);
 	 	 $this->assign('generalize',$generalize);
 		 #渲染视图
@@ -86,7 +86,7 @@ class Generalize extends Common{
 	  * @return [type] [description]
 	  */
 	public function share(){
-		$share = Share::paginate(Config::get('page_size'), false, ['query'=>Request::instance()->param()]);
+		$share = Share::paginate(12, false, ['query'=>Request::instance()->param()]);
 		$this->assign('button', 
  		 	 [
  		 		 ['text'=>'新增分享', 'link'=>url('/index/generalize/shareCreat'), 'modal'=>'modal'],
@@ -153,7 +153,7 @@ class Generalize extends Common{
 	}
 	#专属二维码列表
 	public function exclusive_list(){
-		$Exclusive = Exclusive::paginate(Config::get('page_size'), false, ['query'=>Request::instance()->param()]);
+		$Exclusive = Exclusive::paginate(12, false, ['query'=>Request::instance()->param()]);
 		$this->assign('button', 
  		 	 [
  		 		 ['text'=>'新增专属', 'link'=>url('/index/generalize/exclusiveCreat'), 'modal'=>'modal'],
@@ -166,9 +166,7 @@ class Generalize extends Common{
 	#新增专属
 	public function exclusiveCreat(){
 		if(Request::instance()->isPost()){
-	 		
 	 		 $Exclusive = new Exclusive($_POST);
-			 
 			 $result = $Exclusive->allowField(true)->save();
 			 #数据是否提交成功
 			 $content = ($result===false) ? ['type'=>'error','msg'=>'添加失败'] : ['type'=>'success','msg'=>'添加成功'];
@@ -180,28 +178,25 @@ class Generalize extends Common{
 	}
 	#编辑专属
 	public function exclusiveedit(){
-		if($_POST){
-	 		
+		if($_POST){	 		
 	 		if(empty($_POST['exclusive_thumb'])){
 	 			unset($_POST['exclusive_thumb']);
 	 		}
-
+	 		// dump($_POST['exclusive_thumb']);die;
 	 		$Share =Exclusive::get(Request::instance()->param('exclusive_id'));
-	 		
-			 $result= $Share->allowField(true)->save($_POST);
-
+			$result= $Share->allowField(true)->save($_POST);
 	 		$content = ($result===false) ? ['type'=>'error','msg'=>'修改失败'] : ['type'=>'success','msg'=>'修改成功'];
-			 Session::set('jump_msg', $content);
+			Session::set('jump_msg', $content);
 			 #重定向控制器 跳转到列表页
-			 $this->redirect('/index/Generalize/share');die;
+			$this->redirect('/index/Generalize/exclusive_list');die;
 	 	}
 		 $id = input("id");
-		 // print_r(input());die;
+		
 		 $info = Exclusive::where(["Exclusive_id" => $id])->find();
 
 		 $this->assign("info",$info);
 
-		 return view("admin/Generalize/exclusive_list");
+		 return view("admin/Generalize/exclusiveedit");
 	}
 	#删除专属
 	public function del_exclusive(){

@@ -47,7 +47,6 @@ class Plan extends Common{
 		//用户组
 		$this->assign("member_group",MemberGroup::all());
 		$this->assign("list",$data);
-
 		$this->assign("count",$count);
 		$this->assign("r",$r);
 		return view("admin/plan/index");
@@ -82,7 +81,7 @@ class Plan extends Common{
 		#失败条件
 		#计划订单列表
 
-
+		$where['generation_state'] = -1;
 		$data = Generation::with("member,creditcard")->where($where)->order("generation_id desc")->paginate(Config::get('page_size'), false, ['query'=>Request::instance()->param()]);
 		#计算总条数
 		$count = Generation::with("member,creditcard")->where($where)->count();
@@ -96,7 +95,18 @@ class Plan extends Common{
 	}
 	#取消执行|继续执行还款计划
 	public function order_status(){
+		$where['order_id'] = request()->param("id");
+		$data['order_status'] = request()->param("status");
 
+		$result	= GenerationOrder::where($where)->update($data);
+		// $result	= GenerationOrder::where($where)->update($data);
+		// if(!$result)
+		// 	die;
+		 #数据是否提交成功
+		 $content = ($result===false) ? ['type'=>'error','msg'=>'操作失败'] : ['type'=>'success','msg'=>'操作成功'];
+		 Session::set('jump_msg', $content);
+		 #重定向控制器 跳转到列表页
+		 $this->redirect("Plan/index");
 	}
 	
 }

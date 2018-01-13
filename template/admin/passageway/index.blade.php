@@ -14,7 +14,7 @@
                  <!-- 以下两列左侧固定 -->
                  <th>#</th>
                  <th>通道名</th>
-                 <th>通道代号</th>
+                 <th>真实通道</th>
                  <!-- 以下三列中间可滚动 -->
                  <th class="flex-col">机构号</th> 
                  <th class="flex-col">机构Key</th>
@@ -30,7 +30,7 @@
            <tr>
                  <td>{{$list->passageway_id}}</td>
                  <td>{{$list->passageway_name}}</td>
-                 <td>{{$list->passageway_no}}</td>
+                 <td>{{$list->passageway_true_name}}</td>
                  <td>{{$list->passageway_mech}}</td>
                  <td>{{$list->passageway_key}}</td>
                  <td>@if($list->passageway_state==1) 启用 @else 禁用 @endif</td>
@@ -46,6 +46,7 @@
                                    <li><a  href="{{url('/index/passageway/list_credit_card','id='.$list['passageway_id'])}}" >查看信用卡列表</a></li>
                                       <li><a  data-remote="{{url('/index/passageway/cashout','id='.$list['passageway_id'])}}" data-toggle="modal" data-size="lg" href="#">提现设置</a></li>
                                       <li><a  data-remote="{{url('/index/passageway/also','id='.$list['passageway_id'])}}" data-toggle="modal" data-size="lg" href="#">代还设置</a> </li>
+                                      <li><a href="{{url('/index/passageway/passageway_details','id='.$list['passageway_id'])}}">交易详情</a> </li>
                                  </ul>
                            </div>
                       </div>

@@ -47,11 +47,12 @@ use think\Loader;
             	 if (isset($return['data']) && !empty($return['data'])) {
                 	 $return['data']=$this->encryption_data($return['data']);
                 	 // $return['data']=$return['data'];// //不需要加密的时候放开
-            	 } else
-                 	 $return['data']=[]; //需要加密的时候放开
+            	 } else{
+                   $return['data']=[]; //需要加密的时候放开
+               }
             	 echo json_encode($return);
  	 	 } catch (\Exception $e) {
-            	 echo json_encode(['code'=>'400',"msg"=>$e->getMessage(),"data"=>""]);
+            	 echo json_encode(['code'=>'400',"msg"=>$e->getMessage(),"data"=>"something is wrong"]);
         	 }
  	 }
 
@@ -91,5 +92,13 @@ use think\Loader;
       }
       public function test2($text){
           return json_encode(jpush(46,$text,$text,$text,1));
+      }
+      #加密测试用
+      public function en_code(){
+        $data=request()->param()['data'];
+        // var_dump(request()->param()['data']);die;
+        // var_dump($data);die;
+        // var_dump(json_decode($data));die;
+        return $this->encryption_data(json_decode($data,1));
       }
  }

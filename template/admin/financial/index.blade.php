@@ -33,19 +33,25 @@
  <script type="text/javascript">
       // 定义标签页
       var tabs = [{
-                title: '会员升级',
+                title: '会员升级收益',
                 url: "{{url('index/financial/level')}}",
                 type: 'iframe',
                 forbidClose: true
            }, {
-                title: '分润收益',
-                url: 'docs/partial/iframe-tab.html',
+                title: '快捷支付收益',
+                url: "{{url('index/financial/income')}}",
                 type: 'iframe',
                 forbidClose: true
            }, {
-                title: 'MZUI',
-                url: 'http://zui.sexy/m',
-                type: 'iframe'
+                title: '自动代还收益',
+                url: "{{url('index/financial/substitute')}}",
+                type: 'iframe',
+                forbidClose: true
+           }, {
+                title: '提现统计',
+                url: "{{url('index/financial/withdraw')}}",
+                type: 'iframe',
+                forbidClose: true
            }];
       // 初始化标签页管理器
       $('#tabs').tabs({tabs: tabs});

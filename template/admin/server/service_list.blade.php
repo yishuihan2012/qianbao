@@ -37,7 +37,7 @@
 	      	<td>{{$val->list_add_time}}</td>
 	      	<td>
 	      		<div class="btn-group">
-	  				<a type="button" class="btn btn-sm" data-remote="{{url('/index/server_model/show_service/list_id/'.$val->list_id)}}" data-size='lg' data-toggle="modal" href="#">查看</a>
+	  				<a type="button" class="btn btn-sm" data-remote="{{url('/index/server_model/show_service/list_id/'.$val->list_id)}}" data-size='lg' data-toggle="modal" href="#">编辑</a>
 	  				<a type="button" class="btn btn-sm" href="{{url('/index/server_model/del_service/list_id/'.$val->list_id)}}">删除</a>
 				</div>
 	      	</td>

@@ -101,7 +101,7 @@ class CashOut
 	            'bankName'   => $this->member_card->card_bankname, //  结算卡开户行  必填  结算卡开户行
 	            'cardNo'      	 => $this->member_card->card_bankno, //算卡卡号 必填  结算卡卡号
 	            'downPayFee'  	=> $this->also->item_rate*10, //结算费率  必填  接入机构给商户的费率，D0直清按照此费率结算，千分之X， 精确到0.01
-	            'downDrawFee' => '0', // 代付费 选填  每笔扣商户额外代付费。不填为不扣。
+	            'downDrawFee' => '0'//$this->passway_info->cashout->cashout_charges, // 代付费 选填  每笔扣商户额外代付费。不填为不扣。
 	      );
 	      //请求体参数加密 AES对称加密 然后连接加密字符串转MD5转为大写
 	      $payload =AESencode(json_encode($arr),$this->passway_info->passageway_pwd_key);
@@ -180,7 +180,7 @@ class CashOut
 	            'bankName'	=> $this->card_info->card_bankname,//银行卡对应的银行名称。采用URLEncode编码
 	            'settleType'	=> 3,//固定值2-T+1结算
 	            'notifyUrl'		=> $this->passway_info->cashout->cashout_callback,//支付完成后将支付结果回调至该链接
-	            'returnUrl'		=> '123',//支付完成后前端跳转地址
+	            'returnUrl'		=> $_SERVER['HTTP_HOST'].'/api/Userurl/calllback_success',//支付完成后前端跳转地址
 	            //'signature'	=> ,//对签名数据进行MD5加密的结果。参见3.1
 	      );
  	      $param=get_signature($arr,$this->passway_info->passageway_key);
@@ -303,14 +303,13 @@ class CashOut
 	 	 }
 	 	 //开始调用支付接口
 	 	 $result=$membernetObject->rongbang_pay($this->card_info->card_id,$tradeNo,$price,$description);
+        // var_dump($result);die;
 	 	 if(is_array($result)){
             $res= [
               	'code'=>200,
-              	'msg'=>'快捷支付订单调用成功',
+              	'data'=>'快捷支付订单调用成功',
             ];
 	 	 	if($result['ishtml']==2){
-	 	 		w_log($result);
-	 	 		w_log($result['sendmessage']);
 	 	 		if($result['sendmessage']===2){
 	 	 			//无需短信验证的情况 返回一个成功提示页
 	            	$res['data']=[
@@ -334,10 +333,10 @@ class CashOut
             //写入套现订单
             $order_result=$this->writeorder($tradeNo, $price, $price*($this->also->item_rate/100) ,$description,$result['payorderid']);
 	      	if(!$order_result)
-	      	 	return ['code'=>327];
+	      	 	return ['code'=>327,'data'=>'无此订单'];
 	        return $res;
 	 	 }else{
-	 	 	return ['code'=>501,'msg'=>$result];
+	 	 	return ['code'=>501,'msg'=>$result,'data'=>$result];
 	 	 }
 	 }
 

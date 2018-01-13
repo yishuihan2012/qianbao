@@ -96,6 +96,7 @@ class Userurl extends Controller
 		$exclusive_id=$this->param['exclusive_id'];
 		//调取数据库url
 		$img=db('qrcode')->where(['qrcode_member_id'=>$this->param['uid'],'qrcode_exclusive_id'=>$exclusive_id])->find();
+			// dump($img);die;
 		if(!$img || !$img['qrcode_url']){
 			$imgurl='autoimg/qrcode_'.$exclusive_id.'_'.$tel.'.png';
 			//若未生成过
@@ -123,7 +124,7 @@ class Userurl extends Controller
 				 $bg = imagecreatefromstring(file_get_contents($bg_url)); 
 				 $QR_width = imagesx($QR);//二维码图片宽度 
 				 $QR_height = imagesy($QR);//二维码图片高度 
-				 imagecopyresampled( $bg,$QR, 240, 710, 0, 0, 296, 296, $QR_width, $QR_height); 
+				 imagecopyresampled( $bg,$QR, 240, 710, 0, 0, 280, 280, $QR_width, $QR_height); 
 				imagejpeg($bg, $imgurl,65); 
 			}
 			if(!$img){
@@ -169,6 +170,12 @@ class Userurl extends Controller
 	 * @return   [type]
 	 */
 	public function repayment_history(){
+		$a='预支付失败：抱歉，本次交易存在风险，已中止交易';
+		if(is_array($a)){
+			return 111;
+		}else{
+			return 222;
+		}
 		$this->checkToken();
 		#进行中
 		// $this->param['uid']=16;
@@ -195,7 +202,7 @@ class Userurl extends Controller
 		// }
 
 		#完成
-		$generation3=Generation::with('creditcard')->where(['generation_member'=>$this->param['uid'],'generation_state'=>3])->select();
+		$generation3=Generation::with('creditcard')->where(['generation_member'=>$this->param['uid'],'generation_state'=>['in','3,4']])->select();
 		foreach ($generation3 as $key => $value) {
 				$generation3[$key]['generation_card']=substr($value['generation_card'], -4);
 				$generation3[$key]['count']=GenerationOrder::where(['order_no'=>$value['generation_id']])->count();
@@ -787,9 +794,10 @@ class Userurl extends Controller
   	if($data['respcode']==2){
   		//支付完成
   		db('cash_order')->where('order_no',$data['ordernumber'])->update(['order_state'=>2]);
+  		$order_id=db('cash_order')->where('order_no',$data['ordernumber'])->value('order_id');
   		//分润
-        $fenrun= new \con\Commission();
-        $fenrun_result=$fenrun->MemberFenRun($param['member_id'],$data['amount'],$param['passageway_id'],1,'交易手续费分润');
+	    $fenrun= new con\Commission();
+        $fenrun_result=$fenrun->MemberFenRun($param['member_id'],$data['amount'],$param['passageway_id'],1,'交易手续费分润',$order_id);
   	}else{
   		//支付失败
   		db('cash_order')->where('order_no',$data['ordernumber'])->update(['order_state'=>-1]);
@@ -800,5 +808,10 @@ class Userurl extends Controller
   #为无需短信确认的情况 直接显示一个成功页面
   public function passway_success(){
   	return view("Userurl/passway_success");
+  }
+  #取消还款计划【整体】
+  public function cancel_repayment($generation_id){
+  	$membernet=new con\Membernet();
+  	return json_encode($membernet->cancle_plan($generation_id));
   }
 }

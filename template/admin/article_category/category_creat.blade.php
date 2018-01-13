@@ -62,8 +62,8 @@
 <script type="text/javascript">
 $(document).ready(function(){
     $('.menu .nav .active').removeClass('active');
-    $('.menu .nav li.newslist').addClass('active');
-    $('.menu .nav li.articles-manager').addClass('show');
+    $('.menu .nav li.articles_category').addClass('active');
+    $('.menu .nav li.article-manager').addClass('show');
     //获取二级分类
 	$("select[name='article_parent']").change(function(){
 	      var id=$(this).val();

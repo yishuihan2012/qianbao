@@ -51,20 +51,6 @@ input.labelauty + label { font: 12px "Microsoft Yahei";}
 				<input type="text" class="form-control group_salt" name="group_salt" placeholder="请填写用户组名称" value="{{ $group->group_salt }}">
 			</div>
 		</div>
-
-		<div class="row">
-			<label for="group_type" class="col-sm-2 text-right"><b>是否能推荐升级:</b></label>
-			<div id="group_name" class="col-sm-6">
-				<select class="form-control" name="group_level_type">
-				  	<!-- <option value="-1" {{ $group->group_level_type=='-1' ? 'selected' : '' }}>不限</option> -->
-				  	<option value="0" {{ $group->group_level_type=='0' ? 'selected' : '' }}>否</option>
-				  	<option value="1" {{ $group->group_level_type=='1' ? 'selected' : '' }}>是</option>
-				  	<!-- <option value="2" {{ $group->group_level_type=='3' ? 'selected' : '' }}>刷卡量</option>
-				  	<option value="3" {{ $group->group_level_type=='3' ? 'selected' : '' }}>付费升级</option>-->
-				</select>
-			</div>
-		</div>
-
 		<div class="row form-group">
 			<label for="group_name" class="col-sm-2 text-right"><b>升级条件-推荐人数量:</b></label>
 			<div id="group_level_value" class="col-sm-6">
@@ -81,6 +67,18 @@ input.labelauty + label { font: 12px "Microsoft Yahei";}
 			<label for="group_name" class="col-sm-2 text-right"><b>升级条件-付费金额:</b></label>
 			<div id="group_level_value" class="col-sm-6">
 				<input type="text" class="form-control group_level_value" name="group_level_money" placeholder="" value="{{ $group->group_level_money }}">
+			</div>
+		</div>
+		<div class="row">
+			<label for="group_type" class="col-sm-2 text-right"><b>是否能推荐升级:</b></label>
+			<div id="group_name" class="col-sm-6">
+				<select class="form-control" name="group_level_type">
+				  	<!-- <option value="-1" {{ $group->group_level_type=='-1' ? 'selected' : '' }}>不限</option> -->
+				  	<option value="0" {{ $group->group_level_type=='0' ? 'selected' : '' }}>否</option>
+				  	<option value="1" {{ $group->group_level_type=='1' ? 'selected' : '' }}>是</option>
+				  	<!-- <option value="2" {{ $group->group_level_type=='3' ? 'selected' : '' }}>刷卡量</option>
+				  	<option value="3" {{ $group->group_level_type=='3' ? 'selected' : '' }}>付费升级</option>-->
+				</select>
 			</div>
 		</div>
 		<h5></h5>
