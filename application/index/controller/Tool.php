@@ -19,8 +19,9 @@ class Tool
 {
     //-------------------------------------------------------
     //文件上传 图片上传(index)
+    //$url
     //-------------------------------------------------------
-	public function upload_one($path='other')
+	public function upload_one($path='other',$url='')
 	{
 		#定义返回消息
 		$data = array('code'=>'0', 'msg'=>'没有选择上传文件', 'url'=>'');
@@ -35,7 +36,65 @@ class Tool
 			#移动到目录
 			$info = $file->move(ROOT_PATH . 'public' . DS . 'uploads' . DS . $path);
 			#图片上传成功与否返回对应的参数
-			$data = $info ? array('code'=>'200', 'msg'=>'上传成功!', 'url'=>"/uploads/".$path.DS.$info->getSaveName()) : array('code'=>'0', 'msg'=>$file->getError(), 'url'=>'');
+			$data = $info ? array('code'=>'200', 'msg'=>'上传成功!', 'url'=>$url."/uploads/".$path.DS.$info->getSaveName()) : array('code'=>'0', 'msg'=>$file->getError(), 'url'=>'');
+			#如果开启OSS
+			// if(Setting::getName('ossopen'))
+			// {
+			// 	#初始化OSS 并且传入配置参数
+			// 	try {
+			// 	    $ossClient = new OssClient(Config::get('OSS.accessKeyId'),Config::get('OSS.accessKeySecret'),Config::get('OSS.endpoint'));
+			// 	} catch (OssException $e) {
+			// 		#OSS链接失败的时候 返回错误信息
+			// 		$data = array('code'=>'0', 'msg'=>$e->getMessage(), 'url'=>'');
+			// 	}
+			// 	#OSS项目目录
+			// 	$bucket = Config::get('OSS.bucket');
+			// 	#OSS保存地址
+			// 	$object = 'images/'.$path.DS.$info->getSaveName();
+			// 	#文件在服务器上的绝对地址
+			// 	$file =$info->getRealPath();
+			// 	#开始处理文件上传
+			// 	try {
+			// 		#上传OSS
+			// 		$result=$ossClient->uploadFile($bucket, $object, $file);
+			// 		$data = array('code'=>'200', 'msg'=>'上传成功', 'url'=>$result['info']['url']);
+			// 		#是否开启删除服务器文件开关
+			// 		if(Setting::getName('delpic'))
+			// 		{
+			// 			#移除本地文件
+			// 			@unlink($file);
+			// 		}
+			// 	} catch (OssException $e) {
+			// 		#上传失败后返回上传失败的错误信息
+			// 		$data = array('code'=>'0', 'msg'=>$e->getMessage(), 'url'=>'');
+			// 	}
+			// }
+			#返回地址
+			echo json_encode($data);
+		}
+	}
+
+
+	//-------------------------------------------------------
+    //文件上传 logo替换(index)
+    //$url
+    //-------------------------------------------------------
+	public function upload_logo($path='other')
+	{
+		#定义返回消息
+		$data = array('code'=>'0', 'msg'=>'没有选择上传文件', 'url'=>'');
+		#如果上传有图片
+		if($_FILES){
+			#循环图片上传属性
+			foreach ($_FILES as $key => $value)
+				#获取到上传到服务器的路径
+				$path=$key;
+			#打开这个目录
+			$file = Request::instance()->file(ROOT_PATH . 'public' . DS . 'static' . DS . $path);
+			#移动到目录
+			$info = $file->move(ROOT_PATH . 'public' . DS . 'static' . DS . $path);
+			#图片上传成功与否返回对应的参数
+			$data = $info ? array('code'=>'200', 'msg'=>'上传成功!', 'url'=>"/static/images/logo.png") : array('code'=>'0', 'msg'=>$file->getError(), 'url'=>'');
 			#如果开启OSS
 			// if(Setting::getName('ossopen'))
 			// {

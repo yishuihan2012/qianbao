@@ -1,6 +1,7 @@
 <nav class="menu" data-ride="menu">
     <a class="btn btn-primary" href="#"><i class="icon icon-edit"></i> 新增项目</a>
-    <a class="btn" href="#"><i class="icon icon-cloud-upload"></i> 轮播图上传</a>
+    <a class="btn" href="{{url('/index/uploads/index')}}" data-remote="" data-size="lg" data-toggle="modal"><i class="icon icon-cloud-upload"></i> 图片上传</a>
+    <a class="btn" href="{{url('/index/uploads/logo')}}" data-remote="" data-size="lg" data-toggle="modal"><i class="icon icon-cloud-upload"></i> 网站logo上传</a>
     <ul class="nav nav-primary">
 
         <li class="dashboard"><a href="{{url('/index/dashboard/index')}}"><i class="0icon icon-dashboard"></i> 控制面板</a></li>
