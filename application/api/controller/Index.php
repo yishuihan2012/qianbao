@@ -101,4 +101,9 @@ use think\Loader;
         // var_dump(json_decode($data));die;
         return $this->encryption_data(json_decode($data,1));
       }
+      #解密测试用
+      public function de_code(){
+        $data=request()->param()['data'];
+        return json_encode($this->decryption_data($data));
+      }
  }

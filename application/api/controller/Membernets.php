@@ -325,7 +325,7 @@
         $data=rongbang_curl($this->passway,$arr,'masget.pay.compay.router.confirmpay');
           w_log($data);
         if($data['ret']==0){
-          // $data=$data['data'];
+          $data=$data['data'];
           //支付成功 更新套现订单表状态
           $order=db('cash_order')->where('order_no',$data['ordernumber'])->find();
           //仅在待支付情况下操作
@@ -335,7 +335,7 @@
             $fenrun= new \app\api\controller\Commission();
             $fenrun_result=$fenrun->MemberFenRun($this->member->member_id,$order['order_money'],$this->passway->passageway_id,1,'交易手续费分润',$order['order_id']);
           }
-          return $data['data'];
+          return $data;
         }else{
           return $data['message'];
         }
