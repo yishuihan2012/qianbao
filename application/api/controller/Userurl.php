@@ -773,11 +773,12 @@ class Userurl extends Controller
   	}
   	#用户信息
   	$info = Members::with("memberCashcard")->where(['member_id' => $memberId])->find();
-
+  	$money=db('cash_order')->where('order_thead_no',$ordercode)->value('order_money');
   	$creditcard = MemberCreditcard::where(['card_id' => $card_id])->find();
   	$this->assign("creditcard",$creditcard);
   	$this->assign("member_info",$info);
 	$this->assign('memberId',$memberId);
+	$this->assign('money',$money);
 	$this->assign('passwayId',$passwayId);
 	$this->assign('ordercode',$ordercode);
 	$this->assign('card_id',$card_id);

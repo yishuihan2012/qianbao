@@ -30,7 +30,7 @@
 	    	身份证号：<span class="invalid-color">{{substrs($member_info['card_idcard'],3)}}</span>
 	    </li>
 	    <li class="mui-table-view-cell bg-w bor-bot">
-	    	金额：<span class="normal-color">500.00</span>
+	    	金额：<span class="normal-color">{{$money}}</span>
 	    </li>
 	    <li class="mui-table-view-cell bg-w bor-bot">
 	    	支付卡：<span class="normal-color">{{substrs($creditcard['card_bankno'],4)}}</span>

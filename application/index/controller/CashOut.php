@@ -331,7 +331,7 @@ class CashOut
             	];
 	 	 	}
             //写入套现订单
-            $order_result=$this->writeorder($tradeNo, $price, $price*($this->also->item_rate/100) ,$description,$result['payorderid']);
+            $order_result=$this->writeorder($tradeNo, $price, $price*($this->also->item_rate/100) ,$description,$result['ordercode']);
 	      	if(!$order_result)
 	      	 	return ['code'=>327,'data'=>'无此订单'];
 	        return $res;
