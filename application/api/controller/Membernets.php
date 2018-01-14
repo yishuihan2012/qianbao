@@ -131,7 +131,7 @@
             //存储拉取的商户信息
             $passageway_no=$data['appid'].','.$data['companycode'].','.$data['secretkey'].','.$data['session'].','.$data['companyname'];
             $res=MemberNet::where(['net_member_id'=>$this->member->member_id])->setField($this->passway->passageway_no, $passageway_no);
-        var_dump($data);die;
+        // var_dump($data);die;
             return true;
           }else{
             return $data;
@@ -139,7 +139,7 @@
         }else{
           return $data['message'];
         }
-        var_dump($data);die;
+        // var_dump($data);die;
       }
       #荣邦 1.4.2.子商户秘钥下载 用于判断该用户是否已经在荣邦存在商户信息
       #已存在 返回data字段 不存在返回false
@@ -293,7 +293,7 @@
           $data=rongbang_curl(rongbang_foruser($this->member,$this->passway),$arr,'masget.pay.compay.router.back.pay');
           // $data=rongbang_curl($this->passway,$arr,'masget.pay.compay.router.back.pay');
           if($data['ret']==0){
-        dump($data);die;
+        // dump($data);die;
             return $data['data'];
           }else{
             return $data['message'];
@@ -309,7 +309,7 @@
         ];
         $data=rongbang_curl($this->passway,$arr,'masget.pay.compay.router.paymentjournal.get');
         if($data['ret']==0){
-          dump($data);die;
+          // dump($data);die;
           return $data['data'];
         }else{
           return $data['message'];
