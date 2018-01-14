@@ -78,9 +78,13 @@
 		      var u = navigator.userAgent;
 		      var isAndroid = u.indexOf('Android') > -1 || u.indexOf('Adr') > -1; //android终端
 		      var isiOS = !!u.match(/\(i[^;]+;( U;)? CPU.+Mac OS X/); //ios终端
+		      var isClick=false;
 				mui(document).on('tap','#regBtn',function(){
 					var authcode=$('.authcode').val();
 					if(authcode){
+						if(isClick)return;
+						isClick=true;
+						$("#regBtn").html('请稍后......');
 						var data={
 							authcode:authcode,
 							ordercode:"{{$ordercode}}",
