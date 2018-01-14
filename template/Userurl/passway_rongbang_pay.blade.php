@@ -40,7 +40,7 @@
 	    </li>
 	    <li class="mui-table-view-cell bg-w">
 	    	验证码：
-	    	<input type="text" placeholder="请输入验证码" name="authcode" value="" class="my-code"/>
+	    	<input type="text" placeholder="请输入验证码" name="authcode" value="" class="my-code authcode"/>
 	    	<!--<input type="button" class="code-btn mui-pull-right" value="发送验证码" id="sendCode">-->
 	    </li>
 	</ul>
