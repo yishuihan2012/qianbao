@@ -766,7 +766,7 @@ class Userurl extends Controller
   		if($authcode){
 		  	$Membernets=new con\Membernets($memberId,$passwayId);
 		  	$result=$Membernets->rongbang_confirm_pay($ordercode,$card_id,$authcode);
-		  	return is_array($result) ? 1 : 3;
+		  	return is_array($result) ? 1 : $result;
 		  }else{
 		  	return 2;
 		  }

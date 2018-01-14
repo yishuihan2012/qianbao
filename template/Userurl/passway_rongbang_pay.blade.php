@@ -90,11 +90,11 @@
 						};
 						$.post('',data,function(res){
 							if(res==1){
-								alert('成功申请快捷支付！')
+								alert('成功申请快捷支付！');
 							}else if(res==2){
-								alert('验证码异常！')
+								alert('验证码异常！');
 							}else{
-								alert('申请快捷支付失败！')
+								alert('申请快捷支付失败！err:'+res);
 							}
 					      if(!isAndroid){
 					        window.webkit.messageHandlers.returnIndex.postMessage(1);
