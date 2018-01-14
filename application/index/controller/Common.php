@@ -22,7 +22,7 @@
            'email'       => Session::get('adminster.adminster_email'),
            'last_login'=> Session::get('adminster.adminster_update_time'),
            'state'       => Session::get('adminster.adminster_state'),
-           'title'         => System::GetName('sitename'),
+           'title'         => System::GetName('sitename')
       ];
       #权限判断
       if(Session::has('jump_msg'))
