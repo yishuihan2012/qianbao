@@ -11,6 +11,7 @@ use think\Config;
 use think\Request;
 use think\Session;
 use think\View;
+use app\index\model\Member;
 use app\index\model\Adminster as Adminsters;
 use app\index\model\AuthGroup as AuthGroups;
 use app\index\model\AuthGroupAccess as AuthGroupAccesss;
@@ -18,6 +19,7 @@ class Adminster extends Common {
 	 #管理员列表
 	 public function index(Request $params)
 	 {
+	 	// halt($this->adminster['adminster_group_id']);
 		 $query=[];
 		 $where=[];
 		 $groups=[];
@@ -27,7 +29,8 @@ class Adminster extends Common {
 		 !empty($params['state']) ? $where['adminster_state']=$params['state'] :  $params['state']="";
 		 !empty($params['group']) ? $groups['group_id']=$params['group'] : $params['group']="";
 		 $params['page']=Request::instance()->param('page') ? : 1;
-		 $adminster_list= Adminsters::haswhere('profile',$groups)->where($where)->paginate(Config::get('page_size'), false, ['query'=>$params]);
+		 $adminster_list= new Adminsters();
+		 $adminster_list= $adminster_list->with('profile')->where($groups)->where($where)->paginate(Config::get('page_size'), false, ['query'=>$params]);
 		 $groupLists=AuthGroups::all();
 		 $this->assign('show',$adminster_list->render());
 		 $this->assign('params',$params);
@@ -39,6 +42,7 @@ class Adminster extends Common {
 	 #管理员新增
 	 public function add(){
 		 if(Request::instance()->isPost()){
+		 	$r=request()->param();
 			 $code=make_rand_code();
 			 $check_login_name=Adminsters::get(['adminster_login'=>Request::instance()->post('login_name')]);
 			 if($check_login_name){
@@ -49,6 +53,18 @@ class Adminster extends Common {
 			 if($check_login_email){
 			     	 Session::set('jump_msg',['type'=>'warning','msg'=>'邮箱已绑定其他账号~请更换','data'=>'']);
 				 $this->redirect($this->history['0']);
+			 }
+			 if($r['login_group']==5){
+			 	if($r['adminster_user_id']){
+			 		$admin=Adminsters::get(['adminster_user_id'=>$r['adminster_user_id']]);
+			 		if($admin){
+				     	 Session::set('jump_msg',['type'=>'warning','msg'=>'该用户已被'.$admin['adminster_login'].'绑定，请更换用户或为'.$admin['adminster_login'].'解除绑定','data'=>'']);
+						 $this->redirect($this->history['0']);
+			 		}
+			 	}else{
+			     	 Session::set('jump_msg',['type'=>'warning','msg'=>'请选择该渠道商对应的用户','data'=>'']);
+					 $this->redirect($this->history['0']);
+			 	}
 			 }
 			 $adminster=new Adminsters;
 			 $adminster->adminster_login=Request::instance()->post('login_name');
@@ -87,6 +103,7 @@ class Adminster extends Common {
 				 $adminsters->adminster_pwd=encryption(Request::instance()->post('login_passwd'),$adminsters->adminster_salt);
 			 $adminsters->adminster_email=Request::instance()->post('login_email');
 			 $adminsters->adminster_login=Request::instance()->post('login_name');
+			 $adminsters->adminster_user_id=Request::instance()->post('adminster_user_id');
 			 $adminsters->profile->group_id=Request::instance()->post('login_group');
 			 if(false===$adminsters->together('profile')->save()){
 				 Session::set('jump_msg',['type'=>'warning','msg'=>'管理员修改失败~请重试','data'=>'']);
@@ -137,13 +154,15 @@ class Adminster extends Common {
 			 $data['adminster_add_time']	=	$adminster_info['adminster_add_time'];
 		 else
 			 $data['adminster_add_time']	=	"";
+		 if(isset($adminster_info) && !empty($adminster_info['adminster_user_id']))
+			 $data['adminster_user_id']	=	$adminster_info['adminster_user_id'];
+		 else
+			 $data['adminster_user_id']	=	"";
 		 #获取用户组信息
 		 $authGroups=AuthGroups::all();
-		 $exist_user=db('adminster')->where('adminster_user_id','not null')->column('adminster_user_id');
 		 $users=db('member')->alias('m')
 		 	->join('member_relation r','m.member_id=r.relation_member_id')
 		 	->where('r.relation_parent_id',0)
-		 	->where('m.member_id','not in',$exist_user)
 		 	->select();
 		 $this->assign('users',$users);
 		 $this->assign('data',$data);

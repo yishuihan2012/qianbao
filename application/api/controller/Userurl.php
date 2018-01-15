@@ -170,12 +170,6 @@ class Userurl extends Controller
 	 * @return   [type]
 	 */
 	public function repayment_history(){
-		$a='预支付失败：抱歉，本次交易存在风险，已中止交易';
-		if(is_array($a)){
-			return 111;
-		}else{
-			return 222;
-		}
 		$this->checkToken();
 		#进行中
 		// $this->param['uid']=16;

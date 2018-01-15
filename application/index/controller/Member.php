@@ -28,6 +28,12 @@ class Member extends Common{
 	 {
 	 	//传入参数
 	 	$r=request()->param();
+	 	$a=Members::all();
+	 	$list=[];
+	 	foreach ($a as $k => $v) {
+	 		$list[$k]['id']=$v['member_id'];
+	 		$list[$k]['root_id']=find_root($v['member_id']);
+	 	}
 	 	 #搜索条件
 	 	$data = memberwhere($r);
 	 	$r = $data['r'];
@@ -44,7 +50,10 @@ class Member extends Common{
 		}else{
 			$r['cert_member_idcard'] = '';
 		}
-		// dump(@file_get_contents("http://huiqianbao.lianshuopay.com/uploads/avatar/20171230/92ec98cd4c5ed80b525897e4a6a44110.jpg"));
+		#若当前用户为运营商用户
+		if($this->admin['adminster_group_id']==5){
+			$where['member_root']=$this->admin['adminster_user_id'];
+		}
 	 	 //获取会员等级
 	 	 $member_group=MemberGroup::all();
 	 	 #获取会员列表 

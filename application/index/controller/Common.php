@@ -11,6 +11,7 @@
       protected $jump_msg;
       protected $_post;
       public $history;
+      protected $admin;
       public function __construct(){
       parent::__construct();
       if(!Session::has('adminster'))
@@ -24,6 +25,9 @@
            'state'       => Session::get('adminster.adminster_state'),
            'title'         => System::GetName('sitename')
       ];
+     $this->admin=session('adminster');
+     // halt($this->adminster);
+     $this->assign('admin', $this->admin);
       #权限判断
       if(Session::has('jump_msg'))
            $data['jump_msg']=Session::get('jump_msg');

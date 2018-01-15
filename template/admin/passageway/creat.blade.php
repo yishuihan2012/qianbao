@@ -42,6 +42,13 @@
 		 </div>		
 	 </div>
 
+	  <div class="row form-group">
+		 <label for="passageway_no" class="col-sm-3 text-right"><b>平台约定费率:</b></label>
+		 <div class="col-sm-6" id="passageway_no">
+			 <input type="text" class="form-control passageway_no" name="passageway_rate" placeholder="请填写通道与平台约定的费率" value="">
+		 </div>		
+	 </div>
+
 	 <div class="row form-group">
 		 <label for="passageway_no" class="col-sm-3 text-right"><b>通道代号:</b></label>
 		 <div class="col-sm-6" id="passageway_no">

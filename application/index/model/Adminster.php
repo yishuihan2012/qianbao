@@ -23,9 +23,9 @@ class Adminster extends Model{
         	 #TODO:自定义的初始化
       }
 	 #关联模型
-	 public function profile()
+	 public  function profile()
 	 {
-	 	 return $this->hasOne('AuthGroupAccess','uid','adminster_id');
+	 	 return $this->hasOne('AuthGroupAccess','uid','adminster_id')->bind('group_id')->setEagerlyType(0);
 	 }
 	 #关联模型 关联角色权限表(一对一关联) 反向关联
 	 public function auth_group_access()
