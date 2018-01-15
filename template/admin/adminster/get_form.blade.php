@@ -33,9 +33,9 @@
       </div>
       <div class="form-group">
           <label for="user_id">运营商绑定用户-非运营商用户组忽略此项</label>
-          <select class="form-control" name="user_id">
+          <select class="form-control" name="adminster_user_id">
             @foreach($users as $v)
-              <option value="{{ $v['member_id'] }}">{{$v['member_nick']}} {{$v['member_mobile']}}</option>
+              <option value="{{ $v['member_id'] }}" {{$v['member_id']==$data['adminster_user_id'] ? 'selected' : ''}}>{{$v['member_nick']}} {{$v['member_mobile']}}</option>
             @endforeach
           </select>
       </div>

@@ -37,6 +37,9 @@
                  <td>@if($list->passageway_status==1) 是 @else 否 @endif</td>
                  <td>{{$list->passageway_add_time}}</td>
                  <td>
+                 @if($adminster['adminster_group_id']==5)
+                      <a class="btn btn-sm" href="{{url('/index/passageway/passageway_details','id='.$list['passageway_id'])}}">交易详情</a> 
+                      @else
                       <div class="btn-group"><a  data-remote="{{url('/index/passageway/rate','id='.$list['passageway_id'])}}" data-toggle="modal" data-size="lg" href="#" class="btn btn-sm">税率调整</a>
                            <div class="btn-group">
                                  <button type="button" class="btn dropdown-toggle btn-sm" data-toggle="dropdown"><span class="caret"></span></button>
@@ -50,6 +53,7 @@
                                  </ul>
                            </div>
                       </div>
+                      @endif
                  </td>
            </tr>
            @endforeach
