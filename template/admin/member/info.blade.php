@@ -135,7 +135,7 @@
 
  <!--dialog Button-->
  <div class="modal-footer animated fadeInLeft">
-	 @if($adminster['adminster_group_id']!=5)
+	 @if($admin['adminster_group_id']!=5)
  	<button type="button" class="btn disables"  data-url="{{url('/index/Member/disables/id/'.$member_info->member_id)}}">封停用户</button>
  	@if($member_info->cert_member_idcard != '')
  	<button type="button" class="btn toexamine"  data-url="{{url('/index/Member/toexamine/id/'.$member_info->member_id.'/member_cert/2')}}">审核未通过</button>
