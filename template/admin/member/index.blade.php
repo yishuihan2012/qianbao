@@ -77,6 +77,9 @@
           <td>{{$val->login_state==1 ? '正常' : '封停'}}</td>
           <td>{{$val->member_creat_time}}</td>
           <td>
+                 @if($adminster['adminster_group_id']==5)
+                     <button type="button" data-toggle="modal" data-size="lg" data-remote="{{url('/index/member/info/id/'.$val->member_id)}}" class="btn btn-sm">查看详情</button>
+                   @else
                 <div class="btn-group">
                      <button type="button" data-toggle="modal" data-size="lg" data-remote="{{url('/index/member/info/id/'.$val->member_id)}}" class="btn btn-sm">查看详情</button>
                      <div class="btn-group">
@@ -86,6 +89,7 @@
                                 <li><a data-toggle="modal" data-size="lg" data-remote="{{url('/index/member/commiss',['memberId'=>$val->member_id])}}" href="#">分佣分润</a></li>
                            </ul>
                      </div>
+                     @endif
                 </div>
           </td>
       </tr>

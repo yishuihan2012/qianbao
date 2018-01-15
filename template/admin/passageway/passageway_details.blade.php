@@ -1,5 +1,5 @@
 @extends('admin/layout/layout_main')
-@section('title','{{$passageway->passageway_name}}~')
+@section('title',$passageway->passageway_name)
 @section('wrapper')
 <style>
 	 h4 > a,.pull-right > a{color:#145ccd;}

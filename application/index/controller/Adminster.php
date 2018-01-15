@@ -11,6 +11,7 @@ use think\Config;
 use think\Request;
 use think\Session;
 use think\View;
+use app\index\model\Member;
 use app\index\model\Adminster as Adminsters;
 use app\index\model\AuthGroup as AuthGroups;
 use app\index\model\AuthGroupAccess as AuthGroupAccesss;
@@ -27,7 +28,8 @@ class Adminster extends Common {
 		 !empty($params['state']) ? $where['adminster_state']=$params['state'] :  $params['state']="";
 		 !empty($params['group']) ? $groups['group_id']=$params['group'] : $params['group']="";
 		 $params['page']=Request::instance()->param('page') ? : 1;
-		 $adminster_list= Adminsters::haswhere('profile',$groups)->where($where)->paginate(Config::get('page_size'), false, ['query'=>$params]);
+		 $adminster_list= new Adminsters();
+		 $adminster_list= $adminster_list->with('profile')->where($groups)->where($where)->paginate(Config::get('page_size'), false, ['query'=>$params]);
 		 $groupLists=AuthGroups::all();
 		 $this->assign('show',$adminster_list->render());
 		 $this->assign('params',$params);
@@ -87,6 +89,7 @@ class Adminster extends Common {
 				 $adminsters->adminster_pwd=encryption(Request::instance()->post('login_passwd'),$adminsters->adminster_salt);
 			 $adminsters->adminster_email=Request::instance()->post('login_email');
 			 $adminsters->adminster_login=Request::instance()->post('login_name');
+			 $adminsters->adminster_user_id=Request::instance()->post('adminster_user_id');
 			 $adminsters->profile->group_id=Request::instance()->post('login_group');
 			 if(false===$adminsters->together('profile')->save()){
 				 Session::set('jump_msg',['type'=>'warning','msg'=>'管理员修改失败~请重试','data'=>'']);
@@ -137,13 +140,15 @@ class Adminster extends Common {
 			 $data['adminster_add_time']	=	$adminster_info['adminster_add_time'];
 		 else
 			 $data['adminster_add_time']	=	"";
+		 if(isset($adminster_info) && !empty($adminster_info['adminster_user_id']))
+			 $data['adminster_user_id']	=	$adminster_info['adminster_user_id'];
+		 else
+			 $data['adminster_user_id']	=	"";
 		 #获取用户组信息
 		 $authGroups=AuthGroups::all();
-		 $exist_user=db('adminster')->where('adminster_user_id','not null')->column('adminster_user_id');
 		 $users=db('member')->alias('m')
 		 	->join('member_relation r','m.member_id=r.relation_member_id')
 		 	->where('r.relation_parent_id',0)
-		 	->where('m.member_id','not in',$exist_user)
 		 	->select();
 		 $this->assign('users',$users);
 		 $this->assign('data',$data);
