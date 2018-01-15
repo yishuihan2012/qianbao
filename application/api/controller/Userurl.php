@@ -635,7 +635,7 @@ class Userurl extends Controller
    		$class = NoviceClasss::all();
    		#还款列表
    		foreach ($class as $key => $value) {
-   			$class[$key]['repaymentList'] = MemberNovice::list($value['novice_class_id']);
+   			$class[$key]['repaymentList'] = MemberNovice::lists($value['novice_class_id']);
    		}
    		$this->assign("class",$class);
     	return view("api/logic/web_freshman_guide");
