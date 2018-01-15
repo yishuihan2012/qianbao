@@ -83,7 +83,7 @@
                            <button type="button" class="btn btn-sm dropdown-toggle" data-toggle="dropdown"><span class="caret"></span></button>
                            <ul class="dropdown-menu" role="menu">
                                 <li><a data-toggle="modal" data-remote="{{url('/index/member/upgrade/id/'.$val->member_id.'/member_group_id/'.$val->member_group_id)}}" href="#">升级会员</a></li>
-                                <li><a data-toggle="modal" data-size="lg" data-remote="{{url('/index/member/commiss',['memberId'=>$val->member_id])}}" href="#">分佣分润</a></li>
+                                <li><a   data-remote="{{url('/index/member/commiss',['memberId'=>$val->member_id])}}" href="{{url('/index/member/commiss',['memberId'=>$val->member_id])}}">分佣分润</a></li>
                            </ul>
                      </div>
                 </div>

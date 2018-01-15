@@ -197,17 +197,27 @@ class Member extends Common{
 	 	$certwhere['cert_member_id'] = request()->param("id");
 	 	$certresult = MemberCert::where($certwhere)->delete();
 	 	$content = ($result===false && $certresult ==false && $cardresult==false) ? ['type'=>'error','msg'=>'修改信息失败'] : ['type'=>'success','msg'=>'修改信息成功'];
-
-
 	 	Session::set('jump_msg', $content);
 	 	$this->redirect("member/index");
 	 }
 	 //会员分佣分润
 	public function commiss(){
 	 	$commiss = new Commission();
-	 	$list = Commissions::where(['commission_member_id' => request()->param("memberId")])->select();
+	 	$where['commission_member_id'] = request()->param("memberId");
+	 	if(request()->param('beginTime') && request()->param('endTime')){
+			$endTime=strtotime(request()->param('endTime'))+24*3600;
+			$where['commission_creat_time']=["between time",[request()->param('beginTime'),$endTime]];
+		}
+		if(request()->param('min_money') && request()->param("max_money")){
+			$where['commission_money'] = array(">=",request()->param('min_money'));
+			$where['commission_money'] = array("<=",request()->param('max_money'));
+		}
+	 	$list = Commissions::where($where)->order("commission_id desc")->paginate(Config::get('page_size'), false, ['query'=>Request::instance()->param()]);
+	 	#统计金额
+	 	$sum = Commissions::where($where)->sum("commission_money");
+	 	$this->assign("memberId",request()->param("memberId"));
+	 	$this->assign("sum",$sum);
 	 	$this->assign("list",$list);
-	 	return view("admin/member/commiss");
-	 	
+	 	return view("admin/member/commiss");	
 	}
 }

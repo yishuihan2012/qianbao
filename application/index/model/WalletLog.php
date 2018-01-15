@@ -31,6 +31,6 @@ class WalletLog extends Model{
         #定义相对的模型关联
         public function wallet()
         {
-            return $this->belongsTo('Wallet', 'log_wallet_id', 'wallet_id')->bind("wallet_member");
+            return $this->belongsTo('Wallet', 'log_wallet_id', 'wallet_id')->bind("wallet_member")->setEagerlyType(0);
         }
 }
