@@ -162,9 +162,8 @@ use app\index\model\Member;
         );  
         // print_r($params);
         $income=repay_request($params,$merch->passageway_mech,'http://pay.mishua.cn/zhonlinepay/service/rest/creditTrans/payBindCard',$merch->iv,$merch->secretkey,$merch->signkey);
-        // print_r($income);
-        //后四位银行卡尾号
-        $card_num=substr($pay['order_card'],-4);
+        //判断执行结果
+        $is_commission=0;
         if($income['code']=='200'){
              $arr['back_tradeNo']=$income['tradeNo'];
              $arr['back_statusDesc']=$income['statusDesc'];
@@ -172,40 +171,80 @@ use app\index\model\Member;
             if($income['status']=="SUCCESS"){
                 $arr['order_status']='2';
                 // $generation['generation_state']=3;
-                //成功-分润
-                 #先判断有没有分润
-                 if($pay['is_commission']=='0'){
-                    $fenrun= new \app\api\controller\Commission();
-                    $fenrun_result=$fenrun->MemberFenRun($pay['order_member'],$pay['order_money'],$merch->passageway_id,3,'代还分润',$pay['order_id']);
-                 }
-                 //在此计划的还款卡余额中增加本次的金额 除去手续费
-                 db('reimbur')->where('reimbur_generation',$pay['order_no'])->setInc('reimbur_left',$pay['order_money']-$pay['order_pound']);
-                //成功极光推送。
-                jpush($pay['order_member'],'还款计划扣款成功通知',"您制定的尾号{$card_num}的还款计划成功扣款".$pay['order_money']."元，在APP内还款计划里即可查看详情。");
+                $is_commission=1;
             }else if($income['status']=="FAIL"){
                 //失败推送消息
                 $arr['order_status']='-1';
-                send_sms($member_base->member_mobile,"您制定的尾号{$card_num}的还款计划还款失败，在APP内还款计划里即可查看详情。");
             }else{
                 $arr['order_status']='2';
                 //带查证或者支付中。。。
             }
-            #1记录为 shangji 有效推荐人
-            $Plan_cation=new \app\api\controller\Planaction();
-            $Plan_cation=$Plan_cation->recommend_record($pay['order_member']);
         }else{
           $arr['back_statusDesc']=$income['message'];
           $arr['back_status']='FAIL';
           $arr['order_status']='-1';
           $generation['generation_state']=-1;
-          // 失败，短信通知
-          send_sms($member_base->member_mobile,"您制定的尾号{$card_num}的还款计划执行失败，在APP内还款计划里即可查看详情。");
+        
         }
         //添加执行记录
-        GenerationOrder::where(['order_id'=>$pay['order_id']])->update($arr);
+        $res=GenerationOrder::where(['order_id'=>$pay['order_id']])->update($arr);
         //更新卡计划
         // Generation::where(['generation_id'=>$pay['order_no']])->update($generation);
-        
+        #更改完状态后续操作
+        $action=$this->plan_notice($pay,$income,$member_base,$is_commission);
+      }
+
+      //计划执行完之后推送通知，分润
+      public function plan_notice($pay,$income,$member_base,$is_commission=0){
+          #1记录有效推荐人 #2 分润分佣 #3 短信通知 # 极光推送
+          //后四位银行卡尾号
+          $card_num=substr($pay['order_card'],-4);
+          if($income['code']=='200'){
+              if($income['status']=="SUCCESS"){
+                  if($pay['order_type']==1){ //消费
+                        #0在此计划的还款卡余额中增加本次的金额 除去手续费
+                        db('reimbur')->where('reimbur_generation',$pay['order_no'])->setInc('reimbur_left',$pay['order_money']-$pay['order_pound']);
+                        #1分润
+                        //先判断有没有分润
+                        if($pay['is_commission']=='0'){
+                             $fenrun= new \app\api\controller\Commission();
+                             $fenrun_result=$fenrun->MemberFenRun($pay['order_member'],$pay['order_money'],$merch->passageway_id,3,'代还分润',$pay['order_id']);
+                        }
+                        #2记录为 shangji 有效推荐人
+                        $Plan_cation=new \app\api\controller\Planaction();
+                        $Plan_cation=$Plan_cation->recommend_record($pay['order_member']);
+                        
+                        #3极光推送
+                        jpush($pay['order_member'],'还款计划扣款成功通知',"您制定的尾号{$card_num}的还款计划成功扣款".$pay['order_money']."元，在APP内还款计划里即可查看详情。");
+                  }elseif($pay['order_type']==2){ //还款
+                        #0在此计划的还款卡余额中减去本次的金额
+                        db('reimbur')->where('reimbur_generation',$pay['order_no'])->setDec('reimbur_left',$pay['order_money']);
+                        #1极光推送
+                        jpush($pay['order_member'],'还款成功通知',"您制定的尾号{$card_num}的还款计划成功还款".$pay['order_money']."元，在APP内还款计划里即可查看详情。");
+
+                  }
+              }else if($income['status']=="FAIL"){
+                  //失败推送消息发短信
+                  if($pay['order_type']==1){ //消费
+                      send_sms($member_base->member_mobile,"您制定的尾号{$card_num}的还款计划扣款失败，在APP内还款计划里即可查看详情。");
+                      jpush($pay['order_member'],'扣款失败通知',"您制定的尾号{$card_num}的还款计划扣款".$pay['order_money']."元失败，在APP内还款计划里即可查看详情。");
+                  }else{  //还款
+                      send_sms($member_base->member_mobile,"您制定的尾号{$card_num}的还款计划还款失败，在APP内还款计划里即可查看详情。");
+                      jpush($pay['order_member'],'还款失败通知',"您制定的尾号{$card_num}的还款计划还款".$pay['order_money']."元失败，在APP内还款计划里即可查看详情。");
+                  }
+              }else{
+                //带查证状态
+              }
+          }else{
+              //失败推送消息发短信
+              if($pay['order_type']==1){ //消费
+                  send_sms($member_base->member_mobile,"您制定的尾号{$card_num}的还款计划扣款失败，在APP内还款计划里即可查看详情。");
+                  jpush($pay['order_member'],'扣款失败通知',"您制定的尾号{$card_num}的还款计划扣款".$pay['order_money']."元失败，在APP内还款计划里即可查看详情。");
+              }else{  //还款
+                  send_sms($member_base->member_mobile,"您制定的尾号{$card_num}的还款计划还款失败，在APP内还款计划里即可查看详情。");
+                  jpush($pay['order_member'],'还款失败通知',"您制定的尾号{$card_num}的还款计划还款".$pay['order_money']."元失败，在APP内还款计划里即可查看详情。");
+              }
+          }
       }
       //8:支付回调
       public function payCallback(){
@@ -223,15 +262,7 @@ use app\index\model\Member;
                 if($resul['status']=="SUCCESS"){
                   $arr['order_status']='2';
                   $generation['generation_state']=3;
-                  $pay=GenerationOrder::where(['back_tradeNo'=>$resul['tradeNo']])->find();
-                   //成功-分润先判断有没有分润
-                   if($pay['is_commission']=='0'){
-                      $fenrun= new \app\api\controller\Commission();
-                      $fenrun_result=$fenrun->MemberFenRun($pay['order_member'],$pay['order_money'],$merch->passageway_id,3,'代还分润',$pay['order_id']);
-                   }
-                  // 极光推送
-                  $card_num=substr($pay['order_card'],-4);
-                  jpush($pay['order_member'],'还款计划扣款成功通知',"您制定的尾号{$card_num}的还款计划成功扣款".$pay['order_money']."元，在APP内还款计划里即可查看详情。");
+                  
                 }
             }
             //更新计划表
@@ -240,7 +271,16 @@ use app\index\model\Member;
             // $id=GenerationOrder::where(['back_tradeNo'=>$resul['tradeNo']])->value('order_no');
             // Generation::where(['generation_id'=>$pay['order_no']])->update($generation);
             if($resul['status']=="SUCCESS"){
-              echo "success";die;
+                $pay=GenerationOrder::where(['back_tradeNo'=>$resul['tradeNo']])->find();
+                //成功-分润先判断有没有分润
+                if($pay['is_commission']=='0'){
+                    $fenrun= new \app\api\controller\Commission();
+                    $fenrun_result=$fenrun->MemberFenRun($pay['order_member'],$pay['order_money'],$merch->passageway_id,3,'代还分润',$pay['order_id']);
+                }
+                // 极光推送
+                $card_num=substr($pay['order_card'],-4);
+                jpush($pay['order_member'],'还款计划扣款成功通知',"您制定的尾号{$card_num}的还款计划成功扣款".$pay['order_money']."元，在APP内还款计划里即可查看详情。");
+                echo "success";die;
             }
       }
       //9状态查询 unfinished
@@ -259,66 +299,62 @@ use app\index\model\Member;
       //10.余额提现
       //http://pay.mishua.cn/zhonlinepay/service/rest/creditTrans/transferApply
       public function transferApply($pay,$isCancel=null){
-        #1获取费率
-        $member_group_id=Member::where(['member_id'=>$pay['order_member']])->value('member_group_id');
-        $rate=PassagewayItem::where(['item_passageway'=>$pay['order_passageway'],'item_group'=>$member_group_id])->find();
-        $also=($rate->item_also)*10;
-        $daikou=($rate->item_charges);
-        #2获取通道信息
-        $merch=Passageway::where(['passageway_id'=>$pay['order_passageway']])->find();
-        // print_r($merch->passageway_mech);die;
-        #3获取银行卡信息
-        $card_info=MemberCreditcard::where(['card_bankno'=>$pay['order_card']])->find();
-        #4获取用户信息
-        $member=MemberNets::where(['net_member_id'=>$pay['order_member']])->find();
-        $orderTime=date('YmdHis',time()+60);
-        $params=array(
-          'mchNo'=>$merch->passageway_mech, //机构号 必填  由平台统一分配 16
-          'userNo'=>$member->LkYQJ,  //平台用户标识  必填  平台下发用户标识  32
-          'settleBindId'=>$card_info->bindId,  //提现卡签约ID 必填  提现结算的卡，传入签约返回的平台签约ID  32
-          'notifyUrl'=>System::getName('system_url').'/Api/Membernet/cashCallback',// 异步通知地址  可填  异步通知的目标地址,为空时平台不发起推送  200
-          'orderNo'=>uniqid(), //提现流水号 必填  机构订单流水号，需唯一 64
-          'orderTime'=>$orderTime,//  提现时间点 必填  格式：yyyyMMddHHmmss 14
-          'depositAmt'=>$pay['order_money']*100,  //提现金额  必填  单位：分  整型(9,0)
-          'feeRatio'=>0,  //提现费率  必填  需与用户入网信息保持一致  数值(5,2)
-          'feeAmt'=>0,//提现单笔手续费   需与用户入网信息保持一致  整型(4,0)
-        );
-        $income=repay_request($params,$merch->passageway_mech,'http://pay.mishua.cn/zhonlinepay/service/rest/creditTrans/transferApply',$merch->iv,$merch->secretkey,$merch->signkey);
-        // print_r($income);
-        $card_num=substr($pay['order_card'],-4);
-        if($income['code']=='200'){
-          $arr['back_tradeNo']=$income['orderNo'];
-          $arr['back_status']=$income['status'];
-          $arr['back_statusDesc']=$income['statusDesc'];
-          if($income['status']=="SUCCESS"){
-               $arr['order_status']='2';
-               //在此计划的还款卡余额中减去本次的金额
-               db('reimbur')->where('reimbur_generation',$pay['order_no'])->setDec('reimbur_left',$pay['order_money']);
-               //成功极光推送。
-              jpush($pay['order_member'],'还款成功通知',"您制定的尾号{$card_num}的还款计划成功还款".$pay['order_money']."元，在APP内还款计划里即可查看详情。");
-          }elseif($income['status']=="FAIL"){
-                //失败推送消息
-                $arr['order_status']='-1';
-                send_sms($member_base->member_mobile,"您制定的尾号{$card_num}的还款计划还款失败，在APP内还款计划里即可查看详情。");
-            }else{
-                $arr['order_status']='2';
-            }
-        }else{
-          $arr['back_status']='FAIL';
-          $arr['back_statusDesc']=$income['message'];
-          $arr['order_status']='-1';
-          // 失败，短信通知
-          send_sms($member_base->member_mobile,"您制定的尾号{$card_num}的还款计划还款失败，在APP内还款计划里即可查看详情。");
-        }
-        //更新订单状态
-        GenerationOrder::where(['order_id'=>$pay['order_id']])->update($arr);
-        //更新卡计划 判断是否是最后一次执行还款计划
-        $GenerationOrder=GenerationOrder::where(['order_no'=>$pay['order_no'],'order_status'=>1])->find();
-        if(!$GenerationOrder){
-          #根据传入的isCancel来判断是否是因为主动取消而结束的本次计划
-          $generation_state=$isCancel ? 4 : 3;
-          Generation::update(['generation_id'=>$pay['order_no'],'generation_state'=>$generation_state]);
-        }
+          #1获取费率
+          $member_group_id=Member::where(['member_id'=>$pay['order_member']])->value('member_group_id');
+          $rate=PassagewayItem::where(['item_passageway'=>$pay['order_passageway'],'item_group'=>$member_group_id])->find();
+          $also=($rate->item_also)*10;
+          $daikou=($rate->item_charges);
+          #2获取通道信息
+          $merch=Passageway::where(['passageway_id'=>$pay['order_passageway']])->find();
+          // print_r($merch->passageway_mech);die;
+          #3获取银行卡信息
+          $card_info=MemberCreditcard::where(['card_bankno'=>$pay['order_card']])->find();
+          #4获取用户信息
+          $member=MemberNets::where(['net_member_id'=>$pay['order_member']])->find();
+          #5:获取用户基本信息
+          $member_base=Member::where(['member_id'=>$pay['order_member']])->find();
+          $orderTime=date('YmdHis',time()+60);
+          $params=array(
+              'mchNo'=>$merch->passageway_mech, //机构号 必填  由平台统一分配 16
+              'userNo'=>$member->LkYQJ,  //平台用户标识  必填  平台下发用户标识  32
+              'settleBindId'=>$card_info->bindId,  //提现卡签约ID 必填  提现结算的卡，传入签约返回的平台签约ID  32
+              'notifyUrl'=>System::getName('system_url').'/Api/Membernet/cashCallback',// 异步通知地址  可填  异步通知的目标地址
+              'orderNo'=>uniqid(), //提现流水号 必填  机构订单流水号，需唯一 64
+              'orderTime'=>$orderTime,//  提现时间点 必填  格式：yyyyMMddHHmmss 14
+              'depositAmt'=>$pay['order_money']*100,  //提现金额  必填  单位：分  整型(9,0)
+              'feeRatio'=>0,  //提现费率  必填  需与用户入网信息保持一致  数值(5,2)
+              'feeAmt'=>0,//提现单笔手续费   需与用户入网信息保持一致  整型(4,0)
+          );
+          $income=repay_request($params,$merch->passageway_mech,'http://pay.mishua.cn/zhonlinepay/service/rest/creditTrans/transferApply',$merch->iv,$merch->secretkey,$merch->signkey);
+          // print_r($income);
+          if($income['code']=='200'){
+            $arr['back_tradeNo']=$income['orderNo'];
+            $arr['back_status']=$income['status'];
+            $arr['back_statusDesc']=$income['statusDesc'];
+            if($income['status']=="SUCCESS"){
+                 $arr['order_status']='2';
+            }elseif($income['status']=="FAIL"){
+                  //失败推送消息
+                  $arr['order_status']='-1';
+              }else{
+                  $arr['order_status']='2';
+              }
+          }else{
+            $arr['back_status']='FAIL';
+            $arr['back_statusDesc']=$income['message'];
+            $arr['order_status']='-1';
+          }
+          //更新订单状态
+          GenerationOrder::where(['order_id'=>$pay['order_id']])->update($arr);
+          //更新卡计划 判断是否是最后一次执行还款计划
+          $GenerationOrder=GenerationOrder::where(['order_no'=>$pay['order_no'],'order_status'=>1])->find();
+          if(!$GenerationOrder){
+            #根据传入的isCancel来判断是否是因为主动取消而结束的本次计划
+            $generation_state=$isCancel ? 4 : 3;
+            Generation::update(['generation_id'=>$pay['order_no'],'generation_state'=>$generation_state]);
+          }
+          //执行完后操作
+          $action=$this->plan_notice($pay,$income,$member_base,0);
       }
       //提现回调
       public function cashCallback(){
@@ -335,12 +371,12 @@ use app\index\model\Member;
                 $arr['back_statusDesc']=$resul['statusDesc'];
                 if($resul['status']=="SUCCESS"){
                   $arr['order_status']='2';
+                  GenerationOrder::where(['back_tradeNo'=>$resul['tradeNo']])->update($arr);
                   $pay=GenerationOrder::where(['back_tradeNo'=>$resul['tradeNo']])->find();
                   $card_num=substr($pay['order_card'],-4);
                   jpush($pay['order_member'],'还款计划扣款成功通知',"您制定的尾号{$card_num}的还款计划成功还款".$pay['order_money']."元，在APP内还款计划里即可查看详情。");
                    echo "success";die;
                 }
-                GenerationOrder::where(['back_tradeNo'=>$resul['tradeNo']])->update($arr);
             }
       }
       //提现状态查询 unfinished
@@ -389,46 +425,46 @@ use app\index\model\Member;
       #取消还款计划【整体】
       # generation_id
       public function cancle_plan($generation_id){
-       Db::startTrans();
-       try{
-        $generation=Generation::get($generation_id);
-        // $generation->generation_state=4;
-        $generation_order=GenerationOrder::where(['order_no'=>$generation_id,'order_status'=>1]);
-        $generation_order->update(['order_status'=>3]);
-        if($generation->generation_state==2){
-          #执行中的，将本次计划还款卡中余额返回信用卡
-          $money=db('reimbur')->where('reimbur_generation',$generation_id)->value('reimbur_left');
-          if($money>0){
-            $userinfo=$this->accountQuery($generation['generation_member']);
-            $realMoney=$userinfo['lastAmt']+$userinfo['availableAmt']-$userinfo['usedAmt'];
-            //判断本次计划还款总金额 是否不大于 商户平台中该用户的余额
-            if($money<=$realMoney){
-              //写入本次取消返还的还款订单
-              $reback_order=GenerationOrder::create([
-                'order_no'=>$generation_id,
-                'order_passageway'=>$generation->order_passageway,
-                'order_member'=>$generation->order_member,
-                'order_type'=>2,
-                'order_card'=>$generation->order_card,
-                'order_money'=>$money,
-                'order_pound'=>0,
-                'order_desc'=>'取消还款计划，自动返还本次计划剩余款项',
-                'order_time'=>date('Y-m-d H:i:s'),
-              ]);
-              $this->transferApply($reback_order->toArray(),true);
-            }else{
-              Db::rollback();
-              return ['code'=>481,'msg'=>get_status_text(481)];
-            }
-          }
-        }
-        Generation::update(['generation_id'=>$generation_id,'generation_state'=>4]);
-         Db::commit();
-         return ['code'=>200];
-       } catch (\Exception $e) {
-             Db::rollback();
-             // return $e->getMessage();
-             return ['code'=>308,'msg'=>$e->getMessage(),'data'=>[]];
-       }
+           Db::startTrans();
+           try{
+              $generation=Generation::get($generation_id);
+              // $generation->generation_state=4;
+              $generation_order=GenerationOrder::where(['order_no'=>$generation_id,'order_status'=>1]);
+              $generation_order->update(['order_status'=>3]);
+              if($generation->generation_state==2){
+                #执行中的，将本次计划还款卡中余额返回信用卡
+                $money=db('reimbur')->where('reimbur_generation',$generation_id)->value('reimbur_left');
+                if($money>0){
+                  $userinfo=$this->accountQuery($generation['generation_member']);
+                  $realMoney=$userinfo['lastAmt']+$userinfo['availableAmt']-$userinfo['usedAmt'];
+                  //判断本次计划还款总金额 是否不大于 商户平台中该用户的余额
+                  if($money<=$realMoney){
+                    //写入本次取消返还的还款订单
+                    $reback_order=GenerationOrder::create([
+                      'order_no'=>$generation_id,
+                      'order_passageway'=>$generation->order_passageway,
+                      'order_member'=>$generation->order_member,
+                      'order_type'=>2,
+                      'order_card'=>$generation->order_card,
+                      'order_money'=>$money,
+                      'order_pound'=>0,
+                      'order_desc'=>'取消还款计划，自动返还本次计划剩余款项',
+                      'order_time'=>date('Y-m-d H:i:s'),
+                    ]);
+                    $this->transferApply($reback_order->toArray(),true);
+                  }else{
+                    Db::rollback();
+                    return ['code'=>481,'msg'=>get_status_text(481)];
+                  }
+                }
+              }
+              Generation::update(['generation_id'=>$generation_id,'generation_state'=>4]);
+              Db::commit();
+              return ['code'=>200];
+           } catch (\Exception $e) {
+                 Db::rollback();
+                 // return $e->getMessage();
+                 return ['code'=>308,'msg'=>$e->getMessage(),'data'=>[]];
+           }
       }
  }
