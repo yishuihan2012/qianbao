@@ -24,6 +24,7 @@
            'state'       => Session::get('adminster.adminster_state'),
            'title'         => System::GetName('sitename')
       ];
+     $this->assign('adminster', session('adminster'));
       #权限判断
       if(Session::has('jump_msg'))
            $data['jump_msg']=Session::get('jump_msg');

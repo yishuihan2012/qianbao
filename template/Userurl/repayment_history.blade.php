@@ -40,7 +40,9 @@
 												</p>
 												<span class="f16">{{$list['card_bankname']}}(尾号{{$list['generation_card']}})</span>
 											</div>
-											<div class="green-color"><span class="iconfont icon-shijian-copy-copy space-right"></span><span class="f16">@if($list['generation_state']==2)执行中@elseif($list['generation_state']==1)待确认@elseif($list['generation_state']==3)还款结束@elseif($list['generation_state']==-1)还款失败@endif</span></div>
+											<div class="green-color"><span class="iconfont icon-shijian-copy-copy space-right"></span><span class="f16">
+												@if($list['generation_state']==2)执行中@elseif($list['generation_state']==1)待确认@elseif($list['generation_state']==3)还款结束@elseif($list['generation_state']==-1)还款失败@elseif($list['generation_state']==4)已取消@endif
+											</span></div>
 										</div>
 										<div class="wrap">
 											<p class="invalid-color f15">还款总金额(含手续费{{$list['generation_pound']}}元)</p>
@@ -77,7 +79,9 @@
 												</p>
 												<span class="f16">{{$list['card_bankname']}}(尾号{{$list['generation_card']}})</span>
 											</div>
-											<div class="green-color"><span class="iconfont icon-shijian-copy-copy space-right"></span><span class="f16">@if($list['generation_state']==2)执行中@elseif($list['generation_state']==1)待确认@elseif($list['generation_state']==3)还款结束@elseif($list['generation_state']==-1)还款失败@endif</span></div>
+											<div class="green-color"><span class="iconfont icon-shijian-copy-copy space-right"></span><span class="f16">
+												@if($list['generation_state']==2)执行中@elseif($list['generation_state']==1)待确认@elseif($list['generation_state']==3)还款结束@elseif($list['generation_state']==-1)还款失败@elseif($list['generation_state']==4)已取消@endif
+										</span></div>
 										</div>
 										<div class="wrap">
 											<p class="invalid-color f15">还款总金额(含手续费{{$list['generation_pound']}}元)</p>

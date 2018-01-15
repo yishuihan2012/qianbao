@@ -34,7 +34,7 @@
 			  </div>
 			</div>
 			<!--还款详情列表-->
-			<ul>
+			<ul style="margin-bottom: 100px;">
 
 				@foreach($order as $key=>$list)
 				<li class="bg-w wrap2 space-up2">
@@ -123,7 +123,7 @@
 
 			</ul>
 		@if(in_array($generation['generation_state'],[1,2]))
-	<a class="my-confirm" id="regBtn">取消整体计划</a>
+	<a class="my-confirm" id="regBtn" style="position: fixed;bottom: 50px;">取消整体计划</a>
 		@endif
 		</div>
 		<script src="/static/js/mui.min.js"></script>

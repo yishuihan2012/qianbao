@@ -9,15 +9,15 @@
   </header>
   <div class="items items-hover">
       <div class="row">
-           <div class="col-sm-6" id="memberData" style="width:400px; height: 400px;"></div>
+           <div class="col-sm-6" id="memberData" style="width:100%; height: 400px;"></div>
            <script type="text/javascript">
                 // 基于准备好的dom，初始化echarts实例
                 var myChart = echarts.init(document.getElementById('memberData'));
                 option = {
                      title : {
-                           text: "会员统计数据,总会员数：{{$member['count']}}",
+                           text: "会员统计数据,总会员数：{{$data['count']}}",
                            x:'center',
-                           top: '20'
+                           top: '15'
                      },
                      tooltip: {
                            trigger: 'item',
@@ -27,7 +27,7 @@
                            name:'会员信息',
                            type:'pie',
                            selectedMode: 'single',
-                           radius: [0, '30%'],
+                           radius: [0, '35%'],
                            label: {
                                 normal: {
                                      position: 'inner'
@@ -39,8 +39,8 @@
                                 }
                            },
                            data:[
-                                @foreach($member['group'] as $group)
-                                {value:{{$group['memberCount']}}, name:"{{$group['group_name']}}"},
+                                @foreach($membergrouplist as $group)
+                                {value:{{$group['membergroupcount']}}, name:"{{$group['group_name']}}"},
                                 @endforeach
                            ]
                      },
@@ -81,8 +81,8 @@
                      }
                 },
                 data:[
-                     {value:{{$member['cert']}}, name:'实名认证人数'},
-                     {value:{{$member['today']}}, name:'今日注册会员'},
+                     {value:{{$data['cert']}}, name:'实名认证人数'},
+                     {value:{{$data['Todaycount']}}, name:'今日注册会员'},
                 ]
            }
       ]

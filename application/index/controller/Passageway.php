@@ -350,8 +350,6 @@ class Passageway extends Common{
 	#通道下的交易订单列表
 	public function passageway_details($id){
 		$passageway=Passageways::get($id);
-		$passageway->sum=db('cash_order')->where(['order_passway'=>$id,'order_state'=>2])->sum('order_money');
-		$passageway->charge=db('cash_order')->where(['order_passway'=>$id,'order_state'=>2])->sum('order_charge');
 		$users=db('member')->column('member_id,member_nick');
 		$list=[];
 		$where=[];
@@ -374,48 +372,47 @@ class Passageway extends Common{
 				'member_nick'=>'',
 			];
 		}
+		$adminster=session('adminster');
+        $group_id=db('auth_group_access')->where('uid',$adminster['id'])->value('group_id');
 		//套现
 		if($passageway->passageway_also==1){
-			$passageway->fenrun=db('cash_order')->alias('o')
-				->join('commission c','o.order_id=c.commission_from')
-				->where('c.commission_type',1)
-				->sum('commission_money');
+			$where['order_passway']=$id;
+			$where['order_state']=2;
+			//运营商
+			if($adminster['adminster_user_id'] && $group_id==5){
+				$where['order_root']=$adminster['adminster_user_id'];
+			}
+			$passageway->sum=db('cash_order')->where($where)->sum('order_money');
+			$passageway->charge=db('cash_order')->where($where)->sum('order_charge');
 			$list=db('cash_order')->alias('o')
 				->join('member m','o.order_member=m.member_id')
-				->where('o.order_passway',$id)
 				->where($where)
 				->order('o.order_id desc')
 		 	 	->paginate(Config::get('page_size'), false, ['query'=>Request::instance()->param()]);
-			// $data=db('commission')->alias('c')
-			// 	->join('cash_order o','c.commission_from=o.order_id')
-			// 	->where('order_passway',$id)
-			// 	->select();
-			// foreach ($data as $k => $v) {
-			// 	//以订单id为键
-			// 	if(isset($list[$v['order_id']])){
-			// 		//区分二级和三级
-			// 		if(isset($list[$v['order_id']]['member2'])){
-			// 			$list[$v['order_id']]['member3']=$users[$v['commission_member_id']];
-			// 			$list[$v['order_id']]['money3']=$v['commission_money'];
-			// 		}else{
-			// 			$list[$v['order_id']]['member2']=$users[$v['commission_member_id']];
-			// 			$list[$v['order_id']]['money2']=$v['commission_money'];
-			// 		}
-			// 	}else{
-			// 		$list[$v['order_id']]=[
-			// 			'order_no'=>$v['order_no'],
-			// 			'order_member'=>$users[$v['order_member']],
-			// 			'order_money'=>$v['order_money'],
-			// 			'order_charge'=>$v['order_charge'],
-			// 			'order_update_time'=>$v['order_update_time'],
-			// 			'member1'=>$users[$v['commission_member_id']],
-			// 			'money1'=>$v['commission_money'],
-			// 		];
-			// 	}
-			// }
+			$passageway->fenrun=db('cash_order')->alias('o')
+				->join('member m','o.order_member=m.member_id')
+				->join('commission c','o.order_id=c.commission_from')
+				->where($where)
+				->sum('commission_money');
 		}else{
-			#代还
-			
+			$where['order_passway_id']=$id;
+			$where['order_status']=2;
+			//运营商
+			if($adminster['adminster_user_id'] && $group_id==5){
+				$where['order_root']=$adminster['adminster_user_id'];
+			}
+			$passageway->sum=db('generation_order')->where($where)->sum('order_money');
+			$passageway->charge=db('generation_order')->where($where)->sum('order_pound');
+			$list=db('generation_order')->alias('o')
+				->join('member m','o.order_member=m.member_id')
+				->where($where)
+				->order('o.order_id desc')
+		 	 	->paginate(Config::get('page_size'), false, ['query'=>Request::instance()->param()]);
+		 	 	$where['commission_type']=3;
+			$passageway->fenrun=db('generation_order')->alias('o')
+				->join('commission c','o.order_id=c.commission_from')
+				->where($where)
+				->sum('commission_money');
 		}
 		$this->assign('r',$r);
 		$this->assign('order_state',$this->order_state);
