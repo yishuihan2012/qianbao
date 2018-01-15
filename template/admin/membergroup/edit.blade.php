@@ -45,6 +45,29 @@ input.labelauty + label { font: 12px "Microsoft Yahei";}
 				<input type="text" class="form-control group_name" name="group_name" placeholder="请填写用户组名称" value="{{ $group->group_name }}">
 			</div>
 		</div>
+
+		<div class="row form-group">
+		 <label for="" class="col-sm-3 text-right"><b>用户组图标:</b></label>
+		 <div id="" class="col-sm-6">
+			 <div id='uploaderExample3' class="uploader">
+			 	 <div class="uploader-message text-center">
+			    	 	 <div class="content"></div>
+			    		 <button type="button" class="close">×</button>
+			  	 </div>
+			  	 <div class="uploader-files file-list file-list-grid"></div>
+			  	 <img name="group_thumb" src="{{$group->group_thumb}}" alt="">
+			 	 <div>
+			 	 	 <hr class="divider">
+			 	 	 <div class="uploader-status pull-right text-muted"></div>
+			 	 	 <button type="button" class="btn btn-link uploader-btn-browse"><i class="icon icon-plus"></i> 选择文件</button>
+			 	 	 <button type="button" class="btn btn-link uploader-btn-start"><i class="icon icon-cloud-upload"></i> 开始上传</button>
+			 	 </div>
+			 </div>
+			 <input type="hidden" class="form-control " name="group_thumb" value="">
+		 </div>		
+	 </div>
+
+
 		<div class="row form-group">
 			<label for="group_name" class="col-sm-2 text-right"><b>组 级 别:</b></label>
 			<div id="group_salt" class="col-sm-6">
@@ -105,4 +128,17 @@ $(".save").click(function(){
 $(function(){
 	$(':input').labelauty();
 });
+
+//上传文件设置
+ $('#uploaderExample3').uploader({
+     url: "{{url('/index/Tool/upload_one')}}",
+	 file_data_name:'avatar',
+	 filters:{ max_file_size: '10mb',},
+	 limitFilesCount:1,
+	 onFileUploaded(file, responseObject) {
+	    	 var attr=eval('('+responseObject.response+")");
+	    	 attr.code ? $("input[name=group_thumb]").val(attr.url) : bootbox.alert({ message: attr.msg, size: 'small' });
+	    	 attr.code ? $("img[name=group_thumb]").attr('src',attr.url) : bootbox.alert({ message: attr.msg, size: 'small' });
+	 }
+ });
 </script>

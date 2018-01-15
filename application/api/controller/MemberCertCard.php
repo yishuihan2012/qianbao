@@ -230,6 +230,7 @@
             );
             $url='http://pay.mishua.cn/zhonlinepay/service/rest/creditTrans/bindCardConfirm';
             $income=repay_request($params,$passageway['passageway_mech'],$url,$passageway['iv'],$passageway['secretkey'],$passageway['signkey']);
+            // var_dump($income);die;
             if($income['code']=='200'){
               //修改签约状态
               $bindStatus=array(
