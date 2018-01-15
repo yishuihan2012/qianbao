@@ -29,6 +29,7 @@
 			    		 <button type="button" class="close">×</button>
 			  	 </div>
 			  	 <div class="uploader-files file-list file-list-grid"></div>
+			  	 <img name="logo" src="{{$logo}}" alt="">
 			 	 <div>
 			 	 	 <hr class="divider">
 			 	 	 <div class="uploader-status pull-right text-muted"></div>
@@ -65,6 +66,7 @@
 	 onFileUploaded(file, responseObject) {
 	    	 var attr=eval('('+responseObject.response+")");
 	    	 attr.code ? $("input[name=logo]").val(attr.url) : bootbox.alert({ message: attr.msg, size: 'small' });
+	    	 attr.code ? $("img[name=logo]").attr('src',attr.url) : bootbox.alert({ message: attr.msg, size: 'small' });
 	 }
  });
 </script>

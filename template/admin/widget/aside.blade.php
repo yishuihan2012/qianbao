@@ -1,7 +1,7 @@
 <nav class="menu" data-ride="menu">
-    <a class="btn btn-primary" href="#"><i class="icon icon-edit"></i> 新增项目</a>
-    <a class="btn" href="{{url('/index/uploads/index')}}" data-remote="" data-size="lg" data-toggle="modal"><i class="icon icon-cloud-upload"></i> 图片上传</a>
-    <a class="btn" href="{{url('/index/uploads/logo')}}" data-remote="" data-size="lg" data-toggle="modal"><i class="icon icon-cloud-upload"></i> 网站logo上传</a>
+    <!-- <a class="btn btn-primary" href="#"><i class="icon icon-edit"></i> 新增项目</a> -->
+    <!-- <a class="btn" href="{{url('/index/uploads/index')}}" data-remote="" data-size="lg" data-toggle="modal"><i class="icon icon-cloud-upload"></i> 会员组头像上传</a> -->
+    <!-- <a class="btn" href="{{url('/index/uploads/logo')}}" data-remote="" data-size="lg" data-toggle="modal"><i class="icon icon-cloud-upload"></i> 网站logo上传</a> -->
     <ul class="nav nav-primary">
 
         <li class="dashboard"><a href="{{url('/index/dashboard/index')}}"><i class="0icon icon-dashboard"></i> 控制面板</a></li>
@@ -107,6 +107,7 @@
                 <li class="setting-customer_service service"><a href="{{url('/index/system/customer_service')}}"><i class="icon icon-sliders"></i> 客服管理</a></li>
                 <li class="setting-announcement"><a href="{{url('/index/system/announcement')}}"><i class="icon icon-sliders"></i> 公告管理</a></li>
                 <li class="setting-Appversion"><a href="{{url('/index/appversion/index')}}"><i class="icon icon-sliders"></i> APP版本号</a></li>
+                <li class="setting-Appversion"><a href="{{url('/index/uploads/logo')}}" data-remote="" data-size="lg" data-toggle="modal"><i class="icon icon-sliders"></i> 网站logo上传</a></li>
             </ul>
         </li>
 

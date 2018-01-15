@@ -38,7 +38,8 @@ class Cashoutcallback
 	 	 $passwayinfo=Cashout::where('cashout_callback','like','%'.$str.'%')->find();
 	 	 if(!$passwayinfo)
 	 	 	 die('找不到回调地址');
-	 	 $passway=Passageway::get($passwayinfo['cashout_passageway_id']);
+         $passway=Passageway::get($passwayinfo['cashout_passageway_id']);
+	 	
 	 	 if(!$passway)
 	 	 	 die('找不到通道');
        	 // 获取传过来参数
@@ -57,6 +58,9 @@ class Cashoutcallback
         	 //file_put_contents('datas3.txt',$resul);
         	 //订单详情
         	 $order   = CashOrder::where(array('order_thead_no' => $resul['transNo']))->find();
+
+             #通道费率
+              $passwayitem=PassagewayItem::get(['item_group'=>$order->member,'item_passageway'=>$passway->passageway_id]);
         	 //00代表成功
         	 if ($resul['status'] == '00' && $order) {
 		 	 $order->order_state=2;
@@ -64,9 +68,15 @@ class Cashoutcallback
 		 	 $fenrun= new \app\api\controller\Commission();
 		 	 $fenrun_result=$fenrun->MemberFenRun($order->order_member,$order->order_money,$order->order_passway,1,'套现手续费分润',$order->order_id);
 		 	 if($fenrun_result['code']=="200")
+             {
  				 $order->order_fen=$fenrun_result['leftmoney'];
+                 $order->order_buckle=$passwayitem->item_charges;
+                 $order->order_platform=$order->order_charge-($order->ordermoney*$passway->passageway_rate/100);
+             }
  			else	
+            {
  				 $order->order_fen=-1;
+            }
 		 	 $res = $order->save();
             	 if ($resul['qfStatus'] == 'SUCCESS' || $resul['qfStatus'] == 'IN_PROCESS') {
             	 	 //订单更新成功的时候去执行分佣
@@ -118,6 +128,9 @@ class Cashoutcallback
         	 //file_put_contents('datas3.txt',$resul);
         	 //订单详情
         	 $order   = CashOrder::where(array('order_thead_no' => $resul['transNo']))->find();
+
+             #通道费率
+              $passwayitem=PassagewayItem::get(['item_group'=>$order->member,'item_passageway'=>$passway->passageway_id]);
         	 //00代表成功
         	 if ($resul['status'] == '2' && $order) {
 		 	 $order->order_state=2;
@@ -125,9 +138,15 @@ class Cashoutcallback
 		 	 $fenrun= new \app\api\controller\Commission();
 		 	 $fenrun_result=$fenrun->MemberFenRun($order->order_member,$order->order_money,$order->order_passway,1,'套现手续费分润',$order->order_id);
 		 	 if($fenrun_result['code']=="200")
+             {
  				 $order->order_fen=$fenrun_result['leftmoney'];
+                  $order->order_buckle=$passwayitem->item_charges;
+                 $order->order_platform=$order->order_charge-($order->ordermoney*$passway->passageway_rate/100);
+             }
  			else	
+            {
  				 $order->order_fen=-1;
+            }
 		 	 $res = $order->save();
             	 if ($resul['qfStatus'] == 'SUCCESS' || $resul['qfStatus'] == 'IN_PROCESS') {
             	 	 //订单更新成功的时候去执行分佣
@@ -181,6 +200,9 @@ class Cashoutcallback
              //file_put_contents('datas3.txt',$resul);
              //订单详情
              $order   = CashOrder::where(array('order_thead_no' => $resul['transNo']))->find();
+
+              #通道费率
+              $passwayitem=PassagewayItem::get(['item_group'=>$order->member,'item_passageway'=>$passway->passageway_id]);
              //00代表成功
              if ($resul['status'] == '2' && $order) {
              $order->order_state=2;
@@ -188,9 +210,15 @@ class Cashoutcallback
              $fenrun= new \app\api\controller\Commission();
              $fenrun_result=$fenrun->MemberFenRun($order->order_member,$order->order_money,$order->order_passway,1,'套现手续费分润',$order->order_id);
              if($fenrun_result['code']=="200")
+             {
                  $order->order_fen=$fenrun_result['leftmoney'];
+                 $order->order_buckle=$passwayitem->item_charges;
+                 $order->order_platform=$order->order_charge-($order->ordermoney*$passway->passageway_rate/100);
+             }
             else    
+            {
                  $order->order_fen=-1;
+            }
              $res = $order->save();
                  if ($resul['qfStatus'] == 'SUCCESS' || $resul['qfStatus'] == 'IN_PROCESS') {
                      //订单更新成功的时候去执行分佣
