@@ -7,19 +7,37 @@
  </style>
  <div class="panel">
       <div class="panel-body">
-      <form action="" method="post">
-           <div class="input-group" style="width: 200px;float: left; margin-right: 10px;">
-                <input type="text" class="form-control date-picker" id="dateTimeRange" placeholder="注册时间查询" />
-                <input type="hidden" name="beginTime" id="beginTime" value="" />
-                <input type="hidden" name="endTime" id="endTime" value="" />
-                <z class='clearTime'>X</z>
+      <form action="{{url('index/Financial/fenrun')}}" method="post">
+           <div class="col-sm-2">
+                <div class="input-control has-icon-left">
+                     <input id="inputAccountExample1" type="text" class="form-control" name="member_nick" placeholder="用户姓名或者手机号" value="{{$conditions['member_nick'] or ''}}">
+                     <label for="inputAccountExample1" class="input-control-icon-left"><i class="icon icon-user "></i></label>
+                </div>
            </div>
-           <button class="btn btn-primary" type="submit">搜索</button>
+           <div class="col-sm-2">
+                <div class="input-group">
+                     <span class="input-group-btn"><button class="btn btn-default" type="button">金额</button></span>
+                     <input type="text" class="form-control" name="min_money" value="{{$conditions['min_money'] or ''}}">
+                     <span class="input-group-btn fix-border"><button class="btn btn-default" type="button">~</button></span>
+                     <input type="text" class="form-control" name="max_money" value="{{$conditions['max_money'] or ''}}">
+                </div>
+           </div>
+           <div class="col-sm-2">
+                <div class="input-group">
+                     <input type="text" class="form-control date-picker" id="dateTimeRange" placeholder="收益时间查询" value="{{$conditions['beginTime'] or ''}}-{{$conditions['endTime'] or ''}}" />
+                     <input type="hidden" name="beginTime" id="beginTime" value="{{$conditions['beginTime'] or ''}}" />
+                     <input type="hidden" name="endTime" id="endTime" value="{{$conditions['endTime'] or ''}}" />
+                     <z class='clearTime'>X</z>
+                </div>
+           </div>
+           <div class="col-sm-1">
+                <button class="btn btn-primary" type="submit">搜索</button>
+           </div>
       </form>
     </div>
  </div>
 
- <blockquote> 分润统计: 共成功分润<strong class="text-danger"> {{$count}}</strong> 笔, 总金额为 <strong class="text-danger">{{$money}}</strong> 元</blockquote>
+ <blockquote> 分润统计: 共成功分润<strong class="text-danger"> {{$data['count']}}</strong> 笔, 总金额为 <strong class="text-danger">{{$data['money']}}</strong> 元</blockquote>
  <section>
  <hr/>
  <table class="table">
@@ -34,7 +52,7 @@
            </tr>
       </thead>
       <tbody>
-      @foreach($list as $key)
+      @foreach($data['list'] as $key)
            <tr>
                 <td>{{$key->commission_id}}</td>
                 <td>{{$key->member_nick}}</td>
@@ -47,7 +65,7 @@
       </tbody>
       <tfoot>
            <tr>
-                <td colspan="10">{!! $list->render() !!}</td>
+                <td colspan="10">{!! $data['list']->render() !!}</td>
            </tr>
       </tfoot>
  </table>
@@ -88,7 +106,9 @@
       $('#beginTime').val(start.format('YYYY-MM-DD'));
       $('#endTime').val(end.format('YYYY-MM-DD'));
  });
+ @if((!isset($conditions['beginTime']) || $conditions['beginTime']=='')  && (!isset($conditions['endTime']) || $conditions['endTime']==''))
  begin_end_time_clear();
+ @endif
  $('.clearTime').click(begin_end_time_clear);
  //清除时间
  function begin_end_time_clear() {

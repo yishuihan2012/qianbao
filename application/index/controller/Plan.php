@@ -39,9 +39,15 @@ class Plan extends Common{
 		}else{
 			$r['cert_member_idcard'] = '';
 		}
-
+		$where['generation_state'] = array("<>",1);
 		#计划订单列表
 		$data = Generation::with("member,creditcard")->where($where)->order("generation_id desc")->paginate(Config::get('page_size'), false, ['query'=>Request::instance()->param()]);
+		#还款总金额
+		$sum = Generation::with("member,creditcard")->where($where)->sum("generation_total");
+		$this->assign("sum",$sum);
+		#剩余还款总额
+		$surplussum = Generation::with("member,creditcard")->where($where)->sum("generation_total");
+		$this->assign("surplussum",$surplussum);
 		#计算总条数
 		$count = Generation::with("member,creditcard")->where($where)->count();
 		//用户组
@@ -83,6 +89,12 @@ class Plan extends Common{
 
 		$where['generation_state'] = -1;
 		$data = Generation::with("member,creditcard")->where($where)->order("generation_id desc")->paginate(Config::get('page_size'), false, ['query'=>Request::instance()->param()]);
+		#还款总金额
+		$sum = Generation::with("member,creditcard")->where($where)->sum("generation_total");
+		$this->assign("sum",$sum);
+		#剩余还款总额
+		$surplussum = Generation::with("member,creditcard")->where($where)->sum("generation_total");
+		$this->assign("surplussum",$surplussum);
 		#计算总条数
 		$count = Generation::with("member,creditcard")->where($where)->count();
 		//用户组

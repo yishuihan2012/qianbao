@@ -1,5 +1,5 @@
 @extends('admin/layout/layout_main')
-@section('title','系统公告列表')
+@section('title','模块管理')
 @section('wrapper')
 <div class="panel">
   	<div class="panel-body">

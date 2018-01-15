@@ -19,6 +19,7 @@ class Adminster extends Common {
 	 #管理员列表
 	 public function index(Request $params)
 	 {
+	 	// halt($this->adminster['adminster_group_id']);
 		 $query=[];
 		 $where=[];
 		 $groups=[];
@@ -41,6 +42,7 @@ class Adminster extends Common {
 	 #管理员新增
 	 public function add(){
 		 if(Request::instance()->isPost()){
+		 	$r=request()->param();
 			 $code=make_rand_code();
 			 $check_login_name=Adminsters::get(['adminster_login'=>Request::instance()->post('login_name')]);
 			 if($check_login_name){
@@ -51,6 +53,18 @@ class Adminster extends Common {
 			 if($check_login_email){
 			     	 Session::set('jump_msg',['type'=>'warning','msg'=>'邮箱已绑定其他账号~请更换','data'=>'']);
 				 $this->redirect($this->history['0']);
+			 }
+			 if($r['login_group']==5){
+			 	if($r['adminster_user_id']){
+			 		$admin=Adminsters::get(['adminster_user_id'=>$r['adminster_user_id']]);
+			 		if($admin){
+				     	 Session::set('jump_msg',['type'=>'warning','msg'=>'该用户已被'.$admin['adminster_login'].'绑定，请更换用户或为'.$admin['adminster_login'].'解除绑定','data'=>'']);
+						 $this->redirect($this->history['0']);
+			 		}
+			 	}else{
+			     	 Session::set('jump_msg',['type'=>'warning','msg'=>'请选择该渠道商对应的用户','data'=>'']);
+					 $this->redirect($this->history['0']);
+			 	}
 			 }
 			 $adminster=new Adminsters;
 			 $adminster->adminster_login=Request::instance()->post('login_name');

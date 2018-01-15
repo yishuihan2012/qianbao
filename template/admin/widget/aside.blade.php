@@ -9,9 +9,12 @@
             <a href="javascript:;"><i class="0icon icon-user"></i> 会员管理</a>
             <ul class="nav">
                 <li class="member"><a href="{{url('/index/member/index')}}"> 会员管理</a></li>
+                @if($admin['adminster_group_id']!=5)
                 <li class="member_group"><a href="{{ url('/index/member_group/index') }}"> 用户组管理</a></li>
+                @endif
             </ul>
         </li>
+        @if($admin['adminster_group_id']!=5)
         <li class="nav-parent wallet-manager">
             <a href="javascript:;"><i class="icon icon-dollar"></i>钱包管理</a>
             <ul class="nav">
@@ -29,12 +32,14 @@
                  <li class="successcash"><a href="{{url('/index/order/successCash')}}"><i class="icon icon-sliders"></i> 成功交易订单</a></li>
             </ul>
         </li>
+        @endif
         <li class="nav-parent passageway-manager">
             <a href="javascript:;"><i class="icon icon-user"></i> 通道管理</a>
             <ul class="nav">
                 <li class="passageway"><a href="{{url('/index/passageway/index')}}"><i class="icon icon-sliders"></i> 通道列表</a></li>
             </ul>
         </li>
+        @if($admin['adminster_group_id']!=5)
         <li class="nav-parent plan-manager">
             <a href="javascript:;"><i class="icon icon-user"></i> 自动代还</a>
             <ul class="nav">
@@ -110,6 +115,6 @@
                 <li class="setting-Appversion"><a href="{{url('/index/uploads/logo')}}" data-remote="" data-size="lg" data-toggle="modal"><i class="icon icon-sliders"></i> 网站logo上传</a></li>
             </ul>
         </li>
-
+        @endif
     </ul>
 </nav>

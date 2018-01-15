@@ -50,32 +50,38 @@ input.labelauty + label { font: 12px "Microsoft Yahei";}
 			<label for="group_salt" class="col-sm-2 text-right"><b>组 级 别:</b></label>
 			<div id="group_salt" class="col-sm-6"><input type="number" class="form-control group_salt group_name" name="group_salt" value=""></div>
 		</div>
+
+		<br/>
 		<div class="row">
 			<label for="group_salt" class="col-sm-2 text-right"><b>升级方式:</b></label>
 			<div id="group_salt" class="col-sm-6">
-				<select name="group_level_type" class="group_name">
-					<option value="-1">不限</option>
-					<option value="1">推荐人</option>
-					<option value="2">刷卡量</option>
-					<option value="3">付费升级</option>
-				</select>
+				 <select name="group_level_type" class="group_name form-control group_level_type">
+				<option value="-1">不限</option>
+				<option value="1">推荐人</option>
+				<option value="2">刷卡量</option>
+				<option value="3">付费升级</option>
+			</select>
 			</div>
 		</div>
+		<br/>
 		<div class="row">
 			<label for="group_salt" class="col-sm-2 text-right"><b>升级条件-推荐人数量:</b></label>
 			<div id="group_salt" class="col-sm-6"><input type="number" class="form-control group_salt  " name="group_level_invite" value="" placeholder="">
 			</div>
 		</div>
+		<br/>
 		<div class="row">
 			<label for="group_salt" class="col-sm-2 text-right"><b>升级条件-刷卡量:</b></label>
 			<div id="group_salt" class="col-sm-6"><input type="number" class="form-control group_salt  " name="group_level_transact" value="" placeholder="">
 			</div>
 		</div>
+		<br/>
 		<div class="row">
 			<label for="group_salt" class="col-sm-2 text-right"><b>升级条件-付费金额:</b></label>
 			<div id="group_salt" class="col-sm-6"><input type="number" class="form-control group_salt  " name="group_level_money" value="" placeholder="">
 			</div>
 		</div>
+		
 		<h5></h5>
 
 	</form>
