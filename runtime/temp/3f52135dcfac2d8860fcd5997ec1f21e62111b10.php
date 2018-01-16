@@ -8,15 +8,15 @@
   </header>
   <div class="items items-hover">
       <div class="row">
-           <div class="col-sm-6" id="memberData" style="width:400px; height: 400px;"></div>
+           <div class="col-sm-6" id="memberData" style="width:100%; height: 400px;"></div>
            <script type="text/javascript">
                 // 基于准备好的dom，初始化echarts实例
                 var myChart = echarts.init(document.getElementById('memberData'));
                 option = {
                      title : {
-                           text: "会员统计数据,总会员数：<?php echo e($member['count']); ?>",
+                           text: "会员统计数据,总会员数：<?php echo e($data['count']); ?>",
                            x:'center',
-                           top: '20'
+                           top: '15'
                      },
                      tooltip: {
                            trigger: 'item',
@@ -26,7 +26,7 @@
                            name:'会员信息',
                            type:'pie',
                            selectedMode: 'single',
-                           radius: [0, '30%'],
+                           radius: [0, '35%'],
                            label: {
                                 normal: {
                                      position: 'inner'
@@ -38,8 +38,8 @@
                                 }
                            },
                            data:[
-                                <?php $__currentLoopData = $member['group']; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $group): $__env->incrementLoopIndices(); $loop = $__env->getFirstLoop(); ?>
-                                {value:<?php echo e($group['memberCount']); ?>, name:"<?php echo e($group['group_name']); ?>"},
+                                <?php $__currentLoopData = $membergrouplist; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $group): $__env->incrementLoopIndices(); $loop = $__env->getFirstLoop(); ?>
+                                {value:<?php echo e($group['membergroupcount']); ?>, name:"<?php echo e($group['group_name']); ?>"},
                                 <?php endforeach; $__env->popLoop(); $loop = $__env->getFirstLoop(); ?>
                            ]
                      },
@@ -80,8 +80,8 @@
                      }
                 },
                 data:[
-                     {value:<?php echo e($member['cert']); ?>, name:'实名认证人数'},
-                     {value:<?php echo e($member['today']); ?>, name:'今日注册会员'},
+                     {value:<?php echo e($data['cert']); ?>, name:'实名认证人数'},
+                     {value:<?php echo e($data['Todaycount']); ?>, name:'今日注册会员'},
                 ]
            }
       ]

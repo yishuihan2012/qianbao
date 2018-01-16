@@ -26,7 +26,7 @@
     <td>{{$key->order_platform}}</td>
     <td>{{$key->order_buckle}}</td>
     <td><i class="icon icon-check text-success"></i></td>
-    <td>{{$key->order_update_time}}</td>
+    <td>{{$key->order_edit_time}}</td>
    </tr>
    @endforeach
    <tr>

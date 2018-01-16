@@ -156,7 +156,6 @@ class Article extends Common{
 	 #新增新手指引
 	 public function noviceCreat(){
 	 	 if(Request::instance()->isPost()){
-	 	 	// dump("!23");
 
 	 		 $MemberNovice = new MemberNovice($_POST);
 			 $result = $MemberNovice->allowField(true)->save();
@@ -185,6 +184,8 @@ class Article extends Common{
 	#修改新手指引
 	public function noviceSave(){
 		if(Request::instance()->isPost()){
+			// dump($_POST);
+	 	//  	die;
 		 	 $MemberNovice =MemberNovice::get(Request::instance()->param('novice_id'));
 		 	 // dump($_POST);die;
 			 $result= $MemberNovice->allowField(true)->save($_POST);

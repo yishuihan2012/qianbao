@@ -48,7 +48,7 @@
                                    <li><a  data-remote="{{url('/index/passageway/add_credit_card','id='.$list['passageway_id'])}}" data-toggle="modal" data-size="lg" href="#">添加信用卡</a></li>
                                    <li><a  href="{{url('/index/passageway/list_credit_card','id='.$list['passageway_id'])}}" >查看信用卡列表</a></li>
                                       <li><a  data-remote="{{url('/index/passageway/cashout','id='.$list['passageway_id'])}}" data-toggle="modal" data-size="lg" href="#">提现设置</a></li>
-                                      <li><a  data-remote="{{url('/index/passageway/also','id='.$list['passageway_id'])}}" data-toggle="modal" data-size="lg" href="#">代还设置</a> </li>
+                                      <!-- <li><a  data-remote="{{url('/index/passageway/also','id='.$list['passageway_id'])}}" data-toggle="modal" data-size="lg" href="#">代还设置</a> </li> -->
                                       <li><a href="{{url('/index/passageway/passageway_details','id='.$list['passageway_id'])}}">交易详情</a> </li>
                                  </ul>
                            </div>

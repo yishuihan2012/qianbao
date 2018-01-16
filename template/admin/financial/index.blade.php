@@ -24,6 +24,7 @@
                      <input type="text" class="form-control" name="max_money" value="{{$conditions['max_money'] or ''}}">
                 </div>
            </div>
+
            <div class="col-sm-2">
                 <div class="input-group">
                      <input type="text" class="form-control date-picker" id="dateTimeRange" placeholder="收益时间查询" value="{{$conditions['beginTime'] or ''}}-{{$conditions['endTime'] or ''}}" />
@@ -43,7 +44,7 @@
  </blockquote>
  <section>
  <hr/>
- <div id="tabs" class="tabs">
+ <div id="tabs" class="tabs" style="height: 550px;">
   <nav class="tabs-navbar"></nav>
   <nav class="tabs-container"></nav>
  </div>
@@ -110,7 +111,9 @@
       $('#beginTime').val(start.format('YYYY-MM-DD'));
       $('#endTime').val(end.format('YYYY-MM-DD'));
  });
+ @if((!isset($conditions['beginTime']) || $conditions['beginTime']=='')  && (!isset($conditions['endTime']) || $conditions['endTime']==''))
  begin_end_time_clear();
+ @endif
  $('.clearTime').click(begin_end_time_clear);
  //清除时间
  function begin_end_time_clear() {

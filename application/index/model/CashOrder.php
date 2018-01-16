@@ -45,7 +45,7 @@
       #关联模型 一对一关联 (member) 会员模型
       public function member()
       {
-           return $this->hasOne('Member','member_id','order_member','','left')->bind("member_nick")->setEagerlyType(0);
+           return $this->hasOne('Member','member_id','order_member','','left')->bind("member_nick,member_mobile")->setEagerlyType(0);
       }
 
 }

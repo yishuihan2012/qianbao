@@ -32,8 +32,7 @@
 		 <div id="passageway_state" class="col-sm-6">
 			 <select name="novice_class" class="form-control">
 			 	@foreach($noviceclass as $k => $v)
-				 <option value="{{$v['novice_class_id']}}" @if($info['novice_class'] == $v['novice_class_id']) selected @endif>{{$v['novice_class_title']}}</option>
-				
+				 <option value="{{$v['novice_class_id']}}" @if($info['novice_class'] == $v['novice_class_id']) selected @endif>{{$v['novice_class_title']}}</option>	
 				@endforeach
 			 </select>
 		 </div>		
@@ -51,7 +50,7 @@
 
  <!--dialog Button-->
  <div class="modal-footer animated fadeInLeft">
- 	<!-- <input type="button" name="getHtml" value="取得HTML" /> -->
+ 	<input type="button" name="getHtml" class="getHtml" value="取得HTML" />
 	 <button type="button" class="btn btn-primary save">保存</button>
       <button type="button" class="btn" data-dismiss="modal">关闭</button>
  </div>
@@ -64,6 +63,9 @@
 //            });
 // });
  //上传文件设置
+ $(".getHtml").click(function(){
+ 	console.log($(".ke-container-default").find(".ke-edit").find(".ke-edit-iframe").text())
+ })
  $('#uploaderExample3').uploader({
       url: "{{url('/index/Tool/upload_one')}}",
 	 file_data_name:'generalize',
@@ -87,7 +89,7 @@
 	 }
 	 $("#myform").submit()
  })
-  
+ 
   //编辑器初始化
       KindEditor.ready(function(K) {
             window.editor = K.create('#editor_id');

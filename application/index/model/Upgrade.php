@@ -33,6 +33,6 @@ class Upgrade extends Model{
       #关联模型 一对一关联 (Member) 会员模型
       public function member()
       {
-           return $this->hasOne('Member', 'member_id', 'upgrade_member_id', '', 'left')->bind('member_nick,member_id')->setEagerlyType(0);
+           return $this->hasOne('Member', 'member_id', 'upgrade_member_id', '', 'left')->bind('member_nick,member_id,member_mobile')->setEagerlyType(0);
       }
 }

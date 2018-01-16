@@ -39,6 +39,6 @@ class GenerationOrder extends Model{
       }
       #关联用户表
       public function member(){
-         return $this->hasOne("Member","member_id","order_member")->bind("member_nick");
+           return $this->hasOne("Member","member_id","order_member",'','left')->bind("member_nick")->setEagerlyType(0);
       }
 }

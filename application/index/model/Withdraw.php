@@ -45,7 +45,7 @@ class Withdraw extends Model{
     //关联会员
     public function member()
     {
-        return $this->hasOne('Member','member_id','withdraw_member')->bind('member_nick,member_image,member_creat_time,member_mobile');
+        return $this->hasOne('Member','member_id','withdraw_member','','left')->bind('member_nick,member_image,member_creat_time,member_mobile')->setEagerlyType(0);
     }
     public function wallet()
     {

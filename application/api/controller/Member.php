@@ -522,8 +522,6 @@
       **/
       public function get_team_info()
       { 
-        
-
         if(!isset($this->param['group_id']) || empty($this->param['group_id']) || !isset($this->param['member_cert']))
             $this->error=314;
 
@@ -544,10 +542,11 @@
                     $member_1rd['member_cert']='已认证';
                   }
                   $member_info[]=$member_1rd;
-                  $MemberRelation_2rd=MemberRelation::haswhere('memberp',['member_group_id'=>$this->param['group_id']])->where('relation_member_id='.$member_1rd['member_id'])->select();
-
+                  $MemberRelation_2rd=MemberRelation::haswhere('memberp',['member_group_id'=>$this->param['group_id']])->where('relation_parent_id='.$member_1rd['member_id'])->select();
+                 
                     if(!empty($MemberRelation_2rd)){
                       foreach ($MemberRelation_2rd as $k => $val) {
+                          
                            $member_2rd=Members::where(['member_id'=>$val['relation_member_id']])->field('member_id,member_image, member_mobile, member_creat_time, member_cert')->find();
                            if($member_2rd['member_cert']==0){
                               $member_2rd['member_cert']='未认证';
@@ -557,9 +556,10 @@
                            $member_info[]=$member_2rd;
                       }
                     } 
-
+                  
             }
             }
+           
           }else{
              $member_info=array();
              #查询出我的所有下级
@@ -578,6 +578,7 @@
                      $member_info[]=$member_1rd;
                       }
                      $MemberRelation_2rd=MemberRelation::haswhere('memberp',['member_group_id'=>$this->param['group_id']])->where('relation_parent_id='.$member_1rd['member_id'])->select();
+                     
                     if(!empty($MemberRelation_2rd)){
                       foreach ($MemberRelation_2rd as $k => $val) {
                            $member_2rd=Members::where(['member_id'=>$val['relation_member_id'],'member_cert'=>$array['member_cert']])->field('member_id,member_image, member_mobile, member_creat_time, member_cert')->find();
@@ -597,6 +598,7 @@
                  
 
               }
+
             }
           }
           $data['totalChildAmount']=count($member_info);

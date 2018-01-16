@@ -1,7 +1,7 @@
 <nav class="menu" data-ride="menu">
-    <a class="btn btn-primary" href="#"><i class="icon icon-edit"></i> 新增项目</a>
-    <a class="btn" href="<?php echo e(url('/index/uploads/index')); ?>" data-remote="" data-size="lg" data-toggle="modal"><i class="icon icon-cloud-upload"></i> 图片上传</a>
-    <a class="btn" href="<?php echo e(url('/index/uploads/logo')); ?>" data-remote="" data-size="lg" data-toggle="modal"><i class="icon icon-cloud-upload"></i> 网站logo上传</a>
+    <!-- <a class="btn btn-primary" href="#"><i class="icon icon-edit"></i> 新增项目</a> -->
+    <!-- <a class="btn" href="<?php echo e(url('/index/uploads/index')); ?>" data-remote="" data-size="lg" data-toggle="modal"><i class="icon icon-cloud-upload"></i> 会员组头像上传</a> -->
+    <!-- <a class="btn" href="<?php echo e(url('/index/uploads/logo')); ?>" data-remote="" data-size="lg" data-toggle="modal"><i class="icon icon-cloud-upload"></i> 网站logo上传</a> -->
     <ul class="nav nav-primary">
 
         <li class="dashboard"><a href="<?php echo e(url('/index/dashboard/index')); ?>"><i class="0icon icon-dashboard"></i> 控制面板</a></li>
@@ -9,9 +9,12 @@
             <a href="javascript:;"><i class="0icon icon-user"></i> 会员管理</a>
             <ul class="nav">
                 <li class="member"><a href="<?php echo e(url('/index/member/index')); ?>"> 会员管理</a></li>
+                <?php if($admin['adminster_group_id']!=5): ?>
                 <li class="member_group"><a href="<?php echo e(url('/index/member_group/index')); ?>"> 用户组管理</a></li>
+                <?php endif; ?>
             </ul>
         </li>
+        <?php if($admin['adminster_group_id']!=5): ?>
         <li class="nav-parent wallet-manager">
             <a href="javascript:;"><i class="icon icon-dollar"></i>钱包管理</a>
             <ul class="nav">
@@ -29,12 +32,14 @@
                  <li class="successcash"><a href="<?php echo e(url('/index/order/successCash')); ?>"><i class="icon icon-sliders"></i> 成功交易订单</a></li>
             </ul>
         </li>
+        <?php endif; ?>
         <li class="nav-parent passageway-manager">
             <a href="javascript:;"><i class="icon icon-user"></i> 通道管理</a>
             <ul class="nav">
                 <li class="passageway"><a href="<?php echo e(url('/index/passageway/index')); ?>"><i class="icon icon-sliders"></i> 通道列表</a></li>
             </ul>
         </li>
+        <?php if($admin['adminster_group_id']!=5): ?>
         <li class="nav-parent plan-manager">
             <a href="javascript:;"><i class="icon icon-user"></i> 自动代还</a>
             <ul class="nav">
@@ -107,8 +112,9 @@
                 <li class="setting-customer_service service"><a href="<?php echo e(url('/index/system/customer_service')); ?>"><i class="icon icon-sliders"></i> 客服管理</a></li>
                 <li class="setting-announcement"><a href="<?php echo e(url('/index/system/announcement')); ?>"><i class="icon icon-sliders"></i> 公告管理</a></li>
                 <li class="setting-Appversion"><a href="<?php echo e(url('/index/appversion/index')); ?>"><i class="icon icon-sliders"></i> APP版本号</a></li>
+                <li class="setting-Appversion"><a href="<?php echo e(url('/index/uploads/logo')); ?>" data-remote="" data-size="lg" data-toggle="modal"><i class="icon icon-sliders"></i> 网站logo上传</a></li>
             </ul>
         </li>
-
+        <?php endif; ?>
     </ul>
 </nav>
