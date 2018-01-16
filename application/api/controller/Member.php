@@ -528,7 +528,6 @@
             $this->error=314;
 
           $array['member_cert']=(empty($this->param['member_cert']) && $this->param['member_cert']!=="0") ? 'all' : $this->param['member_cert'] ;
-
           #查询全部
           if($array['member_cert']=='all'){
             $member_info=array();
@@ -544,7 +543,7 @@
                     $member_1rd['member_cert']='已认证';
                   }
                   $member_info[]=$member_1rd;
-                  $MemberRelation_2rd=MemberRelation::haswhere('memberp',['member_group_id'=>$this->param['group_id']])->where('relation_member_id='.$member_1rd['member_id'])->select();
+                  $MemberRelation_2rd=MemberRelation::haswhere('memberp',['member_group_id'=>$this->param['group_id']])->where('relation_parent_id='.$member_1rd['member_id'])->select();
 
                     if(!empty($MemberRelation_2rd)){
                       foreach ($MemberRelation_2rd as $k => $val) {
