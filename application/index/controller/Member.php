@@ -28,12 +28,6 @@ class Member extends Common{
 	 {
 	 	//传入参数
 	 	$r=request()->param();
-	 	$a=Members::all();
-	 	$list=[];
-	 	foreach ($a as $k => $v) {
-	 		$list[$k]['id']=$v['member_id'];
-	 		$list[$k]['root_id']=find_root($v['member_id']);
-	 	}
 	 	 #搜索条件
 	 	$data = memberwhere($r);
 	 	$r = $data['r'];
@@ -42,6 +36,8 @@ class Member extends Common{
 		if(request()->param('beginTime') && request()->param('endTime')){
 			$endTime=strtotime(request()->param('endTime'))+24*3600;
 			$where['member_creat_time']=["between time",[request()->param('beginTime'),$endTime]];
+			$this->assign('beginTime',request()->param('beginTime'));
+			$this->assign('endTime',request()->param('endTime'));
 		}
 		#身份证查询
 		$wheres = array();
@@ -52,7 +48,7 @@ class Member extends Common{
 		}
 		#若当前用户为运营商用户
 		if($this->admin['adminster_group_id']==5){
-			$where['member_root']=$this->admin['adminster_user_id'];
+			$where['member_id']=["in",$this->admin['children']];
 		}
 	 	 //获取会员等级
 	 	 $member_group=MemberGroup::all();

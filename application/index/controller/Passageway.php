@@ -380,7 +380,7 @@ class Passageway extends Common{
 			$where['order_state']=2;
 			//运营商
 			if($adminster['adminster_user_id'] && $group_id==5){
-				$where['order_root']=$adminster['adminster_user_id'];
+				$where['order_member']=["in",$adminster['children']];
 			}
 			$passageway->sum=db('cash_order')->where($where)->sum('order_money');
 			$passageway->charge=db('cash_order')->where($where)->sum('order_charge');
@@ -399,7 +399,7 @@ class Passageway extends Common{
 			$where['order_status']=2;
 			//运营商
 			if($adminster['adminster_user_id'] && $group_id==5){
-				$where['order_root']=$adminster['adminster_user_id'];
+				$where['member_id']=["in",$adminster['children']];
 			}
 			$passageway->sum=db('generation_order')->where($where)->sum('order_money');
 			$passageway->charge=db('generation_order')->where($where)->sum('order_pound');
@@ -409,6 +409,8 @@ class Passageway extends Common{
 				->order('o.order_id desc')
 		 	 	->paginate(Config::get('page_size'), false, ['query'=>Request::instance()->param()]);
 		 	 	$where['commission_type']=3;
+		 	 	if(isset($where['member_id']))
+		 	 		unset($where['member_id']);
 			$passageway->fenrun=db('generation_order')->alias('o')
 				->join('commission c','o.order_id=c.commission_from')
 				->where($where)

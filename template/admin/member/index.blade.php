@@ -132,11 +132,15 @@
 <!-- {!! $member_list->render() !!}<em>当前共{{$count}}条</em> -->
  <script type="text/javascript">
  $(document).ready(function(){
+  var start="{{(isset($beginTime))?$beginTime : ''}}";
+  var end="{{(isset($endTime))?$endTime : ''}}";
+
       $('table.datatable').datatable({sortable: true});
      	 $('.menu .nav .active').removeClass('active');
     	 $('.menu .nav li.member').addClass('active');
     	 $('.menu .nav li.member-manager').addClass('show');
 
+$('#dateTimeRange span').html();
 $('#dateTimeRange').daterangepicker({
         applyClass : 'btn-sm btn-success',
         cancelClass : 'btn-sm btn-default',
@@ -173,7 +177,14 @@ $('#dateTimeRange').daterangepicker({
     }, function(start, end, label) { // 格式化日期显示框
         $('#beginTime').val(start.format('YYYY-MM-DD'));
         $('#endTime').val(end.format('YYYY-MM-DD'));
+        $('#dateTimeRange').val(start+'-'+end);
     });
+  setTimeout(function(){
+        $('#beginTime').val(start.format('YYYY-MM-DD'));
+        $('#endTime').val(end.format('YYYY-MM-DD'));
+        $('#dateTimeRange').val(start+'-'+end);
+        console.log(start);
+      },100);
 begin_end_time_clear();
 $('.clearTime').click(begin_end_time_clear);
   //清除时间
