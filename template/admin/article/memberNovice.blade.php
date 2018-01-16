@@ -28,7 +28,7 @@
 	     
 	      	<td>{{$val->novice_class_title}}</td>
 	      	<td>
-	      		<a type="button" class="btn btn-sm" data-remote="{{url('/index/article/noviceSave/novice_id/'.$val->novice_id)}}" data-size='lg' data-toggle="modal" href="#">编辑</a>
+	      		<a type="button" class="btn btn-sm" href="{{url('/index/article/noviceSave/novice_id/'.$val->novice_id)}}">编辑</a>
 	  			<a type="button" class="btn btn-sm" href="{{url('/index/article/noviceRemove/novice_id/'.$val->novice_id)}}">删除</a>
 	      	</td>
 	    </tr>

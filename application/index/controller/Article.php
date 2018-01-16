@@ -184,8 +184,7 @@ class Article extends Common{
 	#修改新手指引
 	public function noviceSave(){
 		if(Request::instance()->isPost()){
-			// dump($_POST);
-	 	//  	die;
+		
 		 	 $MemberNovice =MemberNovice::get(Request::instance()->param('novice_id'));
 		 	 // dump($_POST);die;
 			 $result= $MemberNovice->allowField(true)->save($_POST);

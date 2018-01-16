@@ -198,6 +198,7 @@
 				  	 	 ->where($where['conditions'])
 				  	 	 ->where($where['whereBetween'])
 				  	 	 ->where($where['timeBetween'])
+				  	 	 ->order('commission_id', 'desc')
 				  	 	 ->paginate(Config::get('page_size'), false, ['query'=>Request::instance()->param()]);
   	 	 //获取共多少笔分佣
   	 	 $data['count']=Commission::haswhere('member',$where['conditions_member'])->with('member,members')
@@ -234,6 +235,7 @@
 				  	 	 ->where($where['conditions'])
 				  	 	 ->where($where['whereBetween'])
 				  	 	 ->where($where['timeBetween'])
+				  	 	 ->order('commission_id', 'desc')
 				  	 	 ->paginate(Config::get('page_size'), false, ['query'=>Request::instance()->param()]);
   	 	 //获取共多少笔分佣
   	 	 $data['count']=Commission::haswhere('member',$where['conditions_member'])->with('member,members')
