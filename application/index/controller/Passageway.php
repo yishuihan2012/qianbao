@@ -60,6 +60,7 @@ class Passageway extends Common{
 	 	 	 	//以用户组为键 转储到data
 	 	 	 	$data[$group_id]['item_'.$key_fix]=$v;
  	 	 	} 	
+ 	 	 	// print_r($data);die;
  	 	 	// halt($passageway->passageway_mech);
  	 	 	 #查询库中是否存在数据
  	 	 	 $passage=PassagewayItem::where(['item_passageway'=>Request::instance()->param('id')])->select();

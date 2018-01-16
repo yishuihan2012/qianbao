@@ -908,7 +908,8 @@ function pad_or_unpad($str, $ext, $pad='pkcs5')
       // var_dump($params);die;
       $url='http://pay.mishua.cn/zhonlinepay/service/rest/creditTrans/updateMerchant';
         $income=repay_request($params, $passageway['passageway_mech'], $url, $passageway['iv'], $passageway['secretkey'], $passageway['signkey']);
-      // var_dump($income);die;
+        print_r($income);die;
+        echo $income['userNo'];die;
       $arr=array(
         'net_member_id'=>$member_info['cert_member_id'],
         "{$passageway['passageway_no']}"=>$income['userNo']

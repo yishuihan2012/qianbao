@@ -147,11 +147,12 @@ class Member extends Common{
 			 			$upgrade_data['upgrade_bak'] = "后台管理员升级";
 			 			$upgrade_data['upgrade_adminster_id'] = Session::get("adminster")['id'];
 
-			 			$passageway=Passageway::where(['passageway_state'=>1])->select();
-			 			
+			 			$passageway=Passageway::where(['passageway_state'=>1,'passageway_status'=>1])->select();
+			 			// print_r($passageway);die;
 			 			foreach ($passageway as $key => $value) {
 			 				 $Alipay=new \app\api\controller\Membernetsedit($info['member_id'],$value['passageway_id'],'M03','',$info['member_mobile']);
-			 				 $success=$Alipay->$value['passageway_method']();
+			 				 $method=$value['passageway_method'];
+			 				 $success=$Alipay->$method();
 			 			}
 			 			//添加用户日志
 			 			$Upgrade =  new Upgrade($upgrade_data);
