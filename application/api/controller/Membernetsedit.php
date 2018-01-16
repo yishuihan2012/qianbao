@@ -137,5 +137,19 @@
            // return ($data['respCode']=="00" || $res) ? true :  false;
            return $data;
       } 
-
+      #荣邦 1.4.3.根据邀请码，修改商户费率与D0费率
+      public function rongbangnet(){
+        $userinfo=db('member_net')->where('net_member_id',$this->member->member_id)->value('AiqJE');
+        $userinfo=explode(',', $userinfo);
+        $arr=array(
+          #公司ID
+          'memberid'   =>$userinfo[1],
+          #商户名称
+          'membername'   =>$userinfo[4],
+          #邀请码(费率套餐代码)
+          'loginprefix'   =>526135,
+        );
+        $data=rongbang_curl($this->passway,$arr,'masget.rboperationsmanager.com.ratepackageinfo.queryloginprefix.update');
+        var_dump($data);die;
+      }
  }
