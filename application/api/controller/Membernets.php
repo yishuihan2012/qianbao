@@ -117,7 +117,9 @@
            'idcardno'            =>$this->membercard->card_idcard,
            'address'             =>"山东省济南市天桥区泺口皮革城",
          );
+        // var_dump($arr);die;
         $data=rongbang_curl($this->passway,$arr,'masget.webapi.com.subcompany.add');
+        var_dump($data);die;
         if($data['ret']==0){
           #储存商户信息到memberNet关联字段中，因为信息有多条，以,分割后存储。
           #信息顺序 0、appid 1、companycode 2、secretkey 3、session 4、companyname
@@ -147,23 +149,13 @@
         $arr=[
           'companycode'=>$this->member->member_mobile,
         ];
-           // var_dump($arr);die;
           $data=rongbang_curl($this->passway,$arr,'masget.webapi.com.subcompany.get');
+           // var_dump($data);die;
           if($data['ret']!=0){
             return $data['message'];
           }else{
             return $data['data'];
           }
-      }
-      #荣邦 1.4.3.根据邀请码，修改商户费率与D0费率
-      public function rongbang_change(){
-        $arr=array(
-          'memberid'   =>'402598069',
-          'membername'   =>'高志勇10163',
-          'loginprefix'   =>526135,
-        );
-        $data=rongbang_curl($this->passway,$arr,'masget.rboperationsmanager.com.ratepackageinfo.queryloginprefix.update');
-        var_dump($data);die;
       }
       #荣邦1.4.3.商户通道入驻接口
       public function rongbangIn(){
@@ -173,7 +165,7 @@
           'bankaccount'   =>1,
         );
         $data=rongbang_curl($this->passway,$arr,'masget.pay.collect.router.treaty.apply');
-        var_dump($data);die;
+        // var_dump($data);die;
       }
       #荣邦1.6.1.申请开通快捷协议
       public function rongbang_openpay($cardid){
