@@ -70,8 +70,8 @@ class Cashoutcallback
 		 	 if($fenrun_result['code']=="200")
              {
  				 $order->order_fen=$fenrun_result['leftmoney'];
-                 $order->order_buckle=$passwayitem->item_charges;
-                 $order->order_platform=$order->order_charge-($order->ordermoney*$passway->passageway_rate/100)+$passway->passageway_income;
+                 $order->order_buckle=$passwayitem->item_charges/100;
+                 $order->order_platform=$order->order_charge-($order->order_money*$passway->passageway_rate/100)+$passway->passageway_income;
              }
  			else	
             {
@@ -140,8 +140,8 @@ class Cashoutcallback
 		 	 if($fenrun_result['code']=="200")
              {
  				 $order->order_fen=$fenrun_result['leftmoney'];
-                  $order->order_buckle=$passwayitem->item_charges;
-                 $order->order_platform=$order->order_charge-($order->ordermoney*$passway->passageway_rate/100)+$passway->passageway_income;
+                  $order->order_buckle=$passwayitem->item_charges/100;
+                 $order->order_platform=$order->order_charge-($order->order_money*$passway->passageway_rate/100)+$passway->passageway_income;
              }
  			else	
             {
@@ -212,8 +212,8 @@ class Cashoutcallback
              if($fenrun_result['code']=="200")
              {
                  $order->order_fen=$fenrun_result['leftmoney'];
-                 $order->order_buckle=$passwayitem->item_charges;
-                 $order->order_platform=$order->order_charge-($order->ordermoney*$passway->passageway_rate/100)+$passway->passageway_income;
+                 $order->order_buckle=$passwayitem->item_charges/100;
+                 $order->order_platform=$order->order_charge-($order->order_money*$passway->passageway_rate/100)+$passway->passageway_income;
              }
             else    
             {
