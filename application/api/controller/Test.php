@@ -46,8 +46,6 @@ class Test
 		}
 		//curl请求
 		public function curlPost($url, $method = 'post', $data = ''){
-			// $data=json_decode($data,true);
-			// print_r($data);die;
 	        $ch = curl_init();
 	        // curl_setopt($ch, CURLOPT_HTTPHEADER, 0);
 	        curl_setopt($ch, CURLOPT_URL, $url);
@@ -65,7 +63,6 @@ class Test
 		//发送请求
 		public function send_request($action='',$method=''){
 			$params=Request::instance()->param();
-			// print_r($params);die;
 			if(!$action){
 				$action=$params['action'];
 			}
@@ -81,10 +78,8 @@ class Test
 				'param'=>$params,
 			);
 			$data=$index->encryption_data(json_encode($data));
-			// print_r($action);die;
 			$request['data']=$data;
 			$host=System::getName('system_url');
-			// $host="wallet.dev.com/index.php";
 			$res = $this->curlPost($host.'/api', 'post',$request);
 			$res=json_decode($res,true);
 			if($res['code']==200){

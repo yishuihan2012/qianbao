@@ -115,7 +115,7 @@
         'userName'=>$this->membercard->card_name,//姓名
         'userCertId'=>$this->membercard->card_idcard,//身份证号  必填  注册后不可修改
         'userPhone'=>$this->phone,
-        'feeRatio'=>0.38/10, //交易费率  必填  单位：千分位。如交易费率为0.005时,需传入5.0
+        'feeRatio'=>$memberAlso['item_also']*10, //交易费率  必填  单位：千分位。如交易费率为0.005时,需传入5.0
         'feeAmt'=>$memberAlso['item_charges'],//单笔交易手续费  必填  单位：分。如机构无单笔手续费，可传入0
         'drawFeeRatio'=>'0',//提现费率
         'drawFeeAmt'=>'0',//单笔提现易手续费
