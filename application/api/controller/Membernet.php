@@ -405,8 +405,8 @@ use app\index\model\Member;
         );
         // var_dump($params);die;
         $income=repay_request($params,$passageway->passageway_mech,'http://pay.mishua.cn/zhonlinepay/service/rest/creditTrans/accountQuery',$passageway->iv,$passageway->secretkey,$passageway->signkey);
-        return $income;
-        var_dump($income);die;
+        // return $income;
+        echo json_encode($income);die;
       }
       public function mishuaedit($uid=16,$passageway='8'){
          #1实名信息
