@@ -27,17 +27,17 @@
 			 <th>用户</th>	
 			 <td>{{$order_info->member_nick}}</td>	
 			 <th>用户头像</th>	
-			 <th><img src="{{$order_info->member_image}}"  data-toggle="lightbox"></th>	
+			 <th><img src="{{$order_info->member_image}}"  data-toggle="lightbox" style="border-radius: 50%; width:150px"></th>	
 		 </tr>	
 	 </table>
 
 	 <div class="help-block"><code>(分成信息)</code></div>
 	 <table class="table table-bordered table-hover table-striped" style="width:90%; margin:0 auto;">
 		 <tr>
-			 <th>账号</th>
-			 <td></td>
-			 <th>token</th>
-			 <td></td>
+			 <th>手机号码</th>
+			 <td>{{$order_info->member_mobile}}</td>
+			 <!-- <th>token</th> -->
+			 <!-- <td></td> -->
 		 </tr>
 		 
 	 </table>

@@ -1,5 +1,5 @@
 @extends('admin/layout/layout_main')
-@section('title','套现列表管理~')
+@section('title','成功交易订单管理~')
 @section('wrapper')
 <style>
 	 h4 > a,.pull-right > a{color:#145ccd;}

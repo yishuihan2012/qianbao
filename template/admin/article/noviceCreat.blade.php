@@ -1,5 +1,5 @@
 @extends('admin/layout/layout_main')
-@section('title','新增文章~')
+@section('title','新增新手指引管理~')
 @section('wrapper')
 <link rel="stylesheet" href="/static/css/jquery-labelauty.css">
 <style>
