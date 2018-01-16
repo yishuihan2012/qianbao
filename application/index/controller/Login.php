@@ -41,6 +41,13 @@ class Login extends Controller
             Session::set('jump_msg',['type'=>'warning','msg'=>$adminster['msg']]);
             $this->redirect('Login/index');
         }
+
+        $adminster_group_id=db('auth_group_access')->where('uid',$adminster['data']['adminster_id'])->value('group_id');
+        #用户组ID 当用户为运营商的时候 调取其下三级子ID
+        $children=[0];
+        if($adminster_group_id==5){
+            $children=$this->get_ids($adminster['data']['adminster_user_id']);
+        }
         Session::set('jump_msg',['type'=>'success','msg'=>$adminster['msg']]);
         Session::set('adminster',[
             'id'=>$adminster['data']['adminster_id'],
@@ -49,7 +56,8 @@ class Login extends Controller
             'adminster_update_time'=>$adminster['data']['adminster_update_time'],
             'adminster_state'=>$adminster['data']['adminster_state'],
             'adminster_user_id'=>$adminster['data']['adminster_user_id'],
-            'adminster_group_id'=>db('auth_group_access')->where('uid',$adminster['data']['adminster_id'])->value('group_id'),
+            'adminster_group_id'=>$adminster_group_id,
+            'children'=>$children,
         ]);
         $this->redirect('Dashboard/index');
     }
@@ -57,5 +65,14 @@ class Login extends Controller
         Session::delete('adminster');
         Session::set('jump_msg',['type'=>'success','msg'=>"您已成功退出~"]);
         $this->redirect('Login/index');
+    }
+    //获取运营商下三级的用户id
+    private function get_ids($uid){
+        if(!$uid)
+            return [0];
+        $level1=db('member_relation')->where('relation_parent_id',$uid)->column('relation_member_id');
+        $level2=db('member_relation')->where('relation_parent_id','in',$level1)->column('relation_member_id');
+        $level3=db('member_relation')->where('relation_parent_id','in',$level2)->column('relation_member_id');
+        return array_merge($level1,$level2,$level3);
     }
 }

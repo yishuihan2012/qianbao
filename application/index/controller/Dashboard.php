@@ -44,8 +44,8 @@ class Dashboard extends Common
        $group_id=db('auth_group_access')->where('uid',$adminster['id'])->value('group_id');
        //运营商登录
         if($adminster['adminster_user_id'] && $group_id==5){
-            $where['order_root']=$adminster['adminster_user_id'];
-            $whereMember['member_root']=$adminster['adminster_user_id'];
+            $where['order_member']=["in",$this->admin['children']];
+            $whereMember['member_id']=["in",$this->admin['children']];
         }
         //总体数据
     	$data=[
@@ -69,7 +69,7 @@ class Dashboard extends Common
             $where=[];
             //运营商筛选
             if($adminster['adminster_user_id'] && $group_id==5){
-                $where=['order_root'=>$adminster['adminster_user_id']];
+                $where['order_member']=["in",$adminster['children']];
             }
             if($v['passageway_also']==1){
                 $where['order_passway']=$v['passageway_id'];
