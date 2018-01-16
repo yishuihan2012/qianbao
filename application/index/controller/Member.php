@@ -12,6 +12,7 @@ use app\index\model\MemberGroup;
 use app\index\model\MemberRelation;
 use app\index\model\MemberCert;
 use app\index\model\MemberCashcard;
+use app\index\model\Passageway;
 use app\index\model\Upgrade;
 use app\api\controller\Commission;
 use app\index\model\Commission as Commissions;
@@ -109,6 +110,7 @@ class Member extends Common{
 	 }
 	 #升级会员
 	 public function upgrade(){
+	 	
 	 	if(Request::instance()->isPost()){
 	 		$where['member_id'] = request()->param("member_id");
 
@@ -144,6 +146,13 @@ class Member extends Common{
 			 			$upgrade_data['upgrade_state'] = 0;
 			 			$upgrade_data['upgrade_bak'] = "后台管理员升级";
 			 			$upgrade_data['upgrade_adminster_id'] = Session::get("adminster")['id'];
+
+			 			$passageway=Passageway::where(['passageway_state'=>1])->select();
+			 			
+			 			// foreach ($passageway as $key => $value) {
+			 			// 	 $Alipay=new \app\api\controller\Membernetsedit($info['member_id'],$value['passageway_id'],'M03','',$info['member_mobile']);
+			 			// 	 $success=$Alipay->$value['passageway_method']();
+			 			// }
 			 			//添加用户日志
 			 			$Upgrade =  new Upgrade($upgrade_data);
 			 			$result = $Upgrade->allowField(true)->save();

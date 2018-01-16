@@ -73,14 +73,14 @@ use think\Loader;
            return json_encode(['code'=>$code, 'msg'=>$msg, 'data'=>$data]);
       }
       //加密data
-      private function encryption_data($data)
+      public function encryption_data($data)
       {
           $aesEncryption=new AesEncryption;
           $return = $aesEncryption->aes128cbcEncrypt(json_encode($data));
           return $return;
       }
       //解密data
-      private function decryption_data($data)
+      public function decryption_data($data)
       {
           $aesEncryption=new AesEncryption;
           $return = $aesEncryption->aes128cbcHexDecrypt($data);

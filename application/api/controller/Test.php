@@ -4,6 +4,10 @@
 */
 namespace app\api\controller;
 use think\Db;
+use app\index\model\System;
+use think\Request;
+use think\Config;
+
 class Test 
 {
 		public function renzheng()
@@ -40,4 +44,55 @@ class Test
 			$a=send_sms('17560044406');
 			print_r($a);
 		}
+		//curl请求
+		public function curlPost($url, $method = 'post', $data = ''){
+			// $data=json_decode($data,true);
+			// print_r($data);die;
+	        $ch = curl_init();
+	        // curl_setopt($ch, CURLOPT_HTTPHEADER, 0);
+	        curl_setopt($ch, CURLOPT_URL, $url);
+	        curl_setopt($ch, CURLOPT_CUSTOMREQUEST, strtoupper($method));
+	        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
+	        curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, false);
+	        curl_setopt($ch, CURLOPT_USERAGENT, 'Mozilla/5.0 (compatible; MSIE 5.01; Windows NT 5.0)');
+	        curl_setopt($ch, CURLOPT_FOLLOWLOCATION, 1);
+	        curl_setopt($ch, CURLOPT_AUTOREFERER, 1);
+	        curl_setopt($ch, CURLOPT_POSTFIELDS, $data);
+	        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+	        $temp = curl_exec($ch);
+	        return $temp;
+        }
+		//发送请求
+		public function send_request($action='',$method=''){
+			$params=Request::instance()->param();
+			// print_r($params);die;
+			if(!$action){
+				$action=$params['action'];
+			}
+			if(!$method){
+				$method=$params['method'];
+			}
+			// unset($params['action']);
+			// unset($params['method']);
+			$index=new Index;
+			$data=array(
+				'action'=>$action,
+				'method'=>$method,
+				'param'=>$params,
+			);
+			$data=$index->encryption_data(json_encode($data));
+			// print_r($action);die;
+			$request['data']=$data;
+			$host=System::getName('system_url');
+			// $host="wallet.dev.com/index.php";
+			$res = $this->curlPost($host.'/api', 'post',$request);
+			$res=json_decode($res,true);
+			if($res['code']==200){
+				$data=$index->decryption_data($res['data']); 
+			}else{
+				$data=$res;
+			}
+			print_r($data);die;
+		}
+
 }
