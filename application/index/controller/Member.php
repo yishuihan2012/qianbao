@@ -151,7 +151,7 @@ class Member extends Common{
 			 			
 			 			foreach ($passageway as $key => $value) {
 			 				 $Alipay=new \app\api\controller\Membernetsedit($info['member_id'],$value['passageway_id'],'M03','',$info['member_mobile']);
-			 				 $success=$Alipay->mishuadaihuan();
+			 				 $success=$Alipay->$value['passageway_method']();
 			 			}
 			 			//添加用户日志
 			 			$Upgrade =  new Upgrade($upgrade_data);
