@@ -92,7 +92,7 @@ class Test
 			}else{
 				$data=$res;
 			}
-			echo $data;die;
+			print_r($data);die;
 		}
 
 }
