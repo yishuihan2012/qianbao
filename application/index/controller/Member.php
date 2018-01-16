@@ -149,10 +149,10 @@ class Member extends Common{
 
 			 			$passageway=Passageway::where(['passageway_state'=>1])->select();
 			 			
-			 			// foreach ($passageway as $key => $value) {
-			 			// 	 $Alipay=new \app\api\controller\Membernetsedit($info['member_id'],$value['passageway_id'],'M03','',$info['member_mobile']);
-			 			// 	 $success=$Alipay->$value['passageway_method']();
-			 			// }
+			 			foreach ($passageway as $key => $value) {
+			 				 $Alipay=new \app\api\controller\Membernetsedit($info['member_id'],$value['passageway_id'],'M03','',$info['member_mobile']);
+			 				 $success=$Alipay->$value['passageway_method']();
+			 			}
 			 			//添加用户日志
 			 			$Upgrade =  new Upgrade($upgrade_data);
 			 			$result = $Upgrade->allowField(true)->save();
