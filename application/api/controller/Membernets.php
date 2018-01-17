@@ -157,7 +157,7 @@
           }
       }
       #荣邦1.4.3.商户通道入驻接口
-      public function rongbangIn(){
+      public function rongbang_in(){
         $userinfo=db('member_net')->where('net_member_id',$this->member->member_id)->value($this->passway->passageway_no);
         // var_dump($userinfo);die;
         $userinfo=explode(',', $userinfo);
