@@ -748,17 +748,20 @@
            
           $Commission=Commission::with('member')->where('commission_member_id='.$this->param['uid'].' and commission_type='.$this->param['type'])->order('commission_id desc')->select();
       
-          
+          $comm = array();
           foreach ($Commission as $key => $value) {
             $Commission[$key]['member_mobile']=Members::where(['member_id'=>$value['commission_childen_member']])->value('member_mobile');
             if($value['commission_money']<0.01){
-              unset($Commission[$key]);
-
+             
+              // unset($Commission[$key]);
+            }else{
+              $comm[] = $value;
+              $comm[]["member_mobile"] =  $Commission[$key]['member_mobile'];
             }
             
           }
-    
-           return ['code'=>200, 'msg'=>'获取成功~', 'data'=>$Commission];
+          // echo json_encode($comm);die;
+           return ['code'=>200, 'msg'=>'获取成功~', 'data'=>$comm];
       }
       
  }
