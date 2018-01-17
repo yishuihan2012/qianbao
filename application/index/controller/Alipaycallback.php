@@ -27,10 +27,10 @@ class Alipaycallback
          // $str = var_export($data,TRUE);
          // file_put_contents('ceshi.txt',$str);
         // var_dump($data);die;
-         // $Alipay=new \app\index\controller\Alipay();
-         // $success=$Alipay->callback($data);
-         // if($success!="SUCCESS")
-         //    echo "FAIL777";
+         $Alipay=new \app\index\controller\Alipay();
+         $success=$Alipay->callback($data);
+         if($success!="SUCCESS")
+            echo "FAIL777";
 
         $order=Upgrade::get(['upgrade_no'=>$data['out_trade_no']]);
         $post['upgrade_member_id']=$order->upgrade_member_id;
@@ -68,13 +68,13 @@ class Alipaycallback
          $commission=new \app\api\controller\Commission();
          $commission->MemberCommis($post['upgrade_member_id'],$post['upgrade_money'],'会员付费升级');
 
-        //  $passageway=Passageway::where(['passageway_state'=>1,'passageway_id'=>['neq','1']])->select();
+         $passageway=Passageway::where(['passageway_state'=>1,'passageway_id'=>['neq','1']])->select();
 
-        // foreach ($passageway as $key => $value) {
-        //      $Membernetsedit=new \app\api\controller\Membernetsedit($member_info['member_id'],$value['passageway_id'],'M03','',$member_info['member_mobile']);
-        //      $method=$value['passageway_method'];
-        //      $success=$Membernetsedit->$method();
-        // }
+        foreach ($passageway as $key => $value) {
+             $Membernetsedit=new \app\api\controller\Membernetsedit($member_info['member_id'],$value['passageway_id'],'M03','',$member_info['member_mobile']);
+             $method=$value['passageway_method'];
+             $success=$Membernetsedit->$method();
+        }
          echo 111;
 	 }
 
