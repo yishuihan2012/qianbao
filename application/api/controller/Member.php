@@ -484,7 +484,7 @@
              $data['list'][$key]['levelIcon']=System::getName('system_url').$value['group_thumb'];
              $data['list'][$key]['childAmount']=0;
              $data['list'][$key]['grandChildAmount']=0;
-             $MemberRelation_1rd=MemberRelation::with("members")->where(["relation_parent_id"=>$this->param['uid'],"member_group_id" => $value['group_id']])->select();
+             $MemberRelation_1rd=MemberRelation::with("members")->where(["relation_parent_id"=>$this->param['uid']])->select();
              // print_r($MemberRelation_1rd);
              foreach ($MemberRelation_1rd as $k => $val) {
                 $member[$k]=Members::with('membergroup')->where(['member_id'=>$val['relation_member_id']])->find();
@@ -506,8 +506,8 @@
 
              $data['list'][$key]['grossChildAmount']=$data['list'][$key]['grandChildAmount']+$data['list'][$key]['childAmount'];
              #总人数
-             $data['totalChildAmount']+=$data['list'][$key]['grossChildAmount'];
-             $data['member_cert']=$membercert['member_cert'];
+             $data['totalChildAmount'] += $data['list'][$key]['grossChildAmount'];
+             $data['member_cert'] = $membercert['member_cert'];
            }
           
          return ['code'=>200, 'msg'=>'信息反馈成功~','data'=>$data];
