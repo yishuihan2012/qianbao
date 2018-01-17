@@ -123,7 +123,10 @@
 
 			</ul>
 		@if(in_array($generation['generation_state'],[1,2]))
-	<a class="my-confirm" id="regBtn" style="position: fixed;bottom: 50px;">取消整体计划</a>
+		<!-- <a class="my-confirm" id="regBtn" style="position: fixed;bottom: 50px;">取消整体计划</a> -->
+		<nav class="mui-bar mui-bar-tab my-footer">
+		  <a class="my-btn-blue2 f18" id="regBtn">取消整体计划</a>
+		</nav>
 		@endif
 		</div>
 		<script src="/static/js/mui.min.js"></script>
