@@ -395,7 +395,7 @@ use app\index\model\Member;
       }
       //3余额查询
       //http://pay.mishua.cn/zhonlinepay/service/rest/creditTrans/accountQuery
-      public function accountQuery($uid){
+      public function accountQuery($uid,$is_print=""){
         $passageway=Passageway::where(['passageway_id'=>8])->find();
         #4获取用户信息
         $member=MemberNets::where(['net_member_id'=>$uid])->find();
@@ -407,8 +407,11 @@ use app\index\model\Member;
         );
         // var_dump($params);die;
         $income=repay_request($params,$passageway->passageway_mech,'http://pay.mishua.cn/zhonlinepay/service/rest/creditTrans/accountQuery',$passageway->iv,$passageway->secretkey,$passageway->signkey);
-        // return $income;
-        echo json_encode($income);die;
+        if($is_print){
+            echo json_encode($income);die;
+        }else{
+          return $income;
+        } 
       }
       public function mishuaedit($uid=16,$passageway='8'){
          #1实名信息
@@ -438,16 +441,17 @@ use app\index\model\Member;
                 $money=db('reimbur')->where('reimbur_generation',$generation_id)->value('reimbur_left');
                 if($money>0){
                   $userinfo=$this->accountQuery($generation['generation_member']);
+                  // print_r($userinfo);die;
                   $realMoney=$userinfo['lastAmt']+$userinfo['availableAmt']-$userinfo['usedAmt'];
                   //判断本次计划还款总金额 是否不大于 商户平台中该用户的余额
                   if($money<=$realMoney){
                     //写入本次取消返还的还款订单
                     $reback_order=GenerationOrder::create([
                       'order_no'=>$generation_id,
-                      'order_passageway'=>$generation->order_passageway,
-                      'order_member'=>$generation->order_member,
+                      'order_passageway'=>$generation->generation_passway_id,
+                      'order_member'=>$generation->generation_member,
                       'order_type'=>2,
-                      'order_card'=>$generation->order_card,
+                      'order_card'=>$generation->generation_card,
                       'order_money'=>$money,
                       'order_pound'=>0,
                       'order_desc'=>'取消还款计划，自动返还本次计划剩余款项',
@@ -456,7 +460,7 @@ use app\index\model\Member;
                     $this->transferApply($reback_order->toArray(),true);
                   }else{
                     Db::rollback();
-                    return ['code'=>481,'msg'=>get_status_text(481)];
+                    return ['code'=>481,'msg'=>'取消计划失败，账户余额异常，如有疑问请联系客服。'];
                   }
                 }
               }
@@ -465,7 +469,7 @@ use app\index\model\Member;
               return ['code'=>200];
            } catch (\Exception $e) {
                  Db::rollback();
-                 // return $e->getMessage();
+                 echo  $e->getMessage();die;
                  return ['code'=>308,'msg'=>$e->getMessage(),'data'=>[]];
            }
       }

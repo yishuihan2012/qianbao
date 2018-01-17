@@ -138,13 +138,13 @@
 			$.post('/api/userurl/cancel_repayment',{generation_id:{{$generation['generation_id']}}},function(res){
 				res=JSON.parse(res);
 				if(res.code==200){
-					alert('取消成功！');
+					mui.toast('取消计划成功');
 					location.reload();
 				}else{
-					alert("取消失败！\n"+res.msg);
+					// alert("取消失败！\n"+res.msg);
+					mui.toast(res.msg);
 				}
 			})
-			console.log(666);
 		})
 	})
 		</script>
