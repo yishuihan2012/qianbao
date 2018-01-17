@@ -119,7 +119,6 @@
          );
         // var_dump($arr);die;
         $data=rongbang_curl($this->passway,$arr,'masget.webapi.com.subcompany.add');
-        var_dump($data);die;
         if($data['ret']==0){
           #储存商户信息到memberNet关联字段中，因为信息有多条，以,分割后存储。
           #信息顺序 0、appid 1、companycode 2、secretkey 3、session 4、companyname
@@ -242,19 +241,6 @@
         $userinfo=explode(',', $userinfo);
         $companyid=$userinfo[0];
        $credit=db('member_creditcard')->where('card_id',$card_id)->find();
-        $arr=[
-          'ordernumber'=>$tradeNo,
-          'body'=>'银联快捷支付',
-          'amount'=>$price*100,//单位分
-          'subpaymenttypeid'=>25,
-          'businesstype'=>1001,
-          'paymenttypeid'=>25,
-          // 'businesstime'=>date('YmdHis'),
-          "backurl"=>request()->domain(). "/api/Userurl/passway_rongbang_paycallback/passageway_id/".$this->passway->passageway_id . "/member_id/" . $this->member->member_id,
-          'payextraparams'=>[
-            'treatycode'=>$treatycode,
-          ],
-        ];
         // 荣邦发来的demo json
         $arr='{
   "amount": "1020",
@@ -267,22 +253,31 @@
   "ordernumber": "test201801101523"
 }';
 
+        //402573747  封顶通道 
+        if($this->passway->passageway_mech==402573747){
+          $paymenttypeid='4';
+          $payextraparams='"{\"bankaccount\":\"'.$credit['card_bankno'].'\"}"';
+          //402512992 快捷无积分
+        }else{
+          $paymenttypeid='25","subpaymenttypeid":"25';
+          $payextraparams='"{\"treatycode\":\"'.$treatycode.'\"}"';
+        }
+
         //由demo而来的终极拼接版
         $arr='{
           "amount": "'.$price*100 .'",
-          "subpaymenttypeid": "25",
           "backurl": "'.request()->domain(). '/api/Userurl/passway_rongbang_paycallback/passageway_id/' . $this->passway->passageway_id . '/member_id/' . $this->member->member_id .'",
           "body": "'.$description.'",
           "businesstype": "1001",
-          "payextraparams": "{\"treatycode\":\"'.$treatycode.'\"}",
-          "paymenttypeid": "25",
+          "payextraparams": '.$payextraparams.',
+          "paymenttypeid": "'.$paymenttypeid.'",
           "ordernumber": "'.$tradeNo.'"
         }';
-          // "backurl": "'.request()->domain(). '/api/Userurl/passway_rongbang_paycallback/passageway_id/' . $this->passway->passageway_id . '/member_id/' . $this->member->member_id .'",
 
         // echo ($arr);die;
         // echo (json_encode($arr));die;
           $data=rongbang_curl(rongbang_foruser($this->member,$this->passway),$arr,'masget.pay.compay.router.back.pay');
+        dump($data);die;
           // $data=rongbang_curl($this->passway,$arr,'masget.pay.compay.router.back.pay');
           if($data['ret']==0){
         // dump($data);die;
@@ -327,6 +322,44 @@
             $fenrun= new \app\api\controller\Commission();
             $fenrun_result=$fenrun->MemberFenRun($this->member->member_id,$order['order_money'],$this->passway->passageway_id,1,'交易手续费分润',$order['order_id']);
           }
+          return $data;
+        }else{
+          return $data['message'];
+        }
+      }
+      #荣邦银行签约接口
+      #封顶通道专用
+      public function rongbang_sign_card($card_id){
+        $credit=db('member_creditcard')->where('card_id',$card_id)->find();
+        $userinfo=db('member_net')->where('net_member_id',$this->member->member_id)->value($this->passway->passageway_no);
+        $userinfo=explode(',', $userinfo);
+        $arr=array(
+          #公司ID
+          'companyid'   =>$userinfo[0],
+          'bankaccount'   =>$credit['card_bankno'],
+          'cvv2'   =>$credit['card_Ident'],
+          'expirationdate'   =>$credit['card_expireDate'],
+          'mobilephone'   =>$credit['card_phone'],
+        );
+        // echo json_encode($arr);die;
+        $data=rongbang_curl(rongbang_foruser($this->member,$this->passway),$arr,'masget.pay.compay.router.sign.card');
+        #成功返回html，是一个string
+        return $data;
+        var_dump($data);die;
+      }
+      #荣邦银行签约状态查询
+      public function rongbang_signquery_card($card_id){
+        $credit=db('member_creditcard')->where('card_id',$card_id)->find();
+        $userinfo=db('member_net')->where('net_member_id',$this->member->member_id)->value($this->passway->passageway_no);
+        $userinfo=explode(',', $userinfo);
+        $arr=array(
+          #公司ID
+          'companyid'   =>$userinfo[0],
+          'bankaccount'   =>$credit['card_bankno'],
+        );
+        $data=rongbang_curl($this->passway,$arr,'masget.pay.compay.router.signquery.card');
+        if($data['ret']==0){
+          $data=$data['data'];
           return $data;
         }else{
           return $data['message'];
@@ -449,9 +482,4 @@
             $res=MemberNet::where(['net_member_id'=>$this->member->member_id])->setField($this->passway->passageway_no, $result['merchId']);
           return $result;
       }
-
-
-
-
-
  }
