@@ -656,7 +656,7 @@
                 }
                 
 
-                $data['group'][$key]['rate']='刷卡费率低至：'.$cashout['item_rate'].'%'.$cashout_item_charges .'代还费率低至：'.$repay['item_also'].'%'.$repay_item_charges;
+                $data['group'][$key]['rate']='刷卡费率低至:'.$cashout['item_rate'].'%'.$cashout_item_charges .' 代还费率低至:'.$repay['item_also'].'%'.$repay_item_charges;
 
                 $data['group'][$key]['des']=$value['group_des'];
                 // $passageway=Passageway::where(['passageway_state'=>1])->select();
