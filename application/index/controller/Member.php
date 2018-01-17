@@ -110,7 +110,6 @@ class Member extends Common{
 	 }
 	 #升级会员
 	 public function upgrade(){
-	 	
 	 	if(Request::instance()->isPost()){
 	 		$where['member_id'] = request()->param("member_id");
 

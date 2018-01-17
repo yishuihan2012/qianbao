@@ -123,8 +123,12 @@
       // var_dump($params);die;
       // var_dump($this->membernet->LkYQJ);die;
       $url='http://pay.mishua.cn/zhonlinepay/service/rest/creditTrans/updateMerchant';
-        $income=repay_request($params, $this->passway->passageway_mech, $url, $this->passway->iv, $this->passway->secretkey, $this->passway->signkey);
-      // var_dump($income);die;
+      $income=repay_request($params, $this->passway->passageway_mech, $url, $this->passway->iv, $this->passway->secretkey, $this->passway->signkey);
+      if($income['code']==200)
+        return true;
+
+      return $income['msg'];
+      // if($income[])
       // $arr=array(
       //   'net_member_id'=>$member_info['cert_member_id'],
       //   "{$passageway['passageway_no']}"=>$income['userNo']

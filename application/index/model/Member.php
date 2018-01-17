@@ -100,4 +100,8 @@ class Member extends Model{
       {
            return $this->hasOne('Recomment','recomment_member_id','member_id');
       }
+      public function membernet()
+      {
+           return $this->hasOne('MemberNet','net_member_id','member_id');
+      }
 }
