@@ -300,6 +300,9 @@ class Userurl extends Controller
 		$generation=Generation::with('creditcard')->where(['generation_id'=>$order_no])->find();
 		//执行计划表
 		$order=GenerationOrder::where(['order_no'=>$order_no])->order('order_time','asc')->select();
+		if(!$order){
+			echo '<li style="margin-top:13rem;text-align:center;list-style:none;font-size:1.4rem;color:#999;">暂无计划详情</li>';die;
+		}
 		foreach ($order as $key => $value) {
 			$value=$value->toArray();
 			// print_r($value);die;
@@ -307,6 +310,7 @@ class Userurl extends Controller
 			$list[$key]['day_time']=date("m月d日",strtotime($value['order_time']));
 			$list[$key]['current_time']=date("H:i",strtotime($value['order_time']));
 		}
+
 		$data=[];
 		//以日期为键
 		foreach ($list as $key => $value) {
