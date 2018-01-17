@@ -1,16 +1,14 @@
 <?php
  /**
- *  @version Member Model  会员基本信息模型
- * @author  $bill 755969423@qq.com
+ *  @version Member Model  会员模型
+ * @author  $GongKe$  755969423@qq.com
  * @time      2017-11-24 09:20
- * @return  
  */
-namespace app\index\model;
-use think\Db;
-use think\Model;
-use think\Config;
+ namespace app\index\model;
+ use think\{Db, Model, Config};
+ use think\ErrorException;
 
-class Member extends Model{
+ class Member extends Model{
       #定义模型数据表 默认为Class名加前缀 如不一样 可自己定义
       #protected $table = 'wt_member';
       #定义主键信息  可留空 默认主键
@@ -23,13 +21,26 @@ class Member extends Model{
       protected $updateTime = 'member_update_time';
       #定义返回数据类型
       protected $resultSetType = 'collection';
+
       protected function initialize()
       {
-           #需要调用父类的`initialize`方法
            parent::initialize();
            #TODO:自定义的初始化
       }
-
+       /**
+       *  @version getChild method /  实例方法 获取会员的直接下级信息
+       *  @author $GongKe$ (755969423@qq.com) 会员下级信息列表
+       *   @datetime    2018-1-17 13:27
+       *   @return  返回会员的下级信息 
+       */
+      public static function getChild(int $memberId) : array
+      {
+           try {
+                not_exists_func();
+           } catch (\Exception $e) {
+                var_dump('123');
+           }
+      }
       #关联模型 一对一关联 (MemberCertification) 用户实名表
       public function membercert()
       {

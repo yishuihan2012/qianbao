@@ -56,8 +56,8 @@
 <script type="text/javascript">
 $(document).ready(function(){
     $('.menu .nav .active').removeClass('active');
-    $('.menu .nav li.newslist').addClass('active');
-    $('.menu .nav li.articles-manager').addClass('show');
+    $('.menu .nav li.new_zhiyin').addClass('active');
+    $('.menu .nav li.article-manager').addClass('show');
     //获取二级分类
 	$(".save").click(function(){
 		// alert('123');

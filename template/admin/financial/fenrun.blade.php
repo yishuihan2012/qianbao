@@ -24,7 +24,7 @@
            </div>
            <div class="col-sm-2">
                 <div class="input-group">
-                     <input type="text" class="form-control date-picker" id="dateTimeRange" placeholder="收益时间查询" value="" />
+                     <input type="text" class="form-control date-picker" id="dateTimeRange" placeholder="收益时间查询" value="" readonly/>
                      <input type="hidden" name="beginTime" id="beginTime" value="" />
                      <input type="hidden" name="endTime" id="endTime" value="" />
                      <z class='clearTime'>X</z>
