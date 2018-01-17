@@ -493,19 +493,26 @@
              $MemberRelation_1rd=MemberRelation::with("members")->where(["relation_parent_id"=>$this->param['uid']])->select();
              // print_r($MemberRelation_1rd);
              foreach ($MemberRelation_1rd as $k => $val) {
-                $member[$k]=Members::with('membergroup')->where(['member_id'=>$val['relation_member_id']])->find();
+                $member=Members::with('membergroup')->where(['member_id'=>$val['relation_member_id']])->find();
                              // return ['code'=>200, 'msg'=>'信息反馈成功~','data'=>$member];
-                if($member[$k]['group_id']==$value['group_id']){
+                if($member['group_id']==$value['group_id']){
                   $data['list'][$key]['childAmount']+=1;
                 } 
 
-                $member_2rd[$k]=MemberRelation::where(['relation_parent_id'=>$member[$k]['member_id']])->select();
+                $member_2rd=MemberRelation::where(['relation_parent_id'=>$member['member_id']])->select();
 
-                foreach ($member_2rd[$k] as $k1 => $val1) {
-                    $member_3rd[$k1]=Members::with('membergroup')->where(['member_id'=>$val1['relation_member_id']])->find();
-                    if($member_3rd[$k1]['group_id']==$value['group_id']){
+                foreach ($member_2rd as $k1 => $val1) {
+                    $member_3rd=Members::with('membergroup')->where(['member_id'=>$val1['relation_member_id']])->find();
+                  if($member_3rd['group_id']==$value['group_id']){
                     $data['list'][$key]['grandChildAmount']+=1;
                   } 
+                  $group3 = MemberRelation::where(['relation_parent_id'=>$member_3rd['member_id']])->select();
+                  foreach ($group3 as $k2 => $v2) {
+                      $group4 = Members::with('membergroup')->where(['member_id'=>$val1['relation_member_id']])->find();
+                    if($group4['group_id']==$value['group_id']){
+                      $data['list'][$key]['grandChildAmount']+=1;
+                    } 
+                  }
                 }
 
              }
