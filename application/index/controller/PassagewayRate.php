@@ -62,7 +62,7 @@ class PassagewayRate extends Common{
 		 $content = ($result===false) ? ['type'=>'error','msg'=>'操作失败'] : ['type'=>'success','msg'=>'操作成功'];
 		 Session::set('jump_msg', $content);
 		 #重定向控制器 跳转到列表页
-		 $this->redirect($this->history['1']);
+		 $this->redirect('/index/passageway_rate/index');
 	}
 
 }
