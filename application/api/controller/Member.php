@@ -761,8 +761,9 @@
              
               // unset($Commission[$key]);
             }else{
+              $value["member_mobile"] = $Commission[$key]['member_mobile'];
               $comm[] = $value;
-              $comm[]["member_mobile"] =  $Commission[$key]['member_mobile'];
+             
             }
             
           }
