@@ -273,7 +273,7 @@
         //由demo而来的终极拼接版
         $arr='{
           "amount": "'.$price*100 .'",
-          "backurl": "'.request()->domain(). '/api/Userurl/passway_rongbang_paycallback/passageway_id/' . $this->passway->passageway_id . '/member_id/' . $this->member->member_id .'",
+          "backurl": "'.request()->domain(). '/api/Userurl/passway_rongbang_paycallback/passageway_id/' . $this->passway->passageway_id . '/member_id/' . $this->member->member_id .'/order_no/'.$tradeNo.'",
           "body": "'.$description.'",
           "businesstype": "1001",
           "payextraparams": '.$payextraparams.',
@@ -292,7 +292,9 @@
             # 因为 无积分是要转换的，所以在此做成与无积分返回格式一致
             return [
               'html'=>base64_encode($data),
-              'ishtml'=>1
+              'ishtml'=>1,
+              ##没有第三方订单号，生成一个用不到的站位
+              'ordercode'=>rand(100000,999999),
             ];
           }else{
             return $data['message'];
