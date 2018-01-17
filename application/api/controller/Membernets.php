@@ -146,25 +146,33 @@
       #已存在 返回data字段 不存在返回false
       public function rongbang_getinfo(){
         $arr=[
-          'companycode'=>$this->member->member_mobile,
+          'companycode'=>$this->member->member_mobile ,
         ];
           $data=rongbang_curl($this->passway,$arr,'masget.webapi.com.subcompany.get');
            // var_dump($data);die;
-          if($data['ret']!=0){
-            return $data['message'];
-          }else{
+          if($data['ret']==0){
             return $data['data'];
+          }else{
+            return $data['message'];
           }
       }
       #荣邦1.4.3.商户通道入驻接口
       public function rongbangIn(){
+        // $userinfo=db('member_net')->where('net_member_id',$this->member->member_id)->value('AiqJE');
+        $userinfo=db('member_net')->where('net_member_id',$this->member->member_id)->value('AiqJE');
+        $userinfo=explode(',', $userinfo);
         $arr=array(
-          'companyid'   =>'402587655',
-          'accounttype'   =>1,
-          'bankaccount'   =>1,
+          'companyid'   =>$userinfo[0],
+          // 'accounttype'   =>1,
+          // 'bankaccount'   =>1,
         );
-        $data=rongbang_curl($this->passway,$arr,'masget.pay.collect.router.treaty.apply');
+        $data=rongbang_curl(rongbang_foruser($this->member,$this->passway),$arr,'masget.pay.compay.router.samename.open');
         // var_dump($data);die;
+        if($data['ret']==0){
+          return $data['data'];
+        }else{
+          return $data['message'];
+        }
       }
       #荣邦1.6.1.申请开通快捷协议
       public function rongbang_openpay($cardid){
@@ -357,7 +365,8 @@
           'companyid'   =>$userinfo[0],
           'bankaccount'   =>$credit['card_bankno'],
         );
-        $data=rongbang_curl($this->passway,$arr,'masget.pay.compay.router.signquery.card');
+        // $data=rongbang_curl($this->passway,$arr,'masget.pay.compay.router.signquery.card');
+        $data=rongbang_curl(rongbang_foruser($this->member,$this->passway),$arr,'masget.pay.compay.router.signquery.card');
         if($data['ret']==0){
           $data=$data['data'];
           return $data;
