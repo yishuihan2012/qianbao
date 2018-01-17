@@ -535,7 +535,7 @@
             if(!empty($MemberRelation_1rd)){
             foreach ($MemberRelation_1rd as $key => $value) {
                   $member_1rd=Members::where(['member_id'=>$value['relation_member_id']])->field('member_id,member_image, member_mobile, member_creat_time, member_cert,member_group_id')->find();
-                  if($value['member_group_id'] == $this->param['group_id']){
+                  if($member_1rd['member_group_id'] == $this->param['group_id']){
                     if($member_1rd['member_cert']==0){
                       $member_1rd['member_cert']='未认证';
                     }else{
@@ -571,7 +571,7 @@
              if(!empty($MemberRelation_1rd)){
                foreach ($MemberRelation_1rd as $key => $value) {
                    $member_1rd=Members::where(['member_id'=>$value['relation_member_id']])->field('member_id,member_image, member_mobile, member_creat_time, member_cert,member_group_id')->find();
-                   if($value['member_group_id'] == $this->param['group_id']){
+                   if($member_1rd['member_group_id'] == $this->param['group_id']){
                      if($member_1rd['member_cert']==$array['member_cert']){
                        if($member_1rd['member_cert']==0){
                         $member_1rd['member_cert']='未认证';
