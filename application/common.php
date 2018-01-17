@@ -908,8 +908,8 @@ function pad_or_unpad($str, $ext, $pad='pkcs5')
       // var_dump($params);die;
       $url='http://pay.mishua.cn/zhonlinepay/service/rest/creditTrans/updateMerchant';
         $income=repay_request($params, $passageway['passageway_mech'], $url, $passageway['iv'], $passageway['secretkey'], $passageway['signkey']);
-        print_r($income);die;
-        echo $income['userNo'];die;
+        // print_r($income);die;
+        // echo $income['userNo'];die;
       $arr=array(
         'net_member_id'=>$member_info['cert_member_id'],
         "{$passageway['passageway_no']}"=>$income['userNo']
@@ -1085,7 +1085,9 @@ function pad_or_unpad($str, $ext, $pad='pkcs5')
         curl_setopt($curl, CURLOPT_RETURNTRANSFER, 1);
         curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, false); // https请求 不验证证书和hosts
         curl_setopt($curl, CURLOPT_SSL_VERIFYHOST, false);
-        $data = json_decode(curl_exec($curl), true);
+        $result=curl_exec($curl);
+        #在签约接口 成功的时候直接返回html 而不是一个json 
+        $data =json_decode($result,true) ? json_decode($result,true) : $result;
         $httpCode = curl_getinfo($curl, CURLINFO_HTTP_CODE);
         curl_close($curl);
         return $data;

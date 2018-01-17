@@ -234,8 +234,8 @@ class CashOut
 		 	 	// $userinfo=$member_net[$this->passway_info->passageway_no];
 		 	 }
 	 	 }
-	 	 //封顶的这个APPID无需开通快捷支付即可使用
-	 	 if($this->passway_info->passageway_mech!=402573747){
+	 	 //快捷支付 调用开通快捷支付接口
+	 	 if($this->passway_info->passageway_mech==402512992){
 		 	 //复用查询条件
 		 	 $pas_where=['member_credit_pas_pasid'=>$this->passway_info->passageway_id,'member_credit_pas_creditid'=>$this->card_info->card_id];
 		 	 #查询用户是否开通快捷支付
@@ -300,6 +300,30 @@ class CashOut
 		            return $res;
 		 	 	}
 		 	 }
+		 	 #封顶 调用银行签约接口
+	 	 }elseif($this->passway_info->passageway_mech==402573747){
+	 	 	$isSign=$membernetObject->rongbang_signquery_card($this->card_info->card_id);
+	 	 	#未签约 或签约状态不是 成功
+	 	 	if(is_string($isSign) || $isSign['status']!=2){
+	 	 		$result=$membernetObject->rongbang_sign_card($this->card_info->card_id);
+	 	 		#签约接口成功返回html 是字符串
+	 	 		if(is_string($result)){
+	 	 			$res=[
+		              	'code'=>200,
+		              	'msg'=>'荣邦银行签约接口调用成功',
+		              	'data'=>[
+		            		'type'=>2,
+		            		'url'=>$result,
+		              	]
+	 	 			];
+	 	 		}else{
+	            	$res=[
+		              	'code'=>500,
+		              	'msg'=>$result['message'],
+	            	];
+	 	 		}
+	 	 		return $res;
+	 	 	}
 	 	 }
 	 	 //开始调用支付接口
 	 	 $result=$membernetObject->rongbang_pay($this->card_info->card_id,$tradeNo,$price,$description);
