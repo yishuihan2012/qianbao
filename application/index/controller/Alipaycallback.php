@@ -68,13 +68,13 @@ class Alipaycallback
          $commission=new \app\api\controller\Commission();
          $commission->MemberCommis($post['upgrade_member_id'],$post['upgrade_money'],'会员付费升级');
 
-         $passageway=Passageway::where(['passageway_state'=>1,'passageway_id'=>['neq','1']])->select();
+        //  $passageway=Passageway::where(['passageway_state'=>1,'passageway_id'=>['neq','1']])->select();
 
-        foreach ($passageway as $key => $value) {
-             $Membernetsedit=new \app\api\controller\Membernetsedit($member_info['member_id'],$value['passageway_id'],'M03','',$member_info['member_mobile']);
-             $method=$value['passageway_method'];
-             $success=$Membernetsedit->$method();
-        }
+        // foreach ($passageway as $key => $value) {
+        //      $Membernetsedit=new \app\api\controller\Membernetsedit($member_info['member_id'],$value['passageway_id'],'M03','',$member_info['member_mobile']);
+        //      $method=$value['passageway_method'];
+        //      $success=$Membernetsedit->$method();
+        // }
          echo 111;
 	 }
 
