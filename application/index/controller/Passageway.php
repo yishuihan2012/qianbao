@@ -35,7 +35,6 @@ class Passageway extends Common{
 	 #通道对会员组税率调整
 	 public function rate()
 	 {
-	 	$members=Member::haswhere('membernet',$passageway->passageway_no." != ''")->where(['member_group_id'=>1])->select();
 	  	 #获取通道
 	  	 if(!Request::instance()->param('id'))
 	  	 	 return '参数错误';
