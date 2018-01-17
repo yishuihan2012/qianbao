@@ -51,7 +51,22 @@
                  $this->error=317;
            }
       }
+      //获取三级下级总数
+      public function get_lower_total($uid){
+          $count=0;
+          $MemberRelation_1rd=MemberRelation::where(["relation_parent_id"=>$this->param['uid']])->select();
+          $count+=count($MemberRelation_1rd);
+          foreach ($MemberRelation_1rd as $k => $val) {
+                $member_2rd=MemberRelation::where(['relation_parent_id'=>$val['relation_member_id']])->select();
+                $count+=count($member_2rd);
+                foreach ($member_2rd as $k1 => $val1) {
+                  $group3 = MemberRelation::where(['relation_parent_id'=>$val1['relation_member_id']])->select();
+                    $count+=count($group3);
+                }
 
+             }
+             return $count;
+      }
       /**
  	 *  @version info method / Api 会员基础信息 通用接口
  	 *  @author $bill$(755969423@qq.com)
@@ -88,14 +103,8 @@
            $data['numberOfCreditCard']=MemberCreditcard::where(['card_member_id'=>$this->param['uid'],'card_state'=>'1'])->count();
            $data['alipayBindState']=MemberAccount::where(['account_user'=>$this->param['uid'],'account_type'=>'Alipay'])->find() ? 1 : 0;
            $data['wechatBindState']=MemberAccount::where(['account_user'=>$this->param['uid'],'account_type'=>'Weipay'])->find() ? 1 : 0;
-           #查询会员下级数量 TODO: 现在是直接下级数量 是否改成三级 #统一列表改成两级
-           $first_member=MemberRelation::where('relation_parent_id',$this->param['uid'])->select();
-           $count=count($first_member);
-           foreach ($first_member as $key => $value) {
-               $second_member=MemberRelation::where('relation_parent_id',$value['relation_member_id'])->select();
-               $count+=count($second_member);
-           }
-           $data['subordinateNumber']=$count;
+           #查询会员下级数量 TODO: 现在是直接下级数量 是否改成三级 #
+           $data['subordinateNumber']=$this->get_lower_total($this->param['uid']);
            $parent_id=MemberRelation::where(['relation_member_id'=>$this->param['uid']])->value('relation_parent_id');
            $data['parent']=$parent_id=='0' ? '' : Members::where('member_id',$parent_id)->value('member_nick');
            $data['parent_phone']=$parent_id=='0' ? '' : Members::where('member_id',$parent_id)->value('member_mobile');
