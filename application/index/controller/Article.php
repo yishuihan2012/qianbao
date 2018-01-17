@@ -10,6 +10,7 @@ use app\index\model\Article as Articles;
 use app\index\model\ArticleCategory as ArticleCategorys;
 use app\index\model\MemberNovice;
 use app\index\model\NoviceClass as NoviceClasss; 
+use app\index\model\ArticleData;
 use think\Controller;
 use think\Request;
 use think\Session;
@@ -87,13 +88,7 @@ class Article extends Common{
 	 #修改文章
 	 public function edit(Request $request)
 	 {
-		 #获取到详细信息
-		 $articleArray = Articles::get(Request::instance()->param('id'),'articleData');
-	 	 #获取到所有一级分类
- 		 $category_list=ArticleCategorys::where('category_parent','0')->select();
- 		 #获取到所有二级分类
- 		 $secend_category=ArticleCategorys::where('category_parent', $articleArray['article_parent'])->select();
-		 #提交更改信息
+		
 		 if(Request::instance()->isPost())
 		 {
 			 #验证器验证 触发Add事件验证
@@ -110,14 +105,24 @@ class Article extends Common{
 			      #return view('admin/category/edit');
 			    	 #exit;
 			 #}
+
 			 $article =Articles::get(Request::instance()->param('id'));
 			 $result= $article->allowField(true)->save($_POST);
+			 $articleData = ArticleData::where(['data_article' => $_POST['article_parent']])->update(['data_text' => $_POST['data_text']]);
+			
 			 #数据是否提交成功
 			 $content = ($result===false) ? ['type'=>'error','msg'=>'文章修改失败'] : ['type'=>'success','msg'=>'文章修改成功'];
 			 Session::set('jump_msg', $content);
 			 #重定向控制器 跳转到列表页
 			 $this->redirect($this->history['1']);
 		 }
+		 #获取到详细信息
+		 $articleArray = Articles::get(Request::instance()->param('id'),'articleData');
+	 	 #获取到所有一级分类
+ 		 $category_list=ArticleCategorys::where('category_parent','0')->select();
+ 		 #获取到所有二级分类
+ 		 $secend_category=ArticleCategorys::where('category_parent', $articleArray['article_parent'])->select();
+		 #提交更改信息
 		 #传递当前信息源去视图
 		 $this->assign('article', $articleArray);
 	 	 $this->assign('category_list', $category_list);
@@ -145,7 +150,12 @@ class Article extends Common{
 	 	echo json_encode($category_list);
 	 }
 
-	 #新手指引
+	 /**
+	 *  @version memberNovice 新手指引
+	 *  @author 杨成志$(3115317085@qq.com)
+	 *   @datetime    2017-12-25 10:22:05
+	 *   @return 
+	 */
 	 public function memberNovice(){
 	 	 $MemberNovice=MemberNovice::with("noviceclass")->paginate(Config::get('page_size'), false, ['query'=>Request::instance()->param()]);
 	 	 $this->assign('button', ['text'=>'新增指引', 'link'=>url('/index/article/noviceCreat')]);
@@ -153,10 +163,14 @@ class Article extends Common{
 	 	 return view('admin/article/memberNovice');
 	 }
 
-	 #新增新手指引
+	 /**
+	 *  @version noviceCreat 新增新手指引
+	 *  @author 杨成志$(3115317085@qq.com)
+	 *   @datetime    2017-12-25 10:22:05
+	 *   @return 
+	 */
 	 public function noviceCreat(){
 	 	 if(Request::instance()->isPost()){
-	 	 	// dump("!23");
 
 	 		 $MemberNovice = new MemberNovice($_POST);
 			 $result = $MemberNovice->allowField(true)->save();
@@ -171,8 +185,9 @@ class Article extends Common{
 	 	 return view('admin/article/noviceCreat');
 	 }
 	/**
-	 * [noviceRemove 删除新手指引]
-	 * @return [type] [description]
+	 * @version[noviceRemove 删除新手指引]
+	 * @author[杨成志(3115317085@qq.com)]
+	 * @return 
 	 */
 	public function noviceRemove(){
 		
@@ -182,9 +197,14 @@ class Article extends Common{
 		Session::set('jump_msg', $content);
 		$this->redirect('article/memberNovice');
 	}
-	#修改新手指引
+	/**
+	 * @version[noviceRemove 编辑新手指引]
+	 * @author[杨成志(3115317085@qq.com)]
+	 * @return 
+	 */
 	public function noviceSave(){
 		if(Request::instance()->isPost()){
+		
 		 	 $MemberNovice =MemberNovice::get(Request::instance()->param('novice_id'));
 		 	 // dump($_POST);die;
 			 $result= $MemberNovice->allowField(true)->save($_POST);

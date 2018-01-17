@@ -46,6 +46,7 @@ class Passageway extends Common{
  	 	 	//取出通道信息
  	 	 	$passageway=Passageways::get(Request::instance()->param('id'));
  	 	 	$data=[];
+ 	 	 	$content=false;//错误提示
  	 	 	//遍历提交数据
  	 	 	foreach ($post as $k => $v) {
 	 	 		#拆分Key键
@@ -82,32 +83,44 @@ class Passageway extends Common{
  	 	 	 			 }
  	 	 	 			//开始更新
  	 	 	 			if($haschange){
- 	 	 	 				$PassagewayItem = new PassagewayItem();
- 	 	 	 				$wheres['item_id'] = $v['item_id'];
- 	 	 	 				$PassagewayItem->where($wheres)->update($data[$v['item_group']]);
- 	 	 	 				//取出该用户组下所有会员
- 	 	 	 				// $members=db('member')->where('member_group_id',$v['item_group'])->select();
- 	 	 	 				$members=Member::haswhere('membernet',$passageway->passageway_no." != ''")->where(['member_group_id'=>$v['item_group']])->select();
- 	 	 	 				 //遍历进行 第三方资料变更 
- 	 	 	 				foreach($members as $member){
- 	 	 	 					// $membernet=db('member_net')->where('net_member_id',$member['member_id'])->find();
- 	 	 	 					// if(empty($membernet[$passageway->passageway_no])){
- 	 	 	 					// 	continue;
- 	 	 	 					// }
- 	 	 	 					//修改费率 代还通道  米刷代还(1是米刷套现，不需要更改费率)
-								if($passageway->passageway_id!=1){
+				           Db::startTrans();
+				           try{
+	 	 	 	 				$PassagewayItem = new PassagewayItem();
+	 	 	 	 				$wheres['item_id'] = $v['item_id'];
+	 	 	 	 				$PassagewayItem->where($wheres)->update($data[$v['item_group']]);
+	 	 	 	 				//取出该用户组下所有会员
+	 	 	 	 				// $members=db('member')->where('member_group_id',$v['item_group'])->select();
+	 	 	 	 				$members=Member::haswhere('membernet',$passageway->passageway_no." != ''")->where(['member_group_id'=>$v['item_group']])->select();
+	 	 	 	 				 //遍历进行 第三方资料变更 
+	 	 	 	 				foreach($members as $member){
+	 	 	 	 					// $membernet=db('member_net')->where('net_member_id',$member['member_id'])->find();
+	 	 	 	 					// if(empty($membernet[$passageway->passageway_no])){
+	 	 	 	 					// 	continue;
+	 	 	 	 					// }
+	 	 	 	 					//修改费率 代还通道  米刷代还(1是米刷套现，不需要更改费率)
+									if($passageway->passageway_id!=1){
 
-						 			 $Membernetsedit=new \app\api\controller\Membernetsedit($member['member_id'],$passageway->passageway_id,'M03','',$member['member_mobile']);
-						 			 $method=$passageway->passageway_method;
-						 			 $success=$Membernetsedit->$method();
-					 	 	 		//通过是否存在返回更新
-					 	 	 		if($success!==true){
-					 	 	 			$content=['type'=>'warning','msg'=>$success];
-					 	 	 			break;
-					 	 	 		}
-
-					 	 	 	}
- 	 	 	 				}
+							 			 $Membernetsedit=new \app\api\controller\Membernetsedit($member['member_id'],$passageway->passageway_id,'M03','',$member['member_mobile']);
+							 			 $method=$passageway->passageway_method;
+							 			 $success=$Membernetsedit->$method();
+						 	 	 		//通过是否存在返回更新
+						 	 	 		if($success!==true){
+						 	 	 			$content=['type'=>'warning','msg'=>$success];
+						 	 	 			break;
+						 	 	 		}
+						 	 	 	}
+	 	 	 	 				}
+	 	 	 	 				if($content){
+	 	 	 	 					Db::rollback();
+	 	 	 	 					break;
+	 	 	 	 				}else{
+					           		Db::commit();
+	 	 	 	 				}
+				           } catch (\Exception $e) {
+				                Db::rollback();
+			 	 	 			$content=['type'=>'warning','msg'=>$e->getMessage()];
+			 	 	 			break;
+				           }
  	 	 	 			}
  	 	 	 		}
  	 	 	 	}
@@ -125,7 +138,7 @@ class Passageway extends Common{
  	 	 	 	if(!$result)
  	 	 	 		$content=['type'=>'warning','msg'=>'税率新增失败'];
  	 	 	 }
-		 	 $content = isset($content) ? $content : ['type'=>'success','msg'=>'税率调整成功'];
+		 	 $content = $content ? $content : ['type'=>'success','msg'=>'税率调整成功'];
 		 	  // ['type'=>'warning','msg'=>'税率调整失败'];
 		 	 Session::set('jump_msg', $content);
 		 	 $this->redirect($this->history['0']);

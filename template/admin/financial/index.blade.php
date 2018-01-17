@@ -24,11 +24,12 @@
                      <input type="text" class="form-control" name="max_money" value="{{$conditions['max_money'] or ''}}">
                 </div>
            </div>
+
            <div class="col-sm-2">
                 <div class="input-group">
-                     <input type="text" class="form-control date-picker" id="dateTimeRange" placeholder="收益时间查询" value="{{$conditions['beginTime'] or ''}}-{{$conditions['endTime'] or ''}}" />
-                     <input type="hidden" name="beginTime" id="beginTime" value="{{$conditions['beginTime'] or ''}}" />
-                     <input type="hidden" name="endTime" id="endTime" value="{{$conditions['endTime'] or ''}}" />
+                     <input type="text" class="form-control date-picker" id="dateTimeRange" placeholder="收益时间查询" value="" readonly />
+                     <input type="hidden" name="beginTime" id="beginTime" value="" />
+                     <input type="hidden" name="endTime" id="endTime" value="" />
                      <z class='clearTime'>X</z>
                 </div>
            </div>
@@ -43,7 +44,7 @@
  </blockquote>
  <section>
  <hr/>
- <div id="tabs" class="tabs">
+ <div id="tabs" class="tabs" style="height: 550px;">
   <nav class="tabs-navbar"></nav>
   <nav class="tabs-container"></nav>
  </div>
@@ -82,6 +83,8 @@
     	 $('.menu .nav li.financial-manager').addClass('show'); 
  });
  //时间日期
+ var start="{{$conditions['beginTime'] or ''}}";
+ var end="{{$conditions['endTime'] or ''}}";
  $('#dateTimeRange').daterangepicker({
       applyClass : 'btn-sm btn-success',
       cancelClass : 'btn-sm btn-default',
@@ -110,7 +113,14 @@
       $('#beginTime').val(start.format('YYYY-MM-DD'));
       $('#endTime').val(end.format('YYYY-MM-DD'));
  });
+ setTimeout(function(){
+      $('#beginTime').val(start.format('YYYY-MM-DD'));
+      $('#endTime').val(end.format('YYYY-MM-DD'));
+      $('#dateTimeRange').val(start+'-'+end);
+      console.log(start);
+ },100);
  begin_end_time_clear();
+
  $('.clearTime').click(begin_end_time_clear);
  //清除时间
  function begin_end_time_clear() {

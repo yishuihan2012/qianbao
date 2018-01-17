@@ -175,17 +175,27 @@
       } 
       #荣邦 1.4.3.根据邀请码，修改商户费率与D0费率
       public function rongbangnet(){
-        $userinfo=db('member_net')->where('net_member_id',$this->member->member_id)->value('AiqJE');
-        $userinfo=explode(',', $userinfo);
-        $arr=array(
-          #公司ID
-          'memberid'   =>$userinfo[1],
-          #商户名称
-          'membername'   =>$userinfo[4],
-          #邀请码(费率套餐代码)
-          'loginprefix'   =>526135,
-        );
-        $data=rongbang_curl($this->passway,$arr,'masget.rboperationsmanager.com.ratepackageinfo.queryloginprefix.update');
-        var_dump($data);die;
+        $memberAlso=PassagewayItem::where(['item_group'=>$this->member->member_group_id,'item_passageway'=>$this->passway->passageway_id])->find();
+        //传入费率对应的在荣邦的编码
+        $rate_code=db('passageway_rate')->where(['rate_rate'=>$memberAlso['item_rate'],'rate_passway_id'=>$this->passway->passageway_id])->find();
+        if($rate_code){
+          $userinfo=db('member_net')->where('net_member_id',$this->member->member_id)->value('AiqJE');
+          $userinfo=explode(',', $userinfo);
+          $arr=array(
+            #公司ID
+            'memberid'   =>$userinfo[1],
+            #商户名称
+            'membername'   =>$userinfo[4],
+            #邀请码(费率套餐代码)
+            'loginprefix'   =>$rate_code['rate_code'],
+          );
+          $data=rongbang_curl($this->passway,$arr,'masget.rboperationsmanager.com.ratepackageinfo.queryloginprefix.update');
+          if($data['ret']==0){
+            return true;
+            return $data['data'];
+          }else{
+            return $data['message'];
+          }
+        }
       }
  }

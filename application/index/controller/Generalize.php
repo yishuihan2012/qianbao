@@ -82,6 +82,7 @@ class Generalize extends Common{
 		$this->redirect('/index/Generalize/index');die;
 	}
 	 /**
+	  * @Author   杨成志(3115317085@qq.com)
 	  * [share 分享链接列表]
 	  * @return [type] [description]
 	  */
@@ -96,6 +97,7 @@ class Generalize extends Common{
 	 	return view("admin/Generalize/share");
 	}
 	/**
+	 * @Author   杨成志(3115317085@qq.com)
 	 * [shareCreat 添加分享列表]
 	 * @return [type] [description]
 	 */
@@ -114,6 +116,7 @@ class Generalize extends Common{
 		return view('admin/Generalize/shareCreat');
 	}
 	/**
+	 * @Author   杨成志(3115317085@qq.com)
 	 * [shareRemove 删除分享操作]
 	 * @return [type] [description]
 	 */
@@ -126,32 +129,33 @@ class Generalize extends Common{
 		 #重定向控制器 跳转到列表页
 		 $this->redirect('/index/Generalize/share');die;
 	}
-	#编辑注册邀请链接
+	/**
+	* @author 杨成志（3115317085@qq.com）
+	* @version shareedit 编辑注册邀请链接
+	*
+	*/
 	public function shareedit(){
 		if($_POST){
-	 		
 	 		if(empty($_POST['share_thumb'])){
 	 			unset($_POST['share_thumb']);
 	 		}
-
 	 		$Share =Share::get(Request::instance()->param('share_id'));
-	 		
-			 $result= $Share->allowField(true)->save($_POST);
-
+			$result= $Share->allowField(true)->save($_POST);
 	 		$content = ($result===false) ? ['type'=>'error','msg'=>'修改失败'] : ['type'=>'success','msg'=>'修改成功'];
 			 Session::set('jump_msg', $content);
 			 #重定向控制器 跳转到列表页
 			 $this->redirect('/index/Generalize/share');die;
 	 	}
 		 $id = input("id");
-		 // print_r(input());die;
 		 $info = Share::where(["share_id" => $id])->find();
-
 		 $this->assign("info",$info);
-
 		 return view("admin/Generalize/shareedit");
 	}
-	#专属二维码列表
+	/**
+	* @author 杨成志（3115317085@qq.com)
+	* @version exclusive_list 专属二维码列表
+	*
+	*/
 	public function exclusive_list(){
 		$Exclusive = Exclusive::paginate(12, false, ['query'=>Request::instance()->param()]);
 		$this->assign('button', 
@@ -160,9 +164,12 @@ class Generalize extends Common{
  		 	 ]);
 		$this->assign("Exclusive",$Exclusive);
 		#渲染视图
-	 	
 		return view("admin/Generalize/exclusive_list");
 	}
+	/**
+	*@version exclusiveCreat 新增专属
+	*@author 杨成志（3115317085@qq.com）
+	*/
 	#新增专属
 	public function exclusiveCreat(){
 		if(Request::instance()->isPost()){
@@ -176,7 +183,10 @@ class Generalize extends Common{
 	 	}
 		return view("admin/Generalize/exclusiveCreat");
 	}
-	#编辑专属
+	/**
+	*@version exclusiveedit 编辑专属详情
+	*@author 杨成志（3115317085@qq.com）
+	*/
 	public function exclusiveedit(){
 		if($_POST){	 		
 	 		if(empty($_POST['exclusive_thumb'])){
@@ -198,7 +208,10 @@ class Generalize extends Common{
 
 		 return view("admin/Generalize/exclusiveedit");
 	}
-	#删除专属
+	/**
+	*@version del_exclusive 删除专属详情
+	*@author 杨成志 （3115317085@qq.com）
+	*/
 	public function del_exclusive(){
 		$id = input("id");
 		
@@ -208,7 +221,10 @@ class Generalize extends Common{
 		 #重定向控制器 跳转到列表页
 		 $this->redirect('/index/Generalize/exclusive_list');die;
 	}
-	#删除图片
+	/**
+	*@version removeimg 删除字段多图一一删除
+	*@author 杨成志（3115317085@qq.com ）
+	*/
 	public function removeimg(){
 		#查出数据表列里的多图值
 		$where['generalize_id'] = input("generalize_id");

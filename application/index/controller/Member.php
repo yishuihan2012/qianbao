@@ -6,24 +6,33 @@
  *   @return 
  */
 namespace app\index\controller;
-use app\index\model\Member as Members;
-use app\index\model\MemberLogin;
-use app\index\model\MemberGroup;
-use app\index\model\MemberRelation;
-use app\index\model\MemberCert;
-use app\index\model\MemberCashcard;
-use app\index\model\Passageway;
-use app\index\model\Upgrade;
-use app\api\controller\Commission;
-use app\index\model\Commission as Commissions;
-use think\Controller;
-use think\Request;
-use think\Session;
-use think\Config;
-use think\Loader;
-use think\Db;
 
-class Member extends Common{
+ use app\index\model\Member as Members;
+ use app\index\model\{MemberLogin, MemberGroup, MemberRelation, MemberCert, MemberCashcard, Upgrade };
+ use app\api\controller\Commission;
+ use app\index\model\Commission as Commissions;
+ use think\{Controller, Request, Session, Config, Loader, Db};
+
+ class Member extends Common{
+ 	 /**
+	 *  @version child method /  会员下级信息
+	 *  @author $GongKe$ (755969423@qq.com) 会员下级信息列表
+	 *   @datetime    2018-1-17 13:27
+	 *   @return  返回会员的下级信息 
+	 */
+ 	 public function child(Request $request)
+ 	 {
+	 	 if(!$request->param('memberId'))
+	 	 {
+			 Session::set('jump_msg', ['type'=>'error','msg'=>'参数错误,缺少会员标识ID']);
+			 $this->redirect($this->history['1']);
+	 	 }
+	 	 $data=Members::getChild($request->param('memberId'));
+	 	 $this->assign('data', $data);
+	 	 //return view('admin/member/info');
+ 	 }
+
+
 	 #会员列表
 	 public function index()
 	 {
