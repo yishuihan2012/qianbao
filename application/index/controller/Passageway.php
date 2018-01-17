@@ -11,6 +11,7 @@ use app\index\model\PassagewayItem;
 use app\index\model\MemberGroup;
 use app\index\model\Cashout;
 use app\index\model\CreditCard;
+use app\index\model\Member;
 use think\Controller;
 use think\Request;
 use think\Session;
@@ -52,17 +53,21 @@ class Passageway extends Common{
 	 	 	 	$key_fix=strtok($k,'_');
 	 	 	 	//该通道为套现 则丢弃 代还数据 否则 丢弃 套现数据
 	 	 	 	#杨注释掉的
-	 	 	 	// if($passageway->passageway_also==1){
-	 	 	 	// 	if($key_fix=='also')continue;
-	 	 	 	// }else{
-	 	 	 	// 	if($key_fix=='rate')continue;
-	 	 	 	// }
+	 	 	 	if($passageway->passageway_also==1){
+	 	 	 		if($key_fix=='also')continue;
+	 	 	 	}else{
+	 	 	 		if($key_fix=='rate')continue;
+	 	 	 	}
 	 	 	 	//以用户组为键 转储到data
 	 	 	 	$data[$group_id]['item_'.$key_fix]=$v;
  	 	 	} 	
+ 	 	 	// echo "<pre>";
+ 	 	 	// print_r($data);die;
  	 	 	// halt($passageway->passageway_mech);
  	 	 	 #查询库中是否存在数据
  	 	 	 $passage=PassagewayItem::where(['item_passageway'=>Request::instance()->param('id')])->select();
+ 	 	 	//  echo "<pre>";
+ 	 	 	// print_r($passage);die;
  	 	 	 if($passage){
  	 	 	 	//针对每条数据执行 (每条对应一个用户组)
  	 	 	 	foreach ($passage as $k => $v) {
@@ -81,37 +86,26 @@ class Passageway extends Common{
  	 	 	 				$wheres['item_id'] = $v['item_id'];
  	 	 	 				$PassagewayItem->where($wheres)->update($data[$v['item_group']]);
  	 	 	 				//取出该用户组下所有会员
- 	 	 	 				$members=db('member')->alias('m')
- 	 	 	 					->join('member_cert c','m.member_id=c.cert_member_id')
- 	 	 	 					->where('m.member_group_id',$k)
- 	 	 	 					->select();
+ 	 	 	 				// $members=db('member')->where('member_group_id',$v['item_group'])->select();
+ 	 	 	 				$members=Member::haswhere('membernet',$passageway->passageway_no." != ''")->where(['member_group_id'=>$v['item_group']])->select();
  	 	 	 				 //遍历进行 第三方资料变更 
  	 	 	 				foreach($members as $member){
- 	 	 	 					$membernet=db('member_net')->where('net_member_id',$member['member_id'])->find();
- 	 	 	 					//暂不启用
- 	 	 	 					// continue;
- 	 	 	 					//套现接口 米刷
-					 	 	 	if($passageway->passageway_also==1 && $passageway->passageway_id==1){
-					                // $membernetObject=new Membernetsedit($member['member_id'],$passageway->passageway_id,'M03');
-					                // $res=$membernetObject->quickNet();
-					 	 	 		$res=mishuaedit($passageway,$data[$v['item_group']],$member,$member['member_mobile'],$membernet[$passageway['passageway_no']]);
+ 	 	 	 					// $membernet=db('member_net')->where('net_member_id',$member['member_id'])->find();
+ 	 	 	 					// if(empty($membernet[$passageway->passageway_no])){
+ 	 	 	 					// 	continue;
+ 	 	 	 					// }
+ 	 	 	 					//修改费率 代还通道  米刷代还(1是米刷套现，不需要更改费率)
+								if($passageway->passageway_id!=1){
+
+						 			 $Membernetsedit=new \app\api\controller\Membernetsedit($member['member_id'],$passageway->passageway_id,'M03','',$member['member_mobile']);
+						 			 $method=$passageway->passageway_method;
+						 			 $success=$Membernetsedit->$method();
 					 	 	 		//通过是否存在返回更新
-					 	 	 		if(isset($res['merchno'])){
-					 	 	 			db('member_net')->where('net_member_id',$member['member_id'])->update([$passageway['passageway_no']=>$res['merchno']]);
-					 	 	 		}else{
-					 	 	 			$content=['type'=>'warning','msg'=>'member_id为'.$member['member_id'].'的用户调用资料变更接口失败'];
+					 	 	 		if($success!==true){
+					 	 	 			$content=['type'=>'warning','msg'=>$success];
 					 	 	 			break;
 					 	 	 		}
-					 	 	 	//代还接口 米刷
-					 	 	 	}elseif($passageway->passageway_also==2 && $passageway->passageway_id==8){
-					 	 	 		$res=mishuaedit($passageway,$data[$v['item_group']],$member,$member['member_mobile'],$membernet[$passageway['passageway_no']]);
-					 	 	 		//通过是否存在返回更新
-					 	 	 		if(isset($res[$passageway['passageway_no']])){
-					 	 	 			db('member_net')->where('net_member_id',$member['member_id'])->update([$passageway['passageway_no']=>$res[$passageway['passageway_no']]]);
-					 	 	 		}else{
-					 	 	 			$content=['type'=>'warning','msg'=>'member_id为'.$member['member_id'].'的用户调用资料变更接口失败'];
-					 	 	 			break;
-					 	 	 		}
+
 					 	 	 	}
  	 	 	 				}
  	 	 	 			}

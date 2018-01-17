@@ -526,7 +526,6 @@
             $this->error=314;
 
           $array['member_cert']=(empty($this->param['member_cert']) && $this->param['member_cert']!=="0") ? 'all' : $this->param['member_cert'] ;
-
           #查询全部
           if($array['member_cert']=='all'){
             $member_info=array();
@@ -542,8 +541,9 @@
                     $member_1rd['member_cert']='已认证';
                   }
                   $member_info[]=$member_1rd;
+
                   $MemberRelation_2rd=MemberRelation::haswhere('memberp',['member_group_id'=>$this->param['group_id']])->where('relation_parent_id='.$value['relation_member_id'])->select();
-                 
+                
                     if(!empty($MemberRelation_2rd)){
               
                       foreach ($MemberRelation_2rd as $k => $val) {
@@ -645,7 +645,6 @@
                 $repay=PassagewayItem::haswhere('passageway',['passageway_state'=>1,'passageway_also'=>2])->where(['item_group'=>$value['group_id']])->order('item_also','asc')->find();
                 $data['group'][$key]['rate']='刷卡费率低至：'.$cashout['item_rate'].'% 代还费率低至：'.$repay['item_also'].'% + '.$repay['item_charges']/100 ."元/笔";
                 $data['group'][$key]['des']=$value['group_des'];
-                $data['group'][$key]['icon']=$value['group_thumb'];
                 // $passageway=Passageway::where(['passageway_state'=>1])->select();
                 // foreach ($passageway as $k => $val) {
                 //     #1获取刷卡最低费率

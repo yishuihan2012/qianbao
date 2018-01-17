@@ -42,6 +42,8 @@ class Alipaycallback
     	 #修改会员等级
     	 $member=Member::where('member_id='.$post['upgrade_member_id'])->update(['member_group_id'=>$post['upgrade_group_id']]);
 
+         $member_info=Member::where('member_id='.$post['upgrade_member_id'])->find();
+
     	 #修改入网
       //    $member_net=MemberNet::where('net_member_id='.$post['upgrade_member_id'])->find();
 
@@ -59,10 +61,19 @@ class Alipaycallback
          // var_dump($arr);die;
     	 // $add_net=MemberNet::where('net_member_id='.$post['upgrade_member_id'])->update($arr);
 
+         $passageway=Passageway::where(['passageway_state'=>1])->select();
+                        
+       
+
          $commission=new \app\api\controller\Commission();
          $commission->MemberCommis($post['upgrade_member_id'],$post['upgrade_money'],'会员付费升级');
-         echo 111;
 
+        foreach ($passageway as $key => $value) {
+             $Membernetsedit=new \app\api\controller\Membernetsedit($member_info['member_id'],$value['passageway_id'],'M03','',$member_info['member_mobile']);
+             $method=$value['passageway_method']
+             $success=$Membernetsedit->$method();
+        }
+         echo 111;
 	 }
 
 }

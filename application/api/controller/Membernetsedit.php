@@ -24,8 +24,7 @@
       private $modifyType; //入网信息
       private $accountno; //银行卡
       private $phone; //手机号
-      private $identityCard; //身份证
-      function __construct($memberId,$passwayId='',$modifyType='M03',$accountno='',$phone='',$identityCard=''){
+      function __construct($memberId,$passwayId='',$modifyType='M03',$accountno='',$phone=''){
            try{
                  #根据memberId获取会员信息和会员的实名认证信息还有会员银行卡信息
                  $this->member=Members::get($memberId);
@@ -78,7 +77,7 @@
                  'accountno'   =>   $this->accountno,
                  'accountType'   =>  '1',
                  'mobile'   =>  $this->phone,
-                 'identityCard'   =>  $this->identityCard,
+                 'identityCard'   =>  $this->membercard->card_idcard,
                  'version'            => "v1.2",//接口固定版本号
            );
         }
@@ -86,7 +85,7 @@
           $arr=array( 
                  'merchno'      => $this->membernet->quick023,//商户签约时，分配给商家的唯一标识。
                  'modifyType'   => $this->modifyType, 
-                 'd0Rate'       => $memberAlso/100,//小数点后四位，例如0.0035 D0费率
+                 'd0Rate'       => $memberAlso/10,//小数点后四位，例如0.0035 D0费率
                  't1Rate'       => System::getName('charge_t1'), //小数点后四位，例如0.0035
                  'quickFixed'   => System::getName('charge_max'),//封顶值 10000为不封顶
                  'version'      => "v1.2",//接口固定版本号
@@ -99,6 +98,43 @@
         var_dump($data);die;
         return $data;
       } 
+
+     /**
+      *  @version mishua / Api 米刷支付商户入网接口
+      *  @author $bill$(755969423@qq.com)
+      *  @datetime    2017-12-25 14:36:05
+      *  @param   $member=要入网的会员   ☆☆☆::使用中
+      **/
+    function mishuadaihuan()
+    {
+      $memberAlso=PassagewayItem::where(['item_group'=>$this->member->member_group_id,'item_passageway'=>$this->passway->passageway_id])->find();
+      $params=array(
+        'versionNo'=>'1',//接口版本号 必填  值固定为1
+        'mchNo'=>$this->passway->passageway_mech, //mchNo 商户号 必填  由米刷统一分配
+        'userNo'=>$this->membernet->LkYQJ, //用户标识,下级机构对用户身份唯一标识。
+        'userName'=>$this->membercard->card_name,//姓名
+        'userCertId'=>$this->membercard->card_idcard,//身份证号  必填  注册后不可修改
+        'userPhone'=>$this->phone,
+        'feeRatio'=>$memberAlso['item_also']*10, //交易费率  必填  单位：千分位。如交易费率为0.005时,需传入5.0
+        'feeAmt'=>$memberAlso['item_charges'],//单笔交易手续费  必填  单位：分。如机构无单笔手续费，可传入0
+        'drawFeeRatio'=>'0',//提现费率
+        'drawFeeAmt'=>'0',//单笔提现易手续费
+      );
+      // var_dump($params);die;
+      // var_dump($this->membernet->LkYQJ);die;
+      $url='http://pay.mishua.cn/zhonlinepay/service/rest/creditTrans/updateMerchant';
+      $income=repay_request($params, $this->passway->passageway_mech, $url, $this->passway->iv, $this->passway->secretkey, $this->passway->signkey);
+      if($income['code']==200)
+        return true;
+
+      return $income['msg'];
+      // if($income[])
+      // $arr=array(
+      //   'net_member_id'=>$member_info['cert_member_id'],
+      //   "{$passageway['passageway_no']}"=>$income['userNo']
+      // );
+      //   return $arr;
+    }
 
 
 
@@ -137,5 +173,19 @@
            // return ($data['respCode']=="00" || $res) ? true :  false;
            return $data;
       } 
-
+      #荣邦 1.4.3.根据邀请码，修改商户费率与D0费率
+      public function rongbangnet(){
+        $userinfo=db('member_net')->where('net_member_id',$this->member->member_id)->value('AiqJE');
+        $userinfo=explode(',', $userinfo);
+        $arr=array(
+          #公司ID
+          'memberid'   =>$userinfo[1],
+          #商户名称
+          'membername'   =>$userinfo[4],
+          #邀请码(费率套餐代码)
+          'loginprefix'   =>526135,
+        );
+        $data=rongbang_curl($this->passway,$arr,'masget.rboperationsmanager.com.ratepackageinfo.queryloginprefix.update');
+        var_dump($data);die;
+      }
  }

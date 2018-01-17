@@ -184,6 +184,8 @@ use app\index\model\Member;
           $arr['back_status']='FAIL';
           $arr['order_status']='-1';
           $generation['generation_state']=-1;
+          $arr['order_buckle']=$rate['item_charges']/100;
+          $arr['order_platform']=$pay['order_pound']-($pay['order_money']*$merch['passageway_rate'])+$merch['passageway_income'];
         
         }
         //添加执行记录

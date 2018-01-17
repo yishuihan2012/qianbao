@@ -309,6 +309,7 @@
        #查找到当前用户信用卡列表
        $data=MemberCreditcard::with("repayment")->where('card_member_id='.$this->param['uid'].' and bindStatus=01')->select();
        foreach ($data as $key => $value) {
+         $data[$key]['card_bankicon']=System::getName('system_url').$value['card_bankicon'];
          $data[$key]['card_banktitle']=$value['card_bankname'].'(尾号'.substr($value['card_bankno'],-4).')';
          //查找当前执行计划表中状态为等待执行的数据
          // $tmp=GenerationOrder::where(['order_card'=>$value['card_bankno'],'order_status'=>1])->find();
