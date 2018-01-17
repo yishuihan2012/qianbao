@@ -88,8 +88,14 @@
            $data['numberOfCreditCard']=MemberCreditcard::where(['card_member_id'=>$this->param['uid'],'card_state'=>'1'])->count();
            $data['alipayBindState']=MemberAccount::where(['account_user'=>$this->param['uid'],'account_type'=>'Alipay'])->find() ? 1 : 0;
            $data['wechatBindState']=MemberAccount::where(['account_user'=>$this->param['uid'],'account_type'=>'Weipay'])->find() ? 1 : 0;
-           #查询会员下级数量 TODO: 现在是直接下级数量 是否改成三级
-           $data['subordinateNumber']=MemberRelation::where('relation_parent_id',$this->param['uid'])->count();
+           #查询会员下级数量 TODO: 现在是直接下级数量 是否改成三级 #统一列表改成两级
+           $first_member=MemberRelation::where('relation_parent_id',$this->param['uid'])->select();
+           $count=count($first_member);
+           foreach ($first_member as $key => $value) {
+               $second_member=MemberRelation::where('relation_parent_id',$value['relation_member_id'])->select();
+               $count+=count($second_member);
+           }
+           $data['subordinateNumber']=$count;
            $parent_id=MemberRelation::where(['relation_member_id'=>$this->param['uid']])->value('relation_parent_id');
            $data['parent']=$parent_id=='0' ? '' : Members::where('member_id',$parent_id)->value('member_nick');
            $data['parent_phone']=$parent_id=='0' ? '' : Members::where('member_id',$parent_id)->value('member_mobile');
