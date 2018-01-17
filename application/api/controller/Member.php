@@ -535,12 +535,14 @@
             if(!empty($MemberRelation_1rd)){
             foreach ($MemberRelation_1rd as $key => $value) {
                   $member_1rd=Members::where(['member_id'=>$value['relation_member_id']])->field('member_id,member_image, member_mobile, member_creat_time, member_cert,member_group_id')->find();
-                  if($member_1rd['member_cert']==0){
-                    $member_1rd['member_cert']='未认证';
-                  }else{
-                    $member_1rd['member_cert']='已认证';
+                  if($value['member_group_id'] == $this->param['group_id']){
+                    if($member_1rd['member_cert']==0){
+                      $member_1rd['member_cert']='未认证';
+                    }else{
+                      $member_1rd['member_cert']='已认证';
+                    }
+                    $member_info[]=$member_1rd;
                   }
-                  $member_info[]=$member_1rd;
 
                   $MemberRelation_2rd=MemberRelation::haswhere('memberp',['member_group_id'=>$this->param['group_id']])->where('relation_parent_id='.$value['relation_member_id'])->select();
                 
@@ -569,12 +571,13 @@
              if(!empty($MemberRelation_1rd)){
                foreach ($MemberRelation_1rd as $key => $value) {
                    $member_1rd=Members::where(['member_id'=>$value['relation_member_id']])->field('member_id,member_image, member_mobile, member_creat_time, member_cert,member_group_id')->find();
-
-                   if($member_1rd['member_cert']==$array['member_cert']){
-                     if($member_1rd['member_cert']==0){
-                      $member_1rd['member_cert']='未认证';
-                    }else{
-                      $member_1rd['member_cert']='已认证';
+                   if($value['member_group_id'] == $this->param['group_id']){
+                     if($member_1rd['member_cert']==$array['member_cert']){
+                       if($member_1rd['member_cert']==0){
+                        $member_1rd['member_cert']='未认证';
+                      }else{
+                        $member_1rd['member_cert']='已认证';
+                      }
                     }
 
                      $member_info[]=$member_1rd;
@@ -603,18 +606,13 @@
 
             }
           }
-          #删除不属于该用户组的
-          foreach ($member_info as $key => $value) {
-             if($value['member_group_id']!=$this->param['group_id']){
-                 unset($member_info[$key]);
-             }
-             
-          }
+         
+         
           $data['totalChildAmount']=count($member_info);
           $data['list']=$member_info;
           return ['code'=>200, 'msg'=>'信息反馈成功~','data'=>$data];
       }
-
+     
       /**
       *  @version get_upgrade_price method / Api 会员等级列表
       *  @author $bill$(755969423@qq.com)
