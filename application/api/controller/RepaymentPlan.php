@@ -172,6 +172,7 @@
                              'generation_pound'   =>$this->param['billMoney']*$also+$rate->item_charges,
                              'generation_start'     =>$this->param['startDate'],
                              'generation_end'      =>$this->param['endDate'],
+                             'generation_passway_id'=>$this->param['passageway'],
                         ]);
                         // print_r($data);die;
                         if($Generation_result->save()!==false)
@@ -198,6 +199,7 @@
                                         'order_desc'     =>'自动代还消费~',
                                         'order_time'     =>$data[$i]['time'],
                                         'order_passageway'=>$this->param['passageway'],
+                                        'order_passway_id'=>$this->param['passageway'],
                                         'order_root'=>$root_id,
                                    );
                                    $lists[]=array(
@@ -210,6 +212,7 @@
                                         'order_desc'       =>'自动代还还款~',
                                         'order_time'       =>$data[$i]['endtime'],
                                         'order_passageway'=>$this->param['passageway'],
+                                        'order_passway_id'=>$this->param['passageway'],
                                         'order_root'=>$root_id,
                                    );
                              }
@@ -279,6 +282,7 @@
                              'generation_pound'   =>$this->param['billMoney']*$also+$rate->item_charges,
                              'generation_start'     =>$this->param['startDate'],
                              'generation_end'      =>$this->param['endDate'],
+                             'generation_passway_id'=>$this->param['passageway'],
                         ]);
                         if($Generation_result->save()!==false)
                         {
@@ -303,6 +307,7 @@
                                         'order_desc'       =>'自动代还还款~',
                                         'order_time'       =>$value['endtime'],
                                         'order_passageway'=>$this->param['passageway'],
+                                        'order_passway_id'=>$this->param['passageway'],
                                    );
                                    foreach ($value['list'] as $k => $v) {
                                          $list[]=array(
@@ -315,6 +320,7 @@
                                               'order_desc'     =>'自动代还消费~',
                                               'order_time'     =>$v['time'],
                                               'order_passageway'=>$this->param['passageway'],
+                                              'order_passway_id'=>$this->param['passageway'],
                                          );
                                    }
                              }

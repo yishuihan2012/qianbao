@@ -448,10 +448,10 @@ use app\index\model\Member;
                     //写入本次取消返还的还款订单
                     $reback_order=GenerationOrder::create([
                       'order_no'=>$generation_id,
-                      'order_passageway'=>$generation->order_passageway,
-                      'order_member'=>$generation->order_member,
+                      'order_passageway'=>$generation->generation_passway_id,
+                      'order_member'=>$generation->generation_member,
                       'order_type'=>2,
-                      'order_card'=>$generation->order_card,
+                      'order_card'=>$generation->generation_card,
                       'order_money'=>$money,
                       'order_pound'=>0,
                       'order_desc'=>'取消还款计划，自动返还本次计划剩余款项',
@@ -469,7 +469,6 @@ use app\index\model\Member;
               return ['code'=>200];
            } catch (\Exception $e) {
                  Db::rollback();
-                 // return $e->getMessage();
                  return ['code'=>308,'msg'=>$e->getMessage(),'data'=>[]];
            }
       }
