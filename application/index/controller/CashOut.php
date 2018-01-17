@@ -302,6 +302,7 @@ class CashOut
 		 	 }
 		 	 #封顶 调用银行签约接口
 	 	 }elseif($this->passway_info->passageway_mech==402573747){
+	 	 	#商户入驻
 	 	 	$isSign=$membernetObject->rongbang_signquery_card($this->card_info->card_id);
 	 	 	#未签约 或签约状态不是 成功
 	 	 	if(is_string($isSign) || $isSign['status']!=2){
@@ -323,6 +324,10 @@ class CashOut
 	            	];
 	 	 		}
 	 	 		return $res;
+	 	 	}
+	 	 	$result=$membernetObject->rongbang_in();
+	 	 	if(is_string($result)){
+	 	 		return ['code'=>500,'msg'=>$result];
 	 	 	}
 	 	 }
 	 	 //开始调用支付接口

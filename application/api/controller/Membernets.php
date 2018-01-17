@@ -157,7 +157,7 @@
           }
       }
       #荣邦1.4.3.商户通道入驻接口
-      public function rongbangIn(){
+      public function rongbang_in(){
         $userinfo=db('member_net')->where('net_member_id',$this->member->member_id)->value($this->passway->passageway_no);
         // var_dump($userinfo);die;
         $userinfo=explode(',', $userinfo);
@@ -168,8 +168,10 @@
         );
         // echo json_encode($arr);die;
         $data=rongbang_curl(rongbang_foruser($this->member,$this->passway),$arr,'masget.pay.compay.router.samename.open');
-        if($data['ret']==0){
-          return $data['data'];
+           // var_dump($data);die;
+           // 5041 为已经进件
+        if($data['ret']==0 ||$data['ret']==5041){
+          return $data;
         }else{
           return $data['message'];
         }
@@ -373,6 +375,7 @@
         );
         // $data=rongbang_curl($this->passway,$arr,'masget.pay.compay.router.signquery.card');
         $data=rongbang_curl(rongbang_foruser($this->member,$this->passway),$arr,'masget.pay.compay.router.signquery.card');
+        // var_dump($data);die;
         if($data['ret']==0){
           $data=$data['data'];
           return $data;
@@ -496,5 +499,10 @@
           if($result['resCode']=='00')
             $res=MemberNet::where(['net_member_id'=>$this->member->member_id])->setField($this->passway->passageway_no, $result['merchId']);
           return $result;
+      }
+
+      #0117 新商户注册（同步多渠道） 
+      public function api0117_reg(){
+        return config('weipay.check_name');
       }
  }
