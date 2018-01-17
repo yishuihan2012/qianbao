@@ -643,7 +643,7 @@
                 $cashout=PassagewayItem::haswhere('passageway',['passageway_state'=>1,'passageway_also'=>1])->where(['item_group'=>$value['group_id']])->order('item_rate','asc')->find();
                 #2获取代还最低费率
                 $repay=PassagewayItem::haswhere('passageway',['passageway_state'=>1,'passageway_also'=>2])->where(['item_group'=>$value['group_id']])->order('item_also','asc')->find();
-                $data['group'][$key]['rate']='刷卡费率低至：'.$cashout['item_rate'].'% 代还费率低至：'.$repay['item_also'].'% + '.$repay['item_charges']/100 ."元/笔";
+                $data['group'][$key]['rate']='刷卡费率低至：'.$cashout['item_rate'].'% +'.$cashout['item_charges']/100 .'元/笔 代还费率低至：'.$repay['item_also'].'% + '.$repay['item_charges']/100 ."元/笔";
                 $data['group'][$key]['des']=$value['group_des'];
                 // $passageway=Passageway::where(['passageway_state'=>1])->select();
                 // foreach ($passageway as $k => $val) {
