@@ -155,13 +155,20 @@ namespace app\index\controller;
 			 			$upgrade_data['upgrade_bak'] = "后台管理员升级";
 			 			$upgrade_data['upgrade_adminster_id'] = Session::get("adminster")['id'];
 
+			 			#查询出启用的通道
 			 			$passageway=Passageway::where(['passageway_state'=>1,'passageway_status'=>1])->select();
-			 			// print_r($passageway);die;
+			 			#遍历通道修改用户在同道入网信息
 			 			foreach ($passageway as $key => $value) {
-			 				 $Alipay=new \app\api\controller\Membernetsedit($info['member_id'],$value['passageway_id'],'M03','',$info['member_mobile']);
+			 				$members=Members::haswhere('membernet',$value['passageway_no']." != ''")->where(['member_id'=>$info['member_id']])->find();
+			 				
+			 				if(empty($members)){
+			 					continue;
+			 				}
+			 				 $Membernetsedit=new \app\api\controller\Membernetsedit($info['member_id'],$value['passageway_id'],'M03','',$info['member_mobile']);
 			 				 $method=$value['passageway_method'];
-			 				 $success=$Alipay->$method();
+			 				 $success=$Membernetsedit->$method();
 			 			}
+			 			
 			 			//添加用户日志
 			 			$Upgrade =  new Upgrade($upgrade_data);
 			 			$result = $Upgrade->allowField(true)->save();
