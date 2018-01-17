@@ -460,7 +460,7 @@ use app\index\model\Member;
                     $this->transferApply($reback_order->toArray(),true);
                   }else{
                     Db::rollback();
-                    return ['code'=>481];
+                    return ['code'=>481,'msg'=>'取消计划失败，账户余额异常，如有疑问请联系客服。'];
                   }
                 }
               }
@@ -469,6 +469,7 @@ use app\index\model\Member;
               return ['code'=>200];
            } catch (\Exception $e) {
                  Db::rollback();
+                 echo  $e->getMessage();die;
                  return ['code'=>308,'msg'=>$e->getMessage(),'data'=>[]];
            }
       }
