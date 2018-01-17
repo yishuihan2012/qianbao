@@ -484,7 +484,7 @@
              $data['list'][$key]['levelIcon']=System::getName('system_url').$value['group_thumb'];
              $data['list'][$key]['childAmount']=0;
              $data['list'][$key]['grandChildAmount']=0;
-             $MemberRelation_1rd=MemberRelation::with("members")->where(["relation_parent_id"=>$this->param['uid'],"member_group_id" => $value['group_id']])->select();
+             $MemberRelation_1rd=MemberRelation::with("members")->where(["relation_parent_id"=>$this->param['uid']])->select();
              // print_r($MemberRelation_1rd);
              foreach ($MemberRelation_1rd as $k => $val) {
                 $member[$k]=Members::with('membergroup')->where(['member_id'=>$val['relation_member_id']])->find();
@@ -506,8 +506,8 @@
 
              $data['list'][$key]['grossChildAmount']=$data['list'][$key]['grandChildAmount']+$data['list'][$key]['childAmount'];
              #总人数
-             $data['totalChildAmount']+=$data['list'][$key]['grossChildAmount'];
-             $data['member_cert']=$membercert['member_cert'];
+             $data['totalChildAmount'] += $data['list'][$key]['grossChildAmount'];
+             $data['member_cert'] = $membercert['member_cert'];
            }
           
          return ['code'=>200, 'msg'=>'信息反馈成功~','data'=>$data];
@@ -530,17 +530,19 @@
           if($array['member_cert']=='all'){
             $member_info=array();
             #查询出我的所有下级
-            $MemberRelation_1rd=MemberRelation::with('memberp')->where(['relation_parent_id'=>$this->param['uid']])->select();
+            $MemberRelation_1rd=MemberRelation::haswhere('memberp')->where(['relation_parent_id'=>$this->param['uid']])->select();
             // return ['code'=>200, 'msg'=>'信息反馈成功~','data'=>$MemberRelation_1rd];
             if(!empty($MemberRelation_1rd)){
             foreach ($MemberRelation_1rd as $key => $value) {
                   $member_1rd=Members::where(['member_id'=>$value['relation_member_id']])->field('member_id,member_image, member_mobile, member_creat_time, member_cert,member_group_id')->find();
-                  if($member_1rd['member_cert']==0){
-                    $member_1rd['member_cert']='未认证';
-                  }else{
-                    $member_1rd['member_cert']='已认证';
+                  if($member_1rd['member_group_id'] == $this->param['group_id']){
+                    if($member_1rd['member_cert']==0){
+                      $member_1rd['member_cert']='未认证';
+                    }else{
+                      $member_1rd['member_cert']='已认证';
+                    }
+                    $member_info[]=$member_1rd;
                   }
-                  $member_info[]=$member_1rd;
 
                   $MemberRelation_2rd=MemberRelation::haswhere('memberp',['member_group_id'=>$this->param['group_id']])->where('relation_parent_id='.$value['relation_member_id'])->select();
                 
@@ -565,16 +567,17 @@
           }else{
              $member_info=array();
              #查询出我的所有下级
-             $MemberRelation_1rd=MemberRelation::with('memberp')->where("relation_parent_id={$this->param['uid']}")->select();
+             $MemberRelation_1rd=MemberRelation::haswhere('memberp')->where("relation_parent_id={$this->param['uid']}")->select();
              if(!empty($MemberRelation_1rd)){
                foreach ($MemberRelation_1rd as $key => $value) {
                    $member_1rd=Members::where(['member_id'=>$value['relation_member_id']])->field('member_id,member_image, member_mobile, member_creat_time, member_cert,member_group_id')->find();
-
-                   if($member_1rd['member_cert']==$array['member_cert']){
-                     if($member_1rd['member_cert']==0){
-                      $member_1rd['member_cert']='未认证';
-                    }else{
-                      $member_1rd['member_cert']='已认证';
+                   if($member_1rd['member_group_id'] == $this->param['group_id']){
+                     if($member_1rd['member_cert']==$array['member_cert']){
+                       if($member_1rd['member_cert']==0){
+                        $member_1rd['member_cert']='未认证';
+                      }else{
+                        $member_1rd['member_cert']='已认证';
+                      }
                     }
 
                      $member_info[]=$member_1rd;
@@ -603,18 +606,13 @@
 
             }
           }
-          #删除不属于该用户组的
-          foreach ($member_info as $key => $value) {
-             if($value['member_group_id']!=$this->param['group_id']){
-                 unset($member_info[$key]);
-             }
-             
-          }
+         
+         
           $data['totalChildAmount']=count($member_info);
           $data['list']=$member_info;
           return ['code'=>200, 'msg'=>'信息反馈成功~','data'=>$data];
       }
-
+     
       /**
       *  @version get_upgrade_price method / Api 会员等级列表
       *  @author $bill$(755969423@qq.com)
@@ -643,7 +641,21 @@
                 $cashout=PassagewayItem::haswhere('passageway',['passageway_state'=>1,'passageway_also'=>1])->where(['item_group'=>$value['group_id']])->order('item_rate','asc')->find();
                 #2获取代还最低费率
                 $repay=PassagewayItem::haswhere('passageway',['passageway_state'=>1,'passageway_also'=>2])->where(['item_group'=>$value['group_id']])->order('item_also','asc')->find();
-                $data['group'][$key]['rate']='刷卡费率低至：'.$cashout['item_rate'].'% 代还费率低至：'.$repay['item_also'].'% + '.$repay['item_charges']/100 ."元/笔";
+                if($cashout['item_charges']==0){
+                  $cashout_item_charges='';
+                }else{
+                  $cashout_item_charges='+'.$cashout['item_charges']/100 .'元/笔';
+                }
+
+                if($repay['item_charges']==0){
+                  $repay_item_charges='';
+                }else{
+                  $repay_item_charges='+'.$repay['item_charges']/100 .'元/笔';
+                }
+                
+
+                $data['group'][$key]['rate']='刷卡费率低至:'.$cashout['item_rate'].'%'.$cashout_item_charges .' 代还费率低至:'.$repay['item_also'].'%'.$repay_item_charges;
+
                 $data['group'][$key]['des']=$value['group_des'];
                 // $passageway=Passageway::where(['passageway_state'=>1])->select();
                 // foreach ($passageway as $k => $val) {

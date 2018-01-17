@@ -101,7 +101,7 @@
 
      /**
       *  @version mishua / Api 米刷支付商户入网接口
-      *  @author $bill$(755969423@qq.com)
+      *  @author $bill$(928791694@qq.com)
       *  @datetime    2017-12-25 14:36:05
       *  @param   $member=要入网的会员   ☆☆☆::使用中
       **/
@@ -120,20 +120,12 @@
         'drawFeeRatio'=>'0',//提现费率
         'drawFeeAmt'=>'0',//单笔提现易手续费
       );
-      // var_dump($params);die;
-      // var_dump($this->membernet->LkYQJ);die;
       $url='http://pay.mishua.cn/zhonlinepay/service/rest/creditTrans/updateMerchant';
       $income=repay_request($params, $this->passway->passageway_mech, $url, $this->passway->iv, $this->passway->secretkey, $this->passway->signkey);
       if($income['code']==200)
         return true;
 
       return $income['msg'];
-      // if($income[])
-      // $arr=array(
-      //   'net_member_id'=>$member_info['cert_member_id'],
-      //   "{$passageway['passageway_no']}"=>$income['userNo']
-      // );
-      //   return $arr;
     }
 
 
@@ -170,9 +162,12 @@
            //dump($data);
            if($data['respCode']=="00" || $data['merchno']!="")
                  $res=MemberNet::where(['net_member_id'=>$this->member->member_id])->setField($this->passway->passageway_no, $data['merchno']);
-           // return ($data['respCode']=="00" || $res) ? true :  false;
-           return $data;
+           return true;
       } 
+
+
+
+
       #荣邦 1.4.3.根据邀请码，修改商户费率与D0费率
       public function rongbangnet(){
         $memberAlso=PassagewayItem::where(['item_group'=>$this->member->member_group_id,'item_passageway'=>$this->passway->passageway_id])->find();
