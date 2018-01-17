@@ -173,7 +173,7 @@ class Userurl extends Controller
 		$this->checkToken();
 		#进行中
 		// $this->param['uid']=16;
-		$generation=Generation::with('creditcard')->where(['generation_member'=>$this->param['uid'],'generation_state'=>2])->select();
+		$generation=Generation::with('creditcard')->where(['generation_member'=>$this->param['uid'],'generation_state'=>2])->order('generation_add_time','desc')->select();
 		foreach ($generation as $key => $value) {
 			//判断自动执行表 是否全部完成执行 取未执行的计划
 			$haventDone=GenerationOrder::where(['order_no'=>$value['generation_id'],'order_status'=>1])->find();
@@ -196,7 +196,7 @@ class Userurl extends Controller
 		// }
 
 		#完成
-		$generation3=Generation::with('creditcard')->where(['generation_member'=>$this->param['uid'],'generation_state'=>['in','3,4']])->select();
+		$generation3=Generation::with('creditcard')->where(['generation_member'=>$this->param['uid'],'generation_state'=>['in','3,4']])->order('generation_add_time','desc')->select();
 		foreach ($generation3 as $key => $value) {
 				$generation3[$key]['generation_card']=substr($value['generation_card'], -4);
 				$generation3[$key]['count']=GenerationOrder::where(['order_no'=>$value['generation_id']])->count();
