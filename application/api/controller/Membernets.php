@@ -158,16 +158,16 @@
       }
       #荣邦1.4.3.商户通道入驻接口
       public function rongbangIn(){
-        // $userinfo=db('member_net')->where('net_member_id',$this->member->member_id)->value('AiqJE');
-        $userinfo=db('member_net')->where('net_member_id',$this->member->member_id)->value('AiqJE');
+        $userinfo=db('member_net')->where('net_member_id',$this->member->member_id)->value($this->passway->passageway_no);
+        // var_dump($userinfo);die;
         $userinfo=explode(',', $userinfo);
         $arr=array(
           'companyid'   =>$userinfo[0],
           // 'accounttype'   =>1,
           // 'bankaccount'   =>1,
         );
+        // echo json_encode($arr);die;
         $data=rongbang_curl(rongbang_foruser($this->member,$this->passway),$arr,'masget.pay.compay.router.samename.open');
-        // var_dump($data);die;
         if($data['ret']==0){
           return $data['data'];
         }else{
@@ -260,9 +260,8 @@
   "paymenttypeid": "25",
   "ordernumber": "test201801101523"
 }';
-
         //402573747  封顶通道 
-        if($this->passway->passageway_mech==402573747){
+        if($this->passway->passageway_id==11){
           $paymenttypeid='4';
           $payextraparams='"{\"bankaccount\":\"'.$credit['card_bankno'].'\"}"';
           //402512992 快捷无积分
@@ -285,18 +284,23 @@
         // echo ($arr);die;
         // echo (json_encode($arr));die;
           $data=rongbang_curl(rongbang_foruser($this->member,$this->passway),$arr,'masget.pay.compay.router.back.pay');
-        dump($data);die;
-          // $data=rongbang_curl($this->passway,$arr,'masget.pay.compay.router.back.pay');
-          if($data['ret']==0){
+          if(isset($data['ret']) && $data['ret']==0){
         // dump($data);die;
             return $data['data'];
+            #封顶 通道 成功返回html 字符串
+          }elseif(is_string($data)){
+            # 因为 无积分是要转换的，所以在此做成与无积分返回格式一致
+            return [
+              'html'=>base64_encode($data),
+              'ishtml'=>1
+            ];
           }else{
             return $data['message'];
           }
       }
       #荣邦 1.5.2.查询交易订单
       public function rongbang_check_pay($ordernumber){
-        $userinfo=db('member_net')->where('net_member_id',$this->member->member_id)->value('AiqJE');
+        $userinfo=db('member_net')->where('net_member_id',$this->member->member_id)->value($this->passway->passageway_no);
         $userinfo=explode(',', $userinfo);
         $arr=[
           'ordernumber'=>$ordernumber,
