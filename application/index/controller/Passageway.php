@@ -35,6 +35,7 @@ class Passageway extends Common{
 	 #通道对会员组税率调整
 	 public function rate()
 	 {
+	 	$members=Member::haswhere('membernet',$passageway->passageway_no." != ''")->where(['member_group_id'=>1])->select();
 	  	 #获取通道
 	  	 if(!Request::instance()->param('id'))
 	  	 	 return '参数错误';
@@ -87,7 +88,7 @@ class Passageway extends Common{
  	 	 	 				$PassagewayItem->where($wheres)->update($data[$v['item_group']]);
  	 	 	 				//取出该用户组下所有会员
  	 	 	 				// $members=db('member')->where('member_group_id',$v['item_group'])->select();
- 	 	 	 				$members=Member::haswhere('membernet',$passageway->passageway_no." != ''")->select();
+ 	 	 	 				$members=Member::haswhere('membernet',$passageway->passageway_no." != ''")->where(['member_group_id'=>$v['item_group']])->select();
  	 	 	 				 //遍历进行 第三方资料变更 
  	 	 	 				foreach($members as $member){
  	 	 	 					// $membernet=db('member_net')->where('net_member_id',$member['member_id'])->find();
@@ -101,7 +102,7 @@ class Passageway extends Common{
 						 			 $method=$passageway->passageway_method;
 						 			 $success=$Membernetsedit->$method();
 					 	 	 		//通过是否存在返回更新
-					 	 	 		if($success!=true){
+					 	 	 		if($success!==true){
 					 	 	 			$content=['type'=>'warning','msg'=>$success];
 					 	 	 			break;
 					 	 	 		}
