@@ -56,7 +56,11 @@
 </div>
 <div class="list">
   <header>
-    <h3><i class="icon-list-ul"></i> 订单列表 <small>共 <strong class="text-danger">{{$count}}</strong> 条</small></h3>
+    <h3>
+        <i class="icon-list-ul"></i> 订单列表 <small>共 <strong class="text-danger">{{$count}}</strong> 条</small>
+        <i class="icon icon-yen"></i> 还款总金额 <small>共 <strong class="text-danger">{{$sum}}</strong> 元</small>
+        <i class="icon icon-yen"></i> 剩余还款总金额 <small>共 <strong class="text-danger">{{$surplussum}}</strong> 元</small>
+    </h3>
   </header>
 
 <table class="table table-striped table-hover">
@@ -74,7 +78,6 @@
           <th>开始还款日期</th>
           <th>最后还款日期</th>
           <th>计划状态</th>
-          <!-- <th>还款失败原因</th> -->
           <th>操作</th>
         
       </tr>
@@ -99,7 +102,6 @@
           <td>{{$v['generation_start']}}</td>
           <td>{{$v['generation_end']}}</td>
           <td>@if($v['generation_state']==2) 还款中 @elseif($v['generation_state']==3)还款结束 @elseif($v['generation_state']==-1)还款失败 @else 待确认 @endif</td>
-          <!-- <td>{{$v['generation_desc']}}</td> -->
           <td><a class="btn btn-sm"  href="{{url('/index/Plan/info/id/'.$v['generation_id'])}}" >查看详情</a></td>
       </tr>
         @endforeach

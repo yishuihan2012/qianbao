@@ -93,8 +93,8 @@ class CashOut
 	            'description' 	=> $description, //交易描述
 	            'orderDate'   => date('YmdHis', time()), //订单日期
 	            'tradeNo'     	=> $tradeNo, //商户平台内部流水号，请确保唯一 TOdo
-	            'notifyUrl'   	=> $this->passway_info->cashout->cashout_callback,/*HOST . "/index.php?s=/Api/Quckpayment/qucikPayCallBack"*/ //异步通知URL
-	            'callbackUrl' 	=>$_SERVER['HTTP_HOST'].'/api/Userurl/calllback_success',/*HOST . "/index.php?s=/Api/Quckpayment/turnurl"*/ //页面回跳地址
+	            'notifyUrl'   	=> $_SERVER['HTTP_HOST'].$this->passway_info->cashout->cashout_callback, //异步通知URL
+	            'callbackUrl' 	=> $_SERVER['HTTP_HOST'].'/api/Userurl/calllback_success',/*HOST . "/index.php?s=/Api/Quckpayment/turnurl"*/ //页面回跳地址
 	            'payCardNo' => $this->card_info->card_bankno, //信用卡卡号
 	            'accName'    => $this->card_info->card_name, //持卡人姓名 必填
 	            'accIdCard'   => $this->card_info->card_idcard, //卡人身份证  必填
@@ -179,7 +179,7 @@ class CashOut
 	            'bankCode'	=> '123',//银行卡对应的银行编码
 	            'bankName'	=> $this->card_info->card_bankname,//银行卡对应的银行名称。采用URLEncode编码
 	            'settleType'	=> 3,//固定值2-T+1结算
-	            'notifyUrl'		=> $this->passway_info->cashout->cashout_callback,//支付完成后将支付结果回调至该链接
+	            'notifyUrl'		=> $_SERVER['HTTP_HOST'].$this->passway_info->cashout->cashout_callback,//支付完成后将支付结果回调至该链接
 	            'returnUrl'		=> $_SERVER['HTTP_HOST'].'/api/Userurl/calllback_success',//支付完成后前端跳转地址
 	            //'signature'	=> ,//对签名数据进行MD5加密的结果。参见3.1
 	      );
@@ -341,7 +341,7 @@ class CashOut
 	 }
 
 
-	 	 /**
+	 /**
 	 * @version 金易付套现 
 	 * @authors bill(755969423@qq.com)
 	 * @date    2017-12-23 16:25:05
@@ -375,8 +375,8 @@ class CashOut
 	            'bizType'=>'4301',//业务类型
 	            'randomStr'=>$tradeNo,// 随机串
 	            'orderId'=>$tradeNo ,//商户订单号
-	            'notifyUrl'=>$this->passway_info->cashout->cashout_callback, //异步通知URL,  //后台异步通知地址
-	            'frontNotifyUrl'=>'123',
+	            'notifyUrl'=>$_SERVER['HTTP_HOST'].$this->passway_info->cashout->cashout_callback, //异步通知URL,  //后台异步通知地址
+	            'frontNotifyUrl'=>$_SERVER['HTTP_HOST'].'/api/Userurl/calllback_success',
 	            'lpCertNo'=>$this->card_info->card_idcard, // 持卡人身份证号
 	            'accNo'=> $this->card_info->card_bankno, // 银行卡号
 	            'phoneNo'=>$this->card_info->card_phone, // 银行预留手机号
@@ -443,7 +443,7 @@ class CashOut
 	      );
 	      #1记录为 shangji 有效推荐人
 	      $Plan_cation=new \app\api\controller\Planaction();
-          $Plan_cation=$Plan_cation->recommend_record($this->member_infos->member_id);
+           $Plan_cation=$Plan_cation->recommend_record($this->member_infos->member_id);
     	 	 $data_result=new CashOrder($data);
     	 	 if($data_result->allowField(true)->save()===false)
     	 	 	 return false;

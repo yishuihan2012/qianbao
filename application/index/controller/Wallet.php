@@ -48,11 +48,25 @@ class Wallet extends Common
     	#查看单个会员钱包日志(look_log)
 	public function look_log(Request $request)
 	{
-		$wallet = Wallets::get(Request::instance()->param('id'));
 		$where['log_wallet_id'] = Request::instance()->param('id');
-
-		$WalletLog =WalletLog::where($where)->select();
-
+		$where['log_wallet_amount'] = array("<>",0);
+	 	if(request()->param('beginTime') && request()->param('endTime')){
+			$endTime=strtotime(request()->param('endTime'))+24*3600;
+			$where['log_add_time']=["between time",[request()->param('beginTime'),$endTime]];
+		}
+		if(request()->param('log_wallet_type')!=''){
+			$where['log_relation_type'] = array("=",request()->param('log_wallet_type'));
+		}
+		$wallet = Wallets::get(Request::instance()->param('id'));
+		
+		$WalletLog =WalletLog::where($where)->paginate(Config::get('page_size'), false, ['query'=>Request::instance()->param()]);
+		$this->assign("log_wallet_id",Request::instance()->param('id'));
+		#计算进账
+		$entertottal = WalletLog::where($where)->where(['log_relation_type' => 1])->sum("log_wallet_amount");
+		$this->assign("entertottal",$entertottal);
+		#计算出账
+		$leavetotal = WalletLog::where($where)->where(['log_relation_type' => 2])->sum("log_wallet_amount");
+		$this->assign("leavetotal",$leavetotal);
 		$this->assign('wallet', $wallet);
 		$this->assign('WalletLog', $WalletLog);
 		return view('admin/wallet/log');

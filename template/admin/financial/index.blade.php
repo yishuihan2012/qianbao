@@ -9,19 +9,38 @@
 
  <div class="panel">
       <div class="panel-body">
-      <form action="" method="post">
-           <div class="input-group" style="width: 200px;float: left; margin-right: 10px;">
-                <input type="text" class="form-control date-picker" id="dateTimeRange" placeholder="注册时间查询" />
-                <input type="hidden" name="beginTime" id="beginTime" value="" />
-                <input type="hidden" name="endTime" id="endTime" value="" />
-                <z class='clearTime'>X</z>
+      <form action="{{url('index/Financial/index')}}" method="post">
+           <div class="col-sm-2">
+                <div class="input-control has-icon-left">
+                     <input id="inputAccountExample1" type="text" class="form-control" name="member_nick" placeholder="用户姓名或者手机号" value="{{$conditions['member_nick'] or ''}}">
+                     <label for="inputAccountExample1" class="input-control-icon-left"><i class="icon icon-user "></i></label>
+                </div>
            </div>
-           <button class="btn btn-primary" type="submit">搜索</button>
+           <div class="col-sm-2">
+                <div class="input-group">
+                     <span class="input-group-btn"><button class="btn btn-default" type="button">金额</button></span>
+                     <input type="text" class="form-control" name="min_money" value="{{$conditions['min_money'] or ''}}">
+                     <span class="input-group-btn fix-border"><button class="btn btn-default" type="button">~</button></span>
+                     <input type="text" class="form-control" name="max_money" value="{{$conditions['max_money'] or ''}}">
+                </div>
+           </div>
+           <div class="col-sm-2">
+                <div class="input-group">
+                     <input type="text" class="form-control date-picker" id="dateTimeRange" placeholder="收益时间查询" value="{{$conditions['beginTime'] or ''}}-{{$conditions['endTime'] or ''}}" />
+                     <input type="hidden" name="beginTime" id="beginTime" value="{{$conditions['beginTime'] or ''}}" />
+                     <input type="hidden" name="endTime" id="endTime" value="{{$conditions['endTime'] or ''}}" />
+                     <z class='clearTime'>X</z>
+                </div>
+           </div>
+           <div class="col-sm-1">
+                <button class="btn btn-primary" type="submit">搜索</button>
+           </div>
       </form>
     </div>
  </div>
 
- <blockquote> 对账中心</blockquote>
+ <blockquote> 对账中心: 会员升级收益 <strong class="text-danger">{{$data['level']}}</strong> 元, 快捷支付收益 <strong class="text-danger">{{$data['quickPay']}}</strong> 元, 代还收益 <strong class="text-danger">{{$data['autoPay']}}</strong> 元, 共提现成功 <strong class="text-danger"> {{$data['withdraw']}} </strong>元。
+ </blockquote>
  <section>
  <hr/>
  <div id="tabs" class="tabs">

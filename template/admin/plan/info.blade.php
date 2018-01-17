@@ -10,7 +10,7 @@
 <hr/>
 <div class="list">
   <header>
-    <h3><i class="icon-list-ul"></i> 信用卡列表 <small>共 <strong class="text-danger">{{count($list)}}</strong> 条</small></h3>
+    <h3><i class="icon-list-ul"></i> 计划列表详情 <small>共 <strong class="text-danger">{{count($list)}}</strong> 条</small></h3>
   </header>
    
 
@@ -88,8 +88,8 @@
     	 $(".remove").click(function(){
     	 	 var url=$(this).attr('data-url');
 		 bootbox.confirm({
-		    title: "删除信用卡",
-		    message: "确定删除信用卡? 删除后不可恢复!",
+		    title: "计划列表详情",
+		    message: "是否执行此操作",
 		    buttons: {
 		        cancel: {label: '<i class="fa fa-times"></i> 点错'},
 		        confirm: {label: '<i class="fa fa-check"></i> 确定'}

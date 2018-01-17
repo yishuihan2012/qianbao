@@ -29,7 +29,7 @@ class MemberNovice extends Model{
            #TODO:自定义的初始化
       }
       #获取用户指引列表
-      public static function list($data = 0){
+      public static function lists($data = 0){
         return $list = Db::table("wt_member_novice")->where(['novice_class' => $data])->select();
       }
 

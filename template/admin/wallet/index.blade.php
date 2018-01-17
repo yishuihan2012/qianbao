@@ -38,7 +38,7 @@
 	      	 <td>{{$wallet->wallet_add_time}}</td>
 	      	 <td>
 	      		 <div class="btn-group">
-	  				 <a type="button" class="btn btn-sm" data-remote="{{url('/index/wallet/look_log/id/'.$wallet->wallet_id)}}" data-size='lg' data-toggle="modal" href="#">查看日志</a>
+	  				 <a  class="btn btn-sm"  href="{{url('/index/wallet/look_log/id/'.$wallet->wallet_id)}}">查看日志</a>
 	  				 <div class="btn-group">
 					      <button type="button" class="btn dropdown-toggle btn-sm" data-toggle="dropdown"><span class="caret"></span></button>
 					    	 <ul class="dropdown-menu" role="menu">

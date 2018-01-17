@@ -32,7 +32,7 @@ class Commission extends Model{
       #一对一关联用户表
       public function member()
       {
-           return $this->hasOne('Member', 'member_id', 'commission_member_id')->bind('member_nick');
+           return $this->hasOne('Member', 'member_id', 'commission_member_id','','left')->bind('member_nick');
       }
       #一对一关联用户表
       public function members()

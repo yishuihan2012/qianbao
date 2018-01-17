@@ -12,6 +12,7 @@ use app\index\model\MemberGroup;
 use app\index\model\MemberRelation;
 use app\index\model\MemberCert;
 use app\index\model\MemberCashcard;
+use app\index\model\Passageway;
 use app\index\model\Upgrade;
 use app\api\controller\Commission;
 use app\index\model\Commission as Commissions;
@@ -28,12 +29,6 @@ class Member extends Common{
 	 {
 	 	//传入参数
 	 	$r=request()->param();
-	 	$a=Members::all();
-	 	$list=[];
-	 	foreach ($a as $k => $v) {
-	 		$list[$k]['id']=$v['member_id'];
-	 		$list[$k]['root_id']=find_root($v['member_id']);
-	 	}
 	 	 #搜索条件
 	 	$data = memberwhere($r);
 	 	$r = $data['r'];
@@ -42,6 +37,8 @@ class Member extends Common{
 		if(request()->param('beginTime') && request()->param('endTime')){
 			$endTime=strtotime(request()->param('endTime'))+24*3600;
 			$where['member_creat_time']=["between time",[request()->param('beginTime'),$endTime]];
+			$this->assign('beginTime',request()->param('beginTime'));
+			$this->assign('endTime',request()->param('endTime'));
 		}
 		#身份证查询
 		$wheres = array();
@@ -52,7 +49,7 @@ class Member extends Common{
 		}
 		#若当前用户为运营商用户
 		if($this->admin['adminster_group_id']==5){
-			$where['member_root']=$this->admin['adminster_user_id'];
+			$where['member_id']=["in",$this->admin['children']];
 		}
 	 	 //获取会员等级
 	 	 $member_group=MemberGroup::all();
@@ -113,6 +110,7 @@ class Member extends Common{
 	 }
 	 #升级会员
 	 public function upgrade(){
+	 	
 	 	if(Request::instance()->isPost()){
 	 		$where['member_id'] = request()->param("member_id");
 
@@ -148,6 +146,14 @@ class Member extends Common{
 			 			$upgrade_data['upgrade_state'] = 0;
 			 			$upgrade_data['upgrade_bak'] = "后台管理员升级";
 			 			$upgrade_data['upgrade_adminster_id'] = Session::get("adminster")['id'];
+
+			 			$passageway=Passageway::where(['passageway_state'=>1,'passageway_status'=>1])->select();
+			 			// print_r($passageway);die;
+			 			foreach ($passageway as $key => $value) {
+			 				 $Alipay=new \app\api\controller\Membernetsedit($info['member_id'],$value['passageway_id'],'M03','',$info['member_mobile']);
+			 				 $method=$value['passageway_method'];
+			 				 $success=$Alipay->$method();
+			 			}
 			 			//添加用户日志
 			 			$Upgrade =  new Upgrade($upgrade_data);
 			 			$result = $Upgrade->allowField(true)->save();
@@ -206,17 +212,27 @@ class Member extends Common{
 	 	$certwhere['cert_member_id'] = request()->param("id");
 	 	$certresult = MemberCert::where($certwhere)->delete();
 	 	$content = ($result===false && $certresult ==false && $cardresult==false) ? ['type'=>'error','msg'=>'修改信息失败'] : ['type'=>'success','msg'=>'修改信息成功'];
-
-
 	 	Session::set('jump_msg', $content);
 	 	$this->redirect("member/index");
 	 }
 	 //会员分佣分润
 	public function commiss(){
 	 	$commiss = new Commission();
-	 	$list = Commissions::where(['commission_member_id' => request()->param("memberId")])->select();
+	 	$where['commission_member_id'] = request()->param("memberId");
+	 	if(request()->param('beginTime') && request()->param('endTime')){
+			$endTime=strtotime(request()->param('endTime'))+24*3600;
+			$where['commission_creat_time']=["between time",[request()->param('beginTime'),$endTime]];
+		}
+		if(request()->param('min_money') && request()->param("max_money")){
+			$where['commission_money'] = array(">=",request()->param('min_money'));
+			$where['commission_money'] = array("<=",request()->param('max_money'));
+		}
+	 	$list = Commissions::where($where)->order("commission_id desc")->paginate(Config::get('page_size'), false, ['query'=>Request::instance()->param()]);
+	 	#统计金额
+	 	$sum = Commissions::where($where)->sum("commission_money");
+	 	$this->assign("memberId",request()->param("memberId"));
+	 	$this->assign("sum",$sum);
 	 	$this->assign("list",$list);
-	 	return view("admin/member/commiss");
-	 	
+	 	return view("admin/member/commiss");	
 	}
 }

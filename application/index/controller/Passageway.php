@@ -60,6 +60,7 @@ class Passageway extends Common{
 	 	 	 	//以用户组为键 转储到data
 	 	 	 	$data[$group_id]['item_'.$key_fix]=$v;
  	 	 	} 	
+ 	 	 	// print_r($data);die;
  	 	 	// halt($passageway->passageway_mech);
  	 	 	 #查询库中是否存在数据
  	 	 	 $passage=PassagewayItem::where(['item_passageway'=>Request::instance()->param('id')])->select();
@@ -380,7 +381,7 @@ class Passageway extends Common{
 			$where['order_state']=2;
 			//运营商
 			if($adminster['adminster_user_id'] && $group_id==5){
-				$where['order_root']=$adminster['adminster_user_id'];
+				$where['order_member']=["in",$adminster['children']];
 			}
 			$passageway->sum=db('cash_order')->where($where)->sum('order_money');
 			$passageway->charge=db('cash_order')->where($where)->sum('order_charge');
@@ -399,7 +400,7 @@ class Passageway extends Common{
 			$where['order_status']=2;
 			//运营商
 			if($adminster['adminster_user_id'] && $group_id==5){
-				$where['order_root']=$adminster['adminster_user_id'];
+				$where['member_id']=["in",$adminster['children']];
 			}
 			$passageway->sum=db('generation_order')->where($where)->sum('order_money');
 			$passageway->charge=db('generation_order')->where($where)->sum('order_pound');
@@ -409,6 +410,8 @@ class Passageway extends Common{
 				->order('o.order_id desc')
 		 	 	->paginate(Config::get('page_size'), false, ['query'=>Request::instance()->param()]);
 		 	 	$where['commission_type']=3;
+		 	 	if(isset($where['member_id']))
+		 	 		unset($where['member_id']);
 			$passageway->fenrun=db('generation_order')->alias('o')
 				->join('commission c','o.order_id=c.commission_from')
 				->where($where)

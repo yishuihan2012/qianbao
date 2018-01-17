@@ -60,7 +60,7 @@
 
  <!--dialog Button-->
  <div class="modal-footer animated fadeInLeft">
-	 <button type="button" class="btn btn-primary save">保存</button>
+	 <!-- <button type="button" class="btn btn-primary save">保存</button> -->
       <button type="button" class="btn" data-dismiss="modal">关闭</button>
  </div>
 

@@ -86,7 +86,7 @@
                            <button type="button" class="btn btn-sm dropdown-toggle" data-toggle="dropdown"><span class="caret"></span></button>
                            <ul class="dropdown-menu" role="menu">
                                 <li><a data-toggle="modal" data-remote="{{url('/index/member/upgrade/id/'.$val->member_id.'/member_group_id/'.$val->member_group_id)}}" href="#">升级会员</a></li>
-                                <li><a data-toggle="modal" data-size="lg" data-remote="{{url('/index/member/commiss',['memberId'=>$val->member_id])}}" href="#">分佣分润</a></li>
+                                <li><a   data-remote="{{url('/index/member/commiss',['memberId'=>$val->member_id])}}" href="{{url('/index/member/commiss',['memberId'=>$val->member_id])}}">分佣分润</a></li>
                            </ul>
                      </div>
                      @endif
@@ -132,11 +132,15 @@
 <!-- {!! $member_list->render() !!}<em>当前共{{$count}}条</em> -->
  <script type="text/javascript">
  $(document).ready(function(){
+  var start="{{(isset($beginTime))?$beginTime : ''}}";
+  var end="{{(isset($endTime))?$endTime : ''}}";
+
       $('table.datatable').datatable({sortable: true});
      	 $('.menu .nav .active').removeClass('active');
     	 $('.menu .nav li.member').addClass('active');
     	 $('.menu .nav li.member-manager').addClass('show');
 
+$('#dateTimeRange span').html();
 $('#dateTimeRange').daterangepicker({
         applyClass : 'btn-sm btn-success',
         cancelClass : 'btn-sm btn-default',
@@ -173,7 +177,14 @@ $('#dateTimeRange').daterangepicker({
     }, function(start, end, label) { // 格式化日期显示框
         $('#beginTime').val(start.format('YYYY-MM-DD'));
         $('#endTime').val(end.format('YYYY-MM-DD'));
+        $('#dateTimeRange').val(start+'-'+end);
     });
+  setTimeout(function(){
+        $('#beginTime').val(start.format('YYYY-MM-DD'));
+        $('#endTime').val(end.format('YYYY-MM-DD'));
+        $('#dateTimeRange').val(start+'-'+end);
+        console.log(start);
+      },100);
 begin_end_time_clear();
 $('.clearTime').click(begin_end_time_clear);
   //清除时间

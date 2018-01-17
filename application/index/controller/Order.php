@@ -6,7 +6,7 @@
  *   @return 
  */
 namespace app\index\controller;
- use think\Db;
+use think\Db;
 use app\index\model\Order as Orders;
 use app\index\model\Withdraw;
 use app\index\model\WalletLog;
@@ -63,13 +63,16 @@ class Order extends Common{
 
 	 #订单详情
 	 public function edit(Request $request){
+
 	 	if(!$request->param('id'))
 	 	 {
 			 Session::set('jump_msg', ['type'=>'error','msg'=>'参数错误']);
 			 $this->redirect($this->history['1']);
 	 	 }
+
 	 	 #查询到当前订单的基本信息
 	 	 $order_info=Orders::with('member')->find($request->param('id'));
+	 	  // dump( $order_info);
 	 	 $this->assign('order_info', $order_info);
 	 	 return view('admin/order/edit');
 	 }
