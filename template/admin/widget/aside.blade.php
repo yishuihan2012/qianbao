@@ -6,7 +6,7 @@
 
         <li class="dashboard"><a href="{{url('/index/dashboard/index')}}"><i class="0icon icon-dashboard"></i> 控制面板</a></li>
         <li class="nav-parent member-manager">
-            <a href="javascript:;"><i class="0icon icon-user"></i> 会员管理</a>
+            <a href="javascript:;"><i class="icon icon-user"></i> 会员管理</a>
             <ul class="nav">
                 <li class="member"><a href="{{url('/index/member/index')}}"> 会员管理</a></li>
                 @if($admin['adminster_group_id']!=5)
@@ -14,6 +14,14 @@
                 @endif
             </ul>
         </li>
+        @if($admin['adminster_group_id']!=5)
+        <li class="nav-parent member-activation-code">
+            <a href="javascript:;"><i class="icon icon-barcode"></i> 激活码管理</a>
+            <ul class="nav">
+                <li class="activation_code"><a href="{{url('/index/activation_code/index')}}"> 激活码列表 </a></li>
+            </ul>
+        </li>
+        @endif
         @if($admin['adminster_group_id']!=5)
         <li class="nav-parent wallet-manager">
             <a href="javascript:;"><i class="icon icon-dollar"></i>钱包管理</a>
