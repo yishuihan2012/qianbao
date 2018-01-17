@@ -460,7 +460,7 @@ use app\index\model\Member;
                     $this->transferApply($reback_order->toArray(),true);
                   }else{
                     Db::rollback();
-                    return ['code'=>481,'msg'=>get_status_text(481)];
+                    return ['code'=>481];
                   }
                 }
               }
