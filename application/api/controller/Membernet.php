@@ -395,7 +395,7 @@ use app\index\model\Member;
       }
       //3余额查询
       //http://pay.mishua.cn/zhonlinepay/service/rest/creditTrans/accountQuery
-      public function accountQuery($uid){
+      public function accountQuery($uid,$is_print=""){
         $passageway=Passageway::where(['passageway_id'=>8])->find();
         #4获取用户信息
         $member=MemberNets::where(['net_member_id'=>$uid])->find();
@@ -407,8 +407,11 @@ use app\index\model\Member;
         );
         // var_dump($params);die;
         $income=repay_request($params,$passageway->passageway_mech,'http://pay.mishua.cn/zhonlinepay/service/rest/creditTrans/accountQuery',$passageway->iv,$passageway->secretkey,$passageway->signkey);
-        // return $income;
-        echo json_encode($income);die;
+        if($is_print){
+            echo json_encode($income);die;
+        }else{
+          return $income;
+        } 
       }
       public function mishuaedit($uid=16,$passageway='8'){
          #1实名信息
@@ -438,6 +441,7 @@ use app\index\model\Member;
                 $money=db('reimbur')->where('reimbur_generation',$generation_id)->value('reimbur_left');
                 if($money>0){
                   $userinfo=$this->accountQuery($generation['generation_member']);
+                  // print_r($userinfo);die;
                   $realMoney=$userinfo['lastAmt']+$userinfo['availableAmt']-$userinfo['usedAmt'];
                   //判断本次计划还款总金额 是否不大于 商户平台中该用户的余额
                   if($money<=$realMoney){
