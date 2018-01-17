@@ -45,6 +45,7 @@
             <a href="javascript:;"><i class="icon icon-user"></i> 通道管理</a>
             <ul class="nav">
                 <li class="passageway"><a href="{{url('/index/passageway/index')}}"><i class="icon icon-sliders"></i> 通道列表</a></li>
+                <!-- <li class="passageway_rate"><a href="{{url('/index/passageway_rate/index')}}"><i class="icon icon-sliders"></i> 费率编码表</a></li> -->
             </ul>
         </li>
         @if($admin['adminster_group_id']!=5)
@@ -120,7 +121,7 @@
                 <li class="setting-customer_service service"><a href="{{url('/index/system/customer_service')}}"><i class="icon icon-sliders"></i> 客服管理</a></li>
                 <li class="setting-announcement"><a href="{{url('/index/system/announcement')}}"><i class="icon icon-sliders"></i> 公告管理</a></li>
                 <li class="setting-Appversion"><a href="{{url('/index/appversion/index')}}"><i class="icon icon-sliders"></i> APP版本号</a></li>
-                <li class="setting-Appversion"><a href="{{url('/index/uploads/logo')}}" data-remote="" data-size="lg" data-toggle="modal"><i class="icon icon-sliders"></i> 网站logo上传</a></li>
+                <li class="setting-logo"><a href="{{url('/index/uploads/logo')}}" data-remote="" data-size="lg" data-toggle="modal"><i class="icon icon-sliders"></i> 网站logo上传</a></li>
             </ul>
         </li>
         @endif

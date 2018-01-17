@@ -30,6 +30,7 @@ class Generalize extends Common{
 	 #添加素材
 	 public function creat()
 	 {
+	 	dump(Request::instance()->isPost());die;
 	 	 if(Request::instance()->isPost())
 	 	 {
 	 		 $Generalizes = new Generalizes($_POST);
