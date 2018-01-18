@@ -27,6 +27,7 @@ namespace app\index\controller;
 			 Session::set('jump_msg', ['type'=>'error','msg'=>'参数错误,缺少会员标识ID']);
 			 $this->redirect($this->history['1']);
 	 	 }
+	 	 $this->assign('button',['text'=>'添加新用户', 'link'=>url('/index/member/register'), 'modal'=>'modal']);
 	 	 $data=Members::getChild($request->param('memberId'));
 	 	 $this->assign('data', $data);
 	 	 //return view('admin/member/info');
@@ -250,4 +251,94 @@ namespace app\index\controller;
 	 	$this->assign("list",$list);
 	 	return view("admin/member/commiss");	
 	}
+	/**
+	*@version registerForOthes 用户注册
+	*@author 杨成志（3115317085@qq.com）
+	*/
+	public function registerForOthers()
+      {
+           #验证parent_phone号码是否存在
+           if(!phone_check($this->param['parent_phone']))
+                 return ['code'=>428];
+           #验证参数是否存在
+           if(!phone_check($this->param['phone']))
+                 return ['code'=>401];
+           #手机验证码参数
+           if(!isset($this->param['smsCode']) || empty($this->param['smsCode']))
+                 return ['code'=>404];
+           #验证码验证规则 读取本手机号最后一条没有使用的验证码 并且在系统设置的有效时间内            
+           $code_info=SmsCode::where(['sms_send'=>$this->param['phone'],'sms_log_state'=>1])->whereTime('sms_log_add_time', "-".System::getName('code_timeout').' minutes')->find();
+           if(!$code_info || $code_info['sms_log_content']!=$this->param['smsCode'])
+                 return ['code'=>404];
+           #改变验证码使用状态
+           $code_info->sms_log_state=2;
+           $result=$code_info->save();
+           #验证是否成功            
+           if(!$result)                  
+                 return ['code'=>404];
+           #检查用户(是否存在)            
+           $member=MemberLogin::phone_exit($this->param['phone']);
+           if($member)                  
+                 return ['code'=>309];
+           $parentmember=MemberLogin::phone_exit($this->param['parent_phone']);
+           if(!$parentmember)                  
+                 return ['code'=>428];
+           Db::startTrans();             
+           #填写注册信息             
+           try{
+                 #随机密码salt                  
+                 $rand_salt=make_rand_code();                  
+                 #加密密码
+                 $pwd=encryption(substr($this->param['phone'], -6), $rand_salt);
+                 #新增会员基本信息                  
+                 $member_info= new Members([
+                      'member_nick'=>$this->param['phone'],
+                      'member_mobile'=>$this->param['phone'],
+                      'member_group_id'=>System::getName('open_reg_membertype')]);
+                 if($member_info->save()===false)
+                 {
+                      Db::rollback();                       
+                      return ['code'=>300];                  
+                 }
+                 $token = get_token();                  
+                 $member_login= new MemberLogin([
+                      'login_member_id'=>$member_info->member_id,
+                      'login_account'    =>$this->param['phone'],                       
+                      'login_pass'  =>$pwd,                       
+                      'login_pass_salt'  =>$rand_salt,
+                      'login_token'         =>$token,                       
+                      'login_attempts'   =>0,
+                 ]);                  
+                #用户推荐表信息处理                  
+                 $meber_relation= new MemberRelation([
+                      'relation_member_id'=>$member_info->member_id,
+                       'relation_parent_id'  =>$parentmember['login_member_id'],
+                      'relation_type'     =>6,//TODO 邀请方式                  
+                 ]);
+                 #初始化会员钱包信息                  
+                 $member_wallet= new Wallet([
+                      'wallet_member'=>$member_info->member_id,
+                      'wallet_amount'=>0                  
+                ]);                  
+                 if(!$member_login->save() || !$meber_relation->save() || !$member_wallet->save())
+                 {                       
+                      Db::rollback();                       
+                      return ['code'=>300];                  
+                 }                  
+                 Db::commit();
+                 $data=Members::member_info($token);                  
+                 return  ['code'=>200,'msg'=>'帮扶注册成功~','data'=>$data]; 
+                 //请求成功             
+           } catch (\Exception $e) {                  
+                 Db::rollback();                 
+                 return ['code'=>308,'msg'=>$e->getMessage()];             
+           }       
+      }
+      /**
+      *@version register 用户注册
+      *@author 杨成志 （3115317085@qq.com
+      */
+      public function register(){
+
+      }
 }

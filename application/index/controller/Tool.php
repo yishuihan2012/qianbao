@@ -27,6 +27,7 @@ class Tool
 		$data = array('code'=>'0', 'msg'=>'没有选择上传文件', 'url'=>'');
 		#如果上传有图片
 		if($_FILES){
+
 			#循环图片上传属性
 			foreach ($_FILES as $key => $value)
 
@@ -181,5 +182,33 @@ class Tool
 		 if(Setting::getName('delpic'))
 		      @unlink($file);			
 		 return $result['info']['url'];
+	 }
+	 /**
+	 *@version KindEditor_upload 编辑器上传图片
+	 *@author 杨成志 （3115317085@qq.com)
+	 */
+	 public function KindEditor_upload($path='other',$url=''){
+	 	if($_FILES){
+	 		
+			#循环图片上传属性
+			foreach ($_FILES as $key => $value)
+
+				#获取到上传到服务器的路径
+				$path=$key;
+			#打开这个目录
+			$file = Request::instance()->file($path);
+			
+			#移动到目录
+			$info = $file->move(ROOT_PATH . 'public' . DS . 'uploads' . DS . $path);
+			// #图片上传成功与否返回对应的参数);
+			if($info){
+				$url = str_replace('\\',"/","/uploads/".$path.DS.$info->getSaveName());
+				echo json_encode(["error" => 0 , "url" => $url]);die;
+			}else{
+				echo json_encode(["message" => "上传失败" , "error" => 1]);
+			}
+						
+		}
+	 	 // echo json_encode(['error' => 0 ,"url" =>"/uploads/imgFile/20180118/6bcf276588d71b5d485c4443d7f50eb7.png"]);
 	 }
 }
