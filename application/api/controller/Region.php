@@ -174,6 +174,8 @@
         foreach ($announcement as $key => $value) {
           $data[$key]=$value['announcement_title'];
         }
+        if(empty($data))
+          $data[0]='2.0版本上线了！';
 
         return ['code'=>200, 'msg'=>'获取公告成功~', 'data'=>$data];
         
