@@ -1023,13 +1023,21 @@ function pad_or_unpad($str, $ext, $pad='pkcs5')
     #荣邦支付解密
     function rongbang_aes_decode($key, $str)
     {
-        $base64str= base64_decode($str);
-        $encrypted = mcrypt_decrypt(MCRYPT_RIJNDAEL_128, $key, $base64str, MCRYPT_MODE_CBC, $key);
-        $base64str = str_replace("-", "+", $base64str);
-        $passParam = str_replace("_", "/", $base64str);
-        return $passParam;
+        $str= safe_b64decode($str);
+        $encrypted = mcrypt_decrypt(MCRYPT_RIJNDAEL_128, $key,$str, MCRYPT_MODE_CBC, $key);
+        return $encrypted;
     }
 
+    #安全base64_decode
+    function safe_b64decode($string) {
+        $data = str_replace(array('-','_'),array('+','/'),$string);
+        $mod4 = strlen($data) % 4;
+        if ($mod4) {
+            $data .= substr('====', $mod4);
+        }
+        return base64_decode($data);
+    }
+    
     #荣邦支付生成sign
     function rongbang_sign($key, $array, $url)
     {

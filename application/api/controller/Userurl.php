@@ -783,9 +783,12 @@ class Userurl extends Controller
   public function passway_rongbang_paycallback(){
   	$param=request()->param();
   	$key=db('passageway')->where('passageway_id',$param['passageway_id'])->value('passageway_pwd_key');
-  	$data=rongbang_aes_decode($key,$param['data']);
-  	$data=json_decode($data,1);
+  	// 测试自己加密的可以解密
+  	// return rongbang_aes_decode($key,rongbang_aes($key,$param['test']));
 
+  	$data=rongbang_aes_decode($key,$param['Data']);
+  	// var_dump($data);die;
+  	$data=json_decode($data,1);
   	if($data['respcode']==2){
   		//支付完成
   		db('cash_order')->where('order_no',$data['ordernumber'])->update(['order_state'=>2]);
