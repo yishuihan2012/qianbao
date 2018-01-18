@@ -122,10 +122,14 @@ class Passageway extends Common{
 			 	 	 			break;
 				           }
  	 	 	 			}
+ 	 	 	 			#剔除已使用的数据
+ 	 	 	 			unset($data[$v['item_group']]);
  	 	 	 		}
  	 	 	 	}
- 	 	 	 	//没有数据的时候 就新增数据
- 	 	 	 }else{
+ 	 	 	 	
+ 	 	 	 }
+ 	 	 	 //还有数据的时候 就新增数据
+ 	 	 	 if(count($data)>0){
  	 	 	 	$newData=[];
  	 	 	 	foreach ($data as $k => $v) {
  	 	 	 		//组合单条数据
