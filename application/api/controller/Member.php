@@ -54,7 +54,7 @@
       //获取三级下级总数
       public function get_lower_total($uid){
           $count=0;
-          $MemberRelation_1rd=MemberRelation::where(["relation_parent_id"=>$this->param['uid']])->select();
+          $MemberRelation_1rd=MemberRelation::where(["relation_parent_id"=>$uid])->select();
           $count+=count($MemberRelation_1rd);
           foreach ($MemberRelation_1rd as $k => $val) {
                 $member_2rd=MemberRelation::where(['relation_parent_id'=>$val['relation_member_id']])->select();
@@ -490,7 +490,7 @@
       public function get_team()
       { 
       	$membercert=Members::where(['member_id'=>$this->param['uid']])->find();
-           $group=MemberGroup::select();
+           $group=MemberGroup::where(['group_visible'=>1])->select();
            // var_dump($group);die;
            $data['totalChildAmount']=0;
            foreach ($group as $key => $value) {
@@ -685,7 +685,7 @@
         // var_dump("expression");die;
             #获取用户组等级信息
         //$passagewayItem=PassagewayItem::haswhere('passageway',['passageway_state'=>1])->where(['item_group'=>$value['group_id']])->order('item_rate','asc')->find();
-            $membergroup=MemberGroup::select();
+            $membergroup=MemberGroup::where(['group_visible'=>1])->select();
             foreach ($membergroup as $key => $value) {
                 $price=sprintf("%.2f",substr(sprintf("%.3f", $value['group_level_money']), 0, -1));
                 $data['group'][$key]['name']=$value['group_name'];
@@ -746,6 +746,7 @@
               return ['code'=>314];
 
             $data['current_salt']=$current['group_salt'];
+            var_dump($data);die;
             return ['code'=>200, 'msg'=>'信息反馈成功~','data'=>$data];
       }
       //计算会员升级级别间的差价
