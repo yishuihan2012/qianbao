@@ -174,23 +174,28 @@
         //传入费率对应的在荣邦的编码
         $rate_code=db('passageway_rate')->where(['rate_rate'=>$memberAlso['item_rate'],'rate_passway_id'=>$this->passway->passageway_id])->find();
         if($rate_code){
-          $userinfo=db('member_net')->where('net_member_id',$this->member->member_id)->value('AiqJE');
+          $userinfo=db('member_net')->where('net_member_id',$this->member->member_id)->value($this->passway->passageway_no);
           $userinfo=explode(',', $userinfo);
           $arr=array(
             #公司ID
-            'memberid'   =>$userinfo[1],
+            'companyid'   =>$userinfo[0],
             #商户名称
-            'membername'   =>$userinfo[4],
+            // 'membername'   =>$userinfo[4],
             #邀请码(费率套餐代码)
-            'loginprefix'   =>$rate_code['rate_code'],
+            'ratecode'   =>$rate_code['rate_code'],
           );
-          $data=rongbang_curl($this->passway,$arr,'masget.rboperationsmanager.com.ratepackageinfo.queryloginprefix.update');
+          // var_dump($arr);die;
+          // $data=rongbang_curl(rongbang_foruser($this->member,$this->passway),$arr,'masget.pay.compay.router.samename.update');
+          $data=rongbang_curl($this->passway,$arr,'masget.pay.compay.router.samename.update');
+          // var_dump($data);die;
           if($data['ret']==0){
             return true;
             return $data['data'];
           }else{
             return $data['message'];
           }
+        }else{
+          return '该费率'.$memberAlso['item_rate'].'无对应的套餐编码';
         }
       }
  }

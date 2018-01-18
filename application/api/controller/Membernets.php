@@ -286,8 +286,8 @@
         // echo ($arr);die;
         // echo (json_encode($arr));die;
           $data=rongbang_curl(rongbang_foruser($this->member,$this->passway),$arr,'masget.pay.compay.router.back.pay');
-          if(isset($data['ret']) && $data['ret']==0){
         // dump($data);die;
+          if(isset($data['ret']) && $data['ret']==0){
             return $data['data'];
             #封顶 通道 成功返回html 字符串
           }elseif(is_string($data)){
@@ -344,7 +344,7 @@
               return $data['respmsg'];
             }
           }else{
-            return $data['message'];
+            return $data['respmsg'];
           }
         }else{
           return $data['message'];
