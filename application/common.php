@@ -12,6 +12,8 @@
  use think\Config;
  use app\index\model\SmsLog as SmsLogs;
  use app\index\model\Member as Members;
+  use app\index\model\MemberGroup;
+   use app\index\model\MemberRelation;
  use app\index\model\Notice;
  use app\index\model\System;
  use app\api\controller as con;

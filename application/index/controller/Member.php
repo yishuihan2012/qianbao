@@ -8,7 +8,7 @@
 namespace app\index\controller;
 
  use app\index\model\Member as Members;
- use app\index\model\{MemberLogin, MemberGroup, MemberRelation, MemberCert, MemberCashcard, Upgrade };
+ use app\index\model\{MemberLogin, MemberGroup, MemberRelation, MemberCert, MemberCashcard, Upgrade ,Passageway};
  use app\api\controller\Commission;
  use app\index\model\Commission as Commissions;
  use think\{Controller, Request, Session, Config, Loader, Db};

@@ -105,7 +105,7 @@
            }
 
            #查询会员下级数量 TODO: 现在是直接下级数量 是否改成三级
-           $data['subordinateNumber']=MemberRelation::where('relation_parent_id',$memberLogin['member']['member_id'])->count();
+           $data['subordinateNumber']=$this->get_lower_total($memberLogin['member']['member_id']);
            $parent_id=MemberRelation::where(['relation_member_id'=>$memberLogin['member']['member_id']])->value('relation_parent_id');
            $data['parent']=$parent_id=='0' ? '' : Member::where('member_id',$parent_id)->value('member_nick');
            $data['parent_phone']=$parent_id=='0' ? '' : Member::where('member_id',$parent_id)->value('member_mobile');
@@ -127,7 +127,22 @@
 
            return ['code'=>200,'msg'=>'登录成功~', 'data'=>$data];
       }
+       //获取三级下级总数
+      public function get_lower_total($uid){
+          $count=0;
+          $MemberRelation_1rd=MemberRelation::where(["relation_parent_id"=>$uid])->select();
+          $count+=count($MemberRelation_1rd);
+          foreach ($MemberRelation_1rd as $k => $val) {
+                $member_2rd=MemberRelation::where(['relation_parent_id'=>$val['relation_member_id']])->select();
+                $count+=count($member_2rd);
+                foreach ($member_2rd as $k1 => $val1) {
+                  $group3 = MemberRelation::where(['relation_parent_id'=>$val1['relation_member_id']])->select();
+                    $count+=count($group3);
+                }
 
+             }
+             return $count;
+      }
       /**
       *  @version find_pwd method / Api 找回密码
       *  @author $bill$(755969423@qq.com)
