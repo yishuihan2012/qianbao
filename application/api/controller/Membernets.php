@@ -329,16 +329,23 @@
           w_log($data);
         if($data['ret']==0){
           $data=$data['data'];
-          //支付成功 更新套现订单表状态
-          $order=db('cash_order')->where('order_no',$data['ordernumber'])->find();
-          //仅在待支付情况下操作
-          if($order['order_state']==1){
-            db('cash_order')->where('order_no',$data['ordernumber'])->update(['order_state'=>2]);
-            //进行分润
-            $fenrun= new \app\api\controller\Commission();
-            $fenrun_result=$fenrun->MemberFenRun($this->member->member_id,$order['order_money'],$this->passway->passageway_id,1,'交易手续费分润',$order['order_id']);
+          if($data['respcode']==2){
+            //支付成功 更新套现订单表状态
+            $order=db('cash_order')->where('order_no',$data['ordernumber'])->find();
+            //仅在待支付情况下操作
+            if($order['order_state']==1){
+              db('cash_order')->where('order_no',$data['ordernumber'])->update(['order_state'=>2]);
+              //进行分润
+              $fenrun= new \app\api\controller\Commission();
+              $fenrun_result=$fenrun->MemberFenRun($this->member->member_id,$order['order_money'],$this->passway->passageway_id,1,'交易手续费分润',$order['order_id']);
+              #交易失败 待支付 已关闭 交易撤销
+              return $data;
+            }else{
+              return $data['respmsg'];
+            }
+          }else{
+            return $data['message'];
           }
-          return $data;
         }else{
           return $data['message'];
         }
