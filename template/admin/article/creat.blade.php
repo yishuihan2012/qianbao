@@ -173,9 +173,7 @@ $(document).ready(function(){
       KindEditor.ready(function(K) {
             window.editor = K.create('#editor_id');
       });
-	 // var options = {
-	 //      filterMode : true
-	 // };
+	
 	  var options = {
 	      filterMode : true,
            uploadJson : "{{url('/index/Tool/KindEditor_upload')}}",
