@@ -762,50 +762,67 @@ function SortByASCII($arr)
       return $data;
  }
 
- //-----------------------------------------------------------
- // @version  金易付加密加密
- // @author   $bill$
- // @datatime 2017-12-27 11:22
- // @param  $string=要进行加密数据
- // @return  加密数据
- //-----------------------------------------------------------
-function jinyifu_encrypt($str, $encryptKey, $iv)
-{
-    $str =pad($str);
-    $td = mcrypt_module_open(MCRYPT_RIJNDAEL_128, '', MCRYPT_MODE_ECB, '');
-    if (empty($iv)) {
-        $iv = @mcrypt_create_iv(mcrypt_enc_get_iv_size($td), MCRYPT_RAND);
-    }
-    mcrypt_generic_init($td, $encryptKey, $iv);
+//  //-----------------------------------------------------------
+//  // @version  金易付加密加密
+//  // @author   $bill$
+//  // @datatime 2017-12-27 11:22
+//  // @param  $string=要进行加密数据
+//  // @return  加密数据
+//  //-----------------------------------------------------------
+// function jinyifu_encrypt($str, $encryptKey, $iv)
+// {
+//     $str =pad($str);
+//     $td = mcrypt_module_open(MCRYPT_RIJNDAEL_128, '', MCRYPT_MODE_ECB, '');
+//     if (empty($iv)) {
+//         $iv = @mcrypt_create_iv(mcrypt_enc_get_iv_size($td), MCRYPT_RAND);
+//     }
+//     mcrypt_generic_init($td, $encryptKey, $iv);
 
-    $cyper_text = mcrypt_generic($td, $str);
-    //$rt = base64_encode($cyper_text);
-    $rt = bin2hex($cyper_text);
-    mcrypt_generic_deinit($td);
-    mcrypt_module_close($td);
-    return $rt;
-}
-function pad($str)
-{
-    return pad_or_unpad($str, '');
-}
-function unpad($str)
-{
-    return pad_or_unpad($str, 'un');
-}
-function pad_or_unpad($str, $ext, $pad='pkcs5')
-{
-    if (is_null($pad)) {
-        return $str;
-    } else {
-        $func_name = __CLASS__ . '::' . $pad . '_' . $ext . 'pad';
-        if (is_callable($func_name)) {
-            $size = mcrypt_get_block_size(MCRYPT_RIJNDAEL_128, MCRYPT_MODE_ECB);
-            return call_user_func($func_name, $str, $size);
-        }
-    }
-    return $str;
-}
+//     $cyper_text = mcrypt_generic($td, $str);
+//     //$rt = base64_encode($cyper_text);
+//     $rt = bin2hex($cyper_text);
+//     mcrypt_generic_deinit($td);
+//     mcrypt_module_close($td);
+//     return $rt;
+// }
+// function pad($str)
+// {
+//     return pad_or_unpad($str, '');
+// }
+// function unpad($str)
+// {
+//     return pad_or_unpad($str, 'un');
+// }
+// function pad_or_unpad($str, $ext, $pad='pkcs5')
+// {
+//     if (is_null($pad)) {
+//         return $str;
+//     } else {
+//         $func_name =$pad . '_' . $ext . 'pad';
+//         if (is_callable($func_name)) {
+//             $size = mcrypt_get_block_size(MCRYPT_RIJNDAEL_128, MCRYPT_MODE_ECB);
+//             return call_user_func($func_name, $str, $size);
+//         }
+//     }
+//     return $str;
+// }
+
+//  function pkcs5_pad($text, $blocksize)
+//     {
+//         $pad = $blocksize - strlen($text) % $blocksize;
+//         return $text . str_repeat(chr($pad), $pad);
+//     }
+//  function pkcs5_unpad($text)
+//     {
+//         $pad = ord($text[strlen($text) - 1]);
+//         if ($pad > strlen($text)) {
+//             return false;
+//         }
+//         if (strspn($text, chr($pad), strlen($text) - $pad) != $pad) {
+//             return false;
+//         }
+//         return substr($text, 0, -1 * $pad);
+//     }
 
 
 

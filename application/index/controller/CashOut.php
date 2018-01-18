@@ -396,6 +396,9 @@ class CashOut
 	 	 }
 	 	 // var_dump($this->passway_info->passageway_pwd_key);die;
 	 	 // return ['code'=>200,'msg'=>'订单获取成功~' , 'data'=>$this->passway_info];
+	 	 $jinyifu=new \app\api\controller\Jinyifu($this->passway_info->passageway_pwd_key,$this->passway_info->iv);
+	 	 $cvn2=$jinyifu->encrypt($this->card_info->card_Ident);
+	 	 $expDate=$jinyifu->encrypt($this->card_info->card_expireDate);
 		 $arr = array(
 	            'branchId'=>$this->passway_info->passageway_mech,// 机构号
 	            'jinepay_mid'=>$member_net[$this->passway_info->passageway_no], // 商户号
@@ -410,8 +413,8 @@ class CashOut
 	            'accNo'=> $this->card_info->card_bankno, // 银行卡号
 	            'phoneNo'=>$this->card_info->card_phone, // 银行预留手机号
 	            'lpName'=>$this->card_info->card_name, //持卡人姓名
-	            'CVN2'=>jinyifu_encrypt($this->card_info->card_Ident,$this->passway_info->passageway_pwd_key,$this->passway_info->iv),
-	            'expDate'=>jinyifu_encrypt($this->card_info->card_expireDate,$this->passway_info->passageway_pwd_key,$this->passway_info->iv),
+	            'CVN2'=>$cvn2,
+	            'expDate'=>$expDate,
 	      );
  	        $arr=SortByASCII($arr);
 	        #2签名
@@ -424,12 +427,15 @@ class CashOut
 	        $params=base64_encode(json_encode($arr));
 	        #4请求字符串
 	        $urls='https://hydra.scjinepay.com/jk/QpayAction_getQpOrder?params='.urlencode($params);
+	        // $url='https://hydra.scjinepay.com/jk/QpayAction_getQpOrder';
 	        #请求
 	        $res=curl_post($urls);
+	        // $res=curl_post($urls, 'get', '', $type="Content-Type: application/json; charset=utf-8");
 
 	        $res=json_decode($res,true);
-	        
+	        	
 	        $result=base64_decode($res['params']);
+	         return ['code'=>200,'msg'=>'111~' , 'data'=>$result];
 			return ['code'=>200,'msg'=>'订单获取成功~11' , 'data'=>$result];
 	        $data=json_decode($result,true);
 	        return ['code'=>200,'msg'=>'订单获取成功~11' , 'data'=>$data];
