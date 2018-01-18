@@ -392,7 +392,7 @@
       **/
       public function jinyifu()
       {
-          $memberAlso=PassagewayItem::where(['item_group'=>$this->member->member_group_id,'item_passageway'=>$this->passway->passageway_id])->value('item_rate');
+          $memberAlso=PassagewayItem::where(['item_group'=>$this->member->member_group_id,'item_passageway'=>$this->passway->passageway_id])->find();
            $arr=array( 
                  'branchId' => $this->passway->passageway_mech,//机构号
                  'lpName'      => $this->membercard->card_name,//法人姓名
@@ -402,10 +402,10 @@
                  'telNo'      => $this->member->member_mobile,//商户手机号
                  'city'           =>  "370100",//结算卡所在市编码
                  'bizTypes'                 => "4301" ,// 开通业务类型
-                 '5001_fee'           => $memberAlso/100,//5001交易手续费例:0.0038  10000元交易手续费38（业务类型包含时必填）
-                 '5001_tzAddFee'              => 2, //5001T0额外手续费例:2  提现额外收取2元提现费（业务类型包含时必填）
-                 '4301_fee'         => $memberAlso/100, //4401交易手续费例:0.0038  10000元交易手续费38（业务类型包含时必填）
-                 '4301_tzAddFee'   => 2,//4401T0额外手续费例:2  提现额外收取2元提现费（业务类型包含时必填）
+                 '5001_fee'           => $memberAlso['item_rate']/100,//5001交易手续费例:0.0038  10000元交易手续费38（业务类型包含时必填）
+                 '5001_tzAddFee'              =>$memberAlso['item_charges']/100, //5001T0额外手续费例:2  提现额外收取2元提现费（业务类型包含时必填）
+                 '4301_fee'         => $memberAlso['item_rate']/100, //4401交易手续费例:0.0038  10000元交易手续费38（业务类型包含时必填）
+                 '4301_tzAddFee'   =>$memberAlso['item_charges']/100,//4401T0额外手续费例:2  提现额外收取2元提现费（业务类型包含时必填）
            );
            // var_dump($arr);die;
 

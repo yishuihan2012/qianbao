@@ -138,7 +138,7 @@
       **/
       public function jinyifu()
       {
-          $memberAlso=PassagewayItem::where(['item_group'=>$this->member->member_group_id,'item_passageway'=>$this->passway->passageway_id])->value('item_rate');
+          $memberAlso=PassagewayItem::where(['item_group'=>$this->member->member_group_id,'item_passageway'=>$this->passway->passageway_id])->find();
            $arr=array( 
                  'branchId' => $this->passway->passageway_mech,//机构号
                  'merchId'  => $this->membernet->PtKWJ,//商户号
@@ -147,21 +147,34 @@
                  'merchName'          => $this->member->member_mobile,//商户名称
                  'accNo'               => $this->membercard->card_bankno,//必须为法人本人卡号
                  'telNo'      => $this->member->member_mobile,//商户手机号
-                 'city'           => "370105",//结算卡所在市编码
+                 'city'           => "370100",//结算卡所在市编码
                  'bizTypes'                 => "4301" ,// 开通业务类型
-                 '5001_fee'           => $memberAlso/100,//5001交易手续费例:0.0038  10000元交易手续费38（业务类型包含时必填）
-                 '5001_tzAddFee'              => 0, //5001T0额外手续费例:2  提现额外收取2元提现费（业务类型包含时必填）
-                 '4301_fee'         => $memberAlso/100, //4401交易手续费例:0.0038  10000元交易手续费38（业务类型包含时必填）
-                 '4301_tzAddFee'   => 0,//4401T0额外手续费例:2  提现额外收取2元提现费（业务类型包含时必填）
+                 '5001_fee'           => $memberAlso['item_rate']/100,//5001交易手续费例:0.0038  10000元交易手续费38（业务类型包含时必填）
+                 '5001_tzAddFee'              => $memberAlso['item_charges']/100, //5001T0额外手续费例:2  提现额外收取2元提现费（业务类型包含时必填）
+                 '4301_fee'         => $memberAlso['item_rate']/100, //4401交易手续费例:0.0038  10000元交易手续费38（业务类型包含时必填）
+                 '4301_tzAddFee'   => $memberAlso['item_charges']/100,//4401T0额外手续费例:2  提现额外收取2元提现费（业务类型包含时必填）
            );
-           //dump($arr);
-           $param=get_signature($arr,$this->passway->passageway_key);
-           //dump($param);
-           $result=curl_post("https://hydra.scjinepay.com/jk/BranchMerchAction_update",'post',$param,'Content-Type: application/x-www-form-urlencoded; charset=gbk');
-           $data=json_decode(mb_convert_encoding($result, 'utf-8', 'GBK,UTF-8,ASCII'),true);
-           //dump($data);
-           if($data['respCode']=="00" || $data['merchno']!="")
-                 $res=MemberNet::where(['net_member_id'=>$this->member->member_id])->setField($this->passway->passageway_no, $data['merchno']);
+
+
+            #1排序
+          $arr=SortByASCII($arr);
+
+          #2签名
+          $sign=jinyifu_getSign($arr,$this->passway->passageway_key);
+          $arr['sign']=$sign;
+          // echo $sign;die;
+          #3参数
+          $params=base64_encode(json_encode($arr));
+          #4请求字符串
+          $urls='https://hydra.scjinepay.com/jk/BranchMerchAction_update?params='.urlencode($params);
+          // echo $urls;
+          #请求
+          $res=curl_post($urls);
+
+          $res=json_decode($res,true);
+          $result=base64_decode($res['params']);
+          $result=json_decode($result,true);
+           if($result['resCode']=="00")
            return true;
       } 
 
