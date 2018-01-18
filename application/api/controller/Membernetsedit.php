@@ -195,12 +195,13 @@
             #商户名称
             // 'membername'   =>$userinfo[4],
             #邀请码(费率套餐代码)
-            'ratecode'   =>$rate_code['rate_code'],
+            // 'ratecode'   =>$rate_code['rate_code'],
+            'ratecode'   =>902429,
           );
           // var_dump($arr);die;
           // $data=rongbang_curl(rongbang_foruser($this->member,$this->passway),$arr,'masget.pay.compay.router.samename.update');
           $data=rongbang_curl($this->passway,$arr,'masget.pay.compay.router.samename.update');
-          // var_dump($data);die;
+          var_dump($data);die;
           if($data['ret']==0){
             return true;
             return $data['data'];

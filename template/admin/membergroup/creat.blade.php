@@ -81,7 +81,16 @@ input.labelauty + label { font: 12px "Microsoft Yahei";}
 			<div id="group_salt" class="col-sm-6"><input type="number" class="form-control group_salt  " name="group_level_money" value="" placeholder="">
 			</div>
 		</div>
-		
+		<br/>
+		<div class="row">
+			<label for="group_salt" class="col-sm-2 text-right"><b>运营商专用</b></label>
+			<div id="group_salt" class="col-sm-6">
+			 <select name="group_visible" class="group_name form-control group_visible">
+				<option value="1">否</option>
+				<option value="0">是</option>
+			</select>
+			</div>
+		</div>
 		<h5></h5>
 
 	</form>
