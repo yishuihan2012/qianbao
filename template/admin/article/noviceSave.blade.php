@@ -94,7 +94,10 @@ $(document).ready(function(){
             window.editor = K.create('#editor_id');
       });
 	 var options = {
-	      filterMode : true
+	      filterMode : true,
+           uploadJson : "{{url('/index/Tool/KindEditor_upload')}}",
+           fileManagerJson : "{{url('/index/Tool/KindEditor_upload')}}",
+           allowFileManager : true
 	 };
 	 var editor = KindEditor.create('textarea[id="content"]', options);
 	 $(".goHistory").click(function(){
