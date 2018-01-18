@@ -8,6 +8,7 @@
  namespace app\index\controller;
  use app\index\model\MemberGroup as MemberGroups;
  use app\index\model\Member as Members;
+  use app\api\controller\Commission;
  use think\Controller;
  use think\Request;
  use think\Session;
@@ -89,5 +90,8 @@
 		 #输出json
 		 echo json_encode($context);
 	 }
-
+	 // public function test(){
+	 // 	$t = new Commission();
+	 // 	$m = $t->MemberCommis(44,100,"ceshi");
+	 // }
  }

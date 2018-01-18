@@ -746,7 +746,7 @@
               return ['code'=>314];
 
             $data['current_salt']=$current['group_salt'];
-            // var_dump($data);die;
+
             return ['code'=>200, 'msg'=>'信息反馈成功~','data'=>$data];
       }
       //计算会员升级级别间的差价
