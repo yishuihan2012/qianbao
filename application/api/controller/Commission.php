@@ -2,6 +2,7 @@
  namespace app\api\controller;
  use think\Db;
  use app\index\model\Member;
+ // use app\index\model\MemberGroup;
  use app\index\model\System;
  use app\index\model\Wallet;
  use app\index\model\WalletLog;
@@ -37,11 +38,20 @@
  	 	 	 $member_faterInfo=Member::get($member_fater_id);
  	 	 	 if($member_faterInfo) //直接上级会员信息真实存在的话 进行分佣
  	 	 	 {
- 	 	 	 	 $fatherMoney=$total_money*(System::getName('direct_total')/100);
- 	 	 	 	 $leftmoney+=$fatherMoney;
+ 	 	 	 	$fatherMoney = 0;
+ 	 	 	 	if(System::getName('commission_type')==1){
+
+ 	 	 	 		$group1 = MemberGroup::get($member_faterInfo['member_group_id']);
+ 	 	 	 		$fatherMoney = $group1['group_direct_cent'];
+ 	 	 	 	}else{
+ 	 	 	 		$fatherMoney=$total_money*(System::getName('direct_total')/100);
+ 	 	 	 	}
+ 	 	 	 	 
+ 	 	 	 	  $leftmoney+=$fatherMoney;
  	 	 	 	 if(!$this->commissionOrder($memberId,$member_fater_id,$fatherMoney,2,$desction."-直接分佣")){
  	 	 	 	 	 return ['code'=>465];
  	 	 	 	  }
+ 	 	 	 	 
  	 	 	 	 //j极光推送分佣提醒
  	 	 	 	 $str="-直接分佣:邀请的".$memberInfo['member_nick']."付费升级成功,获得收益".$fatherMoney."元~";
  	 	 	 	 jpush($member_fater_id,'直接分佣收益到账提醒~',$str,$str);
@@ -49,12 +59,23 @@
  	 	 	 	 #查询间接上级
  	 	 	 	 $member_grandFater_id=MemberRelation::where('relation_member_id',$member_fater_id)->value('relation_parent_id');
  	 	 	 	 $member_grandFaterInfo= Member::get($member_grandFater_id);
+
  	 	 	 	 if($member_grandFater_id=="0" || !$member_grandFaterInfo)
  	 	 	 	 	 return ['code'=>200,'leftmoney'=>$leftmoney];
  	 	 	 	 #查询间接上级信息
+
  	 	 	 	 if($member_grandFaterInfo)
- 	 	 	 	 {
- 	 	 	 	 	 $grandFatherMoney=$total_money*(System::getName('indirect_total')/100);
+
+ 	 	 	 	 {   
+ 	 	 	 	 	$grandFatherMoney = 0;
+ 	 	 	 	 	if(System::getName('commission_type')==1){
+ 	 	 	 	 		
+ 	 	 	 	 		$group2 = MemberGroup::get($member_grandFaterInfo['member_group_id']);
+ 	 	 	 			$grandFatherMoney = $group2['group_second_level_cent'];
+ 	 	 	 	 	 }else{
+ 	 	 	 	 	 	 $grandFatherMoney=$total_money*(System::getName('indirect_total')/100);
+ 	 	 	 	 	 }
+ 	 	 	 	 
  	 	 	 	 	 $leftmoney+=$grandFatherMoney;
 	 	 	 	 	 if(!$this->commissionOrder($memberId,$member_grandFater_id,$grandFatherMoney,2,$desction."-间接分佣")){
 	 	 	 	 	 	 return ['code'=>465];
@@ -69,7 +90,15 @@
 	 	 	 	 	 	 return ['code'=>200,'leftmoney'=>$leftmoney];
 	 	 	 	 	 if($member_endFatherInfo)
 	 	 	 	 	 {
-	 	 	 	 	 	 $endFatherMoney=$total_money*(System::getName('indirect_3rd_total')/100);
+	 	 	 	 	 	$endFatherMoney = 0;
+	 	 	 	 	 	if(System::getName('commission_type')==1){
+
+	 	 	 	 	 		$group3 = MemberGroup::get($member_endFatherInfo['member_group_id']);
+ 	 	 	 				$endFatherMoney = $group3['group_three_cent'];
+	 	 	 	 	 	}else{
+	 	 	 	 	 		$endFatherMoney=$total_money*(System::getName('indirect_3rd_total')/100);
+	 	 	 	 	 	}
+	 	 	 	 	 	    
 	 	 	 	 	 	 $leftmoney+=$endFatherMoney;
 		 	 	 	 	 if(!$this->commissionOrder($memberId,$member_endFather_id,$endFatherMoney,2,$desction."-三级分佣")){
 		 	 	 	 	 	 return ['code'=>465];
