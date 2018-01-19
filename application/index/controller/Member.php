@@ -18,8 +18,8 @@ namespace app\index\controller;
  	 /**
 	 *  @version child method /  会员下级信息
 	 *  @author $GongKe$ (755969423@qq.com) 会员下级信息列表
-	 *   @datetime    2018-1-17 13:27
-	 *   @return  返回会员的下级信息 
+	 *  @datetime    2018-1-17 13:27
+	 *  @return  返回会员的下级信息 
 	 */
  	 public function child(Request $request)
  	 {

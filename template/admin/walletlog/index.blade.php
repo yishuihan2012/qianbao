@@ -4,13 +4,22 @@
 <style>
 	.text-ellipsis{cursor: pointer;}
 </style>
+<header>
+    <i class="icon-list-ul"></i> 日志条数 <small>共 <strong class="text-danger">{{$count}}</strong> 条</small>
+    <i class="icon icon-yen"></i> 钱包收入 <small>共 <strong class="text-danger">{{$entertottal}}</strong> 元</small>
+      <i class="icon icon-yen"></i> 钱包支出 <small>共 <strong class="text-danger">{{$leavetotal}}</strong> 元</small>
+  </header>
 <div class="panel">
   	<div class="panel-body">
   		<form action="" name="myform" class="form-group" method="get">
+        <div class="input-group" style="width: 150px;float: left;margin-right: 10px;">
+          <span class="input-group-addon">用户名</span>
+          <input type="text" class="form-control" name="member_nick" value="" placeholder="用户名">
+        </div>
   			 <div class="input-group" style="width: 150px;float: left;margin-right: 10px;">
                 <span class="input-group-addon">收入支出</span>
                      <select name="log_wallet_type" class="form-control">
-                             <option value="1">全部</option>
+                             <option value="">全部</option>
                              <option value="1">收入</option>
                              <option value="2">支出</option>            
                     </select>
@@ -25,13 +34,9 @@
                 </div>
             </div>
             <div class="col-sm-1">
-                <button class="btn btn-primary" type="submit">搜索</button>
+                <button class="btn btn-primary" type="submit"> </button>
             </div>
 		</form>
-	  <h3>
-      <i class="icon icon-yen"></i> 钱包收入 <small>共 <strong class="text-danger">{{$entertottal}}</strong> 元</small>
-      <i class="icon icon-yen"></i> 钱包支出 <small>共 <strong class="text-danger">{{$leavetotal}}</strong> 元</small>
-    </h3>
   	</div>
 
 </div>
@@ -40,7 +45,7 @@
   	<thead>
 	    <tr>
 	      	<th>#</th>
-	      	<th>会员</th>
+	      	<th>用户名</th>
 	      	<!-- <th>订单号</th> -->
 	      	<th>操作金额</th>
 	      	<th>描述</th>
