@@ -442,9 +442,9 @@ use app\index\model\Member;
               return['code'=>483,'msg'=>'计划不在执行过程中，无法取消'];
            }
            #1如果当天没还款且有消费成功的不能取消
-           $order_back=GenerationOrder::where('order_status = 1 and order_type= 2')->whereTime('order_time','today')->find();
-           $order_cash=GenerationOrder::where('order_type= 1 and order_status = 2')->whereTime('order_time','today')->find();
-           if($order && $order_cash){
+           $order_back=GenerationOrder::where(['order_type'=>2,'order_status'=>1])->whereTime('order_time', 'today')->find();
+           $order_cash=GenerationOrder::where(['order_type'>1,'order_status'=>2])->whereTime('order_time', 'today')->find();
+           if($order_back && $order_cash){
               return['code'=>484,'msg'=>'您当天有笔还款还未执行，暂时不能取消'];//如果当天没还款且有消费成功的不能取消
            }
            #执行取消计划操作
