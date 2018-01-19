@@ -371,12 +371,12 @@ class CashOut
 
 
 	 /**
-	 * @version 金易付套现 
-	 * @authors bill(755969423@qq.com)
+	 * @version 金易付取现 
+	 * @authors Mr.gao(928791694@qq.com)
 	 * @date    2017-12-23 16:25:05
 	 * @version $Bill$
 	 */
-	 public function jinyifu($tradeNo,$price,$description='金易付套现')
+	 public function jinyifu($tradeNo,$price,$description='金易付取现')
 	 {
 	 	 #检测通道是否需要入网
 	 	 if($this->passway_info->passageway_status=="1")
