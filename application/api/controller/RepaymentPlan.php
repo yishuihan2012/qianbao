@@ -58,7 +58,7 @@
            // $this->param['billMoney']=1000;
            // $this->param['payCount']=4;
            // $this->param['startDate']="2018-01-19";
-           // $this->param['endDate']="2018-01-20";
+           // $this->param['endDate']="2018-01-29";
            // $this->param['passageway']=8;
            $root_id=find_root($this->param['uid']);
            #0 获取参数数据
@@ -95,6 +95,7 @@
            $daikou=($rate->item_charges)/100; 
 
           #1获取实际还款天数和还款日期
+
            if($this->param['startDate']==date('Y-m-d',time()) && date('H',time())>19){
               $days=days_between_dates($this->param['startDate'],$this->param['endDate']);
               $date=prDates(date('Y-m-d',strtotime($this->param['startDate'])+3600*24),$this->param['endDate']);
@@ -118,7 +119,12 @@
                if($days==0){
                    return['code'=>478];//还款天数太短无法为您安排还款
                 }
+          }else{
+               shuffle($date);
+                #消费几次就取几个随机日期
+               $date=array_slice($date,0,$this->param['payCount']);
           }
+          // print_r($date);die;
           ########存入主表数据############################
           Db::startTrans();
            $Generation_result=new Generation([
@@ -153,7 +159,7 @@
           $day_pay_count=$this->get_day_count($this->param['payCount'],$days);
           #5计算出每天实际刷卡金额，和实际到账金额
           $Generation_order_insert=[];
-          for ($i=0; $i <$days ; $i++) { 
+          for ($i=0; $i <count($date) ; $i++) { 
               $day_real_get_money=0;
               // $plan[$i]['day_date']=$date[$i];
               // $plan[$i]['day_pay_money']=$day_pay_money[$i];
