@@ -15,6 +15,7 @@ use app\index\model\Recomment;
 use app\index\model\Member;
 use app\index\model\MemberGroup;
 use app\index\model\Wallet;
+use app\index\model\Upgrade;
 use think\Controller;
 use think\Request;
 use think\Session;
@@ -43,13 +44,13 @@ class Order extends Common{
 			$r['cert_member_idcard'] = '';
 		}
 	 	 // #查询订单列表分页
-	 	$order_lists = Orders::haswhere('member',$where)
+	 	$order_lists = Upgrade::haswhere('member',$where)
 	 		->join("wt_member_cert m", "m.cert_member_id=Member.member_id","left")
 	 		->where($wheres)->field('wt_member.member_nick')
 	 		->paginate(Config::get('page_size'),false, ['query'=>Request::instance()->param()]);
-	 	 // dump(Orders::getLastsql());
+	 
 	 	 #统计订单条数
-	 	 $count['count_size']=Orders::haswhere('member',$where)->join("wt_member_cert m", "m.cert_member_id=Member.member_id","left")->where($wheres)->count();
+	 	 $count['count_size']=Upgrade::haswhere('member',$where)->join("wt_member_cert m", "m.cert_member_id=Member.member_id","left")->where($wheres)->count();
 		$this->assign('order_lists', $order_lists);
 	    $this->assign('count', $count);
 		 
@@ -71,8 +72,13 @@ class Order extends Common{
 	 	 }
 
 	 	 #查询到当前订单的基本信息
-	 	 $order_info=Orders::with('member')->find($request->param('id'));
-	 	  // dump( $order_info);
+	 	 $order_info=Upgrade::with('member')->find($request->param('id'));
+	 	 #升级前的用户组
+	 	 $front_group = MemberGroup::get($order_info['upgrade_before_group']);
+	 	 $this->assign("front_group",$front_group);
+	 	 #升级后的用户组
+	 	 $after_group = MemberGroup::get($order_info['upgrade_group_id']);
+	 	 $this->assign("after_group",$after_group);
 	 	 $this->assign('order_info', $order_info);
 	 	 return view('admin/order/edit');
 	 }
