@@ -428,8 +428,39 @@ use app\index\model\Member;
       }
 
       #取消还款计划【整体】
-      # generation_id
+      /**
+       * @param  [type]
+       * @return [type]
+       */
       public function cancle_plan($generation_id){
+           Db::startTrans();
+           $generation=Generation::get($generation_id);
+           if(!$generation){
+              return['code'=>482,'msg'=>'获取计划失败'];
+           }
+           if($generation['generation_state']==4 || $generation['generation_state']==1 || $generation['generation_state']==3){
+              return['code'=>483,'msg'=>'计划不在执行过程中，无法取消'];
+           }
+           #1如果当天没还款且有消费成功的不能取消
+           $order_back=GenerationOrder::where(['order_type'=>'2','order_status'=>'1'])->whereTime('order_time','today')->find();
+           $order_cash=GenerationOrder::where(['order_type'>'1','order_status'=>'2'])->whereTime('order_time','today')->find();
+           if($order && $order_cash){
+              return['code'=>484,'msg'=>'您当天有笔还款还未执行，暂时不能取消'];//如果当天没还款且有消费成功的不能取消
+           }
+           #执行取消计划操作
+           $Generation=Generation::update(['generation_id'=>$generation_id,'generation_state'=>4]);
+           $generation_order=GenerationOrder::where(['order_no'=>$generation_id,'order_status'=>1]);
+           if($Generation && $generation_order){
+              Db::commit();
+              return ['code'=>200];
+           }else{
+              Db::rollback();
+              return ['code'=>481,'msg'=>'取消计划失败，如有疑问请联系客服。'];
+           }
+      }
+       #取消还款计划【整体】 old
+      # generation_id
+      public function cancle_plans($generation_id){
            Db::startTrans();
            try{
               $generation=Generation::get($generation_id);
