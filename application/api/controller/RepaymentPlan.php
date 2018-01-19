@@ -25,26 +25,161 @@
       public $error;
       protected $param;
       private $member;//会员
-      public function __construct($param)
-      {
-           $this->param=$param;
-           try{
-                 if(!isset($this->param['uid']) || empty($this->param['uid']) || !isset($this->param['token']) ||empty($this->param['token']))
-                       $this->error=314;
-                 #查找到当前用户
-                 $member=Member::haswhere('memberLogin',['login_token'=>$this->param['token']])->where('member_id', $this->param['uid'])->find();
-                 if($member['member_cert']!='1')
-                      $this->error=356;
-                 if(empty($member))
-                       $this->error=314;
-                 #查找实名认证信息
-                 $member_cert=MemberCert::get(['cert_member_id'=>$member['member_id']]);
-                 if(empty($member_cert) && !$this->error )
-                      $this->error=356;
-                 $this->member=$member;
-            }catch (\Exception $e) {
-                 $this->error=317;
+      // public function __construct($param)
+      // {
+      //      $this->param=$param;
+      //      try{
+      //            if(!isset($this->param['uid']) || empty($this->param['uid']) || !isset($this->param['token']) ||empty($this->param['token']))
+      //                  $this->error=314;
+      //            #查找到当前用户
+      //            $member=Member::haswhere('memberLogin',['login_token'=>$this->param['token']])->where('member_id', $this->param['uid'])->find();
+      //            if($member['member_cert']!='1')
+      //                 $this->error=356;
+      //            if(empty($member))
+      //                  $this->error=314;
+      //            #查找实名认证信息
+      //            $member_cert=MemberCert::get(['cert_member_id'=>$member['member_id']]);
+      //            if(empty($member_cert) && !$this->error )
+      //                 $this->error=356;
+      //            $this->member=$member;
+      //       }catch (\Exception $e) {
+      //            $this->error=317;
+      //      }
+      // }
+
+      //创建计划
+      public function create_plan(){
+          // 测试数据
+           $this->param['uid']=42;
+           $this->param['token']=16;
+           $this->param['cardId']=30;
+           $this->param['billMoney']=1000;
+           $this->param['payCount']=4;
+           $this->param['startDate']="2018-01-19";
+           $this->param['endDate']="2018-01-21";
+           $this->param['passageway']=8;
+           #0 获取参数数据
+           if($this->param['endDate']<$this->param['startDate']){
+              exit(json_encode(['code'=>111,'msg'=>'还款结束日期不能小于开始日期']));
+              return['code'=>474]; //开始日期不能小于今天
            }
+           if($this->param['startDate']<date('Y-m-d',time())){
+               exit(json_encode(['code'=>111,'msg'=>'开始日期不能小于今天']));
+               return ['code'=>475];//开始日期不能小于今天
+           }
+           if(date('H',time())>19 && $this->param['startDate']==$this->param['endDate'] ){
+               return ['code'=>476];//今天已超过还款时间，无法为您制定还款计划
+           }
+           #获取需要参数
+          $member_info=MemberCerts::where('cert_member_id='.$this->param['uid'])->find();
+          if(empty($member_info)){
+                exit(json_encode(['code'=>111,'msg'=>'当前登录已失效，请重新登录']));
+                return ['code'=>317];//当前登录已失效，请重新登录
+          }
+          // print_r($member_info);die;
+          #卡详情
+          $card_info=MemberCreditcard::where('card_id='.$this->param['cardId'])->find();
+          if(!$card_info){
+              exit(json_encode(['code'=>111,'msg'=>'未获取到卡号信息']));
+              return ['code'=>442];
+          }
+          #获取后台费率
+          $member_group_id=Member::where(['member_id'=>$this->param['uid']])->value('member_group_id');
+          $rate=PassagewayItem::where(['item_passageway'=>$this->param['passageway'],'item_group'=>$member_group_id])->find();
+           #定义税率  
+           $also=($rate->item_also)/100;
+           #定义代扣费
+           $daikou=($rate->item_charges)/100; 
+
+          #1获取实际还款天数和还款日期
+           if($this->param['startDate']==date('Y-m-d',time()) && date('H',time())>19){
+              $days=days_between_dates($this->param['startDate'],$this->param['endDate']);
+              $date=prDates(date('Y-m-d',strtotime($this->param['startDate'])+3600*24),$this->param['endDate']);
+           }else{
+              $days=days_between_dates($this->param['startDate'],$this->param['endDate'])+1;
+              $date=prDates($this->param['startDate'],$this->param['endDate']);
+           }
+            if($days==0){
+               return['code'=>478];//还款天数太短无法为您安排还款
+            }
+          //如果还款次数小于天数
+          if($this->param['payCount']>$days){
+                if($this->param['startDate']==date('Y-m-d',time()) && date('H',time())>12){
+                  $days=days_between_dates($this->param['startDate'],$this->param['endDate']);
+                  $date=prDates(date('Y-m-d',strtotime($this->param['startDate'])+3600*24),$this->param['endDate']);
+
+                }else{
+                  $days=days_between_dates($this->param['startDate'],$this->param['endDate'])+1;
+                  $date=prDates($this->param['startDate'],$this->param['endDate']);
+                }
+               if($days==0){
+                   return['code'=>478];//还款天数太短无法为您安排还款
+                }
+          }
+
+          #3确定每天还款金额
+          $day_pay_money=$this->get_random_money($this->param['payCount'],$this->param['billMoney'],$is_int=1);
+          #4确定每天还款次数
+          $day_pay_count=$this->get_day_count($this->param['payCount'],$days);
+          #5计算出每天实际刷卡金额，和实际到账金额
+          for ($i=0; $i <$days ; $i++) { 
+              $plan[$i]['day_date']=$date[$i];
+              $plan[$i]['day_pay_money']=$day_pay_money[$i];
+              $plan[$i]['day_pay_count']=$day_pay_count[$i];
+              $plan[$i]['cash']=array(
+                  
+              );
+          }
+          #6详细每天几点还款
+      }
+
+      //根据还款金额获取需要支付的金额
+      public function get_need_pay($rate,$fix,$get,$cout=1){
+
+      }
+      //根据支付的金额获取实际到账金额
+      public function get_real_money($rate,$fix,$pay,$count=1){
+
+      }
+      //根据总金额和次数随机每次金额
+      public function get_random_money($num,$money,$is_int=''){
+        $count=$num;
+        for ($i=0; $i <$num; $i++) { 
+          if($i==$num-1){
+            $arr[]=$money;
+          }else{
+            $avage=$money/$count;
+            //判断奇偶，
+            if($is_int){
+              if($i%2==0){//偶数随机在平均值上
+                $get=ceil(rand($avage,$avage*1.2));
+              }else{//奇数随机在平均值下
+                $get=ceil(rand($avage*0.8,$avage));
+              }
+            }else{
+              if($i%2==0){//偶数随机在平均值上
+                $get=ceil(rand($avage,$avage*1.2)).'.'.rand(0,99);
+              }else{//奇数随机在平均值下
+                $get=ceil(rand($avage*0.8,$avage)).'.'.rand(0,99);
+              }
+            }
+            
+            $int_num=intval($get);
+            if(strlen($int_num)>2){
+              $first=substr($int_num,-1,1);
+              $second=substr($int_num,-2,1);
+              $third=substr($int_num,-3,1);
+
+              if($first==$second &&$first==$third){
+                $this->get_random_money($num,$money);
+              }
+            }
+            $count=$count-1;
+            $money=$money-$get;
+            $arr[]=$get;
+          }
+        }
+        return $arr;
       }
       //创建还款计划
       public function creatPlan()

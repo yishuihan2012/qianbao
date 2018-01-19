@@ -152,16 +152,16 @@
  	 	 //判断上级会员用户组是否允许分润
  	 	 $member_fatherGroup=MemberGroup::where(['group_id'=>$member_fatherInfo['member_group_id']])->value('group_run');
  	 	 if($member_fatherGroup=="0"){
- 	 	 	 $father_result=$this->commissionOrder($memberId,$member_faterId,0,1,$desction."-直接分润:您当前用户组不允许获得分润~",$order_id);
+ 	 	 	 $father_result=$this->commissionOrder($memberId,$member_faterId,0,$type,$desction."-直接分润:您当前用户组不允许获得分润~",$order_id);
  	 	 }else{
  	 	 	 //计算税率差 如果上级的税率和本人税率相同或者大于本人税率  则不进行分润
  	 	 	 if($member_also-$member_fatherAlso<=0){
- 	 	 	 	 $father_result=$this->commissionOrder($memberId,$member_faterId,0,1,$desction."-直接分润:与操作人会员级别相同或比操作人级别低,不获得分润~",$order_id);
+ 	 	 	 	 $father_result=$this->commissionOrder($memberId,$member_faterId,0,$type,$desction."-直接分润:与操作人会员级别相同或比操作人级别低,不获得分润~",$order_id);
  	 	 	 }else{
  	 	 	 	 $member_fatherAlsoMoney=$price*(($member_also-$member_fatherAlso)/100);
  	 	 	 	 $leftmoney+=$member_fatherAlsoMoney;
  	 	 	 	 $str=$desction."-直接分润:邀请的".$memberInfo['member_nick'].$action."成功,获得收益".$member_fatherAlsoMoney."元~";
- 	 	 	 	 $father_result=$this->commissionOrder($memberId,$member_faterId,$member_fatherAlsoMoney,1,$str,$order_id);
+ 	 	 	 	 $father_result=$this->commissionOrder($memberId,$member_faterId,$member_fatherAlsoMoney,$type,$str,$order_id);
  	 	 	 	 // jpush($member_faterId,'分润收益到账提醒~',$str,$str);
  	 	 	 }
  	 	 }
@@ -183,7 +183,7 @@
 		 $member_grandFatherAlso=PassagewayItem::where(['item_passageway'=>$passwayId,'item_group'=>$member_grandFatherInfo['member_group_id']])->value($field);
  	 	 if($member_grandFatherGroup=="0")
  	 	 {
- 	 	 	 $grandResult=$this->commissionOrder($memberId,$member_grandFaterId,0,1,$desction."-间接分润:您的用户组不允许获得分润~",$order_id);	
+ 	 	 	 $grandResult=$this->commissionOrder($memberId,$member_grandFaterId,0,$type,$desction."-间接分润:您的用户组不允许获得分润~",$order_id);	
  	 	 }else{
  	 	 	 #查询他的上级是否允许分润
  	 	 	if($member_fatherGroup=="0")
@@ -194,12 +194,12 @@
  	 	 	}
  	 	 	 #比对两级的会员费率 如果比最小的费率大 则不进行分佣
  	 	 	 if($total_also_1-$member_grandFatherAlso<=0){
- 	 	 	 	 $grandResult=$this->commissionOrder($memberId,$member_grandFaterId,0,1,$desction."-间接分润:与下级会员级别相同或比下级级别低,不获得分润~",$order_id);
+ 	 	 	 	 $grandResult=$this->commissionOrder($memberId,$member_grandFaterId,0,$type,$desction."-间接分润:与下级会员级别相同或比下级级别低,不获得分润~",$order_id);
  	 	 	 } else{
 	 	 	 	 $member_grandFatherAlsoMoney=$price*(($total_also_1-$member_grandFatherAlso)/100);
 	 	 	 	 $leftmoney+=$member_grandFatherAlsoMoney;
 	 	 	 	 $str1=$desction."-间接分润:邀请的".$memberInfo['member_nick'].$action."成功,获得收益".$member_grandFatherAlsoMoney."元~";
-	 	 	 	 $grandResult=$this->commissionOrder($memberId,$member_grandFaterId,$member_grandFatherAlsoMoney,1,$str1,$order_id);
+	 	 	 	 $grandResult=$this->commissionOrder($memberId,$member_grandFaterId,$member_grandFatherAlsoMoney,$type,$str1,$order_id);
 	 	 	 	  // jpush($member_grandFaterId,'分润收益到账提醒~',$str1,$str1);
  	 	 	 }
  	 	 }
@@ -220,7 +220,7 @@
  	 	 $member_endFatherAlso=PassagewayItem::where(['item_passageway'=>$passwayId,'item_group'=>$member_endFatherInfo['member_group_id']])->value($field);
 
  	 	 if($member_endFatherGroup=="0"){
- 	 	 	 $endFather_result=$this->commissionOrder($memberId,$member_endFatherId,0,1,$desction."-三级分润:您的用户组不允许获得分润~",$order_id);
+ 	 	 	 $endFather_result=$this->commissionOrder($memberId,$member_endFatherId,0,$type,$desction."-三级分润:您的用户组不允许获得分润~",$order_id);
  	 	 }else{
  	 	 	 if($member_grandFatherGroup=="0")
  	 	 	 {
@@ -234,12 +234,12 @@
  	 	 	 #进行税率计算 比对 如果想对税率小于0 则不进行分佣
  	 	 	 if($total_also_2-$member_endFatherAlso<=0)
  	 	 	 {
- 	 	 	 	 $endFather_result=$this->commissionOrder($memberId,$member_endFatherId,0,1,$desction."-三级分润:您的会员组级别较低,不获得分润~",$order_id);
+ 	 	 	 	 $endFather_result=$this->commissionOrder($memberId,$member_endFatherId,0,$type,$desction."-三级分润:您的会员组级别较低,不获得分润~",$order_id);
  	 	 	 }else{
  	 	 	 	 $member_endFatherAlsoMoney=$price*(($total_also_2-$member_endFatherAlso)/100);
  	 	 	 	 $leftmoney+=$member_endFatherAlsoMoney;
  	 	 	 	 $str2=$desction."-三级分润:邀请的".$memberInfo['member_nick'].$action."成功,获得收益".$member_endFatherAlsoMoney."元~";
- 	 	 	 	 $endFather_result=$this->commissionOrder($memberId,$member_endFatherId,$member_endFatherAlsoMoney,1,$str2,$order_id);
+ 	 	 	 	 $endFather_result=$this->commissionOrder($memberId,$member_endFatherId,$member_endFatherAlsoMoney,$type,$str2,$order_id);
  	 	 	 	  // jpush($member_endFatherId,'分润收益到账提醒~',$str2,$str2);
  	 	 	 }
  	 	 }
