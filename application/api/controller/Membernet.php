@@ -450,7 +450,7 @@ use app\index\model\Member;
            }
            #执行取消计划操作
            $Generation=Generation::update(['generation_id'=>$generation_id,'generation_state'=>4]);
-           $generation_order=GenerationOrder::where(['order_no'=>$generation_id,'order_status'=>1]);
+           $generation_order=GenerationOrder::where(['order_no'=>$generation_id,'order_status'=>4]);
            if($Generation && $generation_order){
               Db::commit();
               return ['code'=>200];
