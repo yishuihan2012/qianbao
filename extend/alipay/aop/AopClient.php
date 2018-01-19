@@ -47,7 +47,7 @@ class AopClient {
 
 
 	//签名类型
-	public $signType = "RSA";
+	public $signType = "RSA2";
 
 
 	//加密密钥和类型
@@ -58,7 +58,7 @@ class AopClient {
 
 	protected $alipaySdkVersion = "alipay-sdk-php-20161101";
 
-	public function generateSign($params, $signType = "RSA") {
+	public function generateSign($params, $signType = "RSA2") {
 		return $this->sign($this->getSignContent($params), $signType);
 	}
 
