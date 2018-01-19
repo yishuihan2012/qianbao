@@ -178,14 +178,14 @@ use app\index\model\CallbackLog as CallbackLogs;
                       'method'        => 'alipay.open.auth.sdk.code.get',
                       'app_name'      => 'mc',
                       'biz_type'      => 'openservice',
-                      // 'pid'           => System::getName('alipay_pid'),
-                      'pid'           =>Config::get('alipay.pid'),
+                      'pid'           => System::getName('alipay_pid'),
+                      // 'pid'           =>Config::get('alipay.pid'),
                       'product_id'    => 'APP_FAST_LOGIN',
                       'scope'         => 'kuaijie',
                       'target_id'     => get_token(),
                       'auth_type'     => 'AUTHACCOUNT',
-                      'app_id'        =>Config::get('alipay.app_id'),
-                      // 'app_id'        =>System::getName('Alipay_appid'),
+                      // 'app_id'        =>Config::get('alipay.app_id'),
+                      'app_id'        =>System::getName('Alipay_appid'),
                  ];
                  $sign =   $this->aop->generateSign($sign_data);
                  // var_dump($sign);die;
