@@ -37,8 +37,10 @@ class Tool
 			$file = Request::instance()->file($path);
 			#移动到目录
 			$info = $file->move(ROOT_PATH . 'public' . DS . 'uploads' . DS . $path);
+			$savename=str_replace('\\', '/', $info->getSaveName());
+
 			#图片上传成功与否返回对应的参数
-			$data = $info ? array('code'=>'200', 'msg'=>'上传成功!', 'url'=>$url."/uploads/".$path.DS.$info->getSaveName()) : array('code'=>'0', 'msg'=>$file->getError(), 'url'=>'');
+			$data = $info ? array('code'=>'200', 'msg'=>'上传成功!', 'url'=>$url."/uploads/".$path.'/'.$savename) : array('code'=>'0', 'msg'=>$file->getError(), 'url'=>'');
 			#如果开启OSS
 			// if(Setting::getName('ossopen'))
 			// {
