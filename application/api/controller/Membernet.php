@@ -449,8 +449,8 @@ use app\index\model\Member;
               return['code'=>484,'msg'=>'您当天有笔还款还未执行，暂时不能取消'];//如果当天没还款且有消费成功的不能取消
            }
            #执行取消计划操作
-           $Generation=Generation::update(['generation_id'=>$generation_id,'generation_state'=>4]);
-           $generation_order=GenerationOrder::update(['order_no'=>$generation_id,'order_status'=>3]);
+           $Generation=Generation::where(['generation_id'=>$generation_id])->update(['generation_state'=>4]);
+           $generation_order=GenerationOrder::where(['order_no'=>$generation_id,'order_status'=>1])->update(['order_status'=>3]);
            if($Generation && $generation_order){
               Db::commit();
               return ['code'=>200];
