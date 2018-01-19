@@ -175,7 +175,7 @@ use app\index\model\CallbackLog as CallbackLogs;
                       'auth_type'     => 'AUTHACCOUNT',
                       'app_id'        =>'2017121500800116',
                  ];
-                 $sign =   $this->aop->generateSign($sign_data);
+                 $sign =   $this->aop->generateSign($sign_data,'RSA2');
                  $sign_data['sign_type']  = "RSA2";
                  $sign_data['sign']  = $sign;
                  $sign_content = $this->aop->getSignContentUrlencode($sign_data);
