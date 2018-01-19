@@ -396,7 +396,7 @@ class CashOut
 	 	 }
 	 	 // var_dump($this->passway_info->passageway_pwd_key);die;
 	 	 // return ['code'=>200,'msg'=>'订单获取成功~' , 'data'=>$this->passway_info];
-	 	 $jinyifu=new \app\api\controller\Jinyifu($this->passway_info->passageway_pwd_key,$this->passway_info->iv);
+	 	 $jinyifu=new \app\api\controller\Jinyifu($this->passway_info->passageway_pwd_key);
 	 	 $cvn2=$jinyifu->encrypt($this->card_info->card_Ident);
 	 	 $expDate=$jinyifu->encrypt($this->card_info->card_expireDate);
 		 $arr = array(
@@ -435,10 +435,9 @@ class CashOut
 	        $res=json_decode($res,true);
 	        	
 	        $result=base64_decode($res['params']);
-	         // return ['code'=>200,'msg'=>'111~' , 'data'=>$result];
-			return ['code'=>200,'msg'=>'订单获取成功~11' , 'data'=>$result];
+			// return ['code'=>200,'msg'=>'订单获取成功~11' , 'data'=>$result];
 	        $data=json_decode($result,true);
-	        return ['code'=>200,'msg'=>'订单获取成功~11' , 'data'=>$data];
+	        // return ['code'=>200,'msg'=>'订单获取成功~11' , 'data'=>$data];
  		 if ($data['respCode'] == 00) {
 	           $order_result=$this->writeorder($tradeNo, $price, $price*($this->also->item_rate/100) ,$description,$data['traceno']);//写入套现订单
 	      	 if(!$order_result)

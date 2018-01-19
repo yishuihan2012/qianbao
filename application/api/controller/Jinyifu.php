@@ -18,11 +18,11 @@ class Jinyifu
     protected $pad_method = NULL;
     protected $secret_key ='';
     protected $iv = '';
-    public function __construct($secret_key,$iv){
+    public function __construct($secret_key){
     	$this->secret_key =$secret_key;
     	$this->cipher = MCRYPT_RIJNDAEL_128;
     	$this->mode =MCRYPT_MODE_ECB;
-    	$this->iv =$iv;
+    	$this->iv ='';
     	$this->pad_method = 'pkcs5';
     }
 
@@ -31,14 +31,11 @@ class Jinyifu
         if (is_null($this->pad_method)) {
             return $str;
         } else {
-            // $func_name = __CLASS__ . '::' . $this->pad_method . '_' . $ext . 'pad';
-            $method=$this->pad_method . '_' . $ext . 'pad';
-            $size = mcrypt_get_block_size($this->cipher, $this->mode);
-            return $this->$method($str, $size);
-            // if (is_callable($func_name)) {
-            //     $size = mcrypt_get_block_size($this->cipher, $this->mode);
-            //     return call_user_func($func_name, $str, $size);
-            // }
+            $func_name = __CLASS__ . '::' . $this->pad_method . '_' . $ext . 'pad';
+            if (is_callable($func_name)) {
+                $size = mcrypt_get_block_size($this->cipher, $this->mode);
+                return call_user_func($func_name, $str, $size);
+            }
         }
 
         return $str;
@@ -67,7 +64,6 @@ class Jinyifu
         $rt = bin2hex($cyper_text);
         mcrypt_generic_deinit($td);
         mcrypt_module_close($td);
-        // var_dump($rt);die;
         return $rt;
     }
     public function decrypt($str)
