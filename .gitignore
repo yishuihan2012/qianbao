@@ -5,4 +5,5 @@
 /public/static/images/avatar.png
 /extend/
 /application/database.php
+/public/.htaccess
 

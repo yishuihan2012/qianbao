@@ -189,7 +189,16 @@ namespace app\index\controller;
 	 		$this->redirect("member/index");
 	 		die;	
 	 	}
-	 	$member_group_info = MemberGroup::order("group_salt desc")->select();//用户分组数据
+	 	#运营商用户
+	 	if($this->admin['adminster_group_id']==5){
+	 		$group_salt=db('member')->alias('m')
+	 			->join('member_group g','m.member_group_id=g.group_id')
+	 			->where('m.member_id',$this->admin['adminster_user_id'])
+	 			->value('g.group_salt');
+		 	$member_group_info = MemberGroup::where(['group_visible'=>0,'group_salt'=>['<=',$group_salt]])->order("group_salt desc")->select();//用户分组数据
+	 	}else{
+		 	$member_group_info = MemberGroup::order("group_salt desc")->select();//用户分组数据
+	 	}
 	 	$this->assign("member_group_id", request()->param("member_group_id"));
 	 	$this->assign("id",request()->param("id"));
 	 	$this->assign('member_group_info',$member_group_info);

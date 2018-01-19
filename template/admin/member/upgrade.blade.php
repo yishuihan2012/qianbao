@@ -19,14 +19,16 @@
  <div class="modal-content animated fadeInLeft">
 	 <form action="{{url('/index/Member/upgrade')}}" method="post" class="form-group" id="myform">
 	 <input type="hidden" name="id" value="">
+
+@if($admin['adminster_group_id']!=5)
 	 <div class="help-block"><code>(是否分佣)</code></div>
 	 <div style="margin-bottom: 5px">
-	
 	 <input type="radio" name="status" value="0" style="margin-left:100px" checked>否
 	  <input type="radio" name="status" value="1" style="margin-left:100px">是
 	  <input type="hidden" name="member_id" value="{{$id}}">
-	
- </div>
+	 </div>
+@endif
+
 <div class="input-group"  style="margin-top:10px;">
 			<span class="input-group-addon">用户分组</span>
 			

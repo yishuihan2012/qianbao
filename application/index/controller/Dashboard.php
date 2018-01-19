@@ -27,6 +27,10 @@ class Dashboard extends Common
     //-------------------------------------------------------
     public function index()
     {   
+        // $memberId=44;
+        //  $family=find_relation($memberId);
+         // array_shift($family);
+        //  halt($family);
         //数据获取展示
         $member['count']=Member::count();#当前用户总数量
         $member['today']=Member::whereTime('member_creat_time','d')->count();#今日用户数量
@@ -50,7 +54,7 @@ class Dashboard extends Common
         //总体数据
     	$data=[
             'count'          => Member::where($whereMember)->count(),#当前用户总数量
-    		'cert'          => Member::where(array_merge($whereMember,['member_cert'=>1]))->count(),#当前用户总数量
+    		'cert'           => Member::where(array_merge($whereMember,['member_cert'=>1]))->count(),#当前用户总数量
     		'Todaycount'     => Member::where($whereMember)->whereTime('member_creat_time','d')->count(),#今日用户数量
             'CashOrdercount' => CashOrder::where(array_merge($where,['order_state'=>2]))->count(),//当前套现总数量
             'GenerationOrdercount' => GenerationOrder::where(array_merge($where,['order_status'=>2]))->count(),//当前还款总数量

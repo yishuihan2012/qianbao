@@ -37,6 +37,7 @@
         </select>
       </div>
     </div>
+    @if($admin['adminster_group_id']!=5)
     <div class="col-xs-4 col-md-2">
         <div class="input-group">
         <span class="input-group-addon">用户组</span>
@@ -48,6 +49,7 @@
         </select>
       </div>
     </div>
+    @endif
     <div class="col-xs-4 col-md-2 text-center">
       <button class="btn btn-primary btn-search" type="button">立即搜索</button>
     </div>

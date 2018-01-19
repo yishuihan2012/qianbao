@@ -29,6 +29,10 @@ class Adminster extends Common {
 		 !empty($params['state']) ? $where['adminster_state']=$params['state'] :  $params['state']="";
 		 !empty($params['group']) ? $groups['group_id']=$params['group'] : $params['group']="";
 		 $params['page']=Request::instance()->param('page') ? : 1;
+		 #运营商用户组
+		 if($this->admin['adminster_group_id']==5){
+		 	$where['adminster_user_id']=['in',$this->admin['children']];
+		 }
 		 $adminster_list= new Adminsters();
 		 $adminster_list= $adminster_list->with('profile')->where($groups)->where($where)->paginate(Config::get('page_size'), false, ['query'=>$params]);
 		 $groupLists=AuthGroups::all();
@@ -44,6 +48,12 @@ class Adminster extends Common {
 		 if(Request::instance()->isPost()){
 		 	$r=request()->param();
 			 $code=make_rand_code();
+			 
+			 #运营商添加的用户强制为 运营商用户组
+			 if($this->admin['adminster_group_id']==5){
+			 	$r['login_group']=5;
+			 }
+
 			 $check_login_name=Adminsters::get(['adminster_login'=>Request::instance()->post('login_name')]);
 			 if($check_login_name){
 				 Session::set('jump_msg',['type'=>'warning','msg'=>'用户名已存在~请重试','data'=>'']);
@@ -158,12 +168,21 @@ class Adminster extends Common {
 			 $data['adminster_user_id']	=	$adminster_info['adminster_user_id'];
 		 else
 			 $data['adminster_user_id']	=	"";
-		 #获取用户组信息
-		 $authGroups=AuthGroups::all();
-		 $users=db('member')->alias('m')
-		 	->join('member_relation r','m.member_id=r.relation_member_id')
-		 	->where('r.relation_parent_id',0)
-		 	->select();
+		 #获取用户组/子运营商用户
+		 if($this->admin['adminster_group_id']==5){
+			 $authGroups=AuthGroups::all(['id'=>5]);
+			 $users=db('member')->alias('m')
+			 	->join('member_group g','m.member_group_id=g.group_id')
+			 	->where('m.member_id','in',$this->admin['children'])
+			 	->where('g.group_visible=0')
+			 	->select();
+		 }else{
+			 $authGroups=AuthGroups::all();
+			 $users=db('member')->alias('m')
+			 	->join('member_group g','m.member_group_id=g.group_id')
+			 	->where('g.group_visible=0')
+			 	->select();
+		 }
 		 $this->assign('users',$users);
 		 $this->assign('data',$data);
     		 $this->assign('auth_groups',$authGroups);
