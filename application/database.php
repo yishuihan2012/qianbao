@@ -15,11 +15,11 @@ return [
     // 服务器地址
     'hostname'        => '120.27.116.16',
     // 数据库名
-    'database'        => 'wallet_demo',
+    'database'        => 'wuyou_test',
     // 用户名
-    'username'        => 'db_wallet',
+    'username'        => 'root',
     // 密码
-    'password'        => 'dbwallet',
+    'password'        => 'chFUCK->D5',
     // 端口
     'hostport'        => '',
     // 连接dsn
