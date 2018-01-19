@@ -1,6 +1,9 @@
 @extends('admin/layout/layout_main')
 @section('title','激活码管理')  
 @section('wrapper')
+ <header>
+    <h3><i class="icon-list-ul"></i> 订单列表 <small>共 <strong class="text-danger">{{$count}}</strong> 条</small></h3>
+  </header>
 <table class="table table-striped table-hover">
     <thead>
       <tr>
