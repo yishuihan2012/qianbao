@@ -38,10 +38,10 @@
  	 	 	 $member_faterInfo=Member::get($member_fater_id);
  	 	 	 if($member_faterInfo) //直接上级会员信息真实存在的话 进行分佣
  	 	 	 {
+
+ 	 	 	 	$group1 = MemberGroup::get($memberInfo['member_group_id']);
  	 	 	 	$fatherMoney = 0;
  	 	 	 	if(System::getName('commission_type')==1){
-
- 	 	 	 		$group1 = MemberGroup::get($member_faterInfo['member_group_id']);
  	 	 	 		$fatherMoney = $group1['group_direct_cent'];
  	 	 	 	}else{
  	 	 	 		$fatherMoney=$total_money*(System::getName('direct_total')/100);
@@ -69,9 +69,7 @@
  	 	 	 	 {   
  	 	 	 	 	$grandFatherMoney = 0;
  	 	 	 	 	if(System::getName('commission_type')==1){
- 	 	 	 	 		
- 	 	 	 	 		$group2 = MemberGroup::get($member_grandFaterInfo['member_group_id']);
- 	 	 	 			$grandFatherMoney = $group2['group_second_level_cent'];
+ 	 	 	 			$grandFatherMoney = $group1['group_second_level_cent'];
  	 	 	 	 	 }else{
  	 	 	 	 	 	 $grandFatherMoney=$total_money*(System::getName('indirect_total')/100);
  	 	 	 	 	 }
@@ -92,9 +90,7 @@
 	 	 	 	 	 {
 	 	 	 	 	 	$endFatherMoney = 0;
 	 	 	 	 	 	if(System::getName('commission_type')==1){
-
-	 	 	 	 	 		$group3 = MemberGroup::get($member_endFatherInfo['member_group_id']);
- 	 	 	 				$endFatherMoney = $group3['group_three_cent'];
+ 	 	 	 				$endFatherMoney = $group1['group_three_cent'];
 	 	 	 	 	 	}else{
 	 	 	 	 	 		$endFatherMoney=$total_money*(System::getName('indirect_3rd_total')/100);
 	 	 	 	 	 	}
