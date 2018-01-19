@@ -176,6 +176,7 @@ use app\index\model\CallbackLog as CallbackLogs;
                       'app_id'        =>System::getName('Alipay_appid'),
                  ];
                  $sign =   $this->aop->generateSign($sign_data);
+                 // var_dump($sign);die;
                  $sign_data['sign_type']  = "RSA2";
                  $sign_data['sign']  = $sign;
                  $sign_content = $this->aop->getSignContentUrlencode($sign_data);
