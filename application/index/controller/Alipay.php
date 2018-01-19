@@ -167,7 +167,7 @@ use app\index\model\CallbackLog as CallbackLogs;
                       'method'        => 'alipay.open.auth.sdk.code.get',
                       'app_name'      => 'mc',
                       'biz_type'      => 'openservice',
-                      'pid'           => System::getName('alipay_pid'),
+                      'pid'           => '2017121500800116',
                       // 'pid'           =>Config::get('alipay.pid'),
                       'product_id'    => 'APP_FAST_LOGIN',
                       'scope'         => 'kuaijie',
