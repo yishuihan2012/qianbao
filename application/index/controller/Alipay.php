@@ -173,7 +173,7 @@ use app\index\model\CallbackLog as CallbackLogs;
                       'scope'         => 'kuaijie',
                       'target_id'     => get_token(),
                       'auth_type'     => 'AUTHACCOUNT',
-                      'app_id'        =>Config::get('alipay.app_id'),
+                      'app_id'        =>System::getName('Alipay_appid'),
                  ];
                  $sign =   $this->aop->generateSign($sign_data);
                  $sign_data['sign_type']  = "RSA2";
