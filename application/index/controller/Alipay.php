@@ -167,13 +167,13 @@ use app\index\model\CallbackLog as CallbackLogs;
                       'method'        => 'alipay.open.auth.sdk.code.get',
                       'app_name'      => 'mc',
                       'biz_type'      => 'openservice',
-                      'pid'           => System::getName('alipay_pid'),
+                      'pid'           => '12313131321',
                       // 'pid'           =>Config::get('alipay.pid'),
                       'product_id'    => 'APP_FAST_LOGIN',
                       'scope'         => 'kuaijie',
                       'target_id'     => get_token(),
                       'auth_type'     => 'AUTHACCOUNT',
-                      'app_id'        =>System::getName('Alipay_appid'),
+                      'app_id'        =>'1231231313',
                  ];
                  $sign =   $this->aop->generateSign($sign_data);
                  $sign_data['sign_type']  = "RSA2";
