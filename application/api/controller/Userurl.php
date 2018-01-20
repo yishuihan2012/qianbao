@@ -26,11 +26,13 @@ use app\index\model\MemberGroup;
 use app\index\model\MemberRelation; 
 use app\index\model\CreditCard;
 use app\index\model\MemberCreditcard;
+use app\index\model\MemberCashcard;
 use app\index\model\Generation;
 use app\index\model\GenerationOrder;
 use app\index\model\System;
 use app\index\model\NoviceClass as NoviceClasss; 
 use app\index\model\Appversion; 
+use app\index\model\SmsCode; 
 /**
  *  此处放置一些固定的web地址
  */
@@ -816,4 +818,53 @@ class Userurl extends Controller
   	$membernet=new con\Membernet();
   	return json_encode($membernet->cancle_plan($generation_id));
   }
+
+    #金易付验证码页面
+  public function jinyifu($memberId,$passagewayId,$cardId,$price){
+
+  	if(request()->ispost()){
+  		var_dump(Request::instance()->param());die;
+  	}
+  	//$member=Members::with('memberCashcard,memberCreditcard')->where(['member_id'=>$memberId,'card_id'])->find();
+  	
+  	$info=Members::haswhere('memberCreditcard',['card_id'=>$cardId])->where(['member_id'=>$memberId])->find();
+  	// //var_dump($info::getLastSql());
+  	// dump($info->memberCreditcard->card_bankname);
+  	// dump($info->memberCashcard->card_bankname);
+  	// die;
+
+  	$this->assign('info',$info);
+  	$this->assign('price',$price);
+  	$this->assign('passagewayId',$passagewayId);
+
+  	return view("Userurl/jinyifu");
+  }
+
+  #金易付发送验证码
+  public function jinyifu_sms(){
+  	// var_dump(Request::instance()->param('phone'));die;
+  	 #验证手机/发送对象是否存在
+      	 if(!phone_check(Request::instance()->param('phone')))
+      	 	 return ['code'=>401];
+           #随机一个验证码
+           $code=verify_code(System::getName('code_number'));
+           // var_dump($code);die;
+           #设定短信内容
+           $message="您本次操作的验证码为".$code."，请尽快使用。有效期为".System::getName('code_timeout')."分钟。";
+           $log=new SmsCode([
+                 'sms_log_content'=>$code,
+                 'sms_log_state'    =>1,
+                 'sms_log_type'     =>'验证码',
+                 'sms_send'          =>Request::instance()->param('phone')
+           ]);
+           $sms_result=$log->save();
+           if(!$sms_result)
+                 return['code'=>303]; 
+           $result=send_sms(Request::instance()->param('phone'), $message);
+           #如果发送成功,记录发送记录表
+           if(!$result)
+                 return ['code'=>303];
+           return ['code'=>200,'msg'=>'验证码发送成功~'];
+  }
+
 }

@@ -394,8 +394,18 @@ class CashOut
 		 	 	 	return ['code'=>462, 'msg'=>$member_net_result['msg']];
 		 	 }	 
 	 	 }
+	 	 $url=request()->domain() . "/api/Userurl/jinyifu/memberId/".$this->member_infos->member_id."/passagewayId/".$this->passway_info->passageway_id."/cardId/".$this->card_info->card_id."/price/".$price;
+	 	 return ['code'=>200,'msg'=>'订单获取成功~', 'data'=>['url'=>$url,'type'=>1, ]];
+
+
+
 	 	 // var_dump($this->passway_info->passageway_pwd_key);die;
 	 	 // return ['code'=>200,'msg'=>'订单获取成功~' , 'data'=>$this->passway_info];
+	 	
+	 }
+
+	  #金易付付款界面
+	 public function jinyifu_pay($price,$description='金易付取现'){
 	 	 $jinyifu=new \app\api\controller\Jinyifu($this->passway_info->passageway_pwd_key);
 	 	 $cvn2=$jinyifu->encrypt($this->card_info->card_Ident);
 	 	 $expDate=$jinyifu->encrypt($this->card_info->card_expireDate);
@@ -405,8 +415,8 @@ class CashOut
 	            'payamt'=>$price, //交易金额
 	            'clientType'=>'web',  //客户端类型
 	            'bizType'=>'4301',//业务类型
-	            'randomStr'=>$tradeNo,// 随机串
-	            'orderId'=>$tradeNo ,//商户订单号
+	            'randomStr'=>make_order(),// 随机串
+	            'orderId'=>make_order() ,//商户订单号
 	            'notifyUrl'=>$_SERVER['HTTP_HOST'].$this->passway_info->cashout->cashout_callback, //异步通知URL,  //后台异步通知地址
 	            'frontNotifyUrl'=>$_SERVER['HTTP_HOST'].'/api/Userurl/calllback_success',
 	            'lpCertNo'=>$this->card_info->card_idcard, // 持卡人身份证号
@@ -427,7 +437,6 @@ class CashOut
 	        $params=base64_encode(json_encode($arr));
 	        #4请求字符串
 	        $urls='https://hydra.scjinepay.com/jk/QpayAction_getQpOrder?params='.urlencode($params);
-	        // $url='https://hydra.scjinepay.com/jk/QpayAction_getQpOrder';
 	        #请求
 	        $res=curl_post($urls);
 	        // $res=curl_post($urls, 'get', '', $type="Content-Type: application/json; charset=utf-8");
