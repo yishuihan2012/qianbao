@@ -94,6 +94,8 @@ class Wallet extends Common
 		$wallet = Wallets::get(Request::instance()->param('id'));
 		
 		$WalletLog =WalletLog::where($where)->paginate(Config::get('page_size'), false, ['query'=>Request::instance()->param()]);
+		$count = WalletLog::where($where)->count();
+		$this->assign("count",$count);
 		$this->assign("log_wallet_id",Request::instance()->param('id'));
 		#计算进账
 		$entertottal = WalletLog::where($where)->where(['log_relation_type' => 1])->sum("log_wallet_amount");
