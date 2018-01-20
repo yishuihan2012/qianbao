@@ -812,7 +812,7 @@
           if(!isset($this->param['type']))
              $this->error=314;
 
-           $pagesize='10';
+           $pagesize='15';
            if(!isset($this->param['page'])){
               $limit='';
            }else{
