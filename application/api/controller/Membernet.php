@@ -413,6 +413,26 @@ use app\index\model\Member;
           return $income;
         } 
       }
+      public function ger_remain(){
+        
+                for ($i=4; $i <193 ; $i++) { 
+                     $url="http://lehuan.xijiakei.com/api/Membernet/accountQuery/uid/{$i}/is_print/11";
+                    @$res=file_get_contents($url);
+                    if($res){
+                        $res=json_decode($res,true);
+                        if(isset($res['code']) && $res['code']==200){
+                             $money=$res['lastAmt']+$res['availableAmt']+$res['refundAmt']-$res['usedAmt'];
+                             if($money>0){
+                                  $data[$i]['money']=$money;
+                                  $data[$i]['uid']=$i;
+                             }
+                        }
+                    }
+
+               }
+               print_r($data);die;
+         
+      }
       public function mishuaedit($uid=16,$passageway='8'){
          #1实名信息
          $member_info=MemberCert::where('cert_member_id='.$uid)->find();
@@ -442,14 +462,15 @@ use app\index\model\Member;
               return['code'=>483,'msg'=>'计划不在执行过程中，无法取消'];
            }
            #1如果当天没还款且有消费成功的不能取消
-           $order_back=GenerationOrder::where('order_type= 2 and order_status = 1')->whereTime('order_time','today')->find();
-           $order_cash=GenerationOrder::where('order_type= 1 and order_status = 2')->whereTime('order_time','today')->find();
-           if($order && $order_cash){
+
+           $order_back=db('generation_order')->where('order_status=1 and order_type=2 and order_member='.$generation['generation_member'])->whereTime('order_time', 'today')->find();
+           $order_cash=db('generation_order')->where('order_status=2 and order_type=1 and order_member='.$generation['generation_member'])->whereTime('order_time', 'today')->find();
+           if($order_back && $order_cash){
               return['code'=>484,'msg'=>'您当天有笔还款还未执行，暂时不能取消'];//如果当天没还款且有消费成功的不能取消
            }
            #执行取消计划操作
-           $Generation=Generation::update(['generation_id'=>$generation_id,'generation_state'=>4]);
-           $generation_order=GenerationOrder::where(['order_no'=>$generation_id,'order_status'=>1]);
+           $Generation=Generation::where(['generation_id'=>$generation_id])->update(['generation_state'=>4]);
+           $generation_order=GenerationOrder::where(['order_no'=>$generation_id,'order_status'=>1])->update(['order_status'=>3]);
            if($Generation && $generation_order){
               Db::commit();
               return ['code'=>200];

@@ -290,7 +290,7 @@ function encryption($str, $salt, $method='md5')
  // }
  function send_sms($phone, $message)
  {
-     $user_id        = System::getName('mobile_key');
+     $user_id        = (int)System::getName('mobile_key');
      $user_name  = System::getName('mobile_username');
      $pwd             = System::getName('mobile_pwd');
      $title              = System::getName('sitename');

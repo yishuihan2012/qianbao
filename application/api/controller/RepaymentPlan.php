@@ -228,8 +228,13 @@
       //根据开始时间结束时间随机每天刷卡时间---有问题
       public function get_random_time($day,$count,$begin=9,$end=19){
         //如果日期为今天，刷卡时间大于当前小时
-        if($day==date('Y-m-d',time())){
-           $begin=date('H',time())+1;
+        $now_h=date('Y-m-d',time());
+        if($day==$now_h){
+           if($now_h<8){
+               $begin =9;
+           }else{
+               $begin=date('H',time())+1;
+           }
         }
         $last=$begin;
          $step=floor(($end-$begin)/$count)-1;
