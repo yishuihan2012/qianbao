@@ -17,8 +17,10 @@
  */
  class Commission
  {
- 	#代理商
+ 	#是否自动执行代理商利润分配
  	private $isFenrun=false;
+ 	#上线集合
+ 	private $family;
 	 /**
 	 *  @version MemberCommis controller / Api 分佣
 	 *  @author $bill$(755969423@qq.com)
@@ -115,18 +117,11 @@
  	 	 //获取到用户税率
  	 	 $member_also=PassagewayItem::where(['item_passageway'=>$passwayId,'item_group'=>$memberInfo['member_group_id']])->value($field);
 
- 	 	 # 【代理商机制】
- 	 	 # 判断顶级是否存在代理商
- 	 	 $family=find_relation($memberId);
- 	 	 #剔除memberId本身
- 	 	 array_shift($family);
- 	 	 foreach ($family as $k => $v) {
- 	 	 	#不可见用户组 即为代理商用户组
- 	 	 	if($v['group_visible']==0){
- 	 	 		$leftmoney+=5;
- 	 	 	}
- 	 	 }
-
+	 	# 【代理商机制】
+	 	# 判断顶级是否存在代理商
+	 	$this->family=find_relation($memberId);
+	 	#剔除memberId本身
+	 	array_shift($family);
 
  	 	 //获取用户直接上级ID
  	 	 $member_faterId=MemberRelation::where('relation_member_id',$memberId)->value('relation_parent_id');
@@ -289,7 +284,7 @@
  	 	 	 $action="代理利润";
  	 	 	 $field="wallet_fenrun";
  	 	 }
- 	 	 try{ 
+ 	 	 try{
 	 	      $commission= new Commissions([
 	 	      	 'commission_member_id'=>$fatherId,
 	 	      	 'commission_childen_member'	=>$memberId,
@@ -334,11 +329,22 @@
                  return false;
            }
  	 }
- 	#在分润方法调用结束后 调用本方法 执行代理商利润分配
  	public function __destruct(){
- 		global $leftmoney;
  		if($this->isFenrun){
  			
  		}
  	}
- }
+ 	#在分润方法调用结束后 调用本方法 执行代理商利润分配
+ 	#【无忧钱管家】在 同级推荐同级或上级 - 上级代理商获取分润结算差额50% 规则中
+ 	#需先调用本方法分配 然后再执行上述规则
+ 	private function agent_allot($memberId,$passwayId){
+ 		global $leftmoney;
+	 	foreach ($family as $k => $v) {
+	 	 	#不可见用户组 即为代理商用户组
+	 	 	if($v['group_visible']==0){
+	 	 		$leftmoney+=5;
+	 	 	}
+	 	}
+
+ 	}
+}

@@ -29,7 +29,7 @@ class Dashboard extends Common
     {   
         // $memberId=44;
         //  $family=find_relation($memberId);
-         // array_shift($family);
+        //  array_shift($family);
         //  halt($family);
         //数据获取展示
         $member['count']=Member::count();#当前用户总数量
