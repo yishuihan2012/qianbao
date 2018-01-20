@@ -59,11 +59,21 @@ namespace app\index\controller;
 		#若当前用户为运营商用户
 		if($this->admin['adminster_group_id']==5){
 			$where['member_id']=["in",$this->admin['children']];
+			$admin_group_salt=db('member_group')->alias('g')
+				->join('member m','m.member_group_id=g.group_id')
+				->where('m.member_id',$this->admin['adminster_user_id'])
+				->value('group_salt');
+			#用于判断下级用户所在的用户组是否大于当前代理商，若大于 不显示升级选项
+			$this->assign('admin_group_salt',$admin_group_salt);
 		}
 	 	 //获取会员等级
 	 	 $member_group=MemberGroup::all();
 	 	 #获取会员列表 
-	 	 $member_list=Members::with('memberLogin,membergroup,membercert')->join("wt_member_cert m", "m.cert_member_id=member_id","left")->where($wheres)->where($where)->order('member_id','desc')->paginate(Config::get('page_size'), false, ['query'=>Request::instance()->param()]);
+	 	 $member_list=Members::with('memberLogin,membergroup,membercert')
+	 	 	->join("wt_member_cert m", "m.cert_member_id=member_id","left")
+	 	 	->where($wheres)->where($where)
+	 	 	->order('member_id','desc')
+	 	 	->paginate(Config::get('page_size'), false, ['query'=>Request::instance()->param()]);
 	 	 #用户身份证号码
 		 $count = Members::with('memberLogin,membergroup,membercert')->join("wt_member_cert m", "m.cert_member_id=member_id","left")->where($wheres)->where($where)->count();
 	 	 $this->assign('count', $count);
@@ -125,7 +135,6 @@ namespace app\index\controller;
 	 		$Member = new Members();
 	 		#获取用户信息
 	 		$info = $Member->join("wt_member_relation","relation_member_id=member_id")->where($where)->find();
-	 		
 	 		#获取用户分组最大会员级别
 	 		$group_salt = Db::table("wt_member_group")->field("group_salt")->order("group_salt desc")->find();
 	 		$content = array();
@@ -195,7 +204,13 @@ namespace app\index\controller;
 	 			->join('member_group g','m.member_group_id=g.group_id')
 	 			->where('m.member_id',$this->admin['adminster_user_id'])
 	 			->value('g.group_salt');
-		 	$member_group_info = MemberGroup::where(['group_visible'=>0,'group_salt'=>['<=',$group_salt]])->order("group_salt desc")->select();//用户分组数据
+	 		$user_group_salt=db('member')->alias('m')
+	 			->join('member_group g','m.member_group_id=g.group_id')
+	 			->where('m.member_id',request()->param("id"))
+	 			->value('g.group_salt');
+	 		#可升级的用户组 应该是大于当前用户组，并且小于当前运营商所在算用户组
+		 	$member_group_info = MemberGroup::where(['group_visible'=>0,'group_salt'=>['between',[$user_group_salt,$group_salt]]])
+		 		->order("group_salt desc")->select();//用户分组数据
 	 	}else{
 		 	$member_group_info = MemberGroup::order("group_salt desc")->select();//用户分组数据
 	 	}

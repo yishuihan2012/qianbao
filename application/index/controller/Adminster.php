@@ -64,26 +64,28 @@ class Adminster extends Common {
 			     	 Session::set('jump_msg',['type'=>'warning','msg'=>'邮箱已绑定其他账号~请更换','data'=>'']);
 				 $this->redirect($this->history['0']);
 			 }
+			 $adminster=new Adminsters;
 			 if($r['login_group']==5){
 			 	if($r['adminster_user_id']){
 			 		$admin=Adminsters::get(['adminster_user_id'=>$r['adminster_user_id']]);
 			 		if($admin){
-				     	 Session::set('jump_msg',['type'=>'warning','msg'=>'该用户已被'.$admin['adminster_login'].'绑定，请更换用户或为'.$admin['adminster_login'].'解除绑定','data'=>'']);
-						 $this->redirect($this->history['0']);
+				     	Session::set('jump_msg',['type'=>'warning','msg'=>'该用户已被'.$admin['adminster_login'].'绑定，请更换用户或为'.$admin['adminster_login'].'解除绑定','data'=>'']);
+						$this->redirect($this->history['0']);
+			 		}else{
+			 			$adminster->adminster_user_id=$r['adminster_user_id'];
 			 		}
 			 	}else{
-			     	 Session::set('jump_msg',['type'=>'warning','msg'=>'请选择该渠道商对应的用户','data'=>'']);
-					 $this->redirect($this->history['0']);
+			     	Session::set('jump_msg',['type'=>'warning','msg'=>'请选择该渠道商对应的用户','data'=>'']);
+					$this->redirect($this->history['0']);
 			 	}
 			 }
-			 $adminster=new Adminsters;
 			 $adminster->adminster_login=Request::instance()->post('login_name');
 			 $adminster->adminster_pwd=encryption(Request::instance()->post('login_passwd'),$code);
 			 $adminster->adminster_salt=$code;
 			 $adminster->adminster_update_time=date('Y-m-d H:i:s');
 			 $adminster->adminster_email=Request::instance()->post('login_email');
 			 $authGroupAccesss=new AuthGroupAccesss;
-			 $authGroupAccesss->group_id=Request::instance()->post('login_group')?Request::instance()->post('login_group'):Config::get('default_groups');
+			 $authGroupAccesss->group_id=$r['login_group']?$r['login_group']:Config::get('default_groups');
 			 $adminster->profile=$authGroupAccesss;
 			 if(false===$adminster->together('profile')->save()){
 			      Session::set('jump_msg',['type'=>'warning','msg'=>'管理员添加失败~请重试','data'=>'']);

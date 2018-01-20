@@ -80,6 +80,7 @@
 <!--                      <button type="button" data-toggle="modal" data-size="lg" data-remote="{{url('/index/member/info/id/'.$val->member_id)}}" class="btn btn-sm">查看详情</button>
  -->                <div class="btn-group">
                      <button type="button" data-toggle="modal" data-size="lg" data-remote="{{url('/index/member/info/id/'.$val->member_id)}}" class="btn btn-sm">查看详情</button>
+                @if(!isset($admin_group_salt) || $admin_group_salt>$val->group_salt)
                      <div class="btn-group">
                            <button type="button" class="btn btn-sm dropdown-toggle" data-toggle="dropdown"><span class="caret"></span></button>
                            <ul class="dropdown-menu" role="menu">
@@ -90,6 +91,7 @@
                      @endif
                            </ul>
                      </div>
+                  @endif
                 </div>
           </td>
       </tr>
