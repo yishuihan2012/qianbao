@@ -554,6 +554,8 @@
         if(!isset($this->param['group_id']) || empty($this->param['group_id']) || !isset($this->param['member_cert']))
             $this->error=314;
 
+          
+
           $array['member_cert']=(empty($this->param['member_cert']) && $this->param['member_cert']!=="0") ? 'all' : $this->param['member_cert'] ;
           #查询全部
           if($array['member_cert']=='all'){
@@ -668,9 +670,13 @@
             }
           }
          
-         
           $data['totalChildAmount']=count($member_info);
-          $data['list']=$member_info;
+           if(!isset($this->param['page'])){
+              $data['list']=$member_info;
+           }else{
+            $data['list']=array_slice($member_info,($this->param['page']-1)*2,2);
+           }
+          
           return ['code'=>200, 'msg'=>'信息反馈成功~','data'=>$data];
       }
      
@@ -806,9 +812,16 @@
           if(!isset($this->param['type']))
              $this->error=314;
 
+           $pagesize='15';
+           if(!isset($this->param['page'])){
+              $limit='';
+           }else{
+            $limit=($this->param['page']-1)*$pagesize.",".$pagesize;
+           }
+          
           $this->param['type']=$this->param['type'] ? $this->param['type'] : 1;
            
-          $Commission=Commission::with('member')->where('commission_member_id='.$this->param['uid'].' and commission_type='.$this->param['type'])->order('commission_id desc')->select();
+          $Commission=Commission::with('member')->where('commission_member_id='.$this->param['uid'].' and commission_type='.$this->param['type'])->order('commission_id desc')->limit($limit)->select();
       
           $comm = array();
           foreach ($Commission as $key => $value) {
