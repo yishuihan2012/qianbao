@@ -385,7 +385,7 @@ class Userurl extends Controller
 	 * @return   [type]
 	 */
 	public function deal_list(){
-		// $this->checkToken();
+		$this->checkToken();
 		// $this->param['uid']=11;
 		//取MemberCash内容
 		$MemberCash=MemberCash::where(['cash_member_id'=>$this->param['uid'],'cash_state'=>1])->order('cash_create_at desc')->select();
@@ -403,6 +403,8 @@ class Userurl extends Controller
 		}
 		//取withdraw内容
 		$Withdraw=Withdraw::where(['withdraw_member'=>$this->param['uid'],'withdraw_state'=>12])->order('withdraw_add_time desc')->select();
+		// $Withdraw=db('withdraw')->where(['withdraw_member'=>$this->param['uid']])->select();
+		// $Withdraw=db('withdraw')->where(['withdraw_member'=>$this->param['uid'],'withdraw_state'=>12])->select();
 		//转存
 		foreach ($Withdraw as $k => $v) {
 			$data[$i]['number']=$i;
@@ -415,6 +417,7 @@ class Userurl extends Controller
 			$data[$i]['withdraw_add_time']=$v['withdraw_add_time'];
 			$data[$i++]['withdraw_method']=$v['withdraw_method'];
 		}
+
 		//取CashOrder内容
 		// $CashOrder=CashOrder::with('bankcard')->all(['order_member'=>$this->param['uid'],'order_state'=>2]);
 		$CashOrder=CashOrder::with('membercreditcard')->where(['order_member'=>$this->param['uid'],'order_state'=>2])->order('order_add_time desc')->select();
@@ -789,11 +792,16 @@ class Userurl extends Controller
   	$key=db('passageway')->where('passageway_id',$param['passageway_id'])->value('passageway_pwd_key');
   	// 测试自己加密的可以解密
   	// return rongbang_aes_decode($key,rongbang_aes($key,$param['test']));
+  	#解不了密的情况下 根据我们自己填的单号去更改订单状态
+  	if($param['order_no']){
+  		$data=[];
+  		$data['ordernumber']=$param['order_no'];
+  		$data['amount']=db('cash_order')->where('order_no',$data['ordernumber'])->value('order_money');
 
-  	$data=rongbang_aes_decode($key,$param['Data']);
+  	// $data=rongbang_aes_decode($key,$param['Data']);
   	// var_dump($data);die;
-  	$data=json_decode($data,1);
-  	if($data['respcode']==2){
+  	// $data=json_decode($data,1);
+  	// if($data['respcode']==2){
   		//支付完成
   		db('cash_order')->where('order_no',$data['ordernumber'])->update(['order_state'=>2]);
   		$order_id=db('cash_order')->where('order_no',$data['ordernumber'])->value('order_id');
@@ -810,6 +818,10 @@ class Userurl extends Controller
   #为无需短信确认的情况 直接显示一个成功页面
   public function passway_success(){
   	return view("Userurl/passway_success");
+  }
+  # 开通快捷支付 前台回调成功页面
+  public function passway_open_success(){
+  	return view("Userurl/passway_open_success");
   }
   #取消还款计划【整体】
   public function cancel_repayment($generation_id){
