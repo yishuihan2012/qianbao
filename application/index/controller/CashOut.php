@@ -13,6 +13,7 @@ use app\index\model\Member;
 use app\index\model\MemberCert;
 use app\index\model\MemberCashcard;
 use app\index\model\Passageway;
+use app\index\model\System;
 use app\index\model\MemberCreditcard;
 use app\index\model\CashOrder;
 use app\index\model\PassagewayItem;
@@ -23,6 +24,7 @@ use app\index\model\CallbackLog as CallbackLogs;
 
 use app\api\controller\Membernets; //入网
 use app\index\model\MemberNet;//入网模型
+use app\index\model\SmsCode;
 
 class CashOut
 {
@@ -405,14 +407,26 @@ class CashOut
 	 }
 
 	  #金易付付款界面
-	 public function jinyifu_pay($price,$description='金易付取现'){
+	 public function jinyifu_pay($param,$description='金易付取现'){
+
+	 	 // #验证码验证规则 读取本手机号最后一条没有使用的验证码 并且在系统设置的有效时间内
+    //        $code_info=SmsCode::where(['sms_send'=>$param['phone'],'sms_log_state'=>1])->whereTime('sms_log_add_time', "-".System::getName('code_timeout').' minutes')->order('sms_log_id','desc')->find();
+    //        if(!$code_info || ($code_info['sms_log_content']!=$param['smsCode']))
+    //              return ['code'=>404];
+    //        #改变验证码使用状态
+    //        $code_info->sms_log_state=2;
+    //        $result=$code_info->save();
+    //        #验证是否成功
+    //        if(!$result)
+    //              return ['code'=>404];
+	 	 $member_net=MemberNet::where(['net_member_id'=>$param['memberId']])->find();
 	 	 $jinyifu=new \app\api\controller\Jinyifu($this->passway_info->passageway_pwd_key);
-	 	 $cvn2=$jinyifu->encrypt($this->card_info->card_Ident);
+	 	 $cvn2='250';//$jinyifu->encrypt($this->card_info->card_Ident);
 	 	 $expDate=$jinyifu->encrypt($this->card_info->card_expireDate);
 		 $arr = array(
 	            'branchId'=>$this->passway_info->passageway_mech,// 机构号
 	            'jinepay_mid'=>$member_net[$this->passway_info->passageway_no], // 商户号
-	            'payamt'=>$price, //交易金额
+	            'payamt'=>$param['price'], //交易金额
 	            'clientType'=>'web',  //客户端类型
 	            'bizType'=>'4301',//业务类型
 	            'randomStr'=>make_order(),// 随机串
@@ -447,7 +461,7 @@ class CashOut
 			// return ['code'=>200,'msg'=>'订单获取成功~11' , 'data'=>$result];
 	        $data=json_decode($result,true);
 	        // return ['code'=>200,'msg'=>'订单获取成功~11' , 'data'=>$data];
- 		 if ($data['respCode'] == 00) {
+ 		 if ($data['resCode'] == 00) {
 	           $order_result=$this->writeorder($tradeNo, $price, $price*($this->also->item_rate/100) ,$description,$data['traceno']);//写入套现订单
 	      	 if(!$order_result)
 	      	 	 return ['code'=>327];

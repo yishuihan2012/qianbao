@@ -128,12 +128,22 @@
 						$("#regBtn").html('请稍后......');
 						var data={
 							smsCode:smsCode,
-							card_id:"{{$info->memberCreditcard->card_id}}",
+							cardId:"{{$info->memberCreditcard->card_id}}",
 							memberId:"{{$info->member_id}}",
 							passwayId:"{{$passagewayId}}",
+							phone:"{{$info->memberCreditcard->card_phone}}",
+							price:"{{$price}}",
 						};
+						console.log(data);
 						$.post('',data,function(res){
 							alert(res)
+							if(res['code']==404){
+								alert("验证码错误")
+							}else if(res['code']==327){
+								alert("插入订单失败");
+							}else if(res['code']==400){
+								alert(res['msg']);
+							}
 					      // if(!isAndroid){
 					      //   window.webkit.messageHandlers.returnIndex.postMessage(1);
 					      // }else{

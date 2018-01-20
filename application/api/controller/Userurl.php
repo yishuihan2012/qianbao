@@ -823,7 +823,11 @@ class Userurl extends Controller
   public function jinyifu($memberId,$passagewayId,$cardId,$price){
 
   	if(request()->ispost()){
-  		var_dump(Request::instance()->param());die;
+  		// var_dump(Request::instance()->post('passagewayId'));die;
+  		$jinyifu=new \app\index\controller\CashOut(Request::instance()->post('memberId'),Request::instance()->post('passwayId'),Request::instance()->post('cardId'));
+  		$res=$jinyifu->jinyifu_pay(Request::instance()->post());
+
+  		return $res;
   	}
   	//$member=Members::with('memberCashcard,memberCreditcard')->where(['member_id'=>$memberId,'card_id'])->find();
   	
