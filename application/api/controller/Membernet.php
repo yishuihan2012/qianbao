@@ -462,9 +462,18 @@ use app\index\model\Member;
               return['code'=>483,'msg'=>'计划不在执行过程中，无法取消'];
            }
            #1如果当天没还款且有消费成功的不能取消
+           $where1['order_status']=1;
+           $where1['order_type']=2;
+           $where1['order_member']=$generation['generation_member'];
+           $where1['order_no']=$generation_id;
 
-           $order_back=db('generation_order')->where('order_status=1 and order_type=2 and order_member='.$generation['generation_member'])->whereTime('order_time', 'today')->find();
-           $order_cash=db('generation_order')->where('order_status=2 and order_type=1 and order_member='.$generation['generation_member'])->whereTime('order_time', 'today')->find();
+           $where2['order_status']=2;
+           $where2['order_type']=1;
+           $where2['order_member']=$generation['generation_member'];
+           $where2['order_no']=$generation_id;
+
+           $order_back=GenerationOrder::where($where1)->whereTime('order_time', 'today')->find();
+           $order_cash=GenerationOrder::where($where2)->whereTime('order_time', 'today')->find();
            if($order_back && $order_cash){
               return['code'=>484,'msg'=>'您当天有笔还款还未执行，暂时不能取消'];//如果当天没还款且有消费成功的不能取消
            }
