@@ -16,7 +16,7 @@
  </div>
 
  <!--dialog Content-->
- <div class="modal-content animated fadeInLeft">
+ <div class="modal-content animated fadeInLeft"> 
 	 <form action="{{url('/index/generalize/exclusiveCreat')}}" method="post" class="form-horizontal" id="myform">
 	 <h2></h2>
 	 <div class="row form-group">
