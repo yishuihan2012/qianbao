@@ -674,7 +674,7 @@
            if(!isset($this->param['page'])){
               $data['list']=$member_info;
            }else{
-            $data['list']=array_slice($member_info,($this->param['page']-1)*2,2);
+            $data['list']=array_slice($member_info,($this->param['page']-1)*10,10);
            }
           
           return ['code'=>200, 'msg'=>'信息反馈成功~','data'=>$data];
