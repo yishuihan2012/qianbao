@@ -543,6 +543,7 @@
       }
 
 
+
       /**
       *  @version get_team_info method / Api 我的团队队员列表
       *  @author $bill$(755969423@qq.com)
@@ -561,7 +562,7 @@
           if($array['member_cert']=='all'){
             $member_info=array();
             #查询出我的所有下级
-            $MemberRelation_1rd=MemberRelation::haswhere('memberp')->where(['relation_parent_id'=>$this->param['uid']])->select();
+            $MemberRelation_1rd=MemberRelation::haswhere('memberp')->where(['relation_parent_id'=>$this->param['uid']])->order("relation_add_time desc")->select();
             // return ['code'=>200, 'msg'=>'信息反馈成功~','data'=>$MemberRelation_1rd];
             if(!empty($MemberRelation_1rd)){
             foreach ($MemberRelation_1rd as $key => $value) {
@@ -575,7 +576,7 @@
                     $member_info[]=$member_1rd;
                   }
 
-                  $MemberRelation_2rd=MemberRelation::haswhere('memberp')->where('relation_parent_id='.$value['relation_member_id'])->select();
+                  $MemberRelation_2rd=MemberRelation::haswhere('memberp')->where('relation_parent_id='.$value['relation_member_id'])->order("relation_add_time desc")->select();
                 
                     if(!empty($MemberRelation_2rd)){
               
@@ -593,7 +594,7 @@
                                $member_info[]=$member_2rd;
                             }
                           
-                           $MemberRelation_3rd=MemberRelation::haswhere('memberp',['member_group_id'=>$this->param['group_id']])->where('relation_parent_id='.$val['relation_member_id'])->select();
+                           $MemberRelation_3rd=MemberRelation::haswhere('memberp',['member_group_id'=>$this->param['group_id']])->order("relation_add_time desc")->where('relation_parent_id='.$val['relation_member_id'])->select();
                            foreach ($MemberRelation_3rd as $k2 => $v2) {
                                $member_3rd=Members::where(['member_id'=>$v2['relation_member_id']])->field('member_id,member_image, member_mobile, member_creat_time, member_cert,member_group_id')->find();
                                if($member_3rd['member_cert']==0){
@@ -613,7 +614,7 @@
           }else{
              $member_info=array();
              #查询出我的所有下级
-             $MemberRelation_1rd=MemberRelation::haswhere('memberp')->where("relation_parent_id={$this->param['uid']}")->select();
+             $MemberRelation_1rd=MemberRelation::haswhere('memberp')->where("relation_parent_id={$this->param['uid']}")->order("relation_add_time desc")->select();
              if(!empty($MemberRelation_1rd)){
                foreach ($MemberRelation_1rd as $key => $value) {
                    $member_1rd=Members::where(['member_id'=>$value['relation_member_id']])->field('member_id,member_image, member_mobile, member_creat_time, member_cert,member_group_id')->find();
@@ -628,7 +629,7 @@
                            $member_info[]=$member_1rd;
                         }
                       }
-                     $MemberRelation_2rd=MemberRelation::haswhere('memberp')->where('relation_parent_id='.$member_1rd['member_id'])->select();
+                     $MemberRelation_2rd=MemberRelation::haswhere('memberp')->where('relation_parent_id='.$member_1rd['member_id'])->order("relation_add_time desc")->select();
                      
                     if(!empty($MemberRelation_2rd)){
                       foreach ($MemberRelation_2rd as $k => $val) {
@@ -646,7 +647,7 @@
                                  $member_info[]=$member_2rd;
                             }
                            }
-                             $MemberRelation_3rd=MemberRelation::haswhere('memberp',['member_group_id'=>$this->param['group_id']])->where('relation_parent_id='.$val['relation_member_id'])->select();
+                             $MemberRelation_3rd=MemberRelation::haswhere('memberp',['member_group_id'=>$this->param['group_id']])->order("relation_add_time desc")->where('relation_parent_id='.$val['relation_member_id'])->select();
                            foreach ($MemberRelation_3rd as $k2 => $v2) {
                              $member_3rd=Members::where(['member_id'=>$v2['relation_member_id']])->field('member_id,member_image, member_mobile, member_creat_time, member_cert,member_group_id')->find();
                              if($member_3rd['member_cert']==$array['member_cert']){
@@ -663,13 +664,12 @@
                       }
                     }
 
-                 
-
               }
 
             }
           }
-         
+
+          $member_info = $this->sort($member_info);
           $data['totalChildAmount']=count($member_info);
            if(!isset($this->param['page'])){
               $data['list']=$member_info;
@@ -679,7 +679,20 @@
           
           return ['code'=>200, 'msg'=>'信息反馈成功~','data'=>$data];
       }
-     
+      #排序
+     public function sort($a){
+        $n =count($a);
+        for($y = 0 ; $y < $n ; $y ++){
+          for($i = 0 ; $i < $n -1 ; $i ++){
+               if($a[$i]["member_id"]<$a[$i+1]["member_id"]){
+                   $b =$a[$i];
+                   $a[$i] =$a[$i+1];
+                   $a[$i+1] =$b;
+               }
+          }
+        }
+       return $a;
+     }
       /**
       *  @version get_upgrade_price method / Api 会员等级列表
       *  @author $bill$(755969423@qq.com)
