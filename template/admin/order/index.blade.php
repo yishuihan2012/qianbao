@@ -74,8 +74,9 @@
            @foreach ($order_lists as $list)
            <tr>
                  <td>{{$list->upgrade_id}}</td>
-        
+                
                  <td>{{$list->member_nick}}</td>
+                 <td>{{$list->upgrade_type}}</td>
                  <td>{{$list->upgrade_no}}</td>
 
                  <td>{{$list->upgrade_money}}</td>

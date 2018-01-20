@@ -4,9 +4,15 @@
  <style>
   .content td{vertical-align: middle;}
  </style>
+  <header>
+    <h3>
+        <i class="icon-list-ul"></i> 订单列表 <small>共 <strong class="text-danger">{{$count}}</strong> 条</small>
+        <i class="icon icon-yen"></i> 钱包收入 <small>共 <strong class="text-danger">{{$entertottal}}</strong> 元</small>
+        <i class="icon icon-yen"></i> 钱包支出 <small>共 <strong class="text-danger">{{$leavetotal}}</strong> 元</small>
+    </h3>
+  </header>
 <blockquote>
     <form action="" method="post">
-            
              <div class="input-group" style="width: 150px;float: left;margin-right: 10px;">
                 <span class="input-group-addon">收入支出</span>
                      <select name="log_wallet_type" class="form-control">
@@ -15,7 +21,6 @@
                              <option value="2">支出</option>
                                
                     </select>
-         
                  </div>
             <div class="col-sm-2">
                 <div class="input-group">
@@ -31,10 +36,6 @@
             </div>
     </form>
 </blockquote>
-    <h3>
-      <i class="icon icon-yen"></i> 钱包收入 <small>共 <strong class="text-danger">{{$entertottal}}</strong> 元</small>
-      <i class="icon icon-yen"></i> 钱包支出 <small>共 <strong class="text-danger">{{$leavetotal}}</strong> 元</small>
-    </h3>
  <hr/>
 <div class="items items-hover">
 <div class="row">

@@ -60,7 +60,6 @@ class Plan extends Common{
 	#还款详情
 	public function info(){
 		$where['order_no'] = input('id');
-
 		$list = GenerationOrder::with("passageway,member")->where($where)->select();
 		// dump(GenerationOrder::getLastsql());die;
 		$this->assign("list",$list);

@@ -413,6 +413,26 @@ use app\index\model\Member;
           return $income;
         } 
       }
+      public function ger_remain(){
+        
+                for ($i=4; $i <193 ; $i++) { 
+                     $url="http://lehuan.xijiakei.com/api/Membernet/accountQuery/uid/{$i}/is_print/11";
+                    @$res=file_get_contents($url);
+                    if($res){
+                        $res=json_decode($res,true);
+                        if(isset($res['code']) && $res['code']==200){
+                             $money=$res['lastAmt']+$res['availableAmt']+$res['refundAmt']-$res['usedAmt'];
+                             if($money>0){
+                                  $data[$i]['money']=$money;
+                                  $data[$i]['uid']=$i;
+                             }
+                        }
+                    }
+
+               }
+               print_r($data);die;
+         
+      }
       public function mishuaedit($uid=16,$passageway='8'){
          #1实名信息
          $member_info=MemberCert::where('cert_member_id='.$uid)->find();
