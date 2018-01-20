@@ -99,13 +99,13 @@ namespace app\index\controller;
 	 	 	->where(["r.relation_member_id"=>$member_info->member_id])
 	 	 	->join('member m','r.relation_parent_id=m.member_id')->find();
 	 	 #查询下级信息
-	 	 $team=db('member_relation')->alias('r')
-	 	 	->where(["r.relation_parent_id"=>$member_info->member_id])
-	 	 	->join('member m','r.relation_member_id=m.member_id')->select();
+	 	 // $team=db('member_relation')->alias('r')
+	 	 // 	->where(["r.relation_parent_id"=>$member_info->member_id])
+	 	 // 	->join('member m','r.relation_member_id=m.member_id')->select();
 	 	 // var_dump($member_info);die;
 	 	 $this->assign('member_info', $member_info);
 	 	 $this->assign('leadr', $leadr);
-	 	 $this->assign('team', $team);
+	 	 // $this->assign('team', $team);
 	 	 return view('admin/member/info');
 	 }
 	 
