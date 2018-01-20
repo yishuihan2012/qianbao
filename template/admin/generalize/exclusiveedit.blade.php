@@ -8,7 +8,7 @@ input.labelauty + label > span.labelauty-unchecked-image{background-image: url( 
 input.labelauty + label > span.labelauty-checked-image{background-image: url( /static/images/input-checked.png );}
 .dowebok {padding-left: 3px;}
 .dowebok ul { list-style-type: none;}
-.dowebok li { display: inline-block;}
+.dowebok li { display: inline-block;}  
 .dowebok li { margin: -3px 20px -10px 0px}
 .dowebok label{margin-bottom: 0}
 input.labelauty + label { font: 12px "Microsoft Yahei";}
