@@ -194,11 +194,11 @@ use app\index\model\Member;
         //更新卡计划
         // Generation::where(['generation_id'=>$pay['order_no']])->update($generation);
         #更改完状态后续操作
-        $action=$this->plan_notice($pay,$income,$member_base,$is_commission);
+        $action=$this->plan_notice($pay,$income,$member_base,$is_commission,$merch);
       }
 
       //计划执行完之后推送通知，分润
-      public function plan_notice($pay,$income,$member_base,$is_commission=0){
+      public function plan_notice($pay,$income,$member_base,$is_commission=0,$merch){
           #1记录有效推荐人 #2 分润分佣 #3 短信通知 # 极光推送
           //后四位银行卡尾号
           $card_num=substr($pay['order_card'],-4);
@@ -357,7 +357,7 @@ use app\index\model\Member;
             Generation::update(['generation_id'=>$pay['order_no'],'generation_state'=>$generation_state]);
           }
           //执行完后操作
-          $action=$this->plan_notice($pay,$income,$member_base,0);
+          $action=$this->plan_notice($pay,$income,$member_base,0,$merch);
       }
       //提现回调
       public function cashCallback(){
