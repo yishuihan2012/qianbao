@@ -121,10 +121,11 @@ use app\index\model\Member;
         $value=GenerationOrder::where(['order_id'=>$id])->find();
         // print_r($value);die;
         if($value['order_type']==1){ //消费
-            $this->payBindCard($value);
+            $res=$this->payBindCard($value);
         }else if($value['order_type']==2){//提现
-            $this->transferApply($value);
+            $res=$this->transferApply($value);
         }
+        print_r($res);die;
     }
      //7绑卡支付
       //http://pay.mishua.cn/zhonlinepay/service/rest/creditTrans/payBindCard

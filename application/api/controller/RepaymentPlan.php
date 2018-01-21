@@ -60,6 +60,13 @@
            // $this->param['startDate']="2018-01-19";
            // $this->param['endDate']="2018-01-29";
            // $this->param['passageway']=8;
+           
+           if($this->param['billMoney']/ $this->param['payCount']<200)
+                return['code'=>477];//单笔还款金额太小，请减小还款次数
+           #总账单除以消费次数得到每次消费AVG平均值  如果平均值小于某个值 则不进行还款  也是浪费资源
+           if($this->param['billMoney']/$this->param['payCount'] >20000)
+                  return['code'=>478];//单笔还款金额过大，请增加还款次数
+
            $root_id=find_root($this->param['uid']);
            #0 获取参数数据
            if($this->param['endDate']<$this->param['startDate']){
@@ -104,7 +111,7 @@
               $date=prDates($this->param['startDate'],$this->param['endDate']);
            }
             if($days==0){
-               return['code'=>478];//还款天数太短无法为您安排还款
+               return['code'=>480];//还款天数太短无法为您安排还款
             }
           //如果还款次数小于天数
           if($this->param['payCount']>$days){
@@ -117,7 +124,7 @@
                   $date=prDates($this->param['startDate'],$this->param['endDate']);
                 }
                if($days==0){
-                   return['code'=>478];//还款天数太短无法为您安排还款
+                   return['code'=>480];//还款天数太短无法为您安排还款
                 }
           }else{
                shuffle($date);
