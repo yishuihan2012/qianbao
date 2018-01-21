@@ -120,8 +120,15 @@
 
                 $rate=PassagewayItem::where('item_passageway='.$passageway['passageway_id'].' and item_group='.$group['member_group_id'])->find();
 
-                $arr=mishua($passageway, $rate, $member_info, $this->param['phone']);
-
+                $income=mishua($passageway, $rate, $member_info, $this->param['phone']);
+                if($income['code']==200){
+                    $arr=array(
+                       'net_member_id'=>$member_info['cert_member_id'],
+                       "{$passageway['passageway_no']}"=>$income['userNo']
+                  );
+                }else{
+                    return['code'=>104,'msg'=>$income['message'],'data'=>[]];
+                }
 
                 $add_net=MemberNet::where('net_member_id='.$this->param['uid'])->update($arr);
            }
