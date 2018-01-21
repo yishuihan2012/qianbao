@@ -10,6 +10,7 @@ use think\Config;
 
 class Test 
 {
+		//认证测试
 		public function renzheng()
 		{
 			    $name=urlencode('高志勇');
@@ -37,8 +38,8 @@ class Test
 			    }
 			dump(json_decode(curl_exec($curl)));    
 		}
-		public function test(){
-			return 1;
+		public function jpush_test($uid=42,$title='极光推送测试',$content="测试cehsi",$item='',$type=2){
+			jpush($uid, $title=$item, $content=$itemitem, $item=$item, $type=$type);
 		}
 		public function message_text(){
 			$a=send_sms('17560044406');
