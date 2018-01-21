@@ -203,7 +203,7 @@ use app\index\model\Member;
           //后四位银行卡尾号
           $card_num=substr($pay['order_card'],-4);
           if($income['code']=='200'){
-              if($income['status']=="SUCCESS"){
+              if($income['status']!="FAIL"){
                   if($pay['order_type']==1){ //消费
                         #0在此计划的还款卡余额中增加本次的金额 除去手续费
                         db('reimbur')->where('reimbur_generation',$pay['order_no'])->setInc('reimbur_left',$pay['order_money']-$pay['order_pound']);
