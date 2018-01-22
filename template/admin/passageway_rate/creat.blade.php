@@ -31,7 +31,12 @@
 			 <input type="text" class="form-control passageway_true_name" name="rate_code" placeholder="APP不显示，荣邦平台费率套餐代码(又叫邀请码)" value="">
 		 </div>		
 	 </div>
-
+	  <div class="row form-group">
+		 <label for="passageway_name" class="col-sm-3 text-right"><b>固定附加费用:</b></label>
+		 <div class="col-sm-6" id="passageway_name">
+			 <input type="text" class="form-control passageway_name" name="rate_charge" placeholder="请填写固定附加费用" value="">
+		 </div>		
+	 </div>
 	 <div class="row form-group">
 		 <label for="passageway_status" class="col-sm-3 text-right"><b>通道名称:</b></label>
 		 <div id="passageway_status" class="col-sm-6">

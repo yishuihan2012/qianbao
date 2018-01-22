@@ -14,6 +14,7 @@
                  <!-- 以下两列左侧固定 -->
                  <th>#</th>
                  <th>费率</th>
+                 <th>固定附加费用</th>
                  <th>荣邦平台费率套餐代码(又叫邀请码)</th>
                  <th>通道名称</th>
                  <th>操作</th>
@@ -24,6 +25,7 @@
           <tr>
             <td>{{$value['rate_id']}}</td>
             <td>{{$value['rate_rate']}}</td>
+            <td>{{$value['rate_charge']}}</td>
             <td>{{$value['rate_code']}}</td>
             <td>{{$value['passageway_name']}}</td>
             <td><a href="{{url('/index/passageway_rate/remove/id/'.$value['rate_id'])}}"><i class="icon-pencil"></i> 删除</a></td>
@@ -32,7 +34,7 @@
           
       </tbody>
  </table>
-
+{!! $list->render() !!}
  </section>
  <script type="text/javascript">
  $(document).ready(function(){
