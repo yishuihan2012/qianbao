@@ -389,55 +389,28 @@ class Userurl extends Controller
 	public function deal_list(){
 		// $this->checkToken();
 		$this->param['uid']=input("uid");
-		//取MemberCash内容
-		$MemberCash=MemberCash::where(['cash_member_id'=>$this->param['uid'],'cash_state'=>1])->order('cash_create_at desc')->select();
-		$data=[];
-		//流水
-		$i=0;
-		//转存
-		foreach ($MemberCash as $k => $v) {
-			$data[$i]['number']=$i;
-			//用于区分MemberCash和Withdraw
-			$data[$i]['type']='MemberCash';
-			$data[$i]['cash_amount']=sprintf("%.2f",substr(sprintf("%.3f", $v['cash_amount']), 0, -1));
-			$data[$i]['service_charge']=sprintf("%.2f",substr(sprintf("%.3f", $v['service_charge']), 0, -1));
-			$data[$i++]['cash_create_at']=$v['cash_create_at'];
+		$page = empty(input("page"))?1:input("page");
+		if($_POST){
+			$start = ($page-1)*10;
+			$CashOrder=CashOrder::where(['order_member'=>$this->param['uid']])->order('order_id desc')->limit($start,10)->select();
+			foreach ($CashOrder as $key => $value) {
+			 $CashOrder[$key]["bank_ons"] = substr($value['order_card'], -4);
+			}
+			echo json_encode(["data" => $CashOrder, "page" => $page+1]);die;
 		}
-		//取withdraw内容
-		$Withdraw=Withdraw::where(['withdraw_member'=>$this->param['uid'],'withdraw_state'=>12])->order('withdraw_add_time desc')->select();
-		// $Withdraw=db('withdraw')->where(['withdraw_member'=>$this->param['uid']])->select();
-		// $Withdraw=db('withdraw')->where(['withdraw_member'=>$this->param['uid'],'withdraw_state'=>12])->select();
-		//转存
-		foreach ($Withdraw as $k => $v) {
-			$data[$i]['number']=$i;
-			//用于区分MemberCash和Withdraw
-			$data[$i]['type']='Withdraw';
-			$data[$i]['withdraw_amount']=sprintf("%.2f",substr(sprintf("%.3f", $v['withdraw_amount']), 0, -1));
-			$data[$i]['withdraw_charge']=sprintf("%.2f",substr(sprintf("%.3f", $v['withdraw_charge']), 0, -1));
-			$data[$i]['withdraw_account']=substr($v['withdraw_account'],-4);
-			$data[$i]['withdraw_charge'] = $v['withdraw_charge'];
-			$data[$i]['withdraw_add_time']=$v['withdraw_add_time'];
-			$data[$i++]['withdraw_method']=$v['withdraw_method'];
+		$CashOrder=CashOrder::where(['order_member'=>$this->param['uid']])->order('order_id desc')->limit(0,10)->select();
+		$count = CashOrder::where(['order_member'=>$this->param['uid']])->order('order_id desc')->count();
+			$pages = ceil($count/10);
+		foreach ($CashOrder as $key => $value) {
+			$CashOrder[$key]["bank_ons"] = substr($value['order_card'], -4);
 		}
-
-		//取CashOrder内容
-		// $CashOrder=CashOrder::with('bankcard')->all(['order_member'=>$this->param['uid'],'order_state'=>2]);
-		$CashOrder=CashOrder::with('membercreditcard')->where(['order_member'=>$this->param['uid'],'order_state'=>2])->order('order_add_time desc')->select();
-		//转存
-		foreach ($CashOrder as $k => $v) {
-			$data[$i]['number']=$i;
-			//用于区分MemberCash和Withdraw
-			$data[$i]['type']='CashOrder';
-			$data[$i]['order_money']=sprintf("%.2f",substr(sprintf("%.3f", $v['order_money']), 0, -1));
-			$data[$i]['order_charge']=$v['order_charge'];
-			$data[$i]['card_bankname']=$v['card_bankname'];
-			$data[$i]['order_creditcard']=substr($v['order_creditcard'],-4);
-			$data[$i++]['order_update_time']=$v['order_update_time'];
+		
+		
+		if(!$data){
+			return view("Userurl/no_data");
 		}
-		// if(!$data){
-		// 	return view("Userurl/no_data");
-		// }
-		$this->assign('data',$data);
+		$this->assign("pages",$pages);
+		$this->assign('data',$CashOrder);
 	  	return view("Userurl/deal_list");
 	}
 	/**
