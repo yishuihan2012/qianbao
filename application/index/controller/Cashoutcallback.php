@@ -28,13 +28,11 @@ class Cashoutcallback
 	 {
 	     $data = file_get_contents("php://input");
 	 	 $data = trim($data);
-         file_put_contents('data1.txt', $data);
          $data = json_decode($data, true);
          //回调详细信息 解密
     	 $localIV="0102030405060708";
 	 	 if($data['code']==0 && $data['mchNo']){
             $passway=Passageway::get(['passageway_mech'=>$data['mchNo']]);
-            file_put_contents('data2.txt', $passway->passageway_pwd_key);
          }else{
             die('找不到通道');
          }
@@ -45,7 +43,7 @@ class Cashoutcallback
         	 $datas = substr($datas, 0, strpos($datas, '}') + 1);
         	 //返回结果
         	 $resul = json_decode($datas, true);
-        	 file_put_contents('data3.txt',$resul);
+        	 file_put_contents('datas3.txt',$resul);
         	 //订单详情
         	 $order   = CashOrder::where(array('order_thead_no' => $resul['transNo']))->find();
 
