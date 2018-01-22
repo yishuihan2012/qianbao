@@ -156,7 +156,8 @@
  	 	 //判断上级会员用户组是否允许分润
  	 	 $member_fatherGroup=MemberGroup::where(['group_id'=>$member_fatherInfo['member_group_id']])->value('group_run');
  	 	 if($member_fatherGroup=="0" || $father_is_agent){
- 	 	 	 $father_result=$this->commissionOrder($memberId,$member_faterId,0,$type,$desction."-直接分润:您当前用户组不允许获得分润~",$order_id);
+ 	 	 	#非代理用户组 不调用分润方法
+ 	 	 	 // $father_result=$this->commissionOrder($memberId,$member_faterId,0,$type,$desction."-直接分润:您当前用户组不允许获得分润~",$order_id);
  	 	 }else{
  	 	 	 //计算税率差 如果上级的税率和本人税率相同或者大于本人税率  则不进行分润
  	 	 	 if($member_also-$member_fatherAlso<=0){
@@ -170,16 +171,8 @@
 	 	 	 	 	$leftmoney+=$member_fatherMoney;
 	 	 	 	 	#同级推荐同级或上级，平台获取的分润结算差额的50%给推荐者
  	 	 	 	}elseif($member_also<=$member_fatherAlso ){
-
- 	 	 	 		#提前进行 代理商计算分润
- 	 	 	 		$this->agent_allot($memberId,$price,$passwayId,$field);
- 	 	 	 		#系统利润
-	 	 	 	 	$system_Money=$price*(($member_also-$passway_also)/100);
-	 	 	 	 	#该用户与系统平分 这个利润
-	 	 	 	 	$system_Money=$system_Money/2;
-	 	 	 	 	$str=$desction."-直接分润:邀请的".$memberInfo['member_nick'].$action."成功,获得分润结算差额收益".$system_Money."元~";
-	 	 	 	 	$father_result=$this->commissionOrder($memberId,$member_faterId,$system_Money,$type,$str,$order_id);
-	 	 	 	 	$leftmoney+=$system_Money;
+ 	 	 	 		#占位符 在运营商分配时使用
+ 	 	 	 		$has_recommend_nb=true;
  	 	 	 	}else{
 	 	 	 	 	$father_result=$this->commissionOrder($memberId,$member_faterId,0,$type,$desction."-直接分润:与操作人会员级别相同或比操作人级别低,不获得分润~",$order_id);
  	 	 	 	}
@@ -193,18 +186,31 @@
  	 	 	 	 // jpush($member_faterId,'分润收益到账提醒~',$str,$str);
  	 	 	 }
  	 	 }
-	 	#剔除直接上级
-	 	array_shift($this->family);
+	 	#代理商利润分配
 	 	end:
-	 	#非【无忧】应使用自动调用
-	 	$this->agent_allot($memberId,$price,$passwayId,$field);
-	 	#写入系统平台的利润 此段应写在代理商提成方法里的末尾
-	 	if(!isset($system_Money)){
- 	 		$passway_also=db('passageway')->where('passageway_id',$passwayId)->value('passageway_rate');
- 	 		#系统利润
-	 	 	$system_Money=$profit-$leftmoney;
+	 	foreach ($this->family as $k => $v) {
+	 	 	#不可见用户组 即为代理商用户组
+	 	 	if($v['group_visible']==0){
+	 	 		$rate=db('passageway_item')->where(['item_passageway'=>$passwayId,'item_group'=>$v['member_group_id']])->value($field);
+	 	 		#通过费率差计算代理商的差价利润
+	 	 			$also=$this->last_also-$rate;
+	 	 			// w_log($this->last_also . '---' . $rate);
+	 	 		if($also>0){
+		 	 		$agent_money=$also*$price/100;
+		 	 		$leftmoney+=$agent_money;
+		 	 		#针对同级推荐 和推荐上级的情况 遇到的第一个分润的 利润50%给推荐人
+		 	 		if(isset($has_recommend_nb) && $has_recommend_nb==true){
+		 	 			$agent_money/=2;
+		 	 	 	 	$str=$desction."-直接分润:邀请的".$memberInfo['member_nick'].$action."成功,获得分润结算差额收益".$agent_money."元~";
+		 	 	 	 	$father_result=$this->commissionOrder($memberId,$member_faterId,$agent_money,$type,$str,$order_id);
+		 	 		}
+		 	 		$this->commissionOrder($memberId,$v['member_id'],$agent_money,4,'代理商利润',$this->order_id);
+		 	 		$this->last_also=$rate;
+	 	 		}
+	 	 	}
 	 	}
- 		$passway_also=db('passageway')->where('passageway_id',$passwayId)->value('passageway_rate');
+		#系统利润
+	 	$system_Money=$profit-$leftmoney;
 	      $commission= new Commissions([
 	      	 'commission_member_id'=>-1,// -1 代表是平台的利润
 	      	 'commission_childen_member'	=>$memberId,
@@ -216,10 +222,7 @@
 	      ]);
 	      $commission->save();
 
-		#--系统平台利润记录结束
-			 	
  	 	 // 【无忧钱管家】只分润1级
- 	 	 var_dump($leftmoney);
  	 	 return ['code'=>200, 'leftmoney'=>$leftmoney];
  	 }
 
