@@ -14,20 +14,20 @@
 			<div id="billsList">
 			<ul class="mui-table-view">
 				<!--月账单统计表头-->
-			    <li class="mui-table-view-cell bg-color invalid-color f15">
+			   <!--  <li class="mui-table-view-cell bg-color invalid-color f15">
 			        2017年11月 9000.00元 共3笔
-			    </li>
+			    </li> -->
 			    <!--注：不同状态显示颜色不同-->
 			    @foreach($data as $k => $v)
 			    <li class="mui-table-view-cell bills-list">
-			        <a href="#">
+			        <a href="javascript:void(0)">
 			        	<div class="dis-flex-be space-bot">
-			        		<p>(银行卡尾号{{$v->bank_ons}})</p>
+			        		<p>银行卡尾号({{$v->bank_ons}})</p>
 			        		<p class="blue-color f20">{{$v->order_money}}元</p>
 			        	</div>
 			        	<div class="dis-flex-be">
-			        		<p class="f14 invalid-color dis-flex">{{$v->order_add_time}}</p>
-			        		<p class="f14 invalid-color dis-flex fc">{{$v->order_desc}}</p>
+			        		<p class="f14 invalid-color dis-flex">{{$v['add_time']}}<br/>{{$v->passageway_name}}</p>
+			        		
 			        		<p class="f14 yellow-color dis-flex ftr">@if($v->order_state == 1) 待支付 @elseif($v->order_state==2) 成功 @elseif($v->order_state==-1) 失败 @else 超时 @endif</p>
 			        	</div>
 			        </a>
@@ -71,14 +71,14 @@
 		        		state = "超时";
 		        	}
 		         $(".mui-table-view").append("<li class='mui-table-view-cell bills-list'>"+
-				        "<a href='bills_detail.html'>"+
+				        "<a href='javascript:void(0)'>"+
 				        	"<div class='dis-flex-be space-bot'>"+
-				        		"<p>(银行卡尾号"+data.data[i].bank_ons+")</p>"+
+				        		"<p>银行卡尾号("+data.data[i].bank_ons+")</p>"+
 				        		"<p class='blue-color f20'>"+data.data[i].order_money+"元</p>"+
 				        	"</div>"+
 				        	"<div class='dis-flex-be'>"+
-				        		"<p class='f14 invalid-color dis-flex'>"+data.data[i].order_add_time+"</p>"+
-				        		"<p class='f14 invalid-color dis-flex fc'>"+data.data[i].order_desc+"</p>"+
+				        		"<p class='f14 invalid-color dis-flex'>"+data.data[i].add_time+"<br/>"+data.data[i].passageway_name+"</p>"+
+				        		// "<p class='f14 invalid-color dis-flex fc'>"++"</p>"+
 				        		"<p class='f14 yellow-color dis-flex ftr'>"+state+"</p>"+
 				        	"</div>"+
 				        "</a>"+

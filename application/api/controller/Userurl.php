@@ -403,22 +403,22 @@ class Userurl extends Controller
 		$page = empty(input("page"))?1:input("page");
 		if($_POST){
 			$start = ($page-1)*10;
-			$CashOrder=CashOrder::where(['order_member'=>$this->param['uid']])->order('order_id desc')->limit($start,10)->select();
+			$CashOrder=CashOrder::with("passageway")->where(['order_member'=>$this->param['uid']])->order('order_id desc')->limit($start,10)->select();
 
 			foreach ($CashOrder as $key => $value) {
-			 $CashOrder[$key]["bank_ons"] = substr($value['order_card'], -4);
+			 	$CashOrder[$key]["bank_ons"] = substr($value['order_card'], -4);
+			 	$CashOrder[$key]['add_time'] = date("m-d H:s",strtotime($value['order_add_time']));
 			}
 			echo json_encode(["data" => $CashOrder, "page" => $page+1]);die;
 		}
-		$CashOrder=CashOrder::where(['order_member'=>$this->param['uid']])->order('order_id desc')->limit(0,10)->select();
+		$CashOrder=CashOrder::with("passageway")->where(['order_member'=>$this->param['uid']])->order('order_id desc')->limit(0,10)->select();
 		$count = CashOrder::where(['order_member'=>$this->param['uid']])->order('order_id desc')->count();
 			$pages = ceil($count/10);
 			#截取银行卡号
 		foreach ($CashOrder as $key => $value) {
 			$CashOrder[$key]["bank_ons"] = substr($value['order_card'], -4);
+			$CashOrder[$key]['add_time'] = date("m-d H:s",strtotime($value['order_add_time']));
 		}
-		
-		
 		if(!$CashOrder){
 			return view("Userurl/no_data");
 		}
