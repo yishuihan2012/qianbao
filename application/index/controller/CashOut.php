@@ -95,8 +95,8 @@ class CashOut
 	            'description' 	=> $description, //交易描述
 	            'orderDate'   => date('YmdHis', time()), //订单日期
 	            'tradeNo'     	=> $tradeNo, //商户平台内部流水号，请确保唯一 TOdo
-	            // 'notifyUrl'		=>'http://wallet.test.xijiakeiji.com/index/Cashoutcallback/mishuaCallBack',
-	            'notifyUrl'   	=> System::getName('system_url').$this->passway_info->cashout->cashout_callback, //异步通知URL
+	            'notifyUrl'		=>'http://wallet.test.xijiakeji.com/index/Cashoutcallback/mishuaCallBack',
+	            // 'notifyUrl'   	=> System::getName('system_url').$this->passway_info->cashout->cashout_callback, //异步通知URL
 	            'callbackUrl' 	=> System::getName('system_url').'/api/Userurl/calllback_success',/*HOST . "/index.php?s=/Api/Quckpayment/turnurl"*/ //页面回跳地址
 	            'payCardNo' => $this->card_info->card_bankno, //信用卡卡号
 	            'accName'    => $this->card_info->card_name, //持卡人姓名 必填
