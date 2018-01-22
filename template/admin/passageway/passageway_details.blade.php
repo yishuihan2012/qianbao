@@ -5,7 +5,11 @@
 	 h4 > a,.pull-right > a{color:#145ccd;}
  </style>
  <blockquote> 
-  {{$passageway->passageway_name}} 累计交易 <z>{{$passageway->sum}}</z> 累计手续费 <z>{{$passageway->charge}}</z> 累计分润<z>{{$passageway->fenrun}}</z>
+  {{$passageway->passageway_name}} 
+  累计交易 <z>{{$passageway->sum}}</z> 
+  累计手续费 <z>{{$passageway->charge}}</z> 
+  累计分润<z>{{$passageway->fenrun}}</z>
+  累计利润<z>{{$passageway->profit}}</z>
  </blockquote>
  <blockquote> 
   <form action="" method="post">

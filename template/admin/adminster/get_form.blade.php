@@ -19,6 +19,7 @@
           <label for="login_email">联系邮箱</label>
           <input id="login_email" name="login_email" type="email" class="form-control" placeholder="联系邮箱" value="{{ $data['login_email'] or '' }}">
       </div>
+    @if($admin['adminster_group_id']!=5)
       <div class="form-group">
           <label for="login_group">用户组信息</label>
           <select class="form-control" id="login_group" name="login_group" multiple>
@@ -31,10 +32,11 @@
             @endforeach
           </select>
       </div>
+    @endif
       <div class="form-group">
           <label for="user_id">运营商绑定用户-非运营商用户组忽略此项</label>
           <select class="form-control" name="adminster_user_id">
-            <option value="">忽略</option>
+            <option value="">无</option>
             @foreach($users as $v)
               <option value="{{ $v['member_id'] }}" {{$v['member_id']==$data['adminster_user_id'] ? 'selected' : ''}}>{{$v['member_nick']}} {{$v['member_mobile']}}</option>
             @endforeach

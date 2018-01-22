@@ -46,7 +46,7 @@ class Login extends Controller
         #用户组ID 当用户为运营商的时候 调取其下三级子ID
         $children=[0];
         if($adminster_group_id==5){
-            $children=$this->get_ids($adminster['data']['adminster_user_id']);
+            $children=$this->get_ids_all([$adminster['data']['adminster_user_id']]);
         }
         Session::set('jump_msg',['type'=>'success','msg'=>$adminster['msg']]);
         Session::set('adminster',[
@@ -74,5 +74,12 @@ class Login extends Controller
         $level2=db('member_relation')->where('relation_parent_id','in',$level1)->column('relation_member_id');
         $level3=db('member_relation')->where('relation_parent_id','in',$level2)->column('relation_member_id');
         return array_merge($level1,$level2,$level3);
+    }
+    #递归获取所有下级用户ID
+    private function get_ids_all($uid){
+        if($uid){
+            $users=db('member_relation')->where('relation_parent_id','in',$uid)->column('relation_member_id');
+            return $users ? array_merge($users,$this->get_ids_all($users)) : [];
+        }
     }
 }

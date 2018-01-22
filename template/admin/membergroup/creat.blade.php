@@ -82,6 +82,16 @@ input.labelauty + label { font: 12px "Microsoft Yahei";}
 			</div>
 		</div>
 		<br/>
+		<div class="row">
+			<label for="group_salt" class="col-sm-2 text-right"><b>运营商专用</b></label>
+			<div id="group_salt" class="col-sm-6">
+			 <select name="group_visible" class="group_name form-control group_visible">
+				<option value="1">否</option>
+				<option value="0">是</option>
+			</select>
+			</div>
+		</div>
+		<br/>
 		<div class="row form-group">
 			<label for="group_name" class="col-sm-2 text-right"><b>直接推荐人分佣金额:</b></label>
 			<div id="group_level_value" class="col-sm-6">

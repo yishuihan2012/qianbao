@@ -104,15 +104,18 @@
                 <li class="suggestion_list"><a href="{{url('/index/suggestion/index')}}"><i class="icon icon-sliders"></i> 用户反馈</a></li>
             </ul>
         </li>
-
+        @endif
         <li class="adminster-manager nav-parent">
             <a href="{{url('/index/adminster/index')}}"><i class="0icon icon-user"></i> 管 理 员</a>
             <ul class="nav">
                 <li class="adminster"><a href="{{url('/index/adminster/index')}}">管理员管理</a></li>
+                @if($admin['adminster_group_id']!=5)
+
                 <li class="auth_group"><a href="{{url('/index/auth_group/index')}}">用户组管理</a></li>
+                @endif
             </ul>
         </li>
-
+        @if($admin['adminster_group_id']!=5)
         <li class="nav-parent system-setting">
             <a href="javascript:;"><i class="icon icon-cog"></i> 系统管理</a>
             <ul class="nav">

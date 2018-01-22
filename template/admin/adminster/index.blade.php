@@ -41,6 +41,7 @@
         </select>
       </div>
     </div>
+    @if($admin['adminster_group_id']!=5)
     <div class="col-xs-4 col-md-2">
         <div class="input-group">
         <span class="input-group-addon">用户组</span>
@@ -52,6 +53,7 @@
         </select>
       </div>
     </div>
+    @endif
     <div class="col-xs-4 col-md-2 text-center">
       <button class="btn btn-primary btn-search" type="button">立即搜索</button>
     </div>
@@ -87,6 +89,7 @@
           <td>{{  get_status_text($adminster['adminster_state']) }}</td>
           <td>{{ $adminster['adminster_update_time'] }}</td>
           <td>
+          @if($admin['adminster_group_id']!=5)
             <div class="btn-group">
             <a href="{{ url('/index/adminster/edit','id='.$adminster['adminster_id']) }}" class="btn btn-sm">编辑</a>
             <div class="btn-group">
@@ -96,6 +99,9 @@
               </ul>
             </div>
         </div>
+        @else
+          无
+        @endif
           </td>
         </tr>
       @endforeach

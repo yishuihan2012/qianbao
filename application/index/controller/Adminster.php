@@ -29,6 +29,10 @@ class Adminster extends Common {
 		 !empty($params['state']) ? $where['adminster_state']=$params['state'] :  $params['state']="";
 		 !empty($params['group']) ? $groups['group_id']=$params['group'] : $params['group']="";
 		 $params['page']=Request::instance()->param('page') ? : 1;
+		 #运营商用户组
+		 if($this->admin['adminster_group_id']==5){
+		 	$where['adminster_user_id']=['in',$this->admin['children']];
+		 }
 		 $adminster_list= new Adminsters();
 		 $adminster_list= $adminster_list->with('profile')->where($groups)->where($where)->order("adminster_id desc")->paginate(Config::get('page_size'), false, ['query'=>$params]);
 		 $groupLists=AuthGroups::all();
@@ -46,6 +50,12 @@ class Adminster extends Common {
 		 if(Request::instance()->isPost()){
 		 	$r=request()->param();
 			 $code=make_rand_code();
+			 
+			 #运营商添加的用户强制为 运营商用户组
+			 if($this->admin['adminster_group_id']==5){
+			 	$r['login_group']=5;
+			 }
+
 			 $check_login_name=Adminsters::get(['adminster_login'=>Request::instance()->post('login_name')]);
 			 if($check_login_name){
 				 Session::set('jump_msg',['type'=>'warning','msg'=>'用户名已存在~请重试','data'=>'']);
@@ -56,26 +66,28 @@ class Adminster extends Common {
 			     	 Session::set('jump_msg',['type'=>'warning','msg'=>'邮箱已绑定其他账号~请更换','data'=>'']);
 				 $this->redirect($this->history['0']);
 			 }
+			 $adminster=new Adminsters;
 			 if($r['login_group']==5){
 			 	if($r['adminster_user_id']){
 			 		$admin=Adminsters::get(['adminster_user_id'=>$r['adminster_user_id']]);
 			 		if($admin){
-				     	 Session::set('jump_msg',['type'=>'warning','msg'=>'该用户已被'.$admin['adminster_login'].'绑定，请更换用户或为'.$admin['adminster_login'].'解除绑定','data'=>'']);
-						 $this->redirect($this->history['0']);
+				     	Session::set('jump_msg',['type'=>'warning','msg'=>'该用户已被'.$admin['adminster_login'].'绑定，请更换用户或为'.$admin['adminster_login'].'解除绑定','data'=>'']);
+						$this->redirect($this->history['0']);
+			 		}else{
+			 			$adminster->adminster_user_id=$r['adminster_user_id'];
 			 		}
 			 	}else{
-			     	 Session::set('jump_msg',['type'=>'warning','msg'=>'请选择该渠道商对应的用户','data'=>'']);
-					 $this->redirect($this->history['0']);
+			     	Session::set('jump_msg',['type'=>'warning','msg'=>'请选择该渠道商对应的用户','data'=>'']);
+					$this->redirect($this->history['0']);
 			 	}
 			 }
-			 $adminster=new Adminsters;
 			 $adminster->adminster_login=Request::instance()->post('login_name');
 			 $adminster->adminster_pwd=encryption(Request::instance()->post('login_passwd'),$code);
 			 $adminster->adminster_salt=$code;
 			 $adminster->adminster_update_time=date('Y-m-d H:i:s');
 			 $adminster->adminster_email=Request::instance()->post('login_email');
 			 $authGroupAccesss=new AuthGroupAccesss;
-			 $authGroupAccesss->group_id=Request::instance()->post('login_group')?Request::instance()->post('login_group'):Config::get('default_groups');
+			 $authGroupAccesss->group_id=$r['login_group']?$r['login_group']:Config::get('default_groups');
 			 $adminster->profile=$authGroupAccesss;
 			 if(false===$adminster->together('profile')->save()){
 			      Session::set('jump_msg',['type'=>'warning','msg'=>'管理员添加失败~请重试','data'=>'']);
@@ -160,12 +172,21 @@ class Adminster extends Common {
 			 $data['adminster_user_id']	=	$adminster_info['adminster_user_id'];
 		 else
 			 $data['adminster_user_id']	=	"";
-		 #获取用户组信息
-		 $authGroups=AuthGroups::all();
-		 $users=db('member')->alias('m')
-		 	->join('member_relation r','m.member_id=r.relation_member_id')
-		 	->where('r.relation_parent_id',0)
-		 	->select();
+		 #获取用户组/子运营商用户
+		 if($this->admin['adminster_group_id']==5){
+			 $authGroups=AuthGroups::all(['id'=>5]);
+			 $users=db('member')->alias('m')
+			 	->join('member_group g','m.member_group_id=g.group_id')
+			 	->where('m.member_id','in',$this->admin['children'])
+			 	->where('g.group_visible=0')
+			 	->select();
+		 }else{
+			 $authGroups=AuthGroups::all();
+			 $users=db('member')->alias('m')
+			 	->join('member_group g','m.member_group_id=g.group_id')
+			 	->where('g.group_visible=0')
+			 	->select();
+		 }
 		 $this->assign('users',$users);
 		 $this->assign('data',$data);
     		 $this->assign('auth_groups',$authGroups);
