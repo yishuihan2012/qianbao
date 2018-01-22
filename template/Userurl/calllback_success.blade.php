@@ -41,13 +41,15 @@
 		<script type="text/javascript">
 			mui.init();
 			mui.ready(function(){
-				document.getElementById('seeDetails').addEventListener('tap',function(){
-						if(!isAndroid){
-					        window.webkit.messageHandlers.returnIndex.paySus();
-					      }else{
-					        android.paySus();
-					      }
-					
+			  var u = navigator.userAgent;
+		      var isAndroid = u.indexOf('Android') > -1 || u.indexOf('Adr') > -1; //android终端
+		      var isiOS = !!u.match(/\(i[^;]+;( U;)? CPU.+Mac OS X/); //ios终端
+				mui(document).on('tap','a',function(){
+			      if(!isAndroid){
+			        window.webkit.messageHandlers.returnIndex.paySus();
+			      }else{
+			        android.paySus();
+			      }
 				});
 			});
 		</script>
