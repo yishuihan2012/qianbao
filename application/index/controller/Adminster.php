@@ -30,8 +30,10 @@ class Adminster extends Common {
 		 !empty($params['group']) ? $groups['group_id']=$params['group'] : $params['group']="";
 		 $params['page']=Request::instance()->param('page') ? : 1;
 		 $adminster_list= new Adminsters();
-		 $adminster_list= $adminster_list->with('profile')->where($groups)->where($where)->paginate(Config::get('page_size'), false, ['query'=>$params]);
+		 $adminster_list= $adminster_list->with('profile')->where($groups)->where($where)->order("adminster_id desc")->paginate(Config::get('page_size'), false, ['query'=>$params]);
 		 $groupLists=AuthGroups::all();
+		 $count = Adminsters::with('profile')->where($groups)->where($where)->count();
+		 $this->assign("count",$count);
 		 $this->assign('show',$adminster_list->render());
 		 $this->assign('params',$params);
 		 $this->assign('groupLists',$groupLists);

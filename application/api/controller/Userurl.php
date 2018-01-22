@@ -79,6 +79,17 @@ class Userurl extends Controller
 
 	#套现成功页面
 	public function calllback_success(){
+		$request = $_REQUEST;
+        $data    = CashOrder::where(['order_thead_no' => $request['transNo']])->find();
+        if ($request['status'] == '00') {
+            $data['order_card']        = substr($data['order_card'], -4);
+            $data['order_money'] = number_format($data['order_money'], 2);
+            $data['result']           = 1;
+        } else {
+            $data['result'] = 0;
+        }
+
+        $this->assign('data',$data);
 	    return view("Userurl/calllback_success");
 	}
 	/**
@@ -387,8 +398,8 @@ class Userurl extends Controller
 	 * @return   [type]
 	 */
 	public function deal_list(){
-		$this->checkToken();
-		// $this->param['uid']=11;
+		// $this->checkToken();
+		$this->param['uid']=input("uid");
 		//取MemberCash内容
 		$MemberCash=MemberCash::where(['cash_member_id'=>$this->param['uid'],'cash_state'=>1])->order('cash_create_at desc')->select();
 		$data=[];
@@ -415,7 +426,7 @@ class Userurl extends Controller
 			$data[$i]['withdraw_amount']=sprintf("%.2f",substr(sprintf("%.3f", $v['withdraw_amount']), 0, -1));
 			$data[$i]['withdraw_charge']=sprintf("%.2f",substr(sprintf("%.3f", $v['withdraw_charge']), 0, -1));
 			$data[$i]['withdraw_account']=substr($v['withdraw_account'],-4);
-			$data[$i]['withdraw_charge']=$v['withdraw_charge'];
+			$data[$i]['withdraw_charge'] = $v['withdraw_charge'];
 			$data[$i]['withdraw_add_time']=$v['withdraw_add_time'];
 			$data[$i++]['withdraw_method']=$v['withdraw_method'];
 		}
@@ -434,9 +445,9 @@ class Userurl extends Controller
 			$data[$i]['order_creditcard']=substr($v['order_creditcard'],-4);
 			$data[$i++]['order_update_time']=$v['order_update_time'];
 		}
-		if(!$data){
-			return view("Userurl/no_data");
-		}
+		// if(!$data){
+		// 	return view("Userurl/no_data");
+		// }
 		$this->assign('data',$data);
 	  	return view("Userurl/deal_list");
 	}

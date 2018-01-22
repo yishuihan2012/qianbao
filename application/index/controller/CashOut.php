@@ -10,10 +10,10 @@ namespace app\index\controller;
 use think\Loader;
 use think\Config;
 use app\index\model\Member;
+use app\index\model\System;
 use app\index\model\MemberCert;
 use app\index\model\MemberCashcard;
 use app\index\model\Passageway;
-use app\index\model\System;
 use app\index\model\MemberCreditcard;
 use app\index\model\CashOrder;
 use app\index\model\PassagewayItem;
@@ -95,8 +95,8 @@ class CashOut
 	            'description' 	=> $description, //交易描述
 	            'orderDate'   => date('YmdHis', time()), //订单日期
 	            'tradeNo'     	=> $tradeNo, //商户平台内部流水号，请确保唯一 TOdo
-	            'notifyUrl'   	=> $_SERVER['HTTP_HOST'].$this->passway_info->cashout->cashout_callback, //异步通知URL
-	            'callbackUrl' 	=> $_SERVER['HTTP_HOST'].'/api/Userurl/calllback_success',/*HOST . "/index.php?s=/Api/Quckpayment/turnurl"*/ //页面回跳地址
+	            'notifyUrl'   	=> System::getName('system_url').$this->passway_info->cashout->cashout_callback, //异步通知URL
+	            'callbackUrl' 	=> System::getName('system_url').'/api/Userurl/calllback_success',/*HOST . "/index.php?s=/Api/Quckpayment/turnurl"*/ //页面回跳地址
 	            'payCardNo' => $this->card_info->card_bankno, //信用卡卡号
 	            'accName'    => $this->card_info->card_name, //持卡人姓名 必填
 	            'accIdCard'   => $this->card_info->card_idcard, //卡人身份证  必填
@@ -105,6 +105,7 @@ class CashOut
 	            'downPayFee'  	=> $this->also->item_rate*10, //结算费率  必填  接入机构给商户的费率，D0直清按照此费率结算，千分之X， 精确到0.01
 	            'downDrawFee' => '0'//$this->passway_info->cashout->cashout_charges, // 代付费 选填  每笔扣商户额外代付费。不填为不扣。
 	      );
+	      // var_dump($arr);die;
 	      //请求体参数加密 AES对称加密 然后连接加密字符串转MD5转为大写
 	      $payload =AESencode(json_encode($arr),$this->passway_info->passageway_pwd_key);
 	      // var_dump($payload);die;
@@ -181,8 +182,8 @@ class CashOut
 	            'bankCode'	=> '123',//银行卡对应的银行编码
 	            'bankName'	=> $this->card_info->card_bankname,//银行卡对应的银行名称。采用URLEncode编码
 	            'settleType'	=> 3,//固定值2-T+1结算
-	            'notifyUrl'		=> $_SERVER['HTTP_HOST'].$this->passway_info->cashout->cashout_callback,//支付完成后将支付结果回调至该链接
-	            'returnUrl'		=> $_SERVER['HTTP_HOST'].'/api/Userurl/calllback_success',//支付完成后前端跳转地址
+	            'notifyUrl'		=> System::getName('system_url').$this->passway_info->cashout->cashout_callback,//支付完成后将支付结果回调至该链接
+	            'returnUrl'		=> System::getName('system_url').'/api/Userurl/calllback_success',//支付完成后前端跳转地址
 	            //'signature'	=> ,//对签名数据进行MD5加密的结果。参见3.1
 	      );
  	      $param=get_signature($arr,$this->passway_info->passageway_key);
@@ -431,8 +432,8 @@ class CashOut
 	            'bizType'=>'4301',//业务类型
 	            'randomStr'=>make_order(),// 随机串
 	            'orderId'=>make_order() ,//商户订单号
-	            'notifyUrl'=>$_SERVER['HTTP_HOST'].$this->passway_info->cashout->cashout_callback, //异步通知URL,  //后台异步通知地址
-	            'frontNotifyUrl'=>$_SERVER['HTTP_HOST'].'/api/Userurl/calllback_success',
+	            'notifyUrl'=>System::getName('system_url').$this->passway_info->cashout->cashout_callback, //异步通知URL,  //后台异步通知地址
+	            'frontNotifyUrl'=>System::getName('system_url').'/api/Userurl/calllback_success',
 	            'lpCertNo'=>$this->card_info->card_idcard, // 持卡人身份证号
 	            'accNo'=> $this->card_info->card_bankno, // 银行卡号
 	            'phoneNo'=>$this->card_info->card_phone, // 银行预留手机号
