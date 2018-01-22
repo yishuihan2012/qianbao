@@ -104,7 +104,7 @@ class Userurl extends Controller
 				Vendor('phpqrcode.phpqrcode');
 				$QRcode=new \QRcode();
 				//生成二维码
-				$QRcode->png($url, 'autoimg/qrcode'.$tel.'.png',0,8);
+				$QRcode->png($url, 'autoimg/qrcode'.$tel.'.png','Q',8);
 				$qrurl=ROOT_PATH.'public/autoimg/qrcode'.$tel.'.png';
 				$logourl=ROOT_PATH.'public/static/images/logo.png';
 				// 二维码加入logo
@@ -112,7 +112,7 @@ class Userurl extends Controller
 				 $logo = imagecreatefromstring(file_get_contents($logourl)); 
 				 $logo_width = imagesx($logo);
 				 $logo_height = imagesy($logo);
-				 imagecopyresampled( $QR,$logo, 115, 115, 0, 0, 60, 60, $logo_width, $logo_height); 
+				 imagecopyresampled( $QR,$logo, 135, 135, 0, 0, 60, 60, $logo_width, $logo_height); 
 				imagepng($QR, 'autoimg/qrcode'.$tel.'.png'); 
 				// 背景
 				$bg_url=Exclusive::get($exclusive_id);
