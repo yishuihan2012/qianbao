@@ -351,13 +351,13 @@ class CashOut
 	 	 			//无需短信验证的情况 返回一个成功提示页
 	            	$res['data']=[
 	            		'type'=>1,
-	            		'url'=>request()->domain() . "/api/Userurl/passway_success",
+	            		'url'=>request()->domain() . "/api/Userurl/passway_success/order_no/".$tradeNo,
 	            	];
 	 	 		}else{
 	 	 			//需要短信验证的情况 返
 	            	$res['data']=[
 	            		'type'=>1,
-	            		'url'=>request()->domain() . "/api/Userurl/passway_rongbang_pay/ordercode/".$result['ordercode']."/card_id/".$this->card_info->card_id."/memberId/" . $this->member_infos->member_id . "/passwayId/" . $this->passway_info->passageway_id,
+	            		'url'=>request()->domain() . "/api/Userurl/passway_rongbang_pay/order_no/".$tradeNo."/card_id/".$this->card_info->card_id."/memberId/" . $this->member_infos->member_id . "/passwayId/" . $this->passway_info->passageway_id,
 	            	];
 	 	 		}
 	 	 	}else{

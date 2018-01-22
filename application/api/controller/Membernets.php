@@ -282,7 +282,7 @@
           "payextraparams": '.$payextraparams.',
           "paymenttypeid": "'.$paymenttypeid.'",
           "ordernumber": "'.$tradeNo.'",
-          "fronturl":"'. request()->domain() . '/api/Userurl/passway_success"
+          "fronturl":"'. request()->domain() . '/api/Userurl/passway_success/order_no/'.$tradeNo.'"
         }';
 
         // echo ($arr);die;

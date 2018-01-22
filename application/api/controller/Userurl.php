@@ -747,12 +747,12 @@ class Userurl extends Controller
   # memberId 用户id passwayId 通道id
   # ordercode 订单号 card_id 卡号
 
-  public function passway_rongbang_pay($memberId,$passwayId,$ordercode,$card_id){
+  public function passway_rongbang_pay($memberId,$passwayId,$order_no,$card_id){
   	if(request()->ispost()){
   		$authcode=request()->param()['authcode'];
   		if($authcode){
 		  	$Membernets=new con\Membernets($memberId,$passwayId);
-		  	$result=$Membernets->rongbang_confirm_pay($ordercode,$card_id,$authcode);
+		  	$result=$Membernets->rongbang_confirm_pay($order_no,$card_id,$authcode);
 		  	return is_array($result) ? 1 : $result;
 		  }else{
 		  	return 2;
@@ -760,14 +760,14 @@ class Userurl extends Controller
   	}
   	#用户信息
   	$info = Members::with("memberCashcard")->where(['member_id' => $memberId])->find();
-  	$money=db('cash_order')->where('order_thead_no',$ordercode)->value('order_money');
+  	$money=db('cash_order')->where('order_thead_no',$order_no)->value('order_money');
   	$creditcard = MemberCreditcard::where(['card_id' => $card_id])->find();
   	$this->assign("creditcard",$creditcard);
   	$this->assign("member_info",$info);
 	$this->assign('memberId',$memberId);
 	$this->assign('money',$money);
 	$this->assign('passwayId',$passwayId);
-	$this->assign('ordercode',$ordercode);
+	$this->assign('order_no',$order_no);
 	$this->assign('card_id',$card_id);
   	return view("Userurl/passway_rongbang_pay");
   }
@@ -782,18 +782,18 @@ class Userurl extends Controller
   	if($param['order_no']){
   		$data=[];
   		$data['ordernumber']=$param['order_no'];
-  		$data['amount']=db('cash_order')->where('order_no',$data['ordernumber'])->value('order_money');
+  		// $data['amount']=db('cash_order')->where('order_no',$data['ordernumber'])->value('order_money');
 
   	// $data=rongbang_aes_decode($key,$param['Data']);
   	// var_dump($data);die;
   	// $data=json_decode($data,1);
   	// if($data['respcode']==2){
   		//支付完成
-  		db('cash_order')->where('order_no',$data['ordernumber'])->update(['order_state'=>2]);
-  		$order_id=db('cash_order')->where('order_no',$data['ordernumber'])->value('order_id');
-  		//分润
-	    $fenrun= new con\Commission();
-        $fenrun_result=$fenrun->MemberFenRun($param['member_id'],$data['amount'],$param['passageway_id'],1,'交易手续费分润',$order_id);
+  		// db('cash_order')->where('order_no',$data['ordernumber'])->update(['order_state'=>2]);
+  		// $order_id=db('cash_order')->where('order_no',$data['ordernumber'])->value('order_id');
+  		// //分润
+	   //  $fenrun= new con\Commission();
+    //     $fenrun_result=$fenrun->MemberFenRun($param['member_id'],$data['amount'],$param['passageway_id'],1,'交易手续费分润',$order_id);
   	}else{
   		//支付失败
   		db('cash_order')->where('order_no',$data['ordernumber'])->update(['order_state'=>-1]);
@@ -803,6 +803,19 @@ class Userurl extends Controller
   }
   #为无需短信确认的情况 直接显示一个成功页面
   public function passway_success(){
+  	$param=request()->param();
+  	#荣邦回调会携带 ordercode 参数
+  	if(isset($param['order_no']) && $param['order_no']){
+  		$order=db('cash_order')->where('order_no',$param['order_no'])->find();
+  		#在订单状态为 待支付 的情况下进行分润
+  		if($order && $order['order_state']==1){
+	  		//支付完成
+	  		db('cash_order')->where('order_no',$param['order_no'])->update(['order_state'=>2]);
+	  		//分润
+		    $fenrun= new con\Commission();
+	        $fenrun_result=$fenrun->MemberFenRun($param['member_id'],$order['order_money'],$order['order_passway'],1,'交易手续费分润',$order['order_id']);
+  		}
+  	}
   	return view("Userurl/passway_success");
   }
   # 开通快捷支付 前台回调成功页面
