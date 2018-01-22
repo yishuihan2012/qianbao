@@ -20,7 +20,7 @@
 			    <!--注：不同状态显示颜色不同-->
 			    @foreach($data as $k => $v)
 			    <li class="mui-table-view-cell bills-list">
-			        <a href="#">
+			        <a href="javascript:void(0)">
 			        	<div class="dis-flex-be space-bot">
 			        		<p>银行卡尾号({{$v->bank_ons}})</p>
 			        		<p class="blue-color f20">{{$v->order_money}}元</p>
@@ -71,7 +71,7 @@
 		        		state = "超时";
 		        	}
 		         $(".mui-table-view").append("<li class='mui-table-view-cell bills-list'>"+
-				        "<a href='#'>"+
+				        "<a href='javascript:void(0)'>"+
 				        	"<div class='dis-flex-be space-bot'>"+
 				        		"<p>银行卡尾号("+data.data[i].bank_ons+")</p>"+
 				        		"<p class='blue-color f20'>"+data.data[i].order_money+"元</p>"+
