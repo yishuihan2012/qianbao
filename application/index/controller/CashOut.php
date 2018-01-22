@@ -106,7 +106,6 @@ class CashOut
 	            'downPayFee'  	=> $this->also->item_rate*10, //结算费率  必填  接入机构给商户的费率，D0直清按照此费率结算，千分之X， 精确到0.01
 	            'downDrawFee' => '0'//$this->passway_info->cashout->cashout_charges, // 代付费 选填  每笔扣商户额外代付费。不填为不扣。
 	      );
-	      var_dump($arr);die;
 	      //请求体参数加密 AES对称加密 然后连接加密字符串转MD5转为大写
 	      $payload =AESencode(json_encode($arr),$this->passway_info->passageway_pwd_key);
 	      // var_dump($payload);die;
