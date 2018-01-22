@@ -20,6 +20,8 @@ class Bank extends Common{
 	 {
 	 	 #查询银行列表分页
 	 	 $bank_list=Banks::order('bank_id','desc')->paginate(Config::get('page_size'), false, ['query'=>Request::instance()->param()]);
+	 	 $count = Banks::order('bank_id','desc')->count();
+	 	 $this->assign("count",$count);
  		 $this->assign('button', ['text'=>'新增银行', 'remote'=>url('/index/bank/creat'), 'modal'=>'modal']);
  		 $this->assign('bank_list', $bank_list);
 		 #渲染视图
@@ -148,6 +150,8 @@ class Bank extends Common{
 	 {
 	 	 #查询可识别银行列表分页
 	 	 $bank_list=BankIdent::order('ident_id','desc')->paginate(Config::get('page_size'), false, ['query'=>Request::instance()->param()]);
+	 	 $count = BankIdent::order('ident_id','desc')->count();
+	 	 $this->assign("count",$count);
  		 $this->assign('bank_list', $bank_list);
 		 #渲染视图
 		 return view('admin/bank/ident');

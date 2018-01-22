@@ -9,9 +9,15 @@
 <hr/>
 <div class="list">
   <header>
-    <h3><i class="icon-list-ul"></i>提现列表 <small>共 <strong class="text-danger">{{$count['count_size']}}</strong> 条</small></h3>
+    <h3>
+      <i class="icon-list-ul"></i>提现列表 <small>共 <strong class="text-danger">{{$count['count_size']}}</strong> 条</small>
+      <i class="icon icon-yen"></i>已提现总金额 <small><strong class="text-danger">{{$countmoney}}</strong> 元</small>
+      <i class="icon icon-yen"></i>全部总金额 <small><strong class="text-danger">{{$count['withdraw_total_money']}}</strong> 元</small>
+      <i class="icon icon-yen"></i>操作全额<small><strong class="text-danger">{{$count['withdraw_amount']}}</strong> 元</small>
+      <i class="icon icon-yen"></i>总手续费 <small><strong class="text-danger">{{$count['withdraw_charge']}}</strong> 元</small>
+    </h3>
   </header>
-  <h3>已提现总金额 <strong class="text-danger">{{$countmoney}}</strong> 元</h3>
+  <h3></h3>
   <blockquote>
   <form action="" method="post">
     <div class="input-group" style="width: 200px;float: left;margin-right: 20px;">

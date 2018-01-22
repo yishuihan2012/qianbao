@@ -2,6 +2,10 @@
 @section('title','会赚钱的都在这~')
 @section('wrapper')
 <!-- HTML 代码 -->
+ <header>
+    <h3><i class="icon-list-ul"></i> 订单列表 <small>共 <strong class="text-danger">{{$count}}</strong> 条</small>
+     
+  </header>
 <div class="panel">
   	<div class="panel-body">
   <div class="row row-search">

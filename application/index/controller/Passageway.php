@@ -31,7 +31,6 @@ class Passageway extends Common{
 		 #渲染视图
 		 return view('admin/passageway/index');
 	 }
-
 	 #通道对会员组税率调整
 	 public function rate()
 	 {

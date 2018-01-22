@@ -9,7 +9,11 @@
 <hr/>
 <div class="list">
   <header>
-    <h3><i class="icon-list-ul"></i> 订单列表 <small>共 <strong class="text-danger">{{$count['count_size']}}</strong> 条</small></h3>
+    <h3>
+      <i class="icon-list-ul"></i> 订单列表 <small>共 <strong class="text-danger">{{$count['count_size']}}</strong> 条</small>
+      <i class="icon icon-yen"></i> 升级总金额 <small>共 <strong class="text-danger">{{$count['upgrade_money']}}</strong> 元</small>
+      <i class="icon icon-yen"></i> 分佣总金额 <small>共 <strong class="text-danger">{{$count['upgrade_commission']}}</strong> 条</small>
+    </h3>
   </header>
    <form action="" method="post">
     <div class="input-group" style="width: 200px;float: left;margin-right: 20px;">

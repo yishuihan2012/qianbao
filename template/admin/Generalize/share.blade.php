@@ -10,7 +10,7 @@
  <section>
  <hr/>
  <div class="list">
-      <header><h3><i class="icon-list-ul"></i> 分享列表 <small>共 <strong class="text-danger">{{count($share)}}</strong> 条</small></h3></header>
+      <header><h3><i class="icon-list-ul"></i> 分享列表 <small>共 <strong class="text-danger">{{$count}}</strong> 条</small></h3></header>
       <div class="row">
            @foreach($share as $list)
            <div class="col-sm-2">
