@@ -190,6 +190,7 @@
           'bankaccount'=>$credit['card_bankno'],
           'cvv2'=>$credit['card_Ident'],
           'expirationdate'=>$credit['card_expireDate'],
+          'fronturl'=>request()->domain() . "/api/Userurl/passway_open_success"
         ];
          // var_dump($arr);die;
         $data=rongbang_curl(rongbang_foruser($this->member,$this->passway),$arr,'masget.pay.collect.router.treaty.apply');
@@ -280,7 +281,8 @@
           "businesstype": "1001",
           "payextraparams": '.$payextraparams.',
           "paymenttypeid": "'.$paymenttypeid.'",
-          "ordernumber": "'.$tradeNo.'"
+          "ordernumber": "'.$tradeNo.'",
+          "fronturl":"'. request()->domain() . '/api/Userurl/passway_success"
         }';
 
         // echo ($arr);die;

@@ -134,21 +134,22 @@
 							phone:"{{$info->memberCreditcard->card_phone}}",
 							price:"{{$price}}",
 						};
-						console.log(data);
+						// console.log(data);
 						$.post('',data,function(res){
-							alert(res)
 							if(res['code']==404){
 								alert("验证码错误")
 							}else if(res['code']==327){
 								alert("插入订单失败");
 							}else if(res['code']==400){
 								alert(res['msg']);
+							}else if(res['code']==200){
+								alert("交易成功");
 							}
-					      // if(!isAndroid){
-					      //   window.webkit.messageHandlers.returnIndex.postMessage(1);
-					      // }else{
-					      //   android.returnIndex();
-					      // }
+					      if(!isAndroid){
+					        window.webkit.messageHandlers.returnIndex.postMessage(1);
+					      }else{
+					        android.returnIndex();
+					      }
 						})
 					}else{
 						alert('请输入验证码！');

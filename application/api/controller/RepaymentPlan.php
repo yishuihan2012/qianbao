@@ -57,9 +57,16 @@
            // $this->param['cardId']=30;
            // $this->param['billMoney']=1000;
            // $this->param['payCount']=4;
-           // $this->param['startDate']="2018-01-19";
+           // $this->param['startDate']="2018-01-22";
            // $this->param['endDate']="2018-01-29";
            // $this->param['passageway']=8;
+           
+           if($this->param['billMoney']/ $this->param['payCount']<200)
+                return['code'=>477];//单笔还款金额太小，请减小还款次数
+           #总账单除以消费次数得到每次消费AVG平均值  如果平均值小于某个值 则不进行还款  也是浪费资源
+           if($this->param['billMoney']/$this->param['payCount'] >20000)
+                  return['code'=>478];//单笔还款金额过大，请增加还款次数
+
            $root_id=find_root($this->param['uid']);
            #0 获取参数数据
            if($this->param['endDate']<$this->param['startDate']){
@@ -72,6 +79,10 @@
            }
            if(date('H',time())>19 && $this->param['startDate']==$this->param['endDate'] ){
                return ['code'=>476];//今天已超过还款时间，无法为您制定还款计划
+           }
+           if($this->param['startDate']<$this->param['startDate']){
+              exit(json_encode(['code'=>111,'msg'=>'还款结束日期不能小于开始日期']));
+              return['code'=>474]; //开始日期不能小于今天
            }
            #获取需要参数
           $member_info=MemberCerts::where('cert_member_id='.$this->param['uid'])->find();
@@ -95,31 +106,38 @@
            $daikou=($rate->item_charges)/100; 
 
           #1获取实际还款天数和还款日期
-
-           if($this->param['startDate']==date('Y-m-d',time()) && date('H',time())>19){
-              $days=days_between_dates($this->param['startDate'],$this->param['endDate']);
-              $date=prDates(date('Y-m-d',strtotime($this->param['startDate'])+3600*24),$this->param['endDate']);
-           }else{
-              $days=days_between_dates($this->param['startDate'],$this->param['endDate'])+1;
-              $date=prDates($this->param['startDate'],$this->param['endDate']);
+           if($this->param['startDate']==date('Y-m-d',time())){
+               return['code'=>485];//开始还款日期必须大于今天
            }
-            if($days==0){
-               return['code'=>478];//还款天数太短无法为您安排还款
-            }
-          //如果还款次数小于天数
-          if($this->param['payCount']>$days){
-                if($this->param['startDate']==date('Y-m-d',time()) && date('H',time())>12){
-                  $days=days_between_dates($this->param['startDate'],$this->param['endDate']);
-                  $date=prDates(date('Y-m-d',strtotime($this->param['startDate'])+3600*24),$this->param['endDate']);
 
-                }else{
-                  $days=days_between_dates($this->param['startDate'],$this->param['endDate'])+1;
-                  $date=prDates($this->param['startDate'],$this->param['endDate']);
-                }
-               if($days==0){
-                   return['code'=>478];//还款天数太短无法为您安排还款
-                }
-          }else{
+           // if($this->param['startDate']==date('Y-m-d',time()) && date('H',time())>19){
+           //    $days=days_between_dates($this->param['startDate'],$this->param['endDate']);
+           //    $date=prDates(date('Y-m-d',strtotime($this->param['startDate'])+3600*24),$this->param['endDate']);
+           // }else{
+           //    $days=days_between_dates($this->param['startDate'],$this->param['endDate'])+1;
+           //    $date=prDates($this->param['startDate'],$this->param['endDate']);
+           // }
+           //  if($days==0){
+           //     return['code'=>480];//还款天数太短无法为您安排还款
+           // }
+           // echo $days;die;
+           // print_r($days);die;
+          //如果还款次数小于天数
+          $days=days_between_dates($this->param['startDate'],$this->param['endDate'])+1;
+          $date=prDates($this->param['startDate'],$this->param['endDate']);
+          if($this->param['payCount']<$days){
+          //       if($this->param['startDate']==date('Y-m-d',time()) && date('H',time())>12){
+          //         $days=days_between_dates($this->param['startDate'],$this->param['endDate']);
+          //         $date=prDates(date('Y-m-d',strtotime($this->param['startDate'])+3600*24),$this->param['endDate']);
+          //       }else{
+          //         $days=days_between_dates($this->param['startDate'],$this->param['endDate'])+1;
+          //         $date=prDates($this->param['startDate'],$this->param['endDate']);
+          //       }
+          //      if($days==0){
+          //          return['code'=>480];//还款天数太短无法为您安排还款
+          //       }
+          // }else{
+          //      $days=days_between_dates($this->param['startDate'],$this->param['endDate'])+1;
                shuffle($date);
                 #消费几次就取几个随机日期
                $date=array_slice($date,0,$this->param['payCount']);
