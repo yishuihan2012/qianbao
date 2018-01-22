@@ -51,16 +51,16 @@
                  $this->error=317;
            }
       }
-      //获取三级下级总数
+        //获取三级下级总数
       public function get_lower_total($uid){
           $count=0;
-          $MemberRelation_1rd=MemberRelation::where(["relation_parent_id"=>$uid])->select();
+          $MemberRelation_1rd=MemberRelation::haswhere("members",'member_id!=""')->where(["relation_parent_id"=>$uid])->select();
           $count+=count($MemberRelation_1rd);
           foreach ($MemberRelation_1rd as $k => $val) {
-                $member_2rd=MemberRelation::where(['relation_parent_id'=>$val['relation_member_id']])->select();
+                $member_2rd=MemberRelation::haswhere("members",'member_id!=""')->where(['relation_parent_id'=>$val['relation_member_id']])->select();
                 $count+=count($member_2rd);
                 foreach ($member_2rd as $k1 => $val1) {
-                  $group3 = MemberRelation::where(['relation_parent_id'=>$val1['relation_member_id']])->select();
+                  $group3 = MemberRelation::haswhere("members",'member_id!=""')->where(['relation_parent_id'=>$val1['relation_member_id']])->select();
                     $count+=count($group3);
                 }
 
