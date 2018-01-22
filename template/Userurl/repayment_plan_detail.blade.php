@@ -16,8 +16,8 @@
 			<div class="wrap bg-w">
 			  <div class=" bor-bot" style="fl">
 			    <div class="" style="width: 65vw;display: inline-block;">
-			      <p class="invalid-color f16">还款总金额(含手续费{{$generation_pound}})</p>
-			      <p class="f24 space-up3 space-bot"><strong>{{$generation['generation_total']+$generation_pound}}</strong></p>
+			      <p class="invalid-color f16">还款总金额(含手续费{{$order_pound}})</p>
+			      <p class="f24 space-up3 space-bot"><strong>{{$generation['generation_total']+$order_pound}}</strong></p>
 			    </div>
 			    <div class=" fc" style="width: 25vw;display: inline-block;">
 			      <p class="invalid-color f16">消费笔数</p>
