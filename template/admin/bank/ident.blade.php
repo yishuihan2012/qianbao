@@ -1,9 +1,14 @@
 @extends('admin/layout/layout_main')
 @section('title','可识别银行列表管理~')
 @section('wrapper')
+
 <style>
 	 h4 > a,.pull-right > a{color:#145ccd;}
  </style>
+ <header>
+    <h3><i class="icon-list-ul"></i> 订单列表 <small>共 <strong class="text-danger">{{$count}}</strong> 条</small>
+     </h3>
+  </header>
  <blockquote> 可识别银行列表管理</blockquote>
  <section>
  <hr/>

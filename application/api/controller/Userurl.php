@@ -431,9 +431,9 @@ class Userurl extends Controller
 			$data[$i]['order_creditcard']=substr($v['order_creditcard'],-4);
 			$data[$i++]['order_update_time']=$v['order_update_time'];
 		}
-		if(!$data){
-			return view("Userurl/no_data");
-		}
+		// if(!$data){
+		// 	return view("Userurl/no_data");
+		// }
 		$this->assign('data',$data);
 	  	return view("Userurl/deal_list");
 	}

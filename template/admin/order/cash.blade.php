@@ -9,7 +9,10 @@
 <hr/>
 <div class="list">
   <header>
-    <h3><i class="icon-list-ul"></i> 交易订单 <small>共 <strong class="text-danger">{{$count['count_size']}}</strong> 条</small></h3>
+    <h3><i class="icon-list-ul"></i> 交易订单 <small>共 <strong class="text-danger">{{$count['count_size']}}</strong> 条</small>
+    <i class="icon icon-yen"></i>全部总金额 <small><strong class="text-danger">{{$count['order_money']}}</strong>元</small>
+    <i class="icon icon-yen"></i>全部手续费 <small><strong class="text-danger">{{$count['order_charge']}}</strong>元</small></h3>
+    </h3>
   </header>
    <form action="" method="post">
     <div class="input-group" style="width: 200px;float: left;margin-right: 20px;">
@@ -64,7 +67,7 @@
                       <th>结算卡</th>
                       <th>信用卡</th>
                       <th class="flex-col">总金额</th>
-                      <th class="flex-col">分润消耗</th> 
+                      <!-- <th class="flex-col">分润消耗</th>  -->
                       <th class="flex-col">手续费</th> 
                       <th class="flex-col">费率</th> 
                       <th>订单状态</th>
@@ -83,7 +86,7 @@
                  <td>{{$list->order_creditcard}}</td>
 
                  <td>{{$list->order_money}}</td>
-                 <td>{{$list->order_fen}}</td>
+                 <!-- <td>{{$list->order_fen}}</td> -->
                  <td>{{$list->order_charge}}</td>
                  <td>{{$list->order_also}}%</td>
 

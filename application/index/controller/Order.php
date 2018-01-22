@@ -46,11 +46,14 @@ class Order extends Common{
 	 	 // #查询订单列表分页
 	 	$order_lists = Upgrade::haswhere('member',$where)
 	 		->join("wt_member_cert m", "m.cert_member_id=Member.member_id","left")
-	 		->where($wheres)->field('wt_member.member_nick')
+	 		->where($wheres)->field('wt_member.member_nick')->order("upgrade_id desc")
 	 		->paginate(Config::get('page_size'),false, ['query'=>Request::instance()->param()]);
 	 
 	 	 #统计订单条数
 	 	 $count['count_size']=Upgrade::haswhere('member',$where)->join("wt_member_cert m", "m.cert_member_id=Member.member_id","left")->where($wheres)->count();
+	 	 #升级总金额
+	 	 $count['upgrade_money'] = Upgrade::haswhere('member',$where)->join("wt_member_cert m", "m.cert_member_id=Member.member_id","left")->where($wheres)->sum("upgrade_money");
+	 	 $count['upgrade_commission'] = Upgrade::haswhere('member',$where)->join("wt_member_cert m", "m.cert_member_id=Member.member_id","left")->where($wheres)->sum("upgrade_commission");
 		$this->assign('order_lists', $order_lists);
 	    $this->assign('count', $count);
 		 
@@ -105,7 +108,7 @@ class Order extends Common{
 		//管理员列表
 		$admins=db('adminster')->column('adminster_id,adminster_login');
 	 	 // #查询订单列表分页
-	 	 $order_lists = Withdraw::haswhere('member',$where)
+	 	$order_lists = Withdraw::haswhere('member',$where)
 	 	 	->join("wt_member_cert m", "m.cert_member_id=Member.member_id","left")
 	 	 	->where($wheres)
 	 	 	->order('withdraw_add_time desc')
@@ -118,6 +121,12 @@ class Order extends Common{
 
 	 	 #统计订单条数
 	 	 $countmoney=Withdraw::where('withdraw_state=12')->sum('withdraw_amount');
+	 	 #提现金额
+	 	 $count['withdraw_total_money'] = Withdraw::where([])->sum('withdraw_total_money');
+	 	 #操作全额
+	 	 $count['withdraw_amount'] = Withdraw::where([])->sum('withdraw_amount');
+	 	 #操作手续费
+	 	 $count['withdraw_charge'] = Withdraw::where([])->sum('withdraw_charge');
 	 	 $count['count_size']=Withdraw::haswhere('member',$where)->join("wt_member_cert m", "m.cert_member_id=Member.member_id","left")->where($wheres)->count();
 		 $this->assign('order_lists', $order_lists);
 		 $this->assign('countmoney', $countmoney);
@@ -223,12 +232,17 @@ class Order extends Common{
 			$r['cert_member_idcard'] = '';
 		}
 	 	 // #查询订单列表分页
-	 	 $order_lists = CashOrder::with('passageway')->join('wt_member m',"m.member_id=wt_cash_order.order_member")->where($where)->join("wt_member_cert mc", "mc.cert_member_id=m.member_id","left")->where($wheres)->paginate(Config::get('page_size'), false, ['query'=>Request::instance()->param()]);
+	 	 $order_lists = CashOrder::with('passageway')->join('wt_member m',"m.member_id=wt_cash_order.order_member")->where($where)->join("wt_member_cert mc", "mc.cert_member_id=m.member_id","left")->where($wheres)->order("order_id desc")->paginate(Config::get('page_size'), false, ['query'=>Request::instance()->param()]);
 	 	
 	 	 #统计订单条数
 	 	 $count['count_size']=CashOrder::with('passageway')->join('wt_member m',"m.member_id=wt_cash_order.order_member")->where($where)->join("wt_member_cert mc", "mc.cert_member_id=m.member_id","left")->where($wheres)->count();
-			 $this->assign('order_lists', $order_lists);
-			 $this->assign('count', $count);
+	 	 #交易总金额
+	 	 $count['order_money']=CashOrder::with('passageway')->join('wt_member m',"m.member_id=wt_cash_order.order_member")->where($where)->join("wt_member_cert mc", "mc.cert_member_id=m.member_id","left")->where($wheres)->sum("order_money");
+	 	 #交易总手续费
+	 	 $count['order_charge']=CashOrder::with('passageway')->join('wt_member m',"m.member_id=wt_cash_order.order_member")->where($where)->join("wt_member_cert mc", "mc.cert_member_id=m.member_id","left")->where($wheres)->sum("order_charge");
+
+		 $this->assign('order_lists', $order_lists);
+		 $this->assign('count', $count);
 		if(!Request::instance()->param('member_nick')){
 		 	$where['member_nick']='';
 		 }
@@ -269,10 +283,14 @@ class Order extends Common{
 		}
 		$where['order_state'] = 2;
 	 	 // #查询订单列表分页
-	 	 $order_lists = CashOrder::with('passageway')->join('wt_member m',"m.member_id=wt_cash_order.order_member")->where($where)->join("wt_member_cert mc", "mc.cert_member_id=m.member_id","left")->where($wheres)->paginate(Config::get('page_size'), false, ['query'=>Request::instance()->param()]);
+	 	 $order_lists = CashOrder::with('passageway')->join('wt_member m',"m.member_id=wt_cash_order.order_member")->where($where)->join("wt_member_cert mc", "mc.cert_member_id=m.member_id","left")->where($wheres)->order("order_id desc")->paginate(Config::get('page_size'), false, ['query'=>Request::instance()->param()]);
 	 	
 	 	 #统计订单条数
 	 	 $count['count_size']=CashOrder::with('passageway')->join('wt_member m',"m.member_id=wt_cash_order.order_member")->where($where)->join("wt_member_cert mc", "mc.cert_member_id=m.member_id","left")->where($wheres)->count();
+	 	  #交易总金额
+	 	 $count['order_money']=CashOrder::with('passageway')->join('wt_member m',"m.member_id=wt_cash_order.order_member")->where($where)->join("wt_member_cert mc", "mc.cert_member_id=m.member_id","left")->where($wheres)->sum("order_money");
+	 	 #交易总手续费
+	 	 $count['order_charge']=CashOrder::with('passageway')->join('wt_member m',"m.member_id=wt_cash_order.order_member")->where($where)->join("wt_member_cert mc", "mc.cert_member_id=m.member_id","left")->where($wheres)->sum("order_charge");
 			 $this->assign('order_lists', $order_lists);
 			 $this->assign('count', $count);
 		if(!Request::instance()->param('member_nick')){
@@ -310,7 +328,7 @@ class Order extends Common{
 		}
 
 	 	 // #查询订单列表分页
-	 	 $order_lists = Recomment::haswhere('member',$where)->join("wt_member_cert m", "m.cert_member_id=Member.member_id","left")->where($wheres)->paginate(Config::get('page_size'), false, ['query'=>Request::instance()->param()]);
+	 	 $order_lists = Recomment::haswhere('member',$where)->join("wt_member_cert m", "m.cert_member_id=Member.member_id","left")->where($wheres)->order("recomment_id desc")->paginate(Config::get('page_size'), false, ['query'=>Request::instance()->param()]);
 	 	 foreach ($order_lists as $key => $value) {
 	 	 		$order_lists[$key]['recomment_member_name']=Member::where(['member_id'=>$value['recomment_member_id']])->value('member_nick');
 	 	 		$order_lists[$key]['recomment_children_name']=Member::where(['member_id'=>$value['recomment_children_member']])->value('member_nick');

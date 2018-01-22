@@ -155,7 +155,9 @@ class Article extends Common{
 	 *   @return 
 	 */
 	 public function memberNovice(){
-	 	 $MemberNovice=MemberNovice::with("noviceclass")->paginate(Config::get('page_size'), false, ['query'=>Request::instance()->param()]);
+	 	 $MemberNovice=MemberNovice::with("noviceclass")->order("novice_id desc")->paginate(Config::get('page_size'), false, ['query'=>Request::instance()->param()]);
+	 	 $count=MemberNovice::with("noviceclass")->count();
+	 	 $this->assign("count",$count);
 	 	 $this->assign('button', ['text'=>'新增指引', 'link'=>url('/index/article/noviceCreat')]);
 	 	 $this->assign('MemberNovice',$MemberNovice);
 	 	 return view('admin/article/memberNovice');
