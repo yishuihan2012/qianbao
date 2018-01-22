@@ -27,6 +27,8 @@ class PassagewayRate extends Common{
 	*/
 	public function index(){
 		$list = PassagewayRates::with("passageway")->order("rate_id desc")->paginate(Config::get('page_size'), false, ['query'=>Request::instance()->param()]);
+		$count = PassagewayRates::with("passageway")->count();
+		$this->assign("count",$count);
 		$this->assign('button', ['text'=>'新增费率编码', 'link'=>url('/index/passageway_rate/creat'), 'modal'=>'modal']);
 		$this->assign('list',$list);
 		return view("admin/passageway_rate/index");

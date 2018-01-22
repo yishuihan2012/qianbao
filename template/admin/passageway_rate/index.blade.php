@@ -7,7 +7,10 @@
  <blockquote> 费率编码表管理</blockquote>
  <section>
  <hr/>
-
+<header>
+    <h3>
+      <i class="icon-list-ul"></i> 费率编码 <small>共 <strong class="text-danger">{{$count}}</strong> 条</small>
+    </h3>
  <table class="table datatable">
       <thead>
            <tr>
