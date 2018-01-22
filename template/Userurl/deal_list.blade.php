@@ -2,75 +2,114 @@
 <html>
 	<head>
 		<meta charset="UTF-8">
-		<title>动账交易列表</title>
+		<title>交易账单</title>
 		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
 		<link href="/static/css/mui.min.css" rel="stylesheet" />
-		<link href="/static/css/iconfont.css" rel="stylesheet" />
 		<link href="/static/css/base.css" rel="stylesheet" />
 		<link href="/static/css/page.css" rel="stylesheet" />
-		<link href="/static/css/themes.css" rel="stylesheet"/>
+		<link href="/static/css/themes.css" rel="stylesheet" />
 	</head>
 	<body>
-		<div class="mui-content wrap3">
-			<ul class="deal-list">
-				@foreach($data as $k=>$v)
-					@if($v['type']=='MemberCash')
-			   <li class="space-up4">
-			   	  <p class="fc"><span class="my-time-bg">{{$v['cash_create_at']}}</span></p>
-			   	  <div class="wrap3 bg-w space-up deal-list-wrap">
-			   	  	<div>
-				   	  	<p class="normal-color">套现交易成功提醒</p>
-				   	  	<p class="normal-color">交易成功</p>
-				   	  	<p class="normal-color fc">交易金额</p>
-				   	  	<p class="normal-color fc f36">{{$v['cash_amount']}}<span class="f24">元</span></p>
-			   	  	</div>
-			   	  	<div class="space-up bor-top wrap5">
-			   	  		<p class="normal-color"><span class="space-right2">交易时间</span><span>{{$v['cash_create_at']}}</span></p>
-			   	  		<p class="normal-color"><span class="space-right2">实际到账</span><span>{{$v['cash_amount']-$v['service_charge']}}</span></p>
-			   	  	</div>
-			   	  </div>
-			   </li>
-					@elseif($v['type']=='Withdraw')
-			   <li class="space-up4">
-			   	  <p class="fc"><span class="my-time-bg">{{$v['withdraw_add_time']}}</span></p>
-			   	  <div class="wrap3 bg-w space-up deal-list-wrap">
-			   	  	<div>
-				   	  	<p class="normal-color">提现交易成功提醒</p>
-				   	  	<p class="normal-color">您尾号{{$v['withdraw_account']}}的银行卡交易成功</p>
-				   	  	<p class="normal-color fc">交易金额</p>
-				   	  	<p class="normal-color fc f36">{{$v['withdraw_amount']}}<span class="f24">元</span></p>
-			   	  	</div>
-			   	  	<div class="space-up bor-top wrap5">
-			   	  		<p class="normal-color"><span class="space-right2">交易时间</span><span>{{$v['withdraw_add_time']}}</span></p>
-			   	  		<p class="normal-color"><span class="space-right2">支付通道</span><span>快捷支付通道</span></p>
-			   	  		<p class="normal-color"><span class="space-right2">实际到账</span><span>{{$v['withdraw_amount']-$v['withdraw_charge']}}元</span></p>
-			   	  	</div>
-			   	  </div>
-			   </li>
-			   		@else
-			   <li class="space-up4">
-			   	  <p class="fc"><span class="my-time-bg">{{$v['order_update_time']}}</span></p>
-			   	  <div class="wrap3 bg-w space-up deal-list-wrap">
-			   	  	<div>
-				   	  	<p class="normal-color">收款交易成功提醒</p>
-				   	  	<p class="normal-color">您尾号{{$v['order_creditcard']}}的{{$v['card_bankname']}}信用卡交易成功</p>
-				   	  	<p class="normal-color fc">交易金额</p>
-				   	  	<p class="normal-color fc f36">{{$v['order_charge']+$v['order_money']}}<span class="f24">元</span></p>
-			   	  	</div>
-			   	  	<div class="space-up bor-top wrap5">
-			   	  		<p class="normal-color"><span class="space-right2">交易时间</span><span>{{$v['order_update_time']}}</span></p>
-			   	  		<p class="normal-color"><span class="space-right2">支付通道</span><span>快捷支付通道</span></p>
-			   	  		<p class="normal-color"><span class="space-right2">实际到账</span><span>{{$v['order_money']}}元</span></p>
-			   	  	</div>
-			   	  </div>
-			   </li>
-					@endif
-				@endforeach
+		<div class="mui-content bills">
+			<div id="billsList">
+			<ul class="mui-table-view">
+				<!--月账单统计表头-->
+			    <li class="mui-table-view-cell bg-color invalid-color f15">
+			        2017年11月 9000.00元 共3笔
+			    </li>
+			    <!--注：不同状态显示颜色不同-->
+			    @foreach($data as $k => $v)
+			    <li class="mui-table-view-cell bills-list">
+			        <a href="#">
+			        	<div class="dis-flex-be space-bot">
+			        		<p>(银行卡尾号{{$v->bank_ons}})</p>
+			        		<p class="blue-color f20">{{$v->order_money}}元</p>
+			        	</div>
+			        	<div class="dis-flex-be">
+			        		<p class="f14 invalid-color dis-flex">{{$v->order_add_time}}</p>
+			        		<p class="f14 invalid-color dis-flex fc">{{$v->order_desc}}</p>
+			        		<p class="f14 yellow-color dis-flex ftr">@if($v->order_state == 1) 待支付 @elseif($v->order_state==2) 成功 @elseif($v->order_state==-1) 失败 @else 超时 @endif</p>
+			        	</div>
+			        </a>
+			    </li>
+			   @endforeach
 			</ul>
+			</div>
 		</div>
 		<script src="/static/js/mui.min.js"></script>
+		<script src="/static/js/jquery-2.1.4.min.js"></script>
 		<script type="text/javascript">
 			mui.init();
+			//滚动加载更多
+			var allpage={{$pages}};//全部页面
+		    var page=1; //当前页的页码
+		    function showAjax(page){
+
+		      $.ajax({
+		        url:"",
+		        type:"post",
+		        data:{page:page},
+		        dateType:"json",
+		        beforeSend:function(XMLHttpRequest){ 
+		          $(".load-more").text("加载中..."); 
+		        }, 
+		        success:function(data){
+		        	var data = JSON.parse(data);
+		        	page = data.page;
+		        	console.log(page);
+		        //要执行的内容
+		        //isEnd =  ;
+		        for(var i=0;i<data.data.length;i++){
+		        	state = '';
+		        	if(data.data[i].order_state == 1){
+		        		state = "待支付";
+		        	}else if(data.data[i].order_state == 2){
+		        		state = "成功";
+		        	}else if(data.data[i].order_state == -1){
+		        		state = "失败";
+		        	}else{
+		        		state = "超时";
+		        	}
+		         $(".mui-table-view").append("<li class='mui-table-view-cell bills-list'>"+
+				        "<a href='bills_detail.html'>"+
+				        	"<div class='dis-flex-be space-bot'>"+
+				        		"<p>(银行卡尾号"+data.data[i].bank_ons+")</p>"+
+				        		"<p class='blue-color f20'>"+data.data[i].order_money+"元</p>"+
+				        	"</div>"+
+				        	"<div class='dis-flex-be'>"+
+				        		"<p class='f14 invalid-color dis-flex'>"+data.data[i].order_add_time+"</p>"+
+				        		"<p class='f14 invalid-color dis-flex fc'>"+data.data[i].order_desc+"</p>"+
+				        		"<p class='f14 yellow-color dis-flex ftr'>"+state+"</p>"+
+				        	"</div>"+
+				        "</a>"+
+				    "</li>");
+		            }
+		          },
+		          error:function(){
+	
+		          }
+		        });
+		        }
+		      function scrollFn(){
+		        //真实内容的高度
+		        var pageHeight = Math.max(document.body.scrollHeight,document.body.offsetHeight);
+		        //视窗的高度
+		        var viewportHeight = window.innerHeight || document.documentElement.clientHeight || document.body.clientHeight || 0;
+		        //隐藏的高度
+		        var scrollHeight = window.pageYOffset || document.documentElement.scrollTop || document.body.scrollTop || 0;
+		        if(pageHeight - viewportHeight - scrollHeight < 60){
+		          page++;
+		          if(page<=allpage){
+		            showAjax(page);
+		          }else{
+		            $(".load-more").text("已无数据");
+		          }
+		         }
+		        }
+		    $(window).bind("scroll",scrollFn);//绑定滚动事件
+			mui('.mui-table-view-cell').on('tap','a',function(){
+		      window.top.location.href=this.href;
+		    });
 		</script>
 	</body>
 
