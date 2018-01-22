@@ -83,12 +83,12 @@ class Test
 			$host=System::getName('system_url');
 			$data = $this->curlPost($host.'/api', 'post',$request);
 			$res=json_decode($data,true);
-			if(is_array($res)){
-				if($res['code']==200){
-					$data=$index->decryption_data($res['data']); 
-				}else{
-					$data=$res;
-				}
+			if(is_array($res) && $res['code']==200){
+				
+				$data=$index->decryption_data($res['data']); 
+				
+			}else{
+				$data=$res;
 			}
 			print_r($data);die;
 		}
