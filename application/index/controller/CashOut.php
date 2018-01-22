@@ -141,7 +141,7 @@ class CashOut
 	      	 if(isset($result['message']))
 	      	 return ['msg'=>$result['message'].',下单失败~', 'code'=>400];
 
-	      	 return ['msg'=>'系统解析失败,下单失败~', 'code'=>400];
+	      	 return ['msg'=>'通道维护中,下单失败~', 'code'=>400];
 
 	      }
 	 }
