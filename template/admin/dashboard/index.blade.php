@@ -107,22 +107,21 @@
   </div>
   <div class="items items-hover">
     <div class="z-card">
-      交易总次数:
+      交易总数:
       <span>{{$data['CashOrdercount']}}</span>
     </div>
     <div class="z-card">
-      还款计划总数:
+      还款总数:
       <span>{{$data['GenerationOrdercount']}}</span>
     </div>
     <div class="z-card">
-      交易总金额:
+      交易总额:
       <span>{{$data['CashOrderSum']}}</span>
     </div>
     <div class="z-card">
-      还款计划总金额:
+      还款总额:
       <span>{{$data['GenerationOrderSum']}}</span>
     </div>
-    
   </div>
   <div class="items items-hover">
     @foreach($membergrouplist as $key => $value)

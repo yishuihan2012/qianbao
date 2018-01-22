@@ -58,8 +58,8 @@ class Dashboard extends Common
     		'Todaycount'     => Member::where($whereMember)->whereTime('member_creat_time','d')->count(),#今日用户数量
             'CashOrdercount' => CashOrder::where(array_merge($where,['order_state'=>2]))->count(),//当前套现总数量
             'GenerationOrdercount' => GenerationOrder::where(array_merge($where,['order_status'=>2]))->count(),//当前还款总数量
-            'CashOrderSum' => CashOrder::where(array_merge($where,['order_state'=>2]))->sum('order_money'),//当前套现总数量
-            'GenerationOrderSum' => GenerationOrder::where(array_merge($where,['order_status'=>2]))->sum('order_money'),//当前还款总数量
+            'CashOrderSum' => round(CashOrder::where(array_merge($where,['order_state'=>2]))->sum('order_money'),2),//当前套现总数量
+            'GenerationOrderSum' => round(GenerationOrder::where(array_merge($where,['order_status'=>2]))->sum('order_money'),2),//当前还款总数量
     	];
         $membergroup =new  MemberGroup();
         $membergrouplist = $membergroup->select();
@@ -79,20 +79,20 @@ class Dashboard extends Common
                 $where['order_passway']=$v['passageway_id'];
                 $where['order_state']=2;
                 //套现通道
-                $passway[$k]['todaysum']=CashOrder::where($where)->whereTime('order_add_time','today')->sum('order_money');
-                $passway[$k]['yesterdaysum']=CashOrder::where($where)->whereTime('order_add_time','yesterday')->sum('order_money');
-                $passway[$k]['weeksum']=CashOrder::where($where)->whereTime('order_add_time','week')->sum('order_money');
-                $passway[$k]['monthsum']=CashOrder::where($where)->whereTime('order_add_time','month')->sum('order_money');
-                $passway[$k]['allsum']=CashOrder::where($where)->sum('order_money');
+                $passway[$k]['todaysum']=round(CashOrder::where($where)->whereTime('order_add_time','today')->sum('order_money'),2);
+                $passway[$k]['yesterdaysum']=round(CashOrder::where($where)->whereTime('order_add_time','yesterday')->sum('order_money'),2);
+                $passway[$k]['weeksum']=round(CashOrder::where($where)->whereTime('order_add_time','week')->sum('order_money'),2);
+                $passway[$k]['monthsum']=round(CashOrder::where($where)->whereTime('order_add_time','month')->sum('order_money'),2);
+                $passway[$k]['allsum']=round(CashOrder::where($where)->sum('order_money'),2);
             }else{
                 $where['order_passway_id']=$v['passageway_id'];
                 $where['order_status']=2;
                 //代还通道
-                $passway[$k]['todaysum']=db('generation_order')->where($where)->whereTime('order_add_time','today')->sum('order_money');
-                $passway[$k]['yesterdaysum']=db('generation_order')->where($where)->whereTime('order_add_time','yesterday')->sum('order_money');
-                $passway[$k]['weeksum']=db('generation_order')->where($where)->whereTime('order_add_time','week')->sum('order_money');
-                $passway[$k]['monthsum']=db('generation_order')->where($where)->whereTime('order_add_time','month')->sum('order_money');
-                $passway[$k]['allsum']=db('generation_order')->where($where)->sum('order_money');
+                $passway[$k]['todaysum']=round(db('generation_order')->where($where)->whereTime('order_add_time','today')->sum('order_money'),2);
+                $passway[$k]['yesterdaysum']=round(db('generation_order')->where($where)->whereTime('order_add_time','yesterday')->sum('order_money'),2);
+                $passway[$k]['weeksum']=round(db('generation_order')->where($where)->whereTime('order_add_time','week')->sum('order_money'),2);
+                $passway[$k]['monthsum']=round(db('generation_order')->where($where)->whereTime('order_add_time','month')->sum('order_money'),2);
+                $passway[$k]['allsum']=round(db('generation_order')->where($where)->sum('order_money'),2);
             }
         }
         $this->assign('data',$data);
