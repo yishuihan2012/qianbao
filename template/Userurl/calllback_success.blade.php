@@ -42,13 +42,12 @@
 			mui.init();
 			mui.ready(function(){
 				document.getElementById('seeDetails').addEventListener('tap',function(){
-					mui.openWindow({
 						if(!isAndroid){
 					        window.webkit.messageHandlers.returnIndex.paySus();
 					      }else{
 					        android.paySus();
 					      }
-					});
+					
 				});
 			});
 		</script>
