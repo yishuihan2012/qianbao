@@ -177,6 +177,7 @@
           $day_pay_count=$this->get_day_count($this->param['payCount'],$days);
           #5计算出每天实际刷卡金额，和实际到账金额
           $Generation_order_insert=[];
+           $generation_pound = 0;
           for ($i=0; $i <count($date) ; $i++) { 
               $day_real_get_money=0;
               // $plan[$i]['day_date']=$date[$i];
@@ -187,6 +188,7 @@
               $each_pay_money=$this->get_random_money($day_pay_count[$i],$day_pay_money[$i],$is_int=1);
               #计算每次刷卡的时间
               $each_pay_time=$this->get_random_time($date[$i],$day_pay_count[$i]);
+
               foreach ($each_pay_money as $k => $each_money) {
                   //获取每次实际需要支付金额
                   $real_each_pay_money=$this->get_need_pay($also,$daikou,$each_money);
@@ -207,6 +209,7 @@
                       'order_passway_id'=>$this->param['passageway'],
                       'order_root'=>$root_id,
                   );
+                  $generation_pound += $real_each_get['fee'];
                 $day_real_get_money+=$real_each_get['money'];
               }
               //提现信息
@@ -225,6 +228,10 @@
               );
 
           }
+          $Generation = new Generation();
+          #修改手续费
+          $ss = $Generation->where(['generation_id' => $Generation_result->generation_id])->update(['generation_pound' =>  $generation_pound]);
+        
           // print_r($Generation_order_insert);die;
           #写入计划表数据
           $Generation_order=new GenerationOrder();
