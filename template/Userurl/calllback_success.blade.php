@@ -16,7 +16,7 @@
 			<div class="fc">
 		    	<span class="mui-icon iconfont icon-successful f48"></span>
 		    	<p class="space-up2">支付成功</p>
-		    	<p class="space-up2 invalid-color">已成功向尾号{{$data->order_card}}银行卡转入</p>
+		    	<p class="space-up2 invalid-color">您已成功支付</p>
 		    	<p class="space-up2 f36 f-bold">{{$data->order_money}}<span class="f24">元</span></p>
 			    <div class="fc my-btn-container">
 			    	<a class="my-btn-blue2 space-right2 f18" id="seeDetails">返回首页</a>
