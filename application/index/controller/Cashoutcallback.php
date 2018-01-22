@@ -13,6 +13,7 @@ use app\index\model\Cashout;
 use think\Request;
 use app\api\controller\Commission;
 use app\index\model\Commission as Commissions;
+use app\index\model\Member;
 class Cashoutcallback
 {
 
@@ -24,64 +25,62 @@ class Cashoutcallback
 	 * @version $Bill$
 	 */
 	 public function mishuaCallBack()
-     {
-         file_put_contents('datas1.txt', 'mishuaCallBack');
-         $data = file_get_contents("php://input");
-         $data = trim($data);
-         file_put_contents('datas2.txt', $data);
+	 {
+	     $data = file_get_contents("php://input");
+	 	 $data = trim($data);
          $data = json_decode($data, true);
-             //回调详细信息 解密
-         $localIV="0102030405060708";
-         $request= Request::instance();
-         $action=$request->controller();
-         $str=$action."/mishuaCallBack";
-         #去查找回调函数路径为这个的设置
-         
-         $passwayinfo=Cashout::where('cashout_callback','like','%'.$str.'%')->find();
-         if(!$passwayinfo)
-             die('找不到回调地址');
-         $passway=Passageway::get($passwayinfo['cashout_passageway_id']);
-        
-         if(!$passway)
-             $datas=AESdecrypt($data['payload'],$passway->passageway_pwd_key, $localIV);
-             $datas = trim($datas);
-             $datas = trim($info);
-             $datas = substr($datas, 0, strpos($datas, '}') + 1);
-             file_put_contents('datas3.txt', $datas);
-             //返回结果
-             $resul = json_decode($datas, true);
-             //订单详情
-             $order   = CashOrder::where(array('order_thead_no' => $resul['transNo']))->find();
+         //回调详细信息 解密
+    	 $localIV="0102030405060708";
+	 	 if($data['code']==0 && $data['mchNo']){
+            $passway=Passageway::get(['passageway_mech'=>$data['mchNo']]);
+         }else{
+            die('找不到通道');
+         }
+       	 // 获取传过来参数
+        	 #Open module
+        	 $info=AESdecrypt($data['payload'],$passway->passageway_pwd_key,$localIV);
+        	 $datas = trim($info);
+        	 $datas = substr($datas, 0, strpos($datas, '}') + 1);
+        	 //返回结果
+        	 $resul = json_decode($datas, true);
+        	 //file_put_contents('datas3.txt',$resul);
+        	 //订单详情
+        	 $order   = CashOrder::where(array('order_thead_no' => $resul['transNo']))->find();
 
+             $member=Member::get($order->order_member);
              #通道费率
-              $passwayitem=PassagewayItem::get(['item_group'=>$order->member,'item_passageway'=>$passway->passageway_id]);
-             //00代表成功
-             if ($resul['status'] == '00' && $order) {
-             $order->order_state=2;
-             //进行分润
-             $commission=Commissions::where(['commission_type'=>1,'commission_from'=>$order->order_id])->find();
-             if(!$commission){
+              $passwayitem=PassagewayItem::get(['item_group'=>$member->member_group_id,'item_passageway'=>$passway->passageway_id]);
+              // var_dump($passwayitem);die;
+        	 //00代表成功
+        	 if ($resul['status'] == '00' && $order) {
+		 	 $order->order_state=2;
+		 	 //进行分润
+             //判断之前有没有分润过
+             $Commission_info=Commissions::where(['commission_from'=>$order->order_id,'commission_type'=>1])->find();
+             if(!$Commission_info){
                     $fenrun= new \app\api\controller\Commission();
                     $fenrun_result=$fenrun->MemberFenRun($order->order_member,$order->order_money,$order->order_passway,1,'套现手续费分润',$order->order_id);
+             }else{
+                $fenrun_result['code']=-1;
              }
-             if($fenrun_result['code']=="200")
+		 	 if($fenrun_result['code']=="200")
              {
-                 $order->order_fen=$fenrun_result['leftmoney'];
+ 				 $order->order_fen=$fenrun_result['leftmoney'];
                  $order->order_buckle=$passwayitem->item_charges/100;
                  $order->order_platform=$order->order_charge-($order->order_money*$passway->passageway_rate/100)+$passway->passageway_income;
              }
-            else    
+ 			else	
             {
-                 $order->order_fen=-1;
+ 				 $order->order_fen=-1;
             }
-             $res = $order->save();
-                 if ($resul['qfStatus'] == 'SUCCESS' || $resul['qfStatus'] == 'IN_PROCESS') {
-                     //订单更新成功的时候去执行分佣
-                     echo 'success';
-                     die;
-                 }
-         } 
-     }
+		 	 $res = $order->save();
+            	 if ($resul['qfStatus'] == 'SUCCESS' || $resul['qfStatus'] == 'IN_PROCESS') {
+            	 	 //订单更新成功的时候去执行分佣
+                	 echo 'success';
+                	 die;
+            	 }
+       	 } 
+	 }
 
 	 /**
 	 * @version  CashOutCallBack 套现回调 快捷支付0.23回调 
