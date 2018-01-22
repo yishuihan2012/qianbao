@@ -388,6 +388,15 @@ class Passageway extends Common{
 			//运营商
 			if($adminster['adminster_user_id'] && $group_id==5){
 				$where['order_member']=["in",$adminster['children']];
+				$passageway->profit=db('commission')->alias('c')
+					->join('cash_order o','c.commission_from=o.order_id')
+					->where('c.commission_member_id',$adminster['adminster_user_id'])
+					->sum('commission_money');
+			}else{
+				$passageway->profit=db('commission')->alias('c')
+					->join('cash_order o','c.commission_from=o.order_id')
+					->where('c.commission_member_id',-1)
+					->sum('commission_money');
 			}
 			$passageway->sum=db('cash_order')->where($where)->sum('order_money');
 			$passageway->charge=db('cash_order')->where($where)->sum('order_charge');
@@ -401,12 +410,22 @@ class Passageway extends Common{
 				->join('commission c','o.order_id=c.commission_from')
 				->where($where)
 				->sum('commission_money');
+		#代还
 		}else{
 			$where['order_passway_id']=$id;
 			$where['order_status']=2;
 			//运营商
 			if($adminster['adminster_user_id'] && $group_id==5){
 				$where['member_id']=["in",$adminster['children']];
+				$passageway->profit=db('commission')->alias('c')
+					->join('generation_order o','c.commission_from=o.order_id')
+					->where('c.commission_member_id',$adminster['adminster_user_id'])
+					->sum('commission_money');
+			}else{
+				$passageway->profit=db('commission')->alias('c')
+					->join('generation_order o','c.commission_from=o.order_id')
+					->where('c.commission_member_id',-1)
+					->sum('commission_money');
 			}
 			$passageway->sum=db('generation_order')->where($where)->sum('order_money');
 			$passageway->charge=db('generation_order')->where($where)->sum('order_pound');
