@@ -77,7 +77,7 @@ class Userurl extends Controller
 	    return view("api/logic/share_code_list");
 	}
 
-	#套现成功页面
+	#取现现成功页面
 	public function calllback_success(){
 		$request = $_REQUEST;
         $data    = CashOrder::where(['order_thead_no' => $request['transNo']])->find();
