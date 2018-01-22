@@ -12,6 +12,7 @@ use app\index\model\PassagewayItem;
 use app\index\model\Cashout;
 use think\Request;
 use app\api\controller\Commission;
+use app\index\model\Commission as Commissions;
 class Cashoutcallback
 {
 
@@ -19,19 +20,16 @@ class Cashoutcallback
 	 * @version  米刷套现
 	 * @authors bill(755969423@qq.com)
 	 * @date    2017-12-23 16:25:05
+     * @edit   xuchengcheng 2018-01-22 
 	 * @version $Bill$
 	 */
 	 public function mishuaCallBack()
 	 {
-        // var_dump(123);die;
-	      $data = file_get_contents("php://input");
+	     $data = file_get_contents("php://input");
 	 	 $data = trim($data);
-	 	 // file_put_contents('datas1.txt', $data);
-        	 // file_put_contents('filecontent.txt',$data);
-        	 $data = json_decode($data, true);
-        	 // file_put_contents('success.txt',$data['state']);
-        	 //回调详细信息 解密
-    	 	 $localIV="0102030405060708";
+         $data = json_decode($data, true);
+         //回调详细信息 解密
+    	 $localIV="0102030405060708";
 	 	 $request= Request::instance();
 	 	 $action=$request->controller();
 	 	 $str=$action."/mishuaCallBack";
@@ -50,10 +48,9 @@ class Cashoutcallback
         	 $encryptedData = base64_decode($data['payload']);
         	 $encryptedData = mdecrypt_generic($module, $encryptedData);
         	 $info = $encryptedData;
-        	 // file_put_contents('datas1.txt',$info);
         	 $datas = trim($info);
         	 $datas = substr($datas, 0, strpos($datas, '}') + 1);
-        	 //file_put_contents('datas2.txt', $datas);
+        	 file_put_contents('datas2.txt', $datas);
         	 //返回结果
         	 $resul = json_decode($datas, true);
         	 //file_put_contents('datas3.txt',$resul);
@@ -66,8 +63,12 @@ class Cashoutcallback
         	 if ($resul['status'] == '00' && $order) {
 		 	 $order->order_state=2;
 		 	 //进行分润
-		 	 $fenrun= new \app\api\controller\Commission();
-		 	 $fenrun_result=$fenrun->MemberFenRun($order->order_member,$order->order_money,$order->order_passway,1,'套现手续费分润',$order->order_id);
+             //判断之前有没有分润过
+             $Commission_info=Commissions::where(['commission_from'=>$order->order_id,'commission_type'=>1])->find();
+             if(!$Commission_info){
+                    $fenrun= new \app\api\controller\Commission();
+                    $fenrun_result=$fenrun->MemberFenRun($order->order_member,$order->order_money,$order->order_passway,1,'套现手续费分润',$order->order_id);
+             }
 		 	 if($fenrun_result['code']=="200")
              {
  				 $order->order_fen=$fenrun_result['leftmoney'];
