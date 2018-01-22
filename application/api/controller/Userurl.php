@@ -106,7 +106,7 @@ class Userurl extends Controller
 				Vendor('phpqrcode.phpqrcode');
 				$QRcode=new \QRcode();
 				//生成二维码
-				$QRcode->png($url, 'autoimg/qrcode'.$tel.'.png',0,8);
+				$QRcode->png($url, 'autoimg/qrcode'.$tel.'.png','H',8);
 				$qrurl=ROOT_PATH.'public/autoimg/qrcode'.$tel.'.png';
 				$logourl=ROOT_PATH.'public/static/images/logo.png';
 				// 二维码加入logo
