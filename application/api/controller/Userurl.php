@@ -842,7 +842,6 @@ class Userurl extends Controller
   		return $res;
   	}
   	//$member=Members::with('memberCashcard,memberCreditcard')->where(['member_id'=>$memberId,'card_id'])->find();
-  	
   	$info=Members::haswhere('memberCreditcard',['card_id'=>$cardId])->where(['member_id'=>$memberId])->find();
   	// //var_dump($info::getLastSql());
   	// dump($info->memberCreditcard->card_bankname);
