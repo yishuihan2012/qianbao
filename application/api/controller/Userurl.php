@@ -404,6 +404,7 @@ class Userurl extends Controller
 		if($_POST){
 			$start = ($page-1)*10;
 			$CashOrder=CashOrder::where(['order_member'=>$this->param['uid']])->order('order_id desc')->limit($start,10)->select();
+
 			foreach ($CashOrder as $key => $value) {
 			 $CashOrder[$key]["bank_ons"] = substr($value['order_card'], -4);
 			}
@@ -412,12 +413,13 @@ class Userurl extends Controller
 		$CashOrder=CashOrder::where(['order_member'=>$this->param['uid']])->order('order_id desc')->limit(0,10)->select();
 		$count = CashOrder::where(['order_member'=>$this->param['uid']])->order('order_id desc')->count();
 			$pages = ceil($count/10);
+			#截取银行卡号
 		foreach ($CashOrder as $key => $value) {
 			$CashOrder[$key]["bank_ons"] = substr($value['order_card'], -4);
 		}
 		
 		
-		if(!$data){
+		if(!$CashOrder){
 			return view("Userurl/no_data");
 		}
 		$this->assign("pages",$pages);

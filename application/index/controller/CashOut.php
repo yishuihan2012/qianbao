@@ -126,6 +126,7 @@ class CashOut
 	      curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
 	      $res = curl_exec($ch);
 	      $result = json_decode($res, true);
+	      // var_dump($result);die;
 	      if ($result['code'] == 0) {
 	      	 $datas=AESdecrypt($result['payload'],$this->passway_info->passageway_pwd_key);
 	            $datas = trim($datas);
@@ -137,7 +138,11 @@ class CashOut
 	      	 	 return ['code'=>327];
 	            return ['code'=>200,'msg'=>'订单获取成功~', 'data'=>['url'=>$resul['tranStr'],'type'=>1, ]];
 	      }else{
+	      	 if(isset($result['message']))
 	      	 return ['msg'=>$result['message'].',下单失败~', 'code'=>400];
+
+	      	 return ['msg'=>'通道维护中,下单失败~', 'code'=>400];
+
 	      }
 	 }
 
