@@ -138,7 +138,11 @@ class CashOut
 	      	 	 return ['code'=>327];
 	            return ['code'=>200,'msg'=>'订单获取成功~', 'data'=>['url'=>$resul['tranStr'],'type'=>1, ]];
 	      }else{
+	      	 if(isset($result['message']))
 	      	 return ['msg'=>$result['message'].',下单失败~', 'code'=>400];
+
+	      	 return ['msg'=>'系统解析失败,下单失败~', 'code'=>400];
+
 	      }
 	 }
 
