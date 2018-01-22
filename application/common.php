@@ -898,10 +898,7 @@ function SortByASCII($arr)
         $url='http://pay.mishua.cn/zhonlinepay/service/rest/creditTrans/createMerchant';
         $income=repay_request($params, $passageway['passageway_mech'], $url, $passageway['iv'], $passageway['secretkey'], $passageway['signkey']);
       // var_dump($income)
-      $arr=array(
-           'net_member_id'=>$member_info['cert_member_id'],
-           "{$passageway['passageway_no']}"=>$income['userNo']
-      );
+        return $income;
         return $arr;
     }
 
