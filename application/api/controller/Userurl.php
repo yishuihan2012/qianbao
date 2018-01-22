@@ -77,8 +77,19 @@ class Userurl extends Controller
 	    return view("api/logic/share_code_list");
 	}
 
-	#套现成功页面
+	#取现现成功页面
 	public function calllback_success(){
+		$request = $_REQUEST;
+        $data    = CashOrder::where(['order_thead_no' => $request['transNo']])->find();
+        if ($request['status'] == '00') {
+            $data['order_card']        = substr($data['order_card'], -4);
+            $data['order_money'] = number_format($data['order_money'], 2);
+            $data['result']           = 1;
+        } else {
+            $data['result'] = 0;
+        }
+
+        $this->assign('data',$data);
 	    return view("Userurl/calllback_success");
 	}
 	/**

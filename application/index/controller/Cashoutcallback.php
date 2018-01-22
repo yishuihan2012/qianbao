@@ -23,6 +23,7 @@ class Cashoutcallback
 	 */
 	 public function mishuaCallBack()
 	 {
+        // var_dump(123);die;
 	      $data = file_get_contents("php://input");
 	 	 $data = trim($data);
 	 	 // file_put_contents('datas1.txt', $data);
