@@ -417,7 +417,7 @@ class Userurl extends Controller
 		}
 		
 		
-		if(!$data){
+		if(!$CashOrder){
 			return view("Userurl/no_data");
 		}
 		$this->assign("pages",$pages);
