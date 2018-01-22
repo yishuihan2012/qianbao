@@ -95,7 +95,7 @@ class CashOut
 	            'description' 	=> $description, //交易描述
 	            'orderDate'   => date('YmdHis', time()), //订单日期
 	            'tradeNo'     	=> $tradeNo, //商户平台内部流水号，请确保唯一 TOdo
-	            'notifyUrl'		=>'http://wallet.test.xijiakeiji.com/index/Cashoutcallback/mishuaCallBack',
+	            'notifyUrl'		=>'http://wallet.test.xijiakeji.com/index/Cashoutcallback/mishuaCallBack',
 	            // 'notifyUrl'   	=> System::getName('system_url').$this->passway_info->cashout->cashout_callback, //异步通知URL
 	            'callbackUrl' 	=> System::getName('system_url').'/api/Userurl/calllback_success',/*HOST . "/index.php?s=/Api/Quckpayment/turnurl"*/ //页面回跳地址
 	            'payCardNo' => $this->card_info->card_bankno, //信用卡卡号
@@ -106,7 +106,6 @@ class CashOut
 	            'downPayFee'  	=> $this->also->item_rate*10, //结算费率  必填  接入机构给商户的费率，D0直清按照此费率结算，千分之X， 精确到0.01
 	            'downDrawFee' => '0'//$this->passway_info->cashout->cashout_charges, // 代付费 选填  每笔扣商户额外代付费。不填为不扣。
 	      );
-	      var_dump($arr);die;
 	      //请求体参数加密 AES对称加密 然后连接加密字符串转MD5转为大写
 	      $payload =AESencode(json_encode($arr),$this->passway_info->passageway_pwd_key);
 	      // var_dump($payload);die;
