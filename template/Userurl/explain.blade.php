@@ -18,7 +18,7 @@
 					@if($data)
 						<img src="{{$data['article_thumb']}}">
 						{{$data['article_desc']}}
-						{{$data['data_text']}}
+						{!!$data['data_text']!!}
 					@else
 						暂无盈利模式说明
 					@endif
