@@ -7,7 +7,10 @@
     <a class="btn btn-primary" href="{{ url('/index/auth_group/add') }}">新增用户组<i class="icon icon-plus"></i></a>
   </div>
 </div> -->
-
+ <header>
+    <h3><i class="icon-list-ul"></i> 订单列表 <small>共 <strong class="text-danger">{{$count}}</strong> 条</small>
+     
+  </header>
 <table class="table table-striped table-hover">
   <thead>
     <tr>

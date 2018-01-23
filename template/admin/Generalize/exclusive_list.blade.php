@@ -9,7 +9,7 @@
  <section>
  <hr/>
  <div class="list">
-      <header><h3><i class="icon-list-ul"></i> 专属列表 <small>共 <strong class="text-danger">{{count($Exclusive)}}</strong> 条</small></h3></header>
+      <header><h3><i class="icon-list-ul"></i> 专属列表 <small>共 <strong class="text-danger">{{$count}}</strong> 条</small></h3></header>
       <div class="row">
            @foreach($Exclusive as $list)
            <div class="col-sm-2">

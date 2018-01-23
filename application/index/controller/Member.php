@@ -12,13 +12,14 @@ namespace app\index\controller;
  use app\api\controller\Commission;
  use app\index\model\Commission as Commissions;
  use think\{Controller, Request, Session, Config, Loader, Db};
-
+ use app\index\model\System;
+  use app\index\model\Wallet;
  class Member extends Common{
  	 /**
 	 *  @version child method /  会员下级信息
 	 *  @author $GongKe$ (755969423@qq.com) 会员下级信息列表
-	 *   @datetime    2018-1-17 13:27
-	 *   @return  返回会员的下级信息 
+	 *  @datetime    2018-1-17 13:27
+	 *  @return  返回会员的下级信息 
 	 */
  	 public function child(Request $request)
  	 {
@@ -27,6 +28,7 @@ namespace app\index\controller;
 			 Session::set('jump_msg', ['type'=>'error','msg'=>'参数错误,缺少会员标识ID']);
 			 $this->redirect($this->history['1']);
 	 	 }
+	 	 
 	 	 $data=Members::getChild($request->param('memberId'));
 	 	 $this->assign('data', $data);
 	 	 //return view('admin/member/info');
@@ -49,6 +51,7 @@ namespace app\index\controller;
 			$this->assign('beginTime',request()->param('beginTime'));
 			$this->assign('endTime',request()->param('endTime'));
 		}
+		$this->assign('button',['text'=>'添加新用户', 'link'=>url('/index/member/register'), 'modal'=>'modal']);
 		#身份证查询
 		$wheres = array();
 		 if( request()->param('cert_member_idcard')){
@@ -83,7 +86,6 @@ namespace app\index\controller;
 		 #渲染视图
 		 return view('admin/member/index');
 	 }
-	
  	 /**
 	 *  @version info method /  会员详细信息
 	 *  @author $bill$(755969423@qq.com) 后台优化功能
@@ -107,13 +109,13 @@ namespace app\index\controller;
 	 	 	->where(["r.relation_member_id"=>$member_info->member_id])
 	 	 	->join('member m','r.relation_parent_id=m.member_id')->find();
 	 	 #查询下级信息
-	 	 $team=db('member_relation')->alias('r')
-	 	 	->where(["r.relation_parent_id"=>$member_info->member_id])
-	 	 	->join('member m','r.relation_member_id=m.member_id')->select();
+	 	 // $team=db('member_relation')->alias('r')
+	 	 // 	->where(["r.relation_parent_id"=>$member_info->member_id])
+	 	 // 	->join('member m','r.relation_member_id=m.member_id')->select();
 	 	 // var_dump($member_info);die;
 	 	 $this->assign('member_info', $member_info);
 	 	 $this->assign('leadr', $leadr);
-	 	 $this->assign('team', $team);
+	 	 // $this->assign('team', $team);
 	 	 return view('admin/member/info');
 	 }
 	 
@@ -183,6 +185,7 @@ namespace app\index\controller;
 			 			$result = $Upgrade->allowField(true)->save();
 			 			$Commission = new Commission();
 			 			//判断用户有没有上级，或者是判断后台有没有设置分佣。
+
 			 			if($info['relation_parent_id']!=0 && $status==1){
 			 				$results = $Commission->MemberCommis(request()->param("member_id"),$upgrade_data['upgrade_commission'],"后台管理员升级"); 
 			 			}
@@ -209,7 +212,7 @@ namespace app\index\controller;
 	 			->where('m.member_id',request()->param("id"))
 	 			->value('g.group_salt');
 	 		#可升级的用户组 应该是大于当前用户组，并且小于当前运营商所在算用户组
-		 	$member_group_info = MemberGroup::where(['group_visible'=>0,'group_salt'=>['between',[$user_group_salt,$group_salt]]])
+		 	$member_group_info = MemberGroup::where(['group_salt'=>['between',[$user_group_salt,$group_salt]]])
 		 		->order("group_salt desc")->select();//用户分组数据
 	 	}else{
 		 	$member_group_info = MemberGroup::order("group_salt desc")->select();//用户分组数据
@@ -274,4 +277,96 @@ namespace app\index\controller;
 	 	$this->assign("list",$list);
 	 	return view("admin/member/commiss");	
 	}
+	/**
+	*@version registerForOthes 用户注册
+	*@author 杨成志（3115317085@qq.com）
+	*/
+	public function registerForOthers()
+      {
+
+           #验证parent_phone号码是否存在
+           if(!phone_check(request()->param('parent_phone'))){
+           		Session::set('jump_msg',['type'=>'warning','msg'=>'主邀请人手机号码不存在','data'=>'']);
+				$this->redirect($this->history['0']);
+           }
+                 
+           #验证参数是否存在
+           if(!phone_check(request()->param('phone'))){
+           		Session::set('jump_msg',['type'=>'warning','msg'=>'请输入正确手机号码','data'=>'']);
+				$this->redirect($this->history['0']);
+           }
+                
+           
+           #检查用户(是否存在)            
+           $member=MemberLogin::phone_exit(request()->param('phone'));
+           if($member){
+           		Session::set('jump_msg',['type'=>'warning','msg'=>'该手机号码已被注册，请直接登录！','data'=>'']);
+				$this->redirect($this->history['0']);
+           }                  
+                 
+           $parentmember=MemberLogin::phone_exit(request()->param('parent_phone'));
+           if(!$parentmember){
+           	    Session::set('jump_msg',['type'=>'warning','msg'=>'主邀请人手机号码不存在','data'=>'']);
+				$this->redirect($this->history['0']);
+           }
+           Db::startTrans();           
+           #填写注册信息             
+           // try{
+                 #随机密码salt                  
+                 $rand_salt=make_rand_code();                  
+                 #加密密码
+                 // dump(substr(request()->param('phone'), -6));die;
+                 $pwd=encryption(substr(request()->param('phone'), -6), $rand_salt);
+                 #新增会员基本信息                  
+                 $member_info = new Members([
+                      'member_nick'=>request()->param('phone'),
+                      'member_mobile'=>request()->param('phone'),
+                      'member_group_id'=>System::getName('open_reg_membertype')]); 
+                 if($member_info->save()===false)
+                 {
+                     Session::set('jump_msg',['type'=>'warning','msg'=>'注册失败请重试','data'=>'']);
+				    $this->redirect($this->history['0']) ;                
+                 } 
+                 $token = get_token();                  
+                 $member_login= new MemberLogin([
+                      'login_member_id'=>$member_info->member_id,
+                      'login_account'    =>request()->param('phone'),                       
+                      'login_pass'  =>$pwd,                       
+                      'login_pass_salt'  =>$rand_salt,
+                      'login_token'         =>$token,                       
+                      'login_attempts'   =>0,
+                 ]);                  
+                #用户推荐表信息处理                  
+                 $meber_relation= new MemberRelation([
+                      'relation_member_id'=>$member_info->member_id,
+                       'relation_parent_id'  =>$parentmember['login_member_id'],
+                      'relation_type'     =>6,//TODO 邀请方式                  
+                 ]);
+                 #初始化会员钱包信息                  
+                 $member_wallet= new Wallet([
+                      'wallet_member'=>$member_info->member_id,
+                      'wallet_amount'=>0                  
+                ]);                  
+                 if(!$member_login->save() || !$meber_relation->save() || !$member_wallet->save())
+                 {                       
+                       Session::set('jump_msg',['type'=>'warning','msg'=>'注册失败请重试','data'=>'']);
+				      $this->redirect($this->history['0'])  ;               
+                 }                  
+                 Db::commit();
+                 $data=Members::member_info($token);                  
+                 Session::set('jump_msg',['type'=>'success','msg'=>'注册成功','data'=>'']);
+				    $this->redirect($this->history['0']) ;
+                 //请求成功             
+        //    } catch (\Exception $e) {                  
+        //         Session::set('jump_msg',['type'=>'warning','msg'=>'你的信息添加失败请稍后再试！~','data'=>'']);
+				    // $this->redirect($this->history['0'])  ;           
+        //    }       
+      }
+      /**
+      *@version register 用户注册
+      *@author 杨成志 （3115317085@qq.com
+      */
+      public function register(){
+      		return view("admin/member/register");
+      }
 }

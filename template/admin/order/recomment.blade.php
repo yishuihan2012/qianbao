@@ -9,7 +9,8 @@
 <hr/>
 <div class="list">
   <header>
-    <h3><i class="icon-list-ul"></i> 红包列表 <small>共 <strong class="text-danger">{{$count['count_size']}}</strong> 条</small></h3>
+    <h3><i class="icon-list-ul"></i> 红包列表 <small>共 <strong class="text-danger">{{$count['count_size']}}</strong> 条</small>
+    <i class="icon icon-yen"></i>全部总金额 <small><strong class="text-danger">{{$countmoney}} 元</small></strong></h3>
   </header>
   <form action="" method="post">
     <div class="input-group" style="width: 200px;float: left;margin-right: 20px;">
@@ -32,7 +33,6 @@
     <option value="1" @if($r['member_cert']==1) selected @endif>已认证</option>
     <option value="2" @if($r['member_cert']==2) selected @endif>未认证</option>
   </select>
- 
   </div>
   <div class="input-group" style="width: 180px;float: left;margin-right: 10px;">
      <span class="input-group-addon">会员级别</span>
@@ -52,7 +52,7 @@
   </div>
   <button class="btn btn-primary" type="submit">搜索</button>
 </form>
-    <h3>红包总金额  <strong class="text-danger">{{$countmoney}}</strong> 元</h3>
+   
   <div class="items items-hover">
       <!-- HTML 代码 -->
           <table class="table datatable">

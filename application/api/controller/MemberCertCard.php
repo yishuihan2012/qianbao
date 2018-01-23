@@ -120,8 +120,15 @@
 
                 $rate=PassagewayItem::where('item_passageway='.$passageway['passageway_id'].' and item_group='.$group['member_group_id'])->find();
 
-                $arr=mishua($passageway, $rate, $member_info, $this->param['phone']);
-
+                $income=mishua($passageway, $rate, $member_info, $this->param['phone']);
+                if($income['code']==200){
+                    $arr=array(
+                       'net_member_id'=>$member_info['cert_member_id'],
+                       "{$passageway['passageway_no']}"=>$income['userNo']
+                  );
+                }else{
+                    return['code'=>104,'msg'=>$income['message'],'data'=>[]];
+                }
 
                 $add_net=MemberNet::where('net_member_id='.$this->param['uid'])->update($arr);
            }
@@ -253,7 +260,7 @@
       }
  
       /**
-      *  @version ubind_card method / Api 添加信用卡信用卡
+      *  @version ubind_card method / Api 解绑信用卡信用卡
       *  @author $bill$(755969423@qq.com)
       *  @datetime    2017-12-15 09:22:05
       *  @param uid=会员ID token=登录令牌  creditCardId='信用卡ID'
@@ -268,9 +275,15 @@
            if(empty($cert_card))
                  return ['code'=>442];
             #查询信用卡是否在还款计划中
-           $generation=GenerationOrder::where(['order_card'=>$cert_card['card_bankno'],'order_status'=>1])->select();
-           if($generation)
-                 return ['code'=>469];
+           $generation=Generation::where(['generation_card'=>$cert_card['card_bankno'],'generation_state'=>2])->select();
+           if($generation){
+              foreach ($generation as $key => $value) {
+                $generation_order=GenerationOrder::where(['order_card'=>$cert_card['card_bankno'],'order_status'=>1,'order_no'=>$value['generation_id']])->select();
+                 if($generation_order){
+                      return ['code'=>469];
+                 }
+              }
+           }
            #查找出会员的实名信息
            $member_cert=MemberCerts::get(['cert_member_id'=>$this->param['uid']]);
            #进行和当前会员信息比对

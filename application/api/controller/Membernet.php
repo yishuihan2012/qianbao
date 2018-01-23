@@ -121,10 +121,11 @@ use app\index\model\Member;
         $value=GenerationOrder::where(['order_id'=>$id])->find();
         // print_r($value);die;
         if($value['order_type']==1){ //消费
-            $this->payBindCard($value);
+            $res=$this->payBindCard($value);
         }else if($value['order_type']==2){//提现
-            $this->transferApply($value);
+            $res=$this->transferApply($value);
         }
+        print_r($res);die;
     }
      //7绑卡支付
       //http://pay.mishua.cn/zhonlinepay/service/rest/creditTrans/payBindCard
@@ -193,16 +194,16 @@ use app\index\model\Member;
         //更新卡计划
         // Generation::where(['generation_id'=>$pay['order_no']])->update($generation);
         #更改完状态后续操作
-        $action=$this->plan_notice($pay,$income,$member_base,$is_commission);
+        $action=$this->plan_notice($pay,$income,$member_base,$is_commission,$merch);
       }
 
       //计划执行完之后推送通知，分润
-      public function plan_notice($pay,$income,$member_base,$is_commission=0){
+      public function plan_notice($pay,$income,$member_base,$is_commission=0,$merch){
           #1记录有效推荐人 #2 分润分佣 #3 短信通知 # 极光推送
           //后四位银行卡尾号
           $card_num=substr($pay['order_card'],-4);
           if($income['code']=='200'){
-              if($income['status']=="SUCCESS"){
+              if($income['status']!="FAIL"){
                   if($pay['order_type']==1){ //消费
                         #0在此计划的还款卡余额中增加本次的金额 除去手续费
                         db('reimbur')->where('reimbur_generation',$pay['order_no'])->setInc('reimbur_left',$pay['order_money']-$pay['order_pound']);
@@ -356,7 +357,7 @@ use app\index\model\Member;
             Generation::update(['generation_id'=>$pay['order_no'],'generation_state'=>$generation_state]);
           }
           //执行完后操作
-          $action=$this->plan_notice($pay,$income,$member_base,0);
+          $action=$this->plan_notice($pay,$income,$member_base,0,$merch);
       }
       //提现回调
       public function cashCallback(){
@@ -413,6 +414,26 @@ use app\index\model\Member;
           return $income;
         } 
       }
+      public function ger_remain(){
+        
+                for ($i=4; $i <193 ; $i++) { 
+                     $url="http://lehuan.xijiakei.com/api/Membernet/accountQuery/uid/{$i}/is_print/11";
+                    @$res=file_get_contents($url);
+                    if($res){
+                        $res=json_decode($res,true);
+                        if(isset($res['code']) && $res['code']==200){
+                             $money=$res['lastAmt']+$res['availableAmt']+$res['refundAmt']-$res['usedAmt'];
+                             if($money>0){
+                                  $data[$i]['money']=$money;
+                                  $data[$i]['uid']=$i;
+                             }
+                        }
+                    }
+
+               }
+               print_r($data);die;
+         
+      }
       public function mishuaedit($uid=16,$passageway='8'){
          #1实名信息
          $member_info=MemberCert::where('cert_member_id='.$uid)->find();
@@ -428,8 +449,49 @@ use app\index\model\Member;
       }
 
       #取消还款计划【整体】
-      # generation_id
+      /**
+       * @param  [type]
+       * @return [type]
+       */
       public function cancle_plan($generation_id){
+           Db::startTrans();
+           $generation=Generation::get($generation_id);
+           if(!$generation){
+              return['code'=>482,'msg'=>'获取计划失败'];
+           }
+           if($generation['generation_state']==4 || $generation['generation_state']==1 || $generation['generation_state']==3){
+              return['code'=>483,'msg'=>'计划不在执行过程中，无法取消'];
+           }
+           #1如果当天没还款且有消费成功的不能取消
+           $where1['order_status']=1;
+           $where1['order_type']=2;
+           $where1['order_member']=$generation['generation_member'];
+           $where1['order_no']=$generation_id;
+
+           $where2['order_status']=2;
+           $where2['order_type']=1;
+           $where2['order_member']=$generation['generation_member'];
+           $where2['order_no']=$generation_id;
+
+           $order_back=GenerationOrder::where($where1)->whereTime('order_time', 'today')->find();
+           $order_cash=GenerationOrder::where($where2)->whereTime('order_time', 'today')->find();
+           if($order_back && $order_cash){
+              return['code'=>484,'msg'=>'您当天有笔还款还未执行，暂时不能取消'];//如果当天没还款且有消费成功的不能取消
+           }
+           #执行取消计划操作
+           $Generation=Generation::where(['generation_id'=>$generation_id])->update(['generation_state'=>4]);
+           $generation_order=GenerationOrder::where(['order_no'=>$generation_id,'order_status'=>1])->update(['order_status'=>3]);
+           if($Generation && $generation_order){
+              Db::commit();
+              return ['code'=>200];
+           }else{
+              Db::rollback();
+              return ['code'=>481,'msg'=>'取消计划失败，如有疑问请联系客服。'];
+           }
+      }
+       #取消还款计划【整体】 old
+      # generation_id
+      public function cancle_plans($generation_id){
            Db::startTrans();
            try{
               $generation=Generation::get($generation_id);

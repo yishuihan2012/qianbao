@@ -46,8 +46,320 @@
                  $this->error=317;
            }
       }
-      //创建还款计划
-      public function creatPlan()
+
+      //创建计划
+      public function creatPlan(){
+        try {
+       
+          // 测试数据
+           // $this->param['uid']=42;
+           // $this->param['token']=16;
+           // $this->param['cardId']=30;
+           // $this->param['billMoney']=1000;
+           // $this->param['payCount']=4;
+           // $this->param['startDate']="2018-01-22";
+           // $this->param['endDate']="2018-01-29";
+           // $this->param['passageway']=8;
+           
+           if($this->param['billMoney']/ $this->param['payCount']<200)
+                return['code'=>477];//单笔还款金额太小，请减小还款次数
+           #总账单除以消费次数得到每次消费AVG平均值  如果平均值小于某个值 则不进行还款  也是浪费资源
+           if($this->param['billMoney']/$this->param['payCount'] >20000)
+                  return['code'=>478];//单笔还款金额过大，请增加还款次数
+
+           $root_id=find_root($this->param['uid']);
+           #0 获取参数数据
+           if($this->param['endDate']<$this->param['startDate']){
+              exit(json_encode(['code'=>111,'msg'=>'还款结束日期不能小于开始日期']));
+              return['code'=>474]; //开始日期不能小于今天
+           }
+           if($this->param['startDate']<date('Y-m-d',time())){
+               exit(json_encode(['code'=>111,'msg'=>'开始日期不能小于今天']));
+               return ['code'=>475];//开始日期不能小于今天
+           }
+           if(date('H',time())>19 && $this->param['startDate']==$this->param['endDate'] ){
+               return ['code'=>476];//今天已超过还款时间，无法为您制定还款计划
+           }
+           if($this->param['startDate']<$this->param['startDate']){
+              exit(json_encode(['code'=>111,'msg'=>'还款结束日期不能小于开始日期']));
+              return['code'=>474]; //开始日期不能小于今天
+           }
+           #获取需要参数
+          $member_info=MemberCerts::where('cert_member_id='.$this->param['uid'])->find();
+          if(empty($member_info)){
+                exit(json_encode(['code'=>111,'msg'=>'当前登录已失效，请重新登录']));
+                return ['code'=>317];//当前登录已失效，请重新登录
+          }
+          // print_r($member_info);die;
+          #卡详情
+          $card_info=MemberCreditcard::where('card_id='.$this->param['cardId'])->find();
+          if(!$card_info){
+              exit(json_encode(['code'=>111,'msg'=>'未获取到卡号信息']));
+              return ['code'=>442];
+          }
+          #获取后台费率
+          $member_group_id=Member::where(['member_id'=>$this->param['uid']])->value('member_group_id');
+          $rate=PassagewayItem::where(['item_passageway'=>$this->param['passageway'],'item_group'=>$member_group_id])->find();
+           #定义税率  
+           $also=($rate->item_also)/100;
+           #定义代扣费
+           $daikou=($rate->item_charges)/100; 
+
+          #1获取实际还款天数和还款日期
+           if($this->param['startDate']==date('Y-m-d',time())){
+               return['code'=>485];//开始还款日期必须大于今天
+           }
+
+           // if($this->param['startDate']==date('Y-m-d',time()) && date('H',time())>19){
+           //    $days=days_between_dates($this->param['startDate'],$this->param['endDate']);
+           //    $date=prDates(date('Y-m-d',strtotime($this->param['startDate'])+3600*24),$this->param['endDate']);
+           // }else{
+           //    $days=days_between_dates($this->param['startDate'],$this->param['endDate'])+1;
+           //    $date=prDates($this->param['startDate'],$this->param['endDate']);
+           // }
+           //  if($days==0){
+           //     return['code'=>480];//还款天数太短无法为您安排还款
+           // }
+           // echo $days;die;
+           // print_r($days);die;
+          //如果还款次数小于天数
+          $days=days_between_dates($this->param['startDate'],$this->param['endDate'])+1;
+          $date=prDates($this->param['startDate'],$this->param['endDate']);
+          if($this->param['payCount']<$days){
+          //       if($this->param['startDate']==date('Y-m-d',time()) && date('H',time())>12){
+          //         $days=days_between_dates($this->param['startDate'],$this->param['endDate']);
+          //         $date=prDates(date('Y-m-d',strtotime($this->param['startDate'])+3600*24),$this->param['endDate']);
+          //       }else{
+          //         $days=days_between_dates($this->param['startDate'],$this->param['endDate'])+1;
+          //         $date=prDates($this->param['startDate'],$this->param['endDate']);
+          //       }
+          //      if($days==0){
+          //          return['code'=>480];//还款天数太短无法为您安排还款
+          //       }
+          // }else{
+          //      $days=days_between_dates($this->param['startDate'],$this->param['endDate'])+1;
+               shuffle($date);
+                #消费几次就取几个随机日期
+               $date=array_slice($date,0,$this->param['payCount']);
+          }
+          // print_r($date);die;
+          ########存入主表数据############################
+          Db::startTrans();
+           $Generation_result=new Generation([
+               'generation_no'          =>uniqidNumber(),//TODO 生成随机代号
+               'generation_count'     =>$this->param['payCount'],
+               'generation_member'    =>$this->param['uid'],
+               'generation_card'      =>$card_info->card_bankno,
+               'generation_total'      =>$this->param['billMoney'],
+               'generation_left'        =>$this->param['billMoney'],
+               'generation_pound'   =>$this->param['billMoney']*$also+$daikou,
+               'generation_start'     =>$this->param['startDate'],
+               'generation_end'      =>$this->param['endDate'],
+               'generation_passway_id'=>$this->param['passageway'],
+          ]);
+          if($Generation_result->save()==false){
+              Db::rollback();
+              return ['code'=>472]; 
+          }
+          //写入还款卡表
+           $reimbur_result=new Reimbur([
+                 'reimbur_generation'   =>$Generation_result->generation_id,
+                 'reimbur_card'             =>$card_info->card_bankno,
+           ]); 
+           if(!$reimbur_result){
+                Db::rollback();
+                 return ['code'=>472]; 
+           }
+          ####################################
+          #3确定每天还款金额
+          $day_pay_money=$this->get_random_money($days,$this->param['billMoney'],$is_int=1);
+          #4确定每天还款次数
+          $day_pay_count=$this->get_day_count($this->param['payCount'],$days);
+          #5计算出每天实际刷卡金额，和实际到账金额
+          $Generation_order_insert=[];
+           $generation_pound = 0;
+          for ($i=0; $i <count($date) ; $i++) { 
+              $day_real_get_money=0;
+              // $plan[$i]['day_date']=$date[$i];
+              // $plan[$i]['day_pay_money']=$day_pay_money[$i];
+              // $plan[$i]['day_pay_count']=$day_pay_count[$i];
+              //刷卡信息
+              #计算每次需要刷卡的理论金额
+              $each_pay_money=$this->get_random_money($day_pay_count[$i],$day_pay_money[$i],$is_int=1);
+              #计算每次刷卡的时间
+              $each_pay_time=$this->get_random_time($date[$i],$day_pay_count[$i]);
+
+              foreach ($each_pay_money as $k => $each_money) {
+                  //获取每次实际需要支付金额
+                  $real_each_pay_money=$this->get_need_pay($also,$daikou,$each_money);
+                  //获取每次实际到账金额
+                  $real_each_get=$this->get_real_money($also,$daikou,$real_each_pay_money);
+
+                  $plan[$i]['pay'][$k]=$Generation_order_insert[]=array(
+                      'order_no'       =>$Generation_result->generation_id,
+                      'order_member'   =>$this->param['uid'],
+                      'order_type'     =>1,
+                      'order_card'     =>$card_info->card_bankno,
+                      'order_money'    =>$real_each_pay_money,
+                      'order_pound'    =>$real_each_get['fee'],
+                      // 'real_each_get'  =>$real_each_get['money'],
+                      'order_desc'     =>'自动代还消费~',
+                      'order_time'     =>$each_pay_time[$k],
+                      'order_passageway'=>$this->param['passageway'],
+                      'order_passway_id'=>$this->param['passageway'],
+                      'order_root'=>$root_id,
+                  );
+                  $generation_pound += $real_each_get['fee'];
+                $day_real_get_money+=$real_each_get['money'];
+              }
+              //提现信息
+              $plan[$i]['cash']=$Generation_order_insert[]=array(
+                  'order_no'         =>$Generation_result->generation_id,
+                  'order_member'     =>$this->param['uid'],
+                  'order_type'       =>2,
+                  'order_card'       =>$card_info->card_bankno,
+                  'order_money'      =>$day_real_get_money,//每天实际打回的金额
+                  'order_pound'      =>0,
+                  'order_desc'       =>'自动代还还款~',
+                  'order_time'       =>$date[$i]." ".get_hours(20,20).":".get_minites(0,30),
+                  'order_passageway'=>$this->param['passageway'],
+                  'order_passway_id'=>$this->param['passageway'],
+                  'order_root'=>$root_id,
+              );
+
+          }
+          $Generation = new Generation();
+          #修改手续费
+          $ss = $Generation->where(['generation_id' => $Generation_result->generation_id])->update(['generation_pound' =>  $generation_pound]);
+        
+          // print_r($Generation_order_insert);die;
+          #写入计划表数据
+          $Generation_order=new GenerationOrder();
+          $order_result=$Generation_order->saveAll($Generation_order_insert);
+
+         if($order_result!==false)
+         { 
+               Db::commit();
+               exit(json_encode(['code'=>200, 'msg'=> '计划创建成功~','data'=>['repaymentScheduleId'=>$Generation_result->generation_id,'repaymentScheduleUrl'=>$_SERVER['SERVER_NAME'].'/api/Userurl/repayment_plan_detail/order_no/'.$Generation_result->generation_id]]));
+         }else{
+               Db::rollback();
+               return ['code'=>472];      
+         }
+
+        } catch (Exception $e) {
+            echo  $e->getMessage.$e->getLine().$e->getFile();
+        }
+    }
+      //根据开始时间结束时间随机每天刷卡时间---有问题
+      public function get_random_time($day,$count,$begin=9,$end=19){
+        //如果日期为今天，刷卡时间大于当前小时
+        $now_h=date('Y-m-d',time());
+        if($day==$now_h){
+           if($now_h<8){
+               $begin =9;
+           }else{
+               $begin=date('H',time())+1;
+           }
+        }
+        $last=$begin;
+         $step=floor(($end-$begin)/$count)-1;
+         for ($i=0; $i <$count ; $i++) { 
+            $time[$i]=$day.' '.get_hours($last,$last+$step).':'.get_minites();
+            // $time[$i]['time']=$day.' '.get_hours($last,$last+$step).':'.get_minites();
+            // $time[$i]['begin']=$last;
+            // $time[$i]['end']=$last+$step;
+            $last=$last+$step+1;
+         }
+         // print_r($time);die;
+         return $time;
+      }
+      //根据还款金额获取需要支付的金额
+      //传入单位元，转成分计算，再返回单位元
+      public function get_need_pay($rate,$fix,$get){
+           //遇到小数向上取整防止金额不够
+          $money=ceil(($get*100+$fix*100)/(1-$rate));
+          return $money/100;
+      }
+      //根据支付的金额获取实际到账金额
+       //传入单位元，转成分计算，再返回单位元
+      public function get_real_money($rate,$fix,$pay){
+         //费率向上取整
+          $return['fee']=ceil($pay*100*$rate+$fix*100)/100;
+          $return['money']=$pay-$return['fee'];
+          return $return;
+      }
+      //根据总金额和次数随机每次金额
+      public function get_random_money($num,$money,$is_int=''){
+        $count=$num;
+        for ($i=0; $i <$num; $i++) { 
+          if($i==$num-1){
+            $arr[]=$money;
+          }else{
+            $avage=$money/$count;
+            //判断奇偶，
+            if($is_int){
+              if($i%2==0){//偶数随机在平均值上
+                $get=ceil(rand($avage,$avage*1.2));
+              }else{//奇数随机在平均值下
+                $get=ceil(rand($avage*0.8,$avage));
+              }
+            }else{
+              if($i%2==0){//偶数随机在平均值上
+                $get=ceil(rand($avage,$avage*1.2)).'.'.rand(0,99);
+              }else{//奇数随机在平均值下
+                $get=ceil(rand($avage*0.8,$avage)).'.'.rand(0,99);
+              }
+            }
+            
+            $int_num=intval($get);
+            if(strlen($int_num)>2){
+              $first=substr($int_num,-1,1);
+              $second=substr($int_num,-2,1);
+              $third=substr($int_num,-3,1);
+
+              if($first==$second &&$first==$third){
+                $this->get_random_money($num,$money);
+              }
+            }
+            $count=$count-1;
+            $money=$money-$get;
+            $arr[]=$get;
+          }
+        }
+        return $arr;
+      }
+     
+       /**
+       *  @version get_day_count controller / method 获取每天消费几次
+       *  @author $bill$(755969423@qq.com)
+       *   @datetime    2017-12-27 16:21:05
+       *   @return 
+       */
+      public function get_day_count($num,$day){
+           if($day <=$num) {
+                 $vs = floor($num / $day);
+                 $svgnum = $vs * $day;
+                 $surnum = $num - $svgnum;
+                 $arr = [];
+                 for ($i = 0; $i < $day; $i++) {
+                      $arr[$i] = $vs;
+                 }
+                 for ($i = 0; $i < $surnum; $i++) {
+                      $arr[$i]+=1;
+                 }
+           }else if($day >$num){
+                 for ($i=0; $i < $num ; $i++) { 
+                      $arr[$i]=1;
+                 }
+           }
+           return $arr;
+      }
+      #取消还款计划【整体】
+      public function cancel_repayment($generation_id){
+        
+      }
+       //创建还款计划
+      public function creatPlan_old()
       {
         // 测试数据
            // $this->param['uid']=16;
@@ -377,34 +689,5 @@
                  return ['code'=>308,'msg'=>$e->getMessage(),'data'=>[]];
            }
           
-      }
-       /**
-       *  @version get_day_count controller / method 获取每天消费几次
-       *  @author $bill$(755969423@qq.com)
-       *   @datetime    2017-12-27 16:21:05
-       *   @return 
-       */
-      public function get_day_count($num,$day){
-           if($day <=$num) {
-                 $vs = floor($num / $day);
-                 $svgnum = $vs * $day;
-                 $surnum = $num - $svgnum;
-                 $arr = [];
-                 for ($i = 0; $i < $day; $i++) {
-                      $arr[$i] = $vs;
-                 }
-                 for ($i = 0; $i < $surnum; $i++) {
-                      $arr[$i]+=1;
-                 }
-           }else if($day >$num){
-                 for ($i=0; $i < $num ; $i++) { 
-                      $arr[$i]=1;
-                 }
-           }
-           return $arr;
-      }
-      #取消还款计划【整体】
-      public function cancel_repayment($generation_id){
-        
       }
  }

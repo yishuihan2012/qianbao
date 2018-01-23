@@ -9,7 +9,7 @@
  use app\index\model\System as Systems;
  use app\index\model\CustomerService;
  use app\index\model\Announcement;
- use app\index\model\Member;
+ use app\index\model\Member as Members;
  use app\index\model\Notice;
  use app\index\model\Page;
  use think\Controller;
@@ -167,7 +167,7 @@
 				$result = $Announcement->allowField(true)->save();
 				if($result!=false){
 					//批量写入用户通知表
-					$members=Member::all()->column('member_id');
+					$members=Members::all()->column('member_id');
 					$data=[];
 					foreach ($members as $k => $v) {
 						$data[]=[

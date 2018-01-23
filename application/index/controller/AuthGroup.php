@@ -18,10 +18,11 @@ use app\index\model\AuthGroupAccess as AuthGroupAccesss;
 
 class AuthGroup extends Common {
     public function index(){
-      $auth_list= AuthGroups::where([])->paginate(Config::get('page_size'), false, [
+      $auth_list= AuthGroups::where([])->order("id desc")->paginate(Config::get('page_size'), false, [
                 'page'=>input('param.page')?:1,
                 'path'=>'/index/auth_group/index/page/[PAGE].html'
                 ]);
+      $this->assign("count",AuthGroups::count());
       $this->assign('show',$auth_list->render());
 			$this->assign('button',['text'=>'新增用户组','link'=>url('/index/auth_group/add')]);
       return view('admin/authgroup/index',['auth_list'=>$auth_list]);

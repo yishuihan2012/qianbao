@@ -84,8 +84,17 @@
       }
       
       public function memberCashcard(){
-        return $this->hasOne("MemberCashcard","card_member_id","member_id")->bind("card_bankno,card_idcard");
+        return $this->hasOne("MemberCashcard","card_member_id","member_id")->bind("card_bankno,card_idcard,card_name");
       } 
+
+      #信用卡
+      public function memberCreditcard()
+      {
+        return $this->hasOne("MemberCreditcard","card_member_id","member_id")->bind("card_id,card_bankno,card_phone");
+      } 
+
+
+
       /**
        *  @version member_info method /返回会员信息
        *  @author $bill$(755969423@qq.com)

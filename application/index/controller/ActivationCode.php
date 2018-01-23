@@ -87,6 +87,8 @@ class  ActivationCode extends Common{
      private function getList(Request $request){
          $list = ActivationCodeData::where([])->order('activation_code_id desc')->paginate(Config::get('page_size'), false);
          $this->assign('list',$list);
+         $count =ActivationCodeData::where([])->count();
+         $this->assign("count",$count);
         return view('admin/activation_code/getList');
      }
      # 获取表单

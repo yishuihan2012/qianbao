@@ -15,12 +15,12 @@
             </ul>
         </li>
         @if($admin['adminster_group_id']!=5)
-        <li class="nav-parent member-activation-code">
+       <!--  <li class="nav-parent member-activation-code">
             <a href="javascript:;"><i class="icon icon-barcode"></i> 激活码管理</a>
             <ul class="nav">
                 <li class="activation_code"><a href="{{url('/index/activation_code/index')}}"> 激活码列表 </a></li>
             </ul>
-        </li>
+        </li> -->
         @endif
         @if($admin['adminster_group_id']!=5)
         <li class="nav-parent wallet-manager">
@@ -45,7 +45,7 @@
             <a href="javascript:;"><i class="icon icon-user"></i> 通道管理</a>
             <ul class="nav">
                 <li class="passageway"><a href="{{url('/index/passageway/index')}}"><i class="icon icon-sliders"></i> 通道列表</a></li>
-                <!-- <li class="passageway_rate"><a href="{{url('/index/passageway_rate/index')}}"><i class="icon icon-sliders"></i> 费率编码表</a></li> -->
+                <li class="passageway_rate"><a href="{{url('/index/passageway_rate/index')}}"><i class="icon icon-sliders"></i> 费率编码表</a></li>
             </ul>
         </li>
         @if($admin['adminster_group_id']!=5)

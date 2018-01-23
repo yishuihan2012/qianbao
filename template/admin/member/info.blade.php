@@ -112,9 +112,8 @@
 	 	@else
 	 	无</div>
 	 	@endif
-
+	 	 @if(isset($team))
 	 <div class="help-block"><code>(下级信息)</code>
-	 	 @if($team)
 	 	 </div>
 	 	 <table class="table table-bordered table-hover table-striped" style="width:90%; margin:0 auto;">
 	 		 @foreach($team as $v)
@@ -126,9 +125,6 @@
 			 </tr>
 			 @endforeach
 	 	 </table>
-	 	 @else
-	 	 无
-	 	 </div>
 	 	 @endif
 	 </form>
  </div>

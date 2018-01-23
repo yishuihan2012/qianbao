@@ -20,7 +20,9 @@ class Generalize extends Common{
 	 #素材列表
 	 public function index()
 	 {
-	 	 $generalize=Generalizes::paginate(12, false, ['query'=>Request::instance()->param()]);
+	 	 $generalize=Generalizes::order("generalize_id desc")->paginate(12, false, ['query'=>Request::instance()->param()]);
+	 	 $count=Generalizes::count();
+	 	 $this->assign("count",$count);
 	 	 $this->assign('button',['text'=>'新增素材', 'link'=>url('/index/generalize/creat'), 'modal'=>'modal']);
 	 	 $this->assign('generalize',$generalize);
 		 #渲染视图
@@ -30,7 +32,6 @@ class Generalize extends Common{
 	 #添加素材
 	 public function creat()
 	 {
-	 	dump(Request::instance()->isPost());die;
 	 	 if(Request::instance()->isPost())
 	 	 {
 	 		 $Generalizes = new Generalizes($_POST);
@@ -88,7 +89,9 @@ class Generalize extends Common{
 	  * @return [type] [description]
 	  */
 	public function share(){
-		$share = Share::paginate(12, false, ['query'=>Request::instance()->param()]);
+		$share = Share::order("share_id desc")->paginate(12, false, ['query'=>Request::instance()->param()]);
+		$count = Share::count();
+		$this->assign("count",$count);
 		$this->assign('button', 
  		 	 [
  		 		 ['text'=>'新增分享', 'link'=>url('/index/generalize/shareCreat'), 'modal'=>'modal'],
@@ -158,7 +161,9 @@ class Generalize extends Common{
 	*
 	*/
 	public function exclusive_list(){
-		$Exclusive = Exclusive::paginate(12, false, ['query'=>Request::instance()->param()]);
+		$Exclusive = Exclusive::order("exclusive_id desc")->paginate(12, false, ['query'=>Request::instance()->param()]);
+		$count = Exclusive::order("exclusive_id desc")->count();
+		$this->assign("count",$count);
 		$this->assign('button', 
  		 	 [
  		 		 ['text'=>'新增专属', 'link'=>url('/index/generalize/exclusiveCreat'), 'modal'=>'modal'],
