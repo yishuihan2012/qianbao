@@ -509,9 +509,9 @@ class CashOut
 		curl_close($ch);
 		preg_match_all ("/<p class=\"result\">(.*)<\/p>/", $output, $error);
 		if(empty($error)){
-			$res['data']=[
+			$res=[
             		'type'=>2,
-            		'url'=>$output,
+            		'url'=>'<!DOCTYPE html><html lang="zh-cn"><head>'.$output,
             	];
             $order_result=$this->writeorder($tradeNo, $price, $price*($this->also->item_rate/100) ,$description,$tradeNo);//写入套现订单
             if(!$order_result)
@@ -551,9 +551,9 @@ class CashOut
 		curl_setopt($ch, CURLOPT_POSTFIELDS, $params);
 		$output = curl_exec($ch);
 		curl_close($ch);
-			$res['data']=[
+			$res=[
             		'type'=>2,
-            		'url'=>$output,
+            		'url'=>'<!DOCTYPE html><html lang="zh-cn"><head>'.$output,
             	];
             $order_result=$this->writeorder($tradeNo, $price, $price*($this->also->item_rate/100) ,$description,$tradeNo);//写入套现订单
             if(!$order_result)
@@ -592,9 +592,9 @@ class CashOut
 		curl_setopt($ch, CURLOPT_POSTFIELDS, $params);
 		$output = curl_exec($ch);
 		curl_close($ch);
-			$res['data']=[
+			$res=[
             		'type'=>2,
-            		'url'=>$output,
+            		'url'=>'<!DOCTYPE html><html lang="zh-cn"><head>'.$output,
             	];
             $order_result=$this->writeorder($tradeNo, $price, $price*($this->also->item_rate/100) ,$description,$tradeNo);//写入套现订单
             if(!$order_result)

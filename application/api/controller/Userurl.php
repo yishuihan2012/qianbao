@@ -888,7 +888,7 @@ class Userurl extends Controller
         $fenrun_result['code']=-1;
      }
 
-     f($fenrun_result['code']=="200")
+     if($fenrun_result['code']=="200")
      {
 		 $order->order_fen=$fenrun_result['leftmoney'];
          $order->order_buckle=$passwayitem->item_charges/100;
