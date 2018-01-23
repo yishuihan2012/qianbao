@@ -99,6 +99,14 @@
       *  失败 返回 接口返回的失败说明
       **/
       public function rongbangnet(){
+        #取出荣邦对应的费率代码
+        $rate_code=db('passageway_rate')->alias('r')
+          ->join('passageway_item i','r.rate_rate=i.item_rate and r.rate_charge*100=i.item_charges')
+          // ->join('passageway_item i','r.rate_charge*100=i.item_charges')
+          ->where(['r.rate_passway_id'=>$this->passway->passageway_id,'i.item_group'=>$this->member->member_group_id,'i.item_passageway'=>$this->passway->passageway_id])
+          ->value('r.rate_code');
+        if(!$rate_code)
+          return '该用户对应的费率无套餐编码，请管理员核对！';
          #定义请求报文组装
          $arr=array(
           //全平台唯一 加通道id以区分
@@ -116,6 +124,7 @@
            'mobilephone'      =>$this->membercard->card_phone,
            'idcardno'            =>$this->membercard->card_idcard,
            'address'             =>"山东省济南市天桥区泺口皮革城",
+           'ratecode'         =>$rate_code,
          );
         // var_dump($arr);die;
         $data=rongbang_curl($this->passway,$arr,'masget.webapi.com.subcompany.add');
