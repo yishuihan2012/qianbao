@@ -22,7 +22,7 @@
     @foreach($list as $key=>$activation_code)
         <tr>
             <td>{{ $activation_code->activation_code_id  }}</td>
-            <td>{{ $activation_code->activation_states>0?"未使用":"已使用" }}</td>
+            <td>{{ $activation_code->activation_states==1?"未使用":"已使用" }}</td>
             <td>{{ $activation_code->activation_code_key  }}</td>
             <td>{{ $activation_code->activation_code_pwd  }}</td>
             <td>{{ $activation_code->adminster->adminster_login  }}</td>

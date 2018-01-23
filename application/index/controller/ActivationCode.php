@@ -101,11 +101,11 @@ class  ActivationCode extends Common{
     public function export(){
         if(request()->ispost()){
             $data=input();
-            if(isset($data['begin']) && isset($data['end'])){
+            if(isset($data['begin']) && $data['begin']!=0 &&  isset($data['end']) && $data['end']!=0 ){
                 $where=['activation_code_id'=>['between',[$data['begin'],$data['end']]]];
-            }elseif(isset($data['begin'])){
+            }elseif(isset($data['begin']) && $data['begin']!=0){
                 $where=['activation_code_id'=>['>=',$data['begin']]];
-            }elseif(isset($data['end'])){
+            }elseif(isset($data['end']) && $data['end']!=0 ){
                 $where=['activation_code_id'=>['<=',$data['end']]];
             }else{
                 $where=[];
@@ -113,7 +113,7 @@ class  ActivationCode extends Common{
             $list=db('activation_code')->where($where)->select();
             $str='';
             foreach ($list as $k => $v) {
-                $str.="{'".$v['activation_code_key']."','".$v['activation_code_pwd']."'}\n";
+                $str.="{'activationNo':'".$v['activation_code_key']."','activationPwd':'".$v['activation_code_pwd']."'}\n";
             }
             $fileName="activation_code.txt";
             header("Content-Type: application/txt");
