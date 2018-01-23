@@ -778,8 +778,10 @@ class Userurl extends Controller
   public function passway_rongbang_paycallback(){
   	$param=request()->param();
   	$key=db('passageway')->where('passageway_id',$param['passageway_id'])->value('passageway_pwd_key');
+  	return $key;
   	// 测试自己加密的可以解密
   	// return rongbang_aes_decode($key,rongbang_aes($key,$param['test']));
+  	return rongbang_aes_decode($key,$param['Data']);
   	#解不了密的情况下 根据我们自己填的单号去更改订单状态
   	if($param['order_no']){
   		$data=[];

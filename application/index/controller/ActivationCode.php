@@ -20,6 +20,7 @@ class  ActivationCode extends Common{
 	 {  
          $this->assign('button', [
             ['text'=>'生成激活码', 'link'=>url('/index/activation_code/add'),'icon'=>'tags','theme'=>'info','modal'=>'modal','size'=>'lg'],
+            ['text'=>'导出激活码', 'link'=>url('/index/activation_code/export'),'icon'=>'tags','theme'=>'info','modal'=>'modal','size'=>'lg'],
         ]);
          return $this->getList(Request::instance());
      }
@@ -94,5 +95,32 @@ class  ActivationCode extends Common{
      # 获取表单
      private function getForm(Request $request){ 
        return view('admin/activation_code/getForm');
+    }
+    #   导出二维码 
+    #   begin end 起止id 无则导出全部
+    public function export(){
+        if(request()->ispost()){
+            $data=input();
+            if(isset($data['begin']) && isset($data['end'])){
+                $where=['activation_code_id'=>['between',[$data['begin'],$data['end']]]];
+            }elseif(isset($data['begin'])){
+                $where=['activation_code_id'=>['>=',$data['begin']]];
+            }elseif(isset($data['end'])){
+                $where=['activation_code_id'=>['<=',$data['end']]];
+            }else{
+                $where=[];
+            }
+            $list=db('activation_code')->where($where)->select();
+            $str='';
+            foreach ($list as $k => $v) {
+                $str.="{'".$v['activation_code_key']."','".$v['activation_code_pwd']."'}\n";
+            }
+            $fileName="activation_code.txt";
+            header("Content-Type: application/txt");
+            header("Content-Disposition: attachment; filename=".$fileName);
+            echo $str;
+            return;
+        }
+        return view('admin/activation_code/export');
     }
 }

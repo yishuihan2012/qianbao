@@ -328,7 +328,7 @@
             'upgrade_bak'=>System::getName('sitename').$member->member_mobile.'升级为'.$member_group->group_name,
             'upgrade_creat_time'=>date("Y-m-d H:i:s",time())
            );
-           Upgrade::insert($params);
+           Upgrades::insert($params);
 
            #支付宝支付
            $Alipay=new \app\index\controller\Alipay();
@@ -871,5 +871,43 @@
             }catch(\think\Exception $error){
                   return ['code'=>100, 'msg'=>'升级失败,'.$error->getMessage()];
             }
+      }
+      #激活码升级
+      // activationNo  激活码序列号
+      // activationPwd  激活码密码
+      public function activationUpdate(){
+        $member=Members::get($this->param['uid']);
+        $code=db('activation_code')->where(['activation_code_key'=>$this->param['activationNo'],'activation_code_pwd'=>$this->param['activationPwd']])->find();
+        if(!$code)
+          return ['code'=>603];
+        #取出当前用户等级
+        $current_group=db('member_group')->where('group_id',$member->member_group_id)->find();
+        #若当前用户等级大于该激活码的目标等级，则返回提示
+        if($current_group['group_salt']>=$code['activation_code_level'])
+          return ['code'=>604];
+        $target_group=db('member_group')->where('group_salt',$code['activation_code_level'])->value('group_id');
+        $arr=[
+          'upgrade_member_id'=>$member->member_id,
+          'upgrade_group_id'=>$target_group,
+          'upgrade_type'=>'激活码',
+          'upgrade_bak'=>$code['activation_code_id'],
+          'upgrade_state'=>1,
+          'upgrade_before_group'=>$current_group['group_id'],
+          'upgrade_no'=>make_order(),
+          'upgrade_money'=>0,
+          'upgrade_commission'=>0,
+          'upgrade_adminster_id'=>0,
+        ];
+        Db::startTrans();   
+        $member=Members::where(['member_id'=>$arr['upgrade_member_id']])->update(['member_group_id'=>$arr['upgrade_group_id']]);
+        $Upgrade = Upgrade::insert($arr);
+        $activation_code=db('activation_code')->where(['activation_code_key'=>$this->param['activationNo'],'activation_code_pwd'=>$this->param['activationPwd']])->update(['activation_states'=>2]);
+        if($member && $Upgrade && $activation_code){
+          Db::commit();
+          return ['code'=>200,'msg'=>'会员升级成功！'];
+        }else{
+          Db::rollback();  
+          return ['code'=>605];  
+        }
       }
  }
