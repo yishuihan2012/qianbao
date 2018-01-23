@@ -5,9 +5,11 @@
 	.text-ellipsis{cursor: pointer;}
 </style>
 <header>
+  <h3>  
     <i class="icon-list-ul"></i> 日志条数 <small>共 <strong class="text-danger">{{$count}}</strong> 条</small>
     <i class="icon icon-yen"></i> 钱包收入 <small>共 <strong class="text-danger">{{$entertottal}}</strong> 元</small>
       <i class="icon icon-yen"></i> 钱包支出 <small>共 <strong class="text-danger">{{$leavetotal}}</strong> 元</small>
+    </h3>
   </header>
 <div class="panel">
   	<div class="panel-body">

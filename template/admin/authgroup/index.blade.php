@@ -8,7 +8,7 @@
   </div>
 </div> -->
  <header>
-    <h3><i class="icon-list-ul"></i> 订单列表 <small>共 <strong class="text-danger">{{$count}}</strong> 条</small>
+    <h3><i class="icon-list-ul"></i> 列表 <small>共 <strong class="text-danger">{{$count}}</strong> 条</small>
      
   </header>
 <table class="table table-striped table-hover">
