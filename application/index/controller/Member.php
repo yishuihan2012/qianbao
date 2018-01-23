@@ -77,14 +77,33 @@ namespace app\index\controller;
 	 	 	->where($wheres)->where($where)
 	 	 	->order('member_id','desc')
 	 	 	->paginate(Config::get('page_size'), false, ['query'=>Request::instance()->param()]);
-	 	 #用户身份证号码
-		 $count = Members::with('memberLogin,membergroup,membercert')->join("wt_member_cert m", "m.cert_member_id=member_id","left")->where($wheres)->where($where)->count();
-	 	 $this->assign('count', $count);
+	 	
+		 #统计用户总数
+	 	 $this->assign('count', $this->counts());
+	 	 #统计未实名用户
+	 	 $this->assign('wei_count', $this->counts(["member_cert" => 0]));
+	 	 #统计已实名用户数量
+	 	 $this->assign('yi_count', $this->counts(["member_cert" => 1]));
+	 	 $group_user = [];
+	 	 foreach($member_group as $key=>$value){
+	 	 	$group_user[$key]['count'] = $this->counts(["member_group_id" => $value['group_id']]);
+	 	 	$group_user[$key]['group_name'] = $value['group_name'];
+
+	 	 }
+	 	 #统计分组用户数量
+	 	 $this->assign("group_user",$group_user);
 	 	 $this->assign('r', $r);
 	 	 $this->assign('member_list', $member_list);
 	 	 $this->assign('member_group', $member_group);
 		 #渲染视图
 		 return view('admin/member/index');
+	 }
+	 /**
+	 * @version counts 统计用户数量
+	 * @author 杨成志（3115317085@qq.com）
+	 */
+	 public function counts($where = []){
+	 	return  Members::with('memberLogin,membergroup,membercert')->join("wt_member_cert m", "m.cert_member_id=member_id","left")->where($where)->count();
 	 }
  	 /**
 	 *  @version info method /  会员详细信息
