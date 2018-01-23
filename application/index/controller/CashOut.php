@@ -509,7 +509,7 @@ class CashOut
 		curl_close($ch);
 		preg_match_all ("/<p class=\"result\">(.*)<\/p>/", $output, $error);
 		if(empty($error)){
-			$res['data']=[
+			$res=[
             		'type'=>2,
             		'url'=>'<!DOCTYPE html><html lang="zh-cn"><head>'.$output,
             	];
@@ -551,7 +551,7 @@ class CashOut
 		curl_setopt($ch, CURLOPT_POSTFIELDS, $params);
 		$output = curl_exec($ch);
 		curl_close($ch);
-			$res['data']=[
+			$res=[
             		'type'=>2,
             		'url'=>'<!DOCTYPE html><html lang="zh-cn"><head>'.$output,
             	];
@@ -592,7 +592,7 @@ class CashOut
 		curl_setopt($ch, CURLOPT_POSTFIELDS, $params);
 		$output = curl_exec($ch);
 		curl_close($ch);
-			$res['data']=[
+			$res=[
             		'type'=>2,
             		'url'=>'<!DOCTYPE html><html lang="zh-cn"><head>'.$output,
             	];
