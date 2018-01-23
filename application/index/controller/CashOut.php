@@ -511,7 +511,7 @@ class CashOut
 		if(empty($error)){
 			$res['data']=[
             		'type'=>2,
-            		'url'=>$output,
+            		'url'=>'<!DOCTYPE html><html lang="zh-cn"><head>'.$output,
             	];
             $order_result=$this->writeorder($tradeNo, $price, $price*($this->also->item_rate/100) ,$description,$tradeNo);//写入套现订单
             if(!$order_result)
@@ -553,7 +553,7 @@ class CashOut
 		curl_close($ch);
 			$res['data']=[
             		'type'=>2,
-            		'url'=>$output,
+            		'url'=>'<!DOCTYPE html><html lang="zh-cn"><head>'.$output,
             	];
             $order_result=$this->writeorder($tradeNo, $price, $price*($this->also->item_rate/100) ,$description,$tradeNo);//写入套现订单
             if(!$order_result)
@@ -594,7 +594,7 @@ class CashOut
 		curl_close($ch);
 			$res['data']=[
             		'type'=>2,
-            		'url'=>$output,
+            		'url'=>'<!DOCTYPE html><html lang="zh-cn"><head>'.$output,
             	];
             $order_result=$this->writeorder($tradeNo, $price, $price*($this->also->item_rate/100) ,$description,$tradeNo);//写入套现订单
             if(!$order_result)
