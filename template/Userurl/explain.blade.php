@@ -13,11 +13,12 @@
 	<body>
 		<div class='mui-content wrap3'>
 			<div class="wrap3 bg-w bor f-br2">
-				<h4>盈利模式说明</h4>
+				<h4>{{$data['article_title']}}</h4>
 				<div class="space-up">
 					@if($data)
 						<img src="{{$data['article_thumb']}}">
-						{{$data['content']}}
+						{{$data['article_desc']}}
+						{{$data['data_text']}}
 					@else
 						暂无盈利模式说明
 					@endif
