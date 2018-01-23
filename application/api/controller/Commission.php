@@ -165,6 +165,9 @@
  	 	 if(!$member_fatherInfo)
  	 	 	goto end;
 
+ 	 	#	【无忧钱管家】只有运营商参与分润，其他用户组不参与
+ 	 	 $father_is_agent=MemberGroup::get($member_fatherInfo['member_group_id'])->value('group_visible');
+
  	 	 //查询直接上级所属用户组 和他的费率
  	 	 $member_fatherAlso=PassagewayItem::where(['item_passageway'=>$passwayId,'item_group'=>$member_fatherInfo['member_group_id']])->value($field);
  	 	 //判断上级会员用户组是否允许分润
@@ -234,6 +237,7 @@
 	      	 'commission_from'		=>$order_id,
 	      ]);
 	      $commission->save();
+	    return ['code'=>200, 'leftmoney'=>$leftmoney];
  	}
 
 
