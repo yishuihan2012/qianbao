@@ -33,6 +33,8 @@ use app\index\model\System;
 use app\index\model\NoviceClass as NoviceClasss; 
 use app\index\model\Appversion; 
 use app\index\model\SmsCode; 
+use app\index\model\ArticleCategory;
+use app\index\model\Article;
 /**
  *  此处放置一些固定的web地址
  */
@@ -605,6 +607,13 @@ class Userurl extends Controller
   }
   #盈利模式说明
   public function explain(){
+  		$data='';
+  		$description=Article::where(['article_title'=>'盈利模式说明'])->value('article_id');
+  		if($description){
+  			$data=ArticleCategory::where(['article_parent'=>$description])->find();
+  			
+  		}
+  		$this->assign('data',$data);
 	  	return view("Userurl/explain");
   }
   #关于我们
