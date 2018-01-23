@@ -506,9 +506,10 @@ class CashOut
 		//把POST的变量加上
 		curl_setopt($ch, CURLOPT_POSTFIELDS, $params);
 		$output = curl_exec($ch);
+		// echo $output;die;
 		curl_close($ch);
 		preg_match_all ("/<p class=\"result\">(.*)<\/p>/", $output, $error);
-		if(empty($error)){
+		if(empty($error[1][0])){
 			$res=[
             		'type'=>2,
             		'url'=>'<!DOCTYPE html><html lang="zh-cn"><head>'.$output,
