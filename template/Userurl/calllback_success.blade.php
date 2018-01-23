@@ -16,7 +16,7 @@
 			<div class="fc">
 		    	<span class="mui-icon iconfont icon-successful f48"></span>
 		    	<p class="space-up2">支付成功</p>
-		    	<p class="space-up2 invalid-color">已成功向尾号{{$data->order_card}}银行卡转入</p>
+		    	<p class="space-up2 invalid-color">您已成功支付</p>
 		    	<p class="space-up2 f36 f-bold">{{$data->order_money}}<span class="f24">元</span></p>
 			    <div class="fc my-btn-container">
 			    	<a class="my-btn-blue2 space-right2 f18" id="seeDetails">返回首页</a>
@@ -41,14 +41,15 @@
 		<script type="text/javascript">
 			mui.init();
 			mui.ready(function(){
-				document.getElementById('seeDetails').addEventListener('tap',function(){
-					mui.openWindow({
-						if(!isAndroid){
-					        window.webkit.messageHandlers.returnIndex.paySus();
-					      }else{
-					        android.paySus();
-					      }
-					});
+			  var u = navigator.userAgent;
+		      var isAndroid = u.indexOf('Android') > -1 || u.indexOf('Adr') > -1; //android终端
+		      var isiOS = !!u.match(/\(i[^;]+;( U;)? CPU.+Mac OS X/); //ios终端
+				mui(document).on('tap','a',function(){
+			      if(!isAndroid){
+			        window.webkit.messageHandlers.returnIndex.paySus();
+			      }else{
+			        android.paySus();
+			      }
 				});
 			});
 		</script>
