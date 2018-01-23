@@ -32,6 +32,7 @@
  use app\index\model\Upgrade;
  use app\index\model\Notice;
  use app\index\model\Announcement;
+ use app\index\controller\MemberLebvelup;
  
  class Member 
  {
@@ -736,5 +737,26 @@
     
            return ['code'=>200, 'msg'=>'获取成功~', 'data'=>$Commission];
       }
-      
+      # 升级 
+      public function make_up_order(){
+            try{
+                  $member = Members::get($this->param['uid']);
+                  $memberLebvelup = new MemberLebvelup($member);
+                  $order = $memberLebvelup->make_order($this->param);
+                  return ['code'=>200, 'msg'=>'订单生成成功', 'data'=>['order'=>$order]];
+            }catch(\think\Exception $error){
+                  return ['code'=>100, 'msg'=>'订单生成失败,'.$error->getMessage()];
+            }
+      }
+      # 升级 
+      public function member_up(){
+            try{
+                  $member = Members::get($this->param['uid']);
+                  $memberLebvelup = new MemberLebvelup($member);
+                  $order = $memberLebvelup->make_order($this->param);
+                  return ['code'=>200, 'msg'=>'获取成功', 'data'=>['order'=>$order]];
+            }catch(\think\Exception $error){
+                  return ['code'=>100, 'msg'=>'升级失败,'.$error->getMessage()];
+            }
+      }
  }
