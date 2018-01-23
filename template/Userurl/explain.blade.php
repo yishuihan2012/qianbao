@@ -16,9 +16,9 @@
 				<h4>{{$data['article_title']}}</h4>
 				<div class="space-up">
 					@if($data)
-						<img src="{{$data['article_thumb']}}">
+						<img src="{{$data['article_thumb']}}" style="width:100%">
 						{{$data['article_desc']}}
-						{{$data['data_text']}}
+						{!!$data['data_text']!!}
 					@else
 						暂无盈利模式说明
 					@endif
