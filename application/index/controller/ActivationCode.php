@@ -113,7 +113,7 @@ class  ActivationCode extends Common{
             $list=db('activation_code')->where($where)->select();
             $str='';
             foreach ($list as $k => $v) {
-                $str.="{'activationNo':'".$v['activation_code_key']."','activationPwd':'".$v['activation_code_pwd']."'}\n";
+                $str.="{\"activationNo\":\"".$v['activation_code_key']."\",\"activationPwd\":\"".$v['activation_code_pwd']."\"}\n";
             }
             $fileName="activation_code.txt";
             header("Content-Type: application/txt");
