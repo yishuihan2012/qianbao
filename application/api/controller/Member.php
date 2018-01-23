@@ -880,6 +880,8 @@
         $code=db('activation_code')->where(['activation_code_key'=>$this->param['activationNo'],'activation_code_pwd'=>$this->param['activationPwd']])->find();
         if(!$code)
           return ['code'=>603];
+        if($code['activation_states']==2)
+          return ['code'=>606];
         #取出当前用户等级
         $current_group=db('member_group')->where('group_id',$member->member_group_id)->find();
         #若当前用户等级大于该激活码的目标等级，则返回提示
