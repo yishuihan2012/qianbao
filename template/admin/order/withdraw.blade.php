@@ -20,16 +20,16 @@
   <h3></h3>
   <blockquote>
   <form action="" method="post">
-    <div class="input-group" style="width: 200px;float: left;margin-right: 20px;">
-    <span class="input-group-addon">名称</span>
-    <input type="text" class="form-control" name="member_nick" value="{{$r['member_nick']}}" placeholder="名称">
+    <div class="input-group" style="width: 150px;float: left;margin-right: 20px;">
+    <span class="input-group-addon">用户名</span>
+    <input type="text" class="form-control" name="member_nick" value="{{$r['member_nick']}}" placeholder="用户名">
   </div>
 
   <div class="input-group" style="width: 200px;float: left;margin-right: 20px;">
     <span class="input-group-addon">手机号</span>
     <input type="text" class="form-control" name="member_mobile" value="{{$r['member_mobile']}}" placeholder="手机号">
   </div>
-  <div class="input-group" style="width: 180px;float: left;margin-right: 10px;">
+  <div class="input-group" style="width: 240px;float: left;margin-right: 10px;">
     <span class="input-group-addon">身份号</span>
     <input type="text" class="form-control" name="cert_member_idcard" value="{{$r['cert_member_idcard']}}" placeholder="身份号">
   </div>
@@ -69,7 +69,7 @@
                  <!-- 以下两列左侧固定 -->
                       <th>#</th>
                       <th>提现流水号</th>
-                      <th>用户</th>
+                      <th>用户名</th>
                       <th>收款方式</th>
                       <th>收款账号</th>
                       <th class="flex-col">总金额</th>

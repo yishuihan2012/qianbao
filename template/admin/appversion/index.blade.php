@@ -4,7 +4,7 @@
 <div class="panel">
   	<div class="panel-body">
   		 <header>
-   			 <h3><i class="icon-list-ul"></i> 订单列表 <small>共 <strong class="text-danger">{{$count}}</strong> 条</small>
+   			 <h3><i class="icon-list-ul"></i>列表 <small>共 <strong class="text-danger">{{$count}}</strong> 条</small>
      		</h3>
   		</header>
 

@@ -607,9 +607,8 @@ class Userurl extends Controller
   }
   #盈利模式说明
   public function explain(){
-  		$description=Article::hasWhere('ArticleCategory',['category_name'=>'盈利模式说明'])->find();
-  		var_dump(Article::getLastSql());die;
-  		$this->assign('data',$data);
+  		$description=Article::hasWhere('articleCategorys',['category_name'=>'盈利模式说明'])->join("wt_article_data","data_article=article_id")->field("data_text")->find();
+  		$this->assign('data',$description);
 	  	return view("Userurl/explain");
   }
   #关于我们

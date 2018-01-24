@@ -12,6 +12,7 @@ use think\Request;
 use think\Session;
 use think\View;
 use app\index\model\Member;
+use app\index\model\System;
 use app\index\model\Adminster as Adminsters;
 use app\index\model\AuthGroup as AuthGroups;
 use app\index\model\AuthGroupAccess as AuthGroupAccesss;
@@ -42,7 +43,11 @@ class Adminster extends Common {
 		 $this->assign('params',$params);
 		 $this->assign('groupLists',$groupLists);
 		 $this->assign('adminster_list',$adminster_list->toArray());
-		 $this->assign('button',['text'=>'新增管理员','link'=>url('/index/adminster/add')]);
+		 $this->assign('button', 
+ 		 	 [
+ 		 	 	 // ['text'=>'用户口令', 'link'=>url('/index/adminster/adminster_key'),'modal'=>'modal','icon'=>'tags','theme'=>'info'],
+ 		 		 ['text'=>'新增管理','link'=>url('/index/adminster/add')],
+ 		 	 ]);
 		 return view('admin/adminster/index');
 	 }
 	 #管理员新增
@@ -172,19 +177,20 @@ class Adminster extends Common {
 			 $data['adminster_user_id']	=	$adminster_info['adminster_user_id'];
 		 else
 			 $data['adminster_user_id']	=	"";
+
 		 #获取用户组/子运营商用户
 		 if($this->admin['adminster_group_id']==5){
 			 $authGroups=AuthGroups::all(['id'=>5]);
 			 $users=db('member')->alias('m')
 			 	->join('member_group g','m.member_group_id=g.group_id')
 			 	->where('m.member_id','in',$this->admin['children'])
-			 	->where('g.group_visible=0')
+	  		 	// ->where('g.group_visible=0')#没有该字段
 			 	->select();
 		 }else{
 			 $authGroups=AuthGroups::all();
 			 $users=db('member')->alias('m')
 			 	->join('member_group g','m.member_group_id=g.group_id')
-			 	->where('g.group_visible=0')
+			 	// ->where('g.group_visible=0')
 			 	->select();
 		 }
 		 $this->assign('users',$users);
@@ -232,4 +238,17 @@ class Adminster extends Common {
 		 }
 		 echo json_encode(['code'=>200,'msg'=>'','data'=>[]]);
 	 }
+	 // public function adminster_key(){
+	 // 	if(Request::instance()->isPost()){
+
+	 // 		 $result = Config::set("adminster_key",$_POST['adminster_key']);
+	 // 		 dump($result);die;
+	 // 		 $content = ($result===false) ? ['type'=>'error','msg'=>'修改失败'] : ['type'=>'success','msg'=>'修改成功'];
+		// 	 Session::set('jump_msg', $content);
+		// 	 #重定向控制器 跳转到列表页
+		// 	 $this->redirect("adminster/index");
+	 // 	}
+	 // 	$this->assign("adminster_key",Config::get('adminster_key'));
+	 // 	return view("admin/adminster/adminster_key");
+	 // }
 }
