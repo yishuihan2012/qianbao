@@ -27,9 +27,11 @@
             </ul> -->
             <!-- 右侧的导航项目 -->
             <ul class="nav navbar-nav navbar-right">
+    @if($admin['adminster_group_id']!=5)
                 <!-- <li><a href="#">红包审批</a></li> -->
                 <li><a href="/index/order/Withdraw.html">提现审批</a></li>
                 <li><a href="{{url('/index/index/help')}}">使用说明</a></li>
+    @endif
                 <li class="dropdown">
                     <a href="#" class="dropdown-toggle" data-toggle="dropdown">{{$name}} <b class="caret"></b></a>
                     <ul class="dropdown-menu" role="menu">

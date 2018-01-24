@@ -56,11 +56,6 @@ class Adminster extends Common {
 			 	$r['login_group']=5;
 			 }
 
-			 $check_login_name=Adminsters::get(['adminster_login'=>Request::instance()->post('login_name')]);
-			 if($check_login_name){
-				 Session::set('jump_msg',['type'=>'warning','msg'=>'用户名已存在~请重试','data'=>'']);
-				 $this->redirect($this->history['0']);
-			 }
 			 $check_login_email=Adminsters::get(['adminster_email'=>Request::instance()->post('login_email')]);
 			 if($check_login_email){
 			     	 Session::set('jump_msg',['type'=>'warning','msg'=>'邮箱已绑定其他账号~请更换','data'=>'']);
@@ -80,6 +75,14 @@ class Adminster extends Common {
 			     	Session::set('jump_msg',['type'=>'warning','msg'=>'请选择该渠道商对应的用户','data'=>'']);
 					$this->redirect($this->history['0']);
 			 	}
+			 	#新增的代理商后台账户 其用户名自动调整为对应后台手机号
+			 	$member=db('member')->where('member_id',$r['adminster_user_id'])->find();
+			 	$r['login_name']=$member['member_mobile'];
+			 }
+			 $check_login_name=Adminsters::get(['adminster_login'=>$r['login_name']]);
+			 if($check_login_name){
+				 Session::set('jump_msg',['type'=>'warning','msg'=>'用户名已存在~请重试','data'=>'']);
+				 $this->redirect($this->history['0']);
 			 }
 			 $adminster->adminster_login=Request::instance()->post('login_name');
 			 $adminster->adminster_pwd=encryption(Request::instance()->post('login_passwd'),$code);
