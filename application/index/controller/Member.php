@@ -51,7 +51,7 @@ namespace app\index\controller;
 			$this->assign('beginTime',request()->param('beginTime'));
 			$this->assign('endTime',request()->param('endTime'));
 		}
-		$this->assign('button',['text'=>'添加新用户', 'link'=>url('/index/member/register'), 'modal'=>'modal']);
+
 		#身份证查询
 		$wheres = array();
 		 if( request()->param('cert_member_idcard')){
@@ -68,6 +68,8 @@ namespace app\index\controller;
 				->value('group_salt');
 			#用于判断下级用户所在的用户组是否大于当前代理商，若大于 不显示升级选项
 			$this->assign('admin_group_salt',$admin_group_salt);
+		}else{
+			$this->assign('button',['text'=>'添加新用户', 'link'=>url('/index/member/register'), 'modal'=>'modal']);
 		}
 	 	 //获取会员等级
 	 	 $member_group=MemberGroup::all();

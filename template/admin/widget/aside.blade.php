@@ -45,7 +45,7 @@
             <a href="javascript:;"><i class="icon icon-user"></i> 通道管理</a>
             <ul class="nav">
                 <li class="passageway"><a href="{{url('/index/passageway/index')}}"><i class="icon icon-sliders"></i> 通道列表</a></li>
-                <li class="passageway_rate"><a href="{{url('/index/passageway_rate/index')}}"><i class="icon icon-sliders"></i> 费率编码表</a></li>
+                <!-- <li class="passageway_rate"><a href="{{url('/index/passageway_rate/index')}}"><i class="icon icon-sliders"></i> 费率编码表</a></li> -->
             </ul>
         </li>
         @if($admin['adminster_group_id']!=5)
