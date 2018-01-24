@@ -54,8 +54,8 @@ class Adminster extends Common {
 	 public function add(){
 		 if(Request::instance()->isPost()){
 		 	$r=request()->param();
-			 $code=make_rand_code();
-			 
+			$code=make_rand_code();
+			
 			 #运营商添加的用户强制为 运营商用户组
 			 if($this->admin['adminster_group_id']==5){
 			 	$r['login_group']=5;
@@ -238,6 +238,7 @@ class Adminster extends Common {
 		 }
 		 echo json_encode(['code'=>200,'msg'=>'','data'=>[]]);
 	 }
+	 #更换用户登录口令
 	 public function adminster_key(){
 	 	if(Request::instance()->isPost()){
 
