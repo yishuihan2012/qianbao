@@ -38,3 +38,9 @@ $(document).ready(function(){
   });
 });
 </script>
+<style type="text/css">
+/*解决一个奇葩BUG 在本地测试没事 在服务器显示自动生成的select容器宽度为0*/
+  .chosen-container-single-nosearch{
+    width: 848px;
+  }
+</style>
