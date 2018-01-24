@@ -243,6 +243,10 @@ class CashOut
 	 	 }
 	 	 //快捷支付 调用开通快捷支付接口
 	 	 if($this->passway_info->passageway_mech==402512992){
+	 	 	$result=$membernetObject->rongbang_in();
+	 	 	if(is_string($result)){
+	 	 		return ['code'=>500,'msg'=>$result];
+	 	 	}
 		 	 //复用查询条件
 		 	 $pas_where=['member_credit_pas_pasid'=>$this->passway_info->passageway_id,'member_credit_pas_creditid'=>$this->card_info->card_id];
 		 	 #查询用户是否开通快捷支付

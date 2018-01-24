@@ -11,7 +11,6 @@
           <th>使用状况</th>
           <th>激活码KEY</th>
           <th>激活码PWD</th>
-          <th>激活码所属</th>
           <th>添加时间</th>
           <th>操作</th>
           
@@ -24,7 +23,6 @@
             <td>{{ $activation_code->activation_states==1?"未使用":"已使用" }}</td>
             <td>{{ $activation_code->activation_code_key  }}</td>
             <td>{{ $activation_code->activation_code_pwd  }}</td>
-            <td>{{ $activation_code->adminster->adminster_login  }}</td>
             <td>{{ $activation_code->activation_add_time  }}</td>
             <td>
                 <div class="btn-group">

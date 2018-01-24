@@ -14,18 +14,16 @@
   <div class="form-group">
     <label for="code_prefix">激活码级别（用户组组别）</label>
     <select data-placeholder="选择用户组..." class="chosen-select form-control" tabindex="2" name="code_group">
-      <option value=""></option>
       @foreach($group as $key=>$val)
-        <option value="{{ $val['group_id'] }}">{{ $val['group_name'] }}</option>
+        <option value="{{ $val['group_id'] }}" {{$key==0 ? 'selected' : ''}}>{{ $val['group_name'] }}</option>
       @endforeach
     </select>
   </div>
   <div class="form-group">
     <label for="code_for">所属代理</label>
     <select data-placeholder="选择代理商..." class="chosen-select form-control" tabindex="2" name="code_for">
-      <option value=""></option>
       @foreach($adminster as $key=>$val)
-        <option value="{{ $val['adminster_id'] }}">{{ $val['adminster_login'] }}</option>
+        <option value="{{ $val['adminster_id'] }}" {{$key==0 ? 'selected' : ''}}>{{ $val['adminster_login'] }}</option>
       @endforeach
     </select>
     </div>

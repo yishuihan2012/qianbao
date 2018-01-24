@@ -57,10 +57,10 @@ class  ActivationCode extends Common{
             Session::set('jump_msg', ['type'=>'success','msg'=>'激活码已经生成']);
             $this->redirect('ActivationCode/index');
          }else{
-            ## 获取全部用户组组别
-            $group = MemberGroup::all();
+            ## 获取全部用户组组别 【无忧钱管家】仅面向非代理使用
+            $group = MemberGroup::all(['group_visible'=>1,'group_salt'=>['>',1]]);
             ## 获取代理
-            $adminster = Adminster::all();
+            $adminster = Adminster::where('adminster_user_id','>',0)->select();
             $this->assign('adminster',$adminster);
             $this->assign('group',$group);
             return view('admin/activation_code/getForm'); 
