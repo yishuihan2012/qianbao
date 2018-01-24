@@ -141,6 +141,7 @@
                shuffle($date);
                 #消费几次就取几个随机日期
                $date=array_slice($date,0,$this->param['payCount']);
+               $days=$this->param['payCount'];
           }
           // print_r($date);die;
           ########存入主表数据############################
