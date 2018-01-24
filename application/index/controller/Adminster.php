@@ -184,7 +184,7 @@ class Adminster extends Common {
 			 $users=db('member')->alias('m')
 			 	->join('member_group g','m.member_group_id=g.group_id')
 			 	->where('m.member_id','in',$this->admin['children'])
-			 	// ->where('g.group_visible=0')
+	  		 	// ->where('g.group_visible=0')
 			 	->select();
 		 }else{
 			 $authGroups=AuthGroups::all();
