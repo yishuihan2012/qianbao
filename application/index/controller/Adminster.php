@@ -45,7 +45,7 @@ class Adminster extends Common {
 		 $this->assign('adminster_list',$adminster_list->toArray());
 		 $this->assign('button', 
  		 	 [
- 		 	 	 // ['text'=>'用户口令', 'link'=>url('/index/adminster/adminster_key'),'modal'=>'modal','icon'=>'tags','theme'=>'info'],
+ 		 	 	 ['text'=>'用户口令', 'link'=>url('/index/adminster/adminster_key'),'modal'=>'modal','icon'=>'tags','theme'=>'info'],
  		 		 ['text'=>'新增管理','link'=>url('/index/adminster/add')],
  		 	 ]);
 		 return view('admin/adminster/index');
@@ -54,8 +54,8 @@ class Adminster extends Common {
 	 public function add(){
 		 if(Request::instance()->isPost()){
 		 	$r=request()->param();
-			 $code=make_rand_code();
-			 
+			$code=make_rand_code();
+			
 			 #运营商添加的用户强制为 运营商用户组
 			 if($this->admin['adminster_group_id']==5){
 			 	$r['login_group']=5;
@@ -184,13 +184,13 @@ class Adminster extends Common {
 			 $users=db('member')->alias('m')
 			 	->join('member_group g','m.member_group_id=g.group_id')
 			 	->where('m.member_id','in',$this->admin['children'])
-	  		 	// ->where('g.group_visible=0')#没有该字段
+	  		 	->where('g.group_visible=0')#没有该字段
 			 	->select();
 		 }else{
 			 $authGroups=AuthGroups::all();
 			 $users=db('member')->alias('m')
 			 	->join('member_group g','m.member_group_id=g.group_id')
-			 	// ->where('g.group_visible=0')
+			 	->where('g.group_visible=0')
 			 	->select();
 		 }
 		 $this->assign('users',$users);
@@ -238,17 +238,17 @@ class Adminster extends Common {
 		 }
 		 echo json_encode(['code'=>200,'msg'=>'','data'=>[]]);
 	 }
-	 // public function adminster_key(){
-	 // 	if(Request::instance()->isPost()){
+	 #更换用户登录口令
+	 public function adminster_key(){
+	 	if(Request::instance()->isPost()){
 
-	 // 		 $result = Config::set("adminster_key",$_POST['adminster_key']);
-	 // 		 dump($result);die;
-	 // 		 $content = ($result===false) ? ['type'=>'error','msg'=>'修改失败'] : ['type'=>'success','msg'=>'修改成功'];
-		// 	 Session::set('jump_msg', $content);
-		// 	 #重定向控制器 跳转到列表页
-		// 	 $this->redirect("adminster/index");
-	 // 	}
-	 // 	$this->assign("adminster_key",Config::get('adminster_key'));
-	 // 	return view("admin/adminster/adminster_key");
-	 // }
+	 		 $result = System::setName("adminster_key",$_POST['adminster_key']);
+	 		 $content = ($result===false) ? ['type'=>'error','msg'=>'修改失败'] : ['type'=>'success','msg'=>'修改成功'];
+			 Session::set('jump_msg', $content);
+			 #重定向控制器 跳转到列表页
+			 $this->redirect("adminster/index");
+	 	}
+	 	$this->assign("adminster_key",System::getName('adminster_key'));
+	 	return view("admin/adminster/adminster_key");
+	 }
 }
