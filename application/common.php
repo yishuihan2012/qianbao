@@ -886,7 +886,7 @@ function SortByASCII($arr)
         $params=array(
         'versionNo'=>'1',//接口版本号 必填  值固定为1
         'mchNo'=>$passageway['passageway_mech'], //mchNo 商户号 必填  由米刷统一分配
-        'mercUserNo'=>$member_info['cert_member_id'], //用户标识,下级机构对用户身份唯一标识。
+        'mercUserNo'=>$passageway['passageway_mech'].$phone, //用户标识,下级机构对用户身份唯一标识。
         'userName'=>$member_info['cert_member_name'],//姓名
         'userCertId'=>$member_info['cert_member_idcard'],//身份证号  必填  注册后不可修改
         'userPhone'=>$phone,
