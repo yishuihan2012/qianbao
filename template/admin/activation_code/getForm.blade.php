@@ -36,11 +36,9 @@ $(document).ready(function(){
     disable_search_threshold: 3, // 10 个以下的选择项则不显示检索框
     search_contains: true         // 从任意位置开始检索
   });
+/*解决一个奇葩BUG 在本地测试没事 在服务器显示自动生成的select容器宽度为0*/
+$('.chosen-container-single').css('width','848px');
 });
 </script>
 <style type="text/css">
-/*解决一个奇葩BUG 在本地测试没事 在服务器显示自动生成的select容器宽度为0*/
-  .chosen-container-single-nosearch{
-    width: 848px;
-  }
 </style>
