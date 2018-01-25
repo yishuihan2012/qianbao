@@ -24,9 +24,6 @@ class Alipaycallback
 	 public function callback()
 	 {
          $data=$_POST;
-         // $str = var_export($data,TRUE);
-         // file_put_contents('ceshi.txt',$str);
-        // var_dump($data);die;
          $Alipay=new \app\index\controller\Alipay();
          $success=$Alipay->callback($data);
          if($success!="SUCCESS")
@@ -53,7 +50,7 @@ class Alipaycallback
              $method=$value['passageway_method'];
              $success=$Membernetsedit->$method();
          }
-         echo 111;
+         return "SUCCESS";
 	 }
 
 }
