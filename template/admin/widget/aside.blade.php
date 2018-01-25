@@ -20,6 +20,7 @@
             <ul class="nav">
                 <li class="activation_code"><a href="{{url('/index/activation_code/index')}}"> 激活码列表 </a></li>
             </ul>
+        -->
         @endif
         @if($admin['adminster_group_id']!=5)
         <li class="nav-parent wallet-manager">
@@ -46,7 +47,9 @@
                 <li class="passageway"><a href="{{url('/index/passageway/index')}}"><i class="icon icon-sliders"></i> 通道列表</a></li>
                 
 	
- 			<!--<li class="passageway_rate"><a href="{{url('/index/passageway_rate/index')}}"><i class="icon icon-sliders"></i> 费率编码表</a></li>-->        </li>
+ 			<!--<li class="passageway_rate"><a href="{{url('/index/passageway_rate/index')}}"><i class="icon icon-sliders"></i> 费率编码表</a></li>-->       
+            </ul> 
+        </li>
         @if($admin['adminster_group_id']!=5)
         <li class="nav-parent plan-manager">
             <a href="javascript:;"><i class="icon icon-user"></i> 自动代还</a>
