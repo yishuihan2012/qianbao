@@ -1167,8 +1167,18 @@ function SortByASCII($arr)
     return $root_id ? find_root($root_id) : $id;
   }
 
-
-
+  # 生成用户的所有上级集合
+  # 用于分润时遍历上级里的所有代理商
+  function find_relation($id){
+    if(!$id)return [];
+    $parent=db('member_relation')->alias('r')
+        ->join('member m','m.member_id=r.relation_member_id')
+        ->join('member_group g','g.group_id=m.member_group_id')
+        ->where('relation_member_id',$id)
+        ->field('member_id,member_group_id,group_visible,relation_parent_id')
+        ->find();
+    return $parent ? array_merge([$parent],find_relation($parent['relation_parent_id'])) : [];
+  }
      function H5encrypt($input, $key) {
         $size = mcrypt_get_block_size(MCRYPT_RIJNDAEL_128, MCRYPT_MODE_ECB);
         $input =pkcs5_pad($input, $size);
