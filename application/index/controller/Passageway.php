@@ -243,7 +243,21 @@ class Passageway extends Common{
 		 $this->assign('passageways', $passageways);
 		 return view('admin/passageway/edit');
 	 }
-
+	 #删除通道
+	 public function delete(){
+	 	$Passageways = Passageways::get(Request::instance()->param('id'));
+	 	#数据是否提交成功
+	 	$result = $Passageways->delete();
+		$content = ($result===false) ? ['type'=>'error','msg'=>'删除失败'] : ['type'=>'success','msg'=>'删除成功'];
+		if($content['type'] == 'success'){
+			$passage=PassagewayItem::where(['item_passageway'=>Request::instance()->param('id')])->delete();
+			$data = Cashout::where('cashout_passageway_id='.Request::instance()->param('id'))->delete();
+		}
+		
+		Session::set('jump_msg', $content);
+		 #重定向控制器 跳转到列表页
+		$this->redirect("/index/passageway/index");
+	 }
 
 	 #删除文章
 	 public function remove()

@@ -45,7 +45,7 @@ class Adminster extends Common {
 		 $this->assign('adminster_list',$adminster_list->toArray());
 		 $this->assign('button', 
  		 	 [
- 		 	 	 ['text'=>'用户口令', 'link'=>url('/index/adminster/adminster_key'),'modal'=>'modal','icon'=>'tags','theme'=>'info'],
+ 		 	 	 // ['text'=>'用户口令', 'link'=>url('/index/adminster/adminster_key'),'modal'=>'modal','icon'=>'tags','theme'=>'info'],
  		 		 ['text'=>'新增管理','link'=>url('/index/adminster/add')],
  		 	 ]);
 		 return view('admin/adminster/index');

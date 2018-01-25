@@ -328,7 +328,7 @@
             'upgrade_bak'=>System::getName('sitename').$member->member_mobile.'升级为'.$member_group->group_name,
             'upgrade_creat_time'=>date("Y-m-d H:i:s",time())
            );
-           Upgrades::insert($params);
+           Upgrade::insert($params);
 
            #支付宝支付
            $Alipay=new \app\index\controller\Alipay();
