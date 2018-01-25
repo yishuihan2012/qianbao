@@ -55,6 +55,7 @@
          }else{
             foreach ($passageway_lists as $key => $value) {
               $rate=PassagewayItem::where(['item_passageway'=>$value['passageway_id'],'item_group'=>$member_group])->find();
+              if(empty($rate))continue;
               $passageway[$key]['item_rate']=$rate->item_rate.'%';
               if($rate->item_charges){
                 $passageway[$key]['item_rate'].="+".$rate->item_charges/100;

@@ -77,11 +77,13 @@ class Passageway extends Common{
  	 	 	 	//针对每条数据执行 (每条对应一个用户组)
  	 	 	 	foreach ($passage as $k => $v) {
  	 	 	 		//若该条对应的用户组 在post中存在 (正常情况会存在)
+ 	 	 	 		// var_dump($data[$v['item_group']]);die;
  	 	 	 		if(isset($data[$v['item_group']])){
  	 	 	 			 $haschange=false;
  	 	 	 			 //遍历该用户组post数据
  	 	 	 			 foreach ($data[$v['item_group']] as $key => $value) {
  	 	 	 				 //若与数据库中的数据不一致，则需要更新
+ 	 	 	 			 	// var_dump($value!=$v[$key]);die;
  	 	 	 				 if($value!=$v[$key])
  	 	 	 					 $haschange=true;
  	 	 	 			 }
@@ -93,17 +95,15 @@ class Passageway extends Common{
 	 	 	 	 				$wheres['item_id'] = $v['item_id'];
 	 	 	 	 				$PassagewayItem->where($wheres)->update($data[$v['item_group']]);
 	 	 	 	 				//取出该用户组下所有会员
-	 	 	 	 				// $members=db('member')->where('member_group_id',$v['item_group'])->select();
-	 	 	 	 				$members=Member::haswhere('membernet',$passageway->passageway_no." != ''")->where(['member_group_id'=>$v['item_group']])->select();
+	 	 	 	 				$members=Member::where(['member_group_id'=>$v['item_group']])->select();
 	 	 	 	 				 //遍历进行 第三方资料变更 
 	 	 	 	 				foreach($members as $member){
-	 	 	 	 					// $membernet=db('member_net')->where('net_member_id',$member['member_id'])->find();
-	 	 	 	 					// if(empty($membernet[$passageway->passageway_no])){
-	 	 	 	 					// 	continue;
-	 	 	 	 					// }
+	 	 	 	 					$membernet=db('member_net')->where('net_member_id',$member['member_id'])->find();
+	 	 	 	 					if(empty($membernet[$passageway->passageway_no]))continue;
+	 	 	 	 					
+
 	 	 	 	 					//修改费率 如果是必须入网就修改费率
 									if($passageway->passageway_status==1){
-
 							 			 $Membernetsedit=new \app\api\controller\Membernetsedit($member['member_id'],$passageway->passageway_id,'M03','',$member['member_mobile']);
 							 			 $method=$passageway->passageway_method;
 							 			 $success=$Membernetsedit->$method();
