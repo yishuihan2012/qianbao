@@ -28,7 +28,7 @@
 	 <div class="row form-group">
 		 <label for="passageway_true_name" class="col-sm-3 text-right"><b>真实名称:</b></label>
 		 <div class="col-sm-6" id="passageway_true_name">
-			 <input type="text" class="form-control passageway_true_name" name="passageway_true_name" placeholder="APP不显示，用于后台确认是哪个通道" value="">
+			 <input type="text" class="form-control passageway_true_name" name="passageway_true_name" placeholder="APP不显示，用于后台确认是哪个通道" value="{{$passageways['passageway_true_name']}}">
 		 </div>		
 	 </div>
 	  <div class="row form-group">
@@ -44,13 +44,13 @@
 	 <div class="row form-group">
 		 <label for="passageway_no" class="col-sm-3 text-right"><b>平台约定费率:</b></label>
 		 <div class="col-sm-6" id="passageway_no">
-			 <input type="text" class="form-control passageway_no" name="passageway_rate" placeholder="请填写通道与平台约定的费率" value="{{$passageways['passageway_rate']}}">
+			 <input type="text" class="form-control passageway_rate" name="passageway_rate" placeholder="请填写通道与平台约定的费率" value="{{$passageways['passageway_rate']}}">
 		 </div>		
 	 </div>
 	 <div class="row form-group">
 		 <label for="passageway_no" class="col-sm-3 text-right"><b>通道代号:</b></label>
 		 <div class="col-sm-6" id="passageway_no">
-			 <input type="text" class="form-control passageway_no" placeholder="请填写通道的代号" value="{{$passageways['passageway_no']}}" disabled="">
+			 <input type="text" class="form-control passageway_no" name="passageway_no" placeholder="请填写通道的代号" value="{{$passageways['passageway_no']}}" disabled="">
 		 </div>		
 	 </div>
 
@@ -81,7 +81,7 @@
 		 </div>		
 	 </div>
 	 <div class="row form-group">
-		 <label for="passageway_also" class="col-sm-3 text-right"><b>是套现还是代还:</b></label>
+		 <label for="passageway_also" class="col-sm-3 text-right"><b>是否提现通道:</b></label>
 		 <div id="passageway_also" class="col-sm-6">
 			 <select name="passageway_also" class="form-control passageway_also">
 				 <option value="1" @if($passageways['passageway_also']==1) selected="" @endif>提现</option>
@@ -89,15 +89,15 @@
 			 </select>
 		 </div>		
 	 </div>
-	 <div class="row form-group">
-		 <label for="passageway_rate" class="col-sm-3 text-right"><b>是否提现通道:</b></label>
+	<!--  <div class="row form-group">
+		 <label for="passageway_also" class="col-sm-3 text-right"><b>是否提现通道:</b></label>
 		 <div id="passageway_rate" class="col-sm-6">
 			 <select name="passageway_rate" class="form-control passageway_rate">
 				 <option value="1" @if($passageways['passageway_rate']==1) selected="" @endif>是</option>
 				 <option value="0" @if($passageways['passageway_rate']==0) selected="" @endif>否</option>
 			 </select>
 		 </div>		
-	 </div>
+	 </div> -->
 	 <div class="row form-group">
 		 <label for="iv" class="col-sm-3 text-right"><b>加密偏移量:</b></label>
 		 <div class="col-sm-6" id="iv">
