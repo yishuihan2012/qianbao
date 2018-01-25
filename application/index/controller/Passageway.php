@@ -419,7 +419,7 @@ class Passageway extends Common{
 			$where['order_status']=2;
 			//运营商
 			if($adminster['adminster_user_id'] && $group_id==5){
-				$where['member_id']=["in",$adminster['children']];
+				$where['order_member']=["in",$adminster['children']];
 				$passageway->profit=db('commission')->alias('c')
 					->join('generation_order o','c.commission_from=o.order_id')
 					->where('c.commission_member_id',$adminster['adminster_user_id'])
