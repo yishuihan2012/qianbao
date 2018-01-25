@@ -89,7 +89,12 @@ class Adminster extends Common {
 				 $this->redirect($this->history['0']);
 			 }
 			 $adminster->adminster_login=$r['adminster_login'];
-			 $adminster->adminster_pwd=encryption(Request::instance()->post('login_passwd'),$code);
+			 if(!$r['login_passwd']){
+		     	 Session::set('jump_msg',['type'=>'warning','msg'=>'密码不能为空!','data'=>'']);
+				 $this->redirect($this->history['0']);
+			 }
+
+			 $adminster->adminster_pwd=encryption($r['login_passwd'],$code);
 			 $adminster->adminster_salt=$code;
 			 $adminster->adminster_update_time=date('Y-m-d H:i:s');
 			 $adminster->adminster_email=$r['login_email'] ?? '';
