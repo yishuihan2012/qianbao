@@ -214,8 +214,7 @@ namespace app\index\controller;
 	 			->where('m.member_id',request()->param("id"))
 	 			->value('g.group_salt');
 	 		#可升级的用户组 应该是大于当前用户组，并且小于当前运营商所在算用户组
-	 		#【无忧钱管家】只能升级到代理
-		 	$member_group_info = MemberGroup::where(['group_salt'=>['between',[$user_group_salt,$group_salt]],'group_visible'=>0])
+		 	$member_group_info = MemberGroup::where(['group_salt'=>['between',[$user_group_salt,$group_salt]]])
 		 		->order("group_salt desc")->select();//用户分组数据
 	 	}else{
 		 	$member_group_info = MemberGroup::order("group_salt desc")->select();//用户分组数据
