@@ -77,16 +77,16 @@ use app\index\model\CallbackLog as CallbackLogs;
               // var_dump($post);die;
               // var_dump($this->aop->rsaCheckV1($post, null,"RSA2"));die;
                  if (!$this->aop->rsaCheckV1($post, null,"RSA2")){
-                    echo "FAIL";
+                    return "FAIL";
                  }
                  if ($post['trade_status']=='WAIT_BUYER_PAY'){
-                    echo "FAIL";
+                    return "FAIL";
                  }
                  if ($post['trade_status']=='TRADE_CLOSED'){
-                    echo "FAIL";
+                    return "FAIL";
                  }
                  if ($post['trade_status']=='TRADE_FINISHED'){
-                    echo "FAIL";
+                    return "FAIL";
                  }
 
                  if ($post['trade_status']=='TRADE_SUCCESS') {
