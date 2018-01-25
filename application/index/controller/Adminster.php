@@ -53,6 +53,7 @@ class Adminster extends Common {
 	 #管理员新增
 	 public function add(){
 		 if(Request::instance()->isPost()){
+		 	$code=make_rand_code();
 		 	$r=request()->param();
 			 $adminster=new Adminsters;			 #运营商添加的用户强制为 运营商用户组
 			 if($this->admin['adminster_group_id']==5){
