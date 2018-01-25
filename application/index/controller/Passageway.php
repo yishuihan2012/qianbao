@@ -31,7 +31,6 @@ class Passageway extends Common{
 		 #渲染视图
 		 return view('admin/passageway/index');
 	 }
-
 	 #通道对会员组税率调整
 	 public function rate()
 	 {
@@ -122,10 +121,14 @@ class Passageway extends Common{
 			 	 	 			break;
 				           }
  	 	 	 			}
+ 	 	 	 			#剔除已使用的数据
+ 	 	 	 			unset($data[$v['item_group']]);
  	 	 	 		}
  	 	 	 	}
- 	 	 	 	//没有数据的时候 就新增数据
- 	 	 	 }else{
+ 	 	 	 	
+ 	 	 	 }
+ 	 	 	 //还有数据的时候 就新增数据
+ 	 	 	 if(count($data)>0){
  	 	 	 	$newData=[];
  	 	 	 	foreach ($data as $k => $v) {
  	 	 	 		//组合单条数据
@@ -416,7 +419,7 @@ class Passageway extends Common{
 			$where['order_status']=2;
 			//运营商
 			if($adminster['adminster_user_id'] && $group_id==5){
-				$where['member_id']=["in",$adminster['children']];
+				$where['order_member']=["in",$adminster['children']];
 				$passageway->profit=db('commission')->alias('c')
 					->join('generation_order o','c.commission_from=o.order_id')
 					->where('c.commission_member_id',$adminster['adminster_user_id'])

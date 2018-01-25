@@ -19,7 +19,8 @@ use think\Loader;
 class Appversion extends Common{
 	//app版本升级列表
 	public function index(){
-		$Appversions=Appversions::paginate(Config::get('page_size'), false, ['query'=>Request::instance()->param()]);
+		$Appversions=Appversions::order("version_id desc")->paginate(Config::get('page_size'), false, ['query'=>Request::instance()->param()]);
+		$this->assign("count",Appversions::count());
 		$this->assign('button',['text'=>'新增版本号', 'link'=>url('/index/appversion/creat'), 'modal'=>'modal']);
 	 	 $this->assign('Appversions',$Appversions);
 		return view("admin/appversion/index");

@@ -139,7 +139,7 @@
 				res=JSON.parse(res);
 				if(res.code==200){
 					mui.toast('取消计划成功');
-					location.reload();
+					setTimeout(location.reload(),1000);
 				}else{
 					// alert("取消失败！\n"+res.msg);
 					mui.toast(res.msg);

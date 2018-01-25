@@ -32,7 +32,12 @@ class WalletLog extends Common
 		if(request()->param('log_wallet_type')!=''){
 			$where['log_relation_type'] = array("=",request()->param('log_wallet_type'));
 		}
+		if(request()->param('member_nick')!=''){
+			$where['member_nick'] =  array("like","%".request()->param('member_nick')."%");
+		}
 		$list = WalletLogs::with('wallet')->join("wt_member","member_id=wallet_member")->where($where)->order('log_id', 'desc')->paginate(Config::get('page_size'), false, ['query'=>Request::instance()->param()]);	
+		$count = WalletLogs::with('wallet')->join("wt_member","member_id=wallet_member")->where($where)->count();
+		$this->assign("count",$count);
 		#计算进账总额
 		$entertottal = WalletLogs::with('wallet')->join("wt_member","member_id=wallet_member")->where($where)->where(['log_relation_type' => 1])->order('log_id', 'desc')->sum("log_wallet_amount");
 		$this->assign("entertottal",$entertottal);

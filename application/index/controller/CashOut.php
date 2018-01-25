@@ -10,6 +10,7 @@ namespace app\index\controller;
 use think\Loader;
 use think\Config;
 use app\index\model\Member;
+use app\index\model\System;
 use app\index\model\MemberCert;
 use app\index\model\MemberCashcard;
 use app\index\model\Passageway;
@@ -23,6 +24,7 @@ use app\index\model\CallbackLog as CallbackLogs;
 
 use app\api\controller\Membernets; //入网
 use app\index\model\MemberNet;//入网模型
+use app\index\model\SmsCode;
 
 class CashOut
 {
@@ -84,7 +86,7 @@ class CashOut
 	 * @date    2017-12-21 16:03:05
 	 * @version $Bill$
 	 */
-	 public function mishua($tradeNo,$price,$description='米刷测试')
+	 public function mishua($tradeNo,$price,$description='银联快捷支付')
 	 {
 	      $arr = array(
 	            'versionNo'   => '1', //版本固定为1
@@ -93,8 +95,8 @@ class CashOut
 	            'description' 	=> $description, //交易描述
 	            'orderDate'   => date('YmdHis', time()), //订单日期
 	            'tradeNo'     	=> $tradeNo, //商户平台内部流水号，请确保唯一 TOdo
-	            'notifyUrl'   	=> $_SERVER['HTTP_HOST'].$this->passway_info->cashout->cashout_callback, //异步通知URL
-	            'callbackUrl' 	=> $_SERVER['HTTP_HOST'].'/api/Userurl/calllback_success',/*HOST . "/index.php?s=/Api/Quckpayment/turnurl"*/ //页面回跳地址
+	            'notifyUrl'   	=> System::getName('system_url').$this->passway_info->cashout->cashout_callback, //异步通知URL
+	            'callbackUrl' 	=> System::getName('system_url').'/api/Userurl/calllback_success',/*HOST . "/index.php?s=/Api/Quckpayment/turnurl"*/ //页面回跳地址
 	            'payCardNo' => $this->card_info->card_bankno, //信用卡卡号
 	            'accName'    => $this->card_info->card_name, //持卡人姓名 必填
 	            'accIdCard'   => $this->card_info->card_idcard, //卡人身份证  必填
@@ -123,6 +125,7 @@ class CashOut
 	      curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
 	      $res = curl_exec($ch);
 	      $result = json_decode($res, true);
+	      // var_dump($result);die;
 	      if ($result['code'] == 0) {
 	      	 $datas=AESdecrypt($result['payload'],$this->passway_info->passageway_pwd_key);
 	            $datas = trim($datas);
@@ -134,7 +137,11 @@ class CashOut
 	      	 	 return ['code'=>327];
 	            return ['code'=>200,'msg'=>'订单获取成功~', 'data'=>['url'=>$resul['tranStr'],'type'=>1, ]];
 	      }else{
+	      	 if(isset($result['message']))
 	      	 return ['msg'=>$result['message'].',下单失败~', 'code'=>400];
+
+	      	 return ['msg'=>'通道维护中,下单失败~', 'code'=>400];
+
 	      }
 	 }
 
@@ -179,8 +186,8 @@ class CashOut
 	            'bankCode'	=> '123',//银行卡对应的银行编码
 	            'bankName'	=> $this->card_info->card_bankname,//银行卡对应的银行名称。采用URLEncode编码
 	            'settleType'	=> 3,//固定值2-T+1结算
-	            'notifyUrl'		=> $_SERVER['HTTP_HOST'].$this->passway_info->cashout->cashout_callback,//支付完成后将支付结果回调至该链接
-	            'returnUrl'		=> $_SERVER['HTTP_HOST'].'/api/Userurl/calllback_success',//支付完成后前端跳转地址
+	            'notifyUrl'		=> System::getName('system_url').$this->passway_info->cashout->cashout_callback,//支付完成后将支付结果回调至该链接
+	            'returnUrl'		=> System::getName('system_url').'/api/Userurl/calllback_success',//支付完成后前端跳转地址
 	            //'signature'	=> ,//对签名数据进行MD5加密的结果。参见3.1
 	      );
  	      $param=get_signature($arr,$this->passway_info->passageway_key);
@@ -236,6 +243,10 @@ class CashOut
 	 	 }
 	 	 //快捷支付 调用开通快捷支付接口
 	 	 if($this->passway_info->passageway_mech==402512992){
+	 	 	$result=$membernetObject->rongbang_in();
+	 	 	if(is_string($result)){
+	 	 		return ['code'=>500,'msg'=>$result];
+	 	 	}
 		 	 //复用查询条件
 		 	 $pas_where=['member_credit_pas_pasid'=>$this->passway_info->passageway_id,'member_credit_pas_creditid'=>$this->card_info->card_id];
 		 	 #查询用户是否开通快捷支付
@@ -343,13 +354,13 @@ class CashOut
 	 	 			//无需短信验证的情况 返回一个成功提示页
 	            	$res['data']=[
 	            		'type'=>1,
-	            		'url'=>request()->domain() . "/api/Userurl/passway_success",
+	            		'url'=>request()->domain() . "/api/Userurl/passway_success/order_no/".$tradeNo,
 	            	];
 	 	 		}else{
 	 	 			//需要短信验证的情况 返
 	            	$res['data']=[
 	            		'type'=>1,
-	            		'url'=>request()->domain() . "/api/Userurl/passway_rongbang_pay/ordercode/".$result['ordercode']."/card_id/".$this->card_info->card_id."/memberId/" . $this->member_infos->member_id . "/passwayId/" . $this->passway_info->passageway_id,
+	            		'url'=>request()->domain() . "/api/Userurl/passway_rongbang_pay/order_no/".$tradeNo."/card_id/".$this->card_info->card_id."/memberId/" . $this->member_infos->member_id . "/passwayId/" . $this->passway_info->passageway_id,
 	            	];
 	 	 		}
 	 	 	}else{
@@ -371,12 +382,12 @@ class CashOut
 
 
 	 /**
-	 * @version 金易付套现 
-	 * @authors bill(755969423@qq.com)
+	 * @version 金易付取现 
+	 * @authors Mr.gao(928791694@qq.com)
 	 * @date    2017-12-23 16:25:05
 	 * @version $Bill$
 	 */
-	 public function jinyifu($tradeNo,$price,$description='金易付套现')
+	 public function jinyifu($tradeNo,$price,$description='金易付取现')
 	 {
 	 	 #检测通道是否需要入网
 	 	 if($this->passway_info->passageway_status=="1")
@@ -394,24 +405,49 @@ class CashOut
 		 	 	 	return ['code'=>462, 'msg'=>$member_net_result['msg']];
 		 	 }	 
 	 	 }
+	 	 $url=request()->domain() . "/api/Userurl/jinyifu/memberId/".$this->member_infos->member_id."/passagewayId/".$this->passway_info->passageway_id."/cardId/".$this->card_info->card_id."/price/".$price;
+	 	 return ['code'=>200,'msg'=>'订单获取成功~', 'data'=>['url'=>$url,'type'=>1, ]];
+
+
+
 	 	 // var_dump($this->passway_info->passageway_pwd_key);die;
 	 	 // return ['code'=>200,'msg'=>'订单获取成功~' , 'data'=>$this->passway_info];
+	 	
+	 }
+
+	  #金易付付款界面
+	 public function jinyifu_pay($param,$description='金易付取现'){
+
+	 	 #验证码验证规则 读取本手机号最后一条没有使用的验证码 并且在系统设置的有效时间内
+           $code_info=SmsCode::where(['sms_send'=>$param['phone'],'sms_log_state'=>1])->whereTime('sms_log_add_time', "-".System::getName('code_timeout').' minutes')->order('sms_log_id','desc')->find();
+           if(!$code_info || ($code_info['sms_log_content']!=$param['smsCode']))
+                 return ['code'=>404];
+           #改变验证码使用状态
+           $code_info->sms_log_state=2;
+           $result=$code_info->save();
+           #验证是否成功
+           if(!$result)
+                 return ['code'=>404];
+	 	 $member_net=MemberNet::where(['net_member_id'=>$param['memberId']])->find();
+	 	 $jinyifu=new \app\api\controller\Jinyifu($this->passway_info->passageway_pwd_key);
+	 	 $cvn2=$jinyifu->encrypt($this->card_info->card_Ident);
+	 	 $expDate=$jinyifu->encrypt($this->card_info->card_expireDate);
 		 $arr = array(
 	            'branchId'=>$this->passway_info->passageway_mech,// 机构号
 	            'jinepay_mid'=>$member_net[$this->passway_info->passageway_no], // 商户号
-	            'payamt'=>$price, //交易金额
+	            'payamt'=>$param['price'], //交易金额
 	            'clientType'=>'web',  //客户端类型
 	            'bizType'=>'4301',//业务类型
-	            'randomStr'=>$tradeNo,// 随机串
-	            'orderId'=>$tradeNo ,//商户订单号
-	            'notifyUrl'=>$_SERVER['HTTP_HOST'].$this->passway_info->cashout->cashout_callback, //异步通知URL,  //后台异步通知地址
-	            'frontNotifyUrl'=>$_SERVER['HTTP_HOST'].'/api/Userurl/calllback_success',
+	            'randomStr'=>make_order(),// 随机串
+	            'orderId'=>make_order() ,//商户订单号
+	            'notifyUrl'=>System::getName('system_url').$this->passway_info->cashout->cashout_callback, //异步通知URL,  //后台异步通知地址
+	            'frontNotifyUrl'=>System::getName('system_url').'/api/Userurl/calllback_success',
 	            'lpCertNo'=>$this->card_info->card_idcard, // 持卡人身份证号
 	            'accNo'=> $this->card_info->card_bankno, // 银行卡号
 	            'phoneNo'=>$this->card_info->card_phone, // 银行预留手机号
 	            'lpName'=>$this->card_info->card_name, //持卡人姓名
-	            'CVN2'=>jinyifu_encrypt($this->card_info->card_Ident,$this->passway_info->passageway_pwd_key,$this->passway_info->iv),
-	            'expDate'=>jinyifu_encrypt($this->card_info->card_expireDate,$this->passway_info->passageway_pwd_key,$this->passway_info->iv),
+	            'CVN2'=>$cvn2,
+	            'expDate'=>$expDate,
 	      );
  	        $arr=SortByASCII($arr);
 	        #2签名
@@ -426,20 +462,22 @@ class CashOut
 	        $urls='https://hydra.scjinepay.com/jk/QpayAction_getQpOrder?params='.urlencode($params);
 	        #请求
 	        $res=curl_post($urls);
+	        // $res=curl_post($urls, 'get', '', $type="Content-Type: application/json; charset=utf-8");
 
 	        $res=json_decode($res,true);
-	        
+	        	
 	        $result=base64_decode($res['params']);
-			return ['code'=>200,'msg'=>'订单获取成功~11' , 'data'=>$result];
+			// return ['code'=>200,'msg'=>'订单获取成功~11' , 'data'=>$result];
 	        $data=json_decode($result,true);
-	        return ['code'=>200,'msg'=>'订单获取成功~11' , 'data'=>$data];
- 		 if ($data['respCode'] == 00) {
+	        // return ['code'=>200,'msg'=>'订单获取成功~11' , 'data'=>$data];
+	        var_dump($data);die;
+ 		 if ($data['resCode'] == 00) {
 	           $order_result=$this->writeorder($tradeNo, $price, $price*($this->also->item_rate/100) ,$description,$data['traceno']);//写入套现订单
 	      	 if(!$order_result)
 	      	 	 return ['code'=>327];
 	           return ['code'=>200,'msg'=>'订单获取成功~' , 'data'=>['url'=>$data['barCode'],'type'=>2]];
 	      }else{
-	      	 return ['code'=>400, 'msg'=>$data['message'].',套现失败~'];
+	      	 return ['code'=>400, 'msg'=>$data['resMsg'].',套现失败~'];
 	      }
 	 }
 

@@ -99,6 +99,14 @@
       *  失败 返回 接口返回的失败说明
       **/
       public function rongbangnet(){
+        #取出荣邦对应的费率代码
+        $rate_code=db('passageway_rate')->alias('r')
+          ->join('passageway_item i','r.rate_rate=i.item_rate and r.rate_charge*100=i.item_charges')
+          // ->join('passageway_item i','r.rate_charge*100=i.item_charges')
+          ->where(['r.rate_passway_id'=>$this->passway->passageway_id,'i.item_group'=>$this->member->member_group_id,'i.item_passageway'=>$this->passway->passageway_id])
+          ->value('r.rate_code');
+        if(!$rate_code)
+          return '该用户对应的费率无套餐编码，请管理员核对！';
          #定义请求报文组装
          $arr=array(
           //全平台唯一 加通道id以区分
@@ -116,6 +124,7 @@
            'mobilephone'      =>$this->membercard->card_phone,
            'idcardno'            =>$this->membercard->card_idcard,
            'address'             =>"山东省济南市天桥区泺口皮革城",
+           'ratecode'         =>$rate_code,
          );
         // var_dump($arr);die;
         $data=rongbang_curl($this->passway,$arr,'masget.webapi.com.subcompany.add');
@@ -190,6 +199,7 @@
           'bankaccount'=>$credit['card_bankno'],
           'cvv2'=>$credit['card_Ident'],
           'expirationdate'=>$credit['card_expireDate'],
+          'fronturl'=>request()->domain() . "/api/Userurl/passway_open_success"
         ];
          // var_dump($arr);die;
         $data=rongbang_curl(rongbang_foruser($this->member,$this->passway),$arr,'masget.pay.collect.router.treaty.apply');
@@ -280,7 +290,8 @@
           "businesstype": "1001",
           "payextraparams": '.$payextraparams.',
           "paymenttypeid": "'.$paymenttypeid.'",
-          "ordernumber": "'.$tradeNo.'"
+          "ordernumber": "'.$tradeNo.'",
+          "fronturl":"'. request()->domain() . '/api/Userurl/passway_success/order_no/'.$tradeNo.'"
         }';
 
         // echo ($arr);die;

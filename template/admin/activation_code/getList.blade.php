@@ -1,6 +1,9 @@
 @extends('admin/layout/layout_main')
 @section('title','激活码管理')  
 @section('wrapper')
+ <header>
+    <h3><i class="icon-list-ul"></i> 激活码列表 <small>共 <strong class="text-danger">{{$count}}</strong> 条</small></h3>
+  </header>
 <table class="table table-striped table-hover">
     <thead>
       <tr>
@@ -8,9 +11,7 @@
           <th>使用状况</th>
           <th>激活码KEY</th>
           <th>激活码PWD</th>
-          <th>激活码所属</th>
           <th>添加时间</th>
-          <th>组名称</th>
           <th>操作</th>
           
       </tr>
@@ -19,12 +20,10 @@
     @foreach($list as $key=>$activation_code)
         <tr>
             <td>{{ $activation_code->activation_code_id  }}</td>
-            <td>{{ $activation_code->activation_states>0?"未使用":"已使用" }}</td>
+            <td>{{ $activation_code->activation_states==1?"未使用":"已使用" }}</td>
             <td>{{ $activation_code->activation_code_key  }}</td>
             <td>{{ $activation_code->activation_code_pwd  }}</td>
-            <td>{{ $activation_code->adminster->adminster_login  }}</td>
             <td>{{ $activation_code->activation_add_time  }}</td>
-            <td>{{ $activation_code->groups->group_name  }}</td>
             <td>
                 <div class="btn-group">
                 <a href="javascript:;" class="btn btn-sm">相关操作</a>

@@ -108,8 +108,7 @@ class Article extends Common{
 
 			 $article =Articles::get(Request::instance()->param('id'));
 			 $result= $article->allowField(true)->save($_POST);
-			 $articleData = ArticleData::where(['data_article' => $_POST['article_parent']])->update(['data_text' => $_POST['data_text']]);
-			
+			 $articleData = ArticleData::where(['data_article' => Request::instance()->param('id')])->update(['data_text' => $_POST['data_text']]);
 			 #数据是否提交成功
 			 $content = ($result===false) ? ['type'=>'error','msg'=>'文章修改失败'] : ['type'=>'success','msg'=>'文章修改成功'];
 			 Session::set('jump_msg', $content);
@@ -130,7 +129,6 @@ class Article extends Common{
 	 	 $this->assign('button', ['text'=>'返回列表', 'link'=>$this->history['2'],'icon'=>'arrow-left']);
 		 return view('admin/article/creat');
 	 }
-
 	 #删除文章
 	 public function remove()
 	 {
@@ -157,7 +155,9 @@ class Article extends Common{
 	 *   @return 
 	 */
 	 public function memberNovice(){
-	 	 $MemberNovice=MemberNovice::with("noviceclass")->paginate(Config::get('page_size'), false, ['query'=>Request::instance()->param()]);
+	 	 $MemberNovice=MemberNovice::with("noviceclass")->order("novice_id desc")->paginate(Config::get('page_size'), false, ['query'=>Request::instance()->param()]);
+	 	 $count=MemberNovice::with("noviceclass")->count();
+	 	 $this->assign("count",$count);
 	 	 $this->assign('button', ['text'=>'新增指引', 'link'=>url('/index/article/noviceCreat')]);
 	 	 $this->assign('MemberNovice',$MemberNovice);
 	 	 return view('admin/article/memberNovice');

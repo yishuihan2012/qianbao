@@ -10,6 +10,7 @@ use think\Config;
 
 class Test 
 {
+		//认证测试
 		public function renzheng()
 		{
 			    $name=urlencode('高志勇');
@@ -37,8 +38,8 @@ class Test
 			    }
 			dump(json_decode(curl_exec($curl)));    
 		}
-		public function test(){
-			return 1;
+		public function jpush_test($uid=42,$title='极光推送测试',$content="测试cehsi",$item='',$type=2){
+			jpush($uid, $title=$item, $content=$content, $item=$item, $type=$type);
 		}
 		public function message_text(){
 			$a=send_sms('17560044406');
@@ -80,10 +81,12 @@ class Test
 			$data=$index->encryption_data(json_encode($data));
 			$request['data']=$data;
 			$host=System::getName('system_url');
-			$res = $this->curlPost($host.'/api', 'post',$request);
-			$res=json_decode($res,true);
-			if($res['code']==200){
+			$data = $this->curlPost($host.'/api', 'post',$request);
+			$res=json_decode($data,true);
+			if(is_array($res) && $res['code']==200){
+				
 				$data=$index->decryption_data($res['data']); 
+				
 			}else{
 				$data=$res;
 			}

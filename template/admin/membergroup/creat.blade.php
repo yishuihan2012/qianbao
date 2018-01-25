@@ -91,6 +91,25 @@ input.labelauty + label { font: 12px "Microsoft Yahei";}
 			</select>
 			</div>
 		</div>
+		<br/>
+		<div class="row form-group">
+			<label for="group_name" class="col-sm-2 text-right"><b>直接推荐人分佣金额:</b></label>
+			<div id="group_level_value" class="col-sm-6">
+				<input type="text" class="form-control group_level_value" name="group_direct_cent" placeholder="" value="">
+			</div>
+		</div>
+		<div class="row form-group">
+			<label for="group_name" class="col-sm-2 text-right"><b>二级推荐人分佣金额:</b></label>
+			<div id="group_level_value" class="col-sm-6">
+				<input type="text" class="form-control group_level_value" name="group_second_level_cent" placeholder="" value="">
+			</div>
+		</div>
+		<div class="row form-group">
+			<label for="group_name" class="col-sm-2 text-right"><b>三级推荐人分佣金额:</b></label>
+			<div id="group_level_value" class="col-sm-6">
+				<input type="text" class="form-control group_level_value" name="group_three_cent" placeholder="" value="">
+			</div>
+		</div>
 		<h5></h5>
 
 	</form>

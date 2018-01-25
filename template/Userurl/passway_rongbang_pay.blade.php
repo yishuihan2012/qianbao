@@ -87,24 +87,24 @@
 						$("#regBtn").html('请稍后......');
 						var data={
 							authcode:authcode,
-							ordercode:"{{$ordercode}}",
+							order_no:"{{$order_no}}",
 							card_id:"{{$card_id}}",
 							memberId:"{{$memberId}}",
 							passwayId:"{{$passwayId}}",
 						};
 						$.post('',data,function(res){
 							if(res==1){
-								alert('成功申请快捷支付！');
+								window.top.location.href='/api/userurl/passway_success/uid/{{$uid}}/token/{{$token}}/order_no/{{$order_no}}';
 							}else if(res==2){
 								alert('验证码异常！');
 							}else{
 								alert('申请快捷支付失败！err:'+res);
+								if(!isAndroid){
+									window.webkit.messageHandlers.returnIndex.postMessage(1);
+								}else{
+									android.returnIndex();
+								}
 							}
-					      if(!isAndroid){
-					        window.webkit.messageHandlers.returnIndex.postMessage(1);
-					      }else{
-					        android.returnIndex();
-					      }
 						})
 					}else{
 						alert('请输入验证码！');

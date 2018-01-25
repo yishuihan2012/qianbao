@@ -8,7 +8,7 @@
  <section>
  <hr/>
  <div class="list">
-      <header><h3><i class="icon-list-ul"></i> 素材列表 <small>共 <strong class="text-danger">{{count($generalize)}}</strong> 条</small></h3></header>
+      <header><h3><i class="icon-list-ul"></i> 素材列表 <small>共 <strong class="text-danger">{{$count}}</strong> 条</small></h3></header>
       <div class="row">
            @foreach($generalize as $list)
            <div class="col-sm-2">
@@ -31,7 +31,7 @@
                <a class="remove" href="#" data-url="{{url('/index/Generalize/remove/id/'.$list['generalize_id'])}}"><i class="icon-remove"></i> 删除</a>
              </div>
                       <div class="card-heading"><strong>{{$list['generalize_title']}}</strong></div>
-                      <div class="card-content text-muted">{{msubstr($list['generalize_contents'],0,20)}}...</div>
+                      <div class="card-content text-muted">{{msubstr($list['generalize_contents'],0,15)}}...</div>
                  </a>
            </div>
            @endforeach
