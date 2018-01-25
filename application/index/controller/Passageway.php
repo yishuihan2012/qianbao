@@ -101,8 +101,8 @@ class Passageway extends Common{
 	 	 	 	 					// if(empty($membernet[$passageway->passageway_no])){
 	 	 	 	 					// 	continue;
 	 	 	 	 					// }
-	 	 	 	 					//修改费率 代还通道  米刷代还(1是米刷套现，不需要更改费率)
-									if($passageway->passageway_id!=1){
+	 	 	 	 					//修改费率 如果是必须入网就修改费率
+									if($passageway->passageway_status==1){
 
 							 			 $Membernetsedit=new \app\api\controller\Membernetsedit($member['member_id'],$passageway->passageway_id,'M03','',$member['member_mobile']);
 							 			 $method=$passageway->passageway_method;
