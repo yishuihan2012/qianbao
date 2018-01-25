@@ -38,4 +38,9 @@ class Article extends Model{
       {
            return $this->hasOne('ArticleCategory','category_id','article_category')->bind('category_name')->setEagerlyType(0);
       }
+        #关联模型 一对一关联 (ArticleCategory) 关联文章分类表
+      public function articleCategorys()
+      {
+           return $this->hasOne('ArticleCategory','category_id','article_parent')->bind('category_name')->setEagerlyType(0);
+      }
 }

@@ -5,7 +5,17 @@
   .content td{vertical-align: middle;}
  </style>
  <header>
-    <h3><i class="icon-list-ul"></i> 用户总人数 <small>共 <strong class="text-danger">{{$count}}</strong> 条</small></h3>
+    <h3><i class="icon-list-ul"></i> 用户总人数 <small>共 <strong class="text-danger">{{$count}}</strong> 人</small>
+      <i class="icon-list-ul"></i> 未实名总人数 <small>共 <strong class="text-danger">{{$wei_count}}</strong> 人</small>
+      <i class="icon-list-ul"></i> 已实名总人数 <small>共 <strong class="text-danger">{{$yi_count}}</strong> 人</small>
+    </h3>
+     <h3>
+    @foreach($group_user as $key => $val)
+   
+      <i class="icon-list-ul"></i> {{$val['group_name']}} <small>共 <strong class="text-danger">{{$val['count']}}</strong> 人</small>
+   
+    @endforeach
+     </h3>
   </header>
 <blockquote>
    

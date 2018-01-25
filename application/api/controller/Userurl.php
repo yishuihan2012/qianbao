@@ -33,6 +33,8 @@ use app\index\model\System;
 use app\index\model\NoviceClass as NoviceClasss; 
 use app\index\model\Appversion; 
 use app\index\model\SmsCode; 
+use app\index\model\ArticleCategory;
+use app\index\model\Article;
 /**
  *  此处放置一些固定的web地址
  */
@@ -117,7 +119,7 @@ class Userurl extends Controller
 				Vendor('phpqrcode.phpqrcode');
 				$QRcode=new \QRcode();
 				//生成二维码
-				$QRcode->png($url, 'autoimg/qrcode'.$tel.'.png','Q',8);
+				$QRcode->png($url, 'autoimg/qrcode'.$tel.'.png','H',8);
 				$qrurl=ROOT_PATH.'public/autoimg/qrcode'.$tel.'.png';
 				$logourl=ROOT_PATH.'public/static/images/logo.png';
 				// 二维码加入logo
@@ -125,7 +127,7 @@ class Userurl extends Controller
 				 $logo = imagecreatefromstring(file_get_contents($logourl)); 
 				 $logo_width = imagesx($logo);
 				 $logo_height = imagesy($logo);
-				 imagecopyresampled( $QR,$logo, 135, 135, 0, 0, 60, 60, $logo_width, $logo_height); 
+				 imagecopyresampled( $QR,$logo, 115, 115, 0, 0, 60, 60, $logo_width, $logo_height); 
 				imagepng($QR, 'autoimg/qrcode'.$tel.'.png'); 
 				// 背景
 				$bg_url=Exclusive::get($exclusive_id);
@@ -605,6 +607,8 @@ class Userurl extends Controller
   }
   #盈利模式说明
   public function explain(){
+  		$description=Article::hasWhere('articleCategorys',['category_name'=>'盈利模式说明'])->join("wt_article_data","data_article=article_id")->field("data_text")->find();
+  		$this->assign('data',$description);
 	  	return view("Userurl/explain");
   }
   #关于我们
@@ -749,12 +753,12 @@ class Userurl extends Controller
   # memberId 用户id passwayId 通道id
   # ordercode 订单号 card_id 卡号
 
-  public function passway_rongbang_pay($memberId,$passwayId,$order_no,$card_id){
+  public function passway_rongbang_pay($memberId,$passwayId,$ordercode,$card_id){
   	if(request()->ispost()){
   		$authcode=request()->param()['authcode'];
   		if($authcode){
 		  	$Membernets=new con\Membernets($memberId,$passwayId);
-		  	$result=$Membernets->rongbang_confirm_pay($order_no,$card_id,$authcode);
+		  	$result=$Membernets->rongbang_confirm_pay($ordercode,$card_id,$authcode);
 		  	return is_array($result) ? 1 : $result;
 		  }else{
 		  	return 2;
@@ -762,14 +766,14 @@ class Userurl extends Controller
   	}
   	#用户信息
   	$info = Members::with("memberCashcard")->where(['member_id' => $memberId])->find();
-  	$money=db('cash_order')->where('order_thead_no',$order_no)->value('order_money');
+  	$money=db('cash_order')->where('order_thead_no',$ordercode)->value('order_money');
   	$creditcard = MemberCreditcard::where(['card_id' => $card_id])->find();
   	$this->assign("creditcard",$creditcard);
   	$this->assign("member_info",$info);
 	$this->assign('memberId',$memberId);
 	$this->assign('money',$money);
 	$this->assign('passwayId',$passwayId);
-	$this->assign('order_no',$order_no);
+	$this->assign('ordercode',$ordercode);
 	$this->assign('card_id',$card_id);
   	return view("Userurl/passway_rongbang_pay");
   }
@@ -778,24 +782,26 @@ class Userurl extends Controller
   public function passway_rongbang_paycallback(){
   	$param=request()->param();
   	$key=db('passageway')->where('passageway_id',$param['passageway_id'])->value('passageway_pwd_key');
+  	return $key;
   	// 测试自己加密的可以解密
   	// return rongbang_aes_decode($key,rongbang_aes($key,$param['test']));
+  	return rongbang_aes_decode($key,$param['Data']);
   	#解不了密的情况下 根据我们自己填的单号去更改订单状态
   	if($param['order_no']){
   		$data=[];
   		$data['ordernumber']=$param['order_no'];
-  		// $data['amount']=db('cash_order')->where('order_no',$data['ordernumber'])->value('order_money');
+  		$data['amount']=db('cash_order')->where('order_no',$data['ordernumber'])->value('order_money');
 
   	// $data=rongbang_aes_decode($key,$param['Data']);
   	// var_dump($data);die;
   	// $data=json_decode($data,1);
   	// if($data['respcode']==2){
   		//支付完成
-  		// db('cash_order')->where('order_no',$data['ordernumber'])->update(['order_state'=>2]);
-  		// $order_id=db('cash_order')->where('order_no',$data['ordernumber'])->value('order_id');
-  		// //分润
-	   //  $fenrun= new con\Commission();
-    //     $fenrun_result=$fenrun->MemberFenRun($param['member_id'],$data['amount'],$param['passageway_id'],1,'交易手续费分润',$order_id);
+  		db('cash_order')->where('order_no',$data['ordernumber'])->update(['order_state'=>2]);
+  		$order_id=db('cash_order')->where('order_no',$data['ordernumber'])->value('order_id');
+  		//分润
+	    $fenrun= new con\Commission();
+        $fenrun_result=$fenrun->MemberFenRun($param['member_id'],$data['amount'],$param['passageway_id'],1,'交易手续费分润',$order_id);
   	}else{
   		//支付失败
   		db('cash_order')->where('order_no',$data['ordernumber'])->update(['order_state'=>-1]);
@@ -805,19 +811,6 @@ class Userurl extends Controller
   }
   #为无需短信确认的情况 直接显示一个成功页面
   public function passway_success(){
-  	$param=request()->param();
-  	#荣邦回调会携带 ordercode 参数
-  	if(isset($param['order_no']) && $param['order_no']){
-  		$order=db('cash_order')->where('order_no',$param['order_no'])->find();
-  		#在订单状态为 待支付 的情况下进行分润
-  		if($order && $order['order_state']==1){
-	  		//支付完成
-	  		db('cash_order')->where('order_no',$param['order_no'])->update(['order_state'=>2]);
-	  		//分润
-		    $fenrun= new con\Commission();
-	        $fenrun_result=$fenrun->MemberFenRun($param['member_id'],$order['order_money'],$order['order_passway'],1,'交易手续费分润',$order['order_id']);
-  		}
-  	}
   	return view("Userurl/passway_success");
   }
   # 开通快捷支付 前台回调成功页面
@@ -879,6 +872,38 @@ class Userurl extends Controller
            if(!$result)
                  return ['code'=>303];
            return ['code'=>200,'msg'=>'验证码发送成功~'];
+  }
+
+  #H5有积分前台通知地址
+  public function H5youjifen($tradeNo){
+  	$order=CashOrder::get(['order_no'=>$tradeNo]);
+  	$passway=Passageway::get($order->order_passway);
+  	$member=Member::get($order->order_member);
+  	#通道费率
+     $passwayitem=PassagewayItem::get(['item_group'=>$member->member_group_id,'item_passageway'=>$passway->passageway_id]);
+  	 $Commission_info=Commissions::where(['commission_from'=>$order->order_id,'commission_type'=>1])->find();
+     if(!$Commission_info){
+            $fenrun= new \app\api\controller\Commission();
+            $fenrun_result=$fenrun->MemberFenRun($order->order_member,$order->order_money,$order->order_passway,1,'套现手续费分润',$order->order_id);
+     }else{
+        $fenrun_result['code']=-1;
+     }
+
+     if($fenrun_result['code']=="200")
+     {
+		 $order->order_fen=$fenrun_result['leftmoney'];
+         $order->order_buckle=$passwayitem->item_charges/100;
+         $order->order_platform=$order->order_charge-($order->order_money*$passway->passageway_rate/100)+$passway->passageway_income;
+     }
+		else	
+     {
+			 $order->order_fen=-1;
+     }
+
+      $res = $order->save();
+	 if ($res) {
+	 	return view("Userurl/H5youjifen");
+	 }
   }
 
 }

@@ -2,7 +2,7 @@
 @section('title','钱包列表管理~')
 @section('wrapper')
  <header>
-    <h3><i class="icon-list-ul"></i> 订单列表 <small>共 <strong class="text-danger">{{$count}}</strong> 条</small>
+    <h3><i class="icon-list-ul"></i> 钱包列表 <small>共 <strong class="text-danger">{{$count}}</strong> 条</small>
      <i class="icon icon-yen"></i> 钱包余额 <small>共 <strong class="text-danger">{{$wallet_amount}}</strong> 元</small>
       <i class="icon icon-yen"></i> 总收益 <small>共 <strong class="text-danger">{{$wallet_total_revenue}}</strong> 元</small>
       <i class="icon icon-yen"></i> 分佣收益 <small>共 <strong class="text-danger">{{$wallet_commission}}</strong> 元</small>

@@ -103,7 +103,7 @@ class CashOut
 	            'bankName'   => $this->member_card->card_bankname, //  结算卡开户行  必填  结算卡开户行
 	            'cardNo'      	 => $this->member_card->card_bankno, //算卡卡号 必填  结算卡卡号
 	            'downPayFee'  	=> $this->also->item_rate*10, //结算费率  必填  接入机构给商户的费率，D0直清按照此费率结算，千分之X， 精确到0.01
-	            'downDrawFee' => $this->also->item_charges/100//$this->passway_info->cashout->cashout_charges, // 代付费 选填  每笔扣商户额外代付费。不填为不扣。
+	            'downDrawFee' => '0'//$this->passway_info->cashout->cashout_charges, // 代付费 选填  每笔扣商户额外代付费。不填为不扣。
 	      );
 	      //请求体参数加密 AES对称加密 然后连接加密字符串转MD5转为大写
 	      $payload =AESencode(json_encode($arr),$this->passway_info->passageway_pwd_key);
@@ -243,10 +243,6 @@ class CashOut
 	 	 }
 	 	 //快捷支付 调用开通快捷支付接口
 	 	 if($this->passway_info->passageway_mech==402512992){
-	 	 	$result=$membernetObject->rongbang_in();
-	 	 	if(is_string($result)){
-	 	 		return ['code'=>500,'msg'=>$result];
-	 	 	}
 		 	 //复用查询条件
 		 	 $pas_where=['member_credit_pas_pasid'=>$this->passway_info->passageway_id,'member_credit_pas_creditid'=>$this->card_info->card_id];
 		 	 #查询用户是否开通快捷支付
@@ -494,7 +490,7 @@ class CashOut
 	 {
 	 	$item_rate=$this->also->item_rate/100;
 	 	$item_charges=$this->also->item_charges;
-	 	$url= System::getName('system_url').'/api/Userurl/H5youjifen/tradeNo/'.$tradeNo;
+	 	$url= System::getName('system_url').'/api/Userurl/H5youjifen/tradeNo'.$tradeNo;
 	 	 $arr= $price."|".$this->card_info->card_name."|".$this->card_info->card_idcard."|".$this->member_card->card_bankno."|".$this->card_info->card_phone."|".$this->card_info->card_bankname."|".$this->card_info->card_bankno."|".$this->card_info->card_phone."|".$this->card_info->card_bankname."| |".$url."|".$tradeNo."|".$item_rate."|".$item_charges;
 	 	 // echo $arr;die;
 	 	 $params['data']=H5encrypt($arr,$this->passway_info->passageway_key);
@@ -510,13 +506,12 @@ class CashOut
 		//把POST的变量加上
 		curl_setopt($ch, CURLOPT_POSTFIELDS, $params);
 		$output = curl_exec($ch);
-		// echo $output;die;
 		curl_close($ch);
 		preg_match_all ("/<p class=\"result\">(.*)<\/p>/", $output, $error);
-		if(empty($error[1][0])){
-			$res=[
+		if(empty($error)){
+			$res['data']=[
             		'type'=>2,
-            		'url'=>'<!DOCTYPE html><html lang="zh-cn"><head>'.$output,
+            		'url'=>$output,
             	];
             $order_result=$this->writeorder($tradeNo, $price, $price*($this->also->item_rate/100) ,$description,$tradeNo);//写入套现订单
             if(!$order_result)
@@ -539,7 +534,7 @@ class CashOut
 	 {
 	 	$item_rate=$this->also->item_rate/100;
 	 	$item_charges=$this->also->item_charges;
-	 	$url= System::getName('system_url').'/api/Userurl/H5youjifen/tradeNo/'.$tradeNo;
+	 	$url= System::getName('system_url').'/api/Userurl/H5youjifen/tradeNo'.$tradeNo;
 	 	 $arr= $price."|".$this->card_info->card_name."|".$this->card_info->card_idcard."|".$this->member_card->card_bankno."|".$this->card_info->card_phone."|".$this->card_info->card_bankno."|".$this->card_info->card_phone."| |".$url."|".$tradeNo."|".$item_rate."|".$item_charges;
 	 	 // echo $arr;die;
 	 	 $params['data']=H5encrypt($arr,$this->passway_info->passageway_key);
@@ -556,9 +551,9 @@ class CashOut
 		curl_setopt($ch, CURLOPT_POSTFIELDS, $params);
 		$output = curl_exec($ch);
 		curl_close($ch);
-			$res=[
+			$res['data']=[
             		'type'=>2,
-            		'url'=>'<!DOCTYPE html><html lang="zh-cn"><head>'.$output,
+            		'url'=>$output,
             	];
             $order_result=$this->writeorder($tradeNo, $price, $price*($this->also->item_rate/100) ,$description,$tradeNo);//写入套现订单
             if(!$order_result)
@@ -580,7 +575,7 @@ class CashOut
 	 {
 	 	$item_rate=$this->also->item_rate/100;
 	 	$item_charges=$this->also->item_charges;
-	 	$url= System::getName('system_url').'/api/Userurl/H5youjifen/tradeNo/'.$tradeNo;
+	 	$url= System::getName('system_url').'/api/Userurl/H5youjifen/tradeNo'.$tradeNo;
 	 	 $arr= $price."|".$this->card_info->card_name."|".$this->card_info->card_idcard."|".$this->member_card->card_bankno."|".$this->card_info->card_phone."|".$this->card_info->card_bankno."|".$this->card_info->card_phone."| |".$url."|".$tradeNo."|".$item_rate."|".$item_charges;
 	 	 // echo $arr;die;
 	 	 $params['data']=H5encrypt($arr,$this->passway_info->passageway_key);
@@ -597,9 +592,9 @@ class CashOut
 		curl_setopt($ch, CURLOPT_POSTFIELDS, $params);
 		$output = curl_exec($ch);
 		curl_close($ch);
-			$res=[
+			$res['data']=[
             		'type'=>2,
-            		'url'=>'<!DOCTYPE html><html lang="zh-cn"><head>'.$output,
+            		'url'=>$output,
             	];
             $order_result=$this->writeorder($tradeNo, $price, $price*($this->also->item_rate/100) ,$description,$tradeNo);//写入套现订单
             if(!$order_result)

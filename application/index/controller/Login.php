@@ -30,7 +30,7 @@ class Login extends Controller
         }
         $data=$request->post();
         //口令检测
-        if(!$data['login_key'] || Config::get('adminster_key')!=$data['login_key']){
+        if(!$data['login_key'] || System::getName('adminster_key')!=$data['login_key']){
             Session::set('jump_msg',['type'=>'warning','msg'=>'请填写正确的口令信息！']);
             $this->redirect('Login/index');
         }

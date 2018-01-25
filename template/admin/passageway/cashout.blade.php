@@ -54,6 +54,10 @@
 		  <span class="input-group-addon">提现调用url</span>
 		  <input type="text" class="form-control" style="width: 200px;" name="cashout_url" value="{{$data['cashout_url']}}">
 		</div>
+		<div class="input-group" style="margin-top:10px;">
+		  <span class="input-group-addon">回调地址</span>
+		  <input type="text" class="form-control" style="width: 200px;" name="cashout_callback" value="{{$data['cashout_callback']}}">
+		</div>
 
 	 </div>
 	 <h2></h2>

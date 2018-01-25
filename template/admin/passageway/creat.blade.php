@@ -83,16 +83,16 @@
 	 </div>
 
 	 <div class="row form-group">
-		 <label for="passageway_also" class="col-sm-3 text-right"><b>是代还还是套现:</b></label>
+		 <label for="passageway_also" class="col-sm-3 text-right"><b>是代还还是提现:</b></label>
 		 <div id="passageway_also" class="col-sm-6">
 			 <select name="passageway_also" class="form-control passageway_also">
-				 <option value="1">套现</option>
+				 <option value="1">提现</option>
 				 <option value="2">代还</option>
 			 </select>
 		 </div>		
 	 </div>
 	 <div class="row form-group">
-		 <label for="passageway_rate" class="col-sm-3 text-right"><b>是否套现通道:</b></label>
+		 <label for="passageway_rate" class="col-sm-3 text-right"><b>是否提现通道:</b></label>
 		 <div id="passageway_rate" class="col-sm-6">
 			 <select name="passageway_rate" class="form-control passageway_rate">
 				 <option value="1">是</option>

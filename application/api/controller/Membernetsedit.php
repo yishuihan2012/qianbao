@@ -185,7 +185,7 @@
       public function rongbangnet(){
         $memberAlso=PassagewayItem::where(['item_group'=>$this->member->member_group_id,'item_passageway'=>$this->passway->passageway_id])->find();
         //传入费率对应的在荣邦的编码
-        $rate_code=db('passageway_rate')->where(['rate_rate'=>$memberAlso['item_rate'],'rate_charge'=>$memberAlso['item_charges']/100,'rate_passway_id'=>$this->passway->passageway_id])->find();
+        $rate_code=db('passageway_rate')->where(['rate_rate'=>$memberAlso['item_rate'],'rate_charge'=>$memberAlso['item_charges'],'rate_passway_id'=>$this->passway->passageway_id])->find();
         if($rate_code){
           $userinfo=db('member_net')->where('net_member_id',$this->member->member_id)->value($this->passway->passageway_no);
           $userinfo=explode(',', $userinfo);

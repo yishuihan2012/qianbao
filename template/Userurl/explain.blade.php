@@ -13,9 +13,15 @@
 	<body>
 		<div class='mui-content wrap3'>
 			<div class="wrap3 bg-w bor f-br2">
-				<h4>盈利模式说明</h4>
+				<h4>{{$data['article_title']}}</h4>
 				<div class="space-up">
-					盈利模式说明盈利模式说明盈利模式说明盈利模式说明盈利模式说明盈利模式说明盈利模式说明盈利模式说明盈利模式说明盈利模式说明盈利模式说明盈利模式说明盈利模式说明盈利模式说明盈利模式说明盈利模式说明盈利模式说明盈利模式说明盈利模式说明盈利模式说明盈利模式说明盈利模式说明
+					@if($data)
+						<img src="{{$data['article_thumb']}}" style="width:100%">
+						{{$data['article_desc']}}
+						{!!$data['data_text']!!}
+					@else
+						暂无盈利模式说明
+					@endif
 				</div>
 			</div>
 		</div>

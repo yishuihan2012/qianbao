@@ -143,6 +143,8 @@
 	 public function announcement()
 	 {
 		 $list=Announcement::with('adminster')->paginate(Config::get('page_size'));
+		 $count = Announcement::count();
+		 $this->assign("count",$count);
 		 $this->assign('button', 
  		 	 [
  		 		 ['text'=>'新增公告', 'link'=>url('/index/System/add_announcement')],
