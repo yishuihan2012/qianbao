@@ -24,8 +24,13 @@ class Passageway extends Common{
 	 #通道列表
 	 public function index()
 	 {
+		 if($this->admin['adminster_group_id']==5){
 	 	 #查询通道列表分页
-	 	 $passageway=Passageways::order('passageway_id','desc')->paginate(Config::get('page_size'), false, ['query'=>Request::instance()->param()]);
+		 	#代理商不显示禁用的通道
+		 	$passageway=Passageways::order('passageway_id','desc')->where('passageway_state',1)->paginate(Config::get('page_size'), false, ['query'=>Request::instance()->param()]);
+		 }else{
+		 	 $passageway=Passageways::order('passageway_id','desc')->paginate(Config::get('page_size'), false, ['query'=>Request::instance()->param()]);
+		 }
  		 $this->assign('button', ['text'=>'新增通道', 'link'=>url('/index/passageway/creat'), 'modal'=>'modal']);
  		 $this->assign('passageway_list', $passageway);
 		 #渲染视图
@@ -419,7 +424,7 @@ class Passageway extends Common{
 			$where['order_status']=2;
 			//运营商
 			if($adminster['adminster_user_id'] && $group_id==5){
-				$where['member_id']=["in",$adminster['children']];
+				$where['order_member']=["in",$adminster['children']];
 				$passageway->profit=db('commission')->alias('c')
 					->join('generation_order o','c.commission_from=o.order_id')
 					->where('c.commission_member_id',$adminster['adminster_user_id'])

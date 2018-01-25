@@ -20,6 +20,7 @@ class  ActivationCode extends Common{
 	 {  
          $this->assign('button', [
             ['text'=>'生成激活码', 'link'=>url('/index/activation_code/add'),'icon'=>'tags','theme'=>'info','modal'=>'modal','size'=>'lg'],
+            ['text'=>'导出激活码', 'link'=>url('/index/activation_code/export'),'icon'=>'tags','theme'=>'info','modal'=>'modal','size'=>'lg'],
         ]);
          return $this->getList(Request::instance());
      }
@@ -56,10 +57,10 @@ class  ActivationCode extends Common{
             Session::set('jump_msg', ['type'=>'success','msg'=>'激活码已经生成']);
             $this->redirect('ActivationCode/index');
          }else{
-            ## 获取全部用户组组别
-            $group = MemberGroup::all();
+            ## 获取全部用户组组别 【无忧钱管家】仅面向非代理使用
+            $group = MemberGroup::all(['group_visible'=>1,'group_salt'=>['>',1]]);
             ## 获取代理
-            $adminster = Adminster::all();
+            $adminster = Adminster::where('adminster_user_id','>',0)->select();
             $this->assign('adminster',$adminster);
             $this->assign('group',$group);
             return view('admin/activation_code/getForm'); 
@@ -94,5 +95,32 @@ class  ActivationCode extends Common{
      # 获取表单
      private function getForm(Request $request){ 
        return view('admin/activation_code/getForm');
+    }
+    #   导出二维码 
+    #   begin end 起止id 无则导出全部
+    public function export(){
+        if(request()->ispost()){
+            $data=input();
+            if(isset($data['begin']) && $data['begin']!=0 &&  isset($data['end']) && $data['end']!=0 ){
+                $where=['activation_code_id'=>['between',[$data['begin'],$data['end']]]];
+            }elseif(isset($data['begin']) && $data['begin']!=0){
+                $where=['activation_code_id'=>['>=',$data['begin']]];
+            }elseif(isset($data['end']) && $data['end']!=0 ){
+                $where=['activation_code_id'=>['<=',$data['end']]];
+            }else{
+                $where=[];
+            }
+            $list=db('activation_code')->where($where)->select();
+            $str='';
+            foreach ($list as $k => $v) {
+                $str.="{\"activationNo\":\"".$v['activation_code_key']."\",\"activationPwd\":\"".$v['activation_code_pwd']."\"}\n";
+            }
+            $fileName="activation_code.txt";
+            header("Content-Type: application/txt");
+            header("Content-Disposition: attachment; filename=".$fileName);
+            echo $str;
+            return;
+        }
+        return view('admin/activation_code/export');
     }
 }

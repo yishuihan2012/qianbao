@@ -54,24 +54,11 @@ class Adminster extends Common {
 	 public function add(){
 		 if(Request::instance()->isPost()){
 		 	$r=request()->param();
-			$code=make_rand_code();
-			
-			 #运营商添加的用户强制为 运营商用户组
+			 $adminster=new Adminsters;			 #运营商添加的用户强制为 运营商用户组
 			 if($this->admin['adminster_group_id']==5){
 			 	$r['login_group']=5;
 			 }
 
-			 $check_login_name=Adminsters::get(['adminster_login'=>Request::instance()->post('login_name')]);
-			 if($check_login_name){
-				 Session::set('jump_msg',['type'=>'warning','msg'=>'用户名已存在~请重试','data'=>'']);
-				 $this->redirect($this->history['0']);
-			 }
-			 $check_login_email=Adminsters::get(['adminster_email'=>Request::instance()->post('login_email')]);
-			 if($check_login_email){
-			     	 Session::set('jump_msg',['type'=>'warning','msg'=>'邮箱已绑定其他账号~请更换','data'=>'']);
-				 $this->redirect($this->history['0']);
-			 }
-			 $adminster=new Adminsters;
 			 if($r['login_group']==5){
 			 	if($r['adminster_user_id']){
 			 		$admin=Adminsters::get(['adminster_user_id'=>$r['adminster_user_id']]);
@@ -85,12 +72,26 @@ class Adminster extends Common {
 			     	Session::set('jump_msg',['type'=>'warning','msg'=>'请选择该渠道商对应的用户','data'=>'']);
 					$this->redirect($this->history['0']);
 			 	}
+			 	#新增的代理商后台账户 其用户名自动调整为对应后台手机号
+			 	$member=db('member')->where('member_id',$r['adminster_user_id'])->find();
+			 	$r['adminster_login']=$member['member_mobile'];
+			 }else{
+				 $check_login_email=Adminsters::get(['adminster_email'=>Request::instance()->post('login_email')]);
+				 if($check_login_email){
+				     	 Session::set('jump_msg',['type'=>'warning','msg'=>'邮箱已绑定其他账号~请更换','data'=>'']);
+					 $this->redirect($this->history['0']);
+				 }
 			 }
-			 $adminster->adminster_login=Request::instance()->post('login_name');
+			 $check_login_name=Adminsters::get(['adminster_login'=>$r['adminster_login']]);
+			 if($check_login_name){
+				 Session::set('jump_msg',['type'=>'warning','msg'=>'用户名已存在~请重试','data'=>'']);
+				 $this->redirect($this->history['0']);
+			 }
+			 $adminster->adminster_login=$r['adminster_login'];
 			 $adminster->adminster_pwd=encryption(Request::instance()->post('login_passwd'),$code);
 			 $adminster->adminster_salt=$code;
 			 $adminster->adminster_update_time=date('Y-m-d H:i:s');
-			 $adminster->adminster_email=Request::instance()->post('login_email');
+			 $adminster->adminster_email=$r['login_email'] ?? '';
 			 $authGroupAccesss=new AuthGroupAccesss;
 			 $authGroupAccesss->group_id=$r['login_group']?$r['login_group']:Config::get('default_groups');
 			 $adminster->profile=$authGroupAccesss;
@@ -184,7 +185,7 @@ class Adminster extends Common {
 			 $users=db('member')->alias('m')
 			 	->join('member_group g','m.member_group_id=g.group_id')
 			 	->where('m.member_id','in',$this->admin['children'])
-	  		 	->where('g.group_visible=0')#没有该字段
+			 	->where('g.group_visible=0')
 			 	->select();
 		 }else{
 			 $authGroups=AuthGroups::all();
