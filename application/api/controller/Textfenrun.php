@@ -8,8 +8,10 @@
  use think\Loader;
 class Textfenrun 
 {
-	public function demo($id=42)
+	public function demo()
 	{
+		$r=input();
+			$id=isset($r['id'] ? $r['id'] : 42;
 		 $fenrun= new \app\api\controller\Commission();
 	 	 $fenrun_result=$fenrun->MemberFenRun($id,'10000',10,1,'交易手续费分润',94);
 	 	 //$fenrun_result=$fenrun->MemberCommis(9,'980','会员升级');
