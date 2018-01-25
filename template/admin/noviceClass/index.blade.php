@@ -8,7 +8,7 @@
   	<div class="panel-body">
   		<header>
 		    <h3>
-		        <i class="icon-list-ul"></i> 订单列表 <small>共 <strong class="text-danger">{{$count}}</strong> 条</small> 
+		        <i class="icon-list-ul"></i> 新手指引 <small>共 <strong class="text-danger">{{$count}}</strong> 条</small> 
 		    </h3>
 	  </header>
 

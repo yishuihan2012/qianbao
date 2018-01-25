@@ -2,7 +2,7 @@
 @section('title','会员用户组管理~')
 @section('wrapper')
  <header>
-    <h3><i class="icon-list-ul"></i> 订单列表 <small>共 <strong class="text-danger">{{$count}}</strong> 条</small></h3>
+    <h3><i class="icon-list-ul"></i> 用户组数量 <small>共 <strong class="text-danger">{{$count}}</strong> 条</small></h3>
   </header>
 <blockquote>
 	 用户组列表(组级别越高代表组内用户等级越高)

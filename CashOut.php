@@ -243,10 +243,6 @@ class CashOut
 	 	 }
 	 	 //快捷支付 调用开通快捷支付接口
 	 	 if($this->passway_info->passageway_mech==402512992){
-	 	 	$result=$membernetObject->rongbang_in();
-	 	 	if(is_string($result)){
-	 	 		return ['code'=>500,'msg'=>$result];
-	 	 	}
 		 	 //复用查询条件
 		 	 $pas_where=['member_credit_pas_pasid'=>$this->passway_info->passageway_id,'member_credit_pas_creditid'=>$this->card_info->card_id];
 		 	 #查询用户是否开通快捷支付
@@ -494,7 +490,7 @@ class CashOut
 	 {
 	 	$item_rate=$this->also->item_rate/100;
 	 	$item_charges=$this->also->item_charges;
-	 	$url= System::getName('system_url').'/api/Userurl/H5youjifen/tradeNo/'.$tradeNo;
+	 	$url= System::getName('system_url').'/api/Userurl/H5youjifen/tradeNo'.$tradeNo;
 	 	 $arr= $price."|".$this->card_info->card_name."|".$this->card_info->card_idcard."|".$this->member_card->card_bankno."|".$this->card_info->card_phone."|".$this->card_info->card_bankname."|".$this->card_info->card_bankno."|".$this->card_info->card_phone."|".$this->card_info->card_bankname."| |".$url."|".$tradeNo."|".$item_rate."|".$item_charges;
 	 	 // echo $arr;die;
 	 	 $params['data']=H5encrypt($arr,$this->passway_info->passageway_key);
@@ -510,13 +506,12 @@ class CashOut
 		//把POST的变量加上
 		curl_setopt($ch, CURLOPT_POSTFIELDS, $params);
 		$output = curl_exec($ch);
-		// echo $output;die;
 		curl_close($ch);
 		preg_match_all ("/<p class=\"result\">(.*)<\/p>/", $output, $error);
-		if(empty($error[1][0])){
-			$res=[
+		if(empty($error)){
+			$res['data']=[
             		'type'=>2,
-            		'url'=>'<!DOCTYPE html><html lang="zh-cn"><head>'.$output,
+            		'url'=>$output,
             	];
             $order_result=$this->writeorder($tradeNo, $price, $price*($this->also->item_rate/100) ,$description,$tradeNo);//写入套现订单
             if(!$order_result)
@@ -539,7 +534,7 @@ class CashOut
 	 {
 	 	$item_rate=$this->also->item_rate/100;
 	 	$item_charges=$this->also->item_charges;
-	 	$url= System::getName('system_url').'/api/Userurl/H5youjifen/tradeNo/'.$tradeNo;
+	 	$url= System::getName('system_url').'/api/Userurl/H5youjifen/tradeNo'.$tradeNo;
 	 	 $arr= $price."|".$this->card_info->card_name."|".$this->card_info->card_idcard."|".$this->member_card->card_bankno."|".$this->card_info->card_phone."|".$this->card_info->card_bankno."|".$this->card_info->card_phone."| |".$url."|".$tradeNo."|".$item_rate."|".$item_charges;
 	 	 // echo $arr;die;
 	 	 $params['data']=H5encrypt($arr,$this->passway_info->passageway_key);
@@ -556,9 +551,9 @@ class CashOut
 		curl_setopt($ch, CURLOPT_POSTFIELDS, $params);
 		$output = curl_exec($ch);
 		curl_close($ch);
-			$res=[
+			$res['data']=[
             		'type'=>2,
-            		'url'=>'<!DOCTYPE html><html lang="zh-cn"><head>'.$output,
+            		'url'=>$output,
             	];
             $order_result=$this->writeorder($tradeNo, $price, $price*($this->also->item_rate/100) ,$description,$tradeNo);//写入套现订单
             if(!$order_result)
@@ -580,7 +575,7 @@ class CashOut
 	 {
 	 	$item_rate=$this->also->item_rate/100;
 	 	$item_charges=$this->also->item_charges;
-	 	$url= System::getName('system_url').'/api/Userurl/H5youjifen/tradeNo/'.$tradeNo;
+	 	$url= System::getName('system_url').'/api/Userurl/H5youjifen/tradeNo'.$tradeNo;
 	 	 $arr= $price."|".$this->card_info->card_name."|".$this->card_info->card_idcard."|".$this->member_card->card_bankno."|".$this->card_info->card_phone."|".$this->card_info->card_bankno."|".$this->card_info->card_phone."| |".$url."|".$tradeNo."|".$item_rate."|".$item_charges;
 	 	 // echo $arr;die;
 	 	 $params['data']=H5encrypt($arr,$this->passway_info->passageway_key);
@@ -597,9 +592,9 @@ class CashOut
 		curl_setopt($ch, CURLOPT_POSTFIELDS, $params);
 		$output = curl_exec($ch);
 		curl_close($ch);
-			$res=[
+			$res['data']=[
             		'type'=>2,
-            		'url'=>'<!DOCTYPE html><html lang="zh-cn"><head>'.$output,
+            		'url'=>$output,
             	];
             $order_result=$this->writeorder($tradeNo, $price, $price*($this->also->item_rate/100) ,$description,$tradeNo);//写入套现订单
             if(!$order_result)

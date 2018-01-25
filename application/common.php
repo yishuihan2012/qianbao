@@ -886,12 +886,12 @@ function SortByASCII($arr)
         $params=array(
         'versionNo'=>'1',//接口版本号 必填  值固定为1
         'mchNo'=>$passageway['passageway_mech'], //mchNo 商户号 必填  由米刷统一分配
-        'mercUserNo'=>$member_info['cert_member_id'], //用户标识,下级机构对用户身份唯一标识。
+        'mercUserNo'=>$passageway['passageway_mech'].$phone, //用户标识,下级机构对用户身份唯一标识。
         'userName'=>$member_info['cert_member_name'],//姓名
         'userCertId'=>$member_info['cert_member_idcard'],//身份证号  必填  注册后不可修改
         'userPhone'=>$phone,
         'feeRatio'=>$rate['item_also']*10, //交易费率  必填  单位：千分位。如交易费率为0.005时,需传入5.0
-        'feeAmt'=>'50',//单笔交易手续费  必填  单位：分。如机构无单笔手续费，可传入0
+        'feeAmt'=>$rate['item_charges'],//单笔交易手续费  必填  单位：分。如机构无单笔手续费，可传入0
         'drawFeeRatio'=>'0',//提现费率
         'drawFeeAmt'=>'0',//单笔提现易手续费
       );
@@ -1166,15 +1166,37 @@ function SortByASCII($arr)
     $root_id=db('member_relation')->where('relation_member_id',$id)->value('relation_parent_id');
     return $root_id ? find_root($root_id) : $id;
   }
-  # 生成用户的所有上级集合
-  # 用于分润时遍历上级里的所有代理商
-  function find_relation($id){
-    if(!$id)return [];
-    $parent=db('member_relation')->alias('r')
-        ->join('member m','m.member_id=r.relation_member_id')
-        ->join('member_group g','g.group_id=m.member_group_id')
-        ->where('relation_member_id',$id)
-        ->field('member_id,member_group_id,group_visible,relation_parent_id')
-        ->find();
-    return $parent ? array_merge([$parent],find_relation($parent['relation_parent_id'])) : [];
-  }
+
+
+
+     function H5encrypt($input, $key) {
+        $size = mcrypt_get_block_size(MCRYPT_RIJNDAEL_128, MCRYPT_MODE_ECB);
+        $input =pkcs5_pad($input, $size);
+        $td = mcrypt_module_open(MCRYPT_RIJNDAEL_128, '', MCRYPT_MODE_ECB, '');
+        $iv = mcrypt_create_iv (mcrypt_enc_get_iv_size($td), MCRYPT_RAND);
+        mcrypt_generic_init($td, $key, $iv);
+        $data = mcrypt_generic($td, $input);
+        mcrypt_generic_deinit($td);
+        mcrypt_module_close($td);
+        $data = base64_encode($data);
+        return $data;
+    }
+   
+    function pkcs5_pad($text, $blocksize) {
+        $pad = $blocksize - (strlen($text) % $blocksize);
+        return $text . str_repeat(chr($pad), $pad);
+    }
+   
+     function H5decrypt($sStr, $sKey) {
+        $decrypted= mcrypt_decrypt(
+        MCRYPT_RIJNDAEL_128,
+        $sKey,
+        base64_decode($sStr),
+        MCRYPT_MODE_ECB
+    );
+  
+        $dec_s = strlen($decrypted);
+        $padding = ord($decrypted[$dec_s-1]);
+        $decrypted = substr($decrypted, 0, -$padding);
+        return $decrypted;
+    } 

@@ -54,13 +54,12 @@
           // 测试数据
            // $this->param['uid']=42;
            // $this->param['token']=16;
-           // $this->param['cardId']=30;
-           // $this->param['billMoney']=1000;
-           // $this->param['payCount']=4;
-           // $this->param['startDate']="2018-01-22";
-           // $this->param['endDate']="2018-01-29";
+           // $this->param['cardId']=21;
+           // $this->param['billMoney']=200;
+           // $this->param['payCount']=1;
+           // $this->param['startDate']="2018-01-25";
+           // $this->param['endDate']="2018-01-27";
            // $this->param['passageway']=8;
-           
            if($this->param['billMoney']/ $this->param['payCount']<200)
                 return['code'=>477];//单笔还款金额太小，请减小还款次数
            #总账单除以消费次数得到每次消费AVG平均值  如果平均值小于某个值 则不进行还款  也是浪费资源
@@ -141,8 +140,8 @@
                shuffle($date);
                 #消费几次就取几个随机日期
                $date=array_slice($date,0,$this->param['payCount']);
+               $days=$this->param['payCount'];
           }
-          // print_r($date);die;
           ########存入主表数据############################
           Db::startTrans();
            $Generation_result=new Generation([

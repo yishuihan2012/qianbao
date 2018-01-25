@@ -29,6 +29,7 @@
 		 		<th>订单手续费</th>
 		 		<th>订单状态</th>
 		 		<th>订单描述</th>
+		 		<th>订单执行时间</th>
 		 		<th>订单更新时间</th>
 		 		<th>订单创建时间</th>
 		 		<th>操作</th>
@@ -48,6 +49,7 @@
 			 <td>{{$value->order_pound}}</td>
 			 <td>@if($value->order_status == 1) 待执行 @elseif($value->order_status == 2) 成功 @elseif($value->order_status == 3) 取消 @elseif($value->order_status ==4) 带查证 @else 失败 @endif </td>
 			 <td>{{$value->order_desc}}</td>
+			 <td>{{$value->order_time}}</td>
 			 <td>{{$value->order_edit_time}}</td>
 			 <td>{{$value->order_add_time}}</td>
 			 <td>

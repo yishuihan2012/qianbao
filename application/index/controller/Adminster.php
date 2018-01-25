@@ -12,6 +12,7 @@ use think\Request;
 use think\Session;
 use think\View;
 use app\index\model\Member;
+use app\index\model\System;
 use app\index\model\Adminster as Adminsters;
 use app\index\model\AuthGroup as AuthGroups;
 use app\index\model\AuthGroupAccess as AuthGroupAccesss;
@@ -42,19 +43,22 @@ class Adminster extends Common {
 		 $this->assign('params',$params);
 		 $this->assign('groupLists',$groupLists);
 		 $this->assign('adminster_list',$adminster_list->toArray());
-		 $this->assign('button',['text'=>'新增管理员','link'=>url('/index/adminster/add')]);
+		 $this->assign('button', 
+ 		 	 [
+ 		 	 	 ['text'=>'用户口令', 'link'=>url('/index/adminster/adminster_key'),'modal'=>'modal','icon'=>'tags','theme'=>'info'],
+ 		 		 ['text'=>'新增管理','link'=>url('/index/adminster/add')],
+ 		 	 ]);
 		 return view('admin/adminster/index');
 	 }
 	 #管理员新增
 	 public function add(){
 		 if(Request::instance()->isPost()){
 		 	$r=request()->param();
-			 $code=make_rand_code();
-			 $adminster=new Adminsters;
-			 #运营商添加的用户强制为 运营商用户组
+			 $adminster=new Adminsters;			 #运营商添加的用户强制为 运营商用户组
 			 if($this->admin['adminster_group_id']==5){
 			 	$r['login_group']=5;
 			 }
+
 			 if($r['login_group']==5){
 			 	if($r['adminster_user_id']){
 			 		$admin=Adminsters::get(['adminster_user_id'=>$r['adminster_user_id']]);
@@ -174,6 +178,7 @@ class Adminster extends Common {
 			 $data['adminster_user_id']	=	$adminster_info['adminster_user_id'];
 		 else
 			 $data['adminster_user_id']	=	"";
+
 		 #获取用户组/子运营商用户
 		 if($this->admin['adminster_group_id']==5){
 			 $authGroups=AuthGroups::all(['id'=>5]);
@@ -233,5 +238,18 @@ class Adminster extends Common {
 			 $adminsterAuth->save();
 		 }
 		 echo json_encode(['code'=>200,'msg'=>'','data'=>[]]);
+	 }
+	 #更换用户登录口令
+	 public function adminster_key(){
+	 	if(Request::instance()->isPost()){
+
+	 		 $result = System::setName("adminster_key",$_POST['adminster_key']);
+	 		 $content = ($result===false) ? ['type'=>'error','msg'=>'修改失败'] : ['type'=>'success','msg'=>'修改成功'];
+			 Session::set('jump_msg', $content);
+			 #重定向控制器 跳转到列表页
+			 $this->redirect("adminster/index");
+	 	}
+	 	$this->assign("adminster_key",System::getName('adminster_key'));
+	 	return view("admin/adminster/adminster_key");
 	 }
 }
