@@ -81,7 +81,7 @@ input.labelauty + label { font: 12px "Microsoft Yahei";}
 			<div id="group_salt" class="col-sm-6"><input type="number" class="form-control group_salt  " name="group_level_money" value="" placeholder="">
 			</div>
 		</div>
-		<br/>
+		<!-- <br/>
 		<div class="row">
 			<label for="group_salt" class="col-sm-2 text-right"><b>运营商专用</b></label>
 			<div id="group_salt" class="col-sm-6">
@@ -90,7 +90,7 @@ input.labelauty + label { font: 12px "Microsoft Yahei";}
 				<option value="0">是</option>
 			</select>
 			</div>
-		</div>
+		</div> -->
 		<br/>
 		<div class="row form-group">
 			<label for="group_name" class="col-sm-2 text-right"><b>直接推荐人分佣金额:</b></label>
