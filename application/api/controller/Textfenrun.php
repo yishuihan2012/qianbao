@@ -10,8 +10,8 @@ class Textfenrun
 {
 	public function demo()
 	{
-		 $fenrun= new \app\api\controller\Commission();
-	 	 $fenrun_result=$fenrun->MemberFenRun(42,'10000',10,1,'交易手续费分润',94);
+		 $fenrun= new \app\api\controller\Commission($id=42);
+	 	 $fenrun_result=$fenrun->MemberFenRun($id,'10000',10,1,'交易手续费分润',94);
 	 	 //$fenrun_result=$fenrun->MemberCommis(9,'980','会员升级');
 	 	 dump($fenrun_result);
 	}
