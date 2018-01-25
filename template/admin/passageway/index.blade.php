@@ -45,6 +45,7 @@
                                  <button type="button" class="btn dropdown-toggle btn-sm" data-toggle="dropdown"><span class="caret"></span></button>
                                  <ul class="dropdown-menu" role="menu">
                                   <li><a  data-remote="{{url('/index/passageway/edit','id='.$list['passageway_id'])}}" data-toggle="modal" data-size="lg" href="#">修改</a></li>
+                                  <li><a class="remove" href="#" data-url="{{url('/index/passageway/delete','id='.$list['passageway_id'])}}"><i class="icon-remove"></i> 删除</a></li>
                                    <li><a  data-remote="{{url('/index/passageway/add_credit_card','id='.$list['passageway_id'])}}" data-toggle="modal" data-size="lg" href="#">添加信用卡</a></li>
                                    <li><a  href="{{url('/index/passageway/list_credit_card','id='.$list['passageway_id'])}}" >查看信用卡列表</a></li>
                                       <li><a  data-remote="{{url('/index/passageway/cashout','id='.$list['passageway_id'])}}" data-toggle="modal" data-size="lg" href="#">提现设置</a></li>
@@ -66,6 +67,21 @@
      	 $('.menu .nav .active').removeClass('active');
     	 $('.menu .nav li.passageway').addClass('active');
     	 $('.menu .nav li.passageway-manager').addClass('show');
+    $(".remove").click(function(){
+         var url=$(this).attr('data-url');
+        bootbox.confirm({
+        title: "删除文章确认",
+        message: "确定删除这篇文章吗? 删除后不可恢复!",
+        buttons: {
+            cancel: {label: '<i class="fa fa-times"></i> 点错'},
+            confirm: {label: '<i class="fa fa-check"></i> 确定'}
+        },
+        callback: function (result) {
+           if(result)
+            window.location.href=url;
+        }
+     });
+    })
 });
 </script>
 @endsection
