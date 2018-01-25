@@ -63,6 +63,8 @@ class Cashoutcallback
              }else{
                 $fenrun_result['code']=-1;
              }
+
+
 		 	 if($fenrun_result['code']=="200")
              {
  				 $order->order_fen=$fenrun_result['leftmoney'];
@@ -72,6 +74,8 @@ class Cashoutcallback
  			else	
             {
  				 $order->order_fen=-1;
+                 $order->order_buckle=$passwayitem->item_charges/100;
+                 $order->order_platform=$order->order_charge-($order->order_money*$passway->passageway_rate/100)+$passway->passageway_income;
             }
 		 	 $res = $order->save();
             	 if ($resul['qfStatus'] == 'SUCCESS' || $resul['qfStatus'] == 'IN_PROCESS') {
@@ -130,18 +134,29 @@ class Cashoutcallback
         	 //00代表成功
         	 if ($resul['status'] == '2' && $order) {
 		 	 $order->order_state=2;
+
+              $Commission_info=Commissions::where(['commission_from'=>$order->order_id,'commission_type'=>1])->find();
 		 	 //进行分润
-		 	 $fenrun= new \app\api\controller\Commission();
-		 	 $fenrun_result=$fenrun->MemberFenRun($order->order_member,$order->order_money,$order->order_passway,1,'套现手续费分润',$order->order_id);
+             if(!$Commission_info){
+    		 	 $fenrun= new \app\api\controller\Commission();
+    		 	 $fenrun_result=$fenrun->MemberFenRun($order->order_member,$order->order_money,$order->order_passway,1,'套现手续费分润',$order->order_id);
+             }else{
+                $fenrun_result['code']=-1;
+             }
+
+
+
 		 	 if($fenrun_result['code']=="200")
              {
  				 $order->order_fen=$fenrun_result['leftmoney'];
-                  $order->order_buckle=$passwayitem->item_charges/100;
+                 $order->order_buckle=$passwayitem->item_charges/100;
                  $order->order_platform=$order->order_charge-($order->order_money*$passway->passageway_rate/100)+$passway->passageway_income;
              }
  			else	
             {
  				 $order->order_fen=-1;
+                 $order->order_buckle=$passwayitem->item_charges/100;
+                 $order->order_platform=$order->order_charge-($order->order_money*$passway->passageway_rate/100)+$passway->passageway_income;
             }
 		 	 $res = $order->save();
             	 if ($resul['qfStatus'] == 'SUCCESS' || $resul['qfStatus'] == 'IN_PROCESS') {
@@ -203,8 +218,15 @@ class Cashoutcallback
              if ($resul['status'] == '2' && $order) {
              $order->order_state=2;
              //进行分润
-             $fenrun= new \app\api\controller\Commission();
-             $fenrun_result=$fenrun->MemberFenRun($order->order_member,$order->order_money,$order->order_passway,1,'套现手续费分润',$order->order_id);
+              $Commission_info=Commissions::where(['commission_from'=>$order->order_id,'commission_type'=>1])->find();
+             //进行分润
+             if(!$Commission_info){
+                 $fenrun= new \app\api\controller\Commission();
+                 $fenrun_result=$fenrun->MemberFenRun($order->order_member,$order->order_money,$order->order_passway,1,'套现手续费分润',$order->order_id);
+             }else{
+                $fenrun_result['code']=-1;
+             }
+
              if($fenrun_result['code']=="200")
              {
                  $order->order_fen=$fenrun_result['leftmoney'];
@@ -214,6 +236,8 @@ class Cashoutcallback
             else    
             {
                  $order->order_fen=-1;
+                 $order->order_buckle=$passwayitem->item_charges/100;
+                 $order->order_platform=$order->order_charge-($order->order_money*$passway->passageway_rate/100)+$passway->passageway_income;
             }
              $res = $order->save();
                  if ($resul['qfStatus'] == 'SUCCESS' || $resul['qfStatus'] == 'IN_PROCESS') {
