@@ -398,6 +398,7 @@ class Passageway extends Common{
 				$where['order_member']=["in",$adminster['children']];
 				$passageway->profit=db('commission')->alias('c')
 					->join('cash_order o','c.commission_from=o.order_id')
+					->where($where)
 					->where('c.commission_member_id',$adminster['adminster_user_id'])
 					->sum('commission_money');
 			}else{

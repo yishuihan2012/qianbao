@@ -153,6 +153,7 @@
 	 	# 【代理商机制】
 	 	# 判断顶级是否存在代理商
 	 	$this->family=find_relation($memberId);
+	 	// halt($this->family);
 	 	#剔除memberId本身
 	 	array_shift($this->family);
 
@@ -178,6 +179,7 @@
  	 	 	 if($member_also-$member_fatherAlso<=0){
  	 	 	 	 $father_result=$this->commissionOrder($memberId,$member_faterId,0,$type,$desction."-直接分润:与操作人会员级别相同或比操作人级别低,不获得分润~",$order_id);
  	 	 	 }else{
+ 	 	 	 	$this->last_also=$member_fatherAlso;
  	 	 	 	 $member_fatherAlsoMoney=$price*(($member_also-$member_fatherAlso)/100);
  	 	 	 	 $leftmoney+=$member_fatherAlsoMoney;
  	 	 	 	 $str=$desction."-直接分润:邀请的".$memberInfo['member_nick'].$action."成功,获得收益".$member_fatherAlsoMoney."元~";
@@ -206,17 +208,11 @@
  	 	 {
  	 	 	 $grandResult=$this->commissionOrder($memberId,$member_grandFaterId,0,$type,$desction."-间接分润:您的用户组不允许获得分润~",$order_id);	
  	 	 }else{
- 	 	 	 #查询他的上级是否允许分润
- 	 	 	if($member_fatherGroup=="0")
- 	 	 	{
- 	 	 		$total_also_1 =$member_also;
- 	 	 	}else{
- 	 	 		$total_also_1 =$member_fatherAlso;
- 	 	 	}
  	 	 	 #比对两级的会员费率 如果比最小的费率大 则不进行分佣
- 	 	 	 if($total_also_1-$member_grandFatherAlso<=0){
+ 	 	 	 if($this->last_also-$member_grandFatherAlso<=0){
  	 	 	 	 $grandResult=$this->commissionOrder($memberId,$member_grandFaterId,0,$type,$desction."-间接分润:与下级会员级别相同或比下级级别低,不获得分润~",$order_id);
  	 	 	 } else{
+ 	 	 	 	$this->last_also=$member_grandFatherAlso;
 	 	 	 	 $member_grandFatherAlsoMoney=$price*(($total_also_1-$member_grandFatherAlso)/100);
 	 	 	 	 $leftmoney+=$member_grandFatherAlsoMoney;
 	 	 	 	 $str1=$desction."-间接分润:邀请的".$memberInfo['member_nick'].$action."成功,获得收益".$member_grandFatherAlsoMoney."元~";
@@ -246,20 +242,12 @@
  	 	 if($member_endFatherGroup=="0"){
  	 	 	 $endFather_result=$this->commissionOrder($memberId,$member_endFatherId,0,$type,$desction."-三级分润:您的用户组不允许获得分润~",$order_id);
  	 	 }else{
- 	 	 	 if($member_grandFatherGroup=="0")
- 	 	 	 {
- 	 	 	 	 if($member_fatherGroup=="0")
- 	 	 	 	 	 $total_also_2=$member_also;
- 	 	 	 	 else 
- 	 	 	 	 	 $total_also_2=$member_fatherAlso;
- 	 	 	 }else{
- 	 	 	 	 $total_also_2=$member_grandFatherAlso-$member_fatherAlso>=0 ? $member_fatherAlso : $member_grandFatherAlso;
- 	 	 	 }
  	 	 	 #进行税率计算 比对 如果想对税率小于0 则不进行分佣
- 	 	 	 if($total_also_2-$member_endFatherAlso<=0)
+ 	 	 	 if($this->last_also-$member_endFatherAlso<=0)
  	 	 	 {
  	 	 	 	 $endFather_result=$this->commissionOrder($memberId,$member_endFatherId,0,$type,$desction."-三级分润:您的会员组级别较低,不获得分润~",$order_id);
  	 	 	 }else{
+ 	 	 	 	$this->last_also=$member_endFatherAlso;
  	 	 	 	 $member_endFatherAlsoMoney=$price*(($total_also_2-$member_endFatherAlso)/100);
  	 	 	 	 $leftmoney+=$member_endFatherAlsoMoney;
  	 	 	 	 $str2=$desction."-三级分润:邀请的".$memberInfo['member_nick'].$action."成功,获得收益".$member_endFatherAlsoMoney."元~";
@@ -277,9 +265,9 @@
 	 	 		$rate=db('passageway_item')->where(['item_passageway'=>$passwayId,'item_group'=>$v['member_group_id']])->value($field);
 	 	 		#通过费率差计算代理商的差价利润
 	 	 			$also=$this->last_also-$rate;
-	 	 			// w_log($this->last_also . '---' . $rate);
 	 	 		if($also>0){
 		 	 		$agent_money=$also*$price/100;
+		 	 		$leftmoney+=$agent_money;
 		 	 		$this->commissionOrder($memberId,$v['member_id'],$agent_money,4,'代理商利润',$this->order_id);
 		 	 		$this->last_also=$rate;
 	 	 		}
