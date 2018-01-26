@@ -119,7 +119,7 @@ class Userurl extends Controller
 				Vendor('phpqrcode.phpqrcode');
 				$QRcode=new \QRcode();
 				//生成二维码
-				$QRcode->png($url, 'autoimg/qrcode'.$tel.'.png','H',8);
+				$QRcode->png($url, 'autoimg/qrcode'.$tel.'.png','H',8,5);
 				$qrurl=ROOT_PATH.'public/autoimg/qrcode'.$tel.'.png';
 				$logourl=ROOT_PATH.'public/static/images/logo.png';
 				// 二维码加入logo
@@ -127,7 +127,7 @@ class Userurl extends Controller
 				 $logo = imagecreatefromstring(file_get_contents($logourl)); 
 				 $logo_width = imagesx($logo);
 				 $logo_height = imagesy($logo);
-				 imagecopyresampled( $QR,$logo, 115, 115, 0, 0, 60, 60, $logo_width, $logo_height); 
+				 imagecopyresampled( $QR,$logo, 165, 165, 0, 0, 70, 70, $logo_width, $logo_height); 
 				imagepng($QR, 'autoimg/qrcode'.$tel.'.png'); 
 				// 背景
 				$bg_url=Exclusive::get($exclusive_id);
@@ -615,7 +615,10 @@ class Userurl extends Controller
   public function about_us(){
   	$data=Page::get(1);
   	$server['weixin']=CustomerService::where('service_title','微信')->find();
+  	#资格证书
+  	$datas = Page::get(4);
 
+  	$this->assign("datas",$datas);
   	$server['qq']=CustomerService::where('service_title','QQ')->find();
 
   	$server['tel']=CustomerService::where('service_title','电话')->find();
