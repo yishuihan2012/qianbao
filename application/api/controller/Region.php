@@ -175,7 +175,7 @@
           $data[$key]=$value['announcement_title'];
         }
         if(empty($data))
-          $data[0]='2.0版本上线了！';
+          $data=[];
 
         return ['code'=>200, 'msg'=>'获取公告成功~', 'data'=>$data];
         
