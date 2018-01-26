@@ -26,9 +26,11 @@ class Alipaycallback
          $data=$_POST;
          $Alipay=new \app\index\controller\Alipay();
          $success=$Alipay->callback($data);
-         if($success!="SUCCESS")
-            echo "FAIL";die;
+         if($success!="SUCCESS"){
+            echo "FAIL";
+            die();
 
+         }
          $order=Upgrade::get(['upgrade_no'=>$data['out_trade_no']]);
          $post['upgrade_member_id']=$order->upgrade_member_id;
          $post['upgrade_money']=$order->upgrade_money;
