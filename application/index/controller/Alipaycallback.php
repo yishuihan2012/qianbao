@@ -28,13 +28,10 @@ class Alipaycallback
          $data=$_POST;
          $Alipay=new \app\index\controller\Alipay();
          $success=$Alipay->callback($data);
-          // file_put_contents('qaz123.txt', $success);
          if($success!="SUCCESS"){
-            echo "FAIL";die;
+            echo "FAIL";
+            die();
          }
-
-        // $data['out_trade_no']='1825349970185';
-
          $order=Upgrade::get(['upgrade_no'=>$data['out_trade_no']]);
          $post['upgrade_member_id']=$order->upgrade_member_id;
          $post['upgrade_money']=$order->upgrade_money;

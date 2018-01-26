@@ -9,7 +9,7 @@ html,body{
 }
 .f-tex-l{text-align:left;word-break: break-all;}
 .f-tex-n{white-space: normal;}
-.mui-content{padding-bottom:5%;}
+.mui-content{padding-bottom:5%;-webkit-touch-callout:none;}
 .mui-segmented-control.mui-segmented-control-inverted .mui-control-item.mui-active{color:#24a1ff;}
 .mui-segmented-control.mui-segmented-control-inverted~.mui-slider-progress-bar{background-color:#24a1ff;}
 /*form表单重写*/
