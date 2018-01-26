@@ -44,7 +44,7 @@ class Alipaycallback
 
           #修改会员通道费率
          #查询出必须入网的通道 
-         $passageway=Passageway::where(['passageway_status'=>1，'passageway_state'=>1])->select();
+         $passageway=Passageway::where(['passageway_status'=>1,'passageway_state'=>1])->select();
          foreach ($passageway as $key => $value) {
              $Membernetsedit=new \app\api\controller\Membernetsedit($member_info['member_id'],$value['passageway_id'],'M03','',$member_info['member_mobile']);
              $method=$value['passageway_method'];
