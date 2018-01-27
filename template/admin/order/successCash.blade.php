@@ -58,7 +58,7 @@
                       <th>结算卡</th>
                       <th>信用卡</th>
                       <th class="flex-col">总金额</th>
-                      <th class="flex-col">分润消耗</th> 
+                      <!-- <th class="flex-col">分润消耗</th>  -->
                       <th class="flex-col">手续费</th> 
                       <th class="flex-col">费率</th> 
                       <th>订单状态</th>
@@ -77,7 +77,7 @@
                  <td>{{$list->order_creditcard}}</td>
 
                  <td>{{$list->order_money}}</td>
-                 <td>{{$list->order_fen}}</td>
+                 <!-- <td>{{$list->order_fen}}</td> -->
                  <td>{{$list->order_charge}}</td>
                  <td>{{$list->order_also}}%</td>
 
