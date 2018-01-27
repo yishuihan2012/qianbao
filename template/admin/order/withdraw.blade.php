@@ -33,27 +33,27 @@
     <span class="input-group-addon">身份号</span>
     <input type="text" class="form-control" name="cert_member_idcard" value="{{$r['cert_member_idcard']}}" placeholder="身份号">
   </div>
-  <div class="input-group" style="width: 150px;float: left;margin-right: 10px;">
-     <span class="input-group-addon">实名状态</span>
-  <select name="member_cert" class="form-control">
+  <div class="input-group" style="width: 170px;float: left;margin-right: 10px;">
+  <span class="input-group-addon">订单状态</span>
+  <select name="withdraw_state" class="form-control">
     <option value="" >全部</option>
-    <option value="1" @if($r['member_cert']==1) selected @endif>已认证</option>
-    <option value="2" @if($r['member_cert']==2) selected @endif>未认证</option>
+    <option value="11" @if($r['withdraw_state']==11) selected @endif>申请已提交</option>
+    <option value="-11" @if($r['withdraw_state']==-11) selected @endif>申请未提交</option>
+    <option value="12" @if($r['withdraw_state']==12) selected @endif>审核通过</option>
+    <option value="-12" @if($r['withdraw_state']==-12) selected @endif>审核未通过</option>
   </select>
  
   </div>
   <div class="input-group" style="width: 180px;float: left;margin-right: 10px;">
-     <span class="input-group-addon">会员级别</span>
-  <select name="member_group_id" class="form-control">
-      <option value="" @if ($r['member_group_id']=='') selected="" @endif>全部</option>
-    @foreach($member_group as $v)
-      <option value="{{$v['group_id']}}" @if ($r['member_group_id']==$v['group_id']) selected @endif>{{$v['group_name']}}</option>
-    @endforeach
+    <span class="input-group-addon">收款方式</span>
+  <select name="withdraw_method" class="form-control">
+      <option value="" @if ($r['withdraw_method']=='') selected="" @endif>全部</option>
+      <option value="Alipay" @if($r['withdraw_method']=='Alipay') selected @endif>支付宝</option>
+      <option value="Weipay" @if($r['withdraw_method']=='Weipay') selected @endif>微信</option>
   </select>
   </div>
-
   <div class="input-group" style="width: 200px;float: left; margin-right: 10px;">
-      <input type="text" class="form-control date-picker" id="dateTimeRange" placeholder="注册时间查询" />
+      <input type="text" class="form-control date-picker" id="dateTimeRange" placeholder="提现订单创建时间" />
       <input type="hidden" name="beginTime" id="beginTime" value="" />
       <input type="hidden" name="endTime" id="endTime" value="" />
       <z class='clearTime'>X</z>

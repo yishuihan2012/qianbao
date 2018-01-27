@@ -45,7 +45,7 @@
   </div>
 
   <div class="input-group" style="width: 200px;float: left; margin-right: 10px;">
-      <input type="text" class="form-control date-picker" id="dateTimeRange" placeholder="注册时间查询" />
+      <input type="text" class="form-control date-picker" id="dateTimeRange" placeholder="红包创建时间" />
       <input type="hidden" name="beginTime" id="beginTime" value="" />
       <input type="hidden" name="endTime" id="endTime" value="" />
       <z class='clearTime'>X</z>

@@ -25,16 +25,16 @@
     <span class="input-group-addon">手机号</span>
     <input type="text" class="form-control" name="member_mobile" value="{{$r['member_mobile']}}" placeholder="手机号">
   </div>
-  <div class="input-group" style="width: 240px;float: left;margin-right: 10px;">
+  <!-- <div class="input-group" style="width: 240px;float: left;margin-right: 10px;">
     <span class="input-group-addon">身份号</span>
     <input type="text" class="form-control" name="cert_member_idcard" value="{{$r['cert_member_idcard']}}" placeholder="身份号">
-  </div>
-  <div class="input-group" style="width: 150px;float: left;margin-right: 10px;">
-     <span class="input-group-addon">实名状态</span>
-  <select name="member_cert" class="form-control">
+  </div> -->
+  <div class="input-group" style="width: 160px;float: left;margin-right: 10px;">
+     <span class="input-group-addon">订单状态</span>
+  <select name="upgrade_state" class="form-control">
     <option value="" >全部</option>
-    <option value="1" @if($r['member_cert']==1) selected @endif>已认证</option>
-    <option value="2" @if($r['member_cert']==2) selected @endif>未认证</option>
+    <option value="1" @if($r['upgrade_state']==0) selected @endif>已支付</option>
+    <option value="0" @if($r['upgrade_state']==1) selected @endif>未支付</option>
   </select>
  
   </div>
@@ -49,7 +49,7 @@
   </div>
 
 <div class="input-group" style="width: 200px;float: left; margin-right: 10px;">
-    <input type="text" class="form-control date-picker" id="dateTimeRange" placeholder="注册时间查询" />
+    <input type="text" class="form-control date-picker" id="dateTimeRange" placeholder="升级创建时间" />
     <input type="hidden" name="beginTime" id="beginTime" value="" />
     <input type="hidden" name="endTime" id="endTime" value="" />
     <z class='clearTime'>X</z>
@@ -71,28 +71,26 @@
                       <th class="flex-col">分佣金额</th> 
                       <th>支付状态</th>
                       <th>订单备注</th>
+                      <th>订单时间</th>
                       <th>操作</th>
                  </tr>
       </thead>
       <tbody>
            @foreach ($order_lists as $list)
            <tr>
-                 <td>{{$list->upgrade_id}}</td>
-                
+                 <td>{{$list->upgrade_id}}</td>                
                  <td>{{$list->member_nick}}</td>
                  <td>{{$list->upgrade_type}}</td>
                  <td>{{$list->upgrade_no}}</td>
-
                  <td>{{$list->upgrade_money}}</td>
-
                  <td>{{$list->upgrade_commission}}</td>
                  <td>@if($list->upgrade_state == 0) 未支付 @else 已支付 @endif</td>
                  <td>{{$list->upgrade_bak}}</td>
-                
+                 <td>{{$list->upgrade_creat_time}}</td>
                  <td>
-                      <div class="btn-group">
-                           <button type="button" data-toggle="modal" data-remote="{{url('/index/order/edit/id/'.$list->upgrade_id)}}" class="btn btn-default btn-sm">详细信息</button>
-                      </div>
+                  <div class="btn-group">
+                       <button type="button" data-toggle="modal" data-remote="{{url('/index/order/edit/id/'.$list->upgrade_id)}}" class="btn btn-default btn-sm">详细信息</button>
+                  </div>
                  </td>
            </tr>
            @endforeach

@@ -13,7 +13,7 @@
     <i class="icon icon-yen"></i>全部总金额 <small><strong class="text-danger">{{$count['order_money']}}</strong>元</small>
     <i class="icon icon-yen"></i>全部手续费 <small><strong class="text-danger">{{$count['order_charge']}}</strong>元</small></h3>
   </header>
-   <form action="" method="post">
+  <form action="" method="post">
     <div class="input-group" style="width: 150px;float: left;margin-right: 20px;">
     <span class="input-group-addon">用户名</span>
     <input type="text" class="form-control" name="member_nick" value="{{$r['member_nick']}}" placeholder="用户名">
@@ -24,18 +24,10 @@
     <input type="text" class="form-control" name="member_mobile" value="{{$r['member_mobile']}}" placeholder="手机号">
   </div>
    <div class="input-group" style="width: 240px;float: left;margin-right: 10px;">
-    <span class="input-group-addon">身份号</span>
-    <input type="text" class="form-control" name="cert_member_idcard" value="{{$r['cert_member_idcard']}}" placeholder="身份号">
+    <span class="input-group-addon">信用卡号</span>
+    <input type="text" class="form-control" name="order_creditcard" value="{{$r['order_creditcard']}}" placeholder="信用卡号">
   </div>
-  <div class="input-group" style="width: 150px;float: left;margin-right: 10px;">
-     <span class="input-group-addon">实名状态</span>
-  <select name="member_cert" class="form-control">
-    <option value="" >全部</option>
-    <option value="1" @if($r['member_cert']==1) selected @endif>已认证</option>
-    <option value="2" @if($r['member_cert']==2) selected @endif>未认证</option>
-  </select>
- 
-  </div>
+  
   <div class="input-group" style="width: 180px;float: left;margin-right: 10px;">
      <span class="input-group-addon">会员级别</span>
   <select name="member_group_id" class="form-control">
@@ -47,7 +39,7 @@
   </div>
 
   <div class="input-group" style="width: 200px;float: left; margin-right: 10px;">
-      <input type="text" class="form-control date-picker" id="dateTimeRange" placeholder="注册时间查询" />
+      <input type="text" class="form-control date-picker" id="dateTimeRange" placeholder="交易订单添加时间" />
       <input type="hidden" name="beginTime" id="beginTime" value="" />
       <input type="hidden" name="endTime" id="endTime" value="" />
       <z class='clearTime'>X</z>
