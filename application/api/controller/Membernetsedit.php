@@ -125,7 +125,7 @@
       if($income['code']==200)
         return true;
 
-      return $income['msg'];
+      return $income['message'];
     }
 
 
