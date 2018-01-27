@@ -15,14 +15,14 @@
   </div>
 
   <div class="input-group" style="width: 200px;float: left;margin-right: 20px;">
-    <span class="input-group-addon">手机号</span>
+    <span class="input-group-addon">需还款信用卡</span>
     <input type="text" class="form-control" name="member_mobile" value="{{$r['member_mobile']}}" placeholder="手机号">
   </div>
   <div class="input-group" style="width: 240px;float: left;margin-right: 10px;">
     <span class="input-group-addon">身份号</span>
-    <input type="text" class="form-control" name="cert_member_idcard" value="{{$r['cert_member_idcard']}}" placeholder="身份号">
+    <input type="text" class="form-control" name="cert_member_idcard" value="{{$r['generation_card']}}" placeholder="身份号">
   </div>
-  <div class="input-group" style="width: 150px;float: left;margin-right: 10px;">
+  <!-- <div class="input-group" style="width: 150px;float: left;margin-right: 10px;">
      <span class="input-group-addon">实名状态</span>
   <select name="member_cert" class="form-control">
     <option value="" >全部</option>
@@ -30,7 +30,7 @@
     <option value="2" @if($r['member_cert']==2) selected @endif>未认证</option>
   </select>
  
-  </div>
+  </div> -->
   <div class="input-group" style="width: 180px;float: left;margin-right: 10px;">
      <span class="input-group-addon">会员级别</span>
   <select name="member_group_id" class="form-control">
