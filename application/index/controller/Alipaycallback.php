@@ -59,7 +59,7 @@ class Alipaycallback
              $method=$value['passageway_method'];
              $success=$Membernetsedit->$method();
          }
-         return "SUCCESS";
+         echo "SUCCESS";die;
      }
 
 }
