@@ -163,6 +163,7 @@ use app\index\model\Member;
         );  
         // print_r($params);
         $income=repay_request($params,$merch->passageway_mech,'http://pay.mishua.cn/zhonlinepay/service/rest/creditTrans/payBindCard',$merch->iv,$merch->secretkey,$merch->signkey);
+        // print_r($income);die;
         //判断执行结果
         $is_commission=0;
         if($income['code']=='200'){
