@@ -99,8 +99,9 @@ use app\index\model\CallbackLog as CallbackLogs;
                       $order->upgrade_type="Alipay";
                       $order->upgrade_alipay_no=$post['trade_no'];
                       $order->upgrade_update_time=date("Y-m-d H:i:s",time());
-                      if (false===$order->save()) //修改失败 结束
-                           return "FAIL";
+                      if (false===$order->save()){ //修改失败 结束
+                          return "FAIL";
+                      }
                       return "SUCCESS";
                  }
            } catch (\Exception $e) {
