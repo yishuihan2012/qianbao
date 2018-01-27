@@ -30,8 +30,13 @@
 			  <tbody  class="bg-w" align="center">
 			    <tr>
 			      <td>费率</td>
+
 			      @foreach($v['details'] as $d)
-			      	<td>{{$d['item_rate']}}</td>
+			      	@if($v['passageway_also'] == 1)
+			      		<td>{{$d['item_rate']}}</td>
+			      	@else
+			      		<td>{{$d['item_also']}}</td>
+			      	@endif
 			      @endforeach
 <!-- 			      <td>0.49%</td>
 			      <td>0.45%</td>
