@@ -78,6 +78,7 @@ class Userurl extends Controller
 	    $this->assign("list",$list);
 	    return view("api/logic/share_code_list");
 	}
+
 	#取现现成功页面
 	public function calllback_success(){
 		$request = $_REQUEST;

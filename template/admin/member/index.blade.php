@@ -11,9 +11,7 @@
     </h3>
      <h3>
     @foreach($group_user as $key => $val)
-   
       <i class="icon-list-ul"></i> {{$val['group_name']}} <small>共 <strong class="text-danger">{{$val['count']}}</strong> 人</small>
-   
     @endforeach
      </h3>
   </header>
@@ -53,7 +51,7 @@
   </div>
 
 <div class="input-group" style="width: 200px;float: left; margin-right: 10px;">
-    <input type="text" class="form-control date-picker" placeholder="注册时间查询" id="dateTimeRange"  />
+    <input type="text" class="form-control date-picker" id="dateTimeRange" placeholder="注册时间" />
     <input type="hidden" name="beginTime" id="beginTime" value="" />
     <input type="hidden" name="endTime" id="endTime" value="" />
     <z class='clearTime'>X</z>
