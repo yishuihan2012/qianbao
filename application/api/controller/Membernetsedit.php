@@ -11,7 +11,7 @@
  use app\index\model\MemberCashcard;
  use app\index\model\Passageway;
  use app\index\model\System;
- use app\index\model\MemberNet;
+ use app\index\model\MemberNet as MemberNetz;
  use app\index\model\PassagewayItem;
 
  class Membernetsedit{ 
@@ -45,7 +45,7 @@
                       $this->error=454; 
 
                     #获取入网信息
-                 $this->membernet=MemberNet::get(['net_member_id'=>$memberId]);
+                 $this->membernet=MemberNetz::get(['net_member_id'=>$memberId]);
                  if(!$this->passway)
                       $this->error=454; 
 
