@@ -304,7 +304,7 @@ class CashOut
 		            }else{
 		              //返回我们自己建的html
 			            $res['data']=[
-	            			'type'=>2,
+	            			'type'=>1,
 	            			'url'=>request()->domain() . "/api/Userurl/passway_rongbang_openpay/treatycode/".$result['treatycode']."/smsseq/".$result['smsseq']."/memberId/" . $this->member_infos->member_id . "/passwayId/" . $this->passway_info->passageway_id,
 		            	];
 		            }
