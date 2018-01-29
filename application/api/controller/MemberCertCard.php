@@ -213,8 +213,9 @@
           
                #信用卡有效状态校验
                $card_validate=BankCert($creditcard['card_bankno'],$creditcard['card_phone'],$creditcard['card_idcard'],$creditcard['card_name']);
-               if($card_validate['reason']!='成功')
-                     return ['code'=>351];
+               if($card_validate['error_code']!=0){
+                 return ['code'=>351];
+               }
                $state=$card_validate['result']['result']=='T' ? '1' : '0';
                if($card_validate['result']['result']=='P')
                      return ['code'=>440];
