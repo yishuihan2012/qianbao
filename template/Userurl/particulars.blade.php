@@ -52,11 +52,11 @@
 			        		<div class="ftr">
 			        			<p class="f20">
 			        				@if($v['log_relation_type']==2)
-			        				@if($v['info']=='审核未通过')
-			        				   +
-			        				@else
-				        		      {{$v['log_wallet_type']==1 ? '+' : '-'}}
-			        				@endif
+				        				@if($v['info']=='审核未通过')
+				        				   +
+				        				@else
+					        		      {{$v['log_wallet_type']==1 ? '+' : '-'}}
+				        				@endif
 			        				@else
 			        					 {{$v['log_wallet_type']==1 ? '+' : '-'}}
 			        				@endif
