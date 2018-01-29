@@ -57,15 +57,16 @@ class Passageway extends Common{
 	 	 	 	$group_id=strrev(strstr(strrev($k),strrev('_'),true));
 	 	 	 	$key_fix=strtok($k,'_');
 	 	 	 	//该通道为套现 则丢弃 代还数据 否则 丢弃 套现数据
-	 	 	 	#杨注释掉的
 	 	 	 	if($passageway->passageway_also==1){
 	 	 	 		if($key_fix=='also')continue;
 	 	 	 	}else{
 	 	 	 		if($key_fix=='rate')continue;
+
 	 	 	 	}
 	 	 	 	//以用户组为键 转储到data
 	 	 	 	$data[$group_id]['item_'.$key_fix]=$v;
- 	 	 	} 	
+ 	 	 	} 
+ 	 	 	
  	 	 	 #查询库中是否存在数据
  	 	 	 $passage=PassagewayItem::where(['item_passageway'=>Request::instance()->param('id')])->select();
  	 	 	 if($passage){
