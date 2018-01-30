@@ -63,7 +63,7 @@ input.labelauty + label { font: 12px "Microsoft Yahei";}
 			 	 	 <button type="button" class="btn btn-link uploader-btn-start"><i class="icon icon-cloud-upload"></i> 开始上传</button>
 			 	 </div>
 			 </div>
-			 <input type="hidden" class="form-control " name="group_thumb" value="">
+			 <input type="hidden" class="form-control " name="group_thumb" value="{{$group->group_thumb}}">
 		 </div>		
 	 </div>
 
