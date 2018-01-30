@@ -332,10 +332,11 @@ class Userurl extends Controller
 			$list[$key]['current_time']=date("H:i",strtotime($value['order_time']));
 			if($value['order_status']=='-1' && $is_first==0){//失败
 				$list[$key]['is_first']=1;
+				$is_first=1;
 			}
-			$is_first=1;
+			
 		}
-
+		// print_r($list);die;
 		$data=[];
 		//以日期为键
 		foreach ($list as $key => $value) {
@@ -357,6 +358,7 @@ class Userurl extends Controller
         		$order_pound+=$vv['order_pound'];
         	}
         }
+        // print_r($data);die;
 		$this->assign('order_pound',$order_pound);
 		$this->assign('generation',$generation);
 		$this->assign('order',$data);
@@ -821,8 +823,8 @@ class Userurl extends Controller
   //重新执行某个计划
   public function reset_one_repayment($plan_id){
   		$membernet=new con\Membernet();
-  		$membernet->action_single_plan($generation_id);
-  		echo json_encode(['code'=>200,'msg'=>"重新执行成功"]);
+  		$res=$membernet->action_single_plan($plan_id);
+  		echo $res;die;
   }
   #金易付验证码页面
   public function jinyifu($memberId,$passagewayId,$cardId,$price){

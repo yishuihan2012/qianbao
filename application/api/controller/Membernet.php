@@ -119,13 +119,17 @@ use app\index\model\Member;
         // print_r($datas);die;
 
         $value=GenerationOrder::where(['order_id'=>$id])->find();
-        // print_r($value);die;
-        if($value['order_type']==1){ //消费
-            $res=$this->payBindCard($value);
-        }else if($value['order_type']==2){//提现
-            $res=$this->transferApply($value);
+        try {
+            // print_r($value);die;
+            if($value['order_type']==1){ //消费
+                $res=$this->payBindCard($value);
+            }else if($value['order_type']==2){//提现
+                $res=$this->transferApply($value);
+            }
+             return json_encode(['code'=>200,'msg'=>'执行成功。']);
+        } catch (Exception $e) {
+            return json_encode(['code'=>101,'msg'=>'执行失败，请联系客服。']);
         }
-        print_r($res);die;
     }
      //7绑卡支付
       //http://pay.mishua.cn/zhonlinepay/service/rest/creditTrans/payBindCard
