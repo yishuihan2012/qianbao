@@ -172,7 +172,6 @@ namespace app\index\controller;
 	 			$dangqian_group = Db::table("wt_member_group")->field("group_salt,group_id,group_level_money")->where(['group_id' => $info['member_group_id']])->find();
 	 			$data['member_group_id'] = $group_id['group_id'];
 	 			#更新用户的分组id
-	 			if($group_id['group_salt']>$dangqian_group['group_salt']){
 	 				if($info['member_group_id'] == request()->param("member_group_id")){
 		 				$content = ['type'=>'error','msg'=>'等同当前等级'];
 		 			}else{
@@ -210,16 +209,16 @@ namespace app\index\controller;
 				 			//判断用户有没有上级，或者是判断后台有没有设置分佣。
 
 				 			if($info['relation_parent_id']!=0 && $status==1){
-				 				$results = $Commission->MemberCommis(request()->param("member_id"),$upgrade_data['upgrade_commission'],"后台管理员升级"); 
+				 				if($group_id['group_salt']>$dangqian_group['group_salt']){
+				 					$results = $Commission->MemberCommis(request()->param("member_id"),$upgrade_data['upgrade_commission'],"后台管理员升级"); 
+				 				}
 				 			}
 				 			$content = ($result===false) ? ['type'=>'error','msg'=>'升级会员失败'] : ['type'=>'success','msg'=>'升级会员成功'];
 			 			}else{
 			 				$content = ['type'=>'error','msg'=>'升级会员失败'];
 			 			}	
 			 		}
-	 			}else{
-	 				$content =  ['type'=>'error','msg'=>'升级的用户组级别小于当前用户组级别，不可操作。'] ;	
-	 			}
+	 			
 	 			
 	 		}else{
 	 			$content =  ['type'=>'error','msg'=>'该用户还没有实名认证，不可以升级。'] ;		
