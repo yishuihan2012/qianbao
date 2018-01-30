@@ -324,14 +324,19 @@ class Userurl extends Controller
 		if(!$order){
 			echo '<li style="margin-top:13rem;text-align:center;list-style:none;font-size:1.4rem;color:#999;">暂无计划详情</li>';die;
 		}
+		$is_first=0;
 		foreach ($order as $key => $value) {
 			$value=$value->toArray();
-			// print_r($value);die;
 			$list[$key]=$value;
 			$list[$key]['day_time']=date("m月d日",strtotime($value['order_time']));
 			$list[$key]['current_time']=date("H:i",strtotime($value['order_time']));
+			if($value['order_status']=='-1' && $is_first==0){//失败
+				$list[$key]['is_first']=1;
+				$is_first=1;
+			}
+			
 		}
-
+		// print_r($list);die;
 		$data=[];
 		//以日期为键
 		foreach ($list as $key => $value) {
@@ -353,6 +358,7 @@ class Userurl extends Controller
         		$order_pound+=$vv['order_pound'];
         	}
         }
+        // print_r($data);die;
 		$this->assign('order_pound',$order_pound);
 		$this->assign('generation',$generation);
 		$this->assign('order',$data);
@@ -623,7 +629,6 @@ class Userurl extends Controller
   	$server['weixin']=CustomerService::where('service_title','微信')->find();
   	#资格证书
   	$datas = Page::get(4);
-
   	$this->assign("datas",$datas);
   	$server['qq']=CustomerService::where('service_title','QQ')->find();
 
@@ -814,8 +819,13 @@ class Userurl extends Controller
   	$membernet=new con\Membernet();
   	return json_encode($membernet->cancle_plan($generation_id));
   }
-
-    #金易付验证码页面
+  //重新执行某个计划
+  public function reset_one_repayment($plan_id){
+  		$membernet=new con\Membernet();
+  		$res=$membernet->action_single_plan($plan_id);
+  		echo $res;die;
+  }
+  #金易付验证码页面
   public function jinyifu($memberId,$passagewayId,$cardId,$price){
 
   	if(request()->ispost()){

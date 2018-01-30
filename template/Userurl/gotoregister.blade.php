@@ -12,10 +12,12 @@
 	</head>
 	<body>
 		<div class="mui-content bg-w" >
-		    <div class="exc-code2" id="shareLink">
+		    <div class="exc-code" id="shareLink">
 			  <img src="{{$share_thumb}}">
-			  <a class="my-btn-r f16" href="{{$url}}" id="shareCode">立即注册</a>
 			</div>
+			<nav class="mui-bar mui-bar-tab wrap bg-w dis-flex-ar" id="muiBarTab">
+			  <a class="main-color f16" href="{{$url}}" id="shareCode">立即注册</a>
+			</nav>
 		</div>
 		<script src="/static/js/mui.min.js"></script>
 		<script type="text/javascript">
@@ -25,7 +27,7 @@
 			mui.init();
 			mui.ready(function(){
 				var _h =  window.screen.availHeight;
-				document.getElementById("shareLink").style.height = _h - 150 +"px";
+				document.getElementById("shareLink").style.height = _h - 130 +"px";
 				//分享二维码
 			});
 		</script>

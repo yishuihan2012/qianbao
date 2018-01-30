@@ -83,10 +83,10 @@
 	 </div>
 
 	 <div class="row form-group">
-		 <label for="passageway_also" class="col-sm-3 text-right"><b>是代还还是提现:</b></label>
+		 <label for="passageway_also" class="col-sm-3 text-right"><b>是代还还是快捷支付:</b></label>
 		 <div id="passageway_also" class="col-sm-6">
 			 <select name="passageway_also" class="form-control passageway_also">
-				 <option value="1">提现</option>
+				 <option value="1">快捷支付</option>
 				 <option value="2">代还</option>
 			 </select>
 		 </div>		
