@@ -152,10 +152,10 @@
 
 	 	# 【代理商机制】
 	 	# 判断顶级是否存在代理商
-	 	$this->family=find_relation($memberId);
+	 	// $this->family=find_relation($memberId);
 	 	// halt($this->family);
 	 	#剔除memberId本身
-	 	array_shift($this->family);
+	 	// array_shift($this->family);
 
  	 	 //获取用户直接上级ID
  	 	 $member_faterId=MemberRelation::where('relation_member_id',$memberId)->value('relation_parent_id');
@@ -188,7 +188,7 @@
  	 	 	 }
  	 	 }
 	 	#剔除直接上级
-	 	array_shift($this->family);
+	 	// array_shift($this->family);
  	 	 #查询间接上级
  	 	 $member_grandFaterId=MemberRelation::where('relation_member_id',$member_faterId)->value('relation_parent_id');
  	 	 #如果没有间接上级的话 则分润完成 
@@ -222,7 +222,7 @@
  	 	 }
 
 	 	#剔除间接上级
-	 	array_shift($this->family);
+	 	// array_shift($this->family);
 
  	 	 #查询第三级上级
  	 	 $member_endFatherId=MemberRelation::where('relation_member_id',$member_grandFaterId)->value('relation_parent_id');
@@ -256,35 +256,35 @@
  	 	 	 }
  	 	 }
 	 	#剔除三级上级
-	 	array_shift($this->family);
+	 	// array_shift($this->family);
 	 	#代理商利润分配
 	 	end:
-	 	foreach ($this->family as $k => $v) {
-	 	 	#不可见用户组 即为代理商用户组
-	 	 	if($v['group_visible']==0){
-	 	 		$rate=db('passageway_item')->where(['item_passageway'=>$passwayId,'item_group'=>$v['member_group_id']])->value($field);
-	 	 		#通过费率差计算代理商的差价利润
-	 	 			$also=$this->last_also-$rate;
-	 	 		if($also>0){
-		 	 		$agent_money=$also*$price/100;
-		 	 		$leftmoney+=$agent_money;
-		 	 		$this->commissionOrder($memberId,$v['member_id'],$agent_money,4,'代理商利润',$this->order_id);
-		 	 		$this->last_also=$rate;
-	 	 		}
-	 	 	}
-	 	}
-		#系统利润
-	 	$system_Money=$profit-$leftmoney;
-		$commission= new Commissions([
-			'commission_member_id'=>-1,// -1 代表是平台的利润
-			'commission_childen_member'	=>$memberId,
-			'commission_type'		=>4,
-			'commission_money'		=>$system_Money,
-			'commission_state'		=>1,
-			'commission_desc'		=>'平台利润',
-			'commission_from'		=>$order_id,
-		]);
-		$commission->save();
+	 // 	foreach ($this->family as $k => $v) {
+	 // 	 	#不可见用户组 即为代理商用户组
+	 // 	 	if($v['group_visible']==0){
+	 // 	 		$rate=db('passageway_item')->where(['item_passageway'=>$passwayId,'item_group'=>$v['member_group_id']])->value($field);
+	 // 	 		#通过费率差计算代理商的差价利润
+	 // 	 			$also=$this->last_also-$rate;
+	 // 	 		if($also>0){
+		//  	 		$agent_money=$also*$price/100;
+		//  	 		$leftmoney+=$agent_money;
+		//  	 		$this->commissionOrder($memberId,$v['member_id'],$agent_money,4,'代理商利润',$this->order_id);
+		//  	 		$this->last_also=$rate;
+	 // 	 		}
+	 // 	 	}
+	 // 	}
+		// #系统利润
+	 // 	$system_Money=$profit-$leftmoney;
+		// $commission= new Commissions([
+		// 	'commission_member_id'=>-1,// -1 代表是平台的利润
+		// 	'commission_childen_member'	=>$memberId,
+		// 	'commission_type'		=>4,
+		// 	'commission_money'		=>$system_Money,
+		// 	'commission_state'		=>1,
+		// 	'commission_desc'		=>'平台利润',
+		// 	'commission_from'		=>$order_id,
+		// ]);
+		// $commission->save();
 
 	 	return ['code'=>200, 'leftmoney'=>$leftmoney];
  	 }
