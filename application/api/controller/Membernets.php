@@ -346,7 +346,7 @@
         if($data['ret']==0){
           $data=$data['data'];
           if($data['respcode']==2){
-            //支付成功 更新套现订单表状态
+            //支付成功 更新快捷支付订单表状态
             $order=db('cash_order')->where('order_no',$data['ordernumber'])->find();
             //仅在待支付情况下操作
             if($order['order_state']==1){

@@ -56,9 +56,9 @@ class Dashboard extends Common
             'count'          => Member::where($whereMember)->count(),#当前用户总数量
     		'cert'           => Member::where(array_merge($whereMember,['member_cert'=>1]))->count(),#当前用户总数量
     		'Todaycount'     => Member::where($whereMember)->whereTime('member_creat_time','d')->count(),#今日用户数量
-            'CashOrdercount' => CashOrder::where(array_merge($where,['order_state'=>2]))->count(),//当前套现总数量
+            'CashOrdercount' => CashOrder::where(array_merge($where,['order_state'=>2]))->count(),//当前快捷支付总数量
             'GenerationOrdercount' => GenerationOrder::where(array_merge($where,['order_status'=>2]))->count(),//当前还款总数量
-            'CashOrderSum' => round(CashOrder::where(array_merge($where,['order_state'=>2]))->sum('order_money'),2),//当前套现总数量
+            'CashOrderSum' => round(CashOrder::where(array_merge($where,['order_state'=>2]))->sum('order_money'),2),//当前快捷支付总数量
             'GenerationOrderSum' => round(GenerationOrder::where(array_merge($where,['order_status'=>2]))->sum('order_money'),2),//当前还款总数量
     	];
         $membergroup =new  MemberGroup();
@@ -78,7 +78,7 @@ class Dashboard extends Common
             if($v['passageway_also']==1){
                 $where['order_passway']=$v['passageway_id'];
                 $where['order_state']=2;
-                //套现通道
+                //快捷支付通道
                 $passway[$k]['todaysum']=round(CashOrder::where($where)->whereTime('order_add_time','today')->sum('order_money'),2);
                 $passway[$k]['yesterdaysum']=round(CashOrder::where($where)->whereTime('order_add_time','yesterday')->sum('order_money'),2);
                 $passway[$k]['weeksum']=round(CashOrder::where($where)->whereTime('order_add_time','week')->sum('order_money'),2);
