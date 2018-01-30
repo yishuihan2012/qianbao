@@ -128,12 +128,16 @@ class Userurl extends Controller
 				 $logo = imagecreatefromstring(file_get_contents($logourl)); 
 				 $logo_width = imagesx($logo);
 				 $logo_height = imagesy($logo);
+<<<<<<< HEAD
+				 imagecopyresampled( $QR,$logo, 165, 165, 0, 0, 70, 70, $logo_width, $logo_height); 
+=======
 				 #动态计算取中心点 让你丫不居中
 				 $qr_width = imagesx($QR);
 				 $scale=0.18;
 				 $logo_line=$scale*$qr_width;
 				 $xy=$qr_width*0.5-$logo_line*0.5;
 				 imagecopyresampled( $QR,$logo, $xy, $xy, 0, 0, $logo_line, $logo_line, $logo_width, $logo_height); 
+>>>>>>> 518837da9d6af233c8eb5c736653572bb5696f8b
 				imagepng($QR, 'autoimg/qrcode'.$tel.'.png'); 
 				// 背景
 				$bg_url=Exclusive::get($exclusive_id);
@@ -411,7 +415,7 @@ class Userurl extends Controller
 		$page = empty(input("page"))?1:input("page");
 		if($_POST){
 			$start = ($page-1)*10;
-			$CashOrder=CashOrder::with("passageway")->where(['order_member'=>$this->param['uid'],"order_money" => ["<>",0]])->order('order_id desc')->limit($start,10)->select();
+			$CashOrder=CashOrder::with("passageway")->where(['order_member'=>$this->param['uid'],'order_money' => ['<>' , 0]])->order('order_id desc')->limit($start,10)->select();
 
 			foreach ($CashOrder as $key => $value) {
 			 	$CashOrder[$key]["bank_ons"] = substr($value['order_card'], -4);
@@ -419,8 +423,8 @@ class Userurl extends Controller
 			}
 			echo json_encode(["data" => $CashOrder, "page" => $page+1]);die;
 		}
-		$CashOrder=CashOrder::with("passageway")->where(['order_member'=>$this->param['uid'],"order_money" => ["<>",0]])->order('order_id desc')->limit(0,10)->select();
-		$count = CashOrder::where(['order_member'=>$this->param['uid'],"order_money" => ["<>",0]])->order('order_id desc')->count();
+		$CashOrder=CashOrder::with("passageway")->where(['order_member'=>$this->param['uid'],'order_money' => ['<>' , 0]])->order('order_id desc')->limit(0,10)->select();
+		$count = CashOrder::where(['order_member'=>$this->param['uid'],'order_money' => ['<>' , 0]])->order('order_id desc')->count();
 			$pages = ceil($count/10);
 			#截取银行卡号
 		foreach ($CashOrder as $key => $value) {
@@ -657,8 +661,7 @@ class Userurl extends Controller
   }
   #收支明细
   public function particulars($month=null){
-  	// $this->param['uid'] = 42;
-	// $this->checkToken();
+	$this->checkToken();
 	$data=[];
   	$data['in']=0;
   	$data['out']=0;
@@ -874,7 +877,7 @@ class Userurl extends Controller
   	 $Commission_info=Commissions::where(['commission_from'=>$order->order_id,'commission_type'=>1])->find();
      if(!$Commission_info){
             $fenrun= new \app\api\controller\Commission();
-            $fenrun_result=$fenrun->MemberFenRun($order->order_member,$order->order_money,$order->order_passway,1,'快捷支付手续费分润',$order->order_id);
+            $fenrun_result=$fenrun->MemberFenRun($order->order_member,$order->order_money,$order->order_passway,1,'套现手续费分润',$order->order_id);
      }else{
         $fenrun_result['code']=-1;
      }
