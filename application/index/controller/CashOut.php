@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  取现接口 套现 
+ * @version  取现接口 快捷支付 
  * @authors Bill(755969423@qq.com)
  * @date    2017-09-29 16:03:05
  * @version $Bill$
@@ -81,7 +81,7 @@ class CashOut
            }
       }  
 	 /**
-	 * @version  米刷 套现 
+	 * @version  米刷 快捷支付 
 	 * @authors bill(755969423@qq.com)
 	 * @date    2017-12-21 16:03:05
 	 * @version $Bill$
@@ -131,7 +131,7 @@ class CashOut
 	            $datas = trim($datas);
 	            $datas = substr($datas, 0, strpos($datas, '}') + 1);
 	            $resul = json_decode($datas, true);
-	            //写入套现订单
+	            //写入快捷支付订单
 	            $order_result=$this->writeorder($tradeNo, $price, $price*($this->also->item_rate/100) ,$description,$resul['transNo']);
 	      	 if(!$order_result)
 	      	 	 return ['code'=>327];
@@ -146,12 +146,12 @@ class CashOut
 	 }
 
 	 /**
-	 * @version  快捷支付 0.23费率套现 
+	 * @version  快捷支付 0.23费率快捷支付 
 	 * @authors bill(755969423@qq.com)
 	 * @date    2017-12-23 16:25:05
 	 * @version $Bill$
 	 */
-	 public function quickPay023($tradeNo,$price,$description='快捷支付 0.23费率套现')
+	 public function quickPay023($tradeNo,$price,$description='快捷支付 0.23费率快捷支付')
 	 {
 	 	 #检测通道是否需要入网
 	 	 if($this->passway_info->passageway_status=="1")
@@ -194,12 +194,12 @@ class CashOut
            $result=curl_post($this->passway_info->cashout->cashout_url,'post',$param,'Content-Type: application/x-www-form-urlencoded; charset=gbk');
            $data=json_decode(mb_convert_encoding($result, 'utf-8', 'GBK,UTF-8,ASCII'),true);
  		 if ($data['respCode'] == 00) {
-	           $order_result=$this->writeorder($tradeNo, $price, $price*($this->also->item_rate/100) ,$description,$data['traceno']);//写入套现订单
+	           $order_result=$this->writeorder($tradeNo, $price, $price*($this->also->item_rate/100) ,$description,$data['traceno']);//写入快捷支付订单
 	      	 if(!$order_result)
 	      	 	 return ['code'=>327];
 	           return ['code'=>200,'msg'=>'订单获取成功~' , 'data'=>['url'=>$data['barCode'],'type'=>2]];
 	      }else{
-	      	 return ['code'=>400, 'msg'=>$data['message'].',套现失败~'];
+	      	 return ['code'=>400, 'msg'=>$data['message'].',快捷支付失败~'];
 	      }
 	 }
 
@@ -370,7 +370,7 @@ class CashOut
             		'url'=>base64_decode($result['html']),
             	];
 	 	 	}
-            //写入套现订单
+            //写入快捷支付订单
             $order_result=$this->writeorder($tradeNo, $price, $price*($this->also->item_rate/100) ,$description,$result['ordercode']);
 	      	if(!$order_result)
 	      	 	return ['code'=>327,'data'=>'无此订单'];
@@ -472,12 +472,12 @@ class CashOut
 	        // return ['code'=>200,'msg'=>'订单获取成功~11' , 'data'=>$data];
 	        var_dump($data);die;
  		 if ($data['resCode'] == 00) {
-	           $order_result=$this->writeorder($tradeNo, $price, $price*($this->also->item_rate/100) ,$description,$data['traceno']);//写入套现订单
+	           $order_result=$this->writeorder($tradeNo, $price, $price*($this->also->item_rate/100) ,$description,$data['traceno']);//写入快捷支付订单
 	      	 if(!$order_result)
 	      	 	 return ['code'=>327];
 	           return ['code'=>200,'msg'=>'订单获取成功~' , 'data'=>['url'=>$data['barCode'],'type'=>2]];
 	      }else{
-	      	 return ['code'=>400, 'msg'=>$data['resMsg'].',套现失败~'];
+	      	 return ['code'=>400, 'msg'=>$data['resMsg'].',快捷支付失败~'];
 	      }
 	 }
 
@@ -518,12 +518,12 @@ class CashOut
             		'type'=>2,
             		'url'=>'<!DOCTYPE html><html lang="zh-cn"><head>'.$output,
             	];
-            $order_result=$this->writeorder($tradeNo, $price, $price*($this->also->item_rate/100) ,$description,$tradeNo);//写入套现订单
+            $order_result=$this->writeorder($tradeNo, $price, $price*($this->also->item_rate/100) ,$description,$tradeNo);//写入快捷支付订单
             if(!$order_result)
 	      	 	 return ['code'=>327];
 	           return ['code'=>200,'msg'=>'订单获取成功~' , 'data'=>$res];
 		}else{
-			return ['code'=>400, 'msg'=>$error[1][0].',套现失败~'];
+			return ['code'=>400, 'msg'=>$error[1][0].',快捷支付失败~'];
 		}	 	
 	 }
 
@@ -560,7 +560,7 @@ class CashOut
             		'type'=>2,
             		'url'=>'<!DOCTYPE html><html lang="zh-cn"><head>'.$output,
             	];
-            $order_result=$this->writeorder($tradeNo, $price, $price*($this->also->item_rate/100) ,$description,$tradeNo);//写入套现订单
+            $order_result=$this->writeorder($tradeNo, $price, $price*($this->also->item_rate/100) ,$description,$tradeNo);//写入快捷支付订单
             if(!$order_result)
 	      	 	 return ['code'=>327];
 	           return ['code'=>200,'msg'=>'订单获取成功~' , 'data'=>$res];
@@ -601,7 +601,7 @@ class CashOut
             		'type'=>2,
             		'url'=>'<!DOCTYPE html><html lang="zh-cn"><head>'.$output,
             	];
-            $order_result=$this->writeorder($tradeNo, $price, $price*($this->also->item_rate/100) ,$description,$tradeNo);//写入套现订单
+            $order_result=$this->writeorder($tradeNo, $price, $price*($this->also->item_rate/100) ,$description,$tradeNo);//写入快捷支付订单
             if(!$order_result)
 	      	 	 return ['code'=>327];
 	           return ['code'=>200,'msg'=>'订单获取成功~' , 'data'=>$res];

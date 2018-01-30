@@ -42,7 +42,7 @@
 			
 		</div>
 		<div class="input-group" style="margin-top:10px;">
-		  <span class="input-group-addon">套现税率</span>
+		  <span class="input-group-addon">快捷支付税率</span>
 		  <input type="text" class="form-control" style="width: 200px;" name="item_rate" value="">
 		</div>
 

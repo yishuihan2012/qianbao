@@ -56,7 +56,7 @@
               $datas = trim($datas);
               $datas = substr($datas, 0, strpos($datas, '}') + 1);
               $resul = json_decode($datas, true);
-              //写入套现订单
+              //写入快捷支付订单
               $order_result=$this->writeorder($tradeNo, $price, $price*($this->also->item_rate/100) ,$description='米刷测试',$resul['transNo']);
              if(!$order_result)
                   return ['code'=>327];

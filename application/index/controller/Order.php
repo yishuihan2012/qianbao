@@ -230,7 +230,7 @@ class Order extends Common{
 	 	return view("admin/order/toexminewithdraw");
 	 }
 
-	  #套现订单
+	  #快捷支付订单
 	 public function cash(){
 	 	$r=request()->param();
 	 	 #搜索条件

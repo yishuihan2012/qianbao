@@ -35,6 +35,7 @@ use app\index\model\Appversion;
 use app\index\model\SmsCode; 
 use app\index\model\ArticleCategory;
 use app\index\model\Article;
+use app\index\model\WalletLog;
 /**
  *  此处放置一些固定的web地址
  */
@@ -651,43 +652,24 @@ class Userurl extends Controller
   }
   #收支明细
   public function particulars($month=null){
-	$this->checkToken();
-	if(!$month)$month=date('Y-m');
-	//月初
-	$monthstart=strtotime($month);
-	//月末
-	$monthend=strtotime(date('Y-m',strtotime('+1 month',strtotime($month))));
-  	//表头数据
-  	$data=[];
-  	$data['month']=$month;
+  	// $this->param['uid'] = 42;
+	// $this->checkToken();
+	$data=[];
   	$data['in']=0;
   	$data['out']=0;
-  	$list=db('wallet_log')->alias('l')
-  		->join('wallet w','l.log_wallet_id=w.wallet_id')
-  		->where(['w.wallet_member'=>$this->param['uid']])
-  		->where('log_add_time','between time',[$monthstart,$monthend])
-  		->order('log_add_time desc')
-  		->select();
-	foreach ($list as $k => $v) {
-		if($v['log_wallet_type']==1){
-			$data['in']+=$v['log_wallet_amount'];
-		}else{
-			$data['out']+=$v['log_wallet_amount'];
-		}
-		switch ($v['log_relation_type']) {
-			//提现操作
-			case 2:
-				$state=db('withdraw')->where('withdraw_id',$v['log_relation_id'])->value('withdraw_state');
-				if($state)$list[$k]['info']=state_info($state);
-				break;
-			
-			default:
-				# code...
-				break;
-		}
+  	//手动下滑获取数据
+	if($_POST){
+		$page = isset($_POST['page'])?$_POST['page']:1;
+		$result = WalletLog::pages($this->param['uid'],$page,$data);
+		$list = $result['list'];
+		exit(json_encode($list));
 	}
-  	$this->assign('data',$data);
-  	$this->assign('list',$list);
+  	//表头数据
+  	$result = WalletLog::pages($this->param['uid'],1,$data);
+  	//总的页数
+  	$this->assign("allpage" , $result['allpage']);
+  	$this->assign('data' , $result['data']);
+  	$this->assign('list' , $result['list']);
   	return view("Userurl/particulars");
   }
   #账单详情
@@ -887,7 +869,7 @@ class Userurl extends Controller
   	 $Commission_info=Commissions::where(['commission_from'=>$order->order_id,'commission_type'=>1])->find();
      if(!$Commission_info){
             $fenrun= new \app\api\controller\Commission();
-            $fenrun_result=$fenrun->MemberFenRun($order->order_member,$order->order_money,$order->order_passway,1,'套现手续费分润',$order->order_id);
+            $fenrun_result=$fenrun->MemberFenRun($order->order_member,$order->order_money,$order->order_passway,1,'快捷支付手续费分润',$order->order_id);
      }else{
         $fenrun_result['code']=-1;
      }

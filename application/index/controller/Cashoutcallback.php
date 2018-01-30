@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  CashOutCallBack 套现回调 套现 
+ * @version  CashOutCallBack 快捷支付回调 快捷支付 
  * @authors John(1160608332@qq.com)
  * @date    2017-09-29 16:03:05
  * @version $Bill$
@@ -18,7 +18,7 @@ class Cashoutcallback
 {
 
 	 /**
-	 * @version  米刷套现
+	 * @version  米刷快捷支付
 	 * @authors bill(755969423@qq.com)
 	 * @date    2017-12-23 16:25:05
      * @edit   xuchengcheng 2018-01-22 
@@ -59,7 +59,7 @@ class Cashoutcallback
              $Commission_info=Commissions::where(['commission_from'=>$order->order_id,'commission_type'=>1])->find();
              if(!$Commission_info){
                     $fenrun= new \app\api\controller\Commission();
-                    $fenrun_result=$fenrun->MemberFenRun($order->order_member,$order->order_money,$order->order_passway,1,'套现手续费分润',$order->order_id);
+                    $fenrun_result=$fenrun->MemberFenRun($order->order_member,$order->order_money,$order->order_passway,1,'快捷支付手续费分润',$order->order_id);
              }else{
                 $fenrun_result['code']=-1;
              }
@@ -87,7 +87,7 @@ class Cashoutcallback
 	 }
 
 	 /**
-	 * @version  CashOutCallBack 套现回调 快捷支付0.23回调 
+	 * @version  CashOutCallBack 快捷支付回调 快捷支付0.23回调 
 	 * @authors John(1160608332@qq.com)
 	 * @date    2017-09-29 16:03:05
 	 * @version $Bill$
@@ -139,7 +139,7 @@ class Cashoutcallback
 		 	 //进行分润
              if(!$Commission_info){
     		 	 $fenrun= new \app\api\controller\Commission();
-    		 	 $fenrun_result=$fenrun->MemberFenRun($order->order_member,$order->order_money,$order->order_passway,1,'套现手续费分润',$order->order_id);
+    		 	 $fenrun_result=$fenrun->MemberFenRun($order->order_member,$order->order_money,$order->order_passway,1,'快捷支付手续费分润',$order->order_id);
              }else{
                 $fenrun_result['code']=-1;
              }
@@ -170,7 +170,7 @@ class Cashoutcallback
 
 
       /**
-     * @version  jinyifuCallBack 套现回调 金易付回调 
+     * @version  jinyifuCallBack 快捷支付回调 金易付回调 
      * @authors John(1160608332@qq.com)
      * @date    2017-09-29 16:03:05
      * @version $Bill$
@@ -222,7 +222,7 @@ class Cashoutcallback
              //进行分润
              if(!$Commission_info){
                  $fenrun= new \app\api\controller\Commission();
-                 $fenrun_result=$fenrun->MemberFenRun($order->order_member,$order->order_money,$order->order_passway,1,'套现手续费分润',$order->order_id);
+                 $fenrun_result=$fenrun->MemberFenRun($order->order_member,$order->order_money,$order->order_passway,1,'快捷支付手续费分润',$order->order_id);
              }else{
                 $fenrun_result['code']=-1;
              }

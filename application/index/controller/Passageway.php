@@ -56,7 +56,7 @@ class Passageway extends Common{
 	 	 		#拆分Key键
 	 	 	 	$group_id=strrev(strstr(strrev($k),strrev('_'),true));
 	 	 	 	$key_fix=strtok($k,'_');
-	 	 	 	//该通道为套现 则丢弃 代还数据 否则 丢弃 套现数据
+	 	 	 	//该通道为快捷支付 则丢弃 代还数据 否则 丢弃 快捷支付数据
 	 	 	 	if($passageway->passageway_also==1){
 	 	 	 		if($key_fix=='also')continue;
 	 	 	 	}else{
@@ -396,7 +396,7 @@ class Passageway extends Common{
 		}
 		$adminster=session('adminster');
         $group_id=db('auth_group_access')->where('uid',$adminster['id'])->value('group_id');
-		//套现
+		//快捷支付
 		if($passageway->passageway_also==1){
 			$where['order_passway']=$id;
 			$where['order_state']=2;
@@ -465,7 +465,7 @@ class Passageway extends Common{
 	 	return view('admin/passageway/passageway_details');
 	}
 	#通道下单个订单详情 
-	#id 订单id type =1 套现 =3 代还
+	#id 订单id type =1 快捷支付 =3 代还
 	public function passageway_details_info($id,$type){
 		$users=db('member')->column('member_id,member_nick');
 		if($type==1){
