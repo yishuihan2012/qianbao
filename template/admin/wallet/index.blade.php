@@ -25,11 +25,11 @@
 			    <input type="text" class="form-control" name="cert_member_idcard" value="{{$r['cert_member_idcard']}}" placeholder="身份号">
 			  </div>
 			  <div class="input-group" style="width: 150px;float: left;margin-right: 10px;">
-			     <span class="input-group-addon">实名状态</span>
-			  <select name="member_cert" class="form-control">
+			     <span class="input-group-addon">红包状态</span>
+			  <select name="wallet_state" class="form-control">
 			    <option value="" >全部</option>
-			    <option value="1" @if($r['member_cert']==1) selected @endif>已认证</option>
-			    <option value="2" @if($r['member_cert']==2) selected @endif>未认证</option>
+			    <option value="2" @if($r['wallet_state']==2) selected @endif>正常</option>
+			    <option value="-2" @if($r['wallet_state']==2) selected @endif>冻结</option>
 			  </select>
 			 
 			  </div>
@@ -44,9 +44,9 @@
 			  </div>
 
 			<div class="input-group" style="width: 200px;float: left; margin-right: 10px;">
-			    <input type="text" class="form-control date-picker" id="dateTimeRange" placeholder="注册时间查询" />
-			    <input type="hidden" name="beginTime" id="beginTime" value="" />
-			    <input type="hidden" name="endTime" id="endTime" value="" />
+			    <input type="text" class="form-control date-picker" id="dateTimeRange" placeholder="红包生成时间"/>
+			    <input type="hidden" name="beginTime" id="beginTime" value=""/>
+			    <input type="hidden" name="endTime" id="endTime" value=""/>
 			    <z class='clearTime'>X</z>
 			</div>
 			  <button class="btn btn-primary" type="submit">搜索</button>

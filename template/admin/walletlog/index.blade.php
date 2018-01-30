@@ -36,7 +36,7 @@
                 </div>
             </div>
             <div class="col-sm-1">
-                <button class="btn btn-primary" type="submit"> </button>
+                <button class="btn btn-primary" type="submit">搜索  </button>
             </div>
 		</form>
   	</div>

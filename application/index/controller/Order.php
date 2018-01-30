@@ -31,29 +31,36 @@ class Order extends Common{
 	 	$data = memberwhere($r);
 	 	$r = $data['r'];
 	 	$where = $data['where'];
-	 	 //注册时间
+	 	 //订单创建时间
+	 	$wheres = array();
 		if(request()->param('beginTime') && request()->param('endTime')){
 			$endTime=strtotime(request()->param('endTime'))+24*3600;
-			$where['member_creat_time']=["between time",[request()->param('beginTime'),$endTime]];
+			$wheres['upgrade_creat_time']=["between time",[request()->param('beginTime'),$endTime]];
 		}
 		#身份证查询
-		$wheres = array();
-		 if( request()->param('cert_member_idcard')){
+		if( request()->param('cert_member_idcard')){
 			$wheres['m.cert_member_idcard'] = ['like',"%".request()->param('cert_member_idcard')."%"];
 		}else{
 			$r['cert_member_idcard'] = '';
 		}
-	 	 // #查询订单列表分页
+		#订单支付状态
+		if(request()->param('upgrade_state')!=''){
+			$wheres['upgrade_state'] = request()->param('upgrade_state');
+		}else{
+			$r['upgrade_state'] = '';
+		}
+		#支付类型
+		// #查询订单列表分页
 	 	$order_lists = Upgrade::haswhere('member',$where)
 	 		->join("wt_member_cert m", "m.cert_member_id=Member.member_id","left")
 	 		->where($wheres)->field('wt_member.member_nick')->order("upgrade_id desc")
 	 		->paginate(Config::get('page_size'),false, ['query'=>Request::instance()->param()]);
 	 
 	 	 #统计订单条数
-	 	 $count['count_size']=Upgrade::haswhere('member',$where)->join("wt_member_cert m", "m.cert_member_id=Member.member_id","left")->where($wheres)->count();
+	 	$count['count_size']=Upgrade::haswhere('member',$where)->join("wt_member_cert m", "m.cert_member_id=Member.member_id","left")->where($wheres)->count();
 	 	 #升级总金额
-	 	 $count['upgrade_money'] = Upgrade::haswhere('member',$where)->join("wt_member_cert m", "m.cert_member_id=Member.member_id","left")->where($wheres)->sum("upgrade_money");
-	 	 $count['upgrade_commission'] = Upgrade::haswhere('member',$where)->join("wt_member_cert m", "m.cert_member_id=Member.member_id","left")->where($wheres)->sum("upgrade_commission");
+	 	$count['upgrade_money'] = Upgrade::haswhere('member',$where)->join("wt_member_cert m", "m.cert_member_id=Member.member_id","left")->where($wheres)->sum("upgrade_money");
+	 	$count['upgrade_commission'] = Upgrade::haswhere('member',$where)->join("wt_member_cert m", "m.cert_member_id=Member.member_id","left")->where($wheres)->sum("upgrade_commission");
 		$this->assign('order_lists', $order_lists);
 	    $this->assign('count', $count);
 		 
@@ -64,7 +71,6 @@ class Order extends Common{
 		 #渲染视图
 		return view('admin/order/index');
 	 }
-
 	 #订单详情
 	 public function edit(Request $request){
 
@@ -93,14 +99,26 @@ class Order extends Common{
 	 	$data = memberwhere($r);
 	 	$r = $data['r'];
 	 	$where = $data['where'];
-	 	 //注册时间
+	 	 //订单下单时间
+	 	$wheres = array();
 		if(request()->param('beginTime') && request()->param('endTime')){
 			$endTime=strtotime(request()->param('endTime'))+24*3600;
-			$where['member_creat_time']=["between time",[request()->param('beginTime'),$endTime]];
+			$wheres['withdraw_creat_time']=["between time",[request()->param('beginTime'),$endTime]];
+		}
+		#提现状态
+		if(request()->param('withdraw_state') ){
+			$wheres['withdraw_state'] = request()->param('withdraw_state');
+		}else{
+			$r['withdraw_state'] = request()->param('withdraw_state');
+		}
+		#支付类型
+		if(request()->param('withdraw_method') ){
+			$wheres['withdraw_method'] = request()->param('withdraw_method');
+		}else{
+			$r['withdraw_method'] = request()->param('withdraw_method');
 		}
 		#身份证查询
-		$wheres = array();
-		 if( request()->param('cert_member_idcard')){
+		if( request()->param('cert_member_idcard')){
 			$wheres['m.cert_member_idcard'] = ['like',"%".request()->param('cert_member_idcard')."%"];
 		}else{
 			$r['cert_member_idcard'] = '';
@@ -220,16 +238,23 @@ class Order extends Common{
 	 	$r = $data['r'];
 	 	$where = $data['where'];
 	 	 //注册时间
+	 	$wheres = array();
 		if(request()->param('beginTime') && request()->param('endTime')){
 			$endTime=strtotime(request()->param('endTime'))+24*3600;
-			$where['member_creat_time']=["between time",[request()->param('beginTime'),$endTime]];
+			$where['order_add_time']=["between time",[request()->param('beginTime'),$endTime]];
 		}
 		#身份证查询
-		$wheres = array();
-		 if( request()->param('cert_member_idcard')){
-			$wheres['mc.cert_member_idcard'] = ['like',"%".request()->param('cert_member_idcard')."%"];
+		
+		if( request()->param('order_creditcard')){
+			$wheres['order_creditcard'] = ['like',"%".request()->param('order_creditcard')."%"];
 		}else{
-			$r['cert_member_idcard'] = '';
+			$r['order_creditcard'] = '';
+		}
+		#订单状态
+		if( request()->param('order_state')){
+			$wheres['order_state'] = ['like',"%".request()->param('order_state')."%"];
+		}else{
+			$r['order_state'] = '';
 		}
 	 	 // #查询订单列表分页
 	 	 $order_lists = CashOrder::with('passageway')->join('wt_member m',"m.member_id=wt_cash_order.order_member")->where($where)->join("wt_member_cert mc", "mc.cert_member_id=m.member_id","left")->where($wheres)->order("order_id desc")->paginate(Config::get('page_size'), false, ['query'=>Request::instance()->param()]);
@@ -270,16 +295,22 @@ class Order extends Common{
 	 	$r = $data['r'];
 	 	$where = $data['where'];
 	 	 //注册时间
+		$wheres = array();
 		if(request()->param('beginTime') && request()->param('endTime')){
 			$endTime=strtotime(request()->param('endTime'))+24*3600;
-			$where['member_creat_time'] = ["between time",[request()->param('beginTime'),$endTime]];
+			$where['order_add_time']=["between time",[request()->param('beginTime'),$endTime]];
 		}
 		#身份证查询
-		$wheres = array();
-		 if( request()->param('cert_member_idcard')){
-			$wheres['mc.cert_member_idcard'] = ['like',"%".request()->param('cert_member_idcard')."%"];
+		if( request()->param('order_creditcard')){
+			$wheres['order_creditcard'] = ['like',"%".request()->param('order_creditcard')."%"];
 		}else{
-			$r['cert_member_idcard'] = '';
+			$r['order_creditcard'] = '';
+		}
+		#订单状态
+		if( request()->param('order_state')){
+			$wheres['order_state'] = ['like',"%".request()->param('order_state')."%"];
+		}else{
+			$r['order_state'] = '';
 		}
 		$where['order_state'] = 2;
 	 	 // #查询订单列表分页
@@ -315,12 +346,12 @@ class Order extends Common{
 	 	$r = $data['r'];
 	 	$where = $data['where'];
 	 	 //注册时间
+	 	$wheres = array();
 		if(request()->param('beginTime') && request()->param('endTime')){
 			$endTime=strtotime(request()->param('endTime'))+24*3600;
-			$where['member_creat_time']=["between time",[request()->param('beginTime'),$endTime]];
+			$wheres['recomment_creat_time']=["between time",[request()->param('beginTime'),$endTime]];
 		}
 		#身份证查询
-		$wheres = array();
 		 if( request()->param('cert_member_idcard')){
 			$wheres['m.cert_member_idcard'] = ['like',"%".request()->param('cert_member_idcard')."%"];
 		}else{

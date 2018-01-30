@@ -25,14 +25,20 @@ class Wallet extends Common
 	 	$data = memberwhere($r);
 	 	$r = $data['r'];
 	 	$where = $data['where'];
-	 	 //注册时间
+	 	 //红包生成时间查询
+	 	$wheres = array();
 		if(request()->param('beginTime') && request()->param('endTime')){
-			$endTime=strtotime(request()->param('endTime'))+24*3600;
-			$where['member_creat_time']=["between time",[request()->param('beginTime'),$endTime]];
+			$endTime = strtotime(request()->param('endTime'))+24*3600;
+			$wheres['wallet_add_time'] = ["between time",[request()->param('beginTime'),$endTime]];
 		}
 		#身份证查询
-		$wheres = array();
-		 if( request()->param('cert_member_idcard')){
+		 if( request()->param('wallet_state')){
+			$wheres['wallet_state'] = ['like',"%".request()->param('wallet_state')."%"];
+		}else{
+			$r['wallet_state'] = '';
+		}
+		#钱包状态
+		if( request()->param('cert_member_idcard')){
 			$wheres['m.cert_member_idcard'] = ['like',"%".request()->param('cert_member_idcard')."%"];
 		}else{
 			$r['cert_member_idcard'] = '';

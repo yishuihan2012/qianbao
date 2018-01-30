@@ -50,11 +50,22 @@
 			        			<p class="f14 invalid-color space-up3">{{$v['log_add_time']}}</p>
 			        		</div>
 			        		<div class="ftr">
-			        			<p class="f20">{{$v['log_wallet_type']==1 ? '' : '-'}}{{substr($v['log_wallet_amount'],0,-2)}}</p>
+			        			<p class="f20">
+			        				@if($v['log_relation_type']==2)
+				        				@if($v['info']=='审核未通过')
+				        				   +
+				        				@else
+					        		      {{$v['log_wallet_type']==1 ? '+' : '-'}}
+				        				@endif
+			        				@else
+			        					{{$v['log_wallet_type']==1 ? '+' : '-'}}
+			        				@endif
+				        			    {{substr($v['log_wallet_amount'],0,-2)}}
+			        			</p>
 			        			<!-- 提现操作 此处显示状态-->
 			        			@if($v['log_relation_type']==2)
 			        				@if(isset($v['info']))
-			        			<p class="f14 yellow-color">{{$v['info']}}</p>
+			        					<p class="f14 yellow-color">{{$v['info']}}</p>
 			        				@endif
 			        			@endif
 			        		</div>

@@ -13,6 +13,7 @@
  use app\index\model\System;
  use app\index\model\MemberNet;
  use app\index\model\PassagewayItem;
+  use app\index\model\PassagewayRate;
 
  class Membernetsedit{ 
       public $error;
@@ -183,9 +184,12 @@
 
       #荣邦 1.4.3.根据邀请码，修改商户费率与D0费率
       public function rongbangnet(){
+        return true;
         $memberAlso=PassagewayItem::where(['item_group'=>$this->member->member_group_id,'item_passageway'=>$this->passway->passageway_id])->find();
+       
         //传入费率对应的在荣邦的编码
-        $rate_code=db('passageway_rate')->where(['rate_rate'=>$memberAlso['item_rate'],'rate_charge'=>$memberAlso['item_charges'],'rate_passway_id'=>$this->passway->passageway_id])->find();
+        $rate_code=PassagewayRate::where(['rate_rate'=>$memberAlso['item_rate'],'rate_charge'=>$memberAlso['item_charges'],'rate_passway_id'=>$this->passway->passageway_id])->find();
+
         if($rate_code){
           $userinfo=db('member_net')->where('net_member_id',$this->member->member_id)->value($this->passway->passageway_no);
           $userinfo=explode(',', $userinfo);
@@ -198,7 +202,7 @@
             'ratecode'   =>$rate_code['rate_code'],
             // 'ratecode'   =>902429,
           );
-          // var_dump($arr);die;
+          var_dump($arr);die;
           // $data=rongbang_curl(rongbang_foruser($this->member,$this->passway),$arr,'masget.pay.compay.router.samename.update');
           $data=rongbang_curl($this->passway,$arr,'masget.pay.compay.router.samename.update');
           // var_dump($data);die;

@@ -57,33 +57,27 @@ class Passageway extends Common{
 	 	 	 	$group_id=strrev(strstr(strrev($k),strrev('_'),true));
 	 	 	 	$key_fix=strtok($k,'_');
 	 	 	 	//该通道为套现 则丢弃 代还数据 否则 丢弃 套现数据
-	 	 	 	#杨注释掉的
 	 	 	 	if($passageway->passageway_also==1){
 	 	 	 		if($key_fix=='also')continue;
 	 	 	 	}else{
 	 	 	 		if($key_fix=='rate')continue;
+
 	 	 	 	}
 	 	 	 	//以用户组为键 转储到data
 	 	 	 	$data[$group_id]['item_'.$key_fix]=$v;
- 	 	 	} 	
- 	 	 	// echo "<pre>";
- 	 	 	// print_r($data);die;
- 	 	 	// halt($passageway->passageway_mech);
+ 	 	 	} 
+ 	 	 	
  	 	 	 #查询库中是否存在数据
  	 	 	 $passage=PassagewayItem::where(['item_passageway'=>Request::instance()->param('id')])->select();
- 	 	 	//  echo "<pre>";
- 	 	 	// print_r($passage);die;
  	 	 	 if($passage){
  	 	 	 	//针对每条数据执行 (每条对应一个用户组)
  	 	 	 	foreach ($passage as $k => $v) {
  	 	 	 		//若该条对应的用户组 在post中存在 (正常情况会存在)
- 	 	 	 		// var_dump($data[$v['item_group']]);die;
  	 	 	 		if(isset($data[$v['item_group']])){
  	 	 	 			 $haschange=false;
  	 	 	 			 //遍历该用户组post数据
  	 	 	 			 foreach ($data[$v['item_group']] as $key => $value) {
  	 	 	 				 //若与数据库中的数据不一致，则需要更新
- 	 	 	 			 	// var_dump($value!=$v[$key]);die;
  	 	 	 				 if($value!=$v[$key])
  	 	 	 					 $haschange=true;
  	 	 	 			 }
@@ -129,8 +123,7 @@ class Passageway extends Common{
  	 	 	 			#剔除已使用的数据
  	 	 	 			unset($data[$v['item_group']]);
  	 	 	 		}
- 	 	 	 	}
- 	 	 	 	
+ 	 	 	 	}	
  	 	 	 }
  	 	 	 //还有数据的时候 就新增数据
  	 	 	 if(count($data)>0){
