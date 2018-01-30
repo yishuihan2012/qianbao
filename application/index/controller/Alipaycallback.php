@@ -45,7 +45,7 @@ class Alipaycallback
           if(!$Commission_info){
              #执行分佣
              $commission=new \app\api\controller\Commission();
-             $commission->MemberCommis($post['upgrade_member_id'],$post['upgrade_money'],'会员付费升级');
+             $commission->MemberCommis($post['upgrade_member_id'],$post['upgrade_money'],'会员付费升级',$order->upgrade_id);
          }
 
           #修改会员通道费率
