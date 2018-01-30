@@ -626,8 +626,8 @@ class Userurl extends Controller
   	$data=Page::get(1);
   	$server['weixin']=CustomerService::where('service_title','微信')->find();
   	#资格证书
-  	$datas = Page::get(4);
-
+  	$datas = Page::get(3);
+  	dump($datas);
   	$this->assign("datas",$datas);
   	$server['qq']=CustomerService::where('service_title','QQ')->find();
 
