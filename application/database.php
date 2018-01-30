@@ -13,13 +13,13 @@ return [
     // 数据库类型
     'type'            => 'mysql',
     // 服务器地址
-    'hostname'        => '120.27.116.16',
+    'hostname'        => '47.104.4.73',
     // 数据库名
-    'database'        => 'wallet_demo',
+    'database'        => 'yunzhong_wallet',
     // 用户名
-    'username'        => 'db_wallet',
+    'username'        => 'root',
     // 密码
-    'password'        => 'dbwallet',
+    'password'        => 'chFUCK~>d5',
     // 端口
     'hostport'        => '',
     // 连接dsn

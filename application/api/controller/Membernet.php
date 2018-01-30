@@ -147,6 +147,12 @@ use app\index\model\Member;
         // print_r($pay);die;
         #5:获取用户基本信息
         $member_base=Member::where(['member_id'=>$pay['order_member']])->find();
+        #6获取渠道提供的费率，如果不一致，重新报备费率
+        $passway_info=$this->accountQuery($pay['order_member']);
+        if($passway_info['feeRatio']!=$also || $passway_info['feeAmt']!=$daikou){//不一致重新报备,修改商户信息
+              $Membernetsedits=new \app\api\controller\Membernetsedit($pay['order_member'],$pay['order_passageway'],'M03','',$member_base['member_mobile']);
+              $update=$Membernetsedits->mishuadaihuan();
+        }
         $params=array(
           'mchNo'=>$merch->passageway_mech, //机构号 必填  由平台统一分配 16
           'userNo'=>$member->LkYQJ,  //平台用户标识  必填  平台下发用户标识  32
@@ -163,6 +169,7 @@ use app\index\model\Member;
         );  
         // print_r($params);
         $income=repay_request($params,$merch->passageway_mech,'http://pay.mishua.cn/zhonlinepay/service/rest/creditTrans/payBindCard',$merch->iv,$merch->secretkey,$merch->signkey);
+        // print_r($income);die;
         //判断执行结果
         $is_commission=0;
         if($income['code']=='200'){
