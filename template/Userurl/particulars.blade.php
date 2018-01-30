@@ -73,61 +73,7 @@
 			        </a>
 			    </li>
 			    @endforeach
-<!-- 			    <li class="mui-table-view-cell bor-bot">
-			        <a href="bills_detail.html">
-			        	<div class="dis-flex-be">
-			        		<div>
-			        			<p class="f16">余额提现</p>
-			        			<p class="f14 invalid-color space-up3">今天10:24</p>
-			        		</div>
-			        		<div class="ftr">
-			        			<p class="f20">-200.00</p>
-			        			<p class="f14 yellow-color">申请中</p>
-			        		</div>
-			        	</div>
-			        </a>
-			    </li>
-			    <li class="mui-table-view-cell bor-bot">
-			        <a href="bills_detail.html">
-			        	<div class="dis-flex-be">
-			        		<div>
-			        			<p class="f16">余额提现</p>
-			        			<p class="f14 invalid-color space-up3">今天10:24</p>
-			        		</div>
-			        		<div class="ftr">
-			        			<p class="f20">-200.00</p>
-			        			<p class="f14 red-color">已驳回：驳回原因驳回原因</p>
-			        		</div>
-			        	</div>
-			        </a>
-			    </li>
-			    <li class="mui-table-view-cell bor-bot">
-			        <a href="bills_detail.html">
-			        	<div class="dis-flex-be">
-			        		<div>
-			        			<p class="f16">余额提现</p>
-			        			<p class="f14 invalid-color space-up3">今天10:24</p>
-			        		</div>
-			        		<div class="ftr">
-			        			<p class="f20">-200.00</p>
-			        			<p class="f14 blue-color">到账</p>
-			        		</div>
-			        	</div>
-			        </a>
-			    </li>
-			    <li class="mui-table-view-cell bor-bot">
-			        <a href="bills_detail.html">
-			        	<div class="dis-flex-be">
-			        		<div>
-			        			<p class="f16">邀请注册奖励</p>
-			        			<p class="f14 invalid-color space-up3">今天10:24</p>
-			        		</div>
-			        		<div>
-			        			<p class="f20">+2.00</p>
-			        		</div>
-			        	</div>
-			        </a>
-			    </li>
+<!-- 			    
  -->			</ul>
 		</div>
 		<script src="/static/js/mui.min.js"></script>
@@ -160,32 +106,47 @@
 					 }
 				};
 			$(".input-reset").mobiscroll($.extend(opt['date'], opt['default']));
-			
 			//滚动加载提示    
-			    var allpage=2;//全部页面
+			    var allpage={{$allpage}};//全部页面
 			    var page=1; //当前页的页码
 			    function showAjax(page){
+			    	
 			      $.ajax({
 			        url:"",
 			        type:"post",
-			        data:{page:page},
+			        data:{page:page,uid:{{$uid}}},
 			        dateType:"json",
 			        beforeSend:function(XMLHttpRequest){ 
 			          $(".load-more").text("加载中..."); 
 			        }, 
 			        success:function(data){
+			        data = JSON.parse(data);
 			        //要执行的内容
 			        //isEnd =  ;
 			        for(var i=0;i<data.length;i++){
+			        	str = '';
+			        	info = '';
+				       if(data[i].log_relation_type == 2 ){
+				       		if(data[i].info){
+				       			str  = '+';
+				       		}else{
+				       			str = data[i].log_wallet_type==1 ? '+' : '-';	
+				       		}
+				       		info = data[i].info;
+				       }else{
+				       		str = data[i].log_wallet_type==1 ? '+' : '-';
+				       }
+
 			         $("#particularsList").append("<li class='mui-table-view-cell bor-bot'>"+
-					        "<a href='bills_detail.html'>"+
+					        "<a href='' id="+data[i].log_id+">"+
 					        	"<div class='dis-flex-be'>"+
 					        		"<div>"+
-					        			"<p class='f16'>邀请注册奖励</p>"+
-					        			"<p class='f14 invalid-color space-up3'>今天10:24</p>"+
+					        			"<p class='f16'>"+data[i].log_form+"</p>"+
+					        			"<p class='f14 invalid-color space-up3'>"+data[i].log_add_time+"</p>"+
 					        		"</div>"+
-					        		"<div>"+
-					        			"<p class='f20'>+2.00</p>"+
+					        		"<div class='ftr'>"+
+					        			"<p class='f20'>"+str+data[i].log_wallet_amount+"</p>"+
+					        			"<p class='f14 yellow-color'>"+info+"</p>"+
 					        		"</div>"+
 					        	"</div>"+
 					        "</a>"+
@@ -206,10 +167,11 @@
 			        var scrollHeight = window.pageYOffset || document.documentElement.scrollTop || document.body.scrollTop || 0;
 			        if(pageHeight - viewportHeight - scrollHeight < 60){
 			            page++;
+			            console.log(page);
 			            if(page<=allpage){
-			                // showAjax(page);
+			                showAjax(page);
 			            }else{
-			                // $(".load-more").text("已无数据");
+			                $(".load-more").text("已无数据");
 			            }
 			        }
 			    }

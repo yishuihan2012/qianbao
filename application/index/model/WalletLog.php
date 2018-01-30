@@ -33,4 +33,46 @@ class WalletLog extends Model{
         {
             return $this->belongsTo('Wallet', 'log_wallet_id', 'wallet_id')->bind("wallet_member")->setEagerlyType(0);
         }
+        #分页
+    public static function pages($uid,$page =1,$data = [],$month = null){
+        if(!$month)$month=date('Y-m');
+        //月初
+        $monthstart=strtotime($month);
+        //月末
+        $monthend=strtotime(date('Y-m',strtotime('+1 month',strtotime($month))));
+        $data['month'] = $month;
+        $limit = ($page-1)*10;
+        $list=db('wallet_log')->alias('l')
+        ->join('wallet w','l.log_wallet_id=w.wallet_id')
+        ->where(['w.wallet_member'=>$uid])
+        ->where('log_add_time','between time',[$monthstart,$monthend])
+        ->order('log_add_time desc')->limit($limit,10)
+        ->select();
+        foreach ($list as $k => $v) {
+            $state=db('withdraw')->where('withdraw_id',$v['log_relation_id'])->value('withdraw_state');
+            if($v['log_wallet_type']==1 || $state == -12){
+                $data['in'] += $v['log_wallet_amount'];
+            }else{
+                $data['out'] += $v['log_wallet_amount'];
+            }
+            switch ($v['log_relation_type']) {
+                //提现操作
+                case 2:
+        
+                    if($state)$list[$k]['info']=state_info($state);
+                    break;
+                default:
+                    # code...
+                    break;
+            }
+        }
+        $count = db('wallet_log')->alias('l')
+        ->join('wallet w','l.log_wallet_id=w.wallet_id')
+        ->where(['w.wallet_member'=>$uid])
+        ->where('log_add_time','between time',[$monthstart,$monthend])
+        ->order('log_add_time desc')
+        ->count();
+        $allpage = ceil($count/10);
+        return ['list' => $list , 'data' => $data , 'allpage' => $allpage];
+    }
 }

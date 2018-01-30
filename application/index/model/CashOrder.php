@@ -1,6 +1,6 @@
 <?php
  /**
- * @version  CashOrder Model 套现订单模型
+ * @version  CashOrder Model 快捷支付订单模型
  * @author  $bill 755969423@qq.com
  * @time      2017-12-20 10:13
  * @return  

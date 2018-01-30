@@ -86,10 +86,10 @@
 		 </div>		
 	 </div>
 	 <div class="row form-group">
-		 <label for="passageway_also" class="col-sm-3 text-right"><b>是否提现通道:</b></label>
+		 <label for="passageway_also" class="col-sm-3 text-right"><b>是代还还是快捷支付通道:</b></label>
 		 <div id="passageway_also" class="col-sm-6">
 			 <select name="passageway_also" class="form-control passageway_also">
-				 <option value="1" @if($passageways['passageway_also']==1) selected="" @endif>提现</option>
+				 <option value="1" @if($passageways['passageway_also']==1) selected="" @endif>快捷支付</option>
 				 <option value="2" @if($passageways['passageway_also']==2) selected="" @endif>代还</option>
 			 </select>
 		 </div>		

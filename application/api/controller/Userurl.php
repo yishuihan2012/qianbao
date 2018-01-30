@@ -35,6 +35,7 @@ use app\index\model\Appversion;
 use app\index\model\SmsCode; 
 use app\index\model\ArticleCategory;
 use app\index\model\Article;
+use app\index\model\WalletLog;
 /**
  *  此处放置一些固定的web地址
  */
@@ -127,7 +128,12 @@ class Userurl extends Controller
 				 $logo = imagecreatefromstring(file_get_contents($logourl)); 
 				 $logo_width = imagesx($logo);
 				 $logo_height = imagesy($logo);
-				 imagecopyresampled( $QR,$logo, 165, 165, 0, 0, 70, 70, $logo_width, $logo_height); 
+				 #动态计算取中心点 让你丫不居中
+				 $qr_width = imagesx($QR);
+				 $scale=0.18;
+				 $logo_line=$scale*$qr_width;
+				 $xy=$qr_width*0.5-$logo_line*0.5;
+				 imagecopyresampled( $QR,$logo, $xy, $xy, 0, 0, $logo_line, $logo_line, $logo_width, $logo_height); 
 				imagepng($QR, 'autoimg/qrcode'.$tel.'.png'); 
 				// 背景
 				$bg_url=Exclusive::get($exclusive_id);
@@ -409,7 +415,7 @@ class Userurl extends Controller
 		$page = empty(input("page"))?1:input("page");
 		if($_POST){
 			$start = ($page-1)*10;
-			$CashOrder=CashOrder::with("passageway")->where(['order_member'=>$this->param['uid'],"order_money" => ["<>",0]])->order('order_id desc')->limit($start,10)->select();
+			$CashOrder=CashOrder::with("passageway")->where(['order_member'=>$this->param['uid'],'order_money' => ['<>' , 0]])->order('order_id desc')->limit($start,10)->select();
 
 			foreach ($CashOrder as $key => $value) {
 			 	$CashOrder[$key]["bank_ons"] = substr($value['order_card'], -4);
@@ -417,8 +423,8 @@ class Userurl extends Controller
 			}
 			echo json_encode(["data" => $CashOrder, "page" => $page+1]);die;
 		}
-		$CashOrder=CashOrder::with("passageway")->where(['order_member'=>$this->param['uid'],"order_money" => ["<>",0]])->order('order_id desc')->limit(0,10)->select();
-		$count = CashOrder::where(['order_member'=>$this->param['uid'],"order_money" => ["<>",0]])->order('order_id desc')->count();
+		$CashOrder=CashOrder::with("passageway")->where(['order_member'=>$this->param['uid'],'order_money' => ['<>' , 0]])->order('order_id desc')->limit(0,10)->select();
+		$count = CashOrder::where(['order_member'=>$this->param['uid'],'order_money' => ['<>' , 0]])->order('order_id desc')->count();
 			$pages = ceil($count/10);
 			#截取银行卡号
 		foreach ($CashOrder as $key => $value) {
@@ -655,43 +661,26 @@ class Userurl extends Controller
   }
   #收支明细
   public function particulars($month=null){
-	$this->checkToken();
-	if(!$month)$month=date('Y-m');
-	//月初
-	$monthstart=strtotime($month);
-	//月末
-	$monthend=strtotime(date('Y-m',strtotime('+1 month',strtotime($month))));
-  	//表头数据
-  	$data=[];
-  	$data['month']=$month;
+	
+	$data=[];
   	$data['in']=0;
   	$data['out']=0;
-  	$list=db('wallet_log')->alias('l')
-  		->join('wallet w','l.log_wallet_id=w.wallet_id')
-  		->where(['w.wallet_member'=>$this->param['uid']])
-  		->where('log_add_time','between time',[$monthstart,$monthend])
-  		->order('log_add_time desc')
-  		->select();
-	foreach ($list as $k => $v) {
-		if($v['log_wallet_type']==1){
-			$data['in']+=$v['log_wallet_amount'];
-		}else{
-			$data['out']+=$v['log_wallet_amount'];
-		}
-		switch ($v['log_relation_type']) {
-			//提现操作
-			case 2:
-				$state=db('withdraw')->where('withdraw_id',$v['log_relation_id'])->value('withdraw_state');
-				if($state)$list[$k]['info']=state_info($state);
-				break;
-			
-			default:
-				# code...
-				break;
-		}
+  	//手动下滑获取数据
+	if($_POST){
+
+		$page = isset($_POST['page'])?$_POST['page']:1;
+		$result = WalletLog::pages(input('uid'),$page,$data);
+		$list = $result['list'];
+		exit(json_encode($list));
 	}
-  	$this->assign('data',$data);
-  	$this->assign('list',$list);
+	$this->checkToken();
+  	//表头数据
+  	$result = WalletLog::pages($this->param['uid'],1,$data);
+  	//总的页数
+  	$this->assign("uid",$this->param['uid']);
+  	$this->assign("allpage" , $result['allpage']);
+  	$this->assign('data' , $result['data']);
+  	$this->assign('list' , $result['list']);
   	return view("Userurl/particulars");
   }
   #账单详情

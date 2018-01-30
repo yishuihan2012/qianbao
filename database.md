@@ -283,15 +283,15 @@
 | page_desc      | text         | 简介 |
 | page_creat_time     | datetime | 添加时间  |
 
-### 10 套现表(cashout)
+### 10 快捷支付表(cashout)
 | 字段                 | 类型          | 备注                |
 | ------------------ | ----------- | -----------------------|
 | cashout_id     | int         | 自增id 		          |
-| cashout_passageway_id     | int         | 套现通道id 		          |
+| cashout_passageway_id     | int         | 快捷支付通道id 		          |
 | cashout_open    | tinyint | 是否开启           |
 | cashout_min      | decimal         | 最小提现额 |
 | cashout_max      | decimal         | 最大提现额 |
-| cashout_type     | varchar | 套现用到的类名  |
+| cashout_type     | varchar | 快捷支付用到的类名  |
 | cashout_add_time     | detetime | 添加时间  |
 
 
