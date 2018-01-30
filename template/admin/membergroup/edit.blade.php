@@ -143,13 +143,18 @@ input.labelauty + label { font: 12px "Microsoft Yahei";}
 				<input type="text" class="form-control group_level_value" name="group_three_cent" placeholder="" value="{{ $group->group_three_cent }}">
 			</div>
 		</div>
+		<div class="row form-group">
+	        <label for="group_des" class="col-sm-2 text-right"><b>描述:</b></label>
+	        <div class="col-sm-6" id="page_desc">
+	           <textarea name="group_des" cols="30" class="form-control" rows="7">{{ $group->group_des }}</textarea>
+	        </div>
+	    </div>
 		<h5></h5>
 
 
 	</form>
 	<h2></h2>
 </div>
-
 <!--dialog Button-->
 <div class="modal-footer animated fadeInLeft">
     <button type="button" class="btn" data-dismiss="modal">关闭</button>

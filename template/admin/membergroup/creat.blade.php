@@ -130,6 +130,12 @@ input.labelauty + label { font: 12px "Microsoft Yahei";}
 				<input type="text" class="form-control group_level_value" name="group_three_cent" placeholder="" value="">
 			</div>
 		</div>
+		<div class="row form-group">
+         <label for="group_des" class="col-sm-2 text-right"><b>描述:</b></label>
+         <div class="col-sm-6" id="page_desc">
+           <textarea name="group_des" cols="30" class="form-control" rows="7">描述</textarea>
+         </div>
+       </div>
 		<h5></h5>
 
 	</form>
