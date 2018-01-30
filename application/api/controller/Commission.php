@@ -30,7 +30,7 @@
 	 *   @datetime    2017-12-08 10:13:05
 	 *   @return 
 	 */
- 	 public function MemberCommis($memberId,$price,$desction)
+ 	 public function MemberCommis($memberId,$price,$desction,$order_id=null)
  	 {
  	 	 $memberInfo=Member::get($memberId);
  	 	 if(!$memberInfo)
@@ -54,7 +54,7 @@
  	 	 	 	}
  	 	 	 	 
  	 	 	 	  $leftmoney+=$fatherMoney;
- 	 	 	 	 if(!$this->commissionOrder($memberId,$member_fater_id,$fatherMoney,2,$desction."-直接分佣")){
+ 	 	 	 	 if(!$this->commissionOrder($memberId,$member_fater_id,$fatherMoney,2,$desction."-直接分佣",$order_id)){
  	 	 	 	 	 return ['code'=>465];
  	 	 	 	  }
  	 	 	 	 
@@ -81,7 +81,7 @@
  	 	 	 	 	 }
  	 	 	 	 
  	 	 	 	 	 $leftmoney+=$grandFatherMoney;
-	 	 	 	 	 if(!$this->commissionOrder($memberId,$member_grandFater_id,$grandFatherMoney,2,$desction."-间接分佣")){
+	 	 	 	 	 if(!$this->commissionOrder($memberId,$member_grandFater_id,$grandFatherMoney,2,$desction."-间接分佣",$order_id)){
 	 	 	 	 	 	 return ['code'=>465];
 	 	 	 	 	 }
 	 	 	 	 	  //j极光推送分佣提醒
@@ -102,7 +102,7 @@
 	 	 	 	 	 	}
 	 	 	 	 	 	    
 	 	 	 	 	 	 $leftmoney+=$endFatherMoney;
-		 	 	 	 	 if(!$this->commissionOrder($memberId,$member_endFather_id,$endFatherMoney,2,$desction."-三级分佣")){
+		 	 	 	 	 if(!$this->commissionOrder($memberId,$member_endFather_id,$endFatherMoney,2,$desction."-三级分佣",$order_id)){
 		 	 	 	 	 	 return ['code'=>465];
 		 	 	 	 	 }
 		 	 	 	 	 //j极光推送分佣提醒
