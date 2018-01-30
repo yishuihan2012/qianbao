@@ -46,7 +46,7 @@
 		      var isiOS = !!u.match(/\(i[^;]+;( U;)? CPU.+Mac OS X/); //ios终端
 				mui(document).on('tap','a',function(){
 			      if(!isAndroid){
-			        window.webkit.messageHandlers.returnIndex.paySus();
+			        window.webkit.messageHandlers.returnIndex.returnIndex();
 			      }else{
 			        android.paySus();
 			      }
