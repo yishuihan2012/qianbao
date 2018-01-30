@@ -128,7 +128,16 @@ class Userurl extends Controller
 				 $logo = imagecreatefromstring(file_get_contents($logourl)); 
 				 $logo_width = imagesx($logo);
 				 $logo_height = imagesy($logo);
+<<<<<<< HEAD
 				 imagecopyresampled( $QR,$logo, 165, 165, 0, 0, 70, 70, $logo_width, $logo_height); 
+=======
+				 #动态计算取中心点 让你丫不居中
+				 $qr_width = imagesx($QR);
+				 $scale=0.18;
+				 $logo_line=$scale*$qr_width;
+				 $xy=$qr_width*0.5-$logo_line*0.5;
+				 imagecopyresampled( $QR,$logo, $xy, $xy, 0, 0, $logo_line, $logo_line, $logo_width, $logo_height); 
+>>>>>>> 518837da9d6af233c8eb5c736653572bb5696f8b
 				imagepng($QR, 'autoimg/qrcode'.$tel.'.png'); 
 				// 背景
 				$bg_url=Exclusive::get($exclusive_id);
