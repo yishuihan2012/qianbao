@@ -127,7 +127,7 @@ class Userurl extends Controller
 				 $logo = imagecreatefromstring(file_get_contents($logourl)); 
 				 $logo_width = imagesx($logo);
 				 $logo_height = imagesy($logo);
-				 imagecopyresampled( $QR,$logo, 165, 165, 0, 0, 70, 70, $logo_width, $logo_height); 
+				 imagecopyresampled( $QR,$logo, 167, 167, 0, 0, 74, 74, $logo_width, $logo_height); 
 				imagepng($QR, 'autoimg/qrcode'.$tel.'.png'); 
 				// 背景
 				$bg_url=Exclusive::get($exclusive_id);
