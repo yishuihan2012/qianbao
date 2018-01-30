@@ -99,7 +99,7 @@
            // dump($card_validate);exit;
            // return ['code'=>200,'msg'=>'实名认证成功~', 'data'=>$card_validate];
            if($card_validate['error_code']!=0){
-             return ['code'=>351];
+             return ['code'=>351,'msg'=>$card_validate['reason']];
            }
            $state=$card_validate['result']['result']=='T' ? '1' : '0';
            //如果实名认证返回状态不等于T 则进行加1次验证
@@ -303,7 +303,7 @@
 
              $card_validate=BankCert($this->param['card_bankno'],$this->param['card_phone'],$cashcard['card_idcard'],$cashcard['card_name']);
              if($card_validate['error_code']!=0){
-               return ['code'=>351];
+                return ['code'=>351,'msg'=>$card_validate['reason']];
              }
              $state=$card_validate['result']['result']=='T' ? '1' : '0';
              if($card_validate['result']['result']=='F')
