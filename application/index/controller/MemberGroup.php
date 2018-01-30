@@ -43,10 +43,10 @@
 		 {
 		 	$data=input();
 		 	#代理商自动调整为不可自动升级
-		 	if($data['group_visible']==0){
-		 		$data['group_level']=0;
-		 		$data['group_level_type']=0;
-		 	}
+		 	// if($data['group_visible']==0){
+		 	// 	$data['group_level']=0;
+		 	// 	$data['group_level_type']=0;
+		 	// }
 			 $group = new MemberGroups($_POST);
 			 // post数组中只有name和email字段会写入
 			 $result = $group->allowField(true)->save();

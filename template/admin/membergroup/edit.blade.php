@@ -104,6 +104,7 @@ input.labelauty + label { font: 12px "Microsoft Yahei";}
 				</select>
 			</div>
 		</div>
+		<br/>
 		<div class="row form-group">
 			<label for="group_name" class="col-sm-2 text-right"><b>直接推荐人分佣金额:</b></label>
 			<div id="group_level_value" class="col-sm-6">
