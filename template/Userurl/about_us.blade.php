@@ -33,7 +33,7 @@
 		            	<h4 class="main-color fc about-tit space-up"><span class="mui-icon iconfont icon-zizhizhengshu space-right"></span>资质证书</h4>
 		            	<div class="about-info">
 		            		<!--卡片视图-->
-		            		{!! $data->page_content !!}
+		            		{!! $datas['page_content'] !!}
 		            		<!-- <div class="my-card">
 								<div class="my-card-header wrap2">
 									<span class="my-badge">01</span>
