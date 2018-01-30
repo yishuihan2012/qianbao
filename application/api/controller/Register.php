@@ -106,7 +106,7 @@
                    #用手机号去查询会员信息
                    $parent = $parent_result ? $parent_result['login_member_id'] : 0;
                    #TODO 系统设置里是否开启必须邀请人
-                   Member::update(['member_id'=>$member_info->member_id,'member_root'=>find_root($parent)]);
+                   // Member::update(['member_id'=>$member_info->member_id,'member_root'=>find_root($parent)]);
             	 	 if(!$parent_result)
             	 	 {
              	 	      Db::rollback();
