@@ -168,53 +168,59 @@ namespace app\index\controller;
 	 			$group_where['group_id'] = request()->param("member_group_id");
 	 			#获取用户组要升级的级别id
 	 			$group_id = Db::table("wt_member_group")->field("group_salt,group_id,group_level_money")->where($group_where)->find();
+	 			#获取
+	 			$dangqian_group = Db::table("wt_member_group")->field("group_salt,group_id,group_level_money")->where(['group_id' => $info['member_group_id']])->find();
 	 			$data['member_group_id'] = $group_id['group_id'];
 	 			#更新用户的分组id
-	 			if($info['member_group_id'] == request()->param("member_group_id")){
-	 				$content = ['type'=>'error','msg'=>'等同当前等级'];
-	 			}else{
-	 				$re = $Member->where($where)->update($data);
-		 			if($re){
-		 				$status = request()->param("status");
-			 			$upgrade_data['upgrade_member_id'] = $where['member_id'];
-			 			$upgrade_data['upgrade_before_group'] = $info['member_group_id'];
-			 			$upgrade_data['upgrade_group_id'] = $group_id['group_id'];
-			 			$upgrade_data['upgrade_type'] = "后台升级";
-			 			$upgrade_data['upgrade_no'] = make_order();
-			 			$upgrade_data['upgrade_money'] = 0;
-			 			$upgrade_data['upgrade_commission'] = ($status==0)?0:$group_id['group_level_money'];
-			 			$upgrade_data['upgrade_state'] = 0;
-			 			$upgrade_data['upgrade_bak'] = "后台管理员升级";
-			 			$upgrade_data['upgrade_adminster_id'] = Session::get("adminster")['id'];
-
-			 			#查询出启用的通道
-			 			$passageway=Passageway::where(['passageway_state'=>1,'passageway_status'=>1])->select();
-			 			#遍历通道修改用户在同道入网信息
-			 			foreach ($passageway as $key => $value) {
-			 				$members=Members::haswhere('membernet',$value['passageway_no']." != ''")->where(['member_id'=>$info['member_id']])->find();
-			 				
-			 				if(empty($members)){
-			 					continue;
-			 				}
-			 				 $Membernetsedit=new \app\api\controller\Membernetsedit($info['member_id'],$value['passageway_id'],'M03','',$info['member_mobile']);
-			 				 $method=$value['passageway_method'];
-			 				 $success=$Membernetsedit->$method();
-			 			}
-			 			
-			 			//添加用户日志
-			 			$Upgrade =  new Upgrade($upgrade_data);
-			 			$result = $Upgrade->allowField(true)->save();
-			 			$Commission = new Commission();
-			 			//判断用户有没有上级，或者是判断后台有没有设置分佣。
-
-			 			if($info['relation_parent_id']!=0 && $status==1){
-			 				$results = $Commission->MemberCommis(request()->param("member_id"),$upgrade_data['upgrade_commission'],"后台管理员升级"); 
-			 			}
-			 			$content = ($result===false) ? ['type'=>'error','msg'=>'升级会员失败'] : ['type'=>'success','msg'=>'升级会员成功'];
+	 			if($group_id['group_salt']>$dangqian_group['group_salt']){
+	 				if($info['member_group_id'] == request()->param("member_group_id")){
+		 				$content = ['type'=>'error','msg'=>'等同当前等级'];
 		 			}else{
-		 				$content = ['type'=>'error','msg'=>'升级会员失败'];
-		 			}	
-		 		}
+		 				$re = $Member->where($where)->update($data);
+			 			if($re){
+			 				$status = request()->param("status");
+				 			$upgrade_data['upgrade_member_id'] = $where['member_id'];
+				 			$upgrade_data['upgrade_before_group'] = $info['member_group_id'];
+				 			$upgrade_data['upgrade_group_id'] = $group_id['group_id'];
+				 			$upgrade_data['upgrade_type'] = "后台升级";
+				 			$upgrade_data['upgrade_no'] = make_order();
+				 			$upgrade_data['upgrade_money'] = 0;
+				 			$upgrade_data['upgrade_commission'] = ($status==0)?0:($group_id['group_level_money']-$dangqian_group['group_level_money']);
+				 			$upgrade_data['upgrade_state'] = 0;
+				 			$upgrade_data['upgrade_bak'] = "后台管理员升级";
+				 			$upgrade_data['upgrade_adminster_id'] = Session::get("adminster")['id'];
+				 			#查询出启用的通道
+				 			$passageway=Passageway::where(['passageway_state'=>1,'passageway_status'=>1])->select();
+				 			#遍历通道修改用户在同道入网信息
+				 			foreach ($passageway as $key => $value) {
+				 				$members=Members::haswhere('membernet',$value['passageway_no']." != ''")->where(['member_id'=>$info['member_id']])->find();
+				 				
+				 				if(empty($members)){
+				 					continue;
+				 				}
+				 				 $Membernetsedit=new \app\api\controller\Membernetsedit($info['member_id'],$value['passageway_id'],'M03','',$info['member_mobile']);
+				 				 $method=$value['passageway_method'];
+				 				 $success=$Membernetsedit->$method();
+				 			}
+				 			
+				 			//添加用户日志
+				 			$Upgrade =  new Upgrade($upgrade_data);
+				 			$result = $Upgrade->allowField(true)->save();
+				 			$Commission = new Commission();
+				 			//判断用户有没有上级，或者是判断后台有没有设置分佣。
+
+				 			if($info['relation_parent_id']!=0 && $status==1){
+				 				$results = $Commission->MemberCommis(request()->param("member_id"),$upgrade_data['upgrade_commission'],"后台管理员升级"); 
+				 			}
+				 			$content = ($result===false) ? ['type'=>'error','msg'=>'升级会员失败'] : ['type'=>'success','msg'=>'升级会员成功'];
+			 			}else{
+			 				$content = ['type'=>'error','msg'=>'升级会员失败'];
+			 			}	
+			 		}
+	 			}else{
+	 				$content =  ['type'=>'error','msg'=>'升级的用户组级别小于当前用户组级别，不可操作。'] ;	
+	 			}
+	 			
 	 		}else{
 	 			$content =  ['type'=>'error','msg'=>'该用户还没有实名认证，不可以升级。'] ;		
 	 		}
