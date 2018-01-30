@@ -657,20 +657,23 @@ class Userurl extends Controller
   }
   #收支明细
   public function particulars($month=null){
-	$this->checkToken();
+	
 	$data=[];
   	$data['in']=0;
   	$data['out']=0;
   	//手动下滑获取数据
 	if($_POST){
+
 		$page = isset($_POST['page'])?$_POST['page']:1;
-		$result = WalletLog::pages($this->param['uid'],$page,$data);
+		$result = WalletLog::pages(input('uid'),$page,$data);
 		$list = $result['list'];
 		exit(json_encode($list));
 	}
+	$this->checkToken();
   	//表头数据
   	$result = WalletLog::pages($this->param['uid'],1,$data);
   	//总的页数
+  	$this->assign("uid",$this->param['uid']);
   	$this->assign("allpage" , $result['allpage']);
   	$this->assign('data' , $result['data']);
   	$this->assign('list' , $result['list']);
