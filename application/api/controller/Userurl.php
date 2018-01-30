@@ -128,7 +128,7 @@ class Userurl extends Controller
 				 $logo = imagecreatefromstring(file_get_contents($logourl)); 
 				 $logo_width = imagesx($logo);
 				 $logo_height = imagesy($logo);
-				 imagecopyresampled( $QR,$logo, 167, 167, 0, 0, 74, 74, $logo_width, $logo_height); 
+				 imagecopyresampled( $QR,$logo, 165, 165, 0, 0, 70, 70, $logo_width, $logo_height); 
 				imagepng($QR, 'autoimg/qrcode'.$tel.'.png'); 
 				// 背景
 				$bg_url=Exclusive::get($exclusive_id);
@@ -406,7 +406,7 @@ class Userurl extends Controller
 		$page = empty(input("page"))?1:input("page");
 		if($_POST){
 			$start = ($page-1)*10;
-			$CashOrder=CashOrder::with("passageway")->where(['order_member'=>$this->param['uid'],"order_money" => ["<>",0]])->order('order_id desc')->limit($start,10)->select();
+			$CashOrder=CashOrder::with("passageway")->where(['order_member'=>$this->param['uid'],'order_money' => ['<>' , 0]])->order('order_id desc')->limit($start,10)->select();
 
 			foreach ($CashOrder as $key => $value) {
 			 	$CashOrder[$key]["bank_ons"] = substr($value['order_card'], -4);
@@ -414,8 +414,8 @@ class Userurl extends Controller
 			}
 			echo json_encode(["data" => $CashOrder, "page" => $page+1]);die;
 		}
-		$CashOrder=CashOrder::with("passageway")->where(['order_member'=>$this->param['uid'],"order_money" => ["<>",0]])->order('order_id desc')->limit(0,10)->select();
-		$count = CashOrder::where(['order_member'=>$this->param['uid'],"order_money" => ["<>",0]])->order('order_id desc')->count();
+		$CashOrder=CashOrder::with("passageway")->where(['order_member'=>$this->param['uid'],'order_money' => ['<>' , 0]])->order('order_id desc')->limit(0,10)->select();
+		$count = CashOrder::where(['order_member'=>$this->param['uid'],'order_money' => ['<>' , 0]])->order('order_id desc')->count();
 			$pages = ceil($count/10);
 			#截取银行卡号
 		foreach ($CashOrder as $key => $value) {
@@ -652,8 +652,7 @@ class Userurl extends Controller
   }
   #收支明细
   public function particulars($month=null){
-  	// $this->param['uid'] = 42;
-	// $this->checkToken();
+	$this->checkToken();
 	$data=[];
   	$data['in']=0;
   	$data['out']=0;
@@ -869,7 +868,7 @@ class Userurl extends Controller
   	 $Commission_info=Commissions::where(['commission_from'=>$order->order_id,'commission_type'=>1])->find();
      if(!$Commission_info){
             $fenrun= new \app\api\controller\Commission();
-            $fenrun_result=$fenrun->MemberFenRun($order->order_member,$order->order_money,$order->order_passway,1,'快捷支付手续费分润',$order->order_id);
+            $fenrun_result=$fenrun->MemberFenRun($order->order_member,$order->order_money,$order->order_passway,1,'套现手续费分润',$order->order_id);
      }else{
         $fenrun_result['code']=-1;
      }
