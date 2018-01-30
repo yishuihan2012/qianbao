@@ -66,7 +66,7 @@
            if($this->param['billMoney']/$this->param['payCount'] >20000)
                   return['code'=>478];//单笔还款金额过大，请增加还款次数
 
-           $root_id=find_root($this->param['uid']);
+           // $root_id=find_root($this->param['uid']);
            #0 获取参数数据
            if($this->param['endDate']<$this->param['startDate']){
               exit(json_encode(['code'=>111,'msg'=>'还款结束日期不能小于开始日期']));
@@ -206,7 +206,7 @@
                       'order_time'     =>$each_pay_time[$k],
                       'order_passageway'=>$this->param['passageway'],
                       'order_passway_id'=>$this->param['passageway'],
-                      'order_root'=>$root_id,
+                      // 'order_root'=>$root_id,
                   );
                   $generation_pound += $real_each_get['fee'];
                 $day_real_get_money+=$real_each_get['money'];
@@ -223,7 +223,7 @@
                   'order_time'       =>$date[$i]." ".get_hours(20,20).":".get_minites(0,30),
                   'order_passageway'=>$this->param['passageway'],
                   'order_passway_id'=>$this->param['passageway'],
-                  'order_root'=>$root_id,
+                  // 'order_root'=>$root_id,
               );
 
           }
@@ -497,7 +497,7 @@
                              $list=array();
                              $lists=array();
                              // print_r($data);die;
-                             $root_id=find_root($this->param['uid']);
+                             // $root_id=find_root($this->param['uid']);
                              for ($i=0; $i <count($data) ; $i++) { 
                              // foreach ($data as $key => $value) {
                                    $list[]=array(
@@ -511,7 +511,7 @@
                                         'order_time'     =>$data[$i]['time'],
                                         'order_passageway'=>$this->param['passageway'],
                                         'order_passway_id'=>$this->param['passageway'],
-                                        'order_root'=>$root_id,
+                                        // 'order_root'=>$root_id,
                                    );
                                    $lists[]=array(
                                         'order_no'         =>$Generation_result->generation_id,
@@ -524,7 +524,7 @@
                                         'order_time'       =>$data[$i]['endtime'],
                                         'order_passageway'=>$this->param['passageway'],
                                         'order_passway_id'=>$this->param['passageway'],
-                                        'order_root'=>$root_id,
+                                        // 'order_root'=>$root_id,
                                    );
                              }
                              // var_dump($lists);die;
