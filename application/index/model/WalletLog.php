@@ -35,11 +35,7 @@ class WalletLog extends Model{
         }
         #分页
     public static function pages($uid,$page =1,$data = [],$month = null){
-        if(!$month)$month=date('Y-m');
-        //月初
-        $monthstart=strtotime($month);
-        //月末
-        $monthend=strtotime(date('Y-m',strtotime('+1 month',strtotime($month))));
+       
         $data['month'] = $month;
         $limit = ($page-1)*10;
         $list=db('wallet_log')->alias('l')
