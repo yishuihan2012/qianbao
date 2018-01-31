@@ -705,7 +705,7 @@ class Userurl extends Controller
   public function bills_detail($log_id){
   	$this->checkToken();
   	$wallet_log=db('wallet_log')->where('log_id',$log_id)->find();
-  	switch ($wallet_log['log_relation_type']) {
+  	switch ($wallet_log['log_relation_type']){
   		//分润分佣
   		case 1:
   			$commission=db('commission')->alias('c')

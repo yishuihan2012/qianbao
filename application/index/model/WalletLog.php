@@ -35,7 +35,6 @@ class WalletLog extends Model{
         }
         #分页
     public static function pages($uid,$page =1,$data = [],$month = null,$monthstart,$monthend){
-       
         $data['month'] = $month;
         $limit = ($page-1)*10;
         $list=db('wallet_log')->alias('l')
@@ -62,6 +61,7 @@ class WalletLog extends Model{
                     break;
             }
         }
+       
         $count = db('wallet_log')->alias('l')
         ->join('wallet w','l.log_wallet_id=w.wallet_id')
         ->where(['w.wallet_member'=>$uid])
