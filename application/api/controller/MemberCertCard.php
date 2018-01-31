@@ -300,12 +300,18 @@
               'bindId'=>$cert_card['bindId']
             );
             $income=repay_request($params,$passageway['passageway_mech'],$url,$passageway['iv'],$passageway['secretkey'],$passageway['signkey']);
+              // var_dump($income);die;
+            if($income['code']!=200){
+              return ['code'=>444];
+            }
             if($income['bindStatus']!='02')
                 return ['code'=>444];
            if($cert_card->delete()===false)
                  return ['code'=>444];
-            MemberNet::where(['net_member_id'=>$this->param['uid']])->update([$passageway['passageway_no']=>'']);
-               
+            $card=MemberCreditcard::where(['card_member_id'=>$this->param['uid']])->find();
+            if(empty($card)){
+              MemberNet::where(['net_member_id'=>$this->param['uid']])->update([$passageway['passageway_no']=>'']);
+            }               
            return ['code'=>200, 'msg'=>'解绑成功~', 'data'=>''];
       }
 
