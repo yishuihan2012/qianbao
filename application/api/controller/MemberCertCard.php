@@ -300,6 +300,9 @@
               'bindId'=>$cert_card['bindId']
             );
             $income=repay_request($params,$passageway['passageway_mech'],$url,$passageway['iv'],$passageway['secretkey'],$passageway['signkey']);
+            if($income['code']!=200){
+              return ['code'=>444];
+            }
             if($income['bindStatus']!='02')
                 return ['code'=>444];
            if($cert_card->delete()===false)
