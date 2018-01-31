@@ -55,7 +55,6 @@ class Order extends Common{
 	 		->join("wt_member_cert m", "m.cert_member_id=Member.member_id","left")
 	 		->where($wheres)->field('wt_member.member_nick')->order("upgrade_id desc")
 	 		->paginate(Config::get('page_size'),false, ['query'=>Request::instance()->param()]);
-	 
 	 	 #统计订单条数
 	 	$count['count_size']=Upgrade::haswhere('member',$where)->join("wt_member_cert m", "m.cert_member_id=Member.member_id","left")->where($wheres)->count();
 	 	 #升级总金额

@@ -39,7 +39,7 @@ class WalletLog extends Model{
         $limit = ($page-1)*10;
         $list=db('wallet_log')->alias('l')
         ->join('wallet w','l.log_wallet_id=w.wallet_id')
-        ->where(['w.wallet_member'=>$uid])
+        ->where(['w.wallet_member'=>$uid,'log_wallet_amount'=>['<>',0]])
         ->where('log_add_time','between time',[$monthstart,$monthend])
         ->order('log_add_time desc')->limit($limit,10)
         ->select();
