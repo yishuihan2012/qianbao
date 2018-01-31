@@ -33,11 +33,10 @@
     <input type="hidden" name="endTime" id="endTime" value="" />
     <z class='clearTime'>X</z>
 </div>
-
   <button class="btn btn-primary" type="submit">搜索</button>
 </form>
 
-
+      
     </form>
     </div>
 </div>
@@ -90,7 +89,7 @@
           <a class="remove" href="#" data-url="{{url('/index/Plan/order_status/status/3/id/'.$value['order_id'])}}"><i class="icon-pencil"></i> 取消执行 </a>
           @endif
           @if($value->order_status == -1)
-          <a class="remove" href="#" data-url="{{url('/api/Memnernet/action_single_plan/id/'.$value['order_id'])}}"><i class="icon-pencil"></i> 重新执行 </a>
+          <a class="remove" href="#" data-url="{{url('/api/Membernet/action_single_plan/id/'.$value['order_id'])}}"><i class="icon-pencil"></i> 重新执行 </a>
           @endif
        </td>
        <!-- <td>{{$value->back_tradeNo}}</td>
