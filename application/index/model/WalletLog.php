@@ -44,16 +44,11 @@ class WalletLog extends Model{
         ->order('log_add_time desc')->limit($limit,10)
         ->select();
         foreach ($list as $k => $v) {
-            $state=db('withdraw')->where('withdraw_id',$v['log_relation_id'])->value('withdraw_state');
-            if($v['log_wallet_type']==1 || $state == -12){
-                $data['in'] += $v['log_wallet_amount'];
-            }else{
-                $data['out'] += $v['log_wallet_amount'];
-            }
+            
             switch ($v['log_relation_type']) {
                 //提现操作
                 case 2:
-        
+                    $state=db('withdraw')->where('withdraw_id',$v['log_relation_id'])->value('withdraw_state');
                     if($state)$list[$k]['info']=state_info($state);
                     break;
                 default:
@@ -61,7 +56,21 @@ class WalletLog extends Model{
                     break;
             }
         }
-       
+        
+        $list2=db('wallet_log')->alias('l')
+        ->join('wallet w','l.log_wallet_id=w.wallet_id')
+        ->where(['w.wallet_member'=>$uid])
+        ->where('log_add_time','between time',[$monthstart,$monthend])
+        ->order('log_add_time desc')
+        ->select();
+        foreach ($list2 as $key => $value) {
+            $state=db('withdraw')->where('withdraw_id',$value['log_relation_id'])->value('withdraw_state');
+            if($value['log_wallet_type']==1 || $state == -12){
+                $data['in'] += $value['log_wallet_amount'];
+            }else{
+                $data['out'] += $value['log_wallet_amount'];
+            }
+        }
         $count = db('wallet_log')->alias('l')
         ->join('wallet w','l.log_wallet_id=w.wallet_id')
         ->where(['w.wallet_member'=>$uid])
