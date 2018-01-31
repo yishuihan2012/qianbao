@@ -8,7 +8,7 @@
 namespace app\index\controller;
 
  use app\index\model\Member as Members;
- use app\index\model\{MemberLogin, MemberGroup, MemberRelation, MemberCert, MemberCashcard, Upgrade ,Passageway};
+ use app\index\model\{MemberLogin, MemberGroup, MemberRelation, MemberCert, MemberCashcard, Upgrade ,Passageway,MemberTeam,MemberNet};
  use app\api\controller\Commission;
  use app\index\model\Commission as Commissions;
  use think\{Controller, Request, Session, Config, Loader, Db};
@@ -309,12 +309,7 @@ namespace app\index\controller;
 	*/
 	public function registerForOthers()
       {
-
-           #验证parent_phone号码是否存在
-           if(!phone_check(request()->param('parent_phone'))){
-           		Session::set('jump_msg',['type'=>'warning','msg'=>'主邀请人手机号码不存在','data'=>'']);
-				$this->redirect($this->history['0']);
-           }
+           
                  
            #验证参数是否存在
            if(!phone_check(request()->param('phone'))){
@@ -328,12 +323,16 @@ namespace app\index\controller;
            if($member){
            		Session::set('jump_msg',['type'=>'warning','msg'=>'该手机号码已被注册，请直接登录！','data'=>'']);
 				$this->redirect($this->history['0']);
-           }                  
-                 
-           $parentmember=MemberLogin::phone_exit(request()->param('parent_phone'));
-           if(!$parentmember){
-           	    Session::set('jump_msg',['type'=>'warning','msg'=>'主邀请人手机号码不存在','data'=>'']);
-				$this->redirect($this->history['0']);
+           } 
+           $parentmember=MemberLogin::phone_exit(request()->param('parent_phone'));                 
+            #验证parent_phone号码是否存在
+           if(request()->param('parent_phone')!=''){    
+
+	           if(!$parentmember){
+	           	    Session::set('jump_msg',['type'=>'warning','msg'=>'主邀请人手机号码不存在','data'=>'']);
+	           	    Db::rollback();
+					$this->redirect($this->history['0']);
+	           }
            }
            Db::startTrans();           
            #填写注册信息             
@@ -365,19 +364,29 @@ namespace app\index\controller;
                 #用户推荐表信息处理                  
                  $meber_relation= new MemberRelation([
                       'relation_member_id'=>$member_info->member_id,
-                       'relation_parent_id'  =>$parentmember['login_member_id'],
+                      'relation_parent_id'  =>empty($parentmember['login_member_id'])?0:$parentmember['login_member_id'],
                       'relation_type'     =>6,//TODO 邀请方式                  
                  ]);
                  #初始化会员钱包信息                  
                  $member_wallet= new Wallet([
                       'wallet_member'=>$member_info->member_id,
                       'wallet_amount'=>0                  
-                ]);                  
-                 if(!$member_login->save() || !$meber_relation->save() || !$member_wallet->save())
-                 {                       
-                       Session::set('jump_msg',['type'=>'warning','msg'=>'注册失败请重试','data'=>'']);
-				      $this->redirect($this->history['0'])  ;               
-                 }                  
+                ]);  
+                $member_team=new MemberTeam([
+                	 'team_name'=>$member_info->member_nick,
+                	 'team_member_id'=>$member_info->member_id,
+                ]);     
+                #初始化会员入网信息
+                $MemberNet=new MemberNet([
+                	 'net_member_id'=>$member_info->member_id,
+                ]);
+                if(!$member_login->save() || !$meber_relation->save() || !$member_wallet->save() || !$member_team->save() || !$MemberNet->save())
+                {                       
+                     Session::set('jump_msg',['type'=>'warning','msg'=>'注册失败请重试','data'=>'']);
+                     Db::rollback();
+					$this->redirect($this->history['0'])  ;               
+                 }                 
+                                  
                  Db::commit();
                  $data=Members::member_info($token);                  
                  Session::set('jump_msg',['type'=>'success','msg'=>'注册成功','data'=>'']);
