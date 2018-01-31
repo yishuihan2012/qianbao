@@ -238,7 +238,6 @@
             );
             $url='http://pay.mishua.cn/zhonlinepay/service/rest/creditTrans/bindCardConfirm';
             $income=repay_request($params,$passageway['passageway_mech'],$url,$passageway['iv'],$passageway['secretkey'],$passageway['signkey']);
-            // var_dump($income);die;
             if($income['code']=='200'){
               //修改签约状态
               $bindStatus=array(
@@ -300,7 +299,7 @@
               'bindId'=>$cert_card['bindId']
             );
             $income=repay_request($params,$passageway['passageway_mech'],$url,$passageway['iv'],$passageway['secretkey'],$passageway['signkey']);
-              // var_dump($income);die;
+
             if($income['code']!=200){
               return ['code'=>444];
             }
@@ -310,7 +309,7 @@
                  return ['code'=>444];
             $card=MemberCreditcard::where(['card_member_id'=>$this->param['uid']])->find();
             if(empty($card)){
-              MemberNet::where(['net_member_id'=>$this->param['uid']])->update([$passageway['passageway_no']=>'']);
+              MemberNet::where(['net_member_id'=>$this->param['uid']])->update([$passageway['passageway_no']=>null]);
             }               
            return ['code'=>200, 'msg'=>'解绑成功~', 'data'=>''];
       }
