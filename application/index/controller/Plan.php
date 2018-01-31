@@ -78,6 +78,10 @@ class Plan extends Common{
 	 	$r = $data['r'];
 	 	$where = $data['where'];
 		$where['order_status'] = -1;
+		if(request()->param('beginTime') && request()->param('endTime')){
+			// $endTime=strtotime(request()->param('endTime'))+24*3600;
+			$where['order_time']=["between time",[request()->param('beginTime'),request()->param('endTime')]];
+		}
 		$list = GenerationOrder::with("passageway,member")->where($where)->paginate(Config::get('page_size'), false, ['query'=>Request::instance()->param()]);
 		$this->assign('r',$r);
 		$this->assign("list",$list);
