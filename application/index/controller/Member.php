@@ -390,7 +390,7 @@ namespace app\index\controller;
       }
       /**
       *@version register 用户注册
-      *@author 杨成志 （3115317085@qq.com
+      *@author 杨成志 （3115317085@qq.com）
       */
       public function register(){
       		return view("admin/member/register");
