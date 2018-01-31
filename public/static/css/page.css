@@ -55,7 +55,7 @@
 /*专属二维码*/
 .exc-code{width:100%;overflow:scroll;}
 .exc-code img{width:100%;height:auto;}
-.exc-code2{width:100%;height:100%;}
+.exc-code2{width:100%;height:100%;overflow:scroll;}
 .exc-code2 img{width:100%;height:auto;}
 .my-btn-r{position:fixed;bottom:100px;left:50%;-webkit-transform: translateX(-50%);transform: translateX(-50%);display:inline-block;width:35%;height:40px;line-height:40px;border-radius:5px;background-color:#dd524d;color:#fff;text-align:center;}
 .code-container{width:140px;height:140px;position:absolute;top:52%;left:50%;margin-left:-65px;}
@@ -158,3 +158,16 @@
 .loading-box{position:absolute;top:55%;left:50%;-webkit-transform: translateX(-50%);transform: translateX(-50%);}
 .loading-box img{width:30px;height:30px;}
 .hid-load{display:none;}
+/*操作指南*/
+.intr-top{width:100%;}
+.intr-top img{width:100%;height:auto;}
+.intr-list-pic{width:80%;border:1px solid #f0f0f0;border-radius:50%;position:relative;margin:0 auto 10px;}
+.intr-list-pic img{width:50%;position: absolute;left:50%;top:50%;-webkit-transform: translate(-50%,-50%);transform: translate(-50%,-50%);}
+.intr-detail{
+	width:80%;
+	margin:0 auto;
+}
+.intr-detail img{
+	width:60%;
+	margin-top:15px;
+}
