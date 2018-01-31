@@ -645,13 +645,24 @@ class Userurl extends Controller
    * @return [type] [description]
    */
    public function web_freshman_guide(){
-   		$class = NoviceClasss::all();
-   		#还款列表
-   		foreach ($class as $key => $value) {
-   			$class[$key]['repaymentList'] = MemberNovice::lists($value['novice_class_id']);
-   		}
-   		$this->assign("class",$class);
+   		// $class = NoviceClasss::all();
+   		// #还款列表
+   		// foreach ($class as $key => $value) {
+   		// 	$class[$key]['repaymentList'] = MemberNovice::lists($value['novice_class_id']);
+   		// }
+   		// $this->assign("class",$class);
     	return view("api/logic/web_freshman_guide");
+  }
+  /**
+  *@version [instructicons_detail 新手指引详情页面]
+  *@author 杨成志 【3115317085@qq.com】
+  */
+  public function instructions_detail(){
+  	$title = input('title');
+  	$this->assign("title",$title);
+  	$info = MemberNovice::where(['novice_name' => $title])->find();
+  	$this->assign("info",$info);
+  	return view('api/logic/instructions_detail');
   }
   #信用卡说明
   public function card_description(){
