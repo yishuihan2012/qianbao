@@ -19,13 +19,13 @@
 						{{$commission['commission_type']==1 ? '分润' : '分佣'}}
 					@endif
 			  奖励</p>
-			  <p class="f24 f-bold">{{substr($wallet_log['log_wallet_amount'],0,-2)}}</p>
+			  <p class="f24 f-bold">{{$wallet_log['log_wallet_amount']}}</p>
 
 			  	<!-- 提现 -->
 				@elseif($wallet_log['log_relation_type']==2)
 
 			  <p class="f14 space-bot">提现金额</p>
-			  <p class="f24 f-bold">{{substr($wallet_log['log_wallet_amount'],0,-2)}}</p>
+			  <p class="f24 f-bold">{{$wallet_log['log_wallet_amount']}}</p>
 			  
 				@elseif($wallet_log['log_relation_type']==3)
 				@elseif($wallet_log['log_relation_type']==4)
@@ -34,7 +34,7 @@
 				@elseif($wallet_log['log_relation_type']==5)
 
 			  <p class="f14 space-bot">推荐奖励</p>
-			  <p class="f24 f-bold">{{substr($wallet_log['log_wallet_amount'],0,-2)}}</p>
+			  <p class="f24 f-bold">{{$wallet_log['log_wallet_amount']}}</p>
 
 				@elseif($wallet_log['log_relation_type']==6)
 				@endif

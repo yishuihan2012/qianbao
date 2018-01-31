@@ -40,10 +40,10 @@
 	 	</thead>
 	 	 <tbody>
 	 	@foreach($list as $key => $value)
-		 <tr>
+		 <tr style="@if($value->order_type == 2)color:red;@endif ">
 		 	<td>{{$value->passageway_name}}</td>
 			 <td>{{$value->member_nick}}</td>
-			 <td>@if($value->order_type == 1) 消费 @else 还款 @endif</td>
+			 <td>@if($value->order_type == 1) 消费 @else <em style="">还款</em> @endif</td>
 			 <td>{{$value->order_card}}</td>
 			 <td>{{$value->order_money}}</td>
 			 <td>{{$value->order_pound}}</td>
@@ -73,7 +73,7 @@
 	    </tbody>
 	</table>
   </div>
-  <a  href="{{url('/index/server_model/index')}}" >返回</a>
+  <a  href="{{url('/index/plan/index')}}" >返回</a>
 </div>
 </section>
 <script>

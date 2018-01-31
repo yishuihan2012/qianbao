@@ -60,7 +60,7 @@
 			        				@else
 			        					{{$v['log_wallet_type']==1 ? '+' : '-'}}
 			        				@endif
-				        			    {{substr($v['log_wallet_amount'],0,-2)}}
+				        			    {{$v['log_wallet_amount']}}
 			        			</p>
 			        			<!-- 提现操作 此处显示状态-->
 			        			@if($v['log_relation_type']==2)
