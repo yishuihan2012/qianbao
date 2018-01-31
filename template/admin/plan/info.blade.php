@@ -73,7 +73,7 @@
 	    </tbody>
 	</table>
   </div>
-  <a  href="{{url('/index/server_model/index')}}" >返回</a>
+  <a  href="{{url('/index/plan/index')}}" >返回</a>
 </div>
 </section>
 <script>
