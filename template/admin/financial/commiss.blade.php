@@ -110,7 +110,7 @@
  setTimeout(function(){
       $('#beginTime').val(start.format('YYYY-MM-DD'));
       $('#endTime').val(end.format('YYYY-MM-DD'));
-      $('#dateTimeRange').val(start+'-'+end);
+      $('#dateTimeRange').val();
       console.log(start);
 },100);
  @if((!isset($conditions['beginTime']) || $conditions['beginTime']=='')  && (!isset($conditions['endTime']) || $conditions['endTime']==''))
