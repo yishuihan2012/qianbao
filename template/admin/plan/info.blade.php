@@ -40,10 +40,10 @@
 	 	</thead>
 	 	 <tbody>
 	 	@foreach($list as $key => $value)
-		 <tr>
+		 <tr style="">
 		 	<td>{{$value->passageway_name}}</td>
 			 <td>{{$value->member_nick}}</td>
-			 <td>@if($value->order_type == 1) 消费 @else 还款 @endif</td>
+			 <td>@if($value->order_type == 1) 消费 @else <em style="color:red;">还款</em> @endif</td>
 			 <td>{{$value->order_card}}</td>
 			 <td>{{$value->order_money}}</td>
 			 <td>{{$value->order_pound}}</td>
