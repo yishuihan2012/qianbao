@@ -34,7 +34,7 @@ class WalletLog extends Model{
             return $this->belongsTo('Wallet', 'log_wallet_id', 'wallet_id')->bind("wallet_member")->setEagerlyType(0);
         }
         #分页
-    public static function pages($uid,$page =1,$data = [],$month = null){
+    public static function pages($uid,$page =1,$data = [],$month = null,$monthstart,$monthend){
        
         $data['month'] = $month;
         $limit = ($page-1)*10;

@@ -686,13 +686,13 @@ class Userurl extends Controller
 	if($_POST){
 
 		$page = isset($_POST['page'])?$_POST['page']:1;
-		$result = WalletLog::pages(input('uid'),$page,$data);
+		$result = WalletLog::pages(input('uid'),$page,$data,$month,$monthstart,$monthend);
 		$list = $result['list'];
 		exit(json_encode($list));
 	}
 	$this->checkToken();
   	//表头数据
-  	$result = WalletLog::pages($this->param['uid'],1,$data);
+  	$result = WalletLog::pages($this->param['uid'],1,$data,$month,$monthstart,$monthend);
   	//总的页数
   	$this->assign("uid",$this->param['uid']);
   	$this->assign("allpage" , $result['allpage']);
