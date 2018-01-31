@@ -673,6 +673,11 @@ class Userurl extends Controller
   }
   #收支明细
   public function particulars($month=null){
+  	if(!$month)$month=date('Y-m');
+    //月初
+    $monthstart=strtotime($month);
+    //月末
+    $monthend=strtotime(date('Y-m',strtotime('+1 month',strtotime($month))));
 	
 	$data=[];
   	$data['in']=0;
@@ -681,13 +686,13 @@ class Userurl extends Controller
 	if($_POST){
 
 		$page = isset($_POST['page'])?$_POST['page']:1;
-		$result = WalletLog::pages(input('uid'),$page,$data);
+		$result = WalletLog::pages(input('uid'),$page,$data,$month,$monthstart,$monthend);
 		$list = $result['list'];
 		exit(json_encode($list));
 	}
 	$this->checkToken();
   	//表头数据
-  	$result = WalletLog::pages($this->param['uid'],1,$data);
+  	$result = WalletLog::pages($this->param['uid'],1,$data,$month,$monthstart,$monthend);
   	//总的页数
   	$this->assign("uid",$this->param['uid']);
   	$this->assign("allpage" , $result['allpage']);
@@ -700,7 +705,7 @@ class Userurl extends Controller
   public function bills_detail($log_id){
   	$this->checkToken();
   	$wallet_log=db('wallet_log')->where('log_id',$log_id)->find();
-  	switch ($wallet_log['log_relation_type']) {
+  	switch ($wallet_log['log_relation_type']){
   		//分润分佣
   		case 1:
   			$commission=db('commission')->alias('c')

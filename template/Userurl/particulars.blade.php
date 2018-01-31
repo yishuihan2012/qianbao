@@ -127,7 +127,7 @@
 			        	str = '';
 			        	info = '';
 				       if(data[i].log_relation_type == 2 ){
-				       		if(data[i].info){
+				       		if(data[i].info == '审核未通过'){
 				       			str  = '+';
 				       		}else{
 				       			str = data[i].log_wallet_type==1 ? '+' : '-';	

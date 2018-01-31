@@ -40,14 +40,14 @@
 	 	</thead>
 	 	 <tbody>
 	 	@foreach($list as $key => $value)
-		 <tr style="@if($value->order_type == 2)color:red;@endif ">
+		 <tr style="">
 		 	<td>{{$value->passageway_name}}</td>
 			 <td>{{$value->member_nick}}</td>
-			 <td>@if($value->order_type == 1) 消费 @else <em style="">还款</em> @endif</td>
+			 <td>@if($value->order_type == 1) <em style="color:#00FF00;"> 消费</em> @else <em style="color:#00FFFF;">还款</em>@endif </td>
 			 <td>{{$value->order_card}}</td>
 			 <td>{{$value->order_money}}</td>
 			 <td>{{$value->order_pound}}</td>
-			 <td>@if($value->order_status == 1) 待执行 @elseif($value->order_status == 2) 成功 @elseif($value->order_status == 3) 取消 @elseif($value->order_status ==4) 带查证 @else 失败 @endif </td>
+			 <td>@if($value->order_status == 1)<em style="color:#FF9900;">  待执行 </em>@elseif($value->order_status == 2)<em style="color:#33FF33;"> 成功</em> @elseif($value->order_status == 3)<em style="color:#FF00FF;"> 取消</em> @elseif($value->order_status ==4) <em style="color:#00FFFF;">带查证</em> @else <em style="color:red;">失败 </em>@endif </td>
 			 <td>{{$value->order_desc}}</td>
 			 <td>{{$value->order_time}}</td>
 			 <td>{{$value->order_edit_time}}</td>
