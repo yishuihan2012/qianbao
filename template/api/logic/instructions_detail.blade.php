@@ -2,7 +2,7 @@
 <html>
 <head>
 		<meta charset="UTF-8">
-		<title>如何注册</title>
+		<title>{{$title}}</title>
 		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
 		<link href="/static/css/mui.min.css" rel="stylesheet" />
 		<link href="/static/css/iconfont.css" rel="stylesheet" />
@@ -11,10 +11,7 @@
 		<link href="/static/css/themes.css" rel="stylesheet"/>
 	</head>
 	<body>
-		<header class="mui-bar mui-bar-nav bg-w bor-bot">
-		    <a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left normal-color"></a>
-		    <h1 class="mui-title">{{$title}}</h1>
-		</header>
+		
 		<div class="mui-content fc bg-w">
 			<div class="intr-detail">
 				<div>
