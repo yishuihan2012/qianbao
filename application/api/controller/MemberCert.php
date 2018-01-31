@@ -98,8 +98,9 @@
            $card_validate=BankCert($this->param['card_bankno'],$this->param['card_phone'],$this->param['card_idcard'],$this->param['card_name']);
            // dump($card_validate);exit;
            // return ['code'=>200,'msg'=>'实名认证成功~', 'data'=>$card_validate];
-           if($card_validate['reason']!='成功')
-                 return ['code'=>351];
+           if($card_validate['error_code']!=0){
+             return ['code'=>351,'msg'=>$card_validate['reason']];
+           }
            $state=$card_validate['result']['result']=='T' ? '1' : '0';
            //如果实名认证返回状态不等于T 则进行加1次验证
            //TODOif($card_validate['result']['result']=='T' && $card_validate['result']['result']!='P')
@@ -301,8 +302,9 @@
           if($cashcard['card_bankno']!=$this->param['card_bankno'] || $cashcard['card_phone']!=$this->param['card_phone']){
 
              $card_validate=BankCert($this->param['card_bankno'],$this->param['card_phone'],$cashcard['card_idcard'],$cashcard['card_name']);
-             if($card_validate['reason']!='成功')
-                   return ['code'=>351];
+             if($card_validate['error_code']!=0){
+                return ['code'=>351,'msg'=>$card_validate['reason']];
+             }
              $state=$card_validate['result']['result']=='T' ? '1' : '0';
              if($card_validate['result']['result']=='F')
                    return ['code'=>352];

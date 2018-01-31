@@ -114,7 +114,7 @@
 			      $.ajax({
 			        url:"",
 			        type:"post",
-			        data:{page:page},
+			        data:{page:page,uid:{{$uid}}},
 			        dateType:"json",
 			        beforeSend:function(XMLHttpRequest){ 
 			          $(".load-more").text("加载中..."); 

@@ -76,9 +76,9 @@
                exit(json_encode(['code'=>111,'msg'=>'开始日期不能小于今天']));
                return ['code'=>475];//开始日期不能小于今天
            }
-           if(date('H',time())>19 && $this->param['startDate']==$this->param['endDate'] ){
-               return ['code'=>476];//今天已超过还款时间，无法为您制定还款计划
-           }
+           // if(date('H',time())>19 && $this->param['startDate']==$this->param['endDate'] ){
+           //     return ['code'=>476];//今天已超过还款时间，无法为您制定还款计划
+           // }
            if($this->param['startDate']<$this->param['startDate']){
               exit(json_encode(['code'=>111,'msg'=>'还款结束日期不能小于开始日期']));
               return['code'=>474]; //开始日期不能小于今天
@@ -250,7 +250,7 @@
         }
     }
       //根据开始时间结束时间随机每天刷卡时间---有问题
-      public function get_random_time($day,$count,$begin=9,$end=19){
+      public function get_random_time($day,$count,$begin=9,$end=14){
         //如果日期为今天，刷卡时间大于当前小时
         $now_h=date('Y-m-d',time());
         if($day==$now_h){

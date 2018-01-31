@@ -67,7 +67,7 @@
 						</div>
 						@elseif($v['order_status']==-1)
 						<!-- 还款失败 -->
-						<div class="dis-flex-be wrap-bt bor-bot">
+						<div class="dis-flex-be wrap-bt">
 							<p class="f15">
 								@if($v['order_type']==1)
 								<span class="my-badge-inpro">消费</span>
@@ -81,7 +81,13 @@
 							  <span class="">执行失败</span>
 							  <span class="iconfont icon-zhifuyouwenti f20 v-m"></span>
 					        </p>
- 					</div>
+ 					  </div>
+	 					<div style="padding:0 10px">
+							<p class="invalid-color f14">失败原因：{{$v['back_statusDesc']}}</p>
+							@if(isset($v['is_first']) && $v['is_first']=1)
+							<p class="bor-bot f16 ftr wrap"><a id="resetBtn" plan_id="{{$v['order_id']}}">重新执行</a></p>
+							@endif
+						</div>
 						@elseif($v['order_status']==2)
 						<!-- 取消还款 -->
 						<div class="dis-flex-be wrap-bt bor-bot">
@@ -113,8 +119,10 @@
 							<p class="f16 red-color2">
 							  <span>计划取消</span>
 							  <span class="iconfont icon-quxiao f20 v-m"></span>
+
 					        </p>
 						</div>
+
 						@endif
 					@endforeach
 					
@@ -135,16 +143,32 @@
 			mui.init();
 	$(function(){
 		$('#regBtn').click(function(){
-			$.post('/api/userurl/cancel_repayment',{generation_id:{{$generation['generation_id']}}},function(res){
-				res=JSON.parse(res);
-				if(res.code==200){
-					mui.toast('取消计划成功');
-					setTimeout(location.reload(),1000);
-				}else{
-					// alert("取消失败！\n"+res.msg);
-					mui.toast(res.msg);
-				}
-			})
+			    mui.confirm('是否确认取消计划？', '取消计划', ['否', '是'], function(e) {  
+                    if (e.index == 1) {  
+                        	$.post('/api/userurl/cancel_repayment',{generation_id:{{$generation['generation_id']}}},function(res){
+								res=JSON.parse(res);
+								if(res.code==200){
+									mui.toast('取消计划成功');
+									setTimeout(location.reload(),2000);
+								}else{
+									// alert("取消失败！\n"+res.msg);
+									mui.toast(res.msg);
+								}
+							})
+                    }
+                })  
+		})
+		$("#resetBtn").click(function(){
+				var plan_id=$(this).attr('plan_id');
+				mui.confirm('计划失败原因通常是因为余额不足，请确保卡内余额充足再执行计划,如有疑问，请联系客服。', '重新执行计划', ['否', '是，重新执行'], function(e) {  
+                    if (e.index == 1) {  
+                    	$.post('/api/userurl/reset_one_repayment',{plan_id:plan_id},function(res){
+								res=JSON.parse(res);
+								mui.toast(res.msg);
+								setTimeout(location.reload(),2000);
+						})
+                    }
+                })  
 		})
 	})
 		</script>

@@ -49,12 +49,12 @@
 		 </div>		
 	 </div>
 
-	 <div class="row form-group">
+	 <!-- <div class="row form-group">
 		 <label for="passageway_no" class="col-sm-3 text-right"><b>通道代号:</b></label>
 		 <div class="col-sm-6" id="passageway_no">
 			 <input type="text" class="form-control passageway_no" name="passageway_no" placeholder="请认真填写通道的代号，保存后无法修改" value="">
 		 </div>		
-	 </div>
+	 </div> -->
 	  <div class="row form-group">
 		 <label for="passageway_method" class="col-sm-3 text-right"><b>入网调用方法地址:</b></label>
 		 <div class="col-sm-6" id="passageway_method">
@@ -83,10 +83,10 @@
 	 </div>
 
 	 <div class="row form-group">
-		 <label for="passageway_also" class="col-sm-3 text-right"><b>是代还还是提现:</b></label>
+		 <label for="passageway_also" class="col-sm-3 text-right"><b>是代还还是快捷支付:</b></label>
 		 <div id="passageway_also" class="col-sm-6">
 			 <select name="passageway_also" class="form-control passageway_also">
-				 <option value="1">提现</option>
+				 <option value="1">快捷支付</option>
 				 <option value="2">代还</option>
 			 </select>
 		 </div>		

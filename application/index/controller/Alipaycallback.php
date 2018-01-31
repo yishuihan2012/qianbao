@@ -60,6 +60,5 @@ class Alipaycallback
              $success=$Membernetsedit->$method();
          }
          echo "SUCCESS";die;
-     }
-
+	 }
 }
