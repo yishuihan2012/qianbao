@@ -593,10 +593,11 @@ class Userurl extends Controller
   #分享的注册页 只有一个按钮的那个
   public function gotoregister(){
   	$this->param=request()->param();
-  	$share_thumb=preg_replace('/~/', '/', $this->param['share_thumb']);
+  	// $share_thumb=preg_replace('/~/', '/', $this->param['share_thumb']);
+  	$Share=Share::get($this->param['share_id']);
   	$url='http://'.$_SERVER['HTTP_HOST'].'/api/userurl/register/recomment/'.$this->param['recomment'];
 	$this->assign('url',$url);
-	$this->assign('share_thumb',$share_thumb);
+	$this->assign('share_thumb',$Share->share_thumb);
   	return view("Userurl/gotoregister");
   }
   #费率说明
