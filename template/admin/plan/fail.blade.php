@@ -16,25 +16,25 @@
     <div class="panel-body">
       <form action="" name="myform" class="form-group" method="get">
           <div class="input-group" style="width: 150px;float: left;margin-right: 20px;">
-          <span class="input-group-addon">会员名称</span>
-          <input type="text" class="form-control" name="member_nick" value="{{$r['member_nick']}}" placeholder="会员名称" >
-        </div>
+            <span class="input-group-addon">会员名称</span>
+            <input type="text" class="form-control" name="member_nick" value="{{$r['member_nick']}}" placeholder="会员名称" >
+          </div>
 
-        <div class="input-group" style="width: 200px;float: left;margin-right: 20px;">
-          <span class="input-group-addon">手机号</span>
-          <input type="text" class="form-control" name="member_mobile" value="{{$r['member_mobile']}}" placeholder="手机号">
-        </div>
-        <div class="input-group" style="width: 200px;float: left;margin-right: 20px;">
-          <span class="input-group-addon">订单金额</span>
-          <input type="text" class="form-control" name="order_money" value="{{$r['order_money']}}" placeholder="订单金额">
-        </div> 
-        <div class="input-group" style="width: 200px;float: left; margin-right: 10px;">
-            <input type="text" class="form-control date-picker" id="dateTimeRange" placeholder="执行时间" />
-            <input type="hidden" name="beginTime" id="beginTime" value="" />
-            <input type="hidden" name="endTime" id="endTime" value="" />
-            <z class='clearTime'>X</z>
-        </div>
-        <button class="btn btn-primary" type="submit">搜索</button>
+          <div class="input-group" style="width: 200px;float: left;margin-right: 20px;">
+            <span class="input-group-addon">手机号</span>
+            <input type="text" class="form-control" name="member_mobile" value="{{$r['member_mobile']}}" placeholder="手机号">
+          </div>
+          <div class="input-group" style="width: 200px;float: left;margin-right: 20px;">
+            <span class="input-group-addon">订单金额</span>
+            <input type="text" class="form-control" name="order_money" value="{{$r['order_money']}}" placeholder="订单金额">
+          </div> 
+          <div class="input-group" style="width: 200px;float: left; margin-right: 10px;">
+              <input type="text" class="form-control date-picker" id="dateTimeRange" placeholder="执行时间" />
+              <input type="hidden" name="beginTime" id="beginTime" value="" />
+              <input type="hidden" name="endTime" id="endTime" value="" />
+              <z class='clearTime'>X</z>
+          </div>
+          <button class="btn btn-primary" type="submit">搜索</button>
     </form>
     </div>
 </div>
@@ -46,24 +46,21 @@
         <table class="table datatable">
            <thead>
             <tr>
-        <th>通道</th>
-        <th>会员名称</th>
-        <th>订单消费类型</th>
-        <th>信用卡号</th>
-        <th>订单金额</th>
-        <th>订单手续费</th>
-        <th>订单状态</th>
-        <th>订单描述</th>
-        <th>订单执行时间</th>
-        <th>订单更新时间</th>
-        <th>订单创建时间</th>
-        <th>失败原因</th>
-        <th>操作</th>
-        <!-- 
-        <th>返回结果描述</th>
-        <th>返回状态</th> -->
-        </tr>
-    </thead>
+              <th>通道</th>
+              <th>会员名称</th>
+              <th>订单消费类型</th>
+              <th>信用卡号</th>
+              <th>订单金额</th>
+              <th>订单手续费</th>
+              <th>订单状态</th>
+              <th>订单描述</th>
+              <th>订单执行时间</th>
+              <th>订单更新时间</th>
+              <th>订单创建时间</th>
+              <th>失败原因</th>
+              <th>操作</th>
+          </tr>
+      </thead>
      <tbody>
     @foreach($list as $key => $value)
      <tr style="">
@@ -81,7 +78,6 @@
        <td>{{$value->back_statusDesc}}</td>
        <td>
         @if($value->order_status == 3)
-          <!-- <a class="remove" href="#" data-url="{{url('/index/Plan/order_status/status/1/id/'.$value['order_id'])}}"><i class="icon-pencil"></i> 继续执行 </a> -->
           @endif
           @if($value->order_status == 1)
           <a class="remove" href="#" data-url="{{url('/api/Memnernet/action_single_plan/id/'.$value['order_id'])}}"><i class="icon-pencil"></i> 立即执行 </a>
@@ -92,9 +88,6 @@
           <a class="remove" href="#" data-url="{{url('/api/Membernet/action_single_plan/id/'.$value['order_id'])}}"><i class="icon-pencil"></i> 重新执行 </a>
           @endif
        </td>
-       <!-- <td>{{$value->back_tradeNo}}</td>
-       <td>{{$value->back_statusDesc}}</td>
-       <td>{{$value->back_status}}</td> -->
      </tr>
      @endforeach
       </tbody>
