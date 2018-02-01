@@ -325,9 +325,10 @@ namespace app\index\controller;
 				$this->redirect($this->history['0']);
            } 
            $parentmember=MemberLogin::phone_exit(request()->param('parent_phone'));                 
-            #验证parent_phone号码是否存在
+            
+           #如果有推荐人手机号码
            if(request()->param('parent_phone')!=''){    
-
+           		#验证parent_phone号码是否存在
 	           if(!$parentmember){
 	           	    Session::set('jump_msg',['type'=>'warning','msg'=>'主邀请人手机号码不存在','data'=>'']);
 	           	    Db::rollback();
