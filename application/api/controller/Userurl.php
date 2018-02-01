@@ -420,7 +420,7 @@ class Userurl extends Controller
 			$CashOrder=CashOrder::with("passageway")->where(['order_member'=>$this->param['uid'],'order_money' => ['<>' , 0]])->order('order_id desc')->limit($start,10)->select();
 
 			foreach ($CashOrder as $key => $value) {
-			 	$CashOrder[$key]["bank_ons"] = substr($value['order_card'], -4);
+			 	$CashOrder[$key]["bank_ons"] = substr($value['order_creditcard'], -4);
 			 	$CashOrder[$key]['add_time'] = date("m-d H:s",strtotime($value['order_add_time']));
 			}
 			echo json_encode(["data" => $CashOrder, "page" => $page+1]);die;
@@ -430,7 +430,7 @@ class Userurl extends Controller
 			$pages = ceil($count/10);
 			#截取银行卡号
 		foreach ($CashOrder as $key => $value) {
-			$CashOrder[$key]["bank_ons"] = substr($value['order_card'], -4);
+			$CashOrder[$key]["bank_ons"] = substr($value['order_creditcard'], -4);
 			$CashOrder[$key]['add_time'] = date("m-d H:s",strtotime($value['order_add_time']));
 		}
 		if(!$CashOrder){

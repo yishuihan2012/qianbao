@@ -22,7 +22,7 @@
 			    <li class="mui-table-view-cell bills-list">
 			        <a href="javascript:void(0)" onclick="js_method();return false;">
 			        	<div class="dis-flex-be space-bot">
-			        		<p>银行卡尾号({{$v->bank_ons}})</p>
+			        		<p>信用卡卡尾号({{$v->bank_ons}})</p>
 			        		<p class="blue-color f20">{{$v->order_money}}元</p>
 			        	</div>
 			        	<div class="dis-flex-be">
