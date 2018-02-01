@@ -61,7 +61,6 @@
  	 	 	 	 //j极光推送分佣提醒
  	 	 	 	 $str="-直接分佣:邀请的".$memberInfo['member_nick']."付费升级成功,获得收益".$fatherMoney."元~";
  	 	 	 	 jpush($member_fater_id,'直接分佣收益到账提醒~',$str,$str);
-
  	 	 	 	 #查询间接上级
  	 	 	 	 $member_grandFater_id=MemberRelation::where('relation_member_id',$member_fater_id)->value('relation_parent_id');
  	 	 	 	 $member_grandFaterInfo= Member::get($member_grandFater_id);
@@ -69,7 +68,6 @@
  	 	 	 	 if($member_grandFater_id=="0" || !$member_grandFaterInfo)
  	 	 	 	 	 return ['code'=>200,'leftmoney'=>$leftmoney];
  	 	 	 	 #查询间接上级信息
-
  	 	 	 	 if($member_grandFaterInfo)
 
  	 	 	 	 {   
