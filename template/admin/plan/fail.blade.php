@@ -78,7 +78,6 @@
        <td>{{$value->back_statusDesc}}</td>
        <td>
         @if($value->order_status == 3)
-          <!-- <a class="remove" href="#" data-url="{{url('/index/Plan/order_status/status/1/id/'.$value['order_id'])}}"><i class="icon-pencil"></i> 继续执行 </a> -->
           @endif
           @if($value->order_status == 1)
           <a class="remove" href="#" data-url="{{url('/api/Memnernet/action_single_plan/id/'.$value['order_id'])}}"><i class="icon-pencil"></i> 立即执行 </a>
