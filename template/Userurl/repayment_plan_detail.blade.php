@@ -74,7 +74,7 @@
 								@elseif($v['order_type']==2)
 								<span class="my-badge-success">还款</span>
 								@endif
-								<span class="invalid-color space-lr2">{{date('H:i',strtotime($v['order_time']))}}</span>
+								<span class="invalid-color space-lr2">{{date('H:i',strtotime($v['order_time']))}} {{date('H:i',strtotime($v['order_edit_time']))}}</span>
 								<span><strong>{{$v['order_money']}}元</strong></span>
 							</p>
 							<p class="f16 red-color">
@@ -85,7 +85,7 @@
 	 					<div style="padding:0 10px">
 							<p class="invalid-color f14">失败原因：{{$v['back_statusDesc']}}</p>
 							@if(isset($v['is_first']) && $v['is_first']=1)
-							<p class="bor-bot f16 ftr wrap">最后更新时间：{{$v['order_edit_time']}}<a id="resetBtn" plan_id="{{$v['order_id']}}">重新执行</a></p>
+							<p class="bor-bot f16 ftr wrap"><a id="resetBtn" plan_id="{{$v['order_id']}}">重新执行</a></p>
 							@endif
 						</div>
 						@elseif($v['order_status']==2)
