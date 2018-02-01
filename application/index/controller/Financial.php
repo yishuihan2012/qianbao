@@ -95,6 +95,7 @@
 		  	 	 ->where($where['conditions_member'])
 		  	 	 ->where($where['upgradeTime'])
 		  	 	 ->where($where['upgradeBetween'])
+		  	 	 ->where(['upgrade_money' => ['<>',0]])
 		  	 	 ->order('upgrade_id','desc')
 		  	 	 ->paginate(Config::get('page_size'), false, ['query'=>Request::instance()->param()]);
 		 $this->assign('data', $data);
@@ -121,6 +122,7 @@
 		  	 	 ->where($where['conditions_member'])
 		  	 	 ->where($where['cashTime'])
 		  	 	 ->where($where['payBetween'])
+		  	 	 ->where(['order_platform' => ['<>',0]])
 		  	 	 ->order('order_id','desc')
 		  	 	 ->paginate(Config::get('page_size'), false, ['query'=>Request::instance()->param()]);
 		 $this->assign('data', $data);
@@ -146,6 +148,7 @@
   	 	 		 ->where($where['conditions_member'])
 		  	 	 ->where(['order_type'=>1,'order_status'=>2])
 		  	 	 ->where($where['autoBetween'])
+		  	 	 ->where(['order_platform' => ['<>' , 0]])
 		  	 	 ->where($where['autoTime'])
 		  	 	 ->paginate(Config::get('page_size'), false, ['query'=>Request::instance()->param()]);
   	 	 //$data=Upgrade::with('member')->order('upgrade_id','desc')->paginate(Config::get('page_size'), false, ['query'=>Request::instance()->param()]);
@@ -173,8 +176,9 @@
 		  	 	 ->where($where['conditions_member'])
 		  	 	 ->where($where['drawBetween'])
 		  	 	 ->where($where['drawTime'])
+		  	 	 ->where(['withdraw_amount' => ['<>' , 0]])
 		  	 	 ->order('withdraw_id', 'desc')
-		  	 	 ->paginate(Config::get('page_size'), false, ['query'=>Request::instance()->param()]);
+		  	 	 ->paginate(Config::get('page_size') , false , ['query'=>Request::instance()->param()]);
   	 	 #计算总提现多少钱
 		 $this->assign('data', $data);
 		 #渲染视图
@@ -198,6 +202,7 @@
 				  	 	 ->where($where['conditions'])
 				  	 	 ->where($where['whereBetween'])
 				  	 	 ->where($where['timeBetween'])
+				  	 	 ->where(['commission_money' => ['<>',0]])
 				  	 	 ->order('commission_id', 'desc')
 				  	 	 ->paginate(Config::get('page_size'), false, ['query'=>Request::instance()->param()]);
   	 	 //获取共多少笔分佣
@@ -205,12 +210,14 @@
  	 					 ->where($where['conditions'])
 				  	 	 ->where($where['whereBetween'])
 				  	 	 ->where($where['timeBetween'])
+				  	 	 ->where(['commission_money' => ['<>' , 0]])
 				  	 	 ->count();
   	 	 //获取总金额
   	 	 $data['money']=Commission::haswhere('member',$where['conditions_member'])->with('member,members')
 	 					 ->where($where['conditions'])
 				  	 	 ->where($where['whereBetween'])
 				  	 	 ->where($where['timeBetween'])
+				  	 	 ->where(['commission_money' => ['<>' , 0]])
 				  	 	 ->sum('commission_money');
   	 	 $this->assign('data',$data);
   	 	 $this->assign('conditions', $request->param());
@@ -235,6 +242,7 @@
 				  	 	 ->where($where['conditions'])
 				  	 	 ->where($where['whereBetween'])
 				  	 	 ->where($where['timeBetween'])
+				  	 	 ->where(['commission_money' => ['<>' , 0]])
 				  	 	 ->order('commission_id', 'desc')
 				  	 	 ->paginate(Config::get('page_size'), false, ['query'=>Request::instance()->param()]);
   	 	 //获取共多少笔分佣
@@ -242,12 +250,14 @@
 				  	 	 ->where($where['conditions'])
 				  	 	 ->where($where['whereBetween'])
 				  	 	 ->where($where['timeBetween'])
+				  	 	 ->where(['commission_money' => ['<>' , 0]])
 				  	 	 ->count();
   	 	 //获取总金额
   	 	 $data['money']=Commission::haswhere('member',$where['conditions_member'])->with('member,members')
 				  	 	 ->where($where['conditions'])
 				  	 	 ->where($where['whereBetween'])
 				  	 	 ->where($where['timeBetween'])
+				  	 	 ->where(['commission_money' => ['<>' , 0]])
 				  	 	 ->sum('commission_money');
   	 	 $this->assign('data',$data);
   	 	 $this->assign('conditions', $request->param());

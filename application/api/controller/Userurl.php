@@ -677,30 +677,33 @@ class Userurl extends Controller
   	$this->assign('list',$list);
   	return view("api/logic/card_description");
   }
-  #收支明细
+  /**
+  *@version particulars 收支明细
+  *@author 杨成志 （3115317085@qq.com）
+  */
   public function particulars($month=null){
   	if(!$month)$month=date('Y-m');
     //月初
     $monthstart=strtotime($month);
     //月末
     $monthend=strtotime(date('Y-m',strtotime('+1 month',strtotime($month))));
-	
 	$data=[];
   	$data['in']=0;
   	$data['out']=0;
   	//手动下滑获取数据
 	if($_POST){
-
 		$page = isset($_POST['page'])?$_POST['page']:1;
+		#获取收支明细数据
 		$result = WalletLog::pages(input('uid'),$page,$data,$month,$monthstart,$monthend);
 		$list = $result['list'];
 		exit(json_encode($list));
 	}
 	$this->checkToken();
-  	//表头数据
+ 	#获取收支明细数据
   	$result = WalletLog::pages($this->param['uid'],1,$data,$month,$monthstart,$monthend);
-  	//总的页数
+  	//用户id
   	$this->assign("uid",$this->param['uid']);
+  	#当前总共多少页
   	$this->assign("allpage" , $result['allpage']);
   	$this->assign('data' , $result['data']);
   	$this->assign('list' , $result['list']);

@@ -15,28 +15,26 @@
    <div class="panel">
     <div class="panel-body">
       <form action="" name="myform" class="form-group" method="get">
+          <div class="input-group" style="width: 150px;float: left;margin-right: 20px;">
+          <span class="input-group-addon">会员名称</span>
+          <input type="text" class="form-control" name="member_nick" value="{{$r['member_nick']}}" placeholder="会员名称" >
+        </div>
 
-  <form action="" method="post">
-    <div class="input-group" style="width: 150px;float: left;margin-right: 20px;">
-    <span class="input-group-addon">还款会员</span>
-    <input type="text" class="form-control" name="member_nick" value="{{$r['member_nick']}}" placeholder="还款会员" >
-  </div>
-
-  <div class="input-group" style="width: 200px;float: left;margin-right: 20px;">
-    <span class="input-group-addon">手机号</span>
-    <input type="text" class="form-control" name="member_mobile" value="{{$r['member_mobile']}}" placeholder="手机号">
-  </div>
-  
-<div class="input-group" style="width: 200px;float: left; margin-right: 10px;">
-    <input type="text" class="form-control date-picker" id="dateTimeRange" placeholder="执行时间" />
-    <input type="hidden" name="beginTime" id="beginTime" value="" />
-    <input type="hidden" name="endTime" id="endTime" value="" />
-    <z class='clearTime'>X</z>
-</div>
-  <button class="btn btn-primary" type="submit">搜索</button>
-</form>
-
-      
+        <div class="input-group" style="width: 200px;float: left;margin-right: 20px;">
+          <span class="input-group-addon">手机号</span>
+          <input type="text" class="form-control" name="member_mobile" value="{{$r['member_mobile']}}" placeholder="手机号">
+        </div>
+        <div class="input-group" style="width: 200px;float: left;margin-right: 20px;">
+          <span class="input-group-addon">订单金额</span>
+          <input type="text" class="form-control" name="order_money" value="{{$r['order_money']}}" placeholder="订单金额">
+        </div> 
+        <div class="input-group" style="width: 200px;float: left; margin-right: 10px;">
+            <input type="text" class="form-control date-picker" id="dateTimeRange" placeholder="执行时间" />
+            <input type="hidden" name="beginTime" id="beginTime" value="" />
+            <input type="hidden" name="endTime" id="endTime" value="" />
+            <z class='clearTime'>X</z>
+        </div>
+        <button class="btn btn-primary" type="submit">搜索</button>
     </form>
     </div>
 </div>
@@ -59,8 +57,9 @@
         <th>订单执行时间</th>
         <th>订单更新时间</th>
         <th>订单创建时间</th>
+        <th>失败原因</th>
         <th>操作</th>
-        <!-- <th>返回订单号</th>
+        <!-- 
         <th>返回结果描述</th>
         <th>返回状态</th> -->
         </tr>
@@ -79,6 +78,7 @@
        <td>{{$value->order_time}}</td>
        <td>{{$value->order_edit_time}}</td>
        <td>{{$value->order_add_time}}</td>
+       <td>{{$value->back_statusDesc}}</td>
        <td>
         @if($value->order_status == 3)
           <!-- <a class="remove" href="#" data-url="{{url('/index/Plan/order_status/status/1/id/'.$value['order_id'])}}"><i class="icon-pencil"></i> 继续执行 </a> -->
