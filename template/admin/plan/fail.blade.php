@@ -15,31 +15,26 @@
    <div class="panel">
     <div class="panel-body">
       <form action="" name="myform" class="form-group" method="get">
+          <div class="input-group" style="width: 150px;float: left;margin-right: 20px;">
+          <span class="input-group-addon">会员名称</span>
+          <input type="text" class="form-control" name="member_nick" value="{{$r['member_nick']}}" placeholder="会员名称" >
+        </div>
 
-  <form action="" method="post">
-    <div class="input-group" style="width: 150px;float: left;margin-right: 20px;">
-    <span class="input-group-addon">会员名称</span>
-    <input type="text" class="form-control" name="member_nick" value="{{$r['member_nick']}}" placeholder="会员名称" >
-  </div>
-
-  <div class="input-group" style="width: 200px;float: left;margin-right: 20px;">
-    <span class="input-group-addon">手机号</span>
-    <input type="text" class="form-control" name="member_mobile" value="{{$r['member_mobile']}}" placeholder="手机号">
-  </div>
-  <div class="input-group" style="width: 200px;float: left;margin-right: 20px;">
-    <span class="input-group-addon">订单金额</span>
-    <input type="text" class="form-control" name="order_money" value="{{$r['order_money']}}" placeholder="订单金额">
-  </div> 
-  <div class="input-group" style="width: 200px;float: left; margin-right: 10px;">
-      <input type="text" class="form-control date-picker" id="dateTimeRange" placeholder="执行时间" />
-      <input type="hidden" name="beginTime" id="beginTime" value="" />
-      <input type="hidden" name="endTime" id="endTime" value="" />
-      <z class='clearTime'>X</z>
-  </div>
-  <button class="btn btn-primary" type="submit">搜索</button>
-</form>
-
-      
+        <div class="input-group" style="width: 200px;float: left;margin-right: 20px;">
+          <span class="input-group-addon">手机号</span>
+          <input type="text" class="form-control" name="member_mobile" value="{{$r['member_mobile']}}" placeholder="手机号">
+        </div>
+        <div class="input-group" style="width: 200px;float: left;margin-right: 20px;">
+          <span class="input-group-addon">订单金额</span>
+          <input type="text" class="form-control" name="order_money" value="{{$r['order_money']}}" placeholder="订单金额">
+        </div> 
+        <div class="input-group" style="width: 200px;float: left; margin-right: 10px;">
+            <input type="text" class="form-control date-picker" id="dateTimeRange" placeholder="执行时间" />
+            <input type="hidden" name="beginTime" id="beginTime" value="" />
+            <input type="hidden" name="endTime" id="endTime" value="" />
+            <z class='clearTime'>X</z>
+        </div>
+        <button class="btn btn-primary" type="submit">搜索</button>
     </form>
     </div>
 </div>
