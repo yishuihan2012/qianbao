@@ -37,6 +37,7 @@ class WalletLog extends Model{
     public static function pages($uid,$page =1,$data = [],$month = null,$monthstart,$monthend){
         $data['month'] = $month;
         $limit = ($page-1)*10;
+        #数据查询
         $list=db('wallet_log')->alias('l')
         ->join('wallet w','l.log_wallet_id=w.wallet_id')
         ->where(['w.wallet_member'=>$uid,'log_wallet_amount'=>['<>',0]])
@@ -56,7 +57,7 @@ class WalletLog extends Model{
                     break;
             }
         }
-        
+        #统计总金额
         $list2=db('wallet_log')->alias('l')
         ->join('wallet w','l.log_wallet_id=w.wallet_id')
         ->where(['w.wallet_member'=>$uid])
@@ -71,6 +72,7 @@ class WalletLog extends Model{
                 $data['out'] += $value['log_wallet_amount'];
             }
         }
+        #统计数量
         $count = db('wallet_log')->alias('l')
         ->join('wallet w','l.log_wallet_id=w.wallet_id')
         ->where(['w.wallet_member'=>$uid])

@@ -52,16 +52,16 @@
            </tr>
       </thead>
       <tbody>
-      @foreach($data['list'] as $key)
+        @foreach($data['list'] as $key)
            <tr>
-                <td>{{$key->commission_id}}</td>
-                <td>{{$key->member_nick}}</td>
-                <td>{{$key->nick}}</td>
-                <td>{{$key->commission_money}}</td>
-                <td>{{$key->commission_desc}}</td>
-                <td>{{$key->commission_creat_time}}</td>
+              <td>{{$key->commission_id}}</td>
+              <td>{{$key->member_nick}}</td>
+              <td>{{$key->nick}}</td>
+              <td>{{$key->commission_money}}</td>
+              <td>{{$key->commission_desc}}</td>
+              <td>{{$key->commission_creat_time}}</td>
            </tr>
-      @endforeach
+        @endforeach
       </tbody>
       <tfoot>
            <tr>

@@ -16,7 +16,7 @@
     <div class="panel-body">
       <form action="" name="myform" class="form-group" method="get">
 
-   <form action="" method="post">
+  <form action="" method="post">
     <div class="input-group" style="width: 150px;float: left;margin-right: 20px;">
     <span class="input-group-addon">还款会员</span>
     <input type="text" class="form-control" name="member_nick" value="{{$r['member_nick']}}" placeholder="还款会员" >

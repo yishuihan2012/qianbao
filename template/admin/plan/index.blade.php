@@ -37,9 +37,9 @@
      <span class="input-group-addon">会员级别</span>
   <select name="member_group_id" class="form-control">
       <option value="" @if ($r['member_group_id']=='') selected="" @endif>全部</option>
-    @foreach($member_group as $v)
-      <option value="{{$v['group_id']}}" @if ($r['member_group_id']==$v['group_id']) selected @endif>{{$v['group_name']}}</option>
-    @endforeach
+      @foreach($member_group as $v)
+        <option value="{{$v['group_id']}}" @if ($r['member_group_id']==$v['group_id']) selected @endif>{{$v['group_name']}}</option>
+      @endforeach
   </select>
   </div>
 
@@ -49,7 +49,7 @@
     <input type="hidden" name="endTime" id="endTime" value="" />
     <z class='clearTime'>X</z>
 </div>
-  <button class="btn btn-primary" type="submit">搜索</button>
+    <button class="btn btn-primary" type="submit">搜索</button>
 </form>
 
 
@@ -80,7 +80,7 @@
 	      	<th>开始还款日期</th>
 	      	<th>最后还款日期</th>
           <th>计划状态</th>
-          <!-- <th>还款失败原因</th> -->
+          <th>还款失败原因</th>
 	      	<th>操作</th>
 	      
 	    </tr>
@@ -105,7 +105,7 @@
 	      	<td>{{$v['generation_start']}}</td>
           <td>{{$v['generation_end']}}</td>
 	      	<td>@if($v['generation_state']==2) 还款中 @elseif($v['generation_state']==3)还款结束 @elseif($v['generation_state']==-1)还款失败 @else 取消 @endif</td>
-	      	<!-- <td>{{$v['generation_desc']}}</td> -->
+	      	<td>{{$v['generation_desc']}}</td>
 	      	<td><a class="btn btn-sm"  href="{{url('/index/Plan/info/id/'.$v['generation_id'])}}" >查看详情</a></td>
 	    </tr>
 	    	@endforeach

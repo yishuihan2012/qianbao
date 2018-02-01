@@ -363,7 +363,7 @@ class Order extends Common{
 	 	 		$order_lists[$key]['recomment_member_name']=Member::where(['member_id'=>$value['recomment_member_id']])->value('member_nick');
 	 	 		$order_lists[$key]['recomment_children_name']=Member::where(['member_id'=>$value['recomment_children_member']])->value('member_nick');
 	 	 }
-	 	 $countmoney=Recomment::sum('recomment_money');
+	 	 $countmoney=Recomment::haswhere('member',$where)->join("wt_member_cert m", "m.cert_member_id=Member.member_id","left")->where($wheres)->sum('recomment_money');
 	 	 #统计订单条数
 	 	 $count['count_size']=Recomment::haswhere('member',$where)->join("wt_member_cert m", "m.cert_member_id=Member.member_id","left")->where($wheres)->count();
 			 $this->assign('countmoney', $countmoney);
