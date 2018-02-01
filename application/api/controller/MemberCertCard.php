@@ -307,10 +307,10 @@
                 return ['code'=>444];
            if($cert_card->delete()===false)
                  return ['code'=>444];
-            $card=MemberCreditcard::where(['card_member_id'=>$this->param['uid']])->find();
-            if(empty($card)){
-              MemberNet::where(['net_member_id'=>$this->param['uid']])->update([$passageway['passageway_no']=>null]);
-            }               
+            // $card=MemberCreditcard::where(['card_member_id'=>$this->param['uid']])->find();
+            // if(empty($card)){
+            //   MemberNet::where(['net_member_id'=>$this->param['uid']])->update([$passageway['passageway_no']=>null]);
+            // }               
            return ['code'=>200, 'msg'=>'解绑成功~', 'data'=>''];
       }
 
