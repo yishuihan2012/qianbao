@@ -176,6 +176,7 @@ use app\index\model\Member;
         // print_r($income);die;
         //判断执行结果
         $is_commission=0;
+        // $arr['income_tradeNo']=$params['orderNo'];
         if($income['code']=='200'){
              $arr['back_tradeNo']=$income['tradeNo'];
              $arr['back_statusDesc']=$income['statusDesc'];
@@ -269,7 +270,7 @@ use app\index\model\Member;
                 $datas = AESdecrypt($result['payload'],$merch->secretkey,$merch->iv);
                 $datas = trim($datas);
                 $datas = substr($datas, 0, strpos($datas, '}') + 1);
-                file_put_contents("payCallback.txt", $datas);
+                // file_put_contents("payCallback.txt", $datas);
                 $resul = json_decode($datas, true);
                 $arr['back_status']=$resul['status'];
                 $arr['back_statusDesc']=$resul['statusDesc'];
@@ -299,16 +300,37 @@ use app\index\model\Member;
       }
       //9状态查询 unfinished
       //http://pay.mishua.cn/zhonlinepay/service/rest/creditTrans/payResultQuery
-      public function payResultQuery(){
+      //计划id
+      public function payResultQuery($id){
+        $generation_order=GenerationOrder::where(['order_id'=>$id])->find();
+        if(!$generation_order){
+            return false;
+        }
+        if(!$generation_order->back_tradeNo){ //无交易流水号，即失败的，不用处理
+            return false;
+        }
+        // echo $generation_order;die;
+        #2获取通道信息
+        $merch=Passageway::where(['passageway_id'=>$generation_order['order_passageway']])->find();
+        if(!$merch){
+            return false;
+        }
+        #3
+        $MemberNets=MemberNets::where(['net_member_id'=>$generation_order['order_member']])->find();
+        #5:获取用户基本信息
+        // $member_base=Member::where(['member_id'=>$pay['order_member']])->find();
         $params=array(
-          'mchNo'=>$this->mechid, //机构号 必填  由平台统一分配
-          'userNo'=>'123',  //平台用户标识  必填  平台下发用户标识
+          'mchNo'=>$merch->passageway_mech, //机构号 必填  由平台统一分配
+          'userNo'=>$MemberNets->LkYQJ,  //平台用户标识  必填  平台下发用户标识
           'orderNo'=>'',  //订单流水号 必填  机构订单流水号，需唯一
-          'tradeNo'=>'',  //平台流水号 必填  绑卡支付返回的流水号
-          'tradeDate'=>'',  //交易日期  可填  格式：yyyyMMdd为空时，仅查询仅3日内的交易数据；传入指定日期，可以查询更早前的数据
+          'tradeNo'=>$generation_order->back_tradeNo,  //平台流水号 必填  绑卡支付返回的流水号
+          'tradeDate'=>date('Ymd',strtotime($generation_order->order_time)),  //交易日期  可填  格式：yyyyMMdd为空时，仅查询仅3日内的交易数据；传入指定日期，可以查询更早前的数据
+          // 'tradeDate'=>'',
         );
-        $income=$this->repay_request($params,'http://pay.mishua.cn/zhonlinepay/service/rest/creditTrans/payResultQuery');
-        var_dump($income);die;
+        // echo $generation_order->order_time;die;
+        // echo json_encode($params);die;
+        $income=repay_request($params,$merch->passageway_mech,'http://pay.mishua.cn/zhonlinepay/service/rest/creditTrans/payResultQuery',$merch->iv,$merch->secretkey,$merch->signkey);
+        echo json_encode($income);
       }
       //10.余额提现
       //http://pay.mishua.cn/zhonlinepay/service/rest/creditTrans/transferApply
@@ -341,6 +363,7 @@ use app\index\model\Member;
           );
           $income=repay_request($params,$merch->passageway_mech,'http://pay.mishua.cn/zhonlinepay/service/rest/creditTrans/transferApply',$merch->iv,$merch->secretkey,$merch->signkey);
           // print_r($income);
+          // 
           if($income['code']=='200'){
             $arr['back_tradeNo']=$income['orderNo'];
             $arr['back_status']=$income['status'];
@@ -379,7 +402,7 @@ use app\index\model\Member;
                 $datas = AESdecrypt($result['payload'],$merch->secretkey,$merch->iv);
                 $datas = trim($datas);
                 $datas = substr($datas, 0, strpos($datas, '}') + 1);
-                file_put_contents("cashCallback.txt", $datas);
+                // file_put_contents("cashCallback.txt", $datas);
                 $resul = json_decode($datas, true);
                 $arr['back_status']=$resul['status'];
                 $arr['back_statusDesc']=$resul['statusDesc'];
