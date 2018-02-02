@@ -151,7 +151,7 @@
 
            $tel=CustomerService::where('service_type=1')->order('service_id desc')->find();
            
-           $data['CSTel']=$tel['service_contact'];
+           $data['CSTel']=$tel['service_contact']?$tel['service_contact']:'';
 
            #支付平台信息
            $Payplatform=Payplatform::where('payplatform_state=1')->field('payplatform_id, payplatform_name, payplatform_icon,payplatform_state')->select();
