@@ -218,12 +218,12 @@
                }
                $state=$card_validate['result']['result']=='T' ? '1' : '0';
                if($card_validate['result']['result']=='P')
-                     return ['code'=>440];
+                     return ['code'=>440, 'msg'=>$card_validate['result']['message']];
 
                if($card_validate['result']['result']=='F')
-                    return ['code'=>439];
+                    return ['code'=>439, 'msg'=>$card_validate['result']['message']];
                if($card_validate['result']['result']=='N')
-                    return ['code'=>353];
+                    return ['code'=>353, 'msg'=>$card_validate['result']['message']];
 
 
             $passageway=Passageway::where('passageway_status=1 and passageway_also=2')->find();
