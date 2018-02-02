@@ -420,7 +420,7 @@ class Userurl extends Controller
 			$CashOrder=CashOrder::with("passageway")->where(['order_member'=>$this->param['uid'],'order_money' => ['<>' , 0]])->order('order_id desc')->limit($start,10)->select();
 
 			foreach ($CashOrder as $key => $value) {
-			 	$CashOrder[$key]["bank_ons"] = substr($value['order_card'], -4);
+			 	$CashOrder[$key]["bank_ons"] = substr($value['order_creditcard'], -4);
 			 	$CashOrder[$key]['add_time'] = date("m-d H:s",strtotime($value['order_add_time']));
 			}
 			echo json_encode(["data" => $CashOrder, "page" => $page+1]);die;
@@ -430,7 +430,7 @@ class Userurl extends Controller
 			$pages = ceil($count/10);
 			#截取银行卡号
 		foreach ($CashOrder as $key => $value) {
-			$CashOrder[$key]["bank_ons"] = substr($value['order_card'], -4);
+			$CashOrder[$key]["bank_ons"] = substr($value['order_creditcard'], -4);
 			$CashOrder[$key]['add_time'] = date("m-d H:s",strtotime($value['order_add_time']));
 		}
 		if(!$CashOrder){
@@ -593,7 +593,13 @@ class Userurl extends Controller
   #分享的注册页 只有一个按钮的那个
   public function gotoregister(){
   	$this->param=request()->param();
-  	$share_thumb=preg_replace('/~/', '/', $this->param['share_thumb']);
+  	#鑫鑫钱柜ngix报错 改用id查询src 兼容以前链接
+  	if(isset($this->param['share_thumb'])){
+	  	$share_thumb=preg_replace('/~/', '/', $this->param['share_thumb']);
+  	}else{
+	  	$Share=Share::get($this->param['share_id']);
+	  	$share_thumb=$Share->share_thumb;
+  	}
   	$url='http://'.$_SERVER['HTTP_HOST'].'/api/userurl/register/recomment/'.$this->param['recomment'];
 	$this->assign('url',$url);
 	$this->assign('share_thumb',$share_thumb);
