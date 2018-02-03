@@ -123,7 +123,22 @@
 
 					        </p>
 						</div>
-
+						@elseif($v['order_status']==4)
+						<div class="dis-flex-be wrap-bt bor-bot">
+							<p class="f15">
+								@if($v['order_type']==1)
+								<span class="my-badge-inpro">消费</span>
+								@elseif($v['order_type']==2)
+								<span class="my-badge-success">还款</span>
+								@endif
+								<span class="invalid-color space-lr2">{{date('H:i',strtotime($v['order_time']))}}</span>
+								<span><strong>{{$v['order_money']}}元</strong></span>
+							</p>
+							<p class="f16 yellow-color">
+							  <span class="">处理中</span>
+							  <span class="iconfont icon-shijian-copy-copy f20 v-m"></span>
+					        </p>
+						</div>
 						@endif
 					@endforeach
 					
