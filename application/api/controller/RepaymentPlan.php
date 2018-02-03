@@ -220,7 +220,7 @@
                   'order_money'      =>$day_real_get_money,//每天实际打回的金额
                   'order_pound'      =>0,
                   'order_desc'       =>'自动代还还款~',
-                  'order_time'       =>$date[$i]." ".get_hours(20,20).":".get_minites(0,30),
+                  'order_time'       =>$date[$i]." ".get_hours(15,16).":".get_minites(0,59),
                   'order_passageway'=>$this->param['passageway'],
                   'order_passway_id'=>$this->param['passageway'],
                   // 'order_root'=>$root_id,

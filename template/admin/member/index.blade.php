@@ -100,7 +100,7 @@
                                 <li><a data-toggle="modal" data-remote="{{url('/index/member/upgrade/id/'.$val->member_id.'/member_group_id/'.$val->member_group_id)}}" href="#">升级会员</a></li>
                  @if($admin['adminster_group_id']!=5)
                                 <li><a data-remote="{{url('/index/member/commiss',['memberId'=>$val->member_id])}}" href="{{url('/index/member/commiss',['memberId'=>$val->member_id])}}">分佣分润</a></li>
-                                <li><a data-size='lg' data-toggle="modal" data-remote="{{url('/index/member/child',['memberId'=>$val->member_id])}}" href="#">下级信息</a></li>
+                               <!--  <li><a data-size='lg' data-toggle="modal" data-remote="{{url('/index/member/child',['memberId'=>$val->member_id])}}" href="#">下级信息</a></li> -->
                      @endif
                            </ul>
                      </div>

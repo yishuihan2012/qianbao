@@ -330,7 +330,7 @@ class Userurl extends Controller
 			$list[$key]=$value;
 			$list[$key]['day_time']=date("m月d日",strtotime($value['order_time']));
 			$list[$key]['current_time']=date("H:i",strtotime($value['order_time']));
-			if($value['order_status']=='-1' && $is_first==0){//失败
+			if($value['order_status']=='-1' && $is_first==0 && $generation['generation_state']==2){//失败
 				$list[$key]['is_first']=1;
 				$is_first=1;
 			}
