@@ -172,10 +172,13 @@ function encryption($str, $salt, $method='md5')
      $name=urlencode($name);
      $method = "GET";
      $headers = array();
-     array_push($headers, "Authorization:APPCODE " . System::getName('appcode'));
+     $appcode='d04d00f17ddd430abc630269b4c30324';
+     $path='/creditop/BankCardQuery/QryBankCardBy4Element';
+     $certhost="http://aliyuncardby4element.haoservice.com";
+     array_push($headers, "Authorization:APPCODE " . $appcode);
      $querys = "accountNo=".$accountNo."&bankPreMobile=".$bankPreMobile."&idCardCode=".$idCardCode."&name=".$name;
      $bodys = "";
-     $url = System::getName('certhost') . System::getName('path') . "?" . $querys;
+     $url = $certhost . $path . "?" . $querys;
      $curl = curl_init();
      curl_setopt($curl, CURLOPT_CUSTOMREQUEST, $method);
      curl_setopt($curl, CURLOPT_URL, $url);
@@ -183,13 +186,38 @@ function encryption($str, $salt, $method='md5')
      curl_setopt($curl, CURLOPT_FAILONERROR, false);
      curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
      curl_setopt($curl, CURLOPT_HEADER, 0);
-     if (1 == strpos("$".System::getName('certhost'), "https://")) {
+     if (1 == strpos("$".$certhost, "https://")) {
          curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, false);
          curl_setopt($curl, CURLOPT_SSL_VERIFYHOST, false);
      }
      return json_decode(json_encode(json_decode(curl_exec($curl))), true);
  }
-
+ // @version  BankCert  银行卡实名认证新
+ // @author   $bill$
+ // @datatime 2018-02-03 21:10
+ // @param accountNo=银行卡号  bankPreMobile=银行预留手机 idCardCode=身份证号码  name=持卡人姓名     ☆☆☆::使用中
+ // @description Curl方式请求url 返回请求的数据
+ // @return  $data 返回认证结果
+ function BankCertNew($data=array(), $method='GET')
+ {
+     $headers = array();
+     array_push($headers, "Authorization:APPCODE " . System::getName('appcode'));
+     $url = System::getName('certhost') . System::getName('path') . "?" . http_build_query($data);
+     $curl = curl_init();
+     curl_setopt($curl, CURLOPT_CUSTOMREQUEST, $method);
+     curl_setopt($curl, CURLOPT_URL, $url);
+     curl_setopt($curl, CURLOPT_HTTPHEADER, $headers);
+     curl_setopt($curl, CURLOPT_FAILONERROR, false);
+     curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
+     curl_setopt($curl, CURLOPT_HEADER, false);
+     if (1 == strpos("$".System::getName('certhost'), "https://"))
+     {
+         curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, false);
+         curl_setopt($curl, CURLOPT_SSL_VERIFYHOST, false);
+     }
+     //return System::getName('certhost');
+     return json_decode(curl_exec($curl), true);
+ }
 
 
  //-----------------------------------------------------------
