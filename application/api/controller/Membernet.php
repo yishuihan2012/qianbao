@@ -191,7 +191,7 @@ use app\index\model\Member;
                 //失败推送消息
                 $arr['order_status']='-1';
             }else{
-                $arr['order_status']='2';
+                $arr['order_status']='4';
                 //带查证或者支付中。。。
             }
         }else{
@@ -266,8 +266,10 @@ use app\index\model\Member;
       //8:支付回调
       public function payCallback(){
         $data = file_get_contents("php://input");
+        file_put_contents('res.txt', $data);
         $result = json_decode($data, true);
            if ($result['code'] == 0) {
+
                 $merch=Passageway::where(['passageway_no'=>'LkYQJ'])->find();
                 $datas = AESdecrypt($result['payload'],$merch->secretkey,$merch->iv);
                 $datas = trim($datas);
@@ -280,6 +282,11 @@ use app\index\model\Member;
                   $arr['order_status']='2';
                   $generation['generation_state']=3;
                   
+                }else if($income['status']=="FAIL"){
+                    $arr['order_status']='-1';
+                }else{
+                    $arr['order_status']='4';
+                    //带查证或者支付中。。。
                 }
             }
             //更新计划表
@@ -398,6 +405,7 @@ use app\index\model\Member;
       //提现回调
       public function cashCallback(){
             $data = file_get_contents("php://input");
+            file_put_contents('res1.txt', $data);
             $result = json_decode($data, true);
             if ($result['code'] == 0) {
                 $merch=Passageway::where(['passageway_no'=>'LkYQJ'])->find();
@@ -409,8 +417,16 @@ use app\index\model\Member;
                 $arr['back_status']=$resul['status'];
                 $arr['back_statusDesc']=$resul['statusDesc'];
                 if($resul['status']=="SUCCESS"){
-                  $arr['order_status']='2';
-                  GenerationOrder::where(['back_tradeNo'=>$resul['depositNo']])->update($arr);
+                    $arr['order_status']='2';
+                }else if($income['status']=="FAIL"){
+                    $arr['order_status']='-1';
+                    
+                }else{
+                    $arr['order_status']='4';
+                    //带查证或者支付中。。。
+                }
+                GenerationOrder::where(['back_tradeNo'=>$resul['depositNo']])->update($arr);
+                if($resul['status']=="SUCCESS"){
                   $pay=GenerationOrder::where(['back_tradeNo'=>$resul['depositNo']])->find();
                   $card_num=substr($pay['order_card'],-4);
                   jpush($pay['order_member'],'还款计划扣款成功通知',"您制定的尾号{$card_num}的还款计划成功还款".$pay['order_money']."元，在APP内还款计划里即可查看详情。");
