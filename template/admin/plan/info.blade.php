@@ -21,6 +21,7 @@
         <table class="table datatable">
            <thead>
            	<tr>
+           		<th>ID</th>
 		 		<th>通道</th>
 		 		<th>会员名称</th>
 		 		<th>订单消费类型</th>
@@ -33,14 +34,12 @@
 		 		<th>订单更新时间</th>
 		 		<th>订单创建时间</th>
 		 		<th>操作</th>
-		 		<!-- <th>返回订单号</th>
-		 		<th>返回结果描述</th>
-		 		<th>返回状态</th> -->
 	 	    </tr>
 	 	</thead>
 	 	 <tbody>
 	 	@foreach($list as $key => $value)
 		 <tr style="">
+		 	<td>{{$value->order_id}}</td>
 		 	<td>{{$value->passageway_name}}</td>
 			 <td>{{$value->member_nick}}</td>
 			 <td>@if($value->order_type == 1) <em style="color:#00FF00;"> 消费</em> @else <em style="color:#00FFFF;">还款</em>@endif </td>

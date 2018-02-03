@@ -68,6 +68,7 @@
 <table class="table table-striped table-hover">
   	<thead>
 	    <tr>
+          <th>ID</th>
 	      	<th>还款会员</th>
 	      	<th>还款会员手机号</th>
 	      	<th>计划代号</th>
@@ -92,7 +93,7 @@
   	<tfoot>
   		@foreach($list as $k => $v)
 	    <tr>
-	    	
+	    	  <td>{{$v['generation_id']}}</td>
 	      	<td>{{$v['member_nick']}}</td>
 	      	<td>{{$v['member_mobile']}}</td>
 	      	<td>{{$v['generation_no']}}</td>

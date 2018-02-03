@@ -87,7 +87,12 @@ class Plan extends Common{
 		}else{
 			$r['order_money'] = ''; 
 		}
-		$list = GenerationOrder::with("passageway,member")->where($where)->paginate(Config::get('page_size'), false, ['query'=>Request::instance()->param()]);
+		if(request()->param('order_no')!=''){
+			$where['order_no'] = request()->param('order_no');
+		}else{
+			$r['order_no'] = '';
+		}
+		$list = GenerationOrder::with("passageway,member")->join("wt_generation","generation_id=order_no")->where($where)->where(['wt_generation.generation_state' => 2])->paginate(Config::get('page_size'), false, ['query'=>Request::instance()->param()]);
 		$this->assign('r',$r);
 		$this->assign("list",$list);
 		return view("admin/plan/fail");

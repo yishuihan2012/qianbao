@@ -28,6 +28,10 @@
             <span class="input-group-addon">订单金额</span>
             <input type="text" class="form-control" name="order_money" value="{{$r['order_money']}}" placeholder="订单金额">
           </div> 
+          <div class="input-group" style="width: 200px;float: left;margin-right: 20px;">
+            <span class="input-group-addon">计划ID</span>
+            <input type="text" class="form-control" name="order_no" value="{{$r['order_no']}}" placeholder="计划ID">
+          </div> 
           <div class="input-group" style="width: 200px;float: left; margin-right: 10px;">
               <input type="text" class="form-control date-picker" id="dateTimeRange" placeholder="执行时间" />
               <input type="hidden" name="beginTime" id="beginTime" value="" />
@@ -46,6 +50,8 @@
         <table class="table datatable">
            <thead>
             <tr>
+              <th>计划ID</th>
+              <th>执行记录ID</th>
               <th>通道</th>
               <th>会员名称</th>
               <th>订单消费类型</th>
@@ -64,7 +70,9 @@
      <tbody>
     @foreach($list as $key => $value)
      <tr style="">
-      <td>{{$value->passageway_name}}</td>
+       <td>{{$value->order_no}}</td>
+       <td>{{$value->order_id}}</td>
+       <td>{{$value->passageway_name}}</td>
        <td>{{$value->member_nick}}</td>
        <td>@if($value->order_type == 1) <em style="color:#00FF00;"> 消费</em> @else <em style="color:#00FFFF;">还款</em>@endif </td>
        <td>{{$value->order_card}}</td>
@@ -87,6 +95,7 @@
           @if($value->order_status == -1)
           <a class="remove" href="#" data-url="{{url('/api/Membernet/action_single_plan/id/'.$value['order_id'])}}"><i class="icon-pencil"></i> 重新执行 </a>
           @endif
+          <a class="btn btn-sm"  href="{{url('/index/Plan/info/id/'.$value['order_no'])}}" >查看详情</a>
        </td>
      </tr>
      @endforeach
