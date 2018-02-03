@@ -153,9 +153,11 @@ use app\index\model\Member;
         $member_base=Member::where(['member_id'=>$pay['order_member']])->find();
         #6获取渠道提供的费率，如果不一致，重新报备费率
         $passway_info=$this->accountQuery($pay['order_member']);
-        if($passway_info['feeRatio']!=$also || $passway_info['feeAmt']!=$daikou){//不一致重新报备,修改商户信息
-              $Membernetsedits=new \app\api\controller\Membernetsedit($pay['order_member'],$pay['order_passageway'],'M03','',$member_base['member_mobile']);
-              $update=$Membernetsedits->mishuadaihuan();
+        if(isset($passway_info['feeRatio']) && isset($passway_info['feeAmt'])){
+            if($passway_info['feeRatio']!=$also || $passway_info['feeAmt']!=$daikou){//不一致重新报备,修改商户信息
+                  $Membernetsedits=new \app\api\controller\Membernetsedit($pay['order_member'],$pay['order_passageway'],'M03','',$member_base['member_mobile']);
+                  $update=$Membernetsedits->mishuadaihuan();
+            }
         }
         $params=array(
           'mchNo'=>$merch->passageway_mech, //机构号 必填  由平台统一分配 16
@@ -408,8 +410,8 @@ use app\index\model\Member;
                 $arr['back_statusDesc']=$resul['statusDesc'];
                 if($resul['status']=="SUCCESS"){
                   $arr['order_status']='2';
-                  GenerationOrder::where(['back_tradeNo'=>$resul['tradeNo']])->update($arr);
-                  $pay=GenerationOrder::where(['back_tradeNo'=>$resul['tradeNo']])->find();
+                  GenerationOrder::where(['back_tradeNo'=>$resul['depositNo']])->update($arr);
+                  $pay=GenerationOrder::where(['back_tradeNo'=>$resul['depositNo']])->find();
                   $card_num=substr($pay['order_card'],-4);
                   jpush($pay['order_member'],'还款计划扣款成功通知',"您制定的尾号{$card_num}的还款计划成功还款".$pay['order_money']."元，在APP内还款计划里即可查看详情。");
                    echo "success";die;
