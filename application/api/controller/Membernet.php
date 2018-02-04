@@ -129,7 +129,7 @@ use app\index\model\Member;
             }
              return json_encode(['code'=>200,'msg'=>'执行成功。']);
         } catch (Exception $e) {
-            return json_encode(['code'=>101,'msg'=>'执行失败，请联系客服。']);
+            return json_encode(['code'=>101,'msg'=>'执行失败。']);
         }
     }
      //7绑卡支付
@@ -294,7 +294,7 @@ use app\index\model\Member;
             // $id=GenerationOrder::where(['back_tradeNo'=>$resul['tradeNo']])->value('order_no');
             // Generation::where(['generation_id'=>$pay['order_no']])->update($generation);
             if($resul['status']=="SUCCESS"){
-                $pay= ::where(['order_platform_no'=>$resul['orderNo']])->find();
+                $pay=GenerationOrder::where(['order_platform_no'=>$resul['orderNo']])->find();
                 //如果原来表里状态不是成功,添加余额。
                 if($pay['order_status']!=2){
                   db('reimbur')->where('reimbur_generation',$pay['order_no'])->setInc('reimbur_left',$pay['order_money']-$pay['order_pound']);

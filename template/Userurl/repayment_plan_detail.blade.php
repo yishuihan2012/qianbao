@@ -165,10 +165,11 @@
 								res=JSON.parse(res);
 								if(res.code==200){
 									mui.toast('取消计划成功');
-									setTimeout(location.reload(),2000);
+									setTimeout(function(){ location.reload(); }, 3000);
 								}else{
 									// alert("取消失败！\n"+res.msg);
 									mui.toast(res.msg);
+									setTimeout(function(){ location.reload(); }, 3000);
 								}
 							})
                     }
@@ -176,12 +177,12 @@
 		})
 		$("#resetBtn").click(function(){
 				var plan_id=$(this).attr('plan_id');
-				mui.confirm('计划失败原因通常是因为余额不足，请确保卡内余额充足再执行计划,如有疑问，请联系客服。', '重新执行计划', ['否', '是，重新执行'], function(e) {  
+				mui.confirm('计划失败原因通常是因为余额不足，请确保卡内余额充足再执行计划,您最多有三次重新执行机会，如有疑问，请联系客服。', '重新执行计划', ['否', '是，重新执行'], function(e) {  
                     if (e.index == 1) {  
                     	$.post('/api/userurl/reset_one_repayment',{plan_id:plan_id},function(res){
 								res=JSON.parse(res);
 								mui.toast(res.msg);
-								setTimeout(location.reload(),2000);
+								setTimeout(function(){ location.reload(); }, 3000);
 						})
                     }
                 })  
