@@ -206,6 +206,7 @@
                       'order_time'     =>$each_pay_time[$k],
                       'order_passageway'=>$this->param['passageway'],
                       'order_passway_id'=>$this->param['passageway'],
+                      'order_platform_no'     =>uniqid(),
                       // 'order_root'=>$root_id,
                   );
                   $generation_pound += $real_each_get['fee'];
@@ -223,6 +224,7 @@
                   'order_time'       =>$date[$i]." ".get_hours(15,16).":".get_minites(0,59),
                   'order_passageway'=>$this->param['passageway'],
                   'order_passway_id'=>$this->param['passageway'],
+                  'order_platform_no'     =>uniqid(),
                   // 'order_root'=>$root_id,
               );
 
