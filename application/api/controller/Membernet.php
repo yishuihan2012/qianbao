@@ -165,7 +165,7 @@ use app\index\model\Member;
           'userNo'=>$member->LkYQJ,  //平台用户标识  必填  平台下发用户标识  32
           'payCardId'=>$card_info->bindId, //支付卡签约ID 必填  支付签约ID，传入签约返回的平台签约ID  32
           'notifyUrl'=>System::getName('system_url').'/Api/Membernet/payCallback',  //异步通知地址  可填  异步回调地址，为空时不起推送  200
-          'orderNo'=>$pay['order_other'], //订单流水号 必填  机构订单流水号，需唯一 64
+          'orderNo'=>$pay['order_platform_no'], //订单流水号 必填  机构订单流水号，需唯一 64
           'orderTime'=>date('YmdHis',time()+60),  //订单时间  必填  格式：yyyyMMddHHmmss 14
           'goodsName'=>'虚拟商品',  //商品名称  必填    50
           'orderDesc'=>'米刷信用卡还款', //订单描述  必填    50
@@ -376,7 +376,7 @@ use app\index\model\Member;
                   'userNo'=>$member->LkYQJ,  //平台用户标识  必填  平台下发用户标识  32
                   'settleBindId'=>$card_info->bindId,  //提现卡签约ID 必填  提现结算的卡，传入签约返回的平台签约ID  32
                   'notifyUrl'=>System::getName('system_url').'/Api/Membernet/cashCallback',// 异步通知地址  可填  异步通知的目标地址
-                  'orderNo'=>$pay['order_other'], //提现流水号 必填  机构订单流水号，需唯一 64
+                  'orderNo'=>$pay['order_platform_no'], //提现流水号 必填  机构订单流水号，需唯一 64
                   'orderTime'=>$orderTime,//  提现时间点 必填  格式：yyyyMMddHHmmss 14
                   'depositAmt'=>$pay['order_money']*100,  //提现金额  必填  单位：分  整型(9,0)
                   'feeRatio'=>0,  //提现费率  必填  需与用户入网信息保持一致  数值(5,2)
