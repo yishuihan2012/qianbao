@@ -83,7 +83,7 @@
 					        </p>
  					  </div>
 	 					<div style="padding:0 10px">
-							<p class="invalid-color f14">失败原因：{{$v['back_statusDesc']}}</p>
+							<p class="invalid-color f14">通道返回的失败原因：{{$v['back_statusDesc']}}</p>
 							<p class="invalid-color f14">最后执行时间{{$v['order_edit_time']}}</p>
 							@if(isset($v['is_first']) && $v['is_first']=1)
 							<p class="bor-bot f16 ftr wrap"><a id="resetBtn" plan_id="{{$v['order_id']}}">重新执行</a></p>
