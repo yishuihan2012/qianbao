@@ -163,43 +163,43 @@
                             return ['code'=>350];
                       }
                       #实名认证成功返回上级红包
-                      $parent_member_id=MemberRelation::where(['relation_member_id'=>$this->param['uid']])->value('relation_parent_id');
-                      if($parent_member_id!=0 && System::getName('is_havecert_redpackets') )
-                      {
-                            $realname_wallet=rand(System::getName('realname_min'),System::getName('realname_max')); //实名红包金额
-                            $wallet=Wallet::get(['wallet_member'=>$parent_member_id]);
-                            if(!$wallet)
-                            {
-                                 Db::rollback();
-                                 return ['code'=>350,'上级用户钱包信息未找到~'];
-                            }
-                           $wallet->wallet_amount=$wallet->wallet_amount+$realname_wallet;
-                           $wallet->wallet_total_revenue=$wallet->wallet_total_revenue+$realname_wallet;
-                           $wallet->wallet_invite=$wallet->wallet_invite+$realname_wallet;
-                           #添加到推荐红包表
-                            $recomment=new Recomment([
-                                 'recomment_member_id'=>$parent_member_id,
-                                 'recomment_children_member'=>$this->param['uid'],
-                                 'recomment_money'=>$realname_wallet,
-                                 'recomment_desc'=>'推荐下级'.$this->param['card_name'].'注册并实名认证成功',
-                            ]);
-                            if($recomment->save()){
-                               $wallet_log=new WalletLog([
-                                     'log_wallet_id'          =>$wallet['wallet_id'],
-                                     'log_wallet_amount'  =>$realname_wallet,
-                                     'log_wallet_type' =>1,
-                                     'log_relation_id'  =>$recomment->recomment_id,
-                                     'log_relation_type' => 5,
-                                     'log_form' => '邀请红包',
-                                     'log_desc' => '邀请好友'.$this->param['card_name'].'注册并完成实名认证,获得红包'.$realname_wallet."元",
-                               ]);
-                             }
-                           if($wallet->save()===false || $wallet_log->save()===false )
-                           {
-                                 Db::rollback();
-                                 return ['code'=>350,'上级钱包余额更新失败~'];
-                           }
-                      }
+                      // $parent_member_id=MemberRelation::where(['relation_member_id'=>$this->param['uid']])->value('relation_parent_id');
+                      // if($parent_member_id!=0 && System::getName('is_havecert_redpackets') )
+                      // {
+                      //       $realname_wallet=rand(System::getName('realname_min'),System::getName('realname_max')); //实名红包金额
+                      //       $wallet=Wallet::get(['wallet_member'=>$parent_member_id]);
+                      //       if(!$wallet)
+                      //       {
+                      //            Db::rollback();
+                      //            return ['code'=>350,'上级用户钱包信息未找到~'];
+                      //       }
+                      //      $wallet->wallet_amount=$wallet->wallet_amount+$realname_wallet;
+                      //      $wallet->wallet_total_revenue=$wallet->wallet_total_revenue+$realname_wallet;
+                      //      $wallet->wallet_invite=$wallet->wallet_invite+$realname_wallet;
+                      //      #添加到推荐红包表
+                      //       $recomment=new Recomment([
+                      //            'recomment_member_id'=>$parent_member_id,
+                      //            'recomment_children_member'=>$this->param['uid'],
+                      //            'recomment_money'=>$realname_wallet,
+                      //            'recomment_desc'=>'推荐下级'.$this->param['card_name'].'注册并实名认证成功',
+                      //       ]);
+                      //       if($recomment->save()){
+                      //          $wallet_log=new WalletLog([
+                      //                'log_wallet_id'          =>$wallet['wallet_id'],
+                      //                'log_wallet_amount'  =>$realname_wallet,
+                      //                'log_wallet_type' =>1,
+                      //                'log_relation_id'  =>$recomment->recomment_id,
+                      //                'log_relation_type' => 5,
+                      //                'log_form' => '邀请红包',
+                      //                'log_desc' => '邀请好友'.$this->param['card_name'].'注册并完成实名认证,获得红包'.$realname_wallet."元",
+                      //          ]);
+                      //        }
+                      //      if($wallet->save()===false || $wallet_log->save()===false )
+                      //      {
+                      //            Db::rollback();
+                      //            return ['code'=>350,'上级钱包余额更新失败~'];
+                      //      }
+                      // }
                       Db::commit();
                       return ['code'=>200,'msg'=>'实名认证成功~', 'data'=>''];
                  }
@@ -235,7 +235,7 @@
            if($cert_card_bankno) return ['code'=>602];
 
            $card_validate=BankCertNew(['bankCardNo'=>$this->param['card_bankno'], 'identityNo'=>$this->param['card_idcard'], 'mobileNo'=>$this->param['card_phone'], 'name'=>$this->param['card_name']]);
-           if($card_validate['code']!=0000) return ['code'=>351, 'msg'=>'实名认证请求出错~'];
+           if($card_validate['code']!=0000) return ['code'=>351, 'msg'=>'实名认证失败。'];
            if($card_validate['data']['resultCode']!='R001')  return ['code'=>351, 'msg'=>'认证信息不匹配或您的储蓄卡尚未开通无卡支付功能，请联系发卡行。'];
            if($card_validate['data']['bankCardBin']['cardTy']!='D')  return ['code'=>351, 'msg'=>'认证失败:请更换一个储蓄卡完成实名认证~'];
            Db::startTrans();
@@ -287,43 +287,43 @@
                      return ['code'=>350];
                 }
                 //实名认证成功返回上级红包
-                $parent_member_id=MemberRelation::where(['relation_member_id'=>$this->param['uid']])->value('relation_parent_id');
-                if($parent_member_id!=0 && System::getName('is_havecert_redpackets') )
-                {
-                     $realname_wallet=rand(System::getName('realname_min'),System::getName('realname_max')); //实名红包金额
-                     $wallet=Wallet::get(['wallet_member'=>$parent_member_id]);
-                     if(!$wallet)
-                     {
-                           Db::rollback();
-                           return ['code'=>350,'上级用户钱包信息未找到~'];
-                     }
-                     $wallet->wallet_amount=$wallet->wallet_amount+$realname_wallet;
-                     $wallet->wallet_total_revenue=$wallet->wallet_total_revenue+$realname_wallet;
-                     $wallet->wallet_invite=$wallet->wallet_invite+$realname_wallet;
-                     //添加到推荐红包表
-                     $recomment=new Recomment([
-                           'recomment_member_id'=>$parent_member_id,
-                           'recomment_children_member'=>$this->param['uid'],
-                           'recomment_money'=>$realname_wallet,
-                           'recomment_desc'=>'推荐下级'.$this->param['card_name'].'注册并实名认证成功',
-                     ]);
-                     if($recomment->save()){
-                           $wallet_log=new WalletLog([
-                                'log_wallet_id'          =>$wallet['wallet_id'],
-                                'log_wallet_amount'  =>$realname_wallet,
-                                'log_wallet_type' =>1,
-                                'log_relation_id'  =>$recomment->recomment_id,
-                                'log_relation_type' => 5,
-                                'log_form' => '邀请红包',
-                                'log_desc' => '邀请好友'.$this->param['card_name'].'注册并完成实名认证,获得红包'.$realname_wallet."元",
-                           ]);
-                      }
-                     if(! $wallet->save()===false || !$wallet_log->save() )
-                     {
-                           Db::rollback();
-                           return ['code'=>350,'上级钱包余额更新失败~'];
-                     }
-                }
+                // $parent_member_id=MemberRelation::where(['relation_member_id'=>$this->param['uid']])->value('relation_parent_id');
+                // if($parent_member_id!=0 && System::getName('is_havecert_redpackets') )
+                // {
+                //      $realname_wallet=rand(System::getName('realname_min'),System::getName('realname_max')); //实名红包金额
+                //      $wallet=Wallet::get(['wallet_member'=>$parent_member_id]);
+                //      if(!$wallet)
+                //      {
+                //            Db::rollback();
+                //            return ['code'=>350,'上级用户钱包信息未找到~'];
+                //      }
+                //      $wallet->wallet_amount=$wallet->wallet_amount+$realname_wallet;
+                //      $wallet->wallet_total_revenue=$wallet->wallet_total_revenue+$realname_wallet;
+                //      $wallet->wallet_invite=$wallet->wallet_invite+$realname_wallet;
+                //      //添加到推荐红包表
+                //      $recomment=new Recomment([
+                //            'recomment_member_id'=>$parent_member_id,
+                //            'recomment_children_member'=>$this->param['uid'],
+                //            'recomment_money'=>$realname_wallet,
+                //            'recomment_desc'=>'推荐下级'.$this->param['card_name'].'注册并实名认证成功',
+                //      ]);
+                //      if($recomment->save()){
+                //            $wallet_log=new WalletLog([
+                //                 'log_wallet_id'          =>$wallet['wallet_id'],
+                //                 'log_wallet_amount'  =>$realname_wallet,
+                //                 'log_wallet_type' =>1,
+                //                 'log_relation_id'  =>$recomment->recomment_id,
+                //                 'log_relation_type' => 5,
+                //                 'log_form' => '邀请红包',
+                //                 'log_desc' => '邀请好友'.$this->param['card_name'].'注册并完成实名认证,获得红包'.$realname_wallet."元",
+                //            ]);
+                //       }
+                //      if(! $wallet->save()===false || !$wallet_log->save() )
+                //      {
+                //            Db::rollback();
+                //            return ['code'=>350,'上级钱包余额更新失败~'];
+                //      }
+                // }
                 Db::commit();
                 return ['code'=>200,'msg'=>'实名认证成功~', 'data'=>''];
            }catch(\Exception $e){
@@ -492,7 +492,7 @@
            $cashcard=MemberCashcard::where('card_member_id='.$this->param['uid'])->find();
            if(!$cashcard) return ['code'=>435];
            $card_validate=BankCertNew(['bankCardNo'=>$this->param['card_bankno'], 'identityNo'=>$this->param['card_idcard'], 'mobileNo'=>$this->param['card_phone'], 'name'=>$this->param['card_name']]);
-           if($card_validate['code']!=0000) return ['code'=>351, 'msg'=>'实名认证请求出错~'];
+           if($card_validate['code']!=0000) return ['code'=>351, 'msg'=>'实名认证失败。'];
            if($card_validate['data']['resultCode']!='R001')  return ['code'=>351, 'msg'=>'认证信息不匹配或您的储蓄卡尚未开通无卡支付功能，请联系发卡行。'];
            if($card_validate['data']['bankCardBin']['cardTy']!='D')  return ['code'=>351, 'msg'=>'认证失败:请更换一个储蓄卡完成实名认证~'];
             $card_bankname=$card_validate['data']['bankCardBin']['bankName'];

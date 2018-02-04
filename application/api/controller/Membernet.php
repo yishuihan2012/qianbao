@@ -187,6 +187,9 @@ use app\index\model\Member;
                 $arr['order_status']='2';
                 // $generation['generation_state']=3;
                 $is_commission=1;
+                ##记录余额
+                #0在此计划的还款卡余额中增加本次的金额 除去手续费
+                db('reimbur')->where('reimbur_generation',$pay['order_no'])->setInc('reimbur_left',$pay['order_money']-$pay['order_pound']);
             }else if($income['status']=="FAIL"){
                 //失败推送消息
                 $arr['order_status']='-1';
@@ -219,8 +222,7 @@ use app\index\model\Member;
           if($income['code']=='200'){
               if($income['status']!="FAIL"){
                   if($pay['order_type']==1){ //消费
-                        #0在此计划的还款卡余额中增加本次的金额 除去手续费
-                        db('reimbur')->where('reimbur_generation',$pay['order_no'])->setInc('reimbur_left',$pay['order_money']-$pay['order_pound']);
+                        
                         #1分润
                         //先判断有没有分润
                         if($pay['is_commission']=='0'){
@@ -234,8 +236,6 @@ use app\index\model\Member;
                         #3极光推送
                         jpush($pay['order_member'],'还款计划扣款成功通知',"您制定的尾号{$card_num}的还款计划成功扣款".$pay['order_money']."元，在APP内还款计划里即可查看详情。");
                   }elseif($pay['order_type']==2){ //还款
-                        #0在此计划的还款卡余额中减去本次的金额
-                        db('reimbur')->where('reimbur_generation',$pay['order_no'])->setDec('reimbur_left',$pay['order_money']);
                         #1极光推送
                         jpush($pay['order_member'],'还款成功通知',"您制定的尾号{$card_num}的还款计划成功还款".$pay['order_money']."元，在APP内还款计划里即可查看详情。");
 
@@ -266,7 +266,6 @@ use app\index\model\Member;
       //8:支付回调
       public function payCallback(){
         $data = file_get_contents("php://input");
-        file_put_contents('res.txt', $data);
         $result = json_decode($data, true);
            if ($result['code'] == 0) {
 
@@ -290,12 +289,16 @@ use app\index\model\Member;
                 }
             }
             //更新计划表
-            GenerationOrder::where(['back_tradeNo'=>$resul['tradeNo']])->update($arr);
+            $update_res=GenerationOrder::where(['back_tradeNo'=>$resul['tradeNo']])->update($arr);
             //更新卡计划
             // $id=GenerationOrder::where(['back_tradeNo'=>$resul['tradeNo']])->value('order_no');
             // Generation::where(['generation_id'=>$pay['order_no']])->update($generation);
             if($resul['status']=="SUCCESS"){
                 $pay=GenerationOrder::where(['back_tradeNo'=>$resul['tradeNo']])->find();
+                //如果原来表里状态不是成功,添加余额。
+                if($pay['order_status']!=2){
+                  db('reimbur')->where('reimbur_generation',$pay['order_no'])->setInc('reimbur_left',$pay['order_money']-$pay['order_pound']);
+                }
                 //成功-分润先判断有没有分润
                 if($pay['is_commission']=='0'){
                     $fenrun= new \app\api\controller\Commission();
@@ -379,6 +382,8 @@ use app\index\model\Member;
             $arr['back_statusDesc']=$income['statusDesc'];
             if($income['status']=="SUCCESS"){
                  $arr['order_status']='2';
+                 #0在此计划的还款卡余额中减去本次的金额
+                 db('reimbur')->where('reimbur_generation',$pay['order_no'])->setDec('reimbur_left',$pay['order_money']);
             }elseif($income['status']=="FAIL"){
                   //失败推送消息
                   $arr['order_status']='-1';
@@ -425,12 +430,16 @@ use app\index\model\Member;
                     $arr['order_status']='4';
                     //带查证或者支付中。。。
                 }
-                GenerationOrder::where(['back_tradeNo'=>$resul['depositNo']])->update($arr);
+                $res=GenerationOrder::where(['back_tradeNo'=>$resul['depositNo']])->update($arr);
                 if($resul['status']=="SUCCESS"){
-                  $pay=GenerationOrder::where(['back_tradeNo'=>$resul['depositNo']])->find();
-                  $card_num=substr($pay['order_card'],-4);
-                  jpush($pay['order_member'],'还款计划扣款成功通知',"您制定的尾号{$card_num}的还款计划成功还款".$pay['order_money']."元，在APP内还款计划里即可查看详情。");
-                   echo "success";die;
+                    $pay=GenerationOrder::where(['back_tradeNo'=>$resul['depositNo']])->find();
+                    
+                    if(isset($pay['order_status']) && $pay['order_status']!=2){
+                         db('reimbur')->where('reimbur_generation',$pay['order_no'])->setDec('reimbur_left',$pay['order_money']);
+                    }
+                    $card_num=substr($pay['order_card'],-4);
+                    jpush($pay['order_member'],'还款计划扣款成功通知',"您制定的尾号{$card_num}的还款计划成功还款".$pay['order_money']."元，在APP内还款计划里即可查看详情。");
+                    echo "success";die;
                 }
             }
       }
