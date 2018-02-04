@@ -187,6 +187,7 @@ use app\index\model\Member;
             if($income['status']=="SUCCESS"){
                 $arr['order_status']='2';
                 // $generation['generation_state']=3;
+                $arr['order_platform']=$pay['order_pound']-($pay['order_money']*$merch['passageway_rate']/100)-$merch['passageway_income'];
                 $is_commission=1;
                 ##记录余额
                 #0在此计划的还款卡余额中增加本次的金额 除去手续费
@@ -203,9 +204,7 @@ use app\index\model\Member;
           $arr['back_status']='FAIL';
           $arr['order_status']='-1';
           $generation['generation_state']=-1;
-          $arr['order_buckle']=$rate['item_charges']/100;
-          $arr['order_platform']=$pay['order_pound']-($pay['order_money']*$merch['passageway_rate'])+$merch['passageway_income'];
-        
+          $arr['order_buckle']=$rate['item_charges']/100;        
         }
         //添加执行记录
         $res=GenerationOrder::where(['order_id'=>$pay['order_id']])->update($arr);
@@ -298,6 +297,11 @@ use app\index\model\Member;
                 //如果原来表里状态不是成功,添加余额。
                 if($pay['order_status']!=2){
                   db('reimbur')->where('reimbur_generation',$pay['order_no'])->setInc('reimbur_left',$pay['order_money']-$pay['order_pound']);
+                }
+                //判断有没有写入收益
+                if($pay['order_platform']<0.01){
+                   $arr['order_platform']=$pay['order_pound']-($pay['order_money']*$merch['passageway_rate']/100)-$merch['passageway_income'];
+                   $update_res=GenerationOrder::where(['order_platform_no'=>$resul['orderNo']])->update($arr);
                 }
                 //成功-分润先判断有没有分润
                 if($pay['is_commission']=='0'){
