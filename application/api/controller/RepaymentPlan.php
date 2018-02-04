@@ -165,9 +165,9 @@
                  'reimbur_generation'   =>$Generation_result->generation_id,
                  'reimbur_card'             =>$card_info->card_bankno,
            ]); 
-           if(!$reimbur_result){
+           if(!$reimbur_result->save()){
                 Db::rollback();
-                 return ['code'=>472]; 
+                return ['code'=>472]; 
            }
           ####################################
           #3确定每天还款金额
