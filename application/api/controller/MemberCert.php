@@ -236,18 +236,22 @@
 
            $card_validate=BankCertNew(['bankCardNo'=>$this->param['card_bankno'], 'identityNo'=>$this->param['card_idcard'], 'mobileNo'=>$this->param['card_phone'], 'name'=>$this->param['card_name']]);
            if($card_validate['code']!=0000) return ['code'=>351, 'msg'=>'实名认证请求出错~'];
-           if($card_validate['data']['resultCode']!='R001')  return ['code'=>351, 'msg'=>'认证失败:'.$card_validate['data']['remark']];
+           if($card_validate['data']['resultCode']!='R001')  return ['code'=>351, 'msg'=>'认证信息不匹配或您的储蓄卡尚未开通无卡支付功能，请联系发卡行。'];
            if($card_validate['data']['bankCardBin']['cardTy']!='D')  return ['code'=>351, 'msg'=>'认证失败:请更换一个储蓄卡完成实名认证~'];
            Db::startTrans();
            try{
                 #写入认证表
+                $card_bankname=$card_validate['data']['bankCardBin']['bankName'];
+                if($num=strpos($card_bankname,'(')){
+                    $card_bankname=substr($card_bankname,0,$num);
+                }
                 $member_cashcard=new MemberCashcard([
                      'card_member_id'=>$this->param['uid'],
                      'card_bankno'=>$this->param['card_bankno'],
                      'card_name'  =>$this->param['card_name'],
                      'card_idcard' =>$this->param['card_idcard'],
                      'card_phone' =>$this->param['card_phone'],
-                     'card_bankname' => $card_validate['data']['bankCardBin']['bankName'],
+                     'card_bankname' =>$card_bankname,
                      //'card_bank_province' =>$this->param['card_bank_province'],
                      //'card_bank_city'   => $this->param['card_bank_city'],
                      //'card_bank_area' => '',//$this->param['card_bank_area'],
@@ -491,6 +495,10 @@
            if($card_validate['code']!=0000) return ['code'=>351, 'msg'=>'实名认证请求出错~'];
            if($card_validate['data']['resultCode']!='R001')  return ['code'=>351, 'msg'=>'认证失败:'.$card_validate['data']['remark']];
            if($card_validate['data']['bankCardBin']['cardTy']!='D')  return ['code'=>351, 'msg'=>'认证失败:请更换一个储蓄卡完成实名认证~'];
+            $card_bankname=$card_validate['data']['bankCardBin']['bankName'];
+            if($num=strpos($card_bankname,'(')){
+                $card_bankname=substr($card_bankname,0,$num);
+            }
            $card=array(
                 'card_bankno'=>$this->param['card_bankno'],
                 'card_phone'=>$this->param['card_phone'],
@@ -499,7 +507,7 @@
                 //'card_bank_area'=>$this->param['card_bank_addressId'],
                 //'card_bank_address' => $bankInfo['bank_name'],
                 //'card_bank_lang'   => $bankInfo['bank_code'],
-                'card_bankname'=> $card_validate['data']['bankCardBin']['bankName'],
+                'card_bankname'=> $card_bankname,
                 'card_state'          => '1',
                 'card_return'        =>json_encode($card_validate),
            );
