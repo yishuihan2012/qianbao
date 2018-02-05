@@ -107,7 +107,9 @@
            #查询会员下级数量 TODO: 现在是直接下级数量 是否改成三级 #
            $data['subordinateNumber']=$this->get_lower_total($this->param['uid']);
            $parent_id=MemberRelation::where(['relation_member_id'=>$this->param['uid']])->value('relation_parent_id');
-           $data['parent']=$parent_id=='0' ? '' : Members::where('member_id',$parent_id)->value('member_nick');
+           $parent=Members::where('member_id',$parent_id)->value('member_nick');
+           $parent=is_numeric($parent) ? ' ' : $parent;
+           $data['parent']=$parent_id=='0' ? '' : $parent;
            $data['parent_phone']=$parent_id=='0' ? '' : Members::where('member_id',$parent_id)->value('member_mobile');
            #查询用户储蓄卡
            $CashCard=MemberCashcard::where(['card_member_id'=>$this->param['uid'],'card_state'=>1])->find();

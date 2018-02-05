@@ -920,7 +920,7 @@ class Userurl extends Controller
      {
 		 $order->order_fen=$fenrun_result['leftmoney'];
          $order->order_buckle=$passwayitem->item_charges/100;
-         $order->order_platform=$order->order_charge-($order->order_money*$passway->passageway_rate/100)+$passway->passageway_income;
+         $order->order_platform=$order->order_charge-($order->order_money*$passway->passageway_rate/100)+$passwayitem->item_charges-$passway->passageway_income;
      }
 		else	
      {

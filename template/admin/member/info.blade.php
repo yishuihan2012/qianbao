@@ -62,16 +62,17 @@
 		 </tr>
 		 <tr>
 			 <td>身份证正面</td>
-			 <td><img src="{{$member_info->IdPositiveImgUrl}}"  data-toggle="lightbox" style="width: 260px; height:150px;"></td>
+			 <td>
+			 	<img src="{{$member_info->IdPositiveImgUrl}}"  data-toggle="lightbox" class='imgs' style="width: 260px; height:150px;"></td>
 			
 		 </tr>
 		 <tr>
 		 	 <td>身份证反面</td>
-		 	  <td><img src="{{$member_info->IdNegativeImgUrl}}"  data-toggle="lightbox" style="width: 260px; height:150px;"></td>
+		 	  <td><img src="{{$member_info->IdNegativeImgUrl}}"  data-toggle="lightbox" class='imgs' style="width: 260px; height:150px;"></td>
 		 </tr>
 		  <tr>
 		 	 <td>身份证人像</td>
-			 <td><img src="{{$member_info->IdPortraitImgUrl}}"  data-toggle="lightbox" style="width: 260px; height:150px;"></td> 
+			 <td><img src="{{$member_info->IdPortraitImgUrl}}"  data-toggle="lightbox" class='imgs' style="width: 260px; height:150px;"></td> 
 		 </tr>
 		@endif 
 	 </table>
@@ -141,7 +142,19 @@
 	 @endif
       <button type="button" class="btn" data-dismiss="modal">关闭</button>
  </div>
+ <img src="" style="display: none;position:absolute;top:0;bottom:0;left:0;right:0;margin:auto;" class="img">
  <script>
+ 	 //图片放大
+ 	 $(".imgs").click(function(){
+ 	 	var url = $(this).attr('src');
+ 	 	if(url!=''){
+ 	 		$(".img").attr("src",url);
+ 	 		$(".img").show();
+ 	 	}
+ 	 })
+ 	 $(".img").click(function(){
+ 	 	$(this).hide();
+ 	 })
 	 $(".save").click(function(){
 		 $("#myform").submit()
 	 })

@@ -151,7 +151,7 @@ use app\index\model\Member;
         // print_r($member);die;
         // print_r($pay);die;
         #5:获取用户基本信息
-        $member_base=Member::where(['member_id'=>$pay['order_member']])->find();
+        $member_base=Member::where(['member_id'=>$pay['order_member']])->find(); 
         #6获取渠道提供的费率，如果不一致，重新报备费率
         $passway_info=$this->accountQuery($pay['order_member']);
         if(isset($passway_info['feeRatio']) && isset($passway_info['feeAmt'])){
