@@ -54,6 +54,9 @@ class Plan extends Common{
 		#剩余还款总额
 		$surplussum = Generation::with("member,creditcard")->where($where)->sum("generation_total");
 		$this->assign("surplussum",$surplussum);
+		#还款总笔数
+		$count_plan = Generation::with("member,creditcard")->where($where)->sum("generation_count");
+		$this->assign("count_plan",$count_plan);
 		#计算总条数
 		$count = Generation::with("member,creditcard")->where($where)->count();
 		//用户组
