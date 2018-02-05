@@ -2,7 +2,6 @@
  namespace app\api\controller;
  use think\Db;
  use app\index\model\Member;
- // use app\index\model\MemberGroup;
  use app\index\model\System;
  use app\index\model\Wallet;
  use app\index\model\WalletLog;
@@ -207,7 +206,6 @@
 	 	 	 	  // jpush($member_grandFaterId,'分润收益到账提醒~',$str1,$str1);
  	 	 	 }
  	 	 }
-
  	 	 #查询第三级上级
  	 	 $member_endFatherId=MemberRelation::where('relation_member_id',$member_grandFaterId)->value('relation_parent_id');
  	 	 if($member_endFatherId=="0")
