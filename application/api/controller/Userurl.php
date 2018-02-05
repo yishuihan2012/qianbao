@@ -82,7 +82,7 @@ class Userurl extends Controller
 
 	#取现现成功页面
 	public function calllback_success(){
-		$request = $_REQUEST;
+		$request = $this->param;
         $data    = CashOrder::where(['order_thead_no' => $request['transNo']])->find();
         if ($request['status'] == '00') {
             $data['order_card']        = substr($data['order_card'], -4);
