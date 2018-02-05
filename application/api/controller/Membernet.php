@@ -161,7 +161,7 @@ use app\index\model\Member;
                   $update=$Membernetsedits->mishuadaihuan();
             }
         }
-        if(!$pay['order_platform_no']){
+        if(!$pay['order_platform_no'] || $pay['order_status']!=1){
             $update_order['order_platform_no']=$pay['order_platform_no']=uniqid();
             $update_res=GenerationOrder::where(['order_id'=>$pay['order_id']])->update($update_order);
         }
