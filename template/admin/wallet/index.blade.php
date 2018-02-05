@@ -73,11 +73,11 @@
   	 @foreach($list as $wallet)
 	    	 <tr>
 	      	 <td>{{$wallet->member_nick}}</td>
-	      	 <td>{{format_money($wallet->wallet_amount)}}</td>
-	      	 <td>{{format_money($wallet->wallet_total_revenue)}}</td>
-	      	 <td>{{format_money($wallet->wallet_invite)}}</td>
-	      	 <td>{{format_money($wallet->wallet_commission)}}</td>
-	      	 <td>{{format_money($wallet->wallet_fenrun)}}</td>
+	      	 <td>{{$wallet->wallet_amount}}</td>
+	      	 <td>{{$wallet->wallet_total_revenue}}</td>
+	      	 <td>{{$wallet->wallet_invite}}</td>
+	      	 <td>{{$wallet->wallet_commission}}</td>
+	      	 <td>{{$wallet->wallet_fenrun}}</td>
 	      	 <td><span class="label label-{{$wallet->wallet_state=='2' ? 'success' : 'danger'}}">{{$wallet->wallet_state=='2' ? '正常' : '冻结' }}</span></td>
 	      	 <td>{{$wallet->wallet_update_time}}</td>
 	      	 <td>{{$wallet->wallet_add_time}}</td>
