@@ -135,6 +135,7 @@ use app\index\model\Member;
      //7绑卡支付
       //http://pay.mishua.cn/zhonlinepay/service/rest/creditTrans/payBindCard
       public function payBindCard($pay){
+
         #1获取费率
         // print_r($pay);die;
         $member_group_id=Member::where(['member_id'=>$pay['order_member']])->value('member_group_id');
@@ -159,6 +160,10 @@ use app\index\model\Member;
                   $Membernetsedits=new \app\api\controller\Membernetsedit($pay['order_member'],$pay['order_passageway'],'M03','',$member_base['member_mobile']);
                   $update=$Membernetsedits->mishuadaihuan();
             }
+        }
+        if(!$pay['order_platform_no']){
+            $update_order['order_platform_no']=$pay['order_platform_no']=uniqid();
+            $update_res=GenerationOrder::where(['order_id'=>$pay['order_id']])->update($update_order);
         }
         $params=array(
           'mchNo'=>$merch->passageway_mech, //机构号 必填  由平台统一分配 16
@@ -375,6 +380,10 @@ use app\index\model\Member;
               #5:获取用户基本信息
               $member_base=Member::where(['member_id'=>$pay['order_member']])->find();
               $orderTime=date('YmdHis',time()+60);
+              if(!$pay['order_platform_no']){
+                  $update_order['order_platform_no']=$pay['order_platform_no']=uniqid();
+                  $update_res=GenerationOrder::where(['order_id'=>$pay['order_id']])->update($update_order);
+              }
               $params=array(
                   'mchNo'=>$merch->passageway_mech, //机构号 必填  由平台统一分配 16
                   'userNo'=>$member->LkYQJ,  //平台用户标识  必填  平台下发用户标识  32
