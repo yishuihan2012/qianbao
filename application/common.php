@@ -976,18 +976,18 @@ function SortByASCII($arr)
         $jpush=new con\Push();
         if ($uid && $title && $content) {
             //获取registration_id
-        $member=Members::get($uid);
-            $member_token=$member->member_token;
-        //写入记录
-        Notice::create([
-          'notice_title'=>$title,
-          'notice_content'=>$content,
-          'notice_recieve'=>$uid,
-          'notice_registration_id'=>$member_token,
-        ]);
-            $jpush->set_message_title($title);
-        // $jpush->set_audience('all');
-        $jpush->set_registration_id($member_token);
+            $member=Members::get($uid);
+            $member_token=$member->memberlogin->login_token;
+            //写入记录
+            Notice::create([
+              'notice_title'=>$title,
+              'notice_content'=>$content,
+              'notice_recieve'=>$uid,
+              'notice_registration_id'=>$member_token,
+            ]);
+                $jpush->set_message_title($title);
+            // $jpush->set_audience('all');
+            $jpush->set_registration_id($member_token);
             $jpush->set_message_sort_desc($content);
             if ($item) {
                 $jpush->set_message_info_type($type);
