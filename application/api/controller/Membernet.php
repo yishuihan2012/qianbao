@@ -383,7 +383,7 @@ use app\index\model\Member;
               #5:获取用户基本信息
               $member_base=Member::where(['member_id'=>$pay['order_member']])->find();
               $orderTime=date('YmdHis',time()+60);
-              if(!$pay['order_platform_no']){
+              if(!$pay['order_platform_no'] || $pay['order_status']!=1){
                   $update_order['order_platform_no']=$pay['order_platform_no']=uniqid();
                   $update_res=GenerationOrder::where(['order_id'=>$pay['order_id']])->update($update_order);
               }
