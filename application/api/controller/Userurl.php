@@ -707,7 +707,9 @@ class Userurl extends Controller
   	}
   }
   //代还，用户签约界面
-  public function user_sign(){
-  		echo 11;die;
+  public function signed(){
+  		echo 233;die;
+  		$this->assign('data',$data);
+  		return view("Userurl/signed");
   }
 }
