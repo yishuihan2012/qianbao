@@ -118,6 +118,7 @@
             $ident_code=substr($this->param['creditCardNo'],0,6);
             $ident_icon=BankIdent::where(['ident_code'=>$ident_code])->value('ident_icon');
              #写入信用卡表
+             $bindId=uniqid();
              $member_cashcard=new MemberCreditcard([
                   'card_member_id'=>$this->param['uid'],
                   'card_bankno'=>$this->param['creditCardNo'],
@@ -131,14 +132,30 @@
                   'card_deadline' => $this->param['deadline'],
                   'card_bankicon' => $ident_icon,
                   'card_state'  => 0,
+                  'bindId'    =>$bindId
                   // 'card_return' =>json_encode($card_validate),
              ]);
            if($member_cashcard->save()===false)
                    return ['code'=>436];
             }
-             return ['code'=>200,'绑卡成功。'];    
+            //发送短信验证码
+            $sms=new \app\api\controller\Sms($this->param['phone']);
+            $res=$sms->send();
+            if($res['code']==200){
+                return ['code'=>'200','msg'=>'短信发送成功','data'=>['bindId'=>$bindId]];
+            }else{
+                return $res;            }
       }
-
+      //绑定信用卡
+      public function addition_card_code(){
+          
+          $bindStatus=array(
+            'bindStatus'=>$income['bindStatus'],
+            'card_return' =>json_encode($card_validate),
+            'card_state'  => $state
+          );
+          $edit=MemberCreditcard::where([''])->update($bindStatus);
+      }
 
        /**
       *  @version addition_card_code method / Api 绑定信用卡2(签约)
@@ -149,7 +166,7 @@
           'billDate:账单日，两位数字，如1号->01',  'deadline:最后还款日',  'isRemind:是否提醒，0表示不提醒，1表示提醒，\ 当关闭提醒时，下方的日期选择将隐藏',
           'remindDate:提醒日，数据格式和账单日相同'
       **/ 
-      public function addition_card_code(){
+      public function addition_card_codes(){
            #判断参数是否存在
            if(!isset($this->param['bindId']) || empty($this->param['bindId']))
                  return ['code'=>441];
