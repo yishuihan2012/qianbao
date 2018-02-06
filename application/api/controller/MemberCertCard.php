@@ -134,7 +134,7 @@
                   'bindId'    =>$bindId
                   // 'card_return' =>json_encode($card_validate),
              ]);
-           if($member_cashcard->save()===false)
+           if($member_cashcard->save()===false){
                    return ['code'=>436];
             }
             //发送短信验证码
