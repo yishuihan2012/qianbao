@@ -69,7 +69,7 @@
 		          $(".code-btn2").val("" + curCount + "秒");
 		          InterValObj = window.setInterval(SetRemainTime, 1000); //启动计时器，1秒执行一次
 		          //向后台发送处理数据
-		            var url = '/index.php/api/Membernet/mishua_income';
+		            var url = '/api/Membernet/mishua_income';
 		            var data={
 		          			'uid':"{{$data['MemberCreditcard']['card_member_id']}}",
 					        // 'token': "{$data['Members']['memberLogin']['login_token']}",
@@ -112,10 +112,10 @@
 		      		if(!bindId){
 		      			mui.toast('获取数据失败，请重新发送验证码'); return;
 		      		}
-		      		var url = '/index.php/api/Member_cert_card/addition_card_code';
+		      		var url = '/api/Member_cert_card/addition_card_codes';
 		            var data={
 		          		action:'MemberCertCard',
-		          		method:'addition_card_code',
+		          		method:'addition_card_codes',
 		          		param:{
 		          			'uid':"{{$data['MemberCreditcard']['card_member_id']}}",
 					        'token': "{{$data['Members']['memberLogin']['login_token']}}",
@@ -130,8 +130,8 @@
 		            		mui.toast('签约失败。');
 		            	}
 		            	if(data.code==200){
-		            	 	setTimeout(function(){ alert("跳转喽"); },3000);
-		            	 	window.location.href="/api/Member";
+		            	 	setTimeout(function(){ window.location.href="/api/Repayment_plan/creatPlan"; },3000);
+		            	 	
 		            	 }
 		             });
 		      });
