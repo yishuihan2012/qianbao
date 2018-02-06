@@ -995,7 +995,6 @@ function SortByASCII($arr)
             if ($item) {
                 $jpush->set_message_info_item($item);
             }
-            dump($jpush);die;
             return $jpush->sign_push();
         }
     }
