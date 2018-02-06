@@ -977,7 +977,7 @@ function SortByASCII($arr)
         if ($uid && $title && $content) {
             //获取registration_id
         $member=Members::get($uid);
-            $member_token=$member->member_token;
+            $member_token=$member->memberLogin->login_token;
         //写入记录
         Notice::create([
           'notice_title'=>$title,
