@@ -9,6 +9,7 @@
  use think\Db;
  use think\Config;
  use think\Request;
+ use think\Session;
  use app\index\model\Member;
  use app\index\model\MemberCert;
  use app\index\model\MemberGroup;
@@ -25,30 +26,65 @@
       public $error;
       protected $param;
       private $member;//会员
-      public function __construct($param)
-      {
-           $this->param=$param;
-           try{
-                 if(!isset($this->param['uid']) || empty($this->param['uid']) || !isset($this->param['token']) ||empty($this->param['token']))
-                       $this->error=314;
-                 #查找到当前用户
-                 $member=Member::haswhere('memberLogin',['login_token'=>$this->param['token']])->where('member_id', $this->param['uid'])->find();
-                 if($member['member_cert']!='1')
-                      $this->error=356;
-                 if(empty($member))
-                       $this->error=314;
-                 #查找实名认证信息
-                 $member_cert=MemberCert::get(['cert_member_id'=>$member['member_id']]);
-                 if(empty($member_cert) && !$this->error )
-                      $this->error=356;
-                 $this->member=$member;
-            }catch (\Exception $e) {
-                 $this->error=317;
-           }
-      }
-
-      //创建计划
+      // public function __construct($param)
+      // {
+      //      $this->param=$param;
+      //      try{
+      //            if(!isset($this->param['uid']) || empty($this->param['uid']) || !isset($this->param['token']) ||empty($this->param['token']))
+      //                  $this->error=314;
+      //            #查找到当前用户
+      //            $member=Member::haswhere('memberLogin',['login_token'=>$this->param['token']])->where('member_id', $this->param['uid'])->find();
+      //            if($member['member_cert']!='1')
+      //                 $this->error=356;
+      //            if(empty($member))
+      //                  $this->error=314;
+      //            #查找实名认证信息
+      //            $member_cert=MemberCert::get(['cert_member_id'=>$member['member_id']]);
+      //            if(empty($member_cert) && !$this->error )
+      //                 $this->error=356;
+      //            $this->member=$member;
+      //       }catch (\Exception $e) {
+      //            $this->error=317;
+      //      }
+      // }
+      //创建还款计划
       public function creatPlan(){
+           $this->param['uid']=16;
+           $this->param['token']=16;
+           $this->param['cardId']=18;
+           $this->param['billMoney']=500;
+           $this->param['payCount']=1;
+           $this->param['startDate']="2018-01-06";
+           $this->param['endDate']="2018-01-06";
+           $this->param['passageway']=8;
+           $session_name='repayment_data_'.$this->param['uid'];
+           #1判断当前通道当前卡用户有没有入网和签约
+           // 获取通道信息
+           $passageway=Passageway::get($this->param['passageway']);
+           // 判断是否入网
+           $member_net=MemberNet::where(['net_member_id'=>$this->param['uid']])->find();
+           if(!$member_net[$passageway->passageway_no]){ //没有入网
+               // 重定向到签约页面
+               session::push($session_name,json_encode($this->param));
+               return redirect('Userurl/signed', ['passageway' =>$this->param['passageway'],'cardId'=>$this->param['cardId']]);
+           }
+           //判断是否签约
+           $MemberCreditcard=MemberCreditcard::where(['card_id'=>$this->param['cardId']])->find();
+           if(!$MemberCreditcard['bindId'] || $MemberCreditcard['bindStatus']!='01'){ //未绑定
+                //重定向到签约
+                 session::push($session_name,json_encode($this->param));
+                 return redirect('Userurl/signed', ['passageway_id' =>$this->param['passageway'],'cardId'=>$this->param['cardId']]);
+           }
+           #2判断是否存在session
+           if($data=session::get($session_name)){
+              //获取到session,跳转到creatPlan_mishua方法
+           }else{
+                exit('获取数据失败！');
+           }
+
+      }
+      //创建计划
+      public function creatPlan__mishua(){
         try {
        
           // 测试数据
@@ -359,9 +395,10 @@
       public function cancel_repayment($generation_id){
         
       }
-       //创建还款计划
+
       public function creatPlan_old()
       {
+
         // 测试数据
            // $this->param['uid']=16;
            // $this->param['token']=16;
@@ -657,33 +694,6 @@
                              return ['code'=>472];      
                         }
                  }
-                 
-                  #判断信用卡是否存在 状态是否正常 是否签约报备
-                 /*$money=$this->param['billMoney'];#获取要还款的账单金额
-                 $payCount=$this->param['payCount'];#刷卡消费次数
-                 $startDate=$this->param['startDate'];#计划执行日
-                 $endDate=$this->param['endDate'];#计划结束日期
-
-                 #获取通道信息
-                 $passway=PassageWay($this->param['passwayId']);
-                 #判断该通道是否可以代还  如果可以的话 查询出该代还通道的费率和代扣费
-                 if($passway->passageway_also!='1' || $passway->passageway_state!='1')
-                       return ['code'=>496];
-                 //判断是否必须入网才可以进行代还设置 并且检查会员是否入网TODO:
-
-                 //取到该通道的税率和代扣费
-                 $passway['also']=0.0035; //税率 需在后台读取 TODO
-                 $passway['holding']=3; //固定值 需在后台取 TODO
-                 //计算平均每次需要还款多少钱 取AVG平均值 
-                 $avg=$this->param['billMoney']/$this->param['payCount'];
-                 //取得总共需要多少手续费
-                 $total_changr=$this->param['billMoney']*$passway['also']+$this->param['payCount']*$passway['holding'];
-                 //计算最低需要多少余额
-                 $total_avg=$avg+$total_changr;*/
-                 //判断可用余额是否足够这些 如果不够的话 则计划失败
-
-                 //计算余额最低不能小于多少钱 取Avg+手续费
-                 //如果可用余额不足 则不进行代还
 
            } catch (\Exception $e) {
                  Db::rollback();

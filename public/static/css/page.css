@@ -149,7 +149,7 @@
 .next-btn{height: 50px;padding: 15px 0;}
 /*订单支付*/
 .media-pic{width:30%;height:auto;}
-.my-code{width:40% !important;padding:0 !important;border:0 !important;}
+.my-code{width:40% !important;padding:0 !important;border:0 !important;margin-bottom:0 !important;}
 .code-btn{width:30% !important;margin-top:5px;padding:5px 0 !important;border:0 !important;background-color:#ed6847 !important;color:#fff !important;}
 .my-confirm{width:90%;padding:8px 0 8px;background-color:#ff604d !important;color:#fff !important;text-align:center;margin-top:70px;border-radius:5px;position:absolute;left:50%;-webkit-transform: translateX(-50%);transform: translateX(-50%);border:0 !important;}
 .my-confirm:link,.my-confirm:visited,.my-confirm:hover,.my-confirm:active{color:#fff;}
@@ -163,12 +163,11 @@
 .intr-top img{width:100%;height:auto;}
 .intr-list-pic{width:80%;border:1px solid #f0f0f0;border-radius:50%;position:relative;margin:0 auto 10px;}
 .intr-list-pic img{width:50%;position: absolute;left:50%;top:50%;-webkit-transform: translate(-50%,-50%);transform: translate(-50%,-50%);}
-.intr-detail{
-	width:80%;
-	margin:0 auto;
-}
-.intr-detail img{
-	width:60%;
-	margin-top:15px;
-}
-.mui-popup{position:fixed;}
+.intr-detail{width:80%;margin:0 auto;}
+.intr-detail img{width:60%;margin-top:15px;}
+/*银联还款通道签约*/
+.code-btn2{width:30% !important;margin-top:5px;padding:5px 0 !important;border:0 !important;}
+.my-confirm2{width:90%;padding:18px 0 18px !important;color:#fff !important;text-align:center;margin-top:70px;border-radius:5px;position:absolute;left:50%;-webkit-transform: translateX(-50%);transform: translateX(-50%);border:0 !important;}
+.my-confirm2:link,.my-confirm2:visited,.my-confirm2:hover,.my-confirm2:active{color:#fff;}
+.media-pic2{width:27%;height:auto;}
+.signed-list li:nth-child(3){margin-top:10px;}
