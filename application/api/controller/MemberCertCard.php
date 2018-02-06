@@ -131,7 +131,7 @@
                   'card_billDate'   => $this->param['billDate'],
                   'card_deadline' => $this->param['deadline'],
                   'card_bankicon' => $ident_icon,
-                  'card_state'  => 0,
+                  'card_state'  => 1,
                   'bindId'    =>$bindId
                   // 'card_return' =>json_encode($card_validate),
              ]);
@@ -144,17 +144,43 @@
             if($res['code']==200){
                 return ['code'=>'200','msg'=>'短信发送成功','data'=>['bindId'=>$bindId]];
             }else{
-                return $res;            }
+                return $res;           
+            }
       }
       //绑定信用卡
       public function addition_card_code(){
-          
+          if(!isset($this->param['bindId']) || empty($this->param['bindId']))
+                 return ['code'=>441];
+           #查询信用卡信息
+          $creditcard=MemberCreditcard::where("bindId='{$this->param['bindId']}' and card_member_id={$this->param['uid']}")->find();
+           // return ['code'=>441,'msg'=>'13','data'=>$creditcard];
+          if(empty($creditcard)){
+               return ['code'=>353];
+          }
+           
+          if($creditcard['bindStatus']=='01'){
+              return ['code'=>463];
+          }
+          #查询当前卡有没有绑定过
+          if($creditcard['card_state']=='1'){
+              return ['code'=>437];
+          }
+
+          //校验验证码
+          $sms=new \app\api\controller\Sms($this->param['phone'],$this->param['smsCode']);
+          $res=$sms->check();
+          if($res['code']!=200){
+              return $res;
+          }
           $bindStatus=array(
-            'bindStatus'=>$income['bindStatus'],
-            'card_return' =>json_encode($card_validate),
-            'card_state'  => $state
+            'bindStatus'=>'01',
           );
-          $edit=MemberCreditcard::where([''])->update($bindStatus);
+          $edit=MemberCreditcard::where("bindId='{$this->param['bindId']}' and mchno='{$creditcard['mchno']}'")->update($bindStatus);
+          if($edit){
+            return ['code'=>200, 'msg'=>'绑定成功', 'data'=>''];
+          }else{
+            return ['code'=>464];
+          }
       }
 
        /**
@@ -210,7 +236,10 @@
               }
               
             }else{
-              return ['code' => 102, 'msg' => $income['message'], 'data' => ''];
+              $session_name='repayment_data_'.$this->param['uid'];
+              $data=session::get($session_name);
+              $data=json_decode($data);
+              return ['code' => 102, 'msg' => $income['message'], 'data' =>$data];
             }
             
       }

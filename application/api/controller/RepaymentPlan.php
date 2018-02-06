@@ -47,14 +47,14 @@
            }
       }
       public function creatPlan(){
-           $this->param['uid']=16;
-           $this->param['token']=16;
-           $this->param['cardId']=18;
-           $this->param['billMoney']=500;
-           $this->param['payCount']=1;
-           $this->param['startDate']="2018-01-06";
-           $this->param['endDate']="2018-01-06";
-           $this->param['passageway']=8;
+           // $this->param['uid']=16;
+           // $this->param['token']=16;
+           // $this->param['cardId']=18;
+           // $this->param['billMoney']=500;
+           // $this->param['payCount']=1;
+           // $this->param['startDate']="2018-01-06";
+           // $this->param['endDate']="2018-01-06";
+           // $this->param['passageway']=8;
            $session_name='repayment_data_'.$this->param['uid'];
            #1判断当前通道当前卡用户有没有入网和签约
            // 获取通道信息
