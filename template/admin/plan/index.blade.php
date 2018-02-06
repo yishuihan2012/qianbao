@@ -60,6 +60,7 @@
   <header>
     <h3>
         <i class="icon-list-ul"></i> 订单列表 <small>共 <strong class="text-danger">{{$count}}</strong> 条</small>
+          <i class="icon-list-ul"></i> 总笔数 <small>共 <strong class="text-danger">{{$count_plan}}</strong> 笔</small>
         <i class="icon icon-yen"></i> 还款总金额 <small>共 <strong class="text-danger">{{$sum}}</strong> 元</small>
         <i class="icon icon-yen"></i> 剩余还款总金额 <small>共 <strong class="text-danger">{{$surplussum}}</strong> 元</small>
     </h3>
@@ -68,6 +69,7 @@
 <table class="table table-striped table-hover">
   	<thead>
 	    <tr>
+          <th>ID</th>
 	      	<th>还款会员</th>
 	      	<th>还款会员手机号</th>
 	      	<th>计划代号</th>
@@ -92,7 +94,7 @@
   	<tfoot>
   		@foreach($list as $k => $v)
 	    <tr>
-	    	
+	    	  <td>{{$v['generation_id']}}</td>
 	      	<td>{{$v['member_nick']}}</td>
 	      	<td>{{$v['member_mobile']}}</td>
 	      	<td>{{$v['generation_no']}}</td>

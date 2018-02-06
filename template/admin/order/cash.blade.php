@@ -11,6 +11,8 @@
   <header>
     <h3><i class="icon-list-ul"></i> 交易订单 <small>共 <strong class="text-danger">{{$count['count_size']}}</strong> 条</small>
     <i class="icon icon-yen"></i>全部总金额 <small><strong class="text-danger">{{$count['order_money']}}</strong>元</small>
+    <i class="icon icon-yen"></i>取现成功金额 <small><strong class="text-danger">{{$count['order_money_yes']}}</strong>元</small>
+    <i class="icon icon-yen"></i>未支付金额 <small><strong class="text-danger">{{$count['order_money_del']}}</strong>元</small>
     <i class="icon icon-yen"></i>全部手续费 <small><strong class="text-danger">{{$count['order_charge']}}</strong>元</small></h3>
     </h3>
   </header>

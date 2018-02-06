@@ -429,9 +429,9 @@
              }
              $state=$card_validate['result']['result']=='T' ? '1' : '0';
              if($card_validate['result']['result']=='F')
-                   return ['code'=>352];
+                   return ['code'=>352, 'msg'=>$card_validate['result']['message']];
              if($card_validate['result']['result']=='N')
-                   return ['code'=>353];
+                   return ['code'=>353, 'msg'=>$card_validate['result']['message']];
 
               $card=array(
              'card_bankno'=>$this->param['card_bankno'],

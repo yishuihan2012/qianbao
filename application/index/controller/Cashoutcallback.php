@@ -69,13 +69,13 @@ class Cashoutcallback
              {
  				 $order->order_fen=$fenrun_result['leftmoney'];
                  $order->order_buckle=$passwayitem->item_charges/100;
-                 $order->order_platform=$order->order_charge-($order->order_money*$passway->passageway_rate/100)+$passway->passageway_income;
+                 $order->order_platform=$order->order_charge-($order->order_money*$passway->passageway_rate/100)+$passwayitem->item_charges-$passway->passageway_income;
              }
  			else	
             {
  				 $order->order_fen=-1;
                  $order->order_buckle=$passwayitem->item_charges/100;
-                 $order->order_platform=$order->order_charge-($order->order_money*$passway->passageway_rate/100)+$passway->passageway_income;
+                 $order->order_platform=$order->order_charge-($order->order_money*$passway->passageway_rate/100)+$passwayitem->item_charges-$passway->passageway_income;
             }
 		 	 $res = $order->save();
             	 if ($resul['qfStatus'] == 'SUCCESS' || $resul['qfStatus'] == 'IN_PROCESS') {
@@ -150,13 +150,13 @@ class Cashoutcallback
              {
  				 $order->order_fen=$fenrun_result['leftmoney'];
                  $order->order_buckle=$passwayitem->item_charges/100;
-                 $order->order_platform=$order->order_charge-($order->order_money*$passway->passageway_rate/100)+$passway->passageway_income;
+                 $order->order_platform=$order->order_charge-($order->order_money*$passway->passageway_rate/100)+$passwayitem->item_charges-$passway->passageway_income;
              }
  			else	
             {
  				 $order->order_fen=-1;
                  $order->order_buckle=$passwayitem->item_charges/100;
-                 $order->order_platform=$order->order_charge-($order->order_money*$passway->passageway_rate/100)+$passway->passageway_income;
+                 $order->order_platform=$order->order_charge-($order->order_money*$passway->passageway_rate/100)+$passwayitem->item_charges-$passway->passageway_income;
             }
 		 	 $res = $order->save();
             	 if ($resul['qfStatus'] == 'SUCCESS' || $resul['qfStatus'] == 'IN_PROCESS') {
@@ -231,13 +231,13 @@ class Cashoutcallback
              {
                  $order->order_fen=$fenrun_result['leftmoney'];
                  $order->order_buckle=$passwayitem->item_charges/100;
-                 $order->order_platform=$order->order_charge-($order->order_money*$passway->passageway_rate/100)+$passway->passageway_income;
+                 $order->order_platform=$order->order_charge-($order->order_money*$passway->passageway_rate/100)+$passwayitem->item_charges-$passway->passageway_income;
              }
             else    
             {
                  $order->order_fen=-1;
                  $order->order_buckle=$passwayitem->item_charges/100;
-                 $order->order_platform=$order->order_charge-($order->order_money*$passway->passageway_rate/100)+$passway->passageway_income;
+                 $order->order_platform=$order->order_charge-($order->order_money*$passway->passageway_rate/100)+$passwayitem->item_charges-$passway->passageway_income;
             }
              $res = $order->save();
                  if ($resul['qfStatus'] == 'SUCCESS' || $resul['qfStatus'] == 'IN_PROCESS') {
@@ -247,5 +247,53 @@ class Cashoutcallback
                  }
          } 
      }
+
+      /**
+       * @version 易宝支付回调     @method yibaoCallBack
+       * @author   Bill 755969423@qq.com    @datetime  2018-01-31 13:09
+       **/
+       public function yibaoCallBack()
+       {
+           $data = file_get_contents("php://input");
+           parse_str($data,$result);
+           $order=CashOrder::where(['order_thead_no' => $result['requestId']])->find();         #查询到当前订单
+           if($order['order_state']==2)
+                 return 'SUCCESS';
+           if($result['status']!='SUCCESS')
+                 return 'Fail';
+           $order->order_charge=$result['fee'];
+           $order->order_state=2;
+           $order->order_desc=$order['order_desc']."消费成功,收款宝订单号:".$result['externalld'];
+           $order->save();
+           $member=Member::get($order['order_member']);
+           $passwayinfo=Passageway::get($order['order_passway']);
+           $order_commis=CashOrder::where(['order_thead_no' => $result['requestId']])->find();
+           $amount=$order['order_money']-$result['fee']-$order['order_buckle'];
+           $membernetObject=new \app\api\payment\yibaoPay($order_commis['order_passway'], $order_commis['order_member']);
+           $also_result=$membernetObject->Draw($member->membernet[$passwayinfo['passageway_no']], $amount, "出款".make_order());
+           $order_commis->order_outmoney=$amount;
+           $order_commis->order_outstatus=$also_result['code']!=0000 ? -1 : 2 ;
+           $order_commis->order_outbak=$also_result['message'].",流水号:".$also_result['serialNo'];
+           if($also_result['code']!=0000)
+           {
+                     $order_commis->order_state=1;
+                     $order_commis->save();
+                     return 'Fail';
+           }else{
+                     $Commission_info=Commissionz::where(['commission_from'=>$order_commis->order_id,'commission_type'=>1])->find();
+                     if($Commission_info)
+                     {
+                            $order_commis->save();
+                            return 'SUCCESS';
+                     }
+                     $fenrun= new \app\api\controller\Commissions();
+                     $fenrun_result=$fenrun->MemberFenRun($order_commis->order_member,$order_commis->order_money,$order_commis->order_passway,1,'快捷支付手续费分润',$order_commis->order_id);
+                     $order_commis->order_fen=$fenrun_result['code']==200 ? (string)$fenrun_result['leftmoney'] : -1;
+                     $order_commis->order_platform=$order_commis->order_charge-($order_commis->order_money*$passwayinfo->passageway_rate/100)+$passwayinfo->passageway_income;
+                     $res = $order_commis->save();
+                     return 'SUCCESS';
+           }
+       }
+
 
 }

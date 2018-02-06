@@ -1,1 +1,0 @@
-{"userNo":"b01f63cf02e240d5866e52f75c343e74","mchNo":"100193","mercUserNo":"42","depositNo":"TA1801161150020715244","depositDate":"20180116","orderNo":"5a5d7669ed776","depositAmt":171496,"settleCardNo":"6259588730937256","depositFeeAmt":0,"status":"SUCCESS","statusDesc":"提现成功"}

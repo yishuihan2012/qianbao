@@ -82,7 +82,7 @@ class Userurl extends Controller
 
 	#取现现成功页面
 	public function calllback_success(){
-		$request = $_REQUEST;
+		$request = $this->param;
         $data    = CashOrder::where(['order_thead_no' => $request['transNo']])->find();
         if ($request['status'] == '00') {
             $data['order_card']        = substr($data['order_card'], -4);
@@ -803,30 +803,39 @@ class Userurl extends Controller
   #荣邦支付回调
   public function passway_rongbang_paycallback(){
   	$param=request()->param();
-  	$key=db('passageway')->where('passageway_id',$param['passageway_id'])->value('passageway_pwd_key');
-  	return $key;
-  	// 测试自己加密的可以解密
+  	#荣邦通道键位
+  	$passageway_no=db('passageway')->column("passageway_id,passageway_no");
+  	$userinfo=db('member_net')->where('net_member_id',$param['member_id'])
+  		->value($passageway_no[$param['passageway_id']]);
+  	// $userinfo="402628739,1756961550411722,9abphqw0bcz2vr3r,zeo3qvxb0nwuobk5619hss25h1dsremg,许成成11599";
+	#信息顺序 0、appid 1、companycode 2、secretkey 3、session 4、companyname
+	$userinfo=explode(',', $userinfo);
+  	$key=$userinfo[2];
   	// return rongbang_aes_decode($key,rongbang_aes($key,$param['test']));
-  	return rongbang_aes_decode($key,$param['Data']);
-  	#解不了密的情况下 根据我们自己填的单号去更改订单状态
-  	if($param['order_no']){
-  		$data=[];
-  		$data['ordernumber']=$param['order_no'];
-  		$data['amount']=db('cash_order')->where('order_no',$data['ordernumber'])->value('order_money');
-
-  	// $data=rongbang_aes_decode($key,$param['Data']);
+  	$data = rongbang_aes_decode($key,$param['Data']);
   	// var_dump($data);die;
-  	// $data=json_decode($data,1);
-  	// if($data['respcode']==2){
-  		//支付完成
-  		db('cash_order')->where('order_no',$data['ordernumber'])->update(['order_state'=>2]);
-  		$order_id=db('cash_order')->where('order_no',$data['ordernumber'])->value('order_id');
-  		//分润
-	    $fenrun= new con\Commission();
-        $fenrun_result=$fenrun->MemberFenRun($param['member_id'],$data['amount'],$param['passageway_id'],1,'交易手续费分润',$order_id);
+  	if($data=='err'){
+  		#失败日志
+  		trace("rongbang_aes_decode_err");
   	}else{
-  		//支付失败
-  		db('cash_order')->where('order_no',$data['ordernumber'])->update(['order_state'=>-1]);
+  		$data=json_decode($data,1);
+  		if($data['respcode']==2){
+  			$cash_order=CashOrder::where('order_no',$param['order_no'])->find();
+  			#仅对待支付状态下的订单进行更新并分润
+  			if($cash_order->order_state==1){
+  				$cash_order->order_state=2;
+  				$cash_order->save();
+				//分润
+			    $fenrun= new con\Commission();
+			    $fenrun_result=$fenrun->MemberFenRun($param['member_id'],$data['amount'],$param['passageway_id'],1,'交易手续费分润',$cash_order->order_id);
+  			}else{
+  				trace("rongbang_repeat_request,not fenrun");
+  			}
+  		}else{
+			$cash_order->order_state=-1;
+			$cash_order->order_desc.=$data['respmsg'];
+			$cash_order->save();
+  		}
   	}
   	//按文档要求返回
   	return json_encode(['message'=>'ok','response'=>'00']);
@@ -920,7 +929,7 @@ class Userurl extends Controller
      {
 		 $order->order_fen=$fenrun_result['leftmoney'];
          $order->order_buckle=$passwayitem->item_charges/100;
-         $order->order_platform=$order->order_charge-($order->order_money*$passway->passageway_rate/100)+$passway->passageway_income;
+         $order->order_platform=$order->order_charge-($order->order_money*$passway->passageway_rate/100)+$passwayitem->item_charges-$passway->passageway_income;
      }
 		else	
      {

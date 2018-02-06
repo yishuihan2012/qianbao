@@ -12,8 +12,8 @@
  use think\Config;
  use app\index\model\SmsLog as SmsLogs;
  use app\index\model\Member as Members;
-  use app\index\model\MemberGroup;
-   use app\index\model\MemberRelation;
+ use app\index\model\MemberGroup;
+ use app\index\model\MemberRelation;
  use app\index\model\Notice;
  use app\index\model\System;
  use app\api\controller as con;
@@ -972,12 +972,12 @@ function SortByASCII($arr)
     //   4.平台公告铃声提示。
     function jpush($uid=null, $title=null, $content=null, $item=null, $type='2')
     {
-        return true;
+        // return true;
         $jpush=new con\Push();
         if ($uid && $title && $content) {
             //获取registration_id
         $member=Members::get($uid);
-            $member_token=$member->member_token;
+            $member_token=$member->memberLogin->login_token;
         //写入记录
         Notice::create([
           'notice_title'=>$title,
@@ -1067,9 +1067,10 @@ function SortByASCII($arr)
     #荣邦支付解密
     function rongbang_aes_decode($key, $str)
     {
+        // $str= base64_decode(safe_b64decode($str));
         $str= safe_b64decode($str);
         $encrypted = mcrypt_decrypt(MCRYPT_RIJNDAEL_128, $key,$str, MCRYPT_MODE_CBC, $key);
-        return $encrypted;
+        return trim($encrypted);
     }
 
     #安全base64_decode
@@ -1203,7 +1204,7 @@ function SortByASCII($arr)
         ->join('member m','m.member_id=r.relation_member_id')
         ->join('member_group g','g.group_id=m.member_group_id')
         ->where('relation_member_id',$id)
-        ->field('member_id,member_group_id,group_visible,relation_parent_id')
+        ->field('member_id,member_group_id,group_visible,relation_parent_id,group_salt,group_floor_price')
         ->find();
     return $parent ? array_merge([$parent],find_relation($parent['relation_parent_id'])) : [];
   }
