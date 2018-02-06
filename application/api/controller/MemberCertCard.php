@@ -110,18 +110,10 @@
             $member_net=MemberNet::where('net_member_id='.$this->param['uid'])->find();
             
             #信用卡有效状态校验
-           $card_validate=BankCert($creditcard['card_bankno'],$creditcard['card_phone'],$creditcard['card_idcard'],$creditcard['card_name']);
-           if($card_validate['reason']!='成功'){
-               return ['code'=>351];
-           }
-           $state=$card_validate['result']['result']=='T' ? '1' : '0';
-           if($card_validate['result']['result']=='P')
-                 return ['code'=>440];
-
-           if($card_validate['result']['result']=='F')
-                return ['code'=>439];
-           if($card_validate['result']['result']=='N')
-                return ['code'=>353];
+           $card_validate=BankCertNew(['bankCardNo'=>$this->param['creditCardNo'], 'identityNo'=>$this->idcard, 'mobileNo'=>$this->param['phone'], 'name'=>$this->name]);
+           if($card_validate['code']!=0000) return ['code'=>351, 'msg'=>'实名认证失败'];
+           if($card_validate['data']['resultCode']!='R001')  return ['code'=>351, 'msg'=>'认证失败:'.$card_validate['data']['remark']];
+           if($card_validate['data']['bankCardBin']['cardTy']!='C')  return ['code'=>351, 'msg'=>'认证失败:只能绑定信用卡'];
 
             $ident_code=substr($this->param['creditCardNo'],0,6);
             $ident_icon=BankIdent::where(['ident_code'=>$ident_code])->value('ident_icon');
