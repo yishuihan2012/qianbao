@@ -109,6 +109,20 @@
               $this->error=356;
             $member_net=MemberNet::where('net_member_id='.$this->param['uid'])->find();
             
+            #信用卡有效状态校验
+           $card_validate=BankCert($creditcard['card_bankno'],$creditcard['card_phone'],$creditcard['card_idcard'],$creditcard['card_name']);
+           if($card_validate['reason']!='成功'){
+               return ['code'=>351];
+           }
+           $state=$card_validate['result']['result']=='T' ? '1' : '0';
+           if($card_validate['result']['result']=='P')
+                 return ['code'=>440];
+
+           if($card_validate['result']['result']=='F')
+                return ['code'=>439];
+           if($card_validate['result']['result']=='N')
+                return ['code'=>353];
+
             $ident_code=substr($this->param['creditCardNo'],0,6);
             $ident_icon=BankIdent::where(['ident_code'=>$ident_code])->value('ident_icon');
              #写入信用卡表
@@ -158,20 +172,6 @@
              #查询当前卡有没有绑定过
               if($creditcard['card_state']=='1')
                   return ['code'=>437];
-          
-               #信用卡有效状态校验
-               $card_validate=BankCert($creditcard['card_bankno'],$creditcard['card_phone'],$creditcard['card_idcard'],$creditcard['card_name']);
-               if($card_validate['reason']!='成功')
-                     return ['code'=>351];
-               $state=$card_validate['result']['result']=='T' ? '1' : '0';
-               if($card_validate['result']['result']=='P')
-                     return ['code'=>440];
-
-               if($card_validate['result']['result']=='F')
-                    return ['code'=>439];
-               if($card_validate['result']['result']=='N')
-                    return ['code'=>353];
-
 
             $passageway=Passageway::where('passageway_status=1 and passageway_also=2')->find();
 
