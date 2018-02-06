@@ -114,44 +114,6 @@
            if($card_validate['code']!=0000) return ['code'=>351, 'msg'=>'实名认证失败'];
            if($card_validate['data']['resultCode']!='R001')  return ['code'=>351, 'msg'=>'认证失败:'.$card_validate['data']['remark']];
            if($card_validate['data']['bankCardBin']['cardTy']!='C')  return ['code'=>351, 'msg'=>'认证失败:只能绑定信用卡'];
-            $url='http://pay.mishua.cn/zhonlinepay/service/rest/creditTrans/bindCardSms';
-            $income=repay_request($params,$passageway['passageway_mech'],$url,$passageway['iv'],$passageway['secretkey'],$passageway['signkey']);
-            
-            if($income['code']=='200'){
-              if($income['bindStatus']=='01'){
-                return ['code'=>463];//此卡已签约
-              }
-                 $card=MemberCreditcard::where(["card_bankno"=>$this->param['creditCardNo']])->find();
-                if(empty($card)){
-                  $ident_code=substr($this->param['creditCardNo'],0,6);
-                  $ident_icon=BankIdent::where(['ident_code'=>$ident_code])->value('ident_icon');
-                   #写入信用卡表
-                   $member_cashcard=new MemberCreditcard([
-                        'card_member_id'=>$this->param['uid'],
-                        'card_bankno'=>$this->param['creditCardNo'],
-                        'card_name'  =>$this->name,
-                        'card_idcard' =>$this->idcard,
-                        'card_phone' =>$this->param['phone'],
-                        'card_bankname' => $this->param['bank_name'],
-                        'card_Ident'  => $this->param['cvv'],
-                        'card_expireDate' => $this->param['expireDate'],
-                        'card_billDate'   => $this->param['billDate'],
-                        'card_deadline' => $this->param['deadline'],
-                        'bindId' => $income['bindId'],
-                        'bindStatus' => $income['bindStatus'],
-                        'mchno' => $passageway['passageway_mech'],
-                        'card_bankicon' => $ident_icon,
-                        'card_state'  => 0,
-                        // 'card_return' =>json_encode($card_validate),
-                   ]);
-                   if($member_cashcard->save()===false)
-                         return ['code'=>436];
-                  }
-                 return ['code'=>200, 'msg'=>'短信发送成功~', 'data'=>['bindId'=>$income['bindId']]];
-              }else{
-                  return ['code'=>400, 'msg'=> $income['message']];
-              }
-=======
             $ident_code=substr($this->param['creditCardNo'],0,6);
             $ident_icon=BankIdent::where(['ident_code'=>$ident_code])->value('ident_icon');
              #写入信用卡表
@@ -173,8 +135,7 @@
            if($member_cashcard->save()===false)
                    return ['code'=>436];
             }
-             return ['code'=>200,'绑卡成功。'];    
->>>>>>> qianyue
+             return ['code'=>200,'绑卡成功。']; 
       }
 
 

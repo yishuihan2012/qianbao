@@ -9,7 +9,6 @@
  use think\Db;
  use think\Config;
  use think\Request;
- use think\Session;
  use app\index\model\Member;
  use app\index\model\MemberCert;
  use app\index\model\MemberGroup;
@@ -26,28 +25,27 @@
       public $error;
       protected $param;
       private $member;//会员
-      // public function __construct($param)
-      // {
-      //      $this->param=$param;
-      //      try{
-      //            if(!isset($this->param['uid']) || empty($this->param['uid']) || !isset($this->param['token']) ||empty($this->param['token']))
-      //                  $this->error=314;
-      //            #查找到当前用户
-      //            $member=Member::haswhere('memberLogin',['login_token'=>$this->param['token']])->where('member_id', $this->param['uid'])->find();
-      //            if($member['member_cert']!='1')
-      //                 $this->error=356;
-      //            if(empty($member))
-      //                  $this->error=314;
-      //            #查找实名认证信息
-      //            $member_cert=MemberCert::get(['cert_member_id'=>$member['member_id']]);
-      //            if(empty($member_cert) && !$this->error )
-      //                 $this->error=356;
-      //            $this->member=$member;
-      //       }catch (\Exception $e) {
-      //            $this->error=317;
-      //      }
-      // }
-      //创建还款计划
+      public function __construct($param)
+      {
+           $this->param=$param;
+           try{
+                 if(!isset($this->param['uid']) || empty($this->param['uid']) || !isset($this->param['token']) ||empty($this->param['token']))
+                       $this->error=314;
+                 #查找到当前用户
+                 $member=Member::haswhere('memberLogin',['login_token'=>$this->param['token']])->where('member_id', $this->param['uid'])->find();
+                 if($member['member_cert']!='1')
+                      $this->error=356;
+                 if(empty($member))
+                       $this->error=314;
+                 #查找实名认证信息
+                 $member_cert=MemberCert::get(['cert_member_id'=>$member['member_id']]);
+                 if(empty($member_cert) && !$this->error )
+                      $this->error=356;
+                 $this->member=$member;
+            }catch (\Exception $e) {
+                 $this->error=317;
+           }
+      }
       public function creatPlan(){
            $this->param['uid']=16;
            $this->param['token']=16;
@@ -78,13 +76,15 @@
            #2判断是否存在session
            if($data=session::get($session_name)){
               //获取到session,跳转到creatPlan_mishua方法
+              return redirect('RepaymentPlan/creatPlan_mishua',json_decode($data),true);
            }else{
                 exit('获取数据失败！');
            }
 
       }
       //创建计划
-      public function creatPlan__mishua(){
+
+      public function creatPlan_mishua(){
         try {
        
           // 测试数据
@@ -229,7 +229,6 @@
                   $real_each_pay_money=$this->get_need_pay($also,$daikou,$each_money);
                   //获取每次实际到账金额
                   $real_each_get=$this->get_real_money($also,$daikou,$real_each_pay_money);
-
                   $plan[$i]['pay'][$k]=$Generation_order_insert[]=array(
                       'order_no'       =>$Generation_result->generation_id,
                       'order_member'   =>$this->param['uid'],
@@ -395,10 +394,9 @@
       public function cancel_repayment($generation_id){
         
       }
-
+       //创建还款计划
       public function creatPlan_old()
       {
-
         // 测试数据
            // $this->param['uid']=16;
            // $this->param['token']=16;
