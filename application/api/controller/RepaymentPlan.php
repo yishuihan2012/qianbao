@@ -25,30 +25,64 @@
       public $error;
       protected $param;
       private $member;//会员
-      public function __construct($param)
-      {
-           $this->param=$param;
-           try{
-                 if(!isset($this->param['uid']) || empty($this->param['uid']) || !isset($this->param['token']) ||empty($this->param['token']))
-                       $this->error=314;
-                 #查找到当前用户
-                 $member=Member::haswhere('memberLogin',['login_token'=>$this->param['token']])->where('member_id', $this->param['uid'])->find();
-                 if($member['member_cert']!='1')
-                      $this->error=356;
-                 if(empty($member))
-                       $this->error=314;
-                 #查找实名认证信息
-                 $member_cert=MemberCert::get(['cert_member_id'=>$member['member_id']]);
-                 if(empty($member_cert) && !$this->error )
-                      $this->error=356;
-                 $this->member=$member;
-            }catch (\Exception $e) {
-                 $this->error=317;
-           }
-      }
+      // public function __construct($param)
+      // {
+      //      $this->param=$param;
+      //      try{
+      //            if(!isset($this->param['uid']) || empty($this->param['uid']) || !isset($this->param['token']) ||empty($this->param['token']))
+      //                  $this->error=314;
+      //            #查找到当前用户
+      //            $member=Member::haswhere('memberLogin',['login_token'=>$this->param['token']])->where('member_id', $this->param['uid'])->find();
+      //            if($member['member_cert']!='1')
+      //                 $this->error=356;
+      //            if(empty($member))
+      //                  $this->error=314;
+      //            #查找实名认证信息
+      //            $member_cert=MemberCert::get(['cert_member_id'=>$member['member_id']]);
+      //            if(empty($member_cert) && !$this->error )
+      //                 $this->error=356;
+      //            $this->member=$member;
+      //       }catch (\Exception $e) {
+      //            $this->error=317;
+      //      }
+      // }
       //创建还款计划
-      public function creatPlan()
+      public function creatPlan(){
+           $this->param['uid']=16;
+           $this->param['token']=16;
+           $this->param['cardId']=18;
+           $this->param['billMoney']=500;
+           $this->param['payCount']=1;
+           $this->param['startDate']="2018-01-06";
+           $this->param['endDate']="2018-01-06";
+           $this->param['passageway']=8;
+           $session_name='repayment_data_'.$this->param['uid'];
+           #1判断当前通道当前卡用户有没有入网和签约
+           // 获取通道信息
+           $passageway=Passageway::get($this->param['passageway']);
+           // 判断是否入网
+           $member_net=MemberNet::where(['net_member_id'=>$this->param['uid']])->find();
+           if(!$member_net[$passageway->passageway_no]){ //没有入网
+               // 重定向到签约页面
+               $this->redirect('Userurl/user_sign', ['passageway' =>$this->param['passageway'],'uid'=>$this->param['uid']]);
+           }
+           //判断是否签约
+           $MemberCreditcard=MemberCreditcard::where(['card_id'=>$this->param['cardId']])->find();
+           if(!$MemberCreditcard['bindId'] || $MemberCreditcard['bindStatus']!='01'){ //未绑定
+                //重定向到签约
+                 $this->redirect('Userurl/user_sign', ['passageway' =>$this->param['passageway'],'uid'=>$this->param['uid']]);
+           }
+           #2判断是否存在session
+           if($data=session::get($session_name)){
+              //获取到session,跳转到creatPlan_mishua方法
+           }else{
+                exit('获取数据失败！');
+           }
+
+      }
+      public function creatPlan_mishua()
       {
+
         // 测试数据
            // $this->param['uid']=16;
            // $this->param['token']=16;
