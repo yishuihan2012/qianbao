@@ -9,6 +9,7 @@
  use think\Db;
  use think\Config;
  use think\Request;
+ use think\Session;
  use app\index\model\Member;
  use app\index\model\MemberCert;
  use app\index\model\MemberGroup;
@@ -64,13 +65,15 @@
            $member_net=MemberNet::where(['net_member_id'=>$this->param['uid']])->find();
            if(!$member_net[$passageway->passageway_no]){ //没有入网
                // 重定向到签约页面
-               $this->redirect('Userurl/user_sign', ['passageway' =>$this->param['passageway'],'uid'=>$this->param['uid']]);
+               session::push($session_name,json_encode($this->param));
+               return redirect('Userurl/signed', ['passageway' =>$this->param['passageway'],'cardId'=>$this->param['cardId']]);
            }
            //判断是否签约
            $MemberCreditcard=MemberCreditcard::where(['card_id'=>$this->param['cardId']])->find();
            if(!$MemberCreditcard['bindId'] || $MemberCreditcard['bindStatus']!='01'){ //未绑定
                 //重定向到签约
-                 $this->redirect('Userurl/user_sign', ['passageway' =>$this->param['passageway'],'uid'=>$this->param['uid']]);
+                 session::push($session_name,json_encode($this->param));
+                 return redirect('Userurl/signed', ['passageway_id' =>$this->param['passageway'],'cardId'=>$this->param['cardId']]);
            }
            #2判断是否存在session
            if($data=session::get($session_name)){

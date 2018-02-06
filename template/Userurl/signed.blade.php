@@ -23,26 +23,27 @@
   	</div>
   	<ul class="mui-table-view bg-color signed-list">
 	    <li class="mui-table-view-cell bg-w bor-bot">
-	    	姓名：<span class="poa-r invalid-color">李晓明</span>
+	    	姓名：<span class="poa-r invalid-color">{{$data['Members']['MemberCert']['cert_member_name']}}</span>
 	    </li>
 	    <li class="mui-table-view-cell bg-w bor-bot">
-	    	身份证号：<span class="poa-r invalid-color">370152 1986 1213 2586</span>
+	    	身份证号：<span class="poa-r invalid-color">{{$data['Members']['MemberCert']['cert_member_idcard']}}</span>
 	    </li>
 	    <li class="mui-table-view-cell bg-w bor-bot">
-	    	信用卡号：<span class="poa-r invalid-color">6259 6555 3311 7715</span>
+	    	信用卡号：<span class="poa-r invalid-color">{{$data['MemberCreditcard']['card_bankno']}}</span>
 	    </li>
 	    <li class="mui-table-view-cell bg-w bor-bot">
-	    	CVV2：<span class="poa-r invalid-color">248</span>
+	    	CVV2：<span class="poa-r invalid-color">{{$data['MemberCreditcard']['card_Ident']}}</span>
 	    </li>
 	    <li class="mui-table-view-cell bg-w bor-bot">
-	    	有效期：<span class="poa-r invalid-color">05/19</span>
+	    	有效期：<span class="poa-r invalid-color">{{$data['MemberCreditcard']['card_expireDate']}}</span>
 	    </li>
 	    <div class="bg-color wrap f14 normal-color">*若CVV2或有效期信息有误请返回"信用卡管理"进行修改</div>
 	    <li class="mui-table-view-cell bg-w bor-bot">
-	    	银行预留手机号：<span class="poa-r invalid-color">187 5248 6635</span>
+	    	银行预留手机号：<span class="poa-r invalid-color">{{$data['Members']['member_mobile']}}</span>
 	    </li>
 	    <li class="mui-table-view-cell bg-w">
 	    	验证码：
+	    	<input type="hidden" name="bindId" value="">
 	    	<input type="text" placeholder="请输入验证码" value="" class="my-code" id="myCode002"/>
 	    	<input type="button" class="code-btn2 mui-pull-right blue-color-th2" value="获取验证码" id="sendCode002">
 	    </li>
@@ -68,9 +69,25 @@
 		          $(".code-btn2").val("" + curCount + "秒");
 		          InterValObj = window.setInterval(SetRemainTime, 1000); //启动计时器，1秒执行一次
 		          //向后台发送处理数据
-		            $.post(url,{},function(data){
-		              message=eval('(' + data + ')');
-		              $.toast(message.msg,"text");
+		            var url = '/index.php/api/Membernet/mishua_income';
+		            var data={
+		          			'uid':"{{$data['MemberCreditcard']['card_member_id']}}",
+					        // 'token': "{$data['Members']['memberLogin']['login_token']}",
+					        'creditCardNo':"{{$data['MemberCreditcard']['card_bankno']}}",
+					        'phone':"{{$data['Members']['member_mobile']}}",
+					        'bank_name': "{{$data['MemberCreditcard']['card_bankname']}}",
+					        'cvv':"{{$data['MemberCreditcard']['card_Ident']}}",
+					        'expireDate':"{{$data['MemberCreditcard']['card_expireDate']}}",
+					        'billDate': "{{$data['MemberCreditcard']['card_billDate']}}",
+					        'deadline':"{{$data['MemberCreditcard']['card_deadline']}}",
+					        "passageway_id":"{{$passageway_id}}",
+					        'group_id':"{{$data['Members']['member_group_id']}}"
+		          		};
+		            $.post(url,data,function(data){
+		            	 if(data.code==200){
+		            	 	 $('input[name="bindId"]').val(data.data.bindId);
+		            	 }
+		            	 mui.toast(data.msg); 
 		             });
 		          });
 		      //timer处理函数
@@ -86,8 +103,37 @@
 		        }
 		      }
 		      $("#confirmBtn002").click(function(){
-		      	var vcode = $("#myCode002").val();
-		      	//mui.toast("验证码输入有误");
+		      		var vcode = $("#myCode002").val();
+		      		preg=/^\d{6}$/;
+		      		if(!vcode || !preg.test(vcode)){
+		      			mui.toast('请输入正确的验证码'); return;
+		      		}
+		      		var	bindId=$('input[name="bindId"]').val();
+		      		if(!bindId){
+		      			mui.toast('获取数据失败，请重新发送验证码'); return;
+		      		}
+		      		var url = '/index.php/api/Member_cert_card/addition_card_code';
+		            var data={
+		          		action:'MemberCertCard',
+		          		method:'addition_card_code',
+		          		param:{
+		          			'uid':"{{$data['MemberCreditcard']['card_member_id']}}",
+					        'token': "{{$data['Members']['memberLogin']['login_token']}}",
+					        'bindId':$('input[name="bindId"]').val(),
+					        'smsCode':vcode
+		          		}
+		          	};
+		            $.post(url,data,function(data){
+		            	if(data.msg){
+		            		mui.toast(data.msg);
+		            	}else{
+		            		mui.toast('签约失败。');
+		            	}
+		            	if(data.code==200){
+		            	 	setTimeout(function(){ alert("跳转喽"); },3000);
+		            	 	window.location.href="/api/Member";
+		            	 }
+		             });
 		      });
 		  	});
 		</script>

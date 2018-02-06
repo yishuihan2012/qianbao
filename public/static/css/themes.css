@@ -4,6 +4,7 @@
 .bg-w{background-color:#fff;}
 .bg-table{background-color:#f7fafc;}
 .bg-blue{background-color:#24a1ff;}
+.bg-blue2{background-color:#24a1ff !important;}
 .bg-tint{background-color:#fff6ea;}
 .bg-tint-yellow{background-color:#f9bc38;}
 .bg-red{width:100%;height:10px;background-color:#ff4151;border-radius: 5px 5px 0 0;}
@@ -16,6 +17,7 @@
 .invalid-color{color:#999;}
 .blue-color{color:#24a1ff;font-weight:bold;}
 .blue-color-th{color:#24a1ff;}
+.blue-color-th2{color:#24a1ff !important;}
 .yellow-color{color:#f9bc38;}
 .pro-yellow-color{color:#d69c35;}
 .tint-yellow-color{color:#fbecd2;}

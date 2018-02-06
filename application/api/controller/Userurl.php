@@ -27,6 +27,8 @@ use app\index\model\MemberCreditcard;
 use app\index\model\Generation;
 use app\index\model\GenerationOrder;
 use app\index\model\NoviceClass as NoviceClasss; 
+use app\index\model\MemberCert;
+use app\index\model\MemberNet;
 /**
  *  此处放置一些固定的web地址
  */
@@ -707,8 +709,20 @@ class Userurl extends Controller
   	}
   }
   //代还，用户签约界面
-  public function signed(){
-  		echo 233;die;
+  public function signed($passageway_id,$cardId){
+  		#信用卡信息
+  		$data['MemberCreditcard']=$MemberCreditcard=MemberCreditcard::where(['card_id'=>$cardId])->find();
+  		#通道信息
+  		$data['passageway']=$passageway=Passageway::get($passageway_id);
+  		#通道入网信息
+  		$member_net=MemberNet::where(['net_member_id'=>$MemberCreditcard['card_member_id']])->find();
+  		#用户基本信息
+  		$data['Members']=$Members=Members::haswhere('memberLogin','')->where(['member_id'=>$MemberCreditcard['card_member_id']])->find();
+  		#登录信息
+  		// if(!$MemberCreditcard || !$passageway || $member_net){
+  		// 	exit('获取信息失败');
+  		// }
+  		$this->assign('passageway_id',$passageway_id);
   		$this->assign('data',$data);
   		return view("Userurl/signed");
   }
