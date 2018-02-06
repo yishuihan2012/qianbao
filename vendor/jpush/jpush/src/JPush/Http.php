@@ -118,7 +118,6 @@ final class Http {
 
     public static function processResp($response) {
         $data = json_decode($response['body'], true);
-        dump($data);die;
         if ($response['http_code'] === 200) {
             $result = array();
             $result['body'] = $data;
