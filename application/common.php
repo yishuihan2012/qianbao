@@ -12,8 +12,8 @@
  use think\Config;
  use app\index\model\SmsLog as SmsLogs;
  use app\index\model\Member as Members;
-  use app\index\model\MemberGroup;
-   use app\index\model\MemberRelation;
+ use app\index\model\MemberGroup;
+ use app\index\model\MemberRelation;
  use app\index\model\Notice;
  use app\index\model\System;
  use app\api\controller as con;
@@ -972,7 +972,7 @@ function SortByASCII($arr)
     //   4.平台公告铃声提示。
     function jpush($uid=null, $title=null, $content=null, $item=null, $type='2')
     {
-        return true;
+        // return true;
         $jpush=new con\Push();
         if ($uid && $title && $content) {
             //获取registration_id
