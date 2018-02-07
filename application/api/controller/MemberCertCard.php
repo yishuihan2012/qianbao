@@ -239,10 +239,7 @@
               }
               
             }else{
-              $session_name='repayment_data_'.$this->param['uid'];
-              $data=session::get($session_name);
-              $data=json_decode($data);
-              return ['code' => 102, 'msg' => $income['message'], 'data' =>$data];
+              return ['code' => 102, 'msg' => $income['message']];
             }
             
       }
