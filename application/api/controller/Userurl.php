@@ -240,7 +240,7 @@ class Userurl extends Controller
 	 */
 
 	public function repayment_plan_create_detail(){
-		$this->checkToken();
+		// $this->checkToken();
 		$order_no=$this->param['order_no'];
 		// $order_no=input('order_no');
 		$data=explode('_', $order_no);
