@@ -147,17 +147,13 @@
                 $res=new MemberCreditcard($arr);
                 $res=$res->save();
              }
-             
-           if(!$member_cashcard || !$res){
-                   return ['code'=>436];
-            }
             //发送短信验证码
             $sms=new \app\index\controller\Sms();
             $res=$sms->send_sms($this->param['phone']);
             if($res['code']==200){
                 return ['code'=>'200','msg'=>'短信发送成功','data'=>['bindId'=>$bindId]];
             }else{
-                return $res;           
+               return ['code'=>'101','msg'=>'短信发送失败'];
             }
       }
       //绑定信用卡
