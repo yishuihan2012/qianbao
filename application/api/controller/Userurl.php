@@ -255,7 +255,8 @@ class Userurl extends Controller
 		#1判断当前通道当前卡用户有没有入网和签约
         // 获取通道信息
        $passageway=Passageway::get($param['passageway']);
-       if(!$passageway){
+       $members=Members::haswhere('memberLogin','')->where(['member_id'=>$param['uid']])->find();
+       if(!$passageway || !$members){
        		$this->assign('data','获取数据失败，请重试。');
        		return view("Userurl/show_error");
        }
@@ -434,7 +435,7 @@ class Userurl extends Controller
         	}
         }
         $this->assign('uid',$param['uid']);
-        $this->assign('token',$this->param['token']);
+        $this->assign('token',$members['memberLogin']['login_token']);
 		$this->assign('order_pound',$order_pound);
 		$this->assign('generation',$generation);
 		$this->assign('order',$data);
