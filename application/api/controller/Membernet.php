@@ -634,7 +634,8 @@ use app\index\model\Member;
             // 判断有没有入网：
             if(!$member_net[$passageway['passageway_no']]){//没有入网
                   $member_info=MemberCert::where('cert_member_id='.$params['uid'])->find();
-                  $rate=PassagewayItem::where('item_passageway='.$params['passageway_id'].' and item_group='.$group['member_group_id'])->find();
+                  $Members=Member::where(['member_id'=>$params['uid']])->find();
+                  $rate=PassagewayItem::where('item_passageway='.$params['passageway_id'].' and item_group='.$Members['member_group_id'])->find();
                   $arr=mishua($passageway, $rate, $member_info, $params['phone']);
                   $add_net=MemberNet::where('net_member_id='.$params['uid'])->update($arr);
             }
