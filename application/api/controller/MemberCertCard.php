@@ -181,7 +181,7 @@
 
           //校验验证码
           $sms=new \app\index\controller\sms();
-           $res=$sms->send_sms($creditcard['card_phone'],$this->param['smsCode']);
+           $res=$sms->check($creditcard['card_phone'],$this->param['smsCode']);
           if($res['code']!=200){
               return $res;
           }
