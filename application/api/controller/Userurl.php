@@ -256,6 +256,7 @@ class Userurl extends Controller
         // 获取通道信息
        $passageway=Passageway::get($param['passageway']);
        if(!$passageway){
+       		$this->assign('data','获取数据失败，请重试。');
        		return view("Userurl/show_error");
        }
        // 判断是否入网
@@ -273,44 +274,11 @@ class Userurl extends Controller
       
        // ***************************************2生成计划**************************************************
        #2生成计划
-          //  if($this->param['billMoney']/ $this->param['payCount']<200)
-          //       return['code'=>477];//单笔还款金额太小，请减小还款次数
-          //  #总账单除以消费次数得到每次消费AVG平均值  如果平均值小于某个值 则不进行还款  也是浪费资源
-          //  if($this->param['billMoney']/$this->param['payCount'] >20000)
-          //         return['code'=>478];//单笔还款金额过大，请增加还款次数
-
-          //  // $root_id=find_root($this->param['uid']);
-          //  #0 获取参数数据
-          //  if($this->param['endDate']<$this->param['startDate']){
-          //     exit(json_encode(['code'=>111,'msg'=>'还款结束日期不能小于开始日期']));
-          //     return['code'=>474]; //开始日期不能小于今天
-          //  }
-          //  if($this->param['startDate']<date('Y-m-d',time())){
-          //      exit(json_encode(['code'=>111,'msg'=>'开始日期不能小于今天']));
-          //      return ['code'=>475];//开始日期不能小于今天
-          //  }
-          //  // if(date('H',time())>19 && $this->param['startDate']==$this->param['endDate'] ){
-          //  //     return ['code'=>476];//今天已超过还款时间，无法为您制定还款计划
-          //  // }
-          //  if($this->param['startDate']<$this->param['startDate']){
-          //     exit(json_encode(['code'=>111,'msg'=>'还款结束日期不能小于开始日期']));
-          //     return['code'=>474]; //开始日期不能小于今天
-          //  }
-          //  #获取需要参数
-          // $member_info=MemberCert::where('cert_member_id='.$this->param['uid'])->find();
-          // if(empty($member_info)){
-          //       exit(json_encode(['code'=>111,'msg'=>'当前登录已失效，请重新登录']));
-          //       return ['code'=>317];//当前登录已失效，请重新登录
-          // }
-          // if($this->param['startDate']==date('Y-m-d',time())){
-          //      return['code'=>485];//开始还款日期必须大于今天
-          // }
-          // print_r($member_info);die;
           #卡详情
           $card_info=MemberCreditcard::where('card_id='.$this->param['cardId'])->find();
           if(!$card_info){
-              exit(json_encode(['code'=>111,'msg'=>'未获取到卡号信息']));
-              return ['code'=>442];
+              $this->assign('data','获取数据失败，请重试。');
+       		  return view("Userurl/show_error");
           }
           #获取后台费率
           $member_group_id=Members::where(['member_id'=>$this->param['uid']])->value('member_group_id');
@@ -344,7 +312,8 @@ class Userurl extends Controller
           ]);
           if($Generation_result->save()==false){
               Db::rollback();
-              return ['code'=>472]; 
+                $this->assign('data','生成计划失败，请重试');
+       			return view("Userurl/show_error");
           }
           //写入还款卡表
            $reimbur_result=new Reimbur([
@@ -353,7 +322,8 @@ class Userurl extends Controller
            ]); 
            if(!$reimbur_result->save()){
                 Db::rollback();
-                return ['code'=>472]; 
+                $this->assign('data','生成计划失败，请重试');
+       			return view("Userurl/show_error");
            }
           ####################################
           #3确定每天还款金额
@@ -425,7 +395,8 @@ class Userurl extends Controller
                Db::commit();
          }else{
                Db::rollback();
-               return ['code'=>472];      
+               $this->assign('data','生成计划失败，请重试');
+       		   return view("Userurl/show_error");
          }
         $order_no=$Generation_result->generation_id;
         // *************************************展示计划****************************************************
