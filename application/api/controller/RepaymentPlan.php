@@ -25,36 +25,36 @@
       public $error;
       protected $param;
       private $member;//会员
-      public function __construct($param)
-      {
-           $this->param=$param;
-           try{
-                 if(!isset($this->param['uid']) || empty($this->param['uid']) || !isset($this->param['token']) ||empty($this->param['token']))
-                       $this->error=314;
-                 #查找到当前用户
-                 $member=Member::haswhere('memberLogin',['login_token'=>$this->param['token']])->where('member_id', $this->param['uid'])->find();
-                 if($member['member_cert']!='1')
-                      $this->error=356;
-                 if(empty($member))
-                       $this->error=314;
-                 #查找实名认证信息
-                 $member_cert=MemberCert::get(['cert_member_id'=>$member['member_id']]);
-                 if(empty($member_cert) && !$this->error )
-                      $this->error=356;
-                 $this->member=$member;
-            }catch (\Exception $e) {
-                 $this->error=317;
-           }
-      }
+      // public function __construct($param)
+      // {
+      //      $this->param=$param;
+      //      try{
+      //            if(!isset($this->param['uid']) || empty($this->param['uid']) || !isset($this->param['token']) ||empty($this->param['token']))
+      //                  $this->error=314;
+      //            #查找到当前用户
+      //            $member=Member::haswhere('memberLogin',['login_token'=>$this->param['token']])->where('member_id', $this->param['uid'])->find();
+      //            if($member['member_cert']!='1')
+      //                 $this->error=356;
+      //            if(empty($member))
+      //                  $this->error=314;
+      //            #查找实名认证信息
+      //            $member_cert=MemberCert::get(['cert_member_id'=>$member['member_id']]);
+      //            if(empty($member_cert) && !$this->error )
+      //                 $this->error=356;
+      //            $this->member=$member;
+      //       }catch (\Exception $e) {
+      //            $this->error=317;
+      //      }
+      // }
       public function creatPlan(){
-           // $this->param['uid']=42;
-           // $this->param['token']=16;
-           // $this->param['cardId']=51;
-           // $this->param['billMoney']=5000;
-           // $this->param['payCount']=3;
-           // $this->param['startDate']="2018-02-08";
-           // $this->param['endDate']="2018-02-11";
-           // $this->param['passageway']='8';
+           $this->param['uid']=42;
+           $this->param['token']=16;
+           $this->param['cardId']=60;
+           $this->param['billMoney']=5000;
+           $this->param['payCount']=3;
+           $this->param['startDate']="2018-02-08";
+           $this->param['endDate']="2018-02-11";
+           $this->param['passageway']='8';
            if(!$this->param['uid'] || !$this->param['token']=16 || !$this->param['cardId'] || !$this->param['billMoney'] || !$this->param['payCount'] || !$this->param['startDate'] || !$this->param['endDate'] || !$this->param['passageway']){
                return['code'=>'313','msg'=>'获取数据失败'];
            }
