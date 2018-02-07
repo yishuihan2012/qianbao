@@ -46,7 +46,8 @@ use app\index\model\System;
            if(!isset($code) || empty($code))
                  return ['code'=>404,'验证码不存在'];
            #验证码验证规则 读取本手机号最后一条没有使用的验证码 并且在系统设置的有效时间内
-           $code_info=SmsCode::where(['sms_send'=>$phone,'sms_log_state'=>1])->whereTime('sms_log_add_time', "-".System::getName('code_timeout').' minutes')->find();
+           // $code_info=SmsCode::where(['sms_send'=>$phone,'sms_log_state'=>1])->whereTime('sms_log_add_time', "-".System::getName('code_timeout').' minutes')->find();
+           $code_info=SmsCode::where(['sms_send'=>$phone,'sms_log_state'=>1])->order('sms_log_id desc')->find();
            if(!$code_info || $code_info['sms_log_content']!=$code)
                  return ['code'=>404,'验证码已失效'];
            #改变验证码使用状态
