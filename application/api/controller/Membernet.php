@@ -652,9 +652,9 @@ use app\index\model\Member;
             $income=repay_request($data,$passageway['passageway_mech'],$url,$passageway['iv'],$passageway['secretkey'],$passageway['signkey']);
             
             if($income['code']=='200'){
-              // if($income['bindStatus']=='01'){
-              //   return ['code'=>463];//此卡已签约
-              // }
+              if($income['bindStatus']=='01'){
+                return ['code'=>463,'msg'=>'此卡已签约'];//此卡已签约
+              }
                  #更新信用卡表
                  $card=MemberCreditcard::where(["card_bankno"=>$params['creditCardNo']])->update(['bindId'=>$income['bindId'],'bindStatus'=>$income['bindStatus'],'mchno'=>$passageway['passageway_mech']]);
                   if(!$card){
