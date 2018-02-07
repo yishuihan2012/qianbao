@@ -279,22 +279,23 @@
            #进行和当前会员信息比对
            if($cert_card['card_name']!=$member_cert['cert_member_name'] ||  $cert_card['card_idcard']!=$member_cert['cert_member_idcard'])
                  return ['code'=>443];
+              if($cert_card['bindStatus']=="01"){
+                  $passageway=Passageway::where('passageway_status=1 and passageway_also=2')->find();
+                  $member_net=MemberNet::where('net_member_id='.$this->param['uid'])->find();
+                  $url='http://pay.mishua.cn/zhonlinepay/service/rest/creditTrans/unbindCard';
+                  $params=array(
+                    'mchNo'=> $cert_card['mchno'],
+                    'userNo'=> $member_net[$passageway['passageway_no']],
+                    'bindId'=>$cert_card['bindId']
+                  );
+                  $income=repay_request($params,$passageway['passageway_mech'],$url,$passageway['iv'],$passageway['secretkey'],$passageway['signkey']);
 
-            $passageway=Passageway::where('passageway_status=1 and passageway_also=2')->find();
-            $member_net=MemberNet::where('net_member_id='.$this->param['uid'])->find();
-            $url='http://pay.mishua.cn/zhonlinepay/service/rest/creditTrans/unbindCard';
-            $params=array(
-              'mchNo'=> $cert_card['mchno'],
-              'userNo'=> $member_net[$passageway['passageway_no']],
-              'bindId'=>$cert_card['bindId']
-            );
-            $income=repay_request($params,$passageway['passageway_mech'],$url,$passageway['iv'],$passageway['secretkey'],$passageway['signkey']);
-
-            if($income['code']!=200){
-              return ['code'=>444];
-            }
-            if($income['bindStatus']!='02')
-                return ['code'=>444];
+                  if($income['code']!=200){
+                    return ['code'=>444];
+                  }
+                  if($income['bindStatus']!='02')
+                      return ['code'=>444];
+              }
            if($cert_card->delete()===false)
                  return ['code'=>444];
             // $card=MemberCreditcard::where(['card_member_id'=>$this->param['uid']])->find();
