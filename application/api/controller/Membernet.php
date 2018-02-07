@@ -621,6 +621,7 @@ use app\index\model\Member;
                  echo  $e->getMessage();die;
                  return ['code'=>308,'msg'=>$e->getMessage(),'data'=>[]];
            }
+      }
       /**
        * 米刷入网
        * @return [type] [description]
@@ -663,7 +664,5 @@ use app\index\model\Member;
             }else{
                   return ['code'=>400, 'msg'=> $income['message']];
             }
-      }
-      public function mishua_sign(){
       }
  }
