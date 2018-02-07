@@ -131,7 +131,7 @@
                   'card_billDate'   => $this->param['billDate'],
                   'card_deadline' => $this->param['deadline'],
                   'card_bankicon' => $ident_icon,
-                  'card_state'  => 1,
+                  'card_state'  => 0,
                   'bindId'    =>$bindId
                   // 'card_return' =>json_encode($card_validate),
              ]);
@@ -139,8 +139,8 @@
                    return ['code'=>436];
             }
             //发送短信验证码
-            $sms=new \app\api\controller\Sms($this->param['phone']);
-            $res=$sms->send();
+            $sms=new \app\index\controller\sms();
+            $res=$sms->send_sms($this->param['phone']);
             if($res['code']==200){
                 return ['code'=>'200','msg'=>'短信发送成功','data'=>['bindId'=>$bindId]];
             }else{
@@ -167,13 +167,14 @@
           }
 
           //校验验证码
-          $sms=new \app\api\controller\Sms($this->param['phone'],$this->param['smsCode']);
-          $res=$sms->check();
+          $sms=new \app\index\controller\sms();
+           $res=$sms->send_sms($this->param['phone'],$this->param['smsCode']);
           if($res['code']!=200){
               return $res;
           }
           $bindStatus=array(
             'bindStatus'=>'01',
+            'card_state'  => 1,
           );
           $edit=MemberCreditcard::where("bindId='{$this->param['bindId']}' and mchno='{$creditcard['mchno']}'")->update($bindStatus);
           if($edit){
