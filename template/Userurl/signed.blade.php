@@ -130,7 +130,7 @@
 		            		mui.toast('签约失败。');
 		            	}
 		            	if(data.code==200){
-		            	 	setTimeout(function(){ window.location.href="/api/Repayment_plan/creatPlan"; },3000);
+		            	 	setTimeout(function(){ window.location.href="/api/Userurl/repayment_plan_detail/order_no"+{{$order_no}}; },3000);
 		            	 	
 		            	 }
 		             });
