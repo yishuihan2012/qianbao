@@ -68,7 +68,7 @@
            }
            //判断是否签约
            $MemberCreditcard=MemberCreditcard::where(['card_id'=>$this->param['cardId']])->find();
-           if(!$MemberCreditcard['bindId'] || $MemberCreditcard['bindStatus']!='01'){ //未绑定
+           if(!$MemberCreditcard['bindId'] || strlen($MemberCreditcard['bindId'])<20){ //未绑定
                 //重定向到签约
                  session::push($session_name,json_encode($this->param));
                  return redirect('Userurl/signed', ['passageway_id' =>$this->param['passageway'],'cardId'=>$this->param['cardId']]);
@@ -76,7 +76,7 @@
            #2判断是否存在session
            if($data=session::get($session_name)){
               //获取到session,跳转到creatPlan_mishua方法
-              return redirect('RepaymentPlan/creatPlan_mishua',json_decode($data),true);
+              return redirect('RepaymentPlan/creatPlan_mishua',json_decode($data,true));
            }else{
                 exit('获取数据失败！');
            }
