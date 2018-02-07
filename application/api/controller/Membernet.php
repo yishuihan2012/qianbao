@@ -357,14 +357,17 @@ use app\index\model\Member;
       //http://pay.mishua.cn/zhonlinepay/service/rest/creditTrans/transferApply
       public function transferApply($pay,$isCancel=null){
           #1获取费率
-          #1判断当天有没有失败的订单
-          $fail_order=GenerationOrder::where(['order_no'=>$pay['order_no'],'order_status'=>'-1','order_type'=>1])->whereTime('order_time', 'today')->find();
+          #1判断当天有没有失败的订单  
+          $today=date('Y-m-d',strtotime($pay['order_time']));
+          $fail_order=GenerationOrder::where(['order_no'=>$pay['order_no'],'order_status'=>'-1','order_type'=>1])->where('order_time','like',$today.'%')->find();
           // $remain_money=Reimbur::where(['reimbur_generation'=>$pay['order_no']])->find();
           // if($remain_money && $remain_money['reimbur_left']<$pay['order_money']){/
           if($fail_order){//如果当天有失败订单
                 $arr['back_status']='FAIL';
                 $arr['back_statusDesc']='当天有失败的订单无法进行还款，请先处理失败的订单。';
                 $arr['order_status']='-1';
+                $income['code']='200';
+                $income['status']="FAIL";
           }else{
               $member_group_id=Member::where(['member_id'=>$pay['order_member']])->value('member_group_id');
               $rate=PassagewayItem::where(['item_passageway'=>$pay['order_passageway'],'item_group'=>$member_group_id])->find();
@@ -380,7 +383,7 @@ use app\index\model\Member;
               #5:获取用户基本信息
               $member_base=Member::where(['member_id'=>$pay['order_member']])->find();
               $orderTime=date('YmdHis',time()+60);
-              if(!$pay['order_platform_no']){
+              if(!$pay['order_platform_no'] || $pay['order_status']!=1){
                   $update_order['order_platform_no']=$pay['order_platform_no']=uniqid();
                   $update_res=GenerationOrder::where(['order_id'=>$pay['order_id']])->update($update_order);
               }

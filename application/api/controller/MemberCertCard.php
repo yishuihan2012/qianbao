@@ -218,8 +218,6 @@
               return ['code'=>463];
 
              #查询当前卡有没有绑定过
-              if($creditcard['card_state']=='1')
-                  return ['code'=>437];
             $passageway=Passageway::where('passageway_status=1 and passageway_also=2')->find();
 
 
@@ -232,12 +230,11 @@
             );
             $url='http://pay.mishua.cn/zhonlinepay/service/rest/creditTrans/bindCardConfirm';
             $income=repay_request($params,$passageway['passageway_mech'],$url,$passageway['iv'],$passageway['secretkey'],$passageway['signkey']);
+            // print_r($income);die;
             if($income['code']=='200'){
               //修改签约状态
               $bindStatus=array(
                 'bindStatus'=>$income['bindStatus'],
-                'card_return' =>json_encode($card_validate),
-                'card_state'  => $state
               );
               $edit=MemberCreditcard::where("bindId='{$this->param['bindId']}' and mchno='{$creditcard['mchno']}'")->update($bindStatus);
               
