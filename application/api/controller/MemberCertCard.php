@@ -144,7 +144,7 @@
              if($card){
                 $member_cashcard=MemberCreditcard::where(["card_bankno"=>$this->param['creditCardNo']])->update($arr);
              }else{
-                $res=MemberCreditcard::save($arr);
+                $res=New MemberCreditcard($arr)->save();
              }
              
            if(!$member_cashcard){
