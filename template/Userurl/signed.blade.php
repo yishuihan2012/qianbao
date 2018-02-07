@@ -103,6 +103,7 @@
 		        }
 		      }
 		      $("#confirmBtn002").click(function(){
+		      		 $("#confirmBtn002")..attr("disabled", true); 
 		      		var vcode = $("#myCode002").val();
 		      		preg=/^\d{6}$/;
 		      		if(!vcode || !preg.test(vcode)){
@@ -124,9 +125,12 @@
 		          		}
 		          	};
 		            $.post(url,data,function(data){
+
 		            	if(data.msg){
+		            		$("#confirmBtn002")..attr("disabled", false); 
 		            		mui.toast(data.msg);
 		            	}else{
+		            		$("#confirmBtn002")..attr("disabled", false); 
 		            		mui.toast('签约失败。');
 		            	}
 		            	if(data.code==200){
