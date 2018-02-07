@@ -152,7 +152,7 @@
                    return ['code'=>436];
             }
             //发送短信验证码
-            $sms=new \app\index\controller\sms();
+            $sms=new \app\index\controller\Sms();
             $res=$sms->send_sms($this->param['phone']);
             if($res['code']==200){
                 return ['code'=>'200','msg'=>'短信发送成功','data'=>['bindId'=>$bindId]];
@@ -180,7 +180,7 @@
           }
 
           //校验验证码
-          $sms=new \app\index\controller\sms();
+          $sms=new \app\index\controller\Sms();
            $res=$sms->check($creditcard['card_phone'],$this->param['smsCode']);
           if($res['code']!=200){
               return $res;
