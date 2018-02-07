@@ -637,7 +637,7 @@ use app\index\model\Member;
                   $Members=Member::where(['member_id'=>$params['uid']])->find();
                   $rate=PassagewayItem::where('item_passageway='.$params['passageway_id'].' and item_group='.$Members['member_group_id'])->find();
                   $arr=mishua($passageway, $rate, $member_info, $params['phone']);
-                  $add_net=MemberNet::where('net_member_id='.$params['uid'])->update($arr);
+                  $add_net=MemberNets::where('net_member_id='.$params['uid'])->update($arr);
             }
             // $passageway=Passageway::where(['passageway_id'=>$params['passageway_id']])->find();
             #绑定信用卡签约
