@@ -32,6 +32,7 @@
  use app\index\model\Upgrade;
  use app\index\model\Notice;
  use app\index\model\Announcement;
+ use app\index\controller\MemberLebvelup;
  
  class Member 
  {
@@ -51,7 +52,22 @@
                  $this->error=317;
            }
       }
+        //获取三级下级总数
+      public function get_lower_total($uid){
+          $count=0;
+          $MemberRelation_1rd=MemberRelation::haswhere("members",'member_id!=""')->where(["relation_parent_id"=>$uid])->select();
+          $count+=count($MemberRelation_1rd);
+          foreach ($MemberRelation_1rd as $k => $val) {
+                $member_2rd=MemberRelation::haswhere("members",'member_id!=""')->where(['relation_parent_id'=>$val['relation_member_id']])->select();
+                $count+=count($member_2rd);
+                foreach ($member_2rd as $k1 => $val1) {
+                  $group3 = MemberRelation::haswhere("members",'member_id!=""')->where(['relation_parent_id'=>$val1['relation_member_id']])->select();
+                    $count+=count($group3);
+                }
 
+             }
+             return $count;
+      }
       /**
  	 *  @version info method / Api 会员基础信息 通用接口
  	 *  @author $bill$(755969423@qq.com)
@@ -61,8 +77,6 @@
       public function info()
       {
            $member=Members::get($this->param['uid']);
-           // echo "<pre>";
-           // print_r($member);
            $data=array();
            $data['authState']=$member['member_cert'];
            $data['name']=$member['member_cert']==1 ? $member['member_nick'] : '';
@@ -85,13 +99,13 @@
            $data['memberLevelId']=$member['member_group_id'];
            $data['memberLevelName']=$member->memberGroup->group_name;
            #判断普通会员，
-           // $data['memberLevelgroup_salt'] = ($member->memberGroup->group_salt==1)?0:1;
+           $data['memberLevelgroup_salt'] = ($member->memberGroup->group_salt==1)?0:1;
            #查询信用卡绑定数量
            $data['numberOfCreditCard']=MemberCreditcard::where(['card_member_id'=>$this->param['uid'],'card_state'=>'1'])->count();
            $data['alipayBindState']=MemberAccount::where(['account_user'=>$this->param['uid'],'account_type'=>'Alipay'])->find() ? 1 : 0;
            $data['wechatBindState']=MemberAccount::where(['account_user'=>$this->param['uid'],'account_type'=>'Weipay'])->find() ? 1 : 0;
-           #查询会员下级数量 TODO: 现在是直接下级数量 是否改成三级
-           $data['subordinateNumber']=MemberRelation::where('relation_parent_id',$this->param['uid'])->count();
+           #查询会员下级数量 TODO: 现在是直接下级数量 是否改成三级 #
+           $data['subordinateNumber']=$this->get_lower_total($this->param['uid']);
            $parent_id=MemberRelation::where(['relation_member_id'=>$this->param['uid']])->value('relation_parent_id');
            $data['parent']=$parent_id=='0' ? '' : Members::where('member_id',$parent_id)->value('member_nick');
            $data['parent_phone']=$parent_id=='0' ? '' : Members::where('member_id',$parent_id)->value('member_mobile');
@@ -283,21 +297,22 @@
            if(!isset($this->param['targetLevelId']) || empty($this->param['targetLevelId']))
                  return ['code'=>448];
            $member=Members::get($this->param['uid']);
-           $member_group=MemberGroup::get(['group_salt'=>$this->param['targetLevelId']]);
+           $member_group=MemberGroup::get(['group_id'=>$this->param['targetLevelId']]);
            if(!$member_group)
                  return ['code'=>449];
            #验证目标组是否可以升级
            if($member_group['group_level']!='1')
                  return ['code'=>450];
            #验证目标组是否可以通过付费方式升级
-           if($member_group['group_level_type']!=-1 && $member_group['group_level_type']!=3)
-                 return ['code'=>451];
+           // if($member_group['group_level_type']!=-1 && $member_group['group_level_type']!=3)
+           //       return ['code'=>451];
            $currentgroup=MemberGroup::get($member['member_group_id']);
            #验证目标组是否比当前组级别高
            if($member_group['group_salt']<=$currentgroup['group_salt'])
                  return ['code'=>452];
            #计算差价
-           $price_diff  =$member_group['group_level_money']-$currentgroup['group_level_money'];
+           $price_diff=$this->get_diff_price($this->param['uid'],$this->param['targetLevelId']);
+           // $price_diff  =$member_group['group_level_money']-$currentgroup['group_level_money'];
            if($price_diff<0)
                  return ['code'=>453];
            $data['money']=$price_diff;
@@ -317,8 +332,14 @@
 
            #支付宝支付
            $Alipay=new \app\index\controller\Alipay();
-           $data['signedStr']=$Alipay->pay($params);
-           return ['code'=>200, 'msg'=>'获取成功~', 'data'=>$data];
+           if($Alipay){
+              $data['signedStr']=$Alipay->pay($params);
+               return ['code'=>200, 'msg'=>'获取成功~', 'data'=>$data];
+           }else{
+               return ['code'=>344];
+           }
+           
+          
       }
 
       /**
@@ -417,7 +438,7 @@
                  #加密密码
                  $pwd=encryption(substr($this->param['phone'], -6), $rand_salt);
                  #新增会员基本信息                  
-                 $member_info= new Member([
+                 $member_info= new Members([
                       'member_nick'=>$this->param['phone'],
                       'member_mobile'=>$this->param['phone'],
                       'member_group_id'=>System::getName('open_reg_membertype')]);
@@ -452,7 +473,7 @@
                       return ['code'=>300];                  
                  }                  
                  Db::commit();
-                 $data=Member::member_info($token);                  
+                 $data=Members::member_info($token);                  
                  return  ['code'=>200,'msg'=>'帮扶注册成功~','data'=>$data]; 
                  //请求成功             
            } catch (\Exception $e) {                  
@@ -469,136 +490,207 @@
       **/
       public function get_team()
       { 
-
       	$membercert=Members::where(['member_id'=>$this->param['uid']])->find();
-           $group=MemberGroup::select();
+           $group=MemberGroup::where(['group_visible'=>1])->select();
            // var_dump($group);die;
            $data['totalChildAmount']=0;
            foreach ($group as $key => $value) {
              $data['list'][$key]['levelName']=$value['group_name'];
              $data['list'][$key]['levelId']=$value['group_id'];
-             $data['list'][$key]['levelIcon']=$value['group_thumb'];
+             $data['list'][$key]['levelIcon']=System::getName('system_url').$value['group_thumb'];
              $data['list'][$key]['childAmount']=0;
              $data['list'][$key]['grandChildAmount']=0;
-             $MemberRelation_1rd=MemberRelation::where(["relation_parent_id"=>$this->param['uid']])->select();
-
+            $MemberRelation_1rd=MemberRelation::haswhere('memberp')->where(['relation_parent_id'=>$this->param['uid']])->select();
+             
              foreach ($MemberRelation_1rd as $k => $val) {
-                $member[$k]=Members::with('membergroup')->where(['member_id'=>$val['relation_member_id']])->find();
+                 $member_1rd=Members::where(['member_id'=>$val['relation_member_id']])->field('member_id,member_image, member_mobile, member_creat_time, member_cert,member_group_id')->find();
+                // $member=Members::with('membergroup')->where(['member_id'=>$val['relation_member_id']])->find();
                              // return ['code'=>200, 'msg'=>'信息反馈成功~','data'=>$member];
-                if($member[$k]['group_id']==$value['group_id']){
+
+                if($member_1rd['member_group_id']==$value['group_id']){
                   $data['list'][$key]['childAmount']+=1;
                 } 
-
-                $member_2rd[$k]=MemberRelation::where(['relation_parent_id'=>$member[$k]['member_id']])->select();
-                foreach ($member_2rd[$k] as $k1 => $val1) {
-                    $member_3rd[$k1]=Members::with('membergroup')->where(['member_id'=>$val1['relation_member_id']])->find();
-                    if($member_3rd[$k1]['group_id']==$value['group_id']){
+                $member_2rd=MemberRelation::haswhere('memberp')->where(['relation_parent_id'=>$member_1rd['member_id']])->select();
+                
+              
+                foreach ($member_2rd as $k1 => $val1) {
+                 $member_2rds=Members::where(['member_id'=>$val1['relation_member_id']])->field('member_id,member_image, member_mobile, member_creat_time, member_cert,member_group_id')->find();
+                  
+                  if($member_2rds['member_group_id']==$value['group_id']){
                     $data['list'][$key]['grandChildAmount']+=1;
                   } 
+                  $group3=MemberRelation::haswhere('memberp')->where(['relation_parent_id'=>$member_2rds['member_id']])->select();
+                  
+                  if(!empty($group3)){
+                    foreach ($group3 as $k2 => $v2) {
+                      $member_3rd=Members::where(['member_id'=>$v2['relation_member_id']])->field('member_id,member_image, member_mobile, member_creat_time, member_cert,member_group_id')->find();
+                      if($member_3rd['member_group_id']==$value['group_id']){
+                        $data['list'][$key]['grandChildAmount'] += 1;
+                      } 
+                    }
+                  }
+                  
                 }
 
              }
-
+            
              $data['list'][$key]['grossChildAmount']=$data['list'][$key]['grandChildAmount']+$data['list'][$key]['childAmount'];
              #总人数
-             $data['totalChildAmount']+=$data['list'][$key]['grossChildAmount'];
-             $data['member_cert']=$membercert['member_cert'];
+             $data['totalChildAmount'] += $data['list'][$key]['grossChildAmount'];
+             $data['member_cert'] = $membercert['member_cert'];
            }
           
          return ['code'=>200, 'msg'=>'信息反馈成功~','data'=>$data];
       }
-
-
       /**
       *  @version get_team_info method / Api 我的团队队员列表
       *  @author $bill$(755969423@qq.com)
       *  @datetime    2017-12-15 11:58:05
       *  @param group_id 会员等级id  member_cert 认证状态 0全部 1已认证，2审核中，3未完善，4未通过
       **/
-      public function get_team_info()
+       public function get_team_info()
       { 
-
         if(!isset($this->param['group_id']) || empty($this->param['group_id']) || !isset($this->param['member_cert']))
             $this->error=314;
 
-          $array['member_cert']=(empty($this->param['member_cert']) && $this->param['member_cert']!=="0") ? 'all' : $this->param['member_cert'] ;
+          
 
+          $array['member_cert']=(empty($this->param['member_cert']) && $this->param['member_cert']!=="0") ? 'all' : $this->param['member_cert'] ;
           #查询全部
           if($array['member_cert']=='all'){
             $member_info=array();
             #查询出我的所有下级
-            $MemberRelation_1rd=MemberRelation::haswhere('memberp',['member_group_id'=>$this->param['group_id']])->where(['relation_parent_id'=>$this->param['uid']])->select();
+            $MemberRelation_1rd=MemberRelation::haswhere('memberp')->where(['relation_parent_id'=>$this->param['uid']])->order("relation_add_time desc")->select();
             // return ['code'=>200, 'msg'=>'信息反馈成功~','data'=>$MemberRelation_1rd];
             if(!empty($MemberRelation_1rd)){
             foreach ($MemberRelation_1rd as $key => $value) {
-                  $member_1rd=Members::where(['member_id'=>$value['relation_member_id']])->field('member_id,member_image, member_mobile, member_creat_time, member_cert')->find();
-                  if($member_1rd['member_cert']==0){
-                    $member_1rd['member_cert']='未认证';
-                  }else{
-                    $member_1rd['member_cert']='已认证';
-                  }
-                  $member_info[]=$member_1rd;
-                  $MemberRelation_2rd=MemberRelation::haswhere('memberp',['member_group_id'=>$this->param['group_id']])->where('relation_parent_id='.$member_1rd['member_id'])->select();
-
-
-                    if(!empty($MemberRelation_2rd)){
-                      foreach ($MemberRelation_2rd as $k => $val) {
-                           $member_2rd=Members::where(['member_id'=>$val['relation_member_id']])->field('member_id,member_image, member_mobile, member_creat_time, member_cert')->find();
-                           if($member_2rd['member_cert']==0){
-                              $member_2rd['member_cert']='未认证';
-                            }else{
-                              $member_2rd['member_cert']='已认证';
-                            }
-                           $member_info[]=$member_2rd;
-                      }
-                    } 
-
-            }
-            }
-          }else{
-             $member_info=array();
-             #查询出我的所有下级
-             $MemberRelation_1rd=MemberRelation::haswhere('memberp',['member_group_id'=>$this->param['group_id']])->where("relation_parent_id={$this->param['uid']}")->select();
-             if(!empty($MemberRelation_1rd)){
-               foreach ($MemberRelation_1rd as $key => $value) {
-                   $member_1rd=Members::where(['member_id'=>$value['relation_member_id']])->field('member_id,member_image, member_mobile, member_creat_time, member_cert')->find();
-
-                   if($member_1rd['member_cert']==$array['member_cert']){
-                     if($member_1rd['member_cert']==0){
+                  $member_1rd=Members::where(['member_id'=>$value['relation_member_id']])->field('member_id,member_image, member_mobile, member_creat_time, member_cert,member_group_id')->find();
+                  if($member_1rd['member_group_id'] == $this->param['group_id']){
+                    if($member_1rd['member_cert']==0){
                       $member_1rd['member_cert']='未认证';
                     }else{
                       $member_1rd['member_cert']='已认证';
                     }
+                    $member_info[]=$member_1rd;
+                  }
 
-                     $member_info[]=$member_1rd;
-                      }
-                     $MemberRelation_2rd=MemberRelation::haswhere('memberp',['member_group_id'=>$this->param['group_id']])->where('relation_parent_id='.$member_1rd['member_id'])->select();
+                  $MemberRelation_2rd=MemberRelation::haswhere('memberp')->where('relation_parent_id='.$value['relation_member_id'])->order("relation_add_time desc")->select();
+                
                     if(!empty($MemberRelation_2rd)){
+              
                       foreach ($MemberRelation_2rd as $k => $val) {
-                           $member_2rd=Members::where(['member_id'=>$val['relation_member_id'],'member_cert'=>$array['member_cert']])->field('member_id,member_image, member_mobile, member_creat_time, member_cert')->find();
+                          
+                           $member_2rd=Members::where(['member_id'=>$val['relation_member_id']])->field('member_id,member_image, member_mobile, member_creat_time, member_cert,member_group_id')->find();
+                           
+                           if($member_2rd['member_group_id'] == $this->param['group_id']){
 
-
-                           if($member_2rd['member_cert']==$array['member_cert']){
                              if($member_2rd['member_cert']==0){
                                 $member_2rd['member_cert']='未认证';
                               }else{
                                 $member_2rd['member_cert']='已认证';
                               }
-                             $member_info[]=$member_2rd;
+                               $member_info[]=$member_2rd;
+                            }
+                          
+                           $MemberRelation_3rd=MemberRelation::haswhere('memberp',['member_group_id'=>$this->param['group_id']])->order("relation_add_time desc")->where('relation_parent_id='.$val['relation_member_id'])->select();
+                           foreach ($MemberRelation_3rd as $k2 => $v2) {
+                               $member_3rd=Members::where(['member_id'=>$v2['relation_member_id']])->field('member_id,member_image, member_mobile, member_creat_time, member_cert,member_group_id')->find();
+                               if($member_3rd['member_cert']==0){
+                                  $member_3rd['member_cert']='未认证';
+                                }else{
+                                  $member_3rd['member_cert']='已认证';
+                                }
+                               $member_info[]=$member_3rd;
                            }
+                       }
+                    } 
+                  
+            }
+            }
+
+          
+          }else{
+             $member_info=array();
+             #查询出我的所有下级
+             $MemberRelation_1rd=MemberRelation::haswhere('memberp')->where("relation_parent_id={$this->param['uid']}")->order("relation_add_time desc")->select();
+             if(!empty($MemberRelation_1rd)){
+               foreach ($MemberRelation_1rd as $key => $value) {
+                   $member_1rd=Members::where(['member_id'=>$value['relation_member_id']])->field('member_id,member_image, member_mobile, member_creat_time, member_cert,member_group_id')->find();
+                   
+                     if($member_1rd['member_cert']==$array['member_cert']){
+                        if($member_1rd['member_group_id'] == $this->param['group_id']){
+                           if($member_1rd['member_cert']==0){
+                            $member_1rd['member_cert']='未认证';
+                          }else{
+                            $member_1rd['member_cert']='已认证';
+                          }
+                           $member_info[]=$member_1rd;
+                        }
+                      }
+                     $MemberRelation_2rd=MemberRelation::haswhere('memberp')->where('relation_parent_id='.$member_1rd['member_id'])->order("relation_add_time desc")->select();
+                     
+                    if(!empty($MemberRelation_2rd)){
+                      foreach ($MemberRelation_2rd as $k => $val) {
+                           $member_2rd=Members::where(['member_id'=>$val['relation_member_id']])->field('member_id,member_image, member_mobile, member_creat_time, member_cert,member_group_id')->find();
+
+
+                           if($member_2rd['member_cert']==$array['member_cert']){
+                             if($member_2rd['member_group_id'] == $this->param['group_id']){
+
+                               if($member_2rd['member_cert']==0){
+                                  $member_2rd['member_cert']='未认证';
+                                }else{
+                                  $member_2rd['member_cert']='已认证';
+                                }
+                                 $member_info[]=$member_2rd;
+                            }
+                           }
+                             $MemberRelation_3rd=MemberRelation::haswhere('memberp',['member_group_id'=>$this->param['group_id']])->order("relation_add_time desc")->where('relation_parent_id='.$val['relation_member_id'])->select();
+                           foreach ($MemberRelation_3rd as $k2 => $v2) {
+                             $member_3rd=Members::where(['member_id'=>$v2['relation_member_id']])->field('member_id,member_image, member_mobile, member_creat_time, member_cert,member_group_id')->find();
+                             if($member_3rd['member_cert']==$array['member_cert']){
+                               if($member_3rd['member_cert']==0){
+                                  $member_3rd['member_cert']='未认证';
+                                }else{
+                                  $member_3rd['member_cert']='已认证';
+                                }
+                               $member_info[] = $member_3rd;
+                             }
+                           }
+                           
+                          
                       }
                     }
 
-                 
-
               }
+
             }
           }
+
+          $member_info = $this->sort($member_info);
           $data['totalChildAmount']=count($member_info);
-          $data['list']=$member_info;
+           if(!isset($this->param['page'])){
+              $data['list']=$member_info;
+           }else{
+            $data['list']=array_slice($member_info,($this->param['page']-1)*10,10);
+           }
+          
           return ['code'=>200, 'msg'=>'信息反馈成功~','data'=>$data];
       }
-
+      #排序
+     public function sort($a){
+        $n =count($a);
+        for($y = 0 ; $y < $n ; $y ++){
+          for($i = 0 ; $i < $n -1 ; $i ++){
+               if($a[$i]["member_id"]<$a[$i+1]["member_id"]){
+                   $b =$a[$i];
+                   $a[$i] =$a[$i+1];
+                   $a[$i+1] =$b;
+               }
+          }
+        }
+       return $a;
+     }
       /**
       *  @version get_upgrade_price method / Api 会员等级列表
       *  @author $bill$(755969423@qq.com)
@@ -610,29 +702,56 @@
         // var_dump("expression");die;
             #获取用户组等级信息
         //$passagewayItem=PassagewayItem::haswhere('passageway',['passageway_state'=>1])->where(['item_group'=>$value['group_id']])->order('item_rate','asc')->find();
-            $membergroup=MemberGroup::select();
+            $membergroup=MemberGroup::where(['group_visible'=>1])->select();
             foreach ($membergroup as $key => $value) {
                 $price=sprintf("%.2f",substr(sprintf("%.3f", $value['group_level_money']), 0, -1));
                 $data['group'][$key]['name']=$value['group_name'];
                 $data['group'][$key]['group_salt']=$value['group_salt'];
                 $data['group'][$key]['id']=$value['group_id'];
-                $data['group'][$key]['icon']=$value['group_thumb'];
+                $data['group'][$key]['icon']=System::getName('system_url').$value['group_thumb'];
                 $data['group'][$key]['group_level_money']=$price;
-                $data['group'][$key]['price_desc']='普通会员升级到此用户组需要的价格￥'.$price.'元';
+                // $data['group'][$key]['price_desc']='普通会员升级到此用户组需要的价格￥'.$price.'元';
+                $data['group'][$key]['price_desc']='普通会员升级到'.$value['group_name'].'此用户组需要的价格￥'.$price.'元';
                 $data['group'][$key]['group_url']=$value['group_url'];
+                $data['group'][$key]['up_price']=$this->get_diff_price($this->param['uid'],$value['group_id']);
                 #获取每个用户等级的最低费率
-                $passageway=Passageway::where(['passageway_state'=>1])->select();
-                foreach ($passageway as $k => $val) {
-                $passagewayItem=PassagewayItem::haswhere('passageway',['passageway_state'=>1])->where(['item_group'=>$value['group_id'],'item_passageway'=>$val['passageway_id']])->order('item_rate','asc')->find();
-                #获取对应费率的通道信息
-                $passageway=Passageway::where(['passageway_state'=>1,'passageway_id'=>$passagewayItem['item_passageway']])->find();
-                #如果不为空
-                if(!empty($passageway)){
-                  $data['group'][$key]['rate']='刷卡费率：'.$passagewayItem['item_rate'].'% 代还费率：'.$passagewayItem['item_also'].'%';
-                  $data['group'][$key]['des']=$passageway['passageway_desc'];
-                  $data['group'][$key]['icon']=$value['group_thumb'];
+                #1获取刷卡最低费率
+                $cashout=PassagewayItem::haswhere('passageway',['passageway_state'=>1,'passageway_also'=>1])->where(['item_group'=>$value['group_id']])->order('item_rate','asc')->find();
+                #2获取代还最低费率
+                $repay=PassagewayItem::haswhere('passageway',['passageway_state'=>1,'passageway_also'=>2])->where(['item_group'=>$value['group_id']])->order('item_also','asc')->find();
+                if($cashout['item_charges']==0){
+                  $cashout_item_charges='';
+                }else{
+                  $cashout_item_charges='+'.$cashout['item_charges']/100 .'元/笔';
                 }
+
+                if($repay['item_charges']==0){
+                  $repay_item_charges='';
+                }else{
+                  $repay_item_charges='+'.$repay['item_charges']/100 .'元/笔';
                 }
+                
+
+                $data['group'][$key]['rate']='刷卡费率低至:'.$cashout['item_rate'].'%'.$cashout_item_charges .' 代还费率低至:'.$repay['item_also'].'%'.$repay_item_charges;
+
+                $data['group'][$key]['des']=$value['group_des'];
+                // $passageway=Passageway::where(['passageway_state'=>1])->select();
+                // foreach ($passageway as $k => $val) {
+                //     #1获取刷卡最低费率
+                //     $cashout=PassagewayItem::haswhere('passageway',['passageway_state'=>1])->where(['item_group'=>$value['group_id'],'item_passageway'=>$val['passageway_id']])->order('item_rate','asc')->find();
+                //     //获取对应费率的通道信息
+                //     $passageway=Passageway::where(['passageway_state'=>1,'passageway_id'=>$passagewayItem['item_passageway']])->find();
+
+                //     #2获取代还最低费率
+
+                //     #如果不为空
+                //     if(!empty($passageway)){
+                //       // $data['group'][$key]['rate']='刷卡费率：'.$passagewayItem['item_rate'].'% 代还费率：'.$passagewayItem['item_also'].'%';
+                //        $data['group'][$key]['rate']='刷卡费率低至：'.$passagewayItem['item_rate'].'% 代还费率低至：'.$passagewayItem['item_also'].'% +'.$passagewayItem['item_charges']*100."/笔";
+                //       $data['group'][$key]['des']=$passageway['passageway_desc'];
+                //       $data['group'][$key]['icon']=$value['group_thumb'];
+                //     }
+                // }
             }
             $member=Members::where('member_id='.$this->param['uid'])->find();
             if(!$member)
@@ -644,10 +763,21 @@
               return ['code'=>314];
 
             $data['current_salt']=$current['group_salt'];
+
             return ['code'=>200, 'msg'=>'信息反馈成功~','data'=>$data];
       }
-
-
+      //计算会员升级级别间的差价
+      public function get_diff_price($uid,$up_level){
+           $member=Members::get($uid);
+           $member_group=MemberGroup::get(['group_id'=>$member['member_group_id']]);
+           $new_group=MemberGroup::get(['group_id'=>$up_level]);
+           if($member_group['group_salt']<$new_group['group_salt']){
+              $diff_price=$new_group['group_level_money']-$member_group['group_level_money'];
+           }else{
+              $diff_price=0;
+           }
+           return $diff_price;
+      }
       /**
    *  @version get_wallet method / Api 会员资产信息
    *  @author $bill$(755969423@qq.com)
@@ -689,22 +819,97 @@
       **/ 
       public function commission_list()
       {
+     
           if(!isset($this->param['type']))
              $this->error=314;
 
+           $pagesize='15';
+           if(!isset($this->param['page'])){
+              $limit='';
+           }else{
+            $limit=($this->param['page']-1)*$pagesize.",".$pagesize;
+           }
+          
           $this->param['type']=$this->param['type'] ? $this->param['type'] : 1;
            
-          $Commission=Commission::with('member')->where('commission_member_id='.$this->param['uid'].' and commission_type='.$this->param['type'])->order('commission_id desc')->select();
+          $Commission=Commission::with('member')->where('commission_member_id='.$this->param['uid'].' and commission_type='.$this->param['type'])->order('commission_id desc')->limit($limit)->select();
+      
+          $comm = array();
           foreach ($Commission as $key => $value) {
             $Commission[$key]['member_mobile']=Members::where(['member_id'=>$value['commission_childen_member']])->value('member_mobile');
-            if(!$value['commission_money']==0){
-              unset($Commission[$key]);
-
+            if($value['commission_money']<0.01){
+             
+              // unset($Commission[$key]);
+            }else{
+              $value["member_mobile"] = $Commission[$key]['member_mobile'];
+              $comm[] = $value;
+             
             }
             
           }
-
-           return ['code'=>200, 'msg'=>'获取成功~', 'data'=>$Commission];
+          // echo json_encode($comm);die;
+           return ['code'=>200, 'msg'=>'获取成功~', 'data'=>$comm];
       }
-      
+      # 升级 
+      public function make_up_order(){
+            try{
+                  $member = Members::get($this->param['uid']);
+                  $memberLebvelup = new MemberLebvelup($member);
+                  $order = $memberLebvelup->make_order($this->param);
+                  return ['code'=>200, 'msg'=>'订单生成成功', 'data'=>['order'=>$order]];
+            }catch(\think\Exception $error){
+                  return ['code'=>100, 'msg'=>'订单生成失败,'.$error->getMessage()];
+            }
+      }
+      # 升级 
+      public function member_up(){
+            try{
+                  $member = Members::get($this->param['uid']);
+                  $memberLebvelup = new MemberLebvelup($member);
+                  $order = $memberLebvelup->make_order($this->param);
+                  return ['code'=>200, 'msg'=>'获取成功', 'data'=>['order'=>$order]];
+            }catch(\think\Exception $error){
+                  return ['code'=>100, 'msg'=>'升级失败,'.$error->getMessage()];
+            }
+      }
+      #激活码升级
+      // activationNo  激活码序列号
+      // activationPwd  激活码密码
+      public function activationUpdate(){
+        $member=Members::get($this->param['uid']);
+        $code=db('activation_code')->where(['activation_code_key'=>$this->param['activationNo'],'activation_code_pwd'=>$this->param['activationPwd']])->find();
+        if(!$code)
+          return ['code'=>603];
+        if($code['activation_states']==2)
+          return ['code'=>606];
+        #取出当前用户等级
+        $current_group=db('member_group')->where('group_id',$member->member_group_id)->find();
+        #若当前用户等级大于该激活码的目标等级，则返回提示
+        if($current_group['group_salt']>=$code['activation_code_level'])
+          return ['code'=>604];
+        $target_group=db('member_group')->where('group_salt',$code['activation_code_level'])->value('group_id');
+        $arr=[
+          'upgrade_member_id'=>$member->member_id,
+          'upgrade_group_id'=>$target_group,
+          'upgrade_type'=>'激活码',
+          'upgrade_bak'=>$code['activation_code_id'],
+          'upgrade_state'=>1,
+          'upgrade_before_group'=>$current_group['group_id'],
+          'upgrade_no'=>make_order(),
+          'upgrade_money'=>0,
+          'upgrade_commission'=>0,
+          'upgrade_adminster_id'=>0,
+        ];
+        Db::startTrans();   
+        $member=Members::where(['member_id'=>$arr['upgrade_member_id']])->update(['member_group_id'=>$arr['upgrade_group_id']]);
+        $Upgrade = Upgrade::insert($arr);
+        $activation_code=db('activation_code')->where(['activation_code_key'=>$this->param['activationNo'],'activation_code_pwd'=>$this->param['activationPwd']])->update(['activation_states'=>2]);
+        if($member && $Upgrade && $activation_code){
+          Db::commit();
+          return ['code'=>200,'msg'=>'会员升级成功！'];
+        }else{
+          Db::rollback();  
+          return ['code'=>605];  
+        }
+      }
  }

@@ -45,25 +45,35 @@ input.labelauty + label { font: 12px "Microsoft Yahei";}
 				<input type="text" class="form-control group_name" name="group_name" placeholder="请填写用户组名称" value="{{ $group->group_name }}">
 			</div>
 		</div>
+
+		<div class="row form-group">
+		 <label for="" class="col-sm-3 text-right"><b>用户组图标:</b></label>
+		 <div id="" class="col-sm-6">
+			 <div id='uploaderExample3' class="uploader">
+			 	 <div class="uploader-message text-center">
+			    	 	 <div class="content"></div>
+			    		 <button type="button" class="close">×</button>
+			  	 </div>
+			  	 <div class="uploader-files file-list file-list-grid"></div>
+			  	 <img name="group_thumb" src="{{$group->group_thumb}}" alt="">
+			 	 <div>
+			 	 	 <hr class="divider">
+			 	 	 <div class="uploader-status pull-right text-muted"></div>
+			 	 	 <button type="button" class="btn btn-link uploader-btn-browse"><i class="icon icon-plus"></i> 选择文件</button>
+			 	 	 <button type="button" class="btn btn-link uploader-btn-start"><i class="icon icon-cloud-upload"></i> 开始上传</button>
+			 	 </div>
+			 </div>
+			 <input type="hidden" class="form-control " name="group_thumb" value="{{$group->group_thumb}}">
+		 </div>		
+	 </div>
+
+
 		<div class="row form-group">
 			<label for="group_name" class="col-sm-2 text-right"><b>组 级 别:</b></label>
 			<div id="group_salt" class="col-sm-6">
 				<input type="text" class="form-control group_salt" name="group_salt" placeholder="请填写用户组名称" value="{{ $group->group_salt }}">
 			</div>
 		</div>
-
-		<div class="row">
-			<label for="group_type" class="col-sm-2 text-right"><b>升级方式:</b></label>
-			<div id="group_name" class="col-sm-6">
-				<select class="form-control" name="group_level_type">
-				  	<option value="-1" {{ $group->group_level_type=='-1' ? 'selected' : '' }}>不限</option>
-				  	<option value="1" {{ $group->group_level_type=='3' ? 'selected' : '' }}>推荐人</option>
-				  	<option value="2" {{ $group->group_level_type=='3' ? 'selected' : '' }}>刷卡量</option>
-				  	<option value="3" {{ $group->group_level_type=='3' ? 'selected' : '' }}>付费升级</option>
-				</select>
-			</div>
-		</div>
-
 		<div class="row form-group">
 			<label for="group_name" class="col-sm-2 text-right"><b>升级条件-推荐人数量:</b></label>
 			<div id="group_level_value" class="col-sm-6">
@@ -82,13 +92,69 @@ input.labelauty + label { font: 12px "Microsoft Yahei";}
 				<input type="text" class="form-control group_level_value" name="group_level_money" placeholder="" value="{{ $group->group_level_money }}">
 			</div>
 		</div>
+		<div class="row">
+			<label for="group_type" class="col-sm-2 text-right"><b>是否能推荐升级:</b></label>
+			<div id="group_name" class="col-sm-6">
+				<select class="form-control" name="group_level_type">
+				  	<!-- <option value="-1" {{ $group->group_level_type=='-1' ? 'selected' : '' }}>不限</option> -->
+				  	<option value="0" {{ $group->group_level_type=='0' ? 'selected' : '' }}>否</option>
+				  	<option value="1" {{ $group->group_level_type=='1' ? 'selected' : '' }}>是</option>
+				  	<!-- <option value="2" {{ $group->group_level_type=='3' ? 'selected' : '' }}>刷卡量</option>
+				  	<option value="3" {{ $group->group_level_type=='3' ? 'selected' : '' }}>付费升级</option>-->
+				</select>
+			</div>
+		</div>
+		<br/>
+		<div class="row">
+			<label for="group_salt" class="col-sm-2 text-right"><b>是否能分佣</b></label>
+			<div id="group_salt" class="col-sm-6">
+			 <select name="group_cent" class="group_name form-control group_visible">
+				<option value="1" @if($group->group_cent == 1) selected @endif>是</option>
+				<option value="0" @if($group->group_cent == 0) selected @endif>否</option>
+			</select>
+			</div>
+		</div>
+		<br/>
+		<div class="row">
+			<label for="group_salt" class="col-sm-2 text-right"><b>是否能分润</b></label>
+			<div id="group_salt" class="col-sm-6">
+			 <select name="group_run" class="group_name form-control group_visible">
+				<option value="1" @if($group->group_run == 1) selected @endif>是</option>
+				<option value="0" @if($group->group_run == 0) selected @endif>否</option>
+			</select>
+			</div>
+		</div>
+		<br/>
+		<div class="row form-group">
+			<label for="group_name" class="col-sm-2 text-right"><b>直接推荐人分佣金额:</b></label>
+			<div id="group_level_value" class="col-sm-6">
+				<input type="text" class="form-control group_level_value" name="group_direct_cent" placeholder="" value="{{ $group->group_direct_cent }}">
+			</div>
+		</div>
+		<div class="row form-group">
+			<label for="group_name" class="col-sm-2 text-right"><b>二级推荐人分佣金额:</b></label>
+			<div id="group_level_value" class="col-sm-6">
+				<input type="text" class="form-control group_level_value" name="group_second_level_cent" placeholder="" value="{{ $group->group_second_level_cent }}">
+			</div>
+		</div>
+		<div class="row form-group">
+			<label for="group_name" class="col-sm-2 text-right"><b>三级推荐人分佣金额:</b></label>
+			<div id="group_level_value" class="col-sm-6">
+				<input type="text" class="form-control group_level_value" name="group_three_cent" placeholder="" value="{{ $group->group_three_cent }}">
+			</div>
+		</div>
+		<div class="row form-group">
+	        <label for="group_des" class="col-sm-2 text-right"><b>描述:</b></label>
+	        <div class="col-sm-6" id="page_desc">
+	           <textarea name="group_des" cols="30" class="form-control" rows="7">{{ $group->group_des }}</textarea>
+	        </div>
+	    </div>
 		<h5></h5>
 
 
 	</form>
 	<h2></h2>
 </div>
-
 <!--dialog Button-->
 <div class="modal-footer animated fadeInLeft">
     <button type="button" class="btn" data-dismiss="modal">关闭</button>
@@ -106,4 +172,17 @@ $(".save").click(function(){
 $(function(){
 	$(':input').labelauty();
 });
+
+//上传文件设置
+ $('#uploaderExample3').uploader({
+     url: "{{url('/index/Tool/upload_one')}}",
+	 file_data_name:'avatar',
+	 filters:{ max_file_size: '10mb',},
+	 limitFilesCount:1,
+	 onFileUploaded(file, responseObject) {
+	    	 var attr=eval('('+responseObject.response+")");
+	    	 attr.code ? $("input[name=group_thumb]").val(attr.url) : bootbox.alert({ message: attr.msg, size: 'small' });
+	    	 attr.code ? $("img[name=group_thumb]").attr('src',attr.url) : bootbox.alert({ message: attr.msg, size: 'small' });
+	 }
+ });
 </script>

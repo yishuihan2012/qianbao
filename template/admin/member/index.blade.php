@@ -1,17 +1,33 @@
 @extends('admin/layout/layout_main')
 @section('title','会员列表管理~')  
 @section('wrapper')
+ <style>
+  .content td{vertical-align: middle;}
+ </style>
+ <header>
+    <h3><i class="icon-list-ul"></i> 用户总人数 <small>共 <strong class="text-danger">{{$count}}</strong> 人</small>
+      <i class="icon-list-ul"></i> 未实名总人数 <small>共 <strong class="text-danger">{{$wei_count}}</strong> 人</small>
+      <i class="icon-list-ul"></i> 已实名总人数 <small>共 <strong class="text-danger">{{$yi_count}}</strong> 人</small>
+    </h3>
+     <h3>
+    @foreach($group_user as $key => $val)
+      <i class="icon-list-ul"></i> {{$val['group_name']}} <small>共 <strong class="text-danger">{{$val['count']}}</strong> 人</small>
+    @endforeach
+     </h3>
+  </header>
 <blockquote>
+   
 	<form action="" method="post">
+    <div class="input-group" style="width: 150px;float: left;margin-right: 10px;">
+    <span class="input-group-addon">用户名</span>
+    <input type="text" class="form-control" name="member_nick" value="{{$r['member_nick']}}" placeholder="用户名">
+  </div>
   <div class="input-group" style="width: 180px;float: left;margin-right: 10px;">
     <span class="input-group-addon">手机号</span>
     <input type="text" class="form-control" name="member_mobile" value="{{$r['member_mobile']}}" placeholder="手机号">
   </div>
-  <div class="input-group" style="width: 180px;float: left;margin-right: 10px;">
-    <span class="input-group-addon">昵称</span>
-    <input type="text" class="form-control" name="member_nick" value="{{$r['member_nick']}}" placeholder="昵称">
-  </div>
-  <div class="input-group" style="width: 180px;float: left;margin-right: 10px;">
+  
+  <div class="input-group" style="width: 240px;float: left;margin-right: 10px;">
     <span class="input-group-addon">身份号</span>
     <input type="text" class="form-control" name="cert_member_idcard" value="{{$r['cert_member_idcard']}}" placeholder="身份号">
   </div>
@@ -35,7 +51,7 @@
   </div>
 
 <div class="input-group" style="width: 200px;float: left; margin-right: 10px;">
-    <input type="text" class="form-control date-picker" id="dateTimeRange" placeholder="注册时间查询" />
+    <input type="text" class="form-control date-picker" id="dateTimeRange" placeholder="注册时间" />
     <input type="hidden" name="beginTime" id="beginTime" value="" />
     <input type="hidden" name="endTime" id="endTime" value="" />
     <z class='clearTime'>X</z>
@@ -56,36 +72,48 @@
           <th>用户头像</th>
           <th>是否实名</th>
           <th>会员等级</th>
-          <th>注册时间</th>
           <th>登录状态</th>
+          <th>注册时间</th>
           <th>操作</th>
+          
       </tr>
   </thead>
     <tbody>
     @foreach($member_list as $val)
-      <tr>
+      <tr class="content">
           <td>{{$val->member_id}}</td>
           <td>{{$val->member_nick}}</td>
           <td>{{$val->member_mobile}}</td>
-          <td><img src="{{$val->member_image}}" data-toggle="lightbox"  class="img-circle" style="max-width: 50px;"></td>
-          <td>{{state_preg($val->member_cert,1,'实名')}}</td>
+          <td><img src="{{$val->member_image}}" data-toggle="lightbox"  class="img-circle" style="max-width: 40px;"></td>
+          <td>@if($val->member_cert == 2) 审核未通过 @else {{state_preg($val->member_cert,1,'实名')}} @endif</td>
           <td>{{$val->group_name}}</td>
+          <td>{{$val->login_state==1 ? '正常' : '封停'}}</td>
           <td>{{$val->member_creat_time}}</td>
-          <td>@if($val->login_state==1)正常@else封停@endif
-                </td>
           <td>
-            <div class="btn-group">
-            <button class="btn btn-sm" data-toggle="modal" data-remote="{{url('/index/member/info/id/'.$val->member_id)}}"  type="button">查看详情</button>
-                <button class="btn btn-sm" data-toggle="modal" data-remote="{{url('/index/member/upgrade/id/'.$val->member_id)}}" type="button">升级会员</button>
-        </div>
+<!--                      <button type="button" data-toggle="modal" data-size="lg" data-remote="{{url('/index/member/info/id/'.$val->member_id)}}" class="btn btn-sm">查看详情</button>
+ -->                <div class="btn-group">
+                     <button type="button" data-toggle="modal" data-size="lg" data-remote="{{url('/index/member/info/id/'.$val->member_id)}}" class="btn btn-sm">查看详情</button>
+                @if(!isset($admin_group_salt) || $admin_group_salt>$val->group_salt)
+                     <div class="btn-group">
+                           <button type="button" class="btn btn-sm dropdown-toggle" data-toggle="dropdown"><span class="caret"></span></button>
+                           <ul class="dropdown-menu" role="menu">
+                                <li><a data-toggle="modal" data-remote="{{url('/index/member/upgrade/id/'.$val->member_id.'/member_group_id/'.$val->member_group_id)}}" href="#">升级会员</a></li>
+                 @if($admin['adminster_group_id']!=5)
+                                <li><a data-remote="{{url('/index/member/commiss',['memberId'=>$val->member_id])}}" href="{{url('/index/member/commiss',['memberId'=>$val->member_id])}}">分佣分润</a></li>
+                               <!--  <li><a data-size='lg' data-toggle="modal" data-remote="{{url('/index/member/child',['memberId'=>$val->member_id])}}" href="#">下级信息</a></li> -->
+                     @endif
+                           </ul>
+                     </div>
+                  @endif
+                </div>
           </td>
       </tr>
-  @endforeach
+      @endforeach
     </tbody>
     <tfoot>
       <tr>
           <td colspan="7">{!! $member_list->render() !!}</td>
-          <td colspan="7" style="line-height: 55px">当前共<em style="font-size: 20px;color:red">{{$count}}</em>条记录</td>
+          
       </tr>
     </tfoot>
 </table>
@@ -119,27 +147,15 @@
 <!-- {!! $member_list->render() !!}<em>当前共{{$count}}条</em> -->
  <script type="text/javascript">
  $(document).ready(function(){
+  var start="{{(isset($beginTime))?$beginTime : ''}}";
+  var end="{{(isset($endTime))?$endTime : ''}}";
+
       $('table.datatable').datatable({sortable: true});
      	 $('.menu .nav .active').removeClass('active');
     	 $('.menu .nav li.member').addClass('active');
     	 $('.menu .nav li.member-manager').addClass('show');
 
-    	 $(".remove").click(function(){
-    	 	 var url=$(this).attr('data-url');
-		 bootbox.confirm({
-		    title: "删除文章确认",
-		    message: "确定删除这篇文章吗? 删除后不可恢复!",
-		    buttons: {
-		        cancel: {label: '<i class="fa fa-times"></i> 点错了'},
-		        confirm: {label: '<i class="fa fa-check"></i> 确定'}
-		    },
-		    callback: function (result) {
-		    	 if(result)
-		    	 	window.location.href=url;
-		    }
-		 });
-    	 })
-
+$('#dateTimeRange span').html();
 $('#dateTimeRange').daterangepicker({
         applyClass : 'btn-sm btn-success',
         cancelClass : 'btn-sm btn-default',
@@ -176,7 +192,14 @@ $('#dateTimeRange').daterangepicker({
     }, function(start, end, label) { // 格式化日期显示框
         $('#beginTime').val(start.format('YYYY-MM-DD'));
         $('#endTime').val(end.format('YYYY-MM-DD'));
+        $('#dateTimeRange').val(start+'-'+end);
     });
+  setTimeout(function(){
+        $('#beginTime').val(start.format('YYYY-MM-DD'));
+        $('#endTime').val(end.format('YYYY-MM-DD'));
+        $('#dateTimeRange').val();
+        console.log(start);
+      },100);
 begin_end_time_clear();
 $('.clearTime').click(begin_end_time_clear);
   //清除时间

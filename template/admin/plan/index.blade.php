@@ -8,18 +8,10 @@
   	<div class="panel-body">
   		<form action="" name="myform" class="form-group" method="get">
 
-		</form>
-
-  	</div>
-</div>
-<div class="list">
-  <header>
-    <h3><i class="icon-list-ul"></i> 订单列表 <small>共 <strong class="text-danger">{{$count}}</strong> 条</small></h3>
-  </header>
    <form action="" method="post">
-    <div class="input-group" style="width: 140px;float: left;margin-right: 20px;">
-    <span class="input-group-addon">名称</span>
-    <input type="text" class="form-control" name="member_nick" value="{{$r['member_nick']}}" placeholder="名称" >
+    <div class="input-group" style="width: 150px;float: left;margin-right: 20px;">
+    <span class="input-group-addon">还款会员</span>
+    <input type="text" class="form-control" name="member_nick" value="{{$r['member_nick']}}" placeholder="还款会员" >
   </div>
 
   <div class="input-group" style="width: 200px;float: left;margin-right: 20px;">
@@ -28,14 +20,16 @@
   </div>
   <div class="input-group" style="width: 240px;float: left;margin-right: 10px;">
     <span class="input-group-addon">身份号</span>
-    <input type="text" class="form-control" name="cert_member_idcard" value="{{$r['cert_member_idcard']}}" placeholder="身份号">
+    <input type="text" class="form-control" name="generation_card" value="{{$r['generation_card']}}" placeholder="身份号">
   </div>
   <div class="input-group" style="width: 150px;float: left;margin-right: 10px;">
-     <span class="input-group-addon">实名状态</span>
-  <select name="member_cert" class="form-control">
+     <span class="input-group-addon">计划状态</span>
+  <select name="generation_state" class="form-control">
     <option value="" >全部</option>
-    <option value="1" @if($r['member_cert']==1) selected @endif>已认证</option>
-    <option value="2" @if($r['member_cert']==2) selected @endif>未认证</option>
+    <option value="2" @if($r['generation_state']==2) selected @endif>还款中</option>
+    <option value="3" @if($r['generation_state']==3) selected @endif>还款结束</option>
+    <option value="-1" @if($r['generation_state']==-1) selected @endif>还款失败</option>
+    <option value="4" @if($r['generation_state']==4) selected @endif>取消</option>
   </select>
  
   </div>
@@ -43,34 +37,50 @@
      <span class="input-group-addon">会员级别</span>
   <select name="member_group_id" class="form-control">
       <option value="" @if ($r['member_group_id']=='') selected="" @endif>全部</option>
-    @foreach($member_group as $v)
-      <option value="{{$v['group_id']}}" @if ($r['member_group_id']==$v['group_id']) selected @endif>{{$v['group_name']}}</option>
-    @endforeach
+      @foreach($member_group as $v)
+        <option value="{{$v['group_id']}}" @if ($r['member_group_id']==$v['group_id']) selected @endif>{{$v['group_name']}}</option>
+      @endforeach
   </select>
   </div>
 
 <div class="input-group" style="width: 200px;float: left; margin-right: 10px;">
-    <input type="text" class="form-control date-picker" id="dateTimeRange" placeholder="注册时间查询" />
+    <input type="text" class="form-control date-picker" id="dateTimeRange" placeholder="还款创建时间" />
     <input type="hidden" name="beginTime" id="beginTime" value="" />
     <input type="hidden" name="endTime" id="endTime" value="" />
     <z class='clearTime'>X</z>
 </div>
-  <button class="btn btn-primary" type="submit">搜索</button>
+    <button class="btn btn-primary" type="submit">搜索</button>
 </form>
+
+
+		</form>
+  	</div>
+</div>
+<div class="list">
+  <header>
+    <h3>
+        <i class="icon-list-ul"></i> 订单列表 <small>共 <strong class="text-danger">{{$count}}</strong> 条</small>
+        <i class="icon icon-yen"></i> 还款总金额 <small>共 <strong class="text-danger">{{$sum}}</strong> 元</small>
+        <i class="icon icon-yen"></i> 剩余还款总金额 <small>共 <strong class="text-danger">{{$surplussum}}</strong> 元</small>
+    </h3>
+  </header>
+
 <table class="table table-striped table-hover">
   	<thead>
 	    <tr>
 	      	<th>还款会员</th>
 	      	<th>还款会员手机号</th>
-	      	<th>代还会员</th>
-	      	<th>代还会员手机号</th>
-	      	<th>需还款信用卡</th>
+	      	<th>计划代号</th>
+	      	<th>需还信用卡</th>
 	      	<th>需还款总额</th>
 	      	<th>还款次数</th>
 	      	<th>已还款总额</th>
 	      	<th>剩余总额</th>
 	      	<th>手续费</th>
-	      	<th>计划状态</th>
+	      	<th>开始还款日期</th>
+	      	<th>最后还款日期</th>
+          <th>计划状态</th>
+          <th>还款失败原因</th>
 	      	<th>操作</th>
 	      
 	    </tr>
@@ -83,19 +93,20 @@
   		@foreach($list as $k => $v)
 	    <tr>
 	    	
-	      	<td>{{$v['o_member_nick']}}</td>
-	      	<td>{{$v['o_member_mobile']}}</td>
 	      	<td>{{$v['member_nick']}}</td>
 	      	<td>{{$v['member_mobile']}}</td>
-	      	<td>{{$v['generation_card']}}</td>
+	      	<td>{{$v['generation_no']}}</td>
+	      	<td>{{$v['card_bankno']}}</td>
 	      	<td>{{$v['generation_total']}}</td>
 	      	<td>{{$v['generation_count']}}</td>
 	      	<td>{{$v['generation_has']}}</td>
 	      	<td>{{$v['generation_left']}}</td>
 	      	<td>{{$v['generation_pound']}}</td>
-	      	<td>@if($v['generation_state']==2) 还款中 @elseif($v['generation_state']==3)还款结束 @elseif($v['generation_state']==-1)还款失败 @endif</td>
-	      	
-	      	<td><button class="btn btn-sm" data-toggle="modal" data-remote="{{url('/index/Plan/info/id/'.$v['order_id'])}}" type="button">查看详情</button></td>
+	      	<td>{{$v['generation_start']}}</td>
+          <td>{{$v['generation_end']}}</td>
+	      	<td>@if($v['generation_state']==2) 还款中 @elseif($v['generation_state']==3)还款结束 @elseif($v['generation_state']==-1)还款失败 @else 取消 @endif</td>
+	      	<td>{{$v['generation_desc']}}</td>
+	      	<td><a class="btn btn-sm"  href="{{url('/index/Plan/info/id/'.$v['generation_id'])}}" >查看详情</a></td>
 	    </tr>
 	    	@endforeach
   	</tfoot>

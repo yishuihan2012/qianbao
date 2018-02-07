@@ -142,6 +142,7 @@
         
            $info=System::where("system_key='min_withdrawals'")->find();
            $data['minWithdraw']='注：最低提现金额为'.$info['system_val'].'元';
+           $data['min_money']=$info['system_val'];
            $info=System::where("system_key='max_withdrawals'")->find();
            $data['max_withdrawals']=$info['system_val'];
            $service=CustomerService::order('service_id desc')->select();
@@ -153,7 +154,7 @@
            $data['CSTel']=$tel['service_contact'];
 
            #支付平台信息
-           $Payplatform=Payplatform::where('payplatform_state=1')->field('payplatform_id, payplatform_name, payplatform_icon')->select();
+           $Payplatform=Payplatform::where('payplatform_state=1')->field('payplatform_id, payplatform_name, payplatform_icon,payplatform_state')->select();
            $data['payPlatforms']=$Payplatform;
            return ['code'=>200, 'msg'=>'获取信息成功', 'data'=>$data];
       }
@@ -173,6 +174,8 @@
         foreach ($announcement as $key => $value) {
           $data[$key]=$value['announcement_title'];
         }
+        if(empty($data))
+          $data=[];
 
         return ['code'=>200, 'msg'=>'获取公告成功~', 'data'=>$data];
         

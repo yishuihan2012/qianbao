@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  取现接口 套现 
+ * @version  取现接口 快捷支付 
  * @authors Bill(755969423@qq.com)
  * @date    2017-09-29 16:03:05
  * @version $Bill$
@@ -10,6 +10,7 @@ namespace app\index\controller;
 use think\Loader;
 use think\Config;
 use app\index\model\Member;
+use app\index\model\System;
 use app\index\model\MemberCert;
 use app\index\model\MemberCashcard;
 use app\index\model\Passageway;
@@ -23,6 +24,7 @@ use app\index\model\CallbackLog as CallbackLogs;
 
 use app\api\controller\Membernets; //入网
 use app\index\model\MemberNet;//入网模型
+use app\index\model\SmsCode;
 
 class CashOut
 {
@@ -79,12 +81,12 @@ class CashOut
            }
       }  
 	 /**
-	 * @version  米刷 套现 
+	 * @version  米刷 快捷支付 
 	 * @authors bill(755969423@qq.com)
 	 * @date    2017-12-21 16:03:05
 	 * @version $Bill$
 	 */
-	 public function mishua($tradeNo,$price,$description='米刷测试')
+	 public function mishua($tradeNo,$price,$description='银联快捷支付')
 	 {
 	      $arr = array(
 	            'versionNo'   => '1', //版本固定为1
@@ -93,15 +95,15 @@ class CashOut
 	            'description' 	=> $description, //交易描述
 	            'orderDate'   => date('YmdHis', time()), //订单日期
 	            'tradeNo'     	=> $tradeNo, //商户平台内部流水号，请确保唯一 TOdo
-	            'notifyUrl'   	=> $this->passway_info->cashout->cashout_callback,/*HOST . "/index.php?s=/Api/Quckpayment/qucikPayCallBack"*/ //异步通知URL
-	            'callbackUrl' 	=>$_SERVER['HTTP_HOST'].'/api/Userurl/calllback_success',/*HOST . "/index.php?s=/Api/Quckpayment/turnurl"*/ //页面回跳地址
+	            'notifyUrl'   	=> System::getName('system_url').$this->passway_info->cashout->cashout_callback, //异步通知URL
+	            'callbackUrl' 	=> System::getName('system_url').'/api/Userurl/calllback_success',/*HOST . "/index.php?s=/Api/Quckpayment/turnurl"*/ //页面回跳地址
 	            'payCardNo' => $this->card_info->card_bankno, //信用卡卡号
 	            'accName'    => $this->card_info->card_name, //持卡人姓名 必填
 	            'accIdCard'   => $this->card_info->card_idcard, //卡人身份证  必填
 	            'bankName'   => $this->member_card->card_bankname, //  结算卡开户行  必填  结算卡开户行
 	            'cardNo'      	 => $this->member_card->card_bankno, //算卡卡号 必填  结算卡卡号
 	            'downPayFee'  	=> $this->also->item_rate*10, //结算费率  必填  接入机构给商户的费率，D0直清按照此费率结算，千分之X， 精确到0.01
-	            'downDrawFee' => '0', // 代付费 选填  每笔扣商户额外代付费。不填为不扣。
+	            'downDrawFee' => $this->also->item_charges/100//$this->passway_info->cashout->cashout_charges, // 代付费 选填  每笔扣商户额外代付费。不填为不扣。
 	      );
 	      //请求体参数加密 AES对称加密 然后连接加密字符串转MD5转为大写
 	      $payload =AESencode(json_encode($arr),$this->passway_info->passageway_pwd_key);
@@ -123,28 +125,33 @@ class CashOut
 	      curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
 	      $res = curl_exec($ch);
 	      $result = json_decode($res, true);
+	      // var_dump($result);die;
 	      if ($result['code'] == 0) {
 	      	 $datas=AESdecrypt($result['payload'],$this->passway_info->passageway_pwd_key);
 	            $datas = trim($datas);
 	            $datas = substr($datas, 0, strpos($datas, '}') + 1);
 	            $resul = json_decode($datas, true);
-	            //写入套现订单
+	            //写入快捷支付订单
 	            $order_result=$this->writeorder($tradeNo, $price, $price*($this->also->item_rate/100) ,$description,$resul['transNo']);
 	      	 if(!$order_result)
 	      	 	 return ['code'=>327];
 	            return ['code'=>200,'msg'=>'订单获取成功~', 'data'=>['url'=>$resul['tranStr'],'type'=>1, ]];
 	      }else{
+	      	 if(isset($result['message']))
 	      	 return ['msg'=>$result['message'].',下单失败~', 'code'=>400];
+
+	      	 return ['msg'=>'通道维护中,下单失败~', 'code'=>400];
+
 	      }
 	 }
 
 	 /**
-	 * @version  快捷支付 0.23费率套现 
+	 * @version  快捷支付 0.23费率快捷支付 
 	 * @authors bill(755969423@qq.com)
 	 * @date    2017-12-23 16:25:05
 	 * @version $Bill$
 	 */
-	 public function quickPay023($tradeNo,$price,$description='快捷支付 0.23费率套现')
+	 public function quickPay023($tradeNo,$price,$description='快捷支付 0.23费率快捷支付')
 	 {
 	 	 #检测通道是否需要入网
 	 	 if($this->passway_info->passageway_status=="1")
@@ -179,20 +186,20 @@ class CashOut
 	            'bankCode'	=> '123',//银行卡对应的银行编码
 	            'bankName'	=> $this->card_info->card_bankname,//银行卡对应的银行名称。采用URLEncode编码
 	            'settleType'	=> 3,//固定值2-T+1结算
-	            'notifyUrl'		=> $this->passway_info->cashout->cashout_callback,//支付完成后将支付结果回调至该链接
-	            'returnUrl'		=> '123',//支付完成后前端跳转地址
+	            'notifyUrl'		=> System::getName('system_url').$this->passway_info->cashout->cashout_callback,//支付完成后将支付结果回调至该链接
+	            'returnUrl'		=> System::getName('system_url').'/api/Userurl/calllback_success',//支付完成后前端跳转地址
 	            //'signature'	=> ,//对签名数据进行MD5加密的结果。参见3.1
 	      );
  	      $param=get_signature($arr,$this->passway_info->passageway_key);
            $result=curl_post($this->passway_info->cashout->cashout_url,'post',$param,'Content-Type: application/x-www-form-urlencoded; charset=gbk');
            $data=json_decode(mb_convert_encoding($result, 'utf-8', 'GBK,UTF-8,ASCII'),true);
  		 if ($data['respCode'] == 00) {
-	           $order_result=$this->writeorder($tradeNo, $price, $price*($this->also->item_rate/100) ,$description,$data['traceno']);//写入套现订单
+	           $order_result=$this->writeorder($tradeNo, $price, $price*($this->also->item_rate/100) ,$description,$data['traceno']);//写入快捷支付订单
 	      	 if(!$order_result)
 	      	 	 return ['code'=>327];
 	           return ['code'=>200,'msg'=>'订单获取成功~' , 'data'=>['url'=>$data['barCode'],'type'=>2]];
 	      }else{
-	      	 return ['code'=>400, 'msg'=>$data['message'].',套现失败~'];
+	      	 return ['code'=>400, 'msg'=>$data['message'].',快捷支付失败~'];
 	      }
 	 }
 
@@ -214,8 +221,10 @@ class CashOut
 	 * @date    2017-12-23 16:25:05
 	 * @version $Bill$
 	 */
-	 public function rongbangcash($tradeNo,$price,$description='荣邦快捷支付')
+	 public function rongbangcash($tradeNo,$price,$description='快捷支付')
 	 {
+	 	// 初始化类
+ 	 	 $membernetObject=new Membernets($this->member_infos->member_id, $this->passway_info->passageway_id);
 	 	 #检测通道是否需要入网
 	 	 if($this->passway_info->passageway_status=="1")
 	 	 {
@@ -225,24 +234,160 @@ class CashOut
 		 	 if(!$member_net || $member_net[$this->passway_info->passageway_no]=="")
 		 	 {
 		 	 	 $method=$this->passway_info->passageway_method;
-		 	 	 $membernetObject=new Membernets($this->member_infos->member_id, $this->passway_info->passageway_id);
-		 	 	 if(!$membernetObject->$method())
-		 	 	 	 return  ['code'=>462]; //入网失败
-		 	 }	 
+		 	 	 $res=$membernetObject->$method();
+		 	 	 if($res!==true)
+		 	 	 	 return  ['code'=>462,'msg'=>$res]; //入网失败
+		 	 }else{
+		 	 	// $userinfo=$member_net[$this->passway_info->passageway_no];
+		 	 }
 	 	 }
-	 	 #获取用户入网信息
-	 	 $member_net=MemberNet::where('net_member_id',$this->member_infos->member_id)->find();
-	 	 
+	 	 //快捷支付 调用开通快捷支付接口
+	 	 if($this->passway_info->passageway_mech==402512992){
+	 	 	$result=$membernetObject->rongbang_in();
+	 	 	if(is_string($result)){
+	 	 		return ['code'=>500,'msg'=>$result];
+	 	 	}
+		 	 //复用查询条件
+		 	 $pas_where=['member_credit_pas_pasid'=>$this->passway_info->passageway_id,'member_credit_pas_creditid'=>$this->card_info->card_id];
+		 	 #查询用户是否开通快捷支付
+		 	 $member_credit_pas=db('member_credit_pas')->where($pas_where)->find();
+		 	 //是否需要调用开通快捷支付变量
+		 	 $needToOpen=false;
+		 	 //从数据库检查是否开通
+		 	 if(!$member_credit_pas || !$member_credit_pas['member_credit_pas_info'] || $member_credit_pas['member_credit_pas_status']==0){
+		 	 	//通用数据
+	 	 		$data=[
+	 	 			'member_credit_pas_creditid'=>$this->card_info->card_id,
+	 	 			'member_credit_pas_pasid'=>$this->passway_info->passageway_id,
+	 	 		];
+		 	 	//如果有 treatycode 调用查询接口
+		 	 	if(isset($member_credit_pas['member_credit_pas_info']) && $member_credit_pas['member_credit_pas_info']!=1){
+			 	 	//调用接口检查是否开通
+			 	 	$result=$membernetObject->rongbang_check($member_credit_pas['member_credit_pas_info']);
+			 	 	if(is_array($result)){
+			 	 		//接口有数据，更新本地数据库 这个用户已经开通了快捷支付
+			 	 		$data['member_credit_pas_info']=$result['treatycode'];
+			 	 		$data['member_credit_pas_status']=1;
+			 	 		if($member_credit_pas){
+			 	 			db('member_credit_pas')->where($pas_where)->update($data);
+			 	 		}else{
+			 	 			db('member_credit_pas')->insert($data);
+			 	 		}
+			 	 	}else{
+					 	 $needToOpen=true;
+			 	 	}
+		 	 	}else{
+				 	 $needToOpen=true;
+		 	 	}
+		 	 	if($needToOpen){
+		 	 		//没有数据，调用开通快捷支付接口
+			 	 	$result=$membernetObject->rongbang_openpay($this->card_info->card_id);
+			 	 	if(is_string($result))
+			 	 		return  ['code'=>500,'msg'=>$result]; 
+		 	 		$data['member_credit_pas_info']=$result['treatycode'];
+		 	 		//将返回的数据，更新本地数据库
+		 	 		if($member_credit_pas){
+		 	 			db('member_credit_pas')->where($pas_where)->update($data);
+		 	 		}else{
+		 	 			db('member_credit_pas')->insert($data);
+		 	 		}
+	                $res= [
+		              	'code'=>200,
+		              	'msg'=>'荣邦开通快捷支付接口调用成功',
+	                ];
+		            //返回了html代码
+		            if($result['ishtml']==1){
+		            	$res['data']=[
+		            		'type'=>2,
+		            		'url'=>base64_decode($result['html']),
+		            	];
+		            }else{
+		              //返回我们自己建的html
+			            $res['data']=[
+	            			'type'=>1,
+	            			'url'=>request()->domain() . "/api/Userurl/passway_rongbang_openpay/treatycode/".$result['treatycode']."/smsseq/".$result['smsseq']."/memberId/" . $this->member_infos->member_id . "/passwayId/" . $this->passway_info->passageway_id,
+		            	];
+		            }
+		            return $res;
+		 	 	}
+		 	 }
+		 	 #封顶 调用银行签约接口
+	 	 }elseif($this->passway_info->passageway_mech==402573747){
+	 	 	#商户入驻
+	 	 	$isSign=$membernetObject->rongbang_signquery_card($this->card_info->card_id);
+	 	 	#未签约 或签约状态不是 成功
+	 	 	if(is_string($isSign) || $isSign['status']!=2){
+	 	 		$result=$membernetObject->rongbang_sign_card($this->card_info->card_id);
+	 	 		#签约接口成功返回html 是字符串
+	 	 		if(is_string($result)){
+	 	 			$res=[
+		              	'code'=>200,
+		              	'msg'=>'荣邦银行签约接口调用成功',
+		              	'data'=>[
+		            		'type'=>2,
+		            		'url'=>$result,
+		              	]
+	 	 			];
+	 	 		}else{
+	            	$res=[
+		              	'code'=>500,
+		              	'msg'=>$result['message'],
+	            	];
+	 	 		}
+	 	 		return $res;
+	 	 	}
+	 	 	$result=$membernetObject->rongbang_in();
+	 	 	if(is_string($result)){
+	 	 		return ['code'=>500,'msg'=>$result];
+	 	 	}
+	 	 }
+	 	 //开始调用支付接口
+	 	 $result=$membernetObject->rongbang_pay($this->card_info->card_id,$tradeNo,$price,$description);
+        // var_dump($result);die;
+	 	 if(is_array($result)){
+            $res= [
+              	'code'=>200,
+              	'data'=>'快捷支付订单调用成功',
+            ];
+	 	 	if($result['ishtml']==2){
+	 	 		if($result['sendmessage']===2){
+	 	 			//无需短信验证的情况 返回一个成功提示页
+	            	$res['data']=[
+	            		'type'=>1,
+	            		'url'=>request()->domain() . "/api/Userurl/passway_success",
+	            	];
+	 	 		}else{
+	 	 			//需要短信验证的情况 返
+	            	$res['data']=[
+	            		'type'=>1,
+	            		'url'=>request()->domain() . "/api/Userurl/passway_rongbang_pay/ordercode/".$result['ordercode']."/card_id/".$this->card_info->card_id."/memberId/" . $this->member_infos->member_id . "/passwayId/" . $this->passway_info->passageway_id,
+	            	];
+	 	 		}
+	 	 	}else{
+	            //返回网页
+            	$res['data']=[
+            		'type'=>2,
+            		'url'=>base64_decode($result['html']),
+            	];
+	 	 	}
+            //写入快捷支付订单
+            $order_result=$this->writeorder($tradeNo, $price, $price*($this->also->item_rate/100) ,$description,$result['ordercode']);
+	      	if(!$order_result)
+	      	 	return ['code'=>327,'data'=>'无此订单'];
+	        return $res;
+	 	 }else{
+	 	 	return ['code'=>501,'msg'=>$result,'data'=>$result];
+	 	 }
 	 }
 
 
-	 	 /**
-	 * @version 金易付套现 
-	 * @authors bill(755969423@qq.com)
+	 /**
+	 * @version 金易付取现 
+	 * @authors Mr.gao(928791694@qq.com)
 	 * @date    2017-12-23 16:25:05
 	 * @version $Bill$
 	 */
-	 public function jinyifu($tradeNo,$price,$description='金易付套现')
+	 public function jinyifu($tradeNo,$price,$description='金易付取现')
 	 {
 	 	 #检测通道是否需要入网
 	 	 if($this->passway_info->passageway_status=="1")
@@ -260,24 +405,49 @@ class CashOut
 		 	 	 	return ['code'=>462, 'msg'=>$member_net_result['msg']];
 		 	 }	 
 	 	 }
+	 	 $url=request()->domain() . "/api/Userurl/jinyifu/memberId/".$this->member_infos->member_id."/passagewayId/".$this->passway_info->passageway_id."/cardId/".$this->card_info->card_id."/price/".$price;
+	 	 return ['code'=>200,'msg'=>'订单获取成功~', 'data'=>['url'=>$url,'type'=>1, ]];
+
+
+
 	 	 // var_dump($this->passway_info->passageway_pwd_key);die;
 	 	 // return ['code'=>200,'msg'=>'订单获取成功~' , 'data'=>$this->passway_info];
+	 	
+	 }
+
+	  #金易付付款界面
+	 public function jinyifu_pay($param,$description='金易付取现'){
+
+	 	 #验证码验证规则 读取本手机号最后一条没有使用的验证码 并且在系统设置的有效时间内
+           $code_info=SmsCode::where(['sms_send'=>$param['phone'],'sms_log_state'=>1])->whereTime('sms_log_add_time', "-".System::getName('code_timeout').' minutes')->order('sms_log_id','desc')->find();
+           if(!$code_info || ($code_info['sms_log_content']!=$param['smsCode']))
+                 return ['code'=>404];
+           #改变验证码使用状态
+           $code_info->sms_log_state=2;
+           $result=$code_info->save();
+           #验证是否成功
+           if(!$result)
+                 return ['code'=>404];
+	 	 $member_net=MemberNet::where(['net_member_id'=>$param['memberId']])->find();
+	 	 $jinyifu=new \app\api\controller\Jinyifu($this->passway_info->passageway_pwd_key);
+	 	 $cvn2=$jinyifu->encrypt($this->card_info->card_Ident);
+	 	 $expDate=$jinyifu->encrypt($this->card_info->card_expireDate);
 		 $arr = array(
 	            'branchId'=>$this->passway_info->passageway_mech,// 机构号
 	            'jinepay_mid'=>$member_net[$this->passway_info->passageway_no], // 商户号
-	            'payamt'=>$price, //交易金额
+	            'payamt'=>$param['price'], //交易金额
 	            'clientType'=>'web',  //客户端类型
 	            'bizType'=>'4301',//业务类型
-	            'randomStr'=>$tradeNo,// 随机串
-	            'orderId'=>$tradeNo ,//商户订单号
-	            'notifyUrl'=>$this->passway_info->cashout->cashout_callback, //异步通知URL,  //后台异步通知地址
-	            'frontNotifyUrl'=>'123',
+	            'randomStr'=>make_order(),// 随机串
+	            'orderId'=>make_order() ,//商户订单号
+	            'notifyUrl'=>System::getName('system_url').$this->passway_info->cashout->cashout_callback, //异步通知URL,  //后台异步通知地址
+	            'frontNotifyUrl'=>System::getName('system_url').'/api/Userurl/calllback_success',
 	            'lpCertNo'=>$this->card_info->card_idcard, // 持卡人身份证号
 	            'accNo'=> $this->card_info->card_bankno, // 银行卡号
 	            'phoneNo'=>$this->card_info->card_phone, // 银行预留手机号
 	            'lpName'=>$this->card_info->card_name, //持卡人姓名
-	            'CVN2'=>jinyifu_encrypt($this->card_info->card_Ident,$this->passway_info->passageway_pwd_key,$this->passway_info->iv),
-	            'expDate'=>jinyifu_encrypt($this->card_info->card_expireDate,$this->passway_info->passageway_pwd_key,$this->passway_info->iv),
+	            'CVN2'=>$cvn2,
+	            'expDate'=>$expDate,
 	      );
  	        $arr=SortByASCII($arr);
 	        #2签名
@@ -292,22 +462,154 @@ class CashOut
 	        $urls='https://hydra.scjinepay.com/jk/QpayAction_getQpOrder?params='.urlencode($params);
 	        #请求
 	        $res=curl_post($urls);
+	        // $res=curl_post($urls, 'get', '', $type="Content-Type: application/json; charset=utf-8");
 
 	        $res=json_decode($res,true);
-	        
+	        	
 	        $result=base64_decode($res['params']);
-return ['code'=>200,'msg'=>'订单获取成功~11' , 'data'=>$result];
+			// return ['code'=>200,'msg'=>'订单获取成功~11' , 'data'=>$result];
 	        $data=json_decode($result,true);
-	        return ['code'=>200,'msg'=>'订单获取成功~11' , 'data'=>$data];
- 		 if ($data['respCode'] == 00) {
-	           $order_result=$this->writeorder($tradeNo, $price, $price*($this->also->item_rate/100) ,$description,$data['traceno']);//写入套现订单
+	        // return ['code'=>200,'msg'=>'订单获取成功~11' , 'data'=>$data];
+	        var_dump($data);die;
+ 		 if ($data['resCode'] == 00) {
+	           $order_result=$this->writeorder($tradeNo, $price, $price*($this->also->item_rate/100) ,$description,$data['traceno']);//写入快捷支付订单
 	      	 if(!$order_result)
 	      	 	 return ['code'=>327];
 	           return ['code'=>200,'msg'=>'订单获取成功~' , 'data'=>['url'=>$data['barCode'],'type'=>2]];
 	      }else{
-	      	 return ['code'=>400, 'msg'=>$data['message'].',套现失败~'];
+	      	 return ['code'=>400, 'msg'=>$data['resMsg'].',快捷支付失败~'];
 	      }
 	 }
+
+
+
+
+	  /**
+	 * @version H5有积分取现 
+	 * @authors Mr.gao(928791694@qq.com)
+	 * @date    2017-12-23 16:25:05
+	 * @version $Bill$
+	 */
+	 public function h5youjifen($tradeNo,$price,$description='H5youjifen取现')
+	 {
+	 	$item_rate=$this->also->item_rate/100;
+	 	$item_charges=$this->also->item_charges;
+	 	$url= System::getName('system_url').'/api/Userurl/H5youjifen/tradeNo/'.$tradeNo;
+	 	 $arr= $price."|".$this->card_info->card_name."|".$this->card_info->card_idcard."|".$this->member_card->card_bankno."|".$this->card_info->card_phone."|".$this->card_info->card_bankname."|".$this->card_info->card_bankno."|".$this->card_info->card_phone."|".$this->card_info->card_bankname."| |".$url."|".$tradeNo."|".$item_rate."|".$item_charges;
+	 	 // echo $arr;die;
+	 	 $params['data']=H5encrypt($arr,$this->passway_info->passageway_key);
+	 	 $params['channel']=$this->passway_info->passageway_mech;
+
+	 	 $url="http://kjnq.jct8.com/quickpay/Integral";
+
+	 	 $ch = curl_init();
+		curl_setopt($ch, CURLOPT_URL, $url);
+		curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+		//设置为POST
+		curl_setopt($ch, CURLOPT_POST, 1);
+		//把POST的变量加上
+		curl_setopt($ch, CURLOPT_POSTFIELDS, $params);
+		$output = curl_exec($ch);
+		// echo $output;die;
+		curl_close($ch);
+		preg_match_all ("/<p class=\"result\">(.*)<\/p>/", $output, $error);
+		if(empty($error[1][0])){
+			$res=[
+            		'type'=>2,
+            		'url'=>'<!DOCTYPE html><html lang="zh-cn"><head>'.$output,
+            	];
+            $order_result=$this->writeorder($tradeNo, $price, $price*($this->also->item_rate/100) ,$description,$tradeNo);//写入快捷支付订单
+            if(!$order_result)
+	      	 	 return ['code'=>327];
+	           return ['code'=>200,'msg'=>'订单获取成功~' , 'data'=>$res];
+		}else{
+			return ['code'=>400, 'msg'=>$error[1][0].',快捷支付失败~'];
+		}	 	
+	 }
+
+
+
+	  /**
+	 * @version H5无积分通道2 
+	 * @authors Mr.gao(928791694@qq.com)
+	 * @date    2017-12-23 16:25:05
+	 * @version $Bill$
+	 */
+	 public function h5wujifen2($tradeNo,$price,$description='H5无积分通道2取现')
+	 {
+	 	$item_rate=$this->also->item_rate/100;
+	 	$item_charges=$this->also->item_charges;
+	 	$url= System::getName('system_url').'/api/Userurl/H5youjifen/tradeNo/'.$tradeNo;
+	 	 $arr= $price."|".$this->card_info->card_name."|".$this->card_info->card_idcard."|".$this->member_card->card_bankno."|".$this->card_info->card_phone."|".$this->card_info->card_bankno."|".$this->card_info->card_phone."| |".$url."|".$tradeNo."|".$item_rate."|".$item_charges;
+	 	 // echo $arr;die;
+	 	 $params['data']=H5encrypt($arr,$this->passway_info->passageway_key);
+	 	 $params['channel']=$this->passway_info->passageway_mech;
+
+	 	 $url="http://kjnq.jct8.com/quickpay/tmplaceOrder";
+
+	 	 $ch = curl_init();
+		curl_setopt($ch, CURLOPT_URL, $url);
+		curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+		//设置为POST
+		curl_setopt($ch, CURLOPT_POST, 1);
+		//把POST的变量加上
+		curl_setopt($ch, CURLOPT_POSTFIELDS, $params);
+		$output = curl_exec($ch);
+		curl_close($ch);
+			$res=[
+            		'type'=>2,
+            		'url'=>'<!DOCTYPE html><html lang="zh-cn"><head>'.$output,
+            	];
+            $order_result=$this->writeorder($tradeNo, $price, $price*($this->also->item_rate/100) ,$description,$tradeNo);//写入快捷支付订单
+            if(!$order_result)
+	      	 	 return ['code'=>327];
+	           return ['code'=>200,'msg'=>'订单获取成功~' , 'data'=>$res];
+			
+	 }
+
+
+
+
+	   /**
+	 * @version H5有积分通道2 
+	 * @authors Mr.gao(928791694@qq.com)
+	 * @date    2017-12-23 16:25:05
+	 * @version $Bill$
+	 */
+	 public function h5youjifen2($tradeNo,$price,$description='H5有积分通道2取现')
+	 {
+	 	$item_rate=$this->also->item_rate/100;
+	 	$item_charges=$this->also->item_charges;
+	 	$url= System::getName('system_url').'/api/Userurl/H5youjifen/tradeNo/'.$tradeNo;
+	 	 $arr= $price."|".$this->card_info->card_name."|".$this->card_info->card_idcard."|".$this->member_card->card_bankno."|".$this->card_info->card_phone."|".$this->card_info->card_bankno."|".$this->card_info->card_phone."| |".$url."|".$tradeNo."|".$item_rate."|".$item_charges;
+	 	 // echo $arr;die;
+	 	 $params['data']=H5encrypt($arr,$this->passway_info->passageway_key);
+	 	 $params['channel']=$this->passway_info->passageway_mech;
+
+	 	 $url="http://kjnq.jct8.com/quickpay/travelOrder";
+
+	 	 $ch = curl_init();
+		curl_setopt($ch, CURLOPT_URL, $url);
+		curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+		//设置为POST
+		curl_setopt($ch, CURLOPT_POST, 1);
+		//把POST的变量加上
+		curl_setopt($ch, CURLOPT_POSTFIELDS, $params);
+		$output = curl_exec($ch);
+		curl_close($ch);
+			$res=[
+            		'type'=>2,
+            		'url'=>'<!DOCTYPE html><html lang="zh-cn"><head>'.$output,
+            	];
+            $order_result=$this->writeorder($tradeNo, $price, $price*($this->also->item_rate/100) ,$description,$tradeNo);//写入快捷支付订单
+            if(!$order_result)
+	      	 	 return ['code'=>327];
+	           return ['code'=>200,'msg'=>'订单获取成功~' , 'data'=>$res];
+			
+	 }
+
+
+
 
 
 
@@ -333,8 +635,12 @@ return ['code'=>200,'msg'=>'订单获取成功~11' , 'data'=>$result];
 	      	 'order_creditcard'=>$this->card_info->card_bankno,
 	      	 'order_card'		=>$this->member_card->card_bankno,
 	      	 'order_state'		=>1,
-	      	 'order_desc'		=>$desc
+	      	 'order_desc'		=>$desc,
+	      	 // 'order_root'		=>find_root($this->member_infos->member_id)
 	      );
+	      #1记录为 shangji 有效推荐人
+	      $Plan_cation=new \app\api\controller\Planaction();
+           $Plan_cation=$Plan_cation->recommend_record($this->member_infos->member_id);
     	 	 $data_result=new CashOrder($data);
     	 	 if($data_result->allowField(true)->save()===false)
     	 	 	 return false;

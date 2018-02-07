@@ -25,6 +25,12 @@
 			 <input type="text" class="form-control passageway_name" name="passageway_name" placeholder="请填写通道的名称" value="">
 		 </div>		
 	 </div>
+	 <div class="row form-group">
+		 <label for="passageway_true_name" class="col-sm-3 text-right"><b>真实名称:</b></label>
+		 <div class="col-sm-6" id="passageway_true_name">
+			 <input type="text" class="form-control passageway_true_name" name="passageway_true_name" placeholder="APP不显示，用于后台确认是哪个通道" value="">
+		 </div>		
+	 </div>
 
 	 <div class="row form-group">
 		 <label for="passageway_status" class="col-sm-3 text-right"><b>是否必须入网:</b></label>
@@ -36,12 +42,19 @@
 		 </div>		
 	 </div>
 
-	 <div class="row form-group">
+	  <div class="row form-group">
+		 <label for="passageway_no" class="col-sm-3 text-right"><b>平台约定费率:</b></label>
+		 <div class="col-sm-6" id="passageway_no">
+			 <input type="text" class="form-control passageway_no" name="passageway_rate" placeholder="请填写通道与平台约定的费率" value="">
+		 </div>		
+	 </div>
+
+	 <!-- <div class="row form-group">
 		 <label for="passageway_no" class="col-sm-3 text-right"><b>通道代号:</b></label>
 		 <div class="col-sm-6" id="passageway_no">
 			 <input type="text" class="form-control passageway_no" name="passageway_no" placeholder="请认真填写通道的代号，保存后无法修改" value="">
 		 </div>		
-	 </div>
+	 </div> -->
 	  <div class="row form-group">
 		 <label for="passageway_method" class="col-sm-3 text-right"><b>入网调用方法地址:</b></label>
 		 <div class="col-sm-6" id="passageway_method">
@@ -60,6 +73,49 @@
 		 <label for="passageway_key" class="col-sm-3 text-right"><b>通道机构KEY:</b></label>
 		 <div class="col-sm-6" id="passageway_key">
 			 <input type="text" class="form-control passageway_key" name="passageway_key" placeholder="请填写通道的机构KEY" value="">
+		 </div>		
+	 </div>
+	  <div class="row form-group">
+		 <label for="passageway_pwd_key" class="col-sm-3 text-right"><b>加密KEY（passageway_pwd_key）:</b></label>
+		 <div class="col-sm-6" id="passageway_pwd_key">
+			 <input type="text" class="form-control passageway_pwd_key" name="passageway_pwd_key" placeholder="加密KEY（passageway_pwd_key）" value="">
+		 </div>		
+	 </div>
+
+	 <div class="row form-group">
+		 <label for="passageway_also" class="col-sm-3 text-right"><b>是代还还是快捷支付:</b></label>
+		 <div id="passageway_also" class="col-sm-6">
+			 <select name="passageway_also" class="form-control passageway_also">
+				 <option value="1">快捷支付</option>
+				 <option value="2">代还</option>
+			 </select>
+		 </div>		
+	 </div>
+	 <div class="row form-group">
+		 <label for="passageway_rate" class="col-sm-3 text-right"><b>是否提现通道:</b></label>
+		 <div id="passageway_rate" class="col-sm-6">
+			 <select name="passageway_rate" class="form-control passageway_rate">
+				 <option value="1">是</option>
+				 <option value="2">否</option>
+			 </select>
+		 </div>		
+	 </div>
+	 <div class="row form-group">
+		 <label for="iv" class="col-sm-3 text-right"><b>加密偏移量:</b></label>
+		 <div class="col-sm-6" id="iv">
+			 <input type="text" class="form-control iv" name="iv" placeholder="请填加密偏移量" value="">
+		 </div>		
+	 </div>
+	  <div class="row form-group">
+		 <label for="secretkey" class="col-sm-3 text-right"><b>加密KEY（secretkey）:</b></label>
+		 <div class="col-sm-6" id="secretkey">
+			 <input type="text" class="form-control secretkey" name="secretkey" placeholder="请填写通道的机构KEY" value="">
+		 </div>		
+	 </div>
+	 <div class="row form-group">
+		 <label for="secretkey" class="col-sm-3 text-right"><b>签名KEY:</b></label>
+		 <div class="col-sm-6" id="secretkey">
+			 <input type="text" class="form-control secretkey" name="secretkey" placeholder="请填加密KEY（secretkey）" value="">
 		 </div>		
 	 </div>
 	 <div class="row form-group">

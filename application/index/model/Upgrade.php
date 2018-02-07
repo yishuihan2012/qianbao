@@ -29,4 +29,10 @@ class Upgrade extends Model{
            parent::initialize();
            #TODO:自定义的初始化
       }
+
+      #关联模型 一对一关联 (Member) 会员模型
+      public function member()
+      {
+           return $this->hasOne('Member', 'member_id', 'upgrade_member_id', '', 'left')->bind('member_nick,member_id,member_mobile,member_image')->setEagerlyType(0);
+      }
 }

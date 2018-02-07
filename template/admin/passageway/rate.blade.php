@@ -25,8 +25,8 @@
 	 <div class="row form-group">
 		 <label for="bank_name" class="col-sm-2 text-right"><b>{{$group['group_name']}}:</b></label>
 		 <div class="col-sm-3 input-group" id="bank_name">
-		 	 <span class="input-group-addon">套现</span>
-		 	 <input type="number" class="form-control bank_name" name="rate_{{$group['group_id']}}" placeholder="{{$group['group_name']}}组此通道的套现税率" 
+		 	 <span class="input-group-addon">快捷支付</span>
+		 	 <input type="number" class="form-control bank_name" name="rate_{{$group['group_id']}}" placeholder="{{$group['group_name']}}组此通道的快捷支付税率" 
 		 	 @foreach($list as $lists) 
 		 	 	@if($lists['item_group']==$group['group_id']) value="{{$lists['item_rate'] or '0.00'}}" @endif 
 		 	 @endforeach >

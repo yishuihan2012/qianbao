@@ -21,8 +21,9 @@ class NoviceClass extends Common{
 	public function index(){
 
 		$NoviceClasss=NoviceClasss::where(array())->order('novice_class_id','desc')->paginate(Config::get('page_size'), false, ['query'=>Request::instance()->param()]);
-	
- 		 	 	$this->assign('button',['text'=>'新增新手指引分类', 'link'=>url('/index/novice_class/creat'), 'modal'=>'modal']);
+		$count = NoviceClasss::where(array())->count();
+		$this->assign("count",$count);
+ 		$this->assign('button',['text'=>'新增新手指引分类', 'link'=>url('/index/novice_class/creat'), 'modal'=>'modal']);
  		 
 		$this->assign("list",$NoviceClasss);
 		return view("/admin/noviceClass/index");

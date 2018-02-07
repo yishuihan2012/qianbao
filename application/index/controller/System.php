@@ -9,7 +9,7 @@
  use app\index\model\System as Systems;
  use app\index\model\CustomerService;
  use app\index\model\Announcement;
- use app\index\model\Member;
+ use app\index\model\Member as Members;
  use app\index\model\Notice;
  use app\index\model\Page;
  use think\Controller;
@@ -143,6 +143,8 @@
 	 public function announcement()
 	 {
 		 $list=Announcement::with('adminster')->paginate(Config::get('page_size'));
+		 $count = Announcement::count();
+		 $this->assign("count",$count);
 		 $this->assign('button', 
  		 	 [
  		 		 ['text'=>'新增公告', 'link'=>url('/index/System/add_announcement')],
@@ -167,7 +169,7 @@
 				$result = $Announcement->allowField(true)->save();
 				if($result!=false){
 					//批量写入用户通知表
-					$members=Member::all()->column('member_id');
+					$members=Members::all()->column('member_id');
 					$data=[];
 					foreach ($members as $k => $v) {
 						$data[]=[
@@ -223,21 +225,23 @@
 	 #删除公告
 	 public function del_announcement()
 	 {
-	 	$param=request()->param();
-       Db::startTrans();             
-       try{
-       	//系统通知表删除
-		 	$result = Announcement::destroy($param['announcement_id']);
-			if($result){
-				//用户通知表批量删除
-				$result=Notice::destroy(['notice_announcement_id'=>$param['announcement_id']]);
-				if($result)Db::commit();
-			}
-			if(!$result)Db::rollback();   
-       } catch (\Exception $e) {                 
-             Db::rollback();                 
-             $result=false;           
-       }       
+	 	// $param=request()->param();
+   //     Db::startTrans();             
+   //     try{
+   //     	//系统通知表删除
+		 // 	$result = Announcement::destroy($param['announcement_id']);
+			// if($result){
+			// 	//用户通知表批量删除
+			// 	$result=Notice::destroy(['notice_announcement_id'=>$param['announcement_id']]);
+			// 	if($result)Db::commit();
+			// }
+			// if(!$result)Db::rollback();   
+   //     } catch (\Exception $e) {                 
+   //           Db::rollback();                 
+   //           $result=false;           
+   //     }    
+       $Announcement =Announcement::get(Request::instance()->param('announcement_id'));
+		 $result= $Announcement->delete();   
 		 $content = ($result===false) ? ['type'=>'error','msg'=>'删除失败'] : ['type'=>'success','msg'=>'删除成功'];
 		 Session::set('jump_msg', $content);
 		 $this->redirect('System/announcement');

@@ -85,11 +85,11 @@
 
            $data['memberLevelId']=$member['member_group_id'];
            $data['memberLevelName']=$member->memberGroup->group_name;
-
+          
            #查询信用卡绑定数量
            $data['numberOfCreditCard']=MemberCreditcard::where(['card_member_id'=>$memberLogin['member']['member_id'],'card_state'=>'1'])->count();
            $alipay=MemberAccount::where(['account_user'=>$memberLogin['member']['member_id'],'account_type'=>'Alipay'])->find();
-           $wei=MemberAccount::where(['account_user'=>$memberLogin['member']['member_id'],'account_type'=>'Weipay'])->find();
+           $wei=MemberAccount::where(['account_user'=>$memberLogin['member']['member_id'],'account_type'=>'Weipay'])->find(); 
 
            $data['alipayBindState']=$alipay? 1 : 0;
            $data['wechatBindState']= $wei ? 1 : 0;
@@ -105,7 +105,7 @@
            }
 
            #查询会员下级数量 TODO: 现在是直接下级数量 是否改成三级
-           $data['subordinateNumber']=MemberRelation::where('relation_parent_id',$memberLogin['member']['member_id'])->count();
+           $data['subordinateNumber']=$this->get_lower_total($memberLogin['member']['member_id']);
            $parent_id=MemberRelation::where(['relation_member_id'=>$memberLogin['member']['member_id']])->value('relation_parent_id');
            $data['parent']=$parent_id=='0' ? '' : Member::where('member_id',$parent_id)->value('member_nick');
            $data['parent_phone']=$parent_id=='0' ? '' : Member::where('member_id',$parent_id)->value('member_mobile');
@@ -117,7 +117,7 @@
               $data['cashcardinfo']=$CashCard['card_bankname'].' 尾号'.substr($CashCard['card_bankno'], -4); 
            }
            $newToken=get_token();
-           MemberLogin::update(['login_id'=>$memberLogin['login_id'],'login_token'=>$newToken]);
+           MemberLogin::update(['login_id'=>$memberLogin['login_id'],'login_token'=>$newToken,'login_attempts'=>0]);
            //是否有未读消息
           $hasmsg=db('notice')->where(['notice_recieve'=>$memberLogin['member']['member_id'],'notice_status'=>0])->find();
            $data['hasmessage']=$hasmsg ? 1 : 0; 
@@ -127,7 +127,22 @@
 
            return ['code'=>200,'msg'=>'登录成功~', 'data'=>$data];
       }
+       //获取三级下级总数
+      public function get_lower_total($uid){
+          $count=0;
+          $MemberRelation_1rd=MemberRelation::haswhere("members",'member_id!=""')->where(["relation_parent_id"=>$uid])->select();
+          $count+=count($MemberRelation_1rd);
+          foreach ($MemberRelation_1rd as $k => $val) {
+                $member_2rd=MemberRelation::haswhere("members",'member_id!=""')->where(['relation_parent_id'=>$val['relation_member_id']])->select();
+                $count+=count($member_2rd);
+                foreach ($member_2rd as $k1 => $val1) {
+                  $group3 = MemberRelation::haswhere("members",'member_id!=""')->where(['relation_parent_id'=>$val1['relation_member_id']])->select();
+                    $count+=count($group3);
+                }
 
+             }
+             return $count;
+      }
       /**
       *  @version find_pwd method / Api 找回密码
       *  @author $bill$(755969423@qq.com)
@@ -189,9 +204,8 @@
       // #获取与登录相同的信息
       public function get_info(){
            $memberLogin=MemberLogin::where("login_member_id={$this->param['uid']} and login_token='{$this->param['token']}'")->find();
-           // var_dump($user);die;
            if(empty($memberLogin)){
-              return ['code'=>304];
+              return ['code'=>317];
            }
            $member=Member::get($memberLogin['login_member_id']);
            $data=array();
@@ -226,7 +240,7 @@
             $data['wechatpayPlatformId']=0;
            }
            #查询会员下级数量 TODO: 现在是直接下级数量 是否改成三级
-           $data['subordinateNumber']=MemberRelation::where('relation_parent_id',$memberLogin['member']['member_id'])->count();
+           $data['subordinateNumber']=$this->get_lower_total($memberLogin['member']['member_id']);
            $parent_id=MemberRelation::where(['relation_member_id'=>$memberLogin['member']['member_id']])->value('relation_parent_id');
            $data['parent']=$parent_id=='0' ? '' : Member::where('member_id',$parent_id)->value('member_nick');
            $data['parent_phone']=$parent_id=='0' ? '' : Member::where('member_id',$parent_id)->value('member_mobile');

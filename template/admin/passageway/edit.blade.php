@@ -25,7 +25,12 @@
 			 <input type="text" class="form-control passageway_name" name="passageway_name" placeholder="请填写通道的名称" value="{{$passageways['passageway_name']}}">
 		 </div>		
 	 </div>
-
+	 <div class="row form-group">
+		 <label for="passageway_true_name" class="col-sm-3 text-right"><b>真实名称:</b></label>
+		 <div class="col-sm-6" id="passageway_true_name">
+			 <input type="text" class="form-control passageway_true_name" name="passageway_true_name" placeholder="APP不显示，用于后台确认是哪个通道" value="{{$passageways['passageway_true_name']}}">
+		 </div>		
+	 </div>
 	  <div class="row form-group">
 		 <label for="passageway_status" class="col-sm-3 text-right"><b>是否必须入网:</b></label>
 		 <div id="passageway_status" class="col-sm-6">
@@ -35,11 +40,22 @@
 			 </select>
 		 </div>		
 	 </div>
-
+	 <div class="row form-group">
+		 <label for="passageway_no" class="col-sm-3 text-right"><b>平台约定费率:</b></label>
+		 <div class="col-sm-6" id="passageway_no">
+			 <input type="text" class="form-control passageway_rate" name="passageway_rate" placeholder="请填写通道与平台约定的费率" value="{{$passageways['passageway_rate']}}">
+		 </div>		
+	 </div>
+	  <div class="row form-group">
+		 <label for="passageway_no" class="col-sm-3 text-right"><b>平台约定固定收益:</b></label>
+		 <div class="col-sm-6" id="passageway_no">
+			 <input type="text" class="form-control passageway_income" name="passageway_income" placeholder="请填写通道与平台约定的固定收益" value="{{$passageways['passageway_income']}}">
+		 </div>
+	 </div>
 	 <div class="row form-group">
 		 <label for="passageway_no" class="col-sm-3 text-right"><b>通道代号:</b></label>
 		 <div class="col-sm-6" id="passageway_no">
-			 <input type="text" class="form-control passageway_no" placeholder="请填写通道的代号" value="{{$passageways['passageway_no']}}" disabled="">
+			 <input type="text" class="form-control passageway_no" name="passageway_no" placeholder="请填写通道的代号" value="{{$passageways['passageway_no']}}" disabled="">
 		 </div>		
 	 </div>
 
@@ -61,6 +77,48 @@
 		 <label for="passageway_key" class="col-sm-3 text-right"><b>通道机构KEY:</b></label>
 		 <div class="col-sm-6" id="passageway_key">
 			 <input type="text" class="form-control passageway_key" name="passageway_key" placeholder="请填写通道的机构KEY" value="{{$passageways['passageway_key']}}">
+		 </div>		
+	 </div>
+	 <div class="row form-group">
+		 <label for="passageway_pwd_key" class="col-sm-3 text-right"><b>加密KEY（passageway_pwd_key）:</b></label>
+		 <div class="col-sm-6" id="passageway_pwd_key">
+			 <input type="text" class="form-control passageway_pwd_key" name="passageway_pwd_key" placeholder="加密KEY（passageway_pwd_key）" value="{{$passageways['passageway_pwd_key']}}">
+		 </div>		
+	 </div>
+	 <div class="row form-group">
+		 <label for="passageway_also" class="col-sm-3 text-right"><b>是代还还是快捷支付通道:</b></label>
+		 <div id="passageway_also" class="col-sm-6">
+			 <select name="passageway_also" class="form-control passageway_also">
+				 <option value="1" @if($passageways['passageway_also']==1) selected="" @endif>快捷支付</option>
+				 <option value="2" @if($passageways['passageway_also']==2) selected="" @endif>代还</option>
+			 </select>
+		 </div>		
+	 </div>
+	<!--  <div class="row form-group">
+		 <label for="passageway_also" class="col-sm-3 text-right"><b>是否提现通道:</b></label>
+		 <div id="passageway_rate" class="col-sm-6">
+			 <select name="passageway_rate" class="form-control passageway_rate">
+				 <option value="1" @if($passageways['passageway_rate']==1) selected="" @endif>是</option>
+				 <option value="0" @if($passageways['passageway_rate']==0) selected="" @endif>否</option>
+			 </select>
+		 </div>		
+	 </div> -->
+	 <div class="row form-group">
+		 <label for="iv" class="col-sm-3 text-right"><b>加密偏移量:</b></label>
+		 <div class="col-sm-6" id="iv">
+			 <input type="text" class="form-control iv" name="iv" placeholder="加密偏移量" value="{{$passageways['iv']}}">
+		 </div>		
+	 </div>
+	 <div class="row form-group">
+		 <label for="iv" class="col-sm-3 text-right"><b>加密key（secretkey）:</b></label>
+		 <div class="col-sm-6" id="secretkey">
+			 <input type="text" class="form-control secretkey" name="secretkey" placeholder="加密key（secretkey）" value="{{$passageways['secretkey']}}">
+		 </div>		
+	 </div>
+	  <div class="row form-group">
+		 <label for="iv" class="col-sm-3 text-right"><b>签名key:</b></label>
+		 <div class="col-sm-6" id="signkey">
+			 <input type="text" class="form-control signkey" name="signkey" placeholder="签名key" value="{{$passageways['signkey']}}">
 		 </div>		
 	 </div>
 	 <div class="row form-group">

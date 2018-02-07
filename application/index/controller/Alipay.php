@@ -24,14 +24,20 @@ use app\index\model\CallbackLog as CallbackLogs;
            Loader::import('alipay.AopSdk');
            $this->aop = new \AopClient();
            $this->aop->appId                        = System::getName('Alipay_appid');
-           $this->aop->format                       = Config::get('alipay.format');
+           // $this->aop->format                       = Config::get('alipay.format');
+           $this->aop->format                       = System::getName('Alipay_format');
            $this->aop->signType                     = Config::get('alipay.sign_type');
+           // $this->aop->signType                     = System::getName('Alipay_sign_type');
            $this->aop->gatewayUrl                   = Config::get('alipay.gateway_url');
+           // $this->aop->gatewayUrl                   = System::getName('alipay_gateway_url');
            $this->aop->apiVersion                   = Config::get('alipay.app_version');
+           // $this->aop->apiVersion                   = System::getName('alipay_app_version');
            $this->aop->postCharset                  = Config::get('alipay.post_charset');
+           // $this->aop->postCharset                  = System::getName('alipay_post_charset');
            $this->aop->rsaPrivateKey                = System::getName('Alipay_secretkey');
            $this->aop->alipayrsaPublicKey           = System::getName('Alipay_key');
            $this->aop->alipaycallback               = System::getName('system_url').System::getName('Alipay_callback');
+           // print_r($this->aop);die;
       }
 
       /**
@@ -55,7 +61,8 @@ use app\index\model\CallbackLog as CallbackLogs;
                  $response = $this->aop->sdkExecute($request);
                  return $response;
            } catch (\Exception $e) {
-                 return ['code'=>344];
+                  return false;
+                 // return ['code'=>344,"msg"=>$e->getMessage()];
            }
       }
 
@@ -70,16 +77,16 @@ use app\index\model\CallbackLog as CallbackLogs;
               // var_dump($post);die;
               // var_dump($this->aop->rsaCheckV1($post, null,"RSA2"));die;
                  if (!$this->aop->rsaCheckV1($post, null,"RSA2")){
-                    echo "FAIL33";
+                    return "FAIL";
                  }
                  if ($post['trade_status']=='WAIT_BUYER_PAY'){
-                    echo "FAIL";die;
+                    return "FAIL";
                  }
                  if ($post['trade_status']=='TRADE_CLOSED'){
-                    echo "FAIL";die;
+                    return "FAIL";
                  }
                  if ($post['trade_status']=='TRADE_FINISHED'){
-                    echo "FAIL";die;
+                    return "FAIL";
                  }
 
                  if ($post['trade_status']=='TRADE_SUCCESS') {
@@ -90,9 +97,11 @@ use app\index\model\CallbackLog as CallbackLogs;
                            return "FAIL";
                       $order->upgrade_state=1; //更改状态为已支付
                       $order->upgrade_type="Alipay";
+                      $order->upgrade_alipay_no=$post['trade_no'];
                       $order->upgrade_update_time=date("Y-m-d H:i:s",time());
-                      if (false===$order->save()) //修改失败 结束
-                           return "FAIL";
+                      if (false===$order->save()){ //修改失败 结束
+                          return "FAIL";
+                      }
                       return "SUCCESS";
                  }
            } catch (\Exception $e) {
@@ -125,6 +134,7 @@ use app\index\model\CallbackLog as CallbackLogs;
        */
       public function transfer(Withdraws $withdraws)
       {
+           $system_name=System::getName('sitename').$withdraws->withdraw_name.'提现';
            $request = new \AlipayFundTransToaccountTransferRequest();
            // 判断账户信息
            $payee_type ="ALIPAY_USERID"; //默认转账方式
@@ -135,9 +145,9 @@ use app\index\model\CallbackLog as CallbackLogs;
                  "\"payee_type\":\"".$payee_type."\"," .
                  "\"payee_account\":\"".$withdraws->withdraw_account."\"," .
                  "\"amount\":\"".($withdraws->withdraw_amount)."\"," . //转账金额 单位 元
-                 "\"payer_show_name\":\"测试喜家钱包2.0提现\"," .
+                 "\"payer_show_name\":\"{$system_name}\"," .
                  "\"payee_real_name\":\"".$withdraws->withdraw_name."\"," .
-                 "\"remark\":\"测试喜家钱包2.0提现\"" .
+                 "\"remark\":\"{$system_name}\"" .
             "  }");
            $result = $this->aop->execute($request);
            $responseNode = str_replace(".", "_", $request->getApiMethodName()) . "_response";
@@ -158,14 +168,15 @@ use app\index\model\CallbackLog as CallbackLogs;
                       'method'        => 'alipay.open.auth.sdk.code.get',
                       'app_name'      => 'mc',
                       'biz_type'      => 'openservice',
-                      'pid'           => Config::get('alipay.pid'),
+                      'pid'           => System::getName('alipay_pid'),
                       'product_id'    => 'APP_FAST_LOGIN',
                       'scope'         => 'kuaijie',
                       'target_id'     => get_token(),
                       'auth_type'     => 'AUTHACCOUNT',
-                      'app_id'        =>Config::get('alipay.app_id'),
+                      'app_id'        =>System::getName('Alipay_appid'),
                  ];
                  $sign =   $this->aop->generateSign($sign_data);
+                 // var_dump($sign);die;
                  $sign_data['sign_type']  = "RSA2";
                  $sign_data['sign']  = $sign;
                  $sign_content = $this->aop->getSignContentUrlencode($sign_data);

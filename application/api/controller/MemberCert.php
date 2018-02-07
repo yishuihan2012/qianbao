@@ -81,9 +81,13 @@
                       return ['code'=>355];
            }
            #去实名认证库查找当前条件的信息
-           $cert_where=MemberCashcard::get(['card_bankno'=>$this->param['card_bankno'],'card_name'=>$this->param['card_name'],'card_idcard'=>$this->param['card_idcard'],'card_phone'=>$this->param['card_phone']]);
+           $cert_where=MemberCashcard::get(['card_idcard'=>$this->param['card_idcard']]);
            if($cert_where)
-                 return $cert_where['card_state'] ? ['code'=>354] : ['code'=>352];
+                 return ['code'=>601];
+
+            $cert_card_bankno=MemberCashcard::get(['card_bankno'=>$this->param['card_bankno']]);
+           if($cert_card_bankno)
+                 return ['code'=>602];
            #判断用户是否超过实名认证的最大次数 超过后将不予受理
            //if($member['member_check_count']>=)
 
@@ -92,10 +96,11 @@
                  return ['code'=>430];
            #银行卡实名验证
            $card_validate=BankCert($this->param['card_bankno'],$this->param['card_phone'],$this->param['card_idcard'],$this->param['card_name']);
-           //dump($card_validate);exit;
+           // dump($card_validate);exit;
            // return ['code'=>200,'msg'=>'实名认证成功~', 'data'=>$card_validate];
-           if($card_validate['reason']!='成功')
-                 return ['code'=>351];
+           if($card_validate['error_code']!=0){
+             return ['code'=>351,'msg'=>$card_validate['reason']];
+           }
            $state=$card_validate['result']['result']=='T' ? '1' : '0';
            //如果实名认证返回状态不等于T 则进行加1次验证
            //TODOif($card_validate['result']['result']=='T' && $card_validate['result']['result']!='P')
@@ -126,12 +131,29 @@
                  #写入到实名认证表
                  if($card_validate['result']['result']=='T' && $card_validate['result']['result']!='P')
                  {
-                      $member_certs=new MemberCerts([
+                      $member_certs_array=[
                            'cert_member_id' =>$this->param['uid'],
                            'cert_card_id'       =>$member_cashcard->card_id,
                            'cert_member_name' => $this->param['card_name'],
-                           'cert_member_idcard' => $this->param['card_idcard']
-                      ]);
+                           'cert_member_idcard' => $this->param['card_idcard'],
+                      ];
+                      //如果最后上传照片，也一起更新
+                      if(isset($this->param['IdPositiveImgUrl'])){
+                          $member_certs_array['IdPositiveImgUrl']=$this->param['IdPositiveImgUrl'];
+                      }else{
+                          $member_certs_array['IdPositiveImgUrl']='';
+                      }
+                      if(isset($this->param['IdNegativeImgUrl'])){
+                          $member_certs_array['IdNegativeImgUrl']=$this->param['IdNegativeImgUrl'];
+                      }else{
+                          $member_certs_array['IdNegativeImgUrl']='';
+                      }
+                      if(isset($this->param['IdPortraitImgUrl'])){
+                          $member_certs_array['IdPortraitImgUrl']=$this->param['IdPortraitImgUrl'];
+                      }else{
+                          $member_certs_array['IdPortraitImgUrl']='';
+                      }
+                      $member_certs=new MemberCerts($member_certs_array);
                       #更改数据表
                       $member_result=new Member;
                       $result=$member_result->where(['member_id'=>$this->param['uid']])->update(['member_cert'=>'1','member_nick'=>$this->param['card_name']]);
@@ -141,43 +163,43 @@
                             return ['code'=>350];
                       }
                       #实名认证成功返回上级红包
-                      $parent_member_id=MemberRelation::where(['relation_member_id'=>$this->param['uid']])->value('relation_parent_id');
-                      if($parent_member_id!=0 && System::getName('is_havecert_redpackets') )
-                      {
-                            $realname_wallet=rand(System::getName('realname_min'),System::getName('realname_max')); //实名红包金额
-                            $wallet=Wallet::get(['wallet_member'=>$parent_member_id]);
-                            if(!$wallet)
-                            {
-                                 Db::rollback();
-                                 return ['code'=>350,'上级用户钱包信息未找到~'];
-                            }
-                           $wallet->wallet_amount=$wallet->wallet_amount+$realname_wallet;
-                           $wallet->wallet_total_revenue=$wallet->wallet_total_revenue+$realname_wallet;
-                           $wallet->wallet_invite=$wallet->wallet_invite+$realname_wallet;
-                           #添加到推荐红包表
-                            $recomment=new Recomment([
-                                 'recomment_member_id'=>$parent_member_id,
-                                 'recomment_children_member'=>$this->param['uid'],
-                                 'recomment_money'=>$realname_wallet,
-                                 'recomment_desc'=>'推荐下级'.$this->param['card_name'].'注册并实名认证成功',
-                            ]);
-                            if($recomment->save()){
-                               $wallet_log=new WalletLog([
-                                     'log_wallet_id'          =>$wallet['wallet_id'],
-                                     'log_wallet_amount'  =>$realname_wallet,
-                                     'log_wallet_type' =>1,
-                                     'log_relation_id'  =>$recomment->recomment_id,
-                                     'log_relation_type' => 5,
-                                     'log_form' => '邀请红包',
-                                     'log_desc' => '邀请好友'.$this->param['card_name'].'注册并完成实名认证,获得红包'.$realname_wallet."元",
-                               ]);
-                             }
-                           if($wallet->save()===false || $wallet_log->save()===false )
-                           {
-                                 Db::rollback();
-                                 return ['code'=>350,'上级钱包余额更新失败~'];
-                           }
-                      }
+                      // $parent_member_id=MemberRelation::where(['relation_member_id'=>$this->param['uid']])->value('relation_parent_id');
+                      // if($parent_member_id!=0 && System::getName('is_havecert_redpackets') )
+                      // {
+                      //       $realname_wallet=rand(System::getName('realname_min'),System::getName('realname_max')); //实名红包金额
+                      //       $wallet=Wallet::get(['wallet_member'=>$parent_member_id]);
+                      //       if(!$wallet)
+                      //       {
+                      //            Db::rollback();
+                      //            return ['code'=>350,'上级用户钱包信息未找到~'];
+                      //       }
+                      //      $wallet->wallet_amount=$wallet->wallet_amount+$realname_wallet;
+                      //      $wallet->wallet_total_revenue=$wallet->wallet_total_revenue+$realname_wallet;
+                      //      $wallet->wallet_invite=$wallet->wallet_invite+$realname_wallet;
+                      //      #添加到推荐红包表
+                      //       $recomment=new Recomment([
+                      //            'recomment_member_id'=>$parent_member_id,
+                      //            'recomment_children_member'=>$this->param['uid'],
+                      //            'recomment_money'=>$realname_wallet,
+                      //            'recomment_desc'=>'推荐下级'.$this->param['card_name'].'注册并实名认证成功',
+                      //       ]);
+                      //       if($recomment->save()){
+                      //          $wallet_log=new WalletLog([
+                      //                'log_wallet_id'          =>$wallet['wallet_id'],
+                      //                'log_wallet_amount'  =>$realname_wallet,
+                      //                'log_wallet_type' =>1,
+                      //                'log_relation_id'  =>$recomment->recomment_id,
+                      //                'log_relation_type' => 5,
+                      //                'log_form' => '邀请红包',
+                      //                'log_desc' => '邀请好友'.$this->param['card_name'].'注册并完成实名认证,获得红包'.$realname_wallet."元",
+                      //          ]);
+                      //        }
+                      //      if($wallet->save()===false || $wallet_log->save()===false )
+                      //      {
+                      //            Db::rollback();
+                      //            return ['code'=>350,'上级钱包余额更新失败~'];
+                      //      }
+                      // }
                       Db::commit();
                       return ['code'=>200,'msg'=>'实名认证成功~', 'data'=>''];
                  }
@@ -186,7 +208,129 @@
                  return ['code'=>350,'msg'=>$e->getMessage()];
            }
       }
+          /**
+       *  @version validation method / Api 验证     @datetime    2018-02-03 21:24
+       *  @author $bill$(755969423@qq.com)     @param     ☆☆☆::使用中  新的四元素认证实名接口
+      **/
+      public function validationNew()
+      {
+           #验证器验证 验证参数合法性
+           $validate = Loader::validate('Membervalidation');
+           #如果验证不通过 返回错误代码 及提示信息
+           if(!$validate->scene('creat')->check($this->param))
+                 return ['code'=>350, 'msg'=>$validate->getError()];
+           #查询当前用户信息 查看是否实名过
+           $member=Member::haswhere('memberLogin',['login_token'=>$this->param['token']])->where('member_id', $this->param['uid'])->find();
+           #如果用户已经实名 或者绑定已了一张结算卡 则不进行实名认证
+           if($member['member_cert'])
+           {
+                 $member_cert=MemberCerts::get(['cert_member_id'=>$member['member_id']]);
+                 $member_cashcard=MemberCashcard::get(['card_member_id'=>$member['member_id'],'card_state'=>1]);
+                 if($member_cert && $member_cashcard) return ['code'=>355];
+           }
+           #去实名认证库查找当前条件的信息
+           $cert_where=MemberCashcard::get(['card_idcard'=>$this->param['card_idcard']]);
+           if($cert_where)  return ['code'=>601];
+           $cert_card_bankno=MemberCashcard::get(['card_bankno'=>$this->param['card_bankno']]);
+           if($cert_card_bankno) return ['code'=>602];
 
+           $card_validate=BankCertNew(['bankCardNo'=>$this->param['card_bankno'], 'identityNo'=>$this->param['card_idcard'], 'mobileNo'=>$this->param['card_phone'], 'name'=>$this->param['card_name']]);
+           if($card_validate['code']!=0000) return ['code'=>351, 'msg'=>'实名认证失败。'];
+           if($card_validate['data']['resultCode']!='R001')  return ['code'=>351, 'msg'=>'认证信息不匹配或您的储蓄卡尚未开通无卡支付功能，请联系发卡行。'];
+           if($card_validate['data']['bankCardBin']['cardTy']!='D')  return ['code'=>351, 'msg'=>'认证失败:请更换一个储蓄卡完成实名认证~'];
+           Db::startTrans();
+           try{
+                #写入认证表
+                $card_bankname=$card_validate['data']['bankCardBin']['bankName'];
+                if($num=strpos($card_bankname,'(')){
+                    $card_bankname=substr($card_bankname,0,$num);
+                }
+                $member_cashcard=new MemberCashcard([
+                     'card_member_id'=>$this->param['uid'],
+                     'card_bankno'=>$this->param['card_bankno'],
+                     'card_name'  =>$this->param['card_name'],
+                     'card_idcard' =>$this->param['card_idcard'],
+                     'card_phone' =>$this->param['card_phone'],
+                     'card_bankname' =>$card_bankname,
+                     //'card_bank_province' =>$this->param['card_bank_province'],
+                     //'card_bank_city'   => $this->param['card_bank_city'],
+                     //'card_bank_area' => '',//$this->param['card_bank_area'],
+                     //'card_bank_address' => $bankInfo['bank_name'],
+                     //'card_bank_lang'   => $bankInfo['bank_code'],
+                     'card_ident'          =>$card_validate['data']['bankCardBin']['id'],
+                     'card_rname'          =>$card_validate['data']['bankCardBin']['cardName'],
+                     'card_type'          =>$card_validate['data']['bankCardBin']['cardTy'],
+                     'card_bankid'        => $card_validate['data']['bankCardBin']['bankId'],
+                     'card_binstart'       => $card_validate['data']['bankCardBin']['binStat'],
+                     'card_channel'       => $card_validate['data']['channel'],
+                     'card_state'          => '1',
+                     'card_return'        =>json_encode($card_validate),
+                ]);
+                if(! $member_cashcard->save()) return ['code'=>350];
+                $member_certs_array=[
+                     'cert_member_id' =>$this->param['uid'],
+                     'cert_card_id'       =>$member_cashcard->card_id,
+                     'cert_member_name' => $this->param['card_name'],
+                     'cert_member_idcard' => $this->param['card_idcard'],
+                ];
+                //如果最后上传照片，也一起更新
+                $member_certs_array['IdPositiveImgUrl']=$this->param['IdPositiveImgUrl'] ?? '';
+                $member_certs_array['IdNegativeImgUrl']=$this->param['IdNegativeImgUrl'] ?? '';
+                $member_certs_array['IdPortraitImgUrl']=$this->param['IdPortraitImgUrl'] ?? '';
+                $member_certs=new MemberCerts($member_certs_array);
+                //更新会员表
+                $member_result=new Member;
+                $result=$member_result->where(['member_id'=>$this->param['uid']])->update(['member_cert'=>'1','member_nick'=>$this->param['card_name']]);
+                if($result===false || $member_certs->save()===false)
+                {
+                     Db::rollback();
+                     return ['code'=>350];
+                }
+                //实名认证成功返回上级红包
+                // $parent_member_id=MemberRelation::where(['relation_member_id'=>$this->param['uid']])->value('relation_parent_id');
+                // if($parent_member_id!=0 && System::getName('is_havecert_redpackets') )
+                // {
+                //      $realname_wallet=rand(System::getName('realname_min'),System::getName('realname_max')); //实名红包金额
+                //      $wallet=Wallet::get(['wallet_member'=>$parent_member_id]);
+                //      if(!$wallet)
+                //      {
+                //            Db::rollback();
+                //            return ['code'=>350,'上级用户钱包信息未找到~'];
+                //      }
+                //      $wallet->wallet_amount=$wallet->wallet_amount+$realname_wallet;
+                //      $wallet->wallet_total_revenue=$wallet->wallet_total_revenue+$realname_wallet;
+                //      $wallet->wallet_invite=$wallet->wallet_invite+$realname_wallet;
+                //      //添加到推荐红包表
+                //      $recomment=new Recomment([
+                //            'recomment_member_id'=>$parent_member_id,
+                //            'recomment_children_member'=>$this->param['uid'],
+                //            'recomment_money'=>$realname_wallet,
+                //            'recomment_desc'=>'推荐下级'.$this->param['card_name'].'注册并实名认证成功',
+                //      ]);
+                //      if($recomment->save()){
+                //            $wallet_log=new WalletLog([
+                //                 'log_wallet_id'          =>$wallet['wallet_id'],
+                //                 'log_wallet_amount'  =>$realname_wallet,
+                //                 'log_wallet_type' =>1,
+                //                 'log_relation_id'  =>$recomment->recomment_id,
+                //                 'log_relation_type' => 5,
+                //                 'log_form' => '邀请红包',
+                //                 'log_desc' => '邀请好友'.$this->param['card_name'].'注册并完成实名认证,获得红包'.$realname_wallet."元",
+                //            ]);
+                //       }
+                //      if($wallet->save()===false || !$wallet_log->save() )
+                //      {
+                //            Db::rollback();
+                //            return ['code'=>350,'上级钱包余额更新失败~'];
+                //      }
+                // }
+                Db::commit();
+                return ['code'=>200,'msg'=>'实名认证成功~', 'data'=>''];
+           }catch(\Exception $e){
+                Db::rollback();
+                return ['code'=>350,'msg'=>$e->getMessage()];
+           }
+      }
       /**
       *  @version get_card_info method /获取绑定储蓄卡信息
       *  @author $bill$(755969423@qq.com)
@@ -271,33 +415,50 @@
            $cashcard=MemberCashcard::where('card_member_id='.$this->param['uid'])->find();
            if(!$cashcard)
                  return ['code'=>435];
+
            $bankInfo=SystemBank::get($this->param['card_bank_addressId']);
            if(!$bankInfo)
                  return ['code'=>430];
            #银行卡实名验证
-           $card_validate=BankCert($this->param['card_bankno'],$this->param['card_phone'],$cashcard['card_idcard'],$cashcard['card_name']);
+               #如果银行卡号与手机号有变动执行认证操作
+          if($cashcard['card_bankno']!=$this->param['card_bankno'] || $cashcard['card_phone']!=$this->param['card_phone']){
 
-           if($card_validate['reason']!='成功')
-                 return ['code'=>351];
-           $state=$card_validate['result']['result']=='T' ? '1' : '0';
-           $card=array(
+             $card_validate=BankCert($this->param['card_bankno'],$this->param['card_phone'],$cashcard['card_idcard'],$cashcard['card_name']);
+             if($card_validate['error_code']!=0){
+                return ['code'=>351,'msg'=>$card_validate['reason']];
+             }
+             $state=$card_validate['result']['result']=='T' ? '1' : '0';
+             if($card_validate['result']['result']=='F')
+                   return ['code'=>352];
+             if($card_validate['result']['result']=='N')
+                   return ['code'=>353];
+
+              $card=array(
+             'card_bankno'=>$this->param['card_bankno'],
+             'card_phone'=>$this->param['card_phone'],
+             'card_bank_province'=>$this->param['card_bank_province'],
+             'card_bank_city'=>$this->param['card_bank_city'],
+             'card_bank_area'=>$this->param['card_bank_addressId'],
+             'card_bank_address' => $bankInfo['bank_name'],
+             'card_bank_lang'   => $bankInfo['bank_code'],
+             'card_bankname'=>$this->param['card_bankname'],
+             'card_state'          => $state,
+             'card_return'        =>json_encode($card_validate),
+             );
+          }else{
+
+            #如果手机号和银行卡号都没有变动直接修改储蓄卡信息
+            $card=array(
                  'card_bankno'=>$this->param['card_bankno'],
                  'card_phone'=>$this->param['card_phone'],
                  'card_bank_province'=>$this->param['card_bank_province'],
                  'card_bank_city'=>$this->param['card_bank_city'],
                  'card_bank_area'=>$this->param['card_bank_addressId'],
-                'card_bank_address' => $bankInfo['bank_name'],
-                'card_bank_lang'   => $bankInfo['bank_code'],
+                 'card_bank_address' => $bankInfo['bank_name'],
+                 'card_bank_lang'   => $bankInfo['bank_code'],
                  'card_bankname'=>$this->param['card_bankname'],
-                 'card_state'          => $state,
-                 'card_return'        =>json_encode($card_validate),
            );
-           if($card_validate['result']['result']=='F')
-                 return ['code'=>352];
-           if($card_validate['result']['result']=='N')
-                 return ['code'=>353];
-
-
+          }
               #修改入网信息M02修改结算卡信息
             // $passageway=Passageway::where(['passageway_state'=>1,'passageway_also'=>1])->select();
             // foreach ($passageway as $key => $value) {
@@ -316,5 +477,44 @@
            return ['code'=>200,'msg'=>'更换储蓄卡成功~', 'data'=>$bank_info];
       }
 
+      /**
+      *  @version validation change_validationNew / Api 更换储蓄卡     @datetime    2018-02-03 21:16
+      *  @author $bill$(755969423@qq.com)   @param  新的四元素认证接口    ☆☆☆::使用中
+      **/
+      public function change_validationNew()
+      {
+           #验证器验证 验证参数合法性
+           $validate = Loader::validate('Membervalidation');
+           #如果验证不通过 返回错误代码 及提示信息
+           if(!$validate->scene('edit')->check($this->param))
+                 return ['code'=>322, 'msg'=>$validate->getError()];
+           #验证用户是否绑定储蓄卡
+           $cashcard=MemberCashcard::where('card_member_id='.$this->param['uid'])->find();
+           if(!$cashcard) return ['code'=>435];
+           $card_validate=BankCertNew(['bankCardNo'=>$this->param['card_bankno'], 'identityNo'=>$this->param['card_idcard'], 'mobileNo'=>$this->param['card_phone'], 'name'=>$this->param['card_name']]);
+           if($card_validate['code']!=0000) return ['code'=>351, 'msg'=>'实名认证失败。'];
+           if($card_validate['data']['resultCode']!='R001')  return ['code'=>351, 'msg'=>'认证信息不匹配或您的储蓄卡尚未开通无卡支付功能，请联系发卡行。'];
+           if($card_validate['data']['bankCardBin']['cardTy']!='D')  return ['code'=>351, 'msg'=>'认证失败:请更换一个储蓄卡完成实名认证~'];
+            $card_bankname=$card_validate['data']['bankCardBin']['bankName'];
+            if($num=strpos($card_bankname,'(')){
+                $card_bankname=substr($card_bankname,0,$num);
+            }
+           $card=array(
+                'card_bankno'=>$this->param['card_bankno'],
+                'card_phone'=>$this->param['card_phone'],
+                //'card_bank_province'=>$this->param['card_bank_province'],
+                //'card_bank_city'=>$this->param['card_bank_city'],
+                //'card_bank_area'=>$this->param['card_bank_addressId'],
+                //'card_bank_address' => $bankInfo['bank_name'],
+                //'card_bank_lang'   => $bankInfo['bank_code'],
+                'card_bankname'=> $card_bankname,
+                'card_state'          => '1',
+                'card_return'        =>json_encode($card_validate),
+           );
+           $result=MemberCashcard::where(['card_member_id'=>$this->param['uid']])->update($card);
+           $bank_info=$result['card_bankname'].' 尾号'.substr($this->param['card_bankno'], -4);
+           if($result===false) return ['code'=>435];
+           return ['code'=>200,'msg'=>'更换储蓄卡成功~', 'data'=>$bank_info];
+      }
 
  }

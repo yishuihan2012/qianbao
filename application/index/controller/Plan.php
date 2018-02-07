@@ -25,94 +25,87 @@ class Plan extends Common{
 	public function index(){
 		$r=request()->param();
 	 	 #搜索条件
-	 	$data = $this->memberwhere($r);
+	 	$data = memberwhere($r);
 	 	$r = $data['r'];
 	 	$where = $data['where'];
 	 	 //注册时间
 		if(request()->param('beginTime') && request()->param('endTime')){
-			$endTime=strtotime(request()->param('endTime'))+24*3600;
-			$where['Member.member_creat_time']=["between time",[request()->param('beginTime'),$endTime]];
+			// $endTime=strtotime(request()->param('endTime'))+24*3600;
+			$where['generation_add_time']=["between time",[request()->param('beginTime'),request()->param('endTime')]];
 		}
-		#身份证查询
-		 if( request()->param('cert_member_idcard')){
-			$where['MemberCert.cert_member_idcard'] = ['like',"%".request()->param('cert_member_idcard')."%"];
+		#需还款信用卡
+		if( request()->param('generation_card')){
+			$where['generation_card'] = ['like',"%".request()->param('generation_card')."%"];
 		}else{
-			$r['cert_member_idcard'] = '';
+			$r['generation_card'] = '';
 		}
-		#待确认条件
-		$where['generation_state'] = ['<>',1];
-		$data = GenerationOrder::list($where);
-		$this->assign("list",$data['list']);
-		$this->assign("count",$data['count']);
+		#计划状态查询
+		$where['generation_state'] = array("<>",1);
+		#计划订单列表
+		if(request()->param('generation_state')){
+			$where['generation_state'] = request()->param("generation_state");
+		}else{
+			$r['generation_state'] = '';
+		}
+		$data = Generation::with("member,creditcard")->where($where)->order("generation_id desc")->paginate(Config::get('page_size'), false, ['query'=>Request::instance()->param()]);
+		#还款总金额
+		$sum = Generation::with("member,creditcard")->where($where)->sum("generation_total");
+		$this->assign("sum",$sum);
+		#剩余还款总额
+		$surplussum = Generation::with("member,creditcard")->where($where)->sum("generation_total");
+		$this->assign("surplussum",$surplussum);
+		#计算总条数
+		$count = Generation::with("member,creditcard")->where($where)->count();
+		//用户组
+		$this->assign("member_group",MemberGroup::all());
+		$this->assign("list",$data);
+		$this->assign("count",$count);
 		$this->assign("r",$r);
-		$member_group=MemberGroup::all();
-		$this->assign('member_group', $member_group);
-		return view("/admin/plan/index");
+		return view("admin/plan/index");
 	}
 	#还款详情
 	public function info(){
-		$where['order_id'] = input('id');
-		$info = GenerationOrder::info($where);
-		$this->assign("info",$info);
-		return view("/admin/pLan/info");
+		$where['order_no'] = input('id');
+		$list = GenerationOrder::with("passageway,member")->where($where)->select();
+		$this->assign("list",$list);
+		return view("/admin/plan/info");
 	}
 	#失败还款计划
 	public function fail(){
 		$r=request()->param();
 	 	 #搜索条件
-	 	$data = $this->memberwhere($r);
+	 	$data = memberwhere($r);
 	 	$r = $data['r'];
 	 	$where = $data['where'];
-	 	 //注册时间
+		$where['order_status'] = -1;
 		if(request()->param('beginTime') && request()->param('endTime')){
-			$endTime=strtotime(request()->param('endTime'))+24*3600;
-			$where['Member.member_creat_time']=["between time",[request()->param('beginTime'),$endTime]];
+			// $endTime=strtotime(request()->param('endTime'))+24*3600;
+			$where['order_time']=["between time",[request()->param('beginTime'),request()->param('endTime')]];
 		}
-		#身份证查询
-		 if( request()->param('cert_member_idcard')){
-			$where['MemberCert.cert_member_idcard'] = ['like',"%".request()->param('cert_member_idcard')."%"];
+		if(request()->param('order_money')!=''){
+			$where['order_money'] = request()->param('order_money');
 		}else{
-			$r['cert_member_idcard'] = '';
+			$r['order_money'] = ''; 
 		}
-		#失败条件
-		$where['generation_state'] = -1;
-		$data = GenerationOrder::list($where);
-		$this->assign("list",$data['list']);
-		$this->assign("count",$data['count']);
-		$this->assign("r",$r);
-		$member_group=MemberGroup::all();
-		$this->assign('member_group', $member_group);
-		return view("/admin/plan/fail");
+		$list = GenerationOrder::with("passageway,member")->where($where)->paginate(Config::get('page_size'), false, ['query'=>Request::instance()->param()]);
+		$this->assign('r',$r);
+		$this->assign("list",$list);
+		return view("admin/plan/fail");
 	}
-	#查询条件
-	public function memberwhere($r){
-       $where=array();
-       //手机号
-       if(!empty($r['member_mobile'] )) {
-        $where['Member.member_mobile']=["like","%".$r['member_mobile']."%"];
-       }else{
-        $r['member_mobile']='';
-       }
-       //昵称
-       if(!empty($r['member_nick']) ){
-        $where['Member.member_nick']=["like","%".$r['member_nick']."%"];
-       }else{
-        $r['member_nick']='';
-       }
-       //是否实名
-       if(!empty($r['member_cert'])){
-        $where['Member.member_cert'] = $r['member_cert']==2?0:1;
-       }else{
-        $r['member_cert']='';
-       }
+	#取消执行|继续执行还款计划
+	public function order_status(){
+		$where['order_id'] = request()->param("id");
+		$data['order_status'] = request()->param("status");
 
-       //会员等级
-       if(!empty($r['member_group_id'])){
-        $where['Member.member_group_id'] = $r['member_group_id'];
-       }else{
-        $r['member_group_id']='';
-       }
-       
-       return ['r'=>$r, 'where' => $where];
-    }
+		$result	= GenerationOrder::where($where)->update($data);
+		// $result	= GenerationOrder::where($where)->update($data);
+		// if(!$result)
+		// 	die;
+		 #数据是否提交成功
+		 $content = ($result===false) ? ['type'=>'error','msg'=>'操作失败'] : ['type'=>'success','msg'=>'操作成功'];
+		 Session::set('jump_msg', $content);
+		 #重定向控制器 跳转到列表页
+		 $this->redirect("Plan/index");
+	}
+	
 }

@@ -8,6 +8,7 @@
  namespace app\index\controller;
  use app\index\model\MemberGroup as MemberGroups;
  use app\index\model\Member as Members;
+  use app\api\controller\Commission;
  use think\Controller;
  use think\Request;
  use think\Session;
@@ -40,6 +41,12 @@
 		#提交更改信息
 		if(Request::instance()->isPost())
 		 {
+		 	$data=input();
+		 	#代理商自动调整为不可自动升级
+		 	// if($data['group_visible']==0){
+		 	// 	$data['group_level']=0;
+		 	// 	$data['group_level_type']=0;
+		 	// }
 			 $group = new MemberGroups($_POST);
 			 // post数组中只有name和email字段会写入
 			 $result = $group->allowField(true)->save();
@@ -89,5 +96,8 @@
 		 #输出json
 		 echo json_encode($context);
 	 }
-
+	 // public function test(){
+	 // 	$t = new Commission();
+	 // 	$m = $t->MemberCommis(44,100,"ceshi");
+	 // }
  }

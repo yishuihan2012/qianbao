@@ -18,7 +18,9 @@
  {
 	 #自定义模块列表 
 	 public function index(){
-		 $list = ServiceItem::paginate(Config::get('page_size'), false, ['query'=>Request::instance()->param()]);
+		 $list = ServiceItem::order("item_id desc")->paginate(Config::get('page_size'), false, ['query'=>Request::instance()->param()]);
+		 $count= ServiceItem::count();
+		 $this->assign("count",$count);
 		 $this->assign('list', $list);
 		 $this->assign('button', ['text'=>'新增模块', 'link'=>url('/index/server_model/add_model'), 'modal'=>'modal']);
 		 #渲染视图
@@ -74,7 +76,9 @@
 	 #自定义模块服务列表 
 	 public function service_list(){
 		 $ServiceItemList=new ServiceItemList();
-		 $list=ServiceItemList::with('serverItem')->paginate(Config::get('page_size'), false, ['query'=>Request::instance()->param()]);
+		 $list=ServiceItemList::with('serverItem')->order("list_id desc")->paginate(Config::get('page_size'), false, ['query'=>Request::instance()->param()]);
+		 $count=ServiceItemList::with('serverItem')->count();
+		 $this->assign("count",$count);
 		 $this->assign('button', ['text'=>'新增服务', 'link'=>url('/index/server_model/add_service')]);
 		 $this->assign('list',$list);
 		 return view('admin/server/service_list');
@@ -85,7 +89,7 @@
 		 if(Request::instance()->isPost()){
 		 	 $ServiceItemList =ServiceItemList::get(Request::instance()->param('list_id'));
 			 $result= $ServiceItemList->allowField(true)->save($_POST);
-			 dump($ServiceItemList->getLastSql());
+
 			 $content = ($result===false) ? ['type'=>'error','msg'=>'修改失败'] : ['type'=>'success','msg'=>'修改成功'];
 			 Session::set('jump_msg', $content);
 			 $this->redirect('server_model/service_list');

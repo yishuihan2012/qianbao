@@ -29,7 +29,7 @@
 						<div id="scroll1" class="mui-scroll-wrapper">
 							<div class="mui-scroll">
 								<ul class="mui-table-view bg-color wrap">
-
+								@if($generation)
 								@foreach($generation as $list)
 									<li class="mui-table-view-cell bg-w space-up f-br2">
 									  <a href="/api/Userurl/repayment_plan_detail/order_no/{{$list['generation_id']}}">	
@@ -40,7 +40,9 @@
 												</p>
 												<span class="f16">{{$list['card_bankname']}}(尾号{{$list['generation_card']}})</span>
 											</div>
-											<div class="green-color"><span class="iconfont icon-shijian-copy-copy space-right"></span><span class="f16">@if($list['generation_state']==2)执行中@elseif($list['generation_state']==1)待确认@elseif($list['generation_state']==3)还款结束@elseif($list['generation_state']==-1)还款失败@endif</span></div>
+											<div class="green-color"><span class="iconfont icon-shijian-copy-copy space-right"></span><span class="f16">
+												@if($list['generation_state']==2)执行中@elseif($list['generation_state']==1)待确认@elseif($list['generation_state']==3)还款结束@elseif($list['generation_state']==-1)还款失败@elseif($list['generation_state']==4)已取消@endif
+											</span></div>
 										</div>
 										<div class="wrap">
 											<p class="invalid-color f15">还款总金额(含手续费{{$list['generation_pound']}}元)</p>
@@ -54,16 +56,19 @@
 									  </a>
 									</li>
 								@endforeach
-
+								@else
+									<li style="margin-top:13rem;text-align:center;list-style:none;font-size:1.4rem;color:#999;">暂无数据</li>
+								@endif
 								</ul>
 							</div>
 						</div>
 					</div>
+
 					<div id="item3mobile" class="mui-slider-item mui-control-content">
 						<div id="scroll3" class="mui-scroll-wrapper">
 							<div class="mui-scroll">
 								<ul class="mui-table-view bg-color wrap">
-
+								@if($generation3)
 								@foreach($generation3 as $list)
 									<li class="mui-table-view-cell bg-w space-up f-br2">
 									  <a href="/api/Userurl/repayment_plan_detail/order_no/{{$list['generation_id']}}">	
@@ -74,7 +79,9 @@
 												</p>
 												<span class="f16">{{$list['card_bankname']}}(尾号{{$list['generation_card']}})</span>
 											</div>
-											<div class="green-color"><span class="iconfont icon-shijian-copy-copy space-right"></span><span class="f16">@if($list['generation_state']==2)执行中@elseif($list['generation_state']==1)待确认@elseif($list['generation_state']==3)还款结束@elseif($list['generation_state']==-1)还款失败@endif</span></div>
+											<div class="green-color"><span class="iconfont icon-shijian-copy-copy space-right"></span><span class="f16">
+												@if($list['generation_state']==2)执行中@elseif($list['generation_state']==1)待确认@elseif($list['generation_state']==3)还款结束@elseif($list['generation_state']==-1)还款失败@elseif($list['generation_state']==4)已取消@endif
+										</span></div>
 										</div>
 										<div class="wrap">
 											<p class="invalid-color f15">还款总金额(含手续费{{$list['generation_pound']}}元)</p>
@@ -88,7 +95,9 @@
 									  </a>
 									</li>
 								@endforeach
-
+								@else
+									<li style="margin-top:13rem;text-align:center;list-style:none;font-size:1.4rem;color:#999;">暂无数据</li>
+								@endif
 								</ul>
 							</div>
 						</div>

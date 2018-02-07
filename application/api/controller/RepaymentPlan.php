@@ -47,45 +47,24 @@
            }
       }
       public function creatPlan(){
-         $generation_id=$this->param['uid'].'_'.$this->param['cardId'].'_'.$this->param['billMoney'].'_'.$this->param['payCount'].'_'.$this->param['startDate'].'_'.$this->param['startDate'].'_'.$this->param['endDate'].'_'.$this->param['passageway'];
-          exit(json_encode(['code'=>200, 'msg'=> '计划创建成功~','data'=>['repaymentScheduleId'=>$generation_id,'repaymentScheduleUrl'=>$_SERVER['SERVER_NAME'].'/api/Userurl/repayment_plan_detail/order_no/'.$generation_id]]));
-           // $this->param['uid']=16;
+           // $this->param['uid']=42;
            // $this->param['token']=16;
-           // $this->param['cardId']=18;
-           // $this->param['billMoney']=500;
-           // $this->param['payCount']=1;
-           // $this->param['startDate']="2018-01-06";
-           // $this->param['endDate']="2018-01-06";
-           // $this->param['passageway']=8;
-           $session_name='repayment_data_'.$this->param['uid'];
-           #1判断当前通道当前卡用户有没有入网和签约
-           // 获取通道信息
-           $passageway=Passageway::get($this->param['passageway']);
-           // 判断是否入网
-           $member_net=MemberNet::where(['net_member_id'=>$this->param['uid']])->find();
-           if(!$member_net[$passageway->passageway_no]){ //没有入网
-               // 重定向到签约页面
-               session::push($session_name,json_encode($this->param));
-               return redirect('Userurl/signed', ['passageway' =>$this->param['passageway'],'cardId'=>$this->param['cardId']]);
-           }
-           //判断是否签约
-           $MemberCreditcard=MemberCreditcard::where(['card_id'=>$this->param['cardId']])->find();
-           if(!$MemberCreditcard['bindId'] || strlen($MemberCreditcard['bindId'])<20){ //未绑定
-                //重定向到签约
-                 session::push($session_name,json_encode($this->param));
-                 return redirect('Userurl/signed', ['passageway_id' =>$this->param['passageway'],'cardId'=>$this->param['cardId']]);
-           }
-           #2判断是否存在session
-           if($data=session::get($session_name)){
-              //获取到session,跳转到creatPlan_mishua方法
-              return redirect('RepaymentPlan/creatPlan_mishua',json_decode($data,true));
-           }else{
-                exit('获取数据失败！');
-           }
-
+           // $this->param['cardId']=51;
+           // $this->param['billMoney']=5000;
+           // $this->param['payCount']=3;
+           // $this->param['startDate']="2018-02-08";
+           // $this->param['endDate']="2018-02-11";
+           // $this->param['passageway']='8';
+          if(!$this->param['uid'] || !$this->param['token']=16 || !$this->param['cardId'] || !$this->param['billMoney'] || !$this->param['payCount'] || !$this->param['startDate'] || !$this->param['endDate'] || !$this->param['passageway']){
+               return['code'=>'313','msg'=>'获取数据失败'];
+          }
+         $generation_id=$this->param['uid'].'_'.$this->param['cardId'].'_'.$this->param['billMoney'].'_'.$this->param['payCount'].'_'.$this->param['startDate'].'_'.$this->param['endDate'].'_'.$this->param['passageway'];
+         exit(json_encode(['code'=>200, 'msg'=> '正在跳转~','data'=>['repaymentScheduleId'=>$generation_id,'repaymentScheduleUrl'=>$_SERVER['SERVER_NAME'].'/api/Userurl/repayment_plan_create_detail/order_no/'.$generation_id]]));die;
+           
       }
       //创建计划
       public function creatPlan_mishua(){
+
         try {
        
           // 测试数据

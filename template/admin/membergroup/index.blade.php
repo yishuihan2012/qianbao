@@ -1,6 +1,9 @@
 @extends('admin/layout/layout_main')
 @section('title','会员用户组管理~')
 @section('wrapper')
+ <header>
+    <h3><i class="icon-list-ul"></i> 用户组数量 <small>共 <strong class="text-danger">{{$count}}</strong> 条</small></h3>
+  </header>
 <blockquote>
 	 用户组列表(组级别越高代表组内用户等级越高)
 </blockquote>
@@ -12,7 +15,7 @@
 	      	<th>用户组</th>
 	      	<th>组级别</th>
 	      	<th>组 升 级</th>
-	      	<th>升级方式</th>
+	      	<th>是否能够推荐升级</th>
 	      	<th>升级条件</th>
 	      	<th>分佣</th>
 	      	<th>分润</th>
@@ -28,10 +31,10 @@
 	      	<td>{{$group['group_salt']}} 级</td>
 	      	<td>{{$group['group_level']=='1' ? '可以升级' :  '禁止升级'}}</td>
 	      	<td>
-	      	@if($group['group_level_type']=='-1')
-	      		不限
+	      	@if($group['group_level_type']=='0')
+	      		不可以
 	      	@elseif($group['group_level_type']=='1')
-				总推荐人数
+				可以
 	      	@elseif($group['group_level_type']=='2')
 	      		总刷卡额
 	      	@elseif($group['group_level_type']=='3')
@@ -40,13 +43,15 @@
 	      	</td>
 	      	<td>
 	      	@if($group['group_level_type']=='1')
-				总推荐人数>{{$group['group_level_invite']}} 人
+				付费升级 或 总推荐人数>{{$group['group_level_invite']}} 人
 	      	@elseif($group['group_level_type']=='2')
 				总刷卡额>{{$group['group_level_transact']}} 元
 	      	@elseif($group['group_level_type']=='3')
 				付费金额>{{$group['group_level_money']}} 元
 	      	@elseif($group['group_level_type']=='-1')
 				推荐人数>{{$group['group_level_invite']}} 人| 刷卡额 > {{$group['group_level_transact']}} 元 | 付费金额>{{$group['group_level_money']}} 元
+			@else
+				付费升级
 	      	@endif
 	      	</td>
 	      	<td>{{$group['group_cent']=='1' ? '允许' :  '不允许'}}</td>
@@ -70,7 +75,7 @@
   	<tfoot>
 	    <tr>
 	      	<td colspan="8">{!! $list->render() !!}</td>
-          <td colspan="2" style="line-height: 55px">当前共<em style="font-size: 20px;color:red">{{$count}}</em>条记录</td>
+         
 	    </tr>
   	</tfoot>
 </table>

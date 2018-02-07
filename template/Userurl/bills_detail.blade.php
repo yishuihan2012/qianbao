@@ -19,13 +19,13 @@
 						{{$commission['commission_type']==1 ? '分润' : '分佣'}}
 					@endif
 			  奖励</p>
-			  <p class="f24 f-bold">{{substr($wallet_log['log_wallet_amount'],0,-2)}}</p>
+			  <p class="f24 f-bold">{{$wallet_log['log_wallet_amount']}}</p>
 
 			  	<!-- 提现 -->
 				@elseif($wallet_log['log_relation_type']==2)
 
-			  <p class="f14 space-bot">{{$wallet_log['log_wallet_type']==1 ? '收款' : '出款'}}交易金额</p>
-			  <p class="f24 f-bold">{{substr($wallet_log['log_wallet_amount'],0,-2)}}</p>
+			  <p class="f14 space-bot">提现金额</p>
+			  <p class="f24 f-bold">{{$wallet_log['log_wallet_amount']}}</p>
 			  
 				@elseif($wallet_log['log_relation_type']==3)
 				@elseif($wallet_log['log_relation_type']==4)
@@ -34,7 +34,7 @@
 				@elseif($wallet_log['log_relation_type']==5)
 
 			  <p class="f14 space-bot">推荐奖励</p>
-			  <p class="f24 f-bold">{{substr($wallet_log['log_wallet_amount'],0,-2)}}</p>
+			  <p class="f24 f-bold">{{$wallet_log['log_wallet_amount']}}</p>
 
 				@elseif($wallet_log['log_relation_type']==6)
 				@endif
@@ -69,18 +69,28 @@
 				    	<p>{{$withdraw['info']}}</p>
 				    </li>
 				    <li class="mui-table-view-cell dis-flex-be">
+				    	<p class="invalid-color">提现方式</p>
+				    	<p>
+				    		{{$withdraw['withdraw_method']=='Alipay' ? '支付宝' : '微信'}}
+				    	</p>
+				    </li>
+				    @if($withdraw['withdraw_state']==12)
+				    <li class="mui-table-view-cell dis-flex-be">
 				    	<p class="invalid-color">实际到账</p>
 				    	<p>{{$withdraw['withdraw_amount']}}元</p>
 				    </li>
+				    @elseif($withdraw['withdraw_state']==-12)
 				    <li class="mui-table-view-cell dis-flex-be">
-				    	<p class="invalid-color">收款方式</p>
-				    	<p>{{$withdraw['withdraw_method']}}</p>
+				    	<p class="invalid-color">驳回原因</p>
+				    	<p>{{$withdraw['withdraw_information']}}</p>
 				    </li>
-<!-- 				    <li class="mui-table-view-cell dis-flex-be bor-bot">
-				    	<p class="invalid-color">支付通道</p>
-				    	<p></p>
+				    @else
+				    <li class="mui-table-view-cell dis-flex-be">
+				    	<p class="invalid-color">预计到账</p>
+				    	<p>{{$withdraw['withdraw_amount']}}元</p>
 				    </li>
- -->				    <li class="mui-table-view-cell dis-flex-be">
+				    @endif
+				    <li class="mui-table-view-cell dis-flex-be">
 				    	<p class="invalid-color">交易时间</p>
 				    	<p>{{$withdraw['withdraw_update_time']}}</p>
 				    </li>

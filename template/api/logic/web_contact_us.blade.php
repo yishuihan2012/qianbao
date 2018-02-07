@@ -50,12 +50,12 @@
 			<ul class="mui-table-view">
 			    <li class="mui-table-view-cell">
 			       <p>工作时间</p>
-			       <p class="poa-r invalid-color">{{$qqInfo['service_time']}}</p>
+			       <p class="poa-r invalid-color">{{$server['working_hours']}}</p>
 			    </li>
 			    <li class="mui-table-view-cell">
-			        <a class="mui-navigate-right" tel="{{$phoneInfo['service_contact']}}" id="telPhone003">
+			        <a class="mui-navigate-right" tel="{{$server['phone']}}" id="telPhone003">
 			        	<p>合作意向咨询</p>
-			        	<p class="invalid-color">请联系{{$phoneInfo['service_contact']}}</p>
+			        	<p class="invalid-color">请联系{{$server['phone']}}</p>
 			        </a>
 			    </li>
 			</ul>

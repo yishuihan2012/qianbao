@@ -1,8 +1,8 @@
 <!doctype html>
 <html>
-	<head>
+<head>
 		<meta charset="UTF-8">
-		<title>新手指引</title>
+		<title>操作指南</title>
 		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
 		<link href="/static/css/mui.min.css" rel="stylesheet" />
 		<link href="/static/css/iconfont.css" rel="stylesheet" />
@@ -11,58 +11,155 @@
 		<link href="/static/css/themes.css" rel="stylesheet"/>
 	</head>
 	<body>
-		<div class="mui-content repayment-history">
-			<!--还款计划列表-->
-			<div id="slider" class="mui-slider">
-				
-				<div id="sliderSegmentedControl" class="mui-slider-indicator mui-segmented-control mui-segmented-control-inverted bg-w">
-					@foreach($class as $key=>$value)
-						<a class="mui-control-item @if($key==0) mui-active @endif" href="#item{{$key+1}}mobile">
-							{{$value['novice_class_title']}}
-						</a>
-					@endforeach
-					
-				</div>
-
-				<!-- <div id="sliderProgressBar" class="mui-slider-progress-bar mui-col-xs-6"></div> -->
-				<div id="sliderProgressBar" class="mui-slider mui-col-xs-6"></div>
-				<div class="mui-slider-group">
-					<!--执行中-->
-					@foreach($class as $key=>$value)
-					<div id="item{{$key+1}}mobile" class="mui-slider-item mui-control-content @if($key==0) mui-active @endif">
-						<div id="scroll{{$key+1}}" class="mui-scroll-wrapper">
-							<div class="mui-scroll">
-								<ul class="mui-table-view bg-color">
-									@foreach($value['repaymentList'] as $k => $v )
-										<li class="mui-table-view-cell mui-collapse bor-bot">
-										  <a class="mui-navigate-right bg-w f16" href="#">
-										  	<span class="bor-left-blue wrap-lr"></span>{{$v['novice_name']}}</a>
-								            <div class="mui-collapse-content">
-								                {!!$v['novice_contents']!!}
-								            </div>
-										</li>
-									@endforeach
-								</ul>
-							</div>
-						</div>
-					</div>
-					@endforeach
-					
-				</div>
+		<div class="mui-content bg-w">
+			<div class="intr-top">
+				<img src="/static/images/intr_top.png">
 			</div>
+			<!--操作指南列表-->
+			<div class="mui-row">
+		        <div class="mui-col-sm-4 mui-col-xs-4">
+		            <li class="mui-table-view-cell">
+		                <a class="fc" href="{{url('/api/userurl/instructions_detail//title/如何注册')}}">
+		                    <div class="intr-list-pic">
+		                    	<img src="/static/fonts/icon/register.png">
+		                    </div>
+		                    <p>如何注册</p>
+		                </a>
+		            </li>
+		        </div>
+		        <div class="mui-col-sm-4 mui-col-xs-4">
+		            <li class="mui-table-view-cell">
+		                <a class="fc" href="{{url('/api/userurl/instructions_detail//title/实名认证')}}">
+		                     <div class="intr-list-pic">
+		                    	<img src="/static/fonts/icon/autonym.png">
+		                    </div> 
+		                    <p>实名认证</p>
+		                </a>
+		            </li>
+		        </div>
+		        <div class="mui-col-sm-4 mui-col-xs-4">
+		            <li class="mui-table-view-cell">
+		                <a class="fc" href="{{url('/api/userurl/instructions_detail//title/代还功能')}}">
+		                     <div class="intr-list-pic">
+		                    	<img src="/static/fonts/icon/repayment.png">
+		                    </div>
+		                    <p>代还功能</p>
+		                </a>
+		            </li>
+		        </div>
+		        <div class="mui-col-sm-4 mui-col-xs-4">
+		            <li class="mui-table-view-cell">
+		                <a class="fc" href="{{url('/api/userurl/instructions_detail//title/快捷支付')}}">
+		                    <div class="intr-list-pic">
+		                    	<img src="/static/fonts/icon/pay.png">
+		                    </div>
+		                    <p>快捷支付</p>
+		                </a>
+		            </li>
+		        </div>
+		        <div class="mui-col-sm-4 mui-col-xs-4">
+		            <li class="mui-table-view-cell">
+		                <a class="fc" href="{{url('/api/userurl/instructions_detail//title/我的团队')}}">
+		                     <div class="intr-list-pic">
+		                    	<img src="/static/fonts/icon/team.png">
+		                    </div> 
+		                    <p>我的团队</p>
+		                </a>
+		            </li>
+		        </div>
+		        <div class="mui-col-sm-4 mui-col-xs-4">
+		            <li class="mui-table-view-cell">
+		                <a class="fc" href="{{url('/api/userurl/instructions_detail//title/我的盈利')}}">
+		                     <div class="intr-list-pic">
+		                    	<img src="/static/fonts/icon/profits.png">
+		                    </div>
+		                    <p>我的盈利</p>
+		                </a>
+		            </li>
+		        </div>
+		        <div class="mui-col-sm-4 mui-col-xs-4">
+		            <li class="mui-table-view-cell">
+		                <a class="fc" href="{{url('/api/userurl/instructions_detail//title/如何升级')}}">
+		                    <div class="intr-list-pic">
+		                    	<img src="/static/fonts/icon/up.png">
+		                    </div>
+		                    <p>如何升级</p>
+		                </a>
+		            </li>
+		        </div>
+		        <div class="mui-col-sm-4 mui-col-xs-4">
+		            <li class="mui-table-view-cell">
+		                <a class="fc" href="{{url('/api/userurl/instructions_detail//title/如何分享')}}">
+		                     <div class="intr-list-pic">
+		                    	<img src="/static/fonts/icon/share.png">
+		                    </div> 
+		                    <p>如何分享</p>
+		                </a>
+		            </li>
+		        </div>
+		        <div class="mui-col-sm-4 mui-col-xs-4">
+		            <li class="mui-table-view-cell">
+		                <a class="fc" href="{{url('/api/userurl/instructions_detail//title/如何提现')}}">
+		                     <div class="intr-list-pic">
+		                    	<img src="/static/fonts/icon/withdraw.png">
+		                    </div>
+		                    <p>如何提现</p>
+		                </a>
+		            </li>
+		        </div>
+		        <div class="mui-col-sm-4 mui-col-xs-4">
+		            <li class="mui-table-view-cell">
+		                <a class="fc" href="{{url('/api/userurl/instructions_detail//title/绑定支付宝')}}">
+		                     <div class="intr-list-pic">
+		                    	<img src="/static/fonts/icon/alipay.png">
+		                    </div>
+		                    <p>绑定支付宝</p>
+		                </a>
+		            </li>
+		        </div>
+		        <div class="mui-col-sm-4 mui-col-xs-4">
+		            <li class="mui-table-view-cell">
+		                <a class="fc" href="{{url('/api/userurl/instructions_detail//title/修改储蓄卡')}}">
+		                     <div class="intr-list-pic">
+		                    	<img src="/static/fonts/icon/card.png">
+		                    </div> 
+		                    <p>修改储蓄卡</p>
+		                </a>
+		            </li>
+		        </div>
+		        <div class="mui-col-sm-4 mui-col-xs-4">
+		            <li class="mui-table-view-cell">
+		                <a class="fc" href="{{url('/api/userurl/instructions_detail//title/修改登录密码')}}">
+		                     <div class="intr-list-pic">
+		                    	<img src="/static/fonts/icon/password.png">
+		                    </div>
+		                    <p>修改登录密码</p>
+		                </a>
+		            </li>
+		        </div>
+		        <div class="mui-col-sm-4 mui-col-xs-4">
+		            <li class="mui-table-view-cell">
+		                <a class="fc" href="{{url('/api/userurl/instructions_detail//title/修改头像')}}">
+		                     <div class="intr-list-pic">
+		                    	<img src="/static/fonts/icon/head-portrait.png">
+		                    </div>
+		                    <p>修改头像</p>
+		                </a>
+		            </li>
+		        </div>
+	    	</div>
 		</div>
 		<script src="/static/js/mui.min.js"></script>
+		<script src="/static/js/jquery-2.1.4.min.js"></script>
 		<script type="text/javascript">
 			mui.init();
-			mui.ready(function(){
-				var _h =  window.screen.availHeight;
-				var topH = document.getElementById("sliderSegmentedControl").offsetHeight;
-				document.getElementById("item1mobile").style.minHeight = _h-topH-100 + 'px';
-				document.getElementById("item2mobile").style.minHeight = _h-topH-100 + 'px';
-				mui('.mui-scroll-wrapper').scroll({
-					indicators: false //是否显示滚动条
-				});
-			});
+			 mui.ready(function(){
+			 	var _picw = $(".intr-list-pic").width();
+			 	$(".intr-list-pic").height(_picw);
+			 	mui('.mui-row').on('tap','a',function(){
+			      window.top.location.href=this.href;
+			    });
+			 })
 		</script>
 	</body>
 

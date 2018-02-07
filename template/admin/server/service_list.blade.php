@@ -1,11 +1,13 @@
 @extends('admin/layout/layout_main')
-@section('title','系统公告列表')
+@section('title','服务管理')
 @section('wrapper')
 <div class="panel">
   	<div class="panel-body">
-  		<form action="" name="myform" class="form-group" method="get">
-
-		</form>
+  		<header>
+		    <h3>
+		        <i class="icon-list-ul"></i> 服务列表 <small>共 <strong class="text-danger">{{$count}}</strong> 条</small> 
+		    </h3>
+	   </header>
 
   	</div>
 </div>
@@ -37,7 +39,7 @@
 	      	<td>{{$val->list_add_time}}</td>
 	      	<td>
 	      		<div class="btn-group">
-	  				<a type="button" class="btn btn-sm" data-remote="{{url('/index/server_model/show_service/list_id/'.$val->list_id)}}" data-size='lg' data-toggle="modal" href="#">查看</a>
+	  				<a type="button" class="btn btn-sm" data-remote="{{url('/index/server_model/show_service/list_id/'.$val->list_id)}}" data-size='lg' data-toggle="modal" href="#">编辑</a>
 	  				<a type="button" class="btn btn-sm" href="{{url('/index/server_model/del_service/list_id/'.$val->list_id)}}">删除</a>
 				</div>
 	      	</td>

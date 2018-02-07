@@ -1,6 +1,6 @@
 <?php
 /**
-*  @version Passageway Model 套现设置模型
+*  @version Passageway Model 快捷支付设置模型
  * @author  $bill 755969423@qq.com
  * @time      2017-11-24 09:20
  * @return  

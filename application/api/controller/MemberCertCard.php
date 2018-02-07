@@ -47,6 +47,7 @@
  use app\index\model\BankIdent;
  use app\index\model\SmsCode as SmsCodes;
  use app\index\model\GenerationOrder;
+ use app\index\model\Generation;
 
  class MemberCertCard 
  {
@@ -63,7 +64,7 @@
                        $this->error=314;
                  #查找到当前用户
                  $member=Member::haswhere('memberLogin',['login_token'=>$this->param['token']])->where('member_id', $this->param['uid'])->find();
-                 if($member['member_cert']!='1')
+                 if($member['member_cert']!=1)
                       $this->error=356;
                  if(empty($member))
                        $this->error=314;
@@ -92,8 +93,8 @@
       **/ 
       public function addition_card()
       {
-         //  $add=new \app\api\controller\MemberNet($this->param['uid'],$this->param['passageway_id'],$this->param['phone']);
-         // return ['code'=>436, 'msg'=>'qwewq','data'=>$add];
+           //  $add=new \app\api\controller\MemberNet($this->param['uid'],$this->param['passageway_id'],$this->param['phone']);
+           // return ['code'=>436, 'msg'=>'qwewq','data'=>$add];
            #验证器验证 验证参数合法性
            $validate = Loader::validate('Memberadditioncard');
            #如果验证不通过 返回错误代码 及提示信息
@@ -213,14 +214,11 @@
            $creditcard=MemberCreditcard::where("bindId='{$this->param['bindId']}' and card_member_id={$this->param['uid']}")->find();
            // return ['code'=>441,'msg'=>'13','data'=>$creditcard];
            if(empty($creditcard))
-              return ['code'=>356];
+              return ['code'=>353];
             if($creditcard['bindStatus']=='01')
               return ['code'=>463];
 
              #查询当前卡有没有绑定过
-              if($creditcard['card_state']=='1')
-                  return ['code'=>437];
-
             $passageway=Passageway::where('passageway_status=1 and passageway_also=2')->find();
 
 
@@ -233,12 +231,11 @@
             );
             $url='http://pay.mishua.cn/zhonlinepay/service/rest/creditTrans/bindCardConfirm';
             $income=repay_request($params,$passageway['passageway_mech'],$url,$passageway['iv'],$passageway['secretkey'],$passageway['signkey']);
+            // print_r($income);die;
             if($income['code']=='200'){
               //修改签约状态
               $bindStatus=array(
                 'bindStatus'=>$income['bindStatus'],
-                'card_return' =>json_encode($card_validate),
-                'card_state'  => $state
               );
               $edit=MemberCreditcard::where("bindId='{$this->param['bindId']}' and mchno='{$creditcard['mchno']}'")->update($bindStatus);
               
@@ -257,7 +254,7 @@
             
       }
       /**
-      *  @version addition_card method / Api 解绑信用卡
+      *  @version ubind_card method / Api 解绑信用卡信用卡
       *  @author $bill$(755969423@qq.com)
       *  @datetime    2017-12-15 09:22:05
       *  @param uid=会员ID token=登录令牌  creditCardId='信用卡ID'
@@ -271,6 +268,16 @@
            $cert_card=MemberCreditcard::get($this->param['creditCardId']);
            if(empty($cert_card))
                  return ['code'=>442];
+            #查询信用卡是否在还款计划中
+           $generation=Generation::where(['generation_card'=>$cert_card['card_bankno'],'generation_state'=>2])->select();
+           if($generation){
+              foreach ($generation as $key => $value) {
+                $generation_order=GenerationOrder::where(['order_card'=>$cert_card['card_bankno'],'order_status'=>1,'order_no'=>$value['generation_id']])->select();
+                 if($generation_order){
+                      return ['code'=>469];
+                 }
+              }
+           }
            #查找出会员的实名信息
            $member_cert=MemberCerts::get(['cert_member_id'=>$this->param['uid']]);
            #进行和当前会员信息比对
@@ -286,12 +293,18 @@
               'bindId'=>$cert_card['bindId']
             );
             $income=repay_request($params,$passageway['passageway_mech'],$url,$passageway['iv'],$passageway['secretkey'],$passageway['signkey']);
+
+            if($income['code']!=200){
+              return ['code'=>444];
+            }
             if($income['bindStatus']!='02')
                 return ['code'=>444];
            if($cert_card->delete()===false)
                  return ['code'=>444];
-            MemberNet::where(['net_member_id'=>$this->param['uid']])->update([$passageway['passageway_no']=>'']);
-               
+            // $card=MemberCreditcard::where(['card_member_id'=>$this->param['uid']])->find();
+            // if(empty($card)){
+            //   MemberNet::where(['net_member_id'=>$this->param['uid']])->update([$passageway['passageway_no']=>null]);
+            // }               
            return ['code'=>200, 'msg'=>'解绑成功~', 'data'=>''];
       }
 
@@ -309,6 +322,7 @@
        #查找到当前用户信用卡列表
        $data=MemberCreditcard::with("repayment")->where('card_member_id='.$this->param['uid'].' and bindStatus=01')->select();
        foreach ($data as $key => $value) {
+         $data[$key]['card_bankicon']=System::getName('system_url').$value['card_bankicon'];
          $data[$key]['card_banktitle']=$value['card_bankname'].'(尾号'.substr($value['card_bankno'],-4).')';
          //查找当前执行计划表中状态为等待执行的数据
          // $tmp=GenerationOrder::where(['order_card'=>$value['card_bankno'],'order_status'=>1])->find();

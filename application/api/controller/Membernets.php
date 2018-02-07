@@ -14,6 +14,7 @@
  use app\index\model\System;
  use app\index\model\MemberNet;
  use app\index\model\PassagewayItem;
+ use app\api\controller\Commission;
 
  class Membernets{ 
       public $error;
@@ -90,97 +91,321 @@
       }
       
       /**
-      *  @version rongbangnet / Api 荣邦快捷支付入网接口
+      *  @version rongbangnet / Api 荣邦1.4.1.快速进件
       *  @author $bill$(755969423@qq.com)
       *  @datetime    2017-12-25 14:36:05
       *  @param   $member=要入网的会员   ☆☆☆::使用中
+      *  成功 返回 数组 0、appid 1、companycode 2、secretkey 3、session
+      *  失败 返回 接口返回的失败说明
       **/
-      public function rongbangnet()
-      {
-        /*
-           #定义请求报文组装
-           $arr=array(
-                 'companyname'    =>"test".time(),//$this->membercard->card_name.rand(1000,9999),山东联硕支付技术有限公司济南分公司（无积分快捷）
-                 // 'companycode'     =>$this->member->member_mobile,
-                 'companycode'     =>time(),
-                 'accountname'      =>$this->membercard->card_name,
-                 'bankaccount'       =>$this->membercard->card_bankno,
-                 'bank'                   =>$this->membercard->card_bank_address,
-                 "bankcode"          =>$this->membercard->card_bank_lang,
-                 "accounttype"      =>"1",
-                 "bankcardtype"    =>"1",
-                 'mobilephone'      =>$this->membercard->card_phone,
-                 'idcardno'            =>$this->membercard->card_idcard,
-                 'address'             =>"山东省济南市天桥区泺口皮革城",
-           );
-           #aes加密并且urlsafe base64编码
-           $passParam=rongbang_aes($this->passway->passageway_pwd_key,$arr);
-           $array=array(
-                 'appid'      =>$this->passway->passageway_mech, //APPID
-                 'method'   =>"masget.webapi.com.subcompany.add",//进件接口
-                 'format'     =>"json",//响应格式
-                 'data'        =>$passParam,//请求报文加密
-                 'v'             =>"2.0",//接口版本号
-                 'session'  =>$this->passway->passageway_key,
-                 // 'target_appid' =>'400467885',
-                 'timestamp'  =>time(),
-            );
-           #连接键值生成sign
-           //拼接请求体参数
-            $getData=rongbang_sign($this->passway->passageway_pwd_key,$array,'https://gw.masget.com:27373/openapi/rest');
-           $curl = curl_init();
-            curl_setopt($curl, CURLOPT_URL, $getData);
-            curl_setopt($curl, CURLOPT_HEADER, 0);
-            curl_setopt($curl, CURLOPT_RETURNTRANSFER, 1);
-            curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, FALSE); // https请求 不验证证书和hosts
-            curl_setopt($curl, CURLOPT_SSL_VERIFYHOST, FALSE);
-            $data = json_decode(curl_exec($curl),true);
-            $httpCode = curl_getinfo($curl,CURLINFO_HTTP_CODE);
-            curl_close($curl);
+      public function rongbangnet(){
+        #取出荣邦对应的费率代码
+        $rate_code=db('passageway_rate')->alias('r')
+          ->join('passageway_item i','r.rate_rate=i.item_rate and r.rate_charge=i.item_charges')
+          // ->join('passageway_item i','r.rate_charge*100=i.item_charges')
+          ->where(['r.rate_passway_id'=>$this->passway->passageway_id,'i.item_group'=>$this->member->member_group_id,'i.item_passageway'=>$this->passway->passageway_id])
+          ->value('r.rate_code');
+        if(!$rate_code)
+          return '该用户对应的费率无套餐编码，请管理员核对！';
+         #定义请求报文组装
+         $arr=array(
+          //全平台唯一 加通道id以区分
+           'companyname'    =>$this->membercard->card_name . $this->passway->passageway_id .rand(100,999),
+           // 'companyname'    =>"test".time(),
+           // 'companycode'     =>$this->member->member_mobile,
+          //全平台唯一 加通道id以区分
+           'companycode'     =>$this->member->member_mobile . $this->passway->passageway_id.rand(100,999),
+           'accountname'      =>$this->membercard->card_name,
+           'bankaccount'       =>$this->membercard->card_bankno,
+           'bank'                   =>$this->membercard->card_bank_address,
+           "bankcode"          =>$this->membercard->card_bank_lang,
+           "accounttype"      =>"1",
+           "bankcardtype"    =>"1",
+           'mobilephone'      =>$this->membercard->card_phone,
+           'idcardno'            =>$this->membercard->card_idcard,
+           'address'             =>"山东省济南市天桥区泺口皮革城",
+           'ratecode'         =>$rate_code,
+         );
+        // var_dump($arr);die;
+        $data=rongbang_curl($this->passway,$arr,'masget.webapi.com.subcompany.add');
+        if($data['ret']==0){
+          #储存商户信息到memberNet关联字段中，因为信息有多条，以,分割后存储。
+          #信息顺序 0、appid 1、companycode 2、secretkey 3、session 4、companyname
+          $passageway_no=$data['data']['appid'].','.$data['data']['companycode'].','.$data['data']['secretkey'].','.$data['data']['session'].','.$data['data']['companyname'];
+          $res=MemberNet::where(['net_member_id'=>$this->member->member_id])->setField($this->passway->passageway_no, $passageway_no);
+            return true;
+        }elseif($data['ret']==34){
+          //34 为该商户商户名称已存在 调用该商户的信息
+          $data=$this->rongbang_getinfo();
+          if(is_array($data)){
+            //存储拉取的商户信息
+            $passageway_no=$data['appid'].','.$data['companycode'].','.$data['secretkey'].','.$data['session'].','.$data['companyname'];
+            $res=MemberNet::where(['net_member_id'=>$this->member->member_id])->setField($this->passway->passageway_no, $passageway_no);
+        // var_dump($data);die;
+            return true;
+          }else{
+            return $data;
+          }
+        }else{
+          return $data['message'];
+        }
+        // var_dump($data);die;
+      }
+      #荣邦 1.4.2.子商户秘钥下载 用于判断该用户是否已经在荣邦存在商户信息
+      #已存在 返回data字段 不存在返回false
+      public function rongbang_getinfo(){
+        $arr=[
+          'companycode'=>$this->member->member_mobile ,
+        ];
+          $data=rongbang_curl($this->passway,$arr,'masget.webapi.com.subcompany.get');
+           // var_dump($data);die;
+          if($data['ret']==0){
+            return $data['data'];
+          }else{
+            return $data['message'];
+          }
+      }
+      #荣邦1.4.3.商户通道入驻接口
+      public function rongbang_in(){
+        $userinfo=db('member_net')->where('net_member_id',$this->member->member_id)->value($this->passway->passageway_no);
+        // var_dump($userinfo);die;
+        $userinfo=explode(',', $userinfo);
+        $arr=array(
+          'companyid'   =>$userinfo[0],
+          // 'accounttype'   =>1,
+          // 'bankaccount'   =>1,
+        );
+        // echo json_encode($arr);die;
+        $data=rongbang_curl(rongbang_foruser($this->member,$this->passway),$arr,'masget.pay.compay.router.samename.open');
+           // var_dump($data);die;
+           // 5041 为已经进件
+        if($data['ret']==0 ||$data['ret']==5041){
+          return $data;
+        }else{
+          return $data['message'];
+        }
+      }
+      #荣邦1.6.1.申请开通快捷协议
+      public function rongbang_openpay($cardid){
+       $credit=db('member_creditcard')->where('card_id',$cardid)->find();
+        $arr=[
+          'mobilephone'=>$this->member->member_mobile,
+          'accountname'=>$this->member->member_nick,
+          'certificateno'=>$this->membercert->cert_member_idcard,
+          'accounttype'=>1,
+          'certificatetype'=>1,
+          'collecttype'=>1,
+          // 'expirationdate'=>1,
+          'bankaccount'=>$credit['card_bankno'],
+          'cvv2'=>$credit['card_Ident'],
+          'expirationdate'=>$credit['card_expireDate'],
+          'fronturl'=>request()->domain() . "/api/Userurl/passway_open_success"
+        ];
+         // var_dump($arr);die;
+        $data=rongbang_curl(rongbang_foruser($this->member,$this->passway),$arr,'masget.pay.collect.router.treaty.apply');
+        // var_dump($data);die;
+         if($data['ret']==0){
+            //$arr=$data['data']['html'];
+         
+            //$arr=urlsafe_b64decode($data['data']['html']);
+           //$arr=base64_decode($data['data']['html']);
+           // var_dump($data['data']['html']);die;
+          return $data['data'];
+         }else{
+          return $data['message'];
+         }
+      }
+      #荣邦1.6.2.确认开通快捷协议
+      public function rongbang_confirm_openpay($treatycode,$smsseq,$authcode){
+        $arr=[
+          'treatycode'=>$treatycode,
+          'smsseq'=>$smsseq,
+          'authcode'=>$authcode,
+        ];
+        $data=rongbang_curl($this->passway,$arr,'masget.pay.collect.router.treaty.apply');
+        if($data['ret']==0){
+          //将快捷支付状态改为已开通
+          db('member_credit_pas')->where(['member_credit_pas_info'=>$treatycode,'member_credit_pas_pasid'=>$this->passway->passageway_id])->update(['member_credit_pas_status'=>1]);
+          return true;
+        }else{
+          return $data['message'];
+        }
+      }
+      #荣邦 1.6.3.查询快捷协议
+      public function rongbang_check($treatycode){
+      //提取转换存储的商户信息
+          #信息顺序 0、appid 1、companycode 2、secretkey 3、session 4、companyname
+        $userdata=db('member_net')->where(['net_member_id'=>$this->member->member_id])->value($this->passway->passageway_no);
+        if($userdata){
+          $userdata=explode(',', $userdata);
+        }
+        $arr=[
+          'pcompanyid'=>$this->passway->passageway_mech,
+          'companyid'=>$userdata[0],
+          'treatycode'=>$treatycode,
+        ];
+          $data=rongbang_curl(rongbang_foruser($this->member,$this->passway),$arr,'masget.pay.collect.router.treaty.query');
+          // var_dump($data);die;
+         if($data['ret']==0 && $data['data']['status']==2){
+          //返回商户信息
+          return $data['data'];
+         }elseif($data['ret']==0 && $data['data']['status']==1){
+          return '审核中';
+         }elseif($data['ret']==0 && $data['data']['status']==3){
+          return '审核失败';
+         }else{
+          return $data['message'];
+         }
+      }
+      #荣邦 1.5.1.订单支付(后台)
+      public function rongbang_pay($card_id,$tradeNo,$price,$description){
+        //取出该用户的荣邦商户信息
+        $userinfo=db('member_net')->where(['net_member_id'=>$this->member->member_id])->value($this->passway->passageway_no);
+        //取出支付凭据
+        $treatycode=db('member_credit_pas')->where(['member_credit_pas_creditid'=>$card_id,'member_credit_pas_pasid'=>$this->passway->passageway_id])->value('member_credit_pas_info');
+        $userinfo=explode(',', $userinfo);
+        $companyid=$userinfo[0];
+       $credit=db('member_creditcard')->where('card_id',$card_id)->find();
+        // 荣邦发来的demo json
+        $arr='{
+  "amount": "1020",
+  "subpaymenttypeid": "25",
+  "backurl": "http://gongke.iask.in:21339/api/Userurl/passway_rongbang_paycallback/passageway_id/10/member_id/44",
+  "body": "订单收款-3301073122471101",
+  "businesstype": "1001",
+  "payextraparams": "{\"treatycode\":\"701218011013424102\"}",
+  "paymenttypeid": "25",
+  "ordernumber": "test201801101523"
+}';
+        //402573747  封顶通道 
+        if($this->passway->passageway_id==11){
+          $paymenttypeid='4';
+          $payextraparams='"{\"bankaccount\":\"'.$credit['card_bankno'].'\"}"';
+          //402512992 快捷无积分
+        }else{
+          $paymenttypeid='25","subpaymenttypeid":"25';
+          $payextraparams='"{\"treatycode\":\"'.$treatycode.'\"}"';
+        }
 
-            //进件完成
-            
-            // var_dump($data);die;
-            if($data['ret']==0){
-              $passageway_no=$data['data']['companyid'];
-              $res=MemberNet::where(['net_member_id'=>$this->member->member_id])->setField($this->passway->passageway_no, $passageway_no);
-            }else{
-              return false;
-            }
-*/
+        //由demo而来的终极拼接版
+        $arr='{
+          "amount": "'.$price*100 .'",
+          "backurl": "'.request()->domain(). '/api/Userurl/passway_rongbang_paycallback/passageway_id/' . $this->passway->passageway_id . '/member_id/' . $this->member->member_id .'/order_no/'.$tradeNo.'",
+          "body": "'.$description.'",
+          "businesstype": "1001",
+          "payextraparams": '.$payextraparams.',
+          "paymenttypeid": "'.$paymenttypeid.'",
+          "ordernumber": "'.$tradeNo.'",
+          "fronturl":"'. request()->domain() . '/api/Userurl/passway_success/order_no/'.$tradeNo.'"
+        }';
 
-            $arr=array(
-              'companyid'   =>'402560662'
-            );
-            
-          $passParam=rongbang_aes($this->passway->passageway_pwd_key,$arr);
-          $array=array(
-            'appid'      =>$this->passway->passageway_mech, //APPID
-             'method'   =>"masget.pay.compay.router.samename.open",//进件接口
-             'format'     =>"json",//响应格式
-             'data'        =>$passParam,//请求报文加密
-             'v'             =>"2.0",//接口版本号
-             'session'  =>$this->passway->passageway_key,
-             // 'target_appid' =>'400467885',
-             'timestamp'  =>time(),
-          );
-
-          $getData=rongbang_sign($this->passway->passageway_pwd_key,$array,'https://gw.masget.com:27373/openapi/rest');
-
-           $curl = curl_init();
-            curl_setopt($curl, CURLOPT_URL, $getData);
-            curl_setopt($curl, CURLOPT_HEADER, 0);
-            curl_setopt($curl, CURLOPT_RETURNTRANSFER, 1);
-            curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, FALSE); // https请求 不验证证书和hosts
-            curl_setopt($curl, CURLOPT_SSL_VERIFYHOST, FALSE);
-            $data = json_decode(curl_exec($curl),true);
-            $httpCode = curl_getinfo($curl,CURLINFO_HTTP_CODE);
-            curl_close($curl);
-            var_dump($data);die;
-                 
+        // echo ($arr);die;
+        // echo (json_encode($arr));die;
+          $data=rongbang_curl(rongbang_foruser($this->member,$this->passway),$arr,'masget.pay.compay.router.back.pay');
+        // dump($data);die;
+          if(isset($data['ret']) && $data['ret']==0){
+            return $data['data'];
+            #封顶 通道 成功返回html 字符串
+          }elseif(is_string($data)){
+            # 因为 无积分是要转换的，所以在此做成与无积分返回格式一致
+            return [
+              'html'=>base64_encode($data),
+              'ishtml'=>1,
+              ##没有第三方订单号，生成一个用不到的站位
+              'ordercode'=>rand(100000,999999),
+            ];
+          }else{
+            return $data['message'];
+          }
+      }
+      #荣邦 1.5.2.查询交易订单
+      public function rongbang_check_pay($ordernumber){
+        $userinfo=db('member_net')->where('net_member_id',$this->member->member_id)->value($this->passway->passageway_no);
+        $userinfo=explode(',', $userinfo);
+        $arr=[
+          'ordernumber'=>$ordernumber,
+          'companyid'=>$userinfo[0],
+        ];
+        $data=rongbang_curl($this->passway,$arr,'masget.pay.compay.router.paymentjournal.get');
+        if($data['ret']==0){
+          // dump($data);die;
+          return $data['data'];
+        }else{
+          return $data['message'];
+        }
       }
 
-
+      #荣邦 1.5.3.确认支付
+      public function rongbang_confirm_pay($ordercode,$card_id,$authcode){
+        $arr=[
+          'ordercode'=>$ordercode,
+          'authcode'=>$authcode,
+        ];
+        $data=rongbang_curl($this->passway,$arr,'masget.pay.compay.router.confirmpay');
+          w_log($data);
+        if($data['ret']==0){
+          $data=$data['data'];
+          if($data['respcode']==2){
+            //支付成功 更新快捷支付订单表状态
+            $order=db('cash_order')->where('order_no',$data['ordernumber'])->find();
+            //仅在待支付情况下操作
+            if($order['order_state']==1){
+              db('cash_order')->where('order_no',$data['ordernumber'])->update(['order_state'=>2]);
+              //进行分润
+              $fenrun= new \app\api\controller\Commission();
+              $fenrun_result=$fenrun->MemberFenRun($this->member->member_id,$order['order_money'],$this->passway->passageway_id,1,'交易手续费分润',$order['order_id']);
+              #交易失败 待支付 已关闭 交易撤销
+              return $data;
+            }else{
+              return $data['respmsg'];
+            }
+          }else{
+            return $data['respmsg'];
+          }
+        }else{
+          return $data['message'];
+        }
+      }
+      #荣邦银行签约接口
+      #封顶通道专用
+      public function rongbang_sign_card($card_id){
+        $credit=db('member_creditcard')->where('card_id',$card_id)->find();
+        $userinfo=db('member_net')->where('net_member_id',$this->member->member_id)->value($this->passway->passageway_no);
+        $userinfo=explode(',', $userinfo);
+        $arr=array(
+          #公司ID
+          'companyid'   =>$userinfo[0],
+          'bankaccount'   =>$credit['card_bankno'],
+          'cvv2'   =>$credit['card_Ident'],
+          'expirationdate'   =>$credit['card_expireDate'],
+          'mobilephone'   =>$credit['card_phone'],
+        );
+        // echo json_encode($arr);die;
+        $data=rongbang_curl(rongbang_foruser($this->member,$this->passway),$arr,'masget.pay.compay.router.sign.card');
+        #成功返回html，是一个string
+        return $data;
+        var_dump($data);die;
+      }
+      #荣邦银行签约状态查询
+      public function rongbang_signquery_card($card_id){
+        $credit=db('member_creditcard')->where('card_id',$card_id)->find();
+        $userinfo=db('member_net')->where('net_member_id',$this->member->member_id)->value($this->passway->passageway_no);
+        $userinfo=explode(',', $userinfo);
+        $arr=array(
+          #公司ID
+          'companyid'   =>$userinfo[0],
+          'bankaccount'   =>$credit['card_bankno'],
+        );
+        // $data=rongbang_curl($this->passway,$arr,'masget.pay.compay.router.signquery.card');
+        $data=rongbang_curl(rongbang_foruser($this->member,$this->passway),$arr,'masget.pay.compay.router.signquery.card');
+        // var_dump($data);die;
+        if($data['ret']==0){
+          $data=$data['data'];
+          return $data;
+        }else{
+          return $data['message'];
+        }
+      }
 
         /**
       *  @version jinyifu / Api 金易付商户入网接口
@@ -190,7 +415,7 @@
       **/
       public function jinyifu()
       {
-          $memberAlso=PassagewayItem::where(['item_group'=>$this->member->member_group_id,'item_passageway'=>$this->passway->passageway_id])->value('item_rate');
+          $memberAlso=PassagewayItem::where(['item_group'=>$this->member->member_group_id,'item_passageway'=>$this->passway->passageway_id])->find();
            $arr=array( 
                  'branchId' => $this->passway->passageway_mech,//机构号
                  'lpName'      => $this->membercard->card_name,//法人姓名
@@ -200,10 +425,10 @@
                  'telNo'      => $this->member->member_mobile,//商户手机号
                  'city'           =>  "370100",//结算卡所在市编码
                  'bizTypes'                 => "4301" ,// 开通业务类型
-                 '5001_fee'           => $memberAlso/100,//5001交易手续费例:0.0038  10000元交易手续费38（业务类型包含时必填）
-                 '5001_tzAddFee'              => 2, //5001T0额外手续费例:2  提现额外收取2元提现费（业务类型包含时必填）
-                 '4301_fee'         => $memberAlso/100, //4401交易手续费例:0.0038  10000元交易手续费38（业务类型包含时必填）
-                 '4301_tzAddFee'   => 2,//4401T0额外手续费例:2  提现额外收取2元提现费（业务类型包含时必填）
+                 '5001_fee'           => $memberAlso['item_rate']/100,//5001交易手续费例:0.0038  10000元交易手续费38（业务类型包含时必填）
+                 '5001_tzAddFee'              =>$memberAlso['item_charges']/100, //5001T0额外手续费例:2  提现额外收取2元提现费（业务类型包含时必填）
+                 '4301_fee'         => $memberAlso['item_rate']/100, //4401交易手续费例:0.0038  10000元交易手续费38（业务类型包含时必填）
+                 '4301_tzAddFee'   =>$memberAlso['item_charges']/100,//4401T0额外手续费例:2  提现额外收取2元提现费（业务类型包含时必填）
            );
            // var_dump($arr);die;
 
@@ -229,7 +454,7 @@
           if($result['resCode']=='00')
             $res=MemberNet::where(['net_member_id'=>$this->member->member_id])->setField($this->passway->passageway_no, $result['merchId']);
           return $result;
-      } 
+      }
 
 
 
@@ -297,10 +522,10 @@
           if($result['resCode']=='00')
             $res=MemberNet::where(['net_member_id'=>$this->member->member_id])->setField($this->passway->passageway_no, $result['merchId']);
           return $result;
-      } 
+      }
 
-
-
-
-
+      #0117 新商户注册（同步多渠道） 
+      public function api0117_reg(){
+        return config('weipay.check_name');
+      }
  }

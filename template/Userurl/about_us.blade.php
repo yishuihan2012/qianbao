@@ -33,7 +33,8 @@
 		            	<h4 class="main-color fc about-tit space-up"><span class="mui-icon iconfont icon-zizhizhengshu space-right"></span>资质证书</h4>
 		            	<div class="about-info">
 		            		<!--卡片视图-->
-		            		<div class="my-card">
+		            		{!! $datas['page_content'] !!}
+		            		<!-- <div class="my-card">
 								<div class="my-card-header wrap2">
 									<span class="my-badge">01</span>
 		            		        <span>某某证书</span>
@@ -50,7 +51,7 @@
 								<div class="my-card-content">
 									 <img src="/static/images/certificate.png">
 								</div>
-							</div>
+							</div> -->
 		            	</div>
 		            </div> 
 		            <!--联系我们-->
@@ -97,16 +98,16 @@
 		            	<div class="my-pad2">
 		            		<dl class="space-bot">
 		            			<dt><h4><span class="mui-icon iconfont icon-icon104 blue-color-th v-m space-right"></span>公司地址</dt>
-		            			<dd>山东省济南市天桥区济泺路71号齐鲁云商大厦20层</dd>
+		            			<dd>{{$server['company_address']}}</dd>
 		            		</dl>
 		            		<ul class="dis-flex-be">
 		            			<li>
 		            				<h4><span class="mui-icon iconfont icon-my-phone blue-color-th v-m space-right"></span>商务合作</h4>
-		            				<p class="f14">18756853348</p>
+		            				<p class="f14">{{$server['phone']}}</p>
 		            			</li>
 		            			<li>
 		            				<h4><span class="mui-icon iconfont icon-shijian-copy-copy blue-color-th v-m space-right"></span>工作时间</h4>
-		            				<p class="f14">08:00-18:00 周一至周六</p>
+		            				<p class="f14">{{$server['working_hours']}}</p>
 		            			</li>
 		            		</ul>
 		            	</div>
@@ -151,7 +152,8 @@
 		            if (/(iPhone|iPad|iPod|iOS)/i.test(navigator.userAgent)) {  //判断iPhone|iPad|iPod|iOS
 		                 window.webkit.messageHandlers.drialPhone.postMessage(tel);
 		            } else if (/(Android)/i.test(navigator.userAgent)) {   //判断Android
-		                 window.AndroidMessage.call(tel);
+		                 // window.AndroidMessage.call(tel);
+		                 android.drialPhone(tel);
 		            }
 	                  
 		            

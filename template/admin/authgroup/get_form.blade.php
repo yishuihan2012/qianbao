@@ -118,6 +118,9 @@
             dataType: 'json'
             });
         });
+        $('input[type="checkbox"]').click(function(){
+          this.checked=this.checked ? 0 : 1;
+        })
     });
 </script>
 @endsection

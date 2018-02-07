@@ -2,6 +2,10 @@
 @section('title','会赚钱的都在这~')
 @section('wrapper')
 <!-- HTML 代码 -->
+ <header>
+    <h3><i class="icon-list-ul"></i> 列表 <small>共 <strong class="text-danger">{{$count}}</strong> 条</small>
+     
+  </header>
 <div class="panel">
   	<div class="panel-body">
   <div class="row row-search">
@@ -13,11 +17,11 @@
   		</div>
       <div class="col-xs-4 col-md-2">
           <div class="input-group">
-          <span class="input-group-addon">联系方式</span>
-            <input type="text" class="form-control" placeholder="联系方式" name="adminster_email" value="{{ $params['email'] }}">
+          <span class="input-group-addon">联系邮箱</span>
+            <input type="text" class="form-control" placeholder="联系邮箱" name="adminster_email" value="{{ $params['email'] }}">
         </div>
       </div>
-      <div class="col-xs-4 col-md-2">
+<!--       <div class="col-xs-4 col-md-2">
           <div class="input-group">
           <span class="input-group-addon">城市信息</span>
           <select class="form-control" name="adminster_city">
@@ -27,7 +31,7 @@
         </select>
         </div>
       </div>
-    <div class="col-xs-4 col-md-2">
+ -->    <div class="col-xs-4 col-md-2">
         <div class="input-group">
         <span class="input-group-addon">管理员状态</span>
         <select class="form-control" name="adminster_state">
@@ -37,6 +41,7 @@
         </select>
       </div>
     </div>
+    @if($admin['adminster_group_id']!=5)
     <div class="col-xs-4 col-md-2">
         <div class="input-group">
         <span class="input-group-addon">用户组</span>
@@ -48,6 +53,7 @@
         </select>
       </div>
     </div>
+    @endif
     <div class="col-xs-4 col-md-2 text-center">
       <button class="btn btn-primary btn-search" type="button">立即搜索</button>
     </div>
@@ -66,7 +72,7 @@
       <th>#</th>
       <th>登录名称</th>
       <th>联系邮箱</th>
-      <th>所在城市</th>
+      <!-- <th>所在城市</th> -->
       <th>状态信息</th>
       <th>最近登录时间</th>
       <th>相关操作</th>
@@ -79,10 +85,11 @@
           <td>{{ $adminster['adminster_id'] }}</td>
           <td>{{ $adminster['adminster_login'] }}</td>
           <td>{{ $adminster['adminster_email'] }}</td>
-          <td>{{ $adminster['adminster_city'] }}</td>
-          <td>{{ get_status_text($adminster['adminster_state']) }}</td>
+          <!-- <td>{{ $adminster['adminster_city'] }}</td> -->
+          <td>{{  get_status_text($adminster['adminster_state']) }}</td>
           <td>{{ $adminster['adminster_update_time'] }}</td>
           <td>
+          @if($admin['adminster_group_id']!=5)
             <div class="btn-group">
             <a href="{{ url('/index/adminster/edit','id='.$adminster['adminster_id']) }}" class="btn btn-sm">编辑</a>
             <div class="btn-group">
@@ -92,6 +99,9 @@
               </ul>
             </div>
         </div>
+        @else
+          无
+        @endif
           </td>
         </tr>
       @endforeach

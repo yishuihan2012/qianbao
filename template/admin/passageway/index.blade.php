@@ -14,7 +14,7 @@
                  <!-- 以下两列左侧固定 -->
                  <th>#</th>
                  <th>通道名</th>
-                 <th>通道代号</th>
+                 <th>真实通道</th>
                  <!-- 以下三列中间可滚动 -->
                  <th class="flex-col">机构号</th> 
                  <th class="flex-col">机构Key</th>
@@ -30,25 +30,31 @@
            <tr>
                  <td>{{$list->passageway_id}}</td>
                  <td>{{$list->passageway_name}}</td>
-                 <td>{{$list->passageway_no}}</td>
+                 <td>{{$list->passageway_true_name}}</td>
                  <td>{{$list->passageway_mech}}</td>
                  <td>{{$list->passageway_key}}</td>
                  <td>@if($list->passageway_state==1) 启用 @else 禁用 @endif</td>
                  <td>@if($list->passageway_status==1) 是 @else 否 @endif</td>
                  <td>{{$list->passageway_add_time}}</td>
                  <td>
+                 @if($admin['adminster_group_id']==5)
+                      <a class="btn btn-sm" href="{{url('/index/passageway/passageway_details','id='.$list['passageway_id'])}}">交易详情</a> 
+                      @else
                       <div class="btn-group"><a  data-remote="{{url('/index/passageway/rate','id='.$list['passageway_id'])}}" data-toggle="modal" data-size="lg" href="#" class="btn btn-sm">税率调整</a>
                            <div class="btn-group">
                                  <button type="button" class="btn dropdown-toggle btn-sm" data-toggle="dropdown"><span class="caret"></span></button>
                                  <ul class="dropdown-menu" role="menu">
                                   <li><a  data-remote="{{url('/index/passageway/edit','id='.$list['passageway_id'])}}" data-toggle="modal" data-size="lg" href="#">修改</a></li>
+                                  <li><a class="remove" href="#" data-url="{{url('/index/passageway/delete','id='.$list['passageway_id'])}}"> 删除</a></li>
                                    <li><a  data-remote="{{url('/index/passageway/add_credit_card','id='.$list['passageway_id'])}}" data-toggle="modal" data-size="lg" href="#">添加信用卡</a></li>
                                    <li><a  href="{{url('/index/passageway/list_credit_card','id='.$list['passageway_id'])}}" >查看信用卡列表</a></li>
-                                      <li><a  data-remote="{{url('/index/passageway/cashout','id='.$list['passageway_id'])}}" data-toggle="modal" data-size="lg" href="#">提现设置</a></li>
-                                      <li><a  data-remote="{{url('/index/passageway/also','id='.$list['passageway_id'])}}" data-toggle="modal" data-size="lg" href="#">代还设置</a> </li>
+                                      <li><a  data-remote="{{url('/index/passageway/cashout','id='.$list['passageway_id'])}}" data-toggle="modal" data-size="lg" href="#">通道设置</a></li>
+                                      <!-- <li><a  data-remote="{{url('/index/passageway/also','id='.$list['passageway_id'])}}" data-toggle="modal" data-size="lg" href="#">代还设置</a> </li> -->
+                                      <li><a href="{{url('/index/passageway/passageway_details','id='.$list['passageway_id'])}}">交易详情</a> </li>
                                  </ul>
                            </div>
                       </div>
+                      @endif
                  </td>
            </tr>
            @endforeach
@@ -61,6 +67,21 @@
      	 $('.menu .nav .active').removeClass('active');
     	 $('.menu .nav li.passageway').addClass('active');
     	 $('.menu .nav li.passageway-manager').addClass('show');
+    $(".remove").click(function(){
+         var url=$(this).attr('data-url');
+        bootbox.confirm({
+        title: "删除文章确认",
+        message: "确定删除这篇文章吗? 删除后不可恢复!",
+        buttons: {
+            cancel: {label: '<i class="fa fa-times"></i> 点错'},
+            confirm: {label: '<i class="fa fa-check"></i> 确定'}
+        },
+        callback: function (result) {
+           if(result)
+            window.location.href=url;
+        }
+     });
+    })
 });
 </script>
 @endsection

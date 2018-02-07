@@ -1,16 +1,28 @@
 <nav class="menu" data-ride="menu">
-    <a class="btn btn-primary" href="#"><i class="icon icon-edit"></i> 新增项目</a>
-    <a class="btn" href="#"><i class="icon icon-cloud-upload"></i> 轮播图上传</a>
+    <!-- <a class="btn btn-primary" href="#"><i class="icon icon-edit"></i> 新增项目</a> -->
+    <!-- <a class="btn" href="{{url('/index/uploads/index')}}" data-remote="" data-size="lg" data-toggle="modal"><i class="icon icon-cloud-upload"></i> 会员组头像上传</a> -->
+    <!-- <a class="btn" href="{{url('/index/uploads/logo')}}" data-remote="" data-size="lg" data-toggle="modal"><i class="icon icon-cloud-upload"></i> 网站logo上传</a> -->
     <ul class="nav nav-primary">
 
         <li class="dashboard"><a href="{{url('/index/dashboard/index')}}"><i class="0icon icon-dashboard"></i> 控制面板</a></li>
         <li class="nav-parent member-manager">
-            <a href="javascript:;"><i class="0icon icon-user"></i> 会员管理</a>
+            <a href="javascript:;"><i class="icon icon-user"></i> 会员管理</a>
             <ul class="nav">
                 <li class="member"><a href="{{url('/index/member/index')}}"> 会员管理</a></li>
+                @if($admin['adminster_group_id']!=5)
                 <li class="member_group"><a href="{{ url('/index/member_group/index') }}"> 用户组管理</a></li>
+                @endif
             </ul>
         </li>
+        @if($admin['adminster_group_id']!=5)
+       <!--  <li class="nav-parent member-activation-code">
+            <a href="javascript:;"><i class="icon icon-barcode"></i> 激活码管理</a>
+            <ul class="nav">
+                <li class="activation_code"><a href="{{url('/index/activation_code/index')}}"> 激活码列表 </a></li>
+            </ul>
+        -->
+        @endif
+        @if($admin['adminster_group_id']!=5)
         <li class="nav-parent wallet-manager">
             <a href="javascript:;"><i class="icon icon-dollar"></i>钱包管理</a>
             <ul class="nav">
@@ -28,23 +40,30 @@
                  <li class="successcash"><a href="{{url('/index/order/successCash')}}"><i class="icon icon-sliders"></i> 成功交易订单</a></li>
             </ul>
         </li>
+        @endif
         <li class="nav-parent passageway-manager">
             <a href="javascript:;"><i class="icon icon-user"></i> 通道管理</a>
             <ul class="nav">
                 <li class="passageway"><a href="{{url('/index/passageway/index')}}"><i class="icon icon-sliders"></i> 通道列表</a></li>
-            </ul>
+                
+	
+ 			<!--<li class="passageway_rate"><a href="{{url('/index/passageway_rate/index')}}"><i class="icon icon-sliders"></i> 费率编码表</a></li>-->       
+            </ul> 
         </li>
+        @if($admin['adminster_group_id']!=5)
         <li class="nav-parent plan-manager">
-            <a href="javascript:;"><i class="icon icon-user"></i> 还款计划</a>
+            <a href="javascript:;"><i class="icon icon-user"></i> 自动代还</a>
             <ul class="nav">
-                <li class="plan"><a href="{{url('/index/plan/index')}}"><i class="icon icon-sliders"></i> 计划列表</a></li>
-                  <li class="plan_fail"><a href="{{url('/index/plan/fail')}}"><i class="icon icon-sliders"></i> 失败计划列表</a></li>
+                    <li class="plan"><a href="{{url('/index/plan/index')}}"><i class="icon icon-sliders"></i> 计划列表</a></li>
+                    <li class="plan_fail"><a href="{{url('/index/plan/fail')}}"><i class="icon icon-sliders"></i> 失败计划列表</a></li>
             </ul>
         </li>
-        <li class="nav-parent suggestion">
-            <a href="javascript:;"><i class="icon icon-user"></i> 财务管理</a>
+        <li class="nav-parent financial-manager">
+            <a href="javascript:;"><i class="icon icon-yen"></i> 财务管理</a>
             <ul class="nav">
-                <li class=""><a href="{{url('/index/suggestion/index')}}"><i class="icon icon-sliders"></i> 用户反馈</a></li>
+                    <li class="financial_center"><a href="{{url('/index/financial/index')}}"><i class=""></i> 对账中心</a></li>
+                    <li class="commiss_center"><a href="{{url('/index/financial/commiss')}}"><i class=""></i> 分佣统计</a></li>
+                    <li class="fenrun_center"><a href="{{url('/index/financial/fenrun')}}"><i class=""></i> 分润统计</a></li>
             </ul>
         </li>
         <li class="nav-parent model-manager">
@@ -87,15 +106,18 @@
                 <li class="suggestion_list"><a href="{{url('/index/suggestion/index')}}"><i class="icon icon-sliders"></i> 用户反馈</a></li>
             </ul>
         </li>
-
+        @endif
         <li class="adminster-manager nav-parent">
             <a href="{{url('/index/adminster/index')}}"><i class="0icon icon-user"></i> 管 理 员</a>
             <ul class="nav">
                 <li class="adminster"><a href="{{url('/index/adminster/index')}}">管理员管理</a></li>
+                @if($admin['adminster_group_id']!=5)
+
                 <li class="auth_group"><a href="{{url('/index/auth_group/index')}}">用户组管理</a></li>
+                @endif
             </ul>
         </li>
-
+        @if($admin['adminster_group_id']!=5)
         <li class="nav-parent system-setting">
             <a href="javascript:;"><i class="icon icon-cog"></i> 系统管理</a>
             <ul class="nav">
@@ -103,8 +125,10 @@
                 <li class="setting-page"><a href="{{url('/index/system/page')}}"><i class="icon icon-sliders"></i> 内置页面</a></li>
                 <li class="setting-customer_service service"><a href="{{url('/index/system/customer_service')}}"><i class="icon icon-sliders"></i> 客服管理</a></li>
                 <li class="setting-announcement"><a href="{{url('/index/system/announcement')}}"><i class="icon icon-sliders"></i> 公告管理</a></li>
+                <li class="setting-Appversion"><a href="{{url('/index/appversion/index')}}"><i class="icon icon-sliders"></i> APP版本号</a></li>
+                <li class="setting-logo"><a href="{{url('/index/uploads/logo')}}" data-remote="" data-size="lg" data-toggle="modal"><i class="icon icon-sliders"></i> 网站logo上传</a></li>
             </ul>
         </li>
-
+        @endif
     </ul>
 </nav>

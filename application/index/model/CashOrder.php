@@ -1,6 +1,6 @@
 <?php
  /**
- * @version  CashOrder Model 套现订单模型
+ * @version  CashOrder Model 快捷支付订单模型
  * @author  $bill 755969423@qq.com
  * @time      2017-12-20 10:13
  * @return  
@@ -39,6 +39,13 @@
       #关联模型 一对一关联 (passageway) 银行卡
       public function passageway()
       {
-           return $this->hasOne('Passageway','passageway_id','order_passway')->setEagerlyType(0);
+           return $this->hasOne('Passageway','passageway_id','order_passway')->bind("passageway_name,passageway_no")->setEagerlyType(0);
       }
+
+      #关联模型 一对一关联 (member) 会员模型
+      public function member()
+      {
+           return $this->hasOne('Member','member_id','order_member','','left')->bind("member_nick,member_mobile")->setEagerlyType(0);
+      }
+
 }

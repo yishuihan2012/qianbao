@@ -50,32 +50,92 @@ input.labelauty + label { font: 12px "Microsoft Yahei";}
 			<label for="group_salt" class="col-sm-2 text-right"><b>组 级 别:</b></label>
 			<div id="group_salt" class="col-sm-6"><input type="number" class="form-control group_salt group_name" name="group_salt" value=""></div>
 		</div>
+
+		<br/>
 		<div class="row">
 			<label for="group_salt" class="col-sm-2 text-right"><b>升级方式:</b></label>
 			<div id="group_salt" class="col-sm-6">
-				<select name="group_level_type" class="group_name">
-					<option value="-1">不限</option>
-					<option value="1">推荐人</option>
-					<option value="2">刷卡量</option>
-					<option value="3">付费升级</option>
-				</select>
+				 <select name="group_level_type" class="group_name form-control group_level_type">
+				<option value="-1">不限</option>
+				<option value="1">推荐人</option>
+				<option value="2">刷卡量</option>
+				<option value="3">付费升级</option>
+			</select>
 			</div>
 		</div>
+		<br/>
 		<div class="row">
 			<label for="group_salt" class="col-sm-2 text-right"><b>升级条件-推荐人数量:</b></label>
 			<div id="group_salt" class="col-sm-6"><input type="number" class="form-control group_salt  " name="group_level_invite" value="" placeholder="">
 			</div>
 		</div>
+		<br/>
 		<div class="row">
 			<label for="group_salt" class="col-sm-2 text-right"><b>升级条件-刷卡量:</b></label>
 			<div id="group_salt" class="col-sm-6"><input type="number" class="form-control group_salt  " name="group_level_transact" value="" placeholder="">
 			</div>
 		</div>
+		<br/>
 		<div class="row">
 			<label for="group_salt" class="col-sm-2 text-right"><b>升级条件-付费金额:</b></label>
 			<div id="group_salt" class="col-sm-6"><input type="number" class="form-control group_salt  " name="group_level_money" value="" placeholder="">
 			</div>
 		</div>
+		<!-- <br/>
+		<div class="row">
+			<label for="group_salt" class="col-sm-2 text-right"><b>运营商专用</b></label>
+			<div id="group_salt" class="col-sm-6">
+			 <select name="group_visible" class="group_name form-control group_visible">
+				<option value="1">否</option>
+				<option value="0">是</option>
+			</select>
+			</div>
+		</div> -->
+		<br/>
+		<div class="row">
+			<label for="group_salt" class="col-sm-2 text-right"><b>是否能分佣</b></label>
+			<div id="group_salt" class="col-sm-6">
+			 <select name="group_cent" class="group_name form-control group_visible">
+				<option value="1">是</option>
+				<option value="0">否</option>
+			</select>
+			</div>
+		</div>
+		<br/>
+		<div class="row">
+			<label for="group_salt" class="col-sm-2 text-right"><b>是否能分润</b></label>
+			<div id="group_salt" class="col-sm-6">
+			 <select name="group_run" class="group_name form-control group_visible">
+				<option value="1">是</option>
+				<option value="0">否</option>
+			</select>
+			</div>
+		</div>
+		<br/>
+		<div class="row form-group">
+			<label for="group_name" class="col-sm-2 text-right"><b>直接推荐人分佣金额:</b></label>
+			<div id="group_level_value" class="col-sm-6">
+				<input type="text" class="form-control group_level_value" name="group_direct_cent" placeholder="" value="">
+			</div>
+		</div>
+		<div class="row form-group">
+			<label for="group_name" class="col-sm-2 text-right"><b>二级推荐人分佣金额:</b></label>
+			<div id="group_level_value" class="col-sm-6">
+				<input type="text" class="form-control group_level_value" name="group_second_level_cent" placeholder="" value="">
+			</div>
+		</div>
+		<div class="row form-group">
+			<label for="group_name" class="col-sm-2 text-right"><b>三级推荐人分佣金额:</b></label>
+			<div id="group_level_value" class="col-sm-6">
+				<input type="text" class="form-control group_level_value" name="group_three_cent" placeholder="" value="">
+			</div>
+		</div>
+		<div class="row form-group">
+         <label for="group_des" class="col-sm-2 text-right"><b>描述:</b></label>
+         <div class="col-sm-6" id="page_desc">
+           <textarea name="group_des" cols="30" class="form-control" rows="7">描述</textarea>
+         </div>
+       </div>
 		<h5></h5>
 
 	</form>

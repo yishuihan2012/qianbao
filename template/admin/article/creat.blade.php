@@ -126,8 +126,8 @@
 <script type="text/javascript">
 $(document).ready(function(){
     $('.menu .nav .active').removeClass('active');
-    $('.menu .nav li.newslist').addClass('active');
-    $('.menu .nav li.articles-manager').addClass('show');
+    $('.menu .nav li.articles').addClass('active');
+    $('.menu .nav li.article-manager').addClass('show');
     //获取二级分类
 	$("select[name='article_parent']").change(function(){
 	      var id=$(this).val();
@@ -173,8 +173,12 @@ $(document).ready(function(){
       KindEditor.ready(function(K) {
             window.editor = K.create('#editor_id');
       });
-	 var options = {
-	      filterMode : true
+	
+	  var options = {
+	      filterMode : true,
+           uploadJson : "{{url('/index/Tool/KindEditor_upload')}}",
+           fileManagerJson : "{{url('/index/Tool/KindEditor_upload')}}",
+           allowFileManager : true
 	 };
 	 var editor = KindEditor.create('textarea[id="content"]', options);
 	 $(".goHistory").click(function(){

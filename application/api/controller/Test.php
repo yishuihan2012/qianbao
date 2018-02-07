@@ -82,6 +82,7 @@ class Test
 			$data=$index->encryption_data(json_encode($data));
 			$request['data']=$data;
 			$host=System::getName('system_url');
+			$host='wallet.dev.com/index.php';
 			$data = $this->curlPost($host.'/api', 'post',$request);
 			$res=json_decode($data,true);
 			if(is_array($res) && $res['code']==200){

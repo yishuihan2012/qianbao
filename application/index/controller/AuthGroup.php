@@ -18,10 +18,11 @@ use app\index\model\AuthGroupAccess as AuthGroupAccesss;
 
 class AuthGroup extends Common {
     public function index(){
-      $auth_list= AuthGroups::where([])->paginate(Config::get('page_size'), false, [
+      $auth_list= AuthGroups::where([])->order("id desc")->paginate(Config::get('page_size'), false, [
                 'page'=>input('param.page')?:1,
                 'path'=>'/index/auth_group/index/page/[PAGE].html'
                 ]);
+      $this->assign("count",AuthGroups::count());
       $this->assign('show',$auth_list->render());
 			$this->assign('button',['text'=>'新增用户组','link'=>url('/index/auth_group/add')]);
       return view('admin/authgroup/index',['auth_list'=>$auth_list]);
@@ -35,8 +36,8 @@ class AuthGroup extends Common {
                   $auth_group->rules=implode(',',Request::instance()->post('group_rules/a'));
             //删除所有权限 更新权限
             if(false===$auth_group->save()){
-                  Session::set('jump_msg',['type'=>'warning','msg'=>'信息更新失败~请重试','data'=>'']);
-                  $this->redirect($this->history['0']);
+              Session::set('jump_msg',['type'=>'warning','msg'=>'信息更新失败~请重试','data'=>'']);
+              $this->redirect($this->history['0']);
             }
             Session::set('jump_msg',['type'=>'success','msg'=>'信息已更新','data'=>'']);
             $this->redirect($this->history['1']);
@@ -51,8 +52,8 @@ class AuthGroup extends Common {
               $auth_group->rules=implode(',',Request::instance()->post('group_rules/a'));
         //删除所有权限 更新权限
         if(false===$auth_group->save()){
-              Session::set('jump_msg',['type'=>'warning','msg'=>'信息添加失败~请重试','data'=>'']);
-              $this->redirect($this->history['0']);
+          Session::set('jump_msg',['type'=>'warning','msg'=>'信息添加失败~请重试','data'=>'']);
+          $this->redirect($this->history['0']);
         }
         Session::set('jump_msg',['type'=>'success','msg'=>'信息已添加','data'=>'']);
         $this->redirect($this->history['1']);
@@ -104,9 +105,9 @@ class AuthGroup extends Common {
         $authAdminster=$authGroupAccesss::get(Request::instance()->post('id'));
         $authAdminster->group_id=Config::get('default_groups');
         $authAdminster->save();
-        exit(json_encode(['code'=>200,'msg'=>'用户已经移除~','data'=>'']));
+        exit(json_encode(['code'=>200,'msg'=>'用户已经移除~','data'=>[]]));
       }
-      echo json_encode(['code'=>104,'msg'=>'非法请求~','data'=>'']);
+      echo json_encode(['code'=>104,'msg'=>'非法请求~','data'=>[]]);
     }
     public function change_state(){
         if(!Request::instance()->isGet()){
@@ -133,5 +134,25 @@ class AuthGroup extends Common {
       }
       $this->assign('authGroups',$authGroups);
       return view('/admin/authgroup/list');
+    }
+    #删除用户组管理
+    public function remove(){
+        $where['id'] = request()->param("group_id");
+        $info = AuthGroups::where($where)->find();
+
+        if($info['rules'] == ''){
+            $result = AuthGroups::where($where)->delete();
+            if($result === false){
+               Session::set('jump_msg',['type'=>'warning','msg'=>'操作失败']);  
+               $this->redirect($this->history['1']);
+            }else{
+               Session::set('jump_msg',['type'=>'success','msg'=>'操作成功']);  
+               $this->redirect($this->history['1']); 
+            }
+           
+        }else{
+            Session::set('jump_msg',['type'=>'warning','msg'=>'该数据里还有数据，不能删!']);  
+               $this->redirect($this->history['1']);
+        }
     }
 }

@@ -70,6 +70,7 @@
            if(empty($member_cert) || empty($membercashcard))
                  return ['code'=>367];
            #判断是否满足后台设置的最小提现额 或者该通道的最小提现额
+               // var_dump(System::getName('min_withdrawals'));die;
            if($this->param['money']<System::getName('min_withdrawals'))
                  return ['code'=>368];
            #判断用户钱包状态是否正常
@@ -136,7 +137,7 @@
                       $withdraws->withdraw_bak  = "需审核提现";  //备注信息
                       $withdraws->save();
                       $message="您的提现申请已经提交,等待审核~";
-                 }            
+                 }         
                  $content=[];
                  $content['type']=2;
                  $content['item']=$message;

@@ -70,7 +70,9 @@
             	 $member_info= new Member([
             	 	 'member_nick'=>$this->param['phone'],
             	 	 'member_mobile'=>$this->param['phone'],
-            	 	 'member_group_id'=>System::getName('open_reg_membertype')
+            	 	 'member_group_id'=>System::getName('open_reg_membertype'),
+                 'member_image'=>System::getName('system_url').'/static/images/logo.png',
+                 'member_root'=>0,
             	 ]);
             	 if(!$member_info->save())
             	 {
@@ -104,6 +106,7 @@
                    #用手机号去查询会员信息
                    $parent = $parent_result ? $parent_result['login_member_id'] : 0;
                    #TODO 系统设置里是否开启必须邀请人
+                   // Member::update(['member_id'=>$member_info->member_id,'member_root'=>find_root($parent)]);
             	 	 if(!$parent_result)
             	 	 {
              	 	      Db::rollback();

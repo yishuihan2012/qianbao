@@ -19,7 +19,7 @@
           $file = Request::instance()->file('file');
           //dump($file);
          if(!$file)
-              echo json_encode(['code'=>100,'msg'=>'请选择上传图片~','data'=>'']);
+              echo json_encode(['code'=>100,'msg'=>'请选择上传图片~','data'=>[]]);
         $tool=new Tool();
         $images=$tool->uploads($file, 'avatar');
         echo $images;

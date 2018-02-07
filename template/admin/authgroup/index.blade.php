@@ -7,7 +7,10 @@
     <a class="btn btn-primary" href="{{ url('/index/auth_group/add') }}">新增用户组<i class="icon icon-plus"></i></a>
   </div>
 </div> -->
-
+ <header>
+    <h3><i class="icon-list-ul"></i> 列表 <small>共 <strong class="text-danger">{{$count}}</strong> 条</small>
+     
+  </header>
 <table class="table table-striped table-hover">
   <thead>
     <tr>
@@ -32,7 +35,7 @@
                     <li><a href="{{ url('/index/auth_group/change_state','id='.$auth['id']) }}" data="" explain="用户组{{ get_status_text($auth['status']*-1) }}">{{ get_status_text($auth['status']*-1) }}</a></li>
                     <li class="divider"></li>
                     <li>
-                      <a href="javascript:;" class="auth-group-delete" data-link="{{ url('/index/auth_group/list',['group_id'=>$auth['id']]) }}">删除</a>
+                      <a href="{{ url('/index/auth_group/remove',['group_id'=>$auth['id']]) }}">删除</a>
                     </li>
                 </ul>
               </div>

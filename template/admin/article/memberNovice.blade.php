@@ -1,11 +1,13 @@
 @extends('admin/layout/layout_main')
-@section('title','系统公告列表')
+@section('title','新手指引管理')
 @section('wrapper')
 <div class="panel">
   	<div class="panel-body">
-  		<form action="" name="myform" class="form-group" method="get">
-
-		</form>
+  		<header>
+		    <h3>
+		        <i class="icon-list-ul"></i> 新手指引 <small>共 <strong class="text-danger">{{$count}}</strong> 条</small> 
+		    </h3>
+	    </header>
 
   	</div>
 </div>
@@ -28,7 +30,7 @@
 	     
 	      	<td>{{$val->novice_class_title}}</td>
 	      	<td>
-	      		<a type="button" class="btn btn-sm" data-remote="{{url('/index/article/noviceSave/novice_id/'.$val->novice_id)}}" data-size='lg' data-toggle="modal" href="#">编辑</a>
+	      		<a type="button" class="btn btn-sm" href="{{url('/index/article/noviceSave/novice_id/'.$val->novice_id)}}">编辑</a>
 	  			<a type="button" class="btn btn-sm" href="{{url('/index/article/noviceRemove/novice_id/'.$val->novice_id)}}">删除</a>
 	      	</td>
 	    </tr>

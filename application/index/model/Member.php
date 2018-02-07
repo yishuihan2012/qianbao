@@ -1,16 +1,14 @@
 <?php
  /**
- *  @version Member Model  会员基本信息模型
- * @author  $bill 755969423@qq.com
+ *  @version Member Model  会员模型
+ * @author  $GongKe$  755969423@qq.com
  * @time      2017-11-24 09:20
- * @return  
  */
-namespace app\index\model;
-use think\Db;
-use think\Model;
-use think\Config;
+ namespace app\index\model;
+ use think\{Db, Model, Config};
+ use think\ErrorException;
 
-class Member extends Model{
+ class Member extends Model{
       #定义模型数据表 默认为Class名加前缀 如不一样 可自己定义
       #protected $table = 'wt_member';
       #定义主键信息  可留空 默认主键
@@ -23,17 +21,30 @@ class Member extends Model{
       protected $updateTime = 'member_update_time';
       #定义返回数据类型
       protected $resultSetType = 'collection';
+
       protected function initialize()
       {
-           #需要调用父类的`initialize`方法
            parent::initialize();
            #TODO:自定义的初始化
       }
-
+       /**
+       *  @version getChild method /  实例方法 获取会员的直接下级信息
+       *  @author $GongKe$ (755969423@qq.com) 会员下级信息列表
+       *   @datetime    2018-1-17 13:27
+       *   @return  返回会员的下级信息 
+       */
+      public static function getChild(int $memberId) : array
+      {
+           try {
+                not_exists_func();
+           } catch (\Exception $e) {
+                var_dump('123');
+           }
+      }
       #关联模型 一对一关联 (MemberCertification) 用户实名表
       public function membercert()
       {
-           return $this->hasOne('MemberCert','cert_member_id','member_id')->bind('cert_member_name,cert_member_idcard');
+           return $this->hasOne('MemberCert','cert_member_id','member_id')->bind('cert_member_name,cert_member_idcard,IdPositiveImgUrl,IdNegativeImgUrl,IdPortraitImgUrl');
       }
 
       #关联模型 一对一关联 (MemberLogin) 用户登录表
@@ -57,14 +68,30 @@ class Member extends Model{
       #关联模型 一对一关联 (MemberRelation) 用户推荐表
       public function memberRelation()
       {
-           return $this->hasOne('MemberRelation','relation_member_id','member_id');
+           return $this->hasOne('MemberRelation','relation_member_id','member_id')->bind('relation_member_id,relation_parent_id')->setEagerlyType(0);
       }
 
       #关联模型 一对一关联 (memberWallet) 用户钱包表
       public function memberWallet()
       {
-           return $this->hasOne('Wallet','wallet_member','member_id');
+           return $this->hasOne('Wallet','wallet_member','member_id')->setEagerlyType(0);
       }
+
+      #关联模型 一对多关联 (Upgrade) 用户升级订单表
+      public function memberUpgrade()
+      {
+           return $this->hasMany('Upgrade','upgrade_id','member_id')->bind('upgrade_state,upgrade_update_time');
+      }
+      
+      public function memberCashcard(){
+        return $this->hasOne("MemberCashcard","card_member_id","member_id")->bind("card_bankno,card_idcard,card_name");
+      } 
+
+      #信用卡
+      public function memberCreditcard()
+      {
+        return $this->hasOne("MemberCreditcard","card_member_id","member_id")->bind("card_id,card_bankno,card_phone");
+      } 
 
 
 
@@ -92,5 +119,9 @@ class Member extends Model{
       public function recomment()
       {
            return $this->hasOne('Recomment','recomment_member_id','member_id');
+      }
+      public function membernet()
+      {
+           return $this->hasOne('MemberNet','net_member_id','member_id');
       }
 }

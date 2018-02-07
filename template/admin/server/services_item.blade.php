@@ -1,10 +1,13 @@
 @extends('admin/layout/layout_main')
-@section('title','系统公告列表')
+@section('title','模块管理')
 @section('wrapper')
 <div class="panel">
   	<div class="panel-body">
-  		<form action="" name="myform" class="form-group" method="get">
-		</form>
+  		<header>
+		    <h3>
+		        <i class="icon-list-ul"></i> 模块列表 <small>共 <strong class="text-danger">{{$count}}</strong> 条</small> 
+		    </h3>
+	  </header>
   	</div>
 </div>
 

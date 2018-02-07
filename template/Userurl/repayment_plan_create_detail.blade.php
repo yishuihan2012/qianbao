@@ -11,7 +11,7 @@
 		<link href="/static/css/themes.css" rel="stylesheet"/>
 	</head>
 	<body>
-		<div class="mui-content repayment-detail">
+		<div class="mui-content generate-plan">
 			<!--还款详情头部-->
 			<div class="wrap bg-w">
 			  <div class="dis-flex-be bor-bot">
@@ -70,9 +70,10 @@
 		@endforeach
 
 			</ul>
-			<a class="my-btn-blue2" id='sub' style="position: fixed;bottom: 50px;left: 5%;">下一步</a>
-			<div style="height: 100px"></div>
 		</div>
+		<nav class="mui-bar mui-bar-tab my-footer">
+		  <a class="my-btn-blue2 f18" id='sub'>下一步</a>
+		</nav>
 		<script src="/static/js/jquery-2.1.4.min.js"></script>
 		<script src="/static/js/mui.min.js"></script>
 		<script type="text/javascript">

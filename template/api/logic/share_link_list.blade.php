@@ -14,7 +14,7 @@
 			 <ul class="bg-w exc-code-list">
 				@foreach($list as $k => $v)
 				 <li class="fl">
-					 <a href="share_link.html" s="{{$v['share_thumb']}}"><div ><img src="{{$v['share_thumb']}}"></div><p class="f14 fc">{{$v['share_title']}}</p></a>
+					 <a href="share_link.html" s="{{$v['share_id']}}"><div ><img src="{{$v['share_thumb']}}"></div><p class="f14 fc">【{{$name}}】{{$v['share_title']}}</p></a>
 				 </li>
 				@endforeach
 			 </ul>
@@ -30,8 +30,8 @@
 			$(function(){
 				mui('.exc-code-list').on('tap','a',function(){
 					var src=$(this).attr('s');
-					src=src.replace(/\//g,'~');
-					var url="{{$url}}"+"/share_thumb/"+src;
+					// src=src.replace(/\//g,'~');
+					var url="{{$url}}"+"/share_id/"+src;
 					var title=$(this).find('p').html();
 					console.log(imgurl);
 			      if(!isAndroid){
