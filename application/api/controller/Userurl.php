@@ -507,9 +507,8 @@ class Userurl extends Controller
 
 	public function repayment_plan_detail(){
 		#1获取参数判断需不需要去签约
-		$this->checkToken();
-		$order_no=$this->param['order_no'];
-		
+		// $this->checkToken();
+		$order_no=input('order_no');
        #33展示计划页面
 		$order=array();
 		//主计划
