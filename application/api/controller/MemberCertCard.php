@@ -148,7 +148,7 @@
                 $res=$res->save();
              }
              
-           if(!$member_cashcard){
+           if(!$member_cashcard || !$res){
                    return ['code'=>436];
             }
             //发送短信验证码
