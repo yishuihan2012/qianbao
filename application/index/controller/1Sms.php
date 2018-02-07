@@ -5,7 +5,7 @@
  use think\Request;
 use app\index\model\SmsCode;
 use app\index\model\System;
- class Sms 
+ class sms extends Common
  {  
       //发送验证码
       public function send_sms($phone){
