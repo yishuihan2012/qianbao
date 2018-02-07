@@ -101,14 +101,18 @@
                  return ['code'=>436, 'msg'=>$validate->getError()];
            $card=MemberCreditcard::where(["card_bankno"=>$this->param['creditCardNo']])->find();
            if($card){
-              return ['code'=>437,'msg'=>'该卡已经绑定过了'];
+              if($card['card_member_id']!=$this->param['uid']){
+                   return ['code'=>437,'msg'=>'该卡已被其他人绑定'];
+              }
+              if($card['card_state']==1 && $card['bindStatus']=='01'){
+                   return ['code'=>437,'msg'=>'该卡已经绑定过了'];
+              }
            }
            #获取用户信息
            $member_info=MemberCerts::where('cert_member_id='.$this->param['uid'])->find();
            if(empty($member_info))
               $this->error=356;
             $member_net=MemberNet::where('net_member_id='.$this->param['uid'])->find();
-            
             #信用卡有效状态校验
            $card_validate=BankCertNew(['bankCardNo'=>$this->param['creditCardNo'], 'identityNo'=>$this->idcard, 'mobileNo'=>$this->param['phone'], 'name'=>$this->name]);
            if($card_validate['code']!=0000) return ['code'=>351, 'msg'=>'实名认证失败'];
@@ -117,25 +121,33 @@
 
             $ident_code=substr($this->param['creditCardNo'],0,6);
             $ident_icon=BankIdent::where(['ident_code'=>$ident_code])->value('ident_icon');
-             #写入信用卡表
-             $bindId=uniqid();
-             $member_cashcard=new MemberCreditcard([
-                  'card_member_id'=>$this->param['uid'],
-                  'card_bankno'=>$this->param['creditCardNo'],
-                  'card_name'  =>$this->name,
-                  'card_idcard' =>$this->idcard,
-                  'card_phone' =>$this->param['phone'],
-                  'card_bankname' => $this->param['bank_name'],
-                  'card_Ident'  => $this->param['cvv'],
-                  'card_expireDate' => $this->param['expireDate'],
-                  'card_billDate'   => $this->param['billDate'],
-                  'card_deadline' => $this->param['deadline'],
-                  'card_bankicon' => $ident_icon,
-                  'card_state'  => 0,
-                  'bindId'    =>$bindId
-                  // 'card_return' =>json_encode($card_validate),
-             ]);
-           if($member_cashcard->save()===false){
+            $passageway=Passageway::where('passageway_also=2 and passageway_state=1')->find();
+            #写入信用卡表
+            $bindId=uniqid();
+            $arr=[
+                'card_member_id'=>$this->param['uid'],
+                'card_bankno'=>$this->param['creditCardNo'],
+                'card_name'  =>$this->name,
+                'card_idcard' =>$this->idcard,
+                'card_phone' =>$this->param['phone'],
+                'card_bankname' => $this->param['bank_name'],
+                'card_Ident'  => $this->param['cvv'],
+                'card_expireDate' => $this->param['expireDate'],
+                'card_billDate'   => $this->param['billDate'],
+                'card_deadline' => $this->param['deadline'],
+                'card_bankicon' => $ident_icon,
+                'card_state'  => 0,
+                'mchno' =>$passageway->passageway_mech,
+                'bindId'    =>$bindId
+                // 'card_return' =>json_encode($card_validate),
+            ];
+             if($card){
+                $member_cashcard=MemberCreditcard::where(["card_bankno"=>$this->param['creditCardNo']])->update($arr);
+             }else{
+                $res=MemberCreditcard::save($arr);
+             }
+             
+           if(!$member_cashcard){
                    return ['code'=>436];
             }
             //发送短信验证码
@@ -168,7 +180,7 @@
 
           //校验验证码
           $sms=new \app\index\controller\sms();
-           $res=$sms->send_sms($this->param['phone'],$this->param['smsCode']);
+           $res=$sms->send_sms($creditcard['card_phone'],$this->param['smsCode']);
           if($res['code']!=200){
               return $res;
           }
