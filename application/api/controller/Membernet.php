@@ -662,9 +662,6 @@ use app\index\model\Member;
               }
                  #更新信用卡表
                  $card=MemberCreditcard::where(["card_bankno"=>$params['creditCardNo']])->update(['bindId'=>$income['bindId'],'bindStatus'=>$income['bindStatus'],'mchno'=>$passageway['passageway_mech']]);
-                  if(!$card){
-                         return ['code'=>436,'发送信息失败，请重试'];
-                  }
                  return ['code'=>200, 'msg'=>'短信发送成功~', 'data'=>['bindId'=>$income['bindId']]];
             }else{
                   return ['code'=>400, 'msg'=> $income['message']];

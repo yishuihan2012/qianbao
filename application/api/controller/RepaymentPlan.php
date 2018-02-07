@@ -47,14 +47,14 @@
       //      }
       // }
       public function creatPlan(){
-           $this->param['uid']=42;
-           $this->param['token']=16;
-           $this->param['cardId']=51;
-           $this->param['billMoney']=5000;
-           $this->param['payCount']=3;
-           $this->param['startDate']="2018-02-08";
-           $this->param['endDate']="2018-02-11";
-           $this->param['passageway']='8';
+           // $this->param['uid']=42;
+           // $this->param['token']=16;
+           // $this->param['cardId']=51;
+           // $this->param['billMoney']=5000;
+           // $this->param['payCount']=3;
+           // $this->param['startDate']="2018-02-08";
+           // $this->param['endDate']="2018-02-11";
+           // $this->param['passageway']='8';
            if(!$this->param['uid'] || !$this->param['token']=16 || !$this->param['cardId'] || !$this->param['billMoney'] || !$this->param['payCount'] || !$this->param['startDate'] || !$this->param['endDate'] || !$this->param['passageway']){
                return['code'=>'313','msg'=>'获取数据失败'];
            }
