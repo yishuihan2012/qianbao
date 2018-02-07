@@ -642,6 +642,7 @@ use app\index\model\Member;
                        "{$passageway['passageway_no']}"=>$mishua_res['userNo']
                   );
                   $add_net=MemberNets::where('net_member_id='.$params['uid'])->update($arr);
+                  $member_net[$passageway['passageway_no']]=$mishua_res['userNo'];
             }
             // $passageway=Passageway::where(['passageway_id'=>$params['passageway_id']])->find();
             #绑定信用卡签约
