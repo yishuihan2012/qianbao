@@ -55,6 +55,9 @@
            // $this->param['startDate']="2018-02-08";
            // $this->param['endDate']="2018-02-11";
            // $this->param['passageway']='8';
+           if(!$this->param['uid'] || !$this->param['token']=16 || !$this->param['cardId'] || !$this->param['billMoney'] || !$this->param['payCount'] || !$this->param['startDate'] || !$this->param['endDate'] || !$this->param['passageway']){
+               return['code'=>'313','msg'=>'获取数据失败'];
+           }
            if($this->param['billMoney']/ $this->param['payCount']<200)
                 return['code'=>477];//单笔还款金额太小，请减小还款次数
            #总账单除以消费次数得到每次消费AVG平均值  如果平均值小于某个值 则不进行还款  也是浪费资源
@@ -75,20 +78,12 @@
            #获取需要参数
           $member_info=MemberCert::where('cert_member_id='.$this->param['uid'])->find();
           if(empty($member_info)){
-                return ['code'=>317,'msg'=>'当前登录已失效，请重新登录']];//当前登录已失效，请重新登录
+                return ['code'=>317,'msg'=>'当前登录已失效，请重新登录'];//当前登录已失效，请重新登录
           }
           if($this->param['startDate']==date('Y-m-d',time())){
                return['code'=>485];//开始还款日期必须大于今天
           }
           // print_r($member_info);die;
-          #卡详情
-          $card_info=MemberCreditcard::where('card_id='.$this->param['cardId'])->find();
-          if(!$card_info){
-              return ['code'=>442,'msg'=>'未获取到卡号信息']];
-          }
-          if(!$this->param['uid'] || !$this->param['token']=16 || !$this->param['cardId'] || !$this->param['billMoney'] || !$this->param['payCount'] || !$this->param['startDate'] || !$this->param['endDate'] || !$this->param['passageway']){
-               return['code'=>'313','msg'=>'获取数据失败'];
-          }
          $generation_id=$this->param['uid'].'_'.$this->param['cardId'].'_'.$this->param['billMoney'].'_'.$this->param['payCount'].'_'.$this->param['startDate'].'_'.$this->param['endDate'].'_'.$this->param['passageway'];
          exit(json_encode(['code'=>200, 'msg'=> '正在跳转~','data'=>['repaymentScheduleId'=>$generation_id,'repaymentScheduleUrl'=>$_SERVER['SERVER_NAME'].'/api/Userurl/repayment_plan_create_detail/order_no/'.$generation_id]]));die;
            
