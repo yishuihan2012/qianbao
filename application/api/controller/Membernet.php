@@ -636,7 +636,11 @@ use app\index\model\Member;
                   $member_info=MemberCert::where('cert_member_id='.$params['uid'])->find();
                   $Members=Member::where(['member_id'=>$params['uid']])->find();
                   $rate=PassagewayItem::where('item_passageway='.$params['passageway_id'].' and item_group='.$Members['member_group_id'])->find();
-                  $arr=mishua($passageway, $rate, $member_info, $params['phone']);
+                  $mishua_res=mishua($passageway, $rate, $member_info, $params['phone']);
+                  $arr=array(
+                       'net_member_id'=>$member_info['cert_member_id'],
+                       "{$passageway['passageway_no']}"=>$mishua_res['userNo']
+                  );
                   $add_net=MemberNets::where('net_member_id='.$params['uid'])->update($arr);
             }
             // $passageway=Passageway::where(['passageway_id'=>$params['passageway_id']])->find();
