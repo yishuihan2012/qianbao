@@ -42,8 +42,10 @@ class Test
 			jpush($uid, $title=$item, $content=$content, $item=$item, $type=$type);
 		}
 		public function message_text(){
-			$a=send_sms('17560044406');
-			print_r($a);
+
+			 	$sms=new \app\index\controller\sms();
+            	$a=$sms->check('17569615504','7041');
+				print_r($a);
 		}
 		//curl请求
 		public function curlPost($url, $method = 'post', $data = ''){
