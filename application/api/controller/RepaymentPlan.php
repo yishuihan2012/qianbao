@@ -47,6 +47,8 @@
            }
       }
       public function creatPlan(){
+         $generation_id=$this->param['uid'].'_'.$this->param['cardId'].'_'.$this->param['billMoney'].'_'.$this->param['payCount'].'_'.$this->param['startDate'].'_'.$this->param['startDate'].'_'.$this->param['endDate'].'_'.$this->param['passageway'];
+          exit(json_encode(['code'=>200, 'msg'=> '计划创建成功~','data'=>['repaymentScheduleId'=>$generation_id,'repaymentScheduleUrl'=>$_SERVER['SERVER_NAME'].'/api/Userurl/repayment_plan_detail/order_no/'.$generation_id]]));
            // $this->param['uid']=16;
            // $this->param['token']=16;
            // $this->param['cardId']=18;
