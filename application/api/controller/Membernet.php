@@ -161,7 +161,7 @@ use app\index\model\Member;
                   $update=$Membernetsedits->mishuadaihuan();
             }
         }
-        if(!$pay['order_platform_no']){
+        if(!$pay['order_platform_no'] || $pay['order_status']!=1){
             $update_order['order_platform_no']=$pay['order_platform_no']=uniqid();
             $update_res=GenerationOrder::where(['order_id'=>$pay['order_id']])->update($update_order);
         }
@@ -357,14 +357,17 @@ use app\index\model\Member;
       //http://pay.mishua.cn/zhonlinepay/service/rest/creditTrans/transferApply
       public function transferApply($pay,$isCancel=null){
           #1获取费率
-          #1判断当天有没有失败的订单
-          $fail_order=GenerationOrder::where(['order_no'=>$pay['order_no'],'order_status'=>'-1','order_type'=>1])->whereTime('order_time', 'today')->find();
+          #1判断当天有没有失败的订单  
+          $today=date('Y-m-d',strtotime($pay['order_time']));
+          $fail_order=GenerationOrder::where(['order_no'=>$pay['order_no'],'order_status'=>'-1','order_type'=>1])->where('order_time','like',$today.'%')->find();
           // $remain_money=Reimbur::where(['reimbur_generation'=>$pay['order_no']])->find();
           // if($remain_money && $remain_money['reimbur_left']<$pay['order_money']){/
           if($fail_order){//如果当天有失败订单
                 $arr['back_status']='FAIL';
                 $arr['back_statusDesc']='当天有失败的订单无法进行还款，请先处理失败的订单。';
                 $arr['order_status']='-1';
+                $income['code']='200';
+                $income['status']="FAIL";
           }else{
               $member_group_id=Member::where(['member_id'=>$pay['order_member']])->value('member_group_id');
               $rate=PassagewayItem::where(['item_passageway'=>$pay['order_passageway'],'item_group'=>$member_group_id])->find();
@@ -380,7 +383,7 @@ use app\index\model\Member;
               #5:获取用户基本信息
               $member_base=Member::where(['member_id'=>$pay['order_member']])->find();
               $orderTime=date('YmdHis',time()+60);
-              if(!$pay['order_platform_no']){
+              if(!$pay['order_platform_no'] || $pay['order_status']!=1){
                   $update_order['order_platform_no']=$pay['order_platform_no']=uniqid();
                   $update_res=GenerationOrder::where(['order_id'=>$pay['order_id']])->update($update_order);
               }
@@ -518,6 +521,7 @@ use app\index\model\Member;
                print_r($data);die;
          
       }
+      //米刷信息变更
       public function mishuaedit($uid=16,$passageway='8'){
          #1实名信息
          $member_info=MemberCert::where('cert_member_id='.$uid)->find();
@@ -528,10 +532,9 @@ use app\index\model\Member;
          #4会员费率
          $rate=PassagewayItem::where('item_passageway='.$passageway.' and item_group='.$member['member_group_id'])->find();
          #5商户入网信息
-         $member_net=MemberNet::where('net_member_id='.$uid)->find();
+         $member_net=MemberNets::where('net_member_id='.$uid)->find();
          mishuaedit($passageway, $rate, $member_info, $member['member_mobile'], $member_net[$passageway['passageway_no']]);
       }
-
       #取消还款计划【整体】
       /**
        * @param  [type]
@@ -618,5 +621,51 @@ use app\index\model\Member;
                  echo  $e->getMessage();die;
                  return ['code'=>308,'msg'=>$e->getMessage(),'data'=>[]];
            }
+      }
+      /**
+       * 米刷入网
+       * @return [type] [description]
+       * 许成成 20180206
+       */
+      public function mishua_income(){
+            $params=input('');
+            $passageway=Passageway::where(['passageway_id'=>$params['passageway_id']])->find();
+            $member_net=MemberNets::where('net_member_id='.$params['uid'])->find();
+            // 判断有没有入网：
+            if(!$member_net[$passageway['passageway_no']]){//没有入网
+                  $member_info=MemberCert::where('cert_member_id='.$params['uid'])->find();
+                  $Members=Member::where(['member_id'=>$params['uid']])->find();
+                  $rate=PassagewayItem::where('item_passageway='.$params['passageway_id'].' and item_group='.$Members['member_group_id'])->find();
+                  $mishua_res=mishua($passageway, $rate, $member_info, $params['phone']);
+                  $arr=array(
+                       'net_member_id'=>$member_info['cert_member_id'],
+                       "{$passageway['passageway_no']}"=>$mishua_res['userNo']
+                  );
+                  $add_net=MemberNets::where('net_member_id='.$params['uid'])->update($arr);
+                  $member_net[$passageway['passageway_no']]=$mishua_res['userNo'];
+            }
+            // $passageway=Passageway::where(['passageway_id'=>$params['passageway_id']])->find();
+            #绑定信用卡签约
+            $data=array(
+                  'mchNo'=>$passageway['passageway_mech'], //mchNo 商户号 必填  由米刷统一分配 
+                  'userNo'=>$member_net[$passageway['passageway_no']],
+                  'phone'=>$params['phone'],
+                  'cardNo'=>$params['creditCardNo'],
+                  'expiredDate'=>$params['expireDate'],
+                  'cvv'=>$params['cvv']
+            );
+            $url='http://pay.mishua.cn/zhonlinepay/service/rest/creditTrans/bindCardSms';
+            $income=repay_request($data,$passageway['passageway_mech'],$url,$passageway['iv'],$passageway['secretkey'],$passageway['signkey']);
+            
+            if($income['code']=='200'){
+              if($income['bindStatus']=='01'){
+                return ['code'=>463,'msg'=>'此卡已签约'];//此卡已签约
+              }
+                 #更新信用卡表
+                 $card=MemberCreditcard::where(["card_bankno"=>$params['creditCardNo']])->update(['bindId'=>$income['bindId'],'bindStatus'=>$income['bindStatus'],'mchno'=>$passageway['passageway_mech']]);
+                 return ['code'=>200, 'msg'=>'短信发送成功~', 'data'=>['bindId'=>$income['bindId']]];
+            }else{
+                  return ['code'=>400, 'msg'=> $income['message']];
+            }
       }
  }

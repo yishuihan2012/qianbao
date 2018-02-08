@@ -46,9 +46,51 @@
                  $this->error=317;
            }
       }
-
-      //创建计划
       public function creatPlan(){
+           // $this->param['uid']=42;
+           // $this->param['token']=16;
+           // $this->param['cardId']=60;
+           // $this->param['billMoney']=5000;
+           // $this->param['payCount']=3;
+           // $this->param['startDate']="2018-02-08";
+           // $this->param['endDate']="2018-02-11";
+           // $this->param['passageway']='8';
+           if(!$this->param['uid'] || !$this->param['token']=16 || !$this->param['cardId'] || !$this->param['billMoney'] || !$this->param['payCount'] || !$this->param['startDate'] || !$this->param['endDate'] || !$this->param['passageway']){
+               return['code'=>'313','msg'=>'获取数据失败'];
+           }
+           if($this->param['billMoney']/ $this->param['payCount']<200)
+                return['code'=>477];//单笔还款金额太小，请减小还款次数
+           #总账单除以消费次数得到每次消费AVG平均值  如果平均值小于某个值 则不进行还款  也是浪费资源
+           if($this->param['billMoney']/$this->param['payCount'] >20000)
+                  return['code'=>478];//单笔还款金额过大，请增加还款次数
+
+           // $root_id=find_root($this->param['uid']);
+           #0 获取参数数据
+           if($this->param['endDate']<$this->param['startDate']){
+              return['code'=>474]; //开始日期不能小于今天
+           }
+           if($this->param['startDate']<date('Y-m-d',time())){
+               return ['code'=>475];//开始日期不能小于今天
+           }
+           // if(date('H',time())>19 && $this->param['startDate']==$this->param['endDate'] ){
+           //     return ['code'=>476];//今天已超过还款时间，无法为您制定还款计划
+           // }
+           #获取需要参数
+          $member_info=MemberCert::where('cert_member_id='.$this->param['uid'])->find();
+          if(empty($member_info)){
+                return ['code'=>317,'msg'=>'当前登录已失效，请重新登录'];//当前登录已失效，请重新登录
+          }
+          if($this->param['startDate']==date('Y-m-d',time())){
+               return['code'=>485];//开始还款日期必须大于今天
+          }
+          // print_r($member_info);die;
+         $generation_id=$this->param['uid'].'_'.$this->param['cardId'].'_'.$this->param['billMoney'].'_'.$this->param['payCount'].'_'.$this->param['startDate'].'_'.$this->param['endDate'].'_'.$this->param['passageway'];
+         exit(json_encode(['code'=>200, 'msg'=> '正在跳转~','data'=>['repaymentScheduleId'=>$generation_id,'repaymentScheduleUrl'=>$_SERVER['SERVER_NAME'].'/api/Userurl/repayment_plan_create_detail/order_no/'.$generation_id]]));die;
+           
+      }
+      //创建计划
+
+      public function creatPlan_mishua(){
         try {
        
           // 测试数据
@@ -193,7 +235,6 @@
                   $real_each_pay_money=$this->get_need_pay($also,$daikou,$each_money);
                   //获取每次实际到账金额
                   $real_each_get=$this->get_real_money($also,$daikou,$real_each_pay_money);
-
                   $plan[$i]['pay'][$k]=$Generation_order_insert[]=array(
                       'order_no'       =>$Generation_result->generation_id,
                       'order_member'   =>$this->param['uid'],
@@ -657,33 +698,6 @@
                              return ['code'=>472];      
                         }
                  }
-                 
-                  #判断信用卡是否存在 状态是否正常 是否签约报备
-                 /*$money=$this->param['billMoney'];#获取要还款的账单金额
-                 $payCount=$this->param['payCount'];#刷卡消费次数
-                 $startDate=$this->param['startDate'];#计划执行日
-                 $endDate=$this->param['endDate'];#计划结束日期
-
-                 #获取通道信息
-                 $passway=PassageWay($this->param['passwayId']);
-                 #判断该通道是否可以代还  如果可以的话 查询出该代还通道的费率和代扣费
-                 if($passway->passageway_also!='1' || $passway->passageway_state!='1')
-                       return ['code'=>496];
-                 //判断是否必须入网才可以进行代还设置 并且检查会员是否入网TODO:
-
-                 //取到该通道的税率和代扣费
-                 $passway['also']=0.0035; //税率 需在后台读取 TODO
-                 $passway['holding']=3; //固定值 需在后台取 TODO
-                 //计算平均每次需要还款多少钱 取AVG平均值 
-                 $avg=$this->param['billMoney']/$this->param['payCount'];
-                 //取得总共需要多少手续费
-                 $total_changr=$this->param['billMoney']*$passway['also']+$this->param['payCount']*$passway['holding'];
-                 //计算最低需要多少余额
-                 $total_avg=$avg+$total_changr;*/
-                 //判断可用余额是否足够这些 如果不够的话 则计划失败
-
-                 //计算余额最低不能小于多少钱 取Avg+手续费
-                 //如果可用余额不足 则不进行代还
 
            } catch (\Exception $e) {
                  Db::rollback();

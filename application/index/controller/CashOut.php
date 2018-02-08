@@ -609,8 +609,65 @@ class CashOut
 	 }
 
 
-
-
+	 /**
+	 * @version  易宝快捷支付   @date    2018-01-29 09:28 AM
+	 * @author bill(755969423@qq.com)   @version $Bill$
+	 */ 	 
+	 public  function yibao($tradeNo,$price,$description='易宝快捷支付')
+	 {
+	 	 $membernetObject=new \app\api\payment\yibaoPay($this->passway_info->passageway_id, $this->member_infos->member_id);
+	 	 #检测通道是否需要入网
+	 	 if($this->passway_info->passageway_status=="1")
+	 	 {
+	 	 	 #检测用户是否已经入网
+		 	 $member_net=MemberNet::where(['net_member_id'=>$this->member_infos->member_id])->find();
+		 	 #如果该通道需要用户入网 去检查入网信息 如果用户还没有入网 则先进行入网 并且设置费率
+		 	 if(!$member_net || $member_net[$this->passway_info->passageway_no]=="")
+		 	 {
+		 	 	 $method=$this->passway_info->passageway_method;
+		 	 	 $member_net_result=$membernetObject->$method();
+		 	 }
+	 	 }
+	 	 #查询子商户是否审核 如果未审核 则进行审核
+ 	 	 $membernetAudit_result=$membernetObject->info($this->member_infos->member_mobile);
+ 	 	 if($membernetAudit_result['code']!=0000)
+ 	 	 	 return ['code'=>202, 'msg'=>'审核查询失败', 'data'=>''];
+ 	 	 //dump($membernetAudit_result['retList'][0]['auditStatus']);die();
+ 	 	 if($membernetAudit_result['retList'][0]['auditStatus']!=2 && $membernetAudit_result['retList'][0]['auditStatus']!=3) //如果不等于这两个值 则去审核子商户
+ 	 	 {
+ 	 	 	 $memberAudit=$membernetObject->usreAudit($this->member_infos->membernet[$this->passway_info->passageway_no]);
+ 	 	 	 if($memberAudit['code']!=0000)
+ 	 	 	 	 return ['code'=>203, 'msg'=>'商户审核失败', 'data'=>''];
+ 	 	 }
+ 	 	 #查询费率与入网费率是否一致
+ 	 	 $also=PassagewayItem::where(['item_passageway'=>$this->passway_info->passageway_id, 'item_group'=>$this->member_infos->member_group_id])->value('item_rate');
+ 	 	 $also=$also/100;
+ 	 	 $netAlao=$membernetObject->queryFee($this->member_infos->membernet[$this->passway_info->passageway_no]);
+ 	 	 if($netAlao['code']!=0000)
+ 	 	 	 return ['code'=>204, 'msg'=>'费率查询失败', 'data'=>''];
+ 	 	 if($also!=$netAlao['rate'])  //费率不一致则重新设置费率
+ 	 	 {
+ 	 	 	 $also_result=$membernetObject->fee($this->member_infos->membernet[$this->passway_info->passageway_no], 1, $also);
+ 	 	 	 $YourSister=true;
+ 	 	 	 for ($i=2; $i<=5 ; $i++)
+ 	 	 	 { 
+ 	 	 	 	 $MyReayThinkCaoYourMather=$membernetObject->fee($this->member_infos->membernet[$this->passway_info->passageway_no], $i, 0);
+ 	 	 	 	 if($MyReayThinkCaoYourMather['code']!=0000)
+ 	 	 	 	 {
+ 	 	 	 	 	 $YourSister=false;
+ 	 	 	 	 	 break;
+ 	 	 	 	 }
+ 	 	 	 }
+ 	 	 	 if($also_result['code']!=0000 or $YourSister!=true)
+ 	 	 	  	 return ['code'=>205,  'msg'=>'费率设置失败', 'data'=>''];	
+ 	 	 }
+ 	 	 //前置工作完成 则进行调用收款接口 
+ 	 	 $memberTrade=$membernetObject->trade($this->member_infos->membernet[$this->passway_info->passageway_no], $price, $tradeNo, $this->card_info->card_bankno);
+ 	 	 if($memberTrade['code']!=200)
+ 	 	 	 return ['code'=>$memberTrade['code'], 'msg'=>$memberTrade['msg'], 'data'=>''];
+ 	 	 $order_result=$this->writeorder($tradeNo, $price, $price*$also ,$description, $memberTrade['data']['data']['requestId']);//写入套现订单
+ 	 	 return  !$order_result ? ['code'=>327] : ['code'=>200,'msg'=>'订单获取成功~', 'data'=>['url'=>$memberTrade['data']['url'],'type'=>1]];
+	 }
 
 
 
