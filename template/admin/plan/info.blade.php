@@ -56,12 +56,12 @@
 			  	<!-- <a class="remove" href="#" data-url="{{url('/index/Plan/order_status/status/1/id/'.$value['order_id'])}}"><i class="icon-pencil"></i> 继续执行 </a> -->
 			  	@endif
 			  	@if($value->order_status == 1)
-			  	<a class="remove" href="#" data-url="{{url('/api/Memnernet/action_single_plan/id/'.$value['order_id'])}}"><i class="icon-pencil"></i> 立即执行 </a>
+			  	<a class="remove" href="#" data-url="{{url('/api/Membernet/action_single_plan/id/'.$value['order_id'])}}"><i class="icon-pencil"></i> 立即执行 </a>
 			  	&nbsp;&nbsp;&nbsp;&nbsp;
 			  	<a class="remove" href="#" data-url="{{url('/index/Plan/order_status/status/3/id/'.$value['order_id'])}}"><i class="icon-pencil"></i> 取消执行 </a>
 			  	@endif
 			  	@if($value->order_status == -1)
-			  	<a class="remove" href="#" data-url="{{url('/api/Memnernet/action_single_plan/id/'.$value['order_id'])}}"><i class="icon-pencil"></i> 重新执行 </a>
+			  	<a class="remove" href="#" data-url="{{url('/api/Membernet/action_single_plan/id/'.$value['order_id'])}}"><i class="icon-pencil"></i> 重新执行 </a>
 			  	@endif
 			 </td>
 			 <!-- <td>{{$value->back_tradeNo}}</td>
@@ -102,7 +102,21 @@
 		    },
 		    callback: function (result) {
 		    	 if(result)
-		    	 	window.location.href=url;
+		    	 	$.ajax({
+		    	 		url:url,
+		    	 		type : 'POST',
+		        		dataType : 'json',
+		        		success:function(data){
+		        			data = JSON.parse(data);
+		        			if(data.code==200){
+		        				alert(data.msg);
+		        				window.location.reload(true);
+		        			}else{
+		        				alert(data.msg);
+		        			}
+		        		}
+		    	 	})
+		    	 	// window.location.href=url;
 		    }
 		 });
     	 })
