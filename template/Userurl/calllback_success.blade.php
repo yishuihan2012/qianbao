@@ -24,9 +24,9 @@
 			</div>
 		</div>
 		@else
-			<div class="mui-content bg-w repay-suc">
+			<div class="mui-content bg-w repay-error">
 			<div class="fc">
-		    	<span class="mui-icon iconfont icon-successful f48"></span>
+		    	<span class="mui-icon iconfont icon-quxiao f48"></span>
 		    	<p class="space-up2">交易失败</p>
 		    	<!-- <p class="space-up2 invalid-color">已成功向尾号2971银行卡转入</p>
 		    	<p class="space-up2 f36 f-bold">500<span class="f24">元</span></p> -->

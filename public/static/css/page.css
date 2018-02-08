@@ -92,6 +92,7 @@
 }
 /*还款计划提交成功*/
 .repay-suc .iconfont{margin-top:70px;color:#27c25a;}
+.repay-error .iconfont{margin-top:70px;color:#fc5c51;}
 .repay-suc .my-btn-container{margin-top:100px;}
 
 
