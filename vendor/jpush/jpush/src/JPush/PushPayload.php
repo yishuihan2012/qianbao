@@ -542,7 +542,7 @@ class PushPayload {
         if (!is_null($title)) {
             if(!is_string($title)) {
                 throw new InvalidArgumentException("Invalid android title value");
-            }
+            } 
             if(strlen($title) > 0) {
                 $android['title'] = $title;
             }

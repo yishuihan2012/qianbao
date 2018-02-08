@@ -31,6 +31,9 @@ use app\index\model\Generation;
 use app\index\model\GenerationOrder;
 use app\index\model\System;
 use app\index\model\NoviceClass as NoviceClasss; 
+use app\index\model\MemberCert;
+use app\index\model\MemberNet;
+use app\index\model\Reimbur;
 use app\index\model\Appversion; 
 use app\index\model\SmsCode; 
 use app\index\model\ArticleCategory;
@@ -237,8 +240,167 @@ class Userurl extends Controller
 	 */
 
 	public function repayment_plan_create_detail(){
-		$this->checkToken();
-		$order_no=$this->param['order_no'];
+		// $this->checkToken();
+		// $order_no=$this->param['order_no'];
+		$order_no=input('order_no');
+		$data=explode('_', $order_no);
+		// print_r($data);die;
+		$this->param['uid']=$param['uid']=$data[0];
+        $this->param['cardId']=$param['cardId']=$data[1];
+        $this->param['billMoney']=$param['billMoney']=$data[2];
+        $this->param['payCount']=$param['payCount']=$data[3];
+        $this->param['startDate']=$param['startDate']=$data[4];
+        $this->param['endDate']=$param['endDate']=$data[5];
+        $this->param['passageway']=$param['passageway']=$data[6];
+		#1判断当前通道当前卡用户有没有入网和签约
+        // 获取通道信息
+       $passageway=Passageway::get($param['passageway']);
+       $members=Members::haswhere('memberLogin','')->where(['member_id'=>$param['uid']])->find();
+       if(!$passageway || !$members){
+       		$this->assign('data','获取数据失败，请重试。');
+       		return view("Userurl/show_error");
+       }
+       // 判断是否入网
+       $member_net=MemberNet::where(['net_member_id'=>$param['uid']])->find();
+       if(!$member_net[$passageway->passageway_no]){ //没有入网
+           // 重定向到签约页面
+           return redirect('Userurl/signed', ['passageway_id' =>$param['passageway'],'cardId'=>$param['cardId'],'order_no'=>$order_no]);
+       }
+       //判断是否签约
+       $MemberCreditcard=MemberCreditcard::where(['card_id'=>$param['cardId']])->find();
+       if(!$MemberCreditcard['bindId'] || strlen($MemberCreditcard['bindId'])<20){ //未绑定
+            //重定向到签约
+             return redirect('Userurl/signed', ['passageway_id' =>$param['passageway'],'cardId'=>$param['cardId'],'order_no'=>$order_no]);
+       }
+      
+       // ***************************************2生成计划**************************************************
+       #2生成计划
+          #卡详情
+          $card_info=MemberCreditcard::where('card_id='.$this->param['cardId'])->find();
+          if(!$card_info){
+              $this->assign('data','获取数据失败，请重试。');
+       		  return view("Userurl/show_error");
+          }
+          #获取后台费率
+          $member_group_id=Members::where(['member_id'=>$this->param['uid']])->value('member_group_id');
+          $rate=PassagewayItem::where(['item_passageway'=>$this->param['passageway'],'item_group'=>$member_group_id])->find();
+           #定义税率  
+           $also=($rate->item_also)/100;
+           #定义代扣费
+           $daikou=($rate->item_charges)/100;
+          //如果还款次数小于天数
+          $days=days_between_dates($this->param['startDate'],$this->param['endDate'])+1;
+          $date=prDates($this->param['startDate'],$this->param['endDate']);
+          if($this->param['payCount']<$days){
+               shuffle($date);
+                #消费几次就取几个随机日期
+               $date=array_slice($date,0,$this->param['payCount']);
+               $days=$this->param['payCount'];
+          }
+          ########存入主表数据############################
+          Db::startTrans();
+           $Generation_result=new Generation([
+               'generation_no'          =>uniqidNumber(),//TODO 生成随机代号
+               'generation_count'     =>$this->param['payCount'],
+               'generation_member'    =>$this->param['uid'],
+               'generation_card'      =>$card_info->card_bankno,
+               'generation_total'      =>$this->param['billMoney'],
+               'generation_left'        =>$this->param['billMoney'],
+               'generation_pound'   =>$this->param['billMoney']*$also+$daikou,
+               'generation_start'     =>$this->param['startDate'],
+               'generation_end'      =>$this->param['endDate'],
+               'generation_passway_id'=>$this->param['passageway'],
+          ]);
+          if($Generation_result->save()==false){
+              Db::rollback();
+                $this->assign('data','生成计划失败，请重试');
+       			return view("Userurl/show_error");
+          }
+          //写入还款卡表
+           $reimbur_result=new Reimbur([
+                 'reimbur_generation'   =>$Generation_result->generation_id,
+                 'reimbur_card'             =>$card_info->card_bankno,
+           ]); 
+           if(!$reimbur_result->save()){
+                Db::rollback();
+                $this->assign('data','生成计划失败，请重试');
+       			return view("Userurl/show_error");
+           }
+          ####################################
+          #3确定每天还款金额
+          $day_pay_money=$this->get_random_money($days,$this->param['billMoney'],$is_int=1);
+          #4确定每天还款次数
+          $day_pay_count=$this->get_day_count($this->param['payCount'],$days);
+          #5计算出每天实际刷卡金额，和实际到账金额
+          $Generation_order_insert=[];
+           $generation_pound = 0;
+          for ($i=0; $i <count($date) ; $i++) { 
+              $day_real_get_money=0;
+              //刷卡信息
+              #计算每次需要刷卡的理论金额
+              $each_pay_money=$this->get_random_money($day_pay_count[$i],$day_pay_money[$i],$is_int=1);
+              #计算每次刷卡的时间
+              $each_pay_time=$this->get_random_time($date[$i],$day_pay_count[$i]);
+
+              foreach ($each_pay_money as $k => $each_money) {
+                  //获取每次实际需要支付金额
+                  $real_each_pay_money=$this->get_need_pay($also,$daikou,$each_money);
+                  //获取每次实际到账金额
+                  $real_each_get=$this->get_real_money($also,$daikou,$real_each_pay_money);
+
+                  $plan[$i]['pay'][$k]=$Generation_order_insert[]=array(
+                      'order_no'       =>$Generation_result->generation_id,
+                      'order_member'   =>$this->param['uid'],
+                      'order_type'     =>1,
+                      'order_card'     =>$card_info->card_bankno,
+                      'order_money'    =>$real_each_pay_money,
+                      'order_pound'    =>$real_each_get['fee'],
+                      // 'real_each_get'  =>$real_each_get['money'],
+                      'order_desc'     =>'自动代还消费~',
+                      'order_time'     =>$each_pay_time[$k],
+                      'order_passageway'=>$this->param['passageway'],
+                      'order_passway_id'=>$this->param['passageway'],
+                      'order_platform_no'     =>uniqid(),
+                      // 'order_root'=>$root_id,
+                  );
+                  $generation_pound += $real_each_get['fee'];
+                $day_real_get_money+=$real_each_get['money'];
+              }
+              //提现信息
+              $plan[$i]['cash']=$Generation_order_insert[]=array(
+                  'order_no'         =>$Generation_result->generation_id,
+                  'order_member'     =>$this->param['uid'],
+                  'order_type'       =>2,
+                  'order_card'       =>$card_info->card_bankno,
+                  'order_money'      =>$day_real_get_money,//每天实际打回的金额
+                  'order_pound'      =>0,
+                  'order_desc'       =>'自动代还还款~',
+                  'order_time'       =>$date[$i]." ".get_hours(15,16).":".get_minites(0,59),
+                  'order_passageway'=>$this->param['passageway'],
+                  'order_passway_id'=>$this->param['passageway'],
+                  'order_platform_no'     =>uniqid(),
+                  // 'order_root'=>$root_id,
+              );
+
+          }
+          $Generation = new Generation();
+          #修改手续费
+          $ss = $Generation->where(['generation_id' => $Generation_result->generation_id])->update(['generation_pound' =>  $generation_pound]);
+        
+          #写入计划表数据
+          $Generation_order=new GenerationOrder();
+          $order_result=$Generation_order->saveAll($Generation_order_insert);
+
+         if($order_result!==false)
+         { 
+               Db::commit();
+         }else{
+               Db::rollback();
+               $this->assign('data','生成计划失败，请重试');
+       		   return view("Userurl/show_error");
+         }
+        $order_no=$Generation_result->generation_id;
+        // *************************************展示计划****************************************************
 		$order=array();
 		//主计划
 		$generation=Generation::with('creditcard')->where(['generation_id'=>$order_no])->find();
@@ -272,6 +434,8 @@ class Userurl extends Controller
         		$order_pound+=$vv['order_pound'];
         	}
         }
+        $this->assign('uid',$param['uid']);
+        $this->assign('token',$members['memberLogin']['login_token']);
 		$this->assign('order_pound',$order_pound);
 		$this->assign('generation',$generation);
 		$this->assign('order',$data);
@@ -314,8 +478,10 @@ class Userurl extends Controller
 	 */
 
 	public function repayment_plan_detail(){
-		$this->checkToken();
-		$order_no=$this->param['order_no'];
+		#1获取参数判断需不需要去签约
+		// $this->checkToken();
+		$order_no=input('order_no');
+       #33展示计划页面
 		$order=array();
 		//主计划
 		$generation=Generation::with('creditcard')->where(['generation_id'=>$order_no])->find();
@@ -364,6 +530,111 @@ class Userurl extends Controller
 		$this->assign('order',$data);
 	  	return view("Userurl/repayment_plan_detail");
 	}
+	//根据开始时间结束时间随机每天刷卡时间---有问题
+      public function get_random_time($day,$count,$begin=9,$end=14){
+        //如果日期为今天，刷卡时间大于当前小时
+        $now_h=date('Y-m-d',time());
+        if($day==$now_h){
+           if($now_h<8){
+               $begin =9;
+           }else{
+               $begin=date('H',time())+1;
+           }
+        }
+        $last=$begin;
+         $step=floor(($end-$begin)/$count)-1;
+         for ($i=0; $i <$count ; $i++) { 
+            $time[$i]=$day.' '.get_hours($last,$last+$step).':'.get_minites();
+            // $time[$i]['time']=$day.' '.get_hours($last,$last+$step).':'.get_minites();
+            // $time[$i]['begin']=$last;
+            // $time[$i]['end']=$last+$step;
+            $last=$last+$step+1;
+         }
+         // print_r($time);die;
+         return $time;
+      }
+      //根据还款金额获取需要支付的金额
+      //传入单位元，转成分计算，再返回单位元
+      public function get_need_pay($rate,$fix,$get){
+           //遇到小数向上取整防止金额不够
+          $money=ceil(($get*100+$fix*100)/(1-$rate));
+          return $money/100;
+      }
+      //根据支付的金额获取实际到账金额
+       //传入单位元，转成分计算，再返回单位元
+      public function get_real_money($rate,$fix,$pay){
+         //费率向上取整
+          $return['fee']=ceil($pay*100*$rate+$fix*100)/100;
+          $return['money']=$pay-$return['fee'];
+          return $return;
+      }
+      //根据总金额和次数随机每次金额
+      public function get_random_money($num,$money,$is_int=''){
+        $count=$num;
+        for ($i=0; $i <$num; $i++) { 
+          if($i==$num-1){
+            $arr[]=$money;
+          }else{
+            $avage=$money/$count;
+            //判断奇偶，
+            if($is_int){
+              if($i%2==0){//偶数随机在平均值上
+                $get=ceil(rand($avage,$avage*1.2));
+              }else{//奇数随机在平均值下
+                $get=ceil(rand($avage*0.8,$avage));
+              }
+            }else{
+              if($i%2==0){//偶数随机在平均值上
+                $get=ceil(rand($avage,$avage*1.2)).'.'.rand(0,99);
+              }else{//奇数随机在平均值下
+                $get=ceil(rand($avage*0.8,$avage)).'.'.rand(0,99);
+              }
+            }
+            
+            $int_num=intval($get);
+            if(strlen($int_num)>2){
+              $first=substr($int_num,-1,1);
+              $second=substr($int_num,-2,1);
+              $third=substr($int_num,-3,1);
+
+              if($first==$second &&$first==$third){
+                $this->get_random_money($num,$money);
+              }
+            }
+            $count=$count-1;
+            $money=$money-$get;
+            $arr[]=$get;
+          }
+        }
+        rsort($arr);
+        return $arr;
+      }
+     
+       /**
+       *  @version get_day_count controller / method 获取每天消费几次
+       *  @author $bill$(755969423@qq.com)
+       *   @datetime    2017-12-27 16:21:05
+       *   @return 
+       */
+      public function get_day_count($num,$day){
+           if($day <=$num) {
+                 $vs = floor($num / $day);
+                 $svgnum = $vs * $day;
+                 $surnum = $num - $svgnum;
+                 $arr = [];
+                 for ($i = 0; $i < $day; $i++) {
+                      $arr[$i] = $vs;
+                 }
+                 for ($i = 0; $i < $surnum; $i++) {
+                      $arr[$i]+=1;
+                 }
+           }else if($day >$num){
+                 for ($i=0; $i < $num ; $i++) { 
+                      $arr[$i]=1;
+                 }
+           }
+           return $arr;
+      }
 	/**
 	 * @Author   Star(794633291@qq.com)
 	 * @DateTime 2017-12-25T14:10:55+0800
@@ -803,30 +1074,39 @@ class Userurl extends Controller
   #荣邦支付回调
   public function passway_rongbang_paycallback(){
   	$param=request()->param();
-  	$key=db('passageway')->where('passageway_id',$param['passageway_id'])->value('passageway_pwd_key');
-  	return $key;
-  	// 测试自己加密的可以解密
+  	#荣邦通道键位
+  	$passageway_no=db('passageway')->column("passageway_id,passageway_no");
+  	$userinfo=db('member_net')->where('net_member_id',$param['member_id'])
+  		->value($passageway_no[$param['passageway_id']]);
+  	// $userinfo="402628739,1756961550411722,9abphqw0bcz2vr3r,zeo3qvxb0nwuobk5619hss25h1dsremg,许成成11599";
+	#信息顺序 0、appid 1、companycode 2、secretkey 3、session 4、companyname
+	$userinfo=explode(',', $userinfo);
+  	$key=$userinfo[2];
   	// return rongbang_aes_decode($key,rongbang_aes($key,$param['test']));
-  	return rongbang_aes_decode($key,$param['Data']);
-  	#解不了密的情况下 根据我们自己填的单号去更改订单状态
-  	if($param['order_no']){
-  		$data=[];
-  		$data['ordernumber']=$param['order_no'];
-  		$data['amount']=db('cash_order')->where('order_no',$data['ordernumber'])->value('order_money');
-
-  	// $data=rongbang_aes_decode($key,$param['Data']);
+  	$data = rongbang_aes_decode($key,$param['Data']);
   	// var_dump($data);die;
-  	// $data=json_decode($data,1);
-  	// if($data['respcode']==2){
-  		//支付完成
-  		db('cash_order')->where('order_no',$data['ordernumber'])->update(['order_state'=>2]);
-  		$order_id=db('cash_order')->where('order_no',$data['ordernumber'])->value('order_id');
-  		//分润
-	    $fenrun= new con\Commission();
-        $fenrun_result=$fenrun->MemberFenRun($param['member_id'],$data['amount'],$param['passageway_id'],1,'交易手续费分润',$order_id);
+  	if($data=='err'){
+  		#失败日志
+  		trace("rongbang_aes_decode_err");
   	}else{
-  		//支付失败
-  		db('cash_order')->where('order_no',$data['ordernumber'])->update(['order_state'=>-1]);
+  		$data=json_decode($data,1);
+  		if($data['respcode']==2){
+  			$cash_order=CashOrder::where('order_no',$param['order_no'])->find();
+  			#仅对待支付状态下的订单进行更新并分润
+  			if($cash_order->order_state==1){
+  				$cash_order->order_state=2;
+  				$cash_order->save();
+				//分润
+			    $fenrun= new con\Commission();
+			    $fenrun_result=$fenrun->MemberFenRun($param['member_id'],$data['amount'],$param['passageway_id'],1,'交易手续费分润',$cash_order->order_id);
+  			}else{
+  				trace("rongbang_repeat_request,not fenrun");
+  			}
+  		}else{
+			$cash_order->order_state=-1;
+			$cash_order->order_desc.=$data['respmsg'];
+			$cash_order->save();
+  		}
   	}
   	//按文档要求返回
   	return json_encode(['message'=>'ok','response'=>'00']);
@@ -849,6 +1129,25 @@ class Userurl extends Controller
   		$membernet=new con\Membernet();
   		$res=$membernet->action_single_plan($plan_id);
   		echo $res;die;
+  }
+  //代还，用户签约界面
+  public function signed($passageway_id,$cardId,$order_no){
+  		#信用卡信息
+  		$data['MemberCreditcard']=$MemberCreditcard=MemberCreditcard::where(['card_id'=>$cardId])->find();
+  		#通道信息
+  		$data['passageway']=$passageway=Passageway::get($passageway_id);
+  		#通道入网信息
+  		$member_net=MemberNet::where(['net_member_id'=>$MemberCreditcard['card_member_id']])->find();
+  		#用户基本信息
+  		$data['Members']=$Members=Members::haswhere('memberLogin','')->where(['member_id'=>$MemberCreditcard['card_member_id']])->find();
+  		#登录信息
+  		// if(!$MemberCreditcard || !$passageway || $member_net){
+  		// 	exit('获取信息失败');
+  		// }
+  		$this->assign('order_no',$order_no);
+  		$this->assign('passageway_id',$passageway_id);
+  		$this->assign('data',$data);
+  		return view("Userurl/signed");
   }
   #金易付验证码页面
   public function jinyifu($memberId,$passagewayId,$cardId,$price){
@@ -932,5 +1231,4 @@ class Userurl extends Controller
 	 	return view("Userurl/H5youjifen");
 	 }
   }
-
 }

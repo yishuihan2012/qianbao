@@ -318,7 +318,7 @@
                 //                 'log_desc' => '邀请好友'.$this->param['card_name'].'注册并完成实名认证,获得红包'.$realname_wallet."元",
                 //            ]);
                 //       }
-                //      if(! $wallet->save()===false || !$wallet_log->save() )
+                //      if($wallet->save()===false || !$wallet_log->save() )
                 //      {
                 //            Db::rollback();
                 //            return ['code'=>350,'上级钱包余额更新失败~'];
