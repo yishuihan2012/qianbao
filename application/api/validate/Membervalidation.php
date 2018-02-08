@@ -27,6 +27,6 @@ class Membervalidation extends Validate
       #定义验证场景
      protected $scene = [
          'creat' =>  ['card_bankno','card_phone','card_name',/*'smsCode','card_bank_province','card_bank_city','card_bank_area','card_bank_addressId','card_bankname',*/'card_idcard'],
-          'edit' =>  ['card_bankno','card_phone','card_name',/*'smsCode','card_bank_province','card_bank_city','card_bank_area','card_bank_addressId','card_bankname'*/'card_idcard'],
+          'edit' =>  ['card_bankno','card_phone','card_name',/*'smsCode','card_bank_province','card_bank_city','card_bank_area','card_bank_addressId','card_bankname''card_idcard'*/],
      ];
 }
