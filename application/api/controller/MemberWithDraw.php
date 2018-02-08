@@ -145,6 +145,7 @@
                  $drawlog=new WalletLog([
                       'log_wallet_id' =>$memberwallet['wallet_id'],
                       'log_wallet_amount'=>$total,
+                      'log_balance'=>$meyyue,
                       'log_wallet_type'    =>2,
                       'log_relation_id'     =>$withdraws->withdraw_id,
                       'log_relation_type' =>2,

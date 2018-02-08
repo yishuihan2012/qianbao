@@ -297,6 +297,7 @@
 	 	      	 $log=new WalletLog([
 	 	      	 	 'log_wallet_id'		=>$wallet->wallet_id,
 	 	      	 	 'log_wallet_amount'	=>$comPrice,
+	 	      	 	 'log_balance'			=>$wallet->wallet_amount,
 	 	      	 	 'log_wallet_type'		=>1,
 	 	      	 	 'log_relation_id'		=>$commission->commission_id,
 	 	      	 	 'log_relation_type'	=>1,

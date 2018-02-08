@@ -209,10 +209,11 @@ class Order extends Common{
 					$Wallet=Wallet::get(['wallet_member'=>$Withdraw->withdraw_member]);
 					$Wallet->wallet_total_withdraw=$Wallet['wallet_total_withdraw']-$Withdraw['withdraw_total_money'];
 					$Wallet->wallet_amount=$Wallet['wallet_amount']+$Withdraw['withdraw_total_money'];
-					//对钱包日志修改描述说明
+					//对钱包日志修改描述说明还有实时余额
 					$wallet_log=WalletLog::get(['log_wallet_id'=>$Wallet->wallet_id,'log_relation_type'=>2,'log_relation_id'=>$Withdraw->withdraw_id]);
 					// trace($wallet_log);
 					$wallet_log->log_desc="您的提现已驳回,驳回原因：".$param['withdraw_information'];
+					$wallet_log->log_balance=$Wallet->wallet_amount;
 					if($Wallet->save()===false || $Withdraw->save()===false || $wallet_log->save()===false){
                       Db::rollback();
                       $result=false;
