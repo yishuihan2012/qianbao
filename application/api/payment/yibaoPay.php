@@ -92,10 +92,10 @@
             	 //'areaCode'=>$code['yibao_code'],												          //商户所在地区,请根据【银联 32 域码 表 0317.xls-来自易宝】,填写编码
             	 //'certFee'=>'0',															                          //认证费用
             	 'manualSettle'=>'Y', 														                          //N否是自助结算 N - 隔天自动打 款;Y - 不会自动打款
-            	 'BankCardPhoto'=>new \CURLFile('D:\zhiman\public\static\bank\default.png','image/jpeg','default.png'),//new CURLFile('uploads/bank.png','image/jpeg','bank.png'), 		//银行卡正面照
-            	 'idCardPhoto'=>new \CURLFile('D:\zhiman\public\static\bank\default.png','image/jpeg','default.png'),//new CURLFile('uploads/bank.png','image/jpeg','bank.png'), 			//身份证正面照
-            	 'idCardBackPhoto'=>new \CURLFile('D:\zhiman\public\static\bank\default.png','image/jpeg','default.png'),//new CURLFile('uploads/bank.png','image/jpeg','bank.png'), 		//身份证背面照
-            	 'PersonPhoto'=>new \CURLFile('D:\zhiman\public\static\bank\default.png','image/jpeg','default.png'),//new CURLFile('uploads/bank.png','image/jpeg','bank.png'), 			//银行卡与身份证及本人上半身合照
+            	 'BankCardPhoto'=>new \CURLFile(ROOT_PATH.'\public\static\bank\default.png','image/jpeg','default.png'),//new CURLFile('uploads/bank.png','image/jpeg','bank.png'), 		//银行卡正面照
+            	 'idCardPhoto'=>new \CURLFile(ROOT_PATH.'\public\static\bank\default.png','image/jpeg','default.png'),//new CURLFile('uploads/bank.png','image/jpeg','bank.png'), 			//身份证正面照
+            	 'idCardBackPhoto'=>new \CURLFile(ROOT_PATH.'\public\static\bank\default.png','image/jpeg','default.png'),//new CURLFile('uploads/bank.png','image/jpeg','bank.png'), 		//身份证背面照
+            	 'PersonPhoto'=>new \CURLFile(ROOT_PATH.'\public\static\bank\default.png','image/jpeg','default.png'),//new CURLFile('uploads/bank.png','image/jpeg','bank.png'), 			//银行卡与身份证及本人上半身合照
            );
            $result=$this->getData($url,$data);
            if($result['code']!=0000)

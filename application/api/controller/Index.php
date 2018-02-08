@@ -30,6 +30,7 @@ use think\Loader;
  	 	 	 #if request action and method is not exit
  	 	 	 if(!isset($data['action']) or !isset($data['method']))
  	 	 	 	 exit($this->return_json('400'));
+        trace("action:".$data['action'].";method:".$data['method']);
  	 	 	 #if param is empty 
  			 if (empty($data['param']) || !isset($data['param']))
                 	 $data['param']=[];
