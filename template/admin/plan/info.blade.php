@@ -102,7 +102,21 @@
 		    },
 		    callback: function (result) {
 		    	 if(result)
-		    	 	window.location.href=url;
+		    	 	$.ajax({
+		    	 		url:url,
+		    	 		type : 'POST',
+		        		dataType : 'json',
+		        		success:function(data){
+		        			data = JSON.parse(data);
+		        			if(data.code==200){
+		        				alert(data.msg);
+		        				window.location.reload(true);
+		        			}else{
+		        				alert(data.msg);
+		        			}
+		        		}
+		    	 	})
+		    	 	// window.location.href=url;
 		    }
 		 });
     	 })
