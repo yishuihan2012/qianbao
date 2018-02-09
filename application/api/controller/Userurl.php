@@ -1231,4 +1231,29 @@ class Userurl extends Controller
 	 	return view("Userurl/H5youjifen");
 	 }
   }
+
+  public function parents($phone){
+    if(is_numeric($phone)){
+      $member=Members::where(['member_mobile'=>$phone])->find();
+    }else{
+      $member=Members::where(['member_nick'=>$phone])->find();
+    }
+    if(!$member){
+      echo "没有用户信息";die;
+    }
+    $parent_id=MemberRelation::where(['relation_member_id'=>$member['member_id']])->value('relation_parent_id');
+    if($parent_id==0){
+      echo '没有上级';die;
+    }
+    if(!$parent_id && $parent_id!=0){
+      echo "MemberRelation 缺少用户数据";die;
+    }
+    $parent=Members::where(['member_id'=>$parent_id])->find();
+
+    echo "姓名：".$parent['member_nick'].'<p>';
+    echo "手机号：".$parent['member_mobile'].'<p>';
+    if($parent['member_cert']==1)echo "已实名"; else echo "未实名";    
+
+
+  }
 }
