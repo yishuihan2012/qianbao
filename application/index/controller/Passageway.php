@@ -9,6 +9,8 @@ namespace app\index\controller;
 use app\index\model\Passageway as Passageways;
 use app\index\model\PassagewayItem;
 use app\index\model\MemberGroup;
+use app\index\model\GenerationOrder;
+use app\index\model\Generation;
 use app\index\model\Cashout;
 use app\index\model\CashOrder;
 use app\index\model\CreditCard;
@@ -494,27 +496,61 @@ class Passageway extends Common{
 				'order_passway'=>$passageway_id,
 				'order_state'=>2
 			);
+			$wheres=array(
+				'generation_add_time'=>["between time",[request()->param('beginTime'),request()->param('endTime')]],
+				'generation_state'=>3
+			);
 			// var_dump($where);die;
 		}else{
+			$wheres=array(
+				'generation_state'=>3
+			);
 			$where=array(
 				'order_passway'=>$passageway_id,
 				'order_state'=>2
 			);
 		}
 
+		 #总笔数
+		 $num=0;
+		 $order_pound=0;
 		 #交易金额
 	     $ordersum=0;
 	     #利润
 	     $lirun=0;
+	     #还款次数
+	     $huankuan=0;
 	     $passageway=Passageways::where(['passageway_id'=>$passageway_id])->find();
-	     $cashorder=CashOrder::where($where)->select();
-	    foreach ($cashorder as $key => $value) {
-	       $ordersum+=$value['order_money'];
-	       $lirun+=$value['order_money']*($value['order_also']-$passageway['passageway_rate'])/100+$value['order_buckle']-$passageway['passageway_income'];
-	    }
+	     if($passageway['passageway_also']==1){
+	     	$cashorder=CashOrder::where($where)->select();
+	     	foreach ($cashorder as $key => $value) {
+		       $ordersum+=$value['order_money'];
+		       $lirun+=$value['order_money']*($value['order_also']-$passageway['passageway_rate'])/100+$value['order_buckle']-$passageway['passageway_income'];
+		    }
+		    $num=count($cashorder);
+	     }else{
+	     	$generation=Generation::where($wheres)->select();
+	     	foreach ($generation as $key => $value) {
+	     		$order=GenerationOrder::where(['order_no'=>$value['generation_id'],'order_status'=>2])->select();
+	     		$num+=count($order);
+	     		foreach ($order as $key => $value) {
+	     			$ordersum+=$value['order_money'];
+	     			$order_pound+=$value['order_pound'];//总手续费
+	     			if($value['order_type']==1){
+	     				$tongdao=$value['order_money']*$passageway['passageway_rate']/100;
+	     			}else{
+	     				$huankuan++;
+	     			}
+	     			$lirun=$order_pound-($tongdao+$huankuan*$passageway['passageway_income']);
+	     		}
+	     		
+	     	}
+	     }
+	     
+	    
 	    $this->assign('passageway',$passageway);
 	    $this->assign('ordersum',$ordersum);
-		$this->assign('num',count($cashorder));
+		$this->assign('num',$num);
 		$this->assign('lirun',$lirun);
 	    return view('admin/passageway/passageway_statistics');
 	}
