@@ -38,7 +38,8 @@ class Test
 			    }
 			dump(json_decode(curl_exec($curl)));    
 		}
-		public function jpush_test($uid=42,$title='极光推送测试',$content="测试cehsi",$item='',$type=2){
+		public function jpush_test($uid=42,$title='极光推送测试',$content="测试cehsi",$item='test',$type=2){
+			// phpinfo();
 			jpush($uid, $title=$item, $content=$content, $item=$item, $type=$type);
 		}
 		public function message_text(){

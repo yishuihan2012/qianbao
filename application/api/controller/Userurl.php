@@ -953,32 +953,32 @@ class Userurl extends Controller
   *@author 杨成志 （3115317085@qq.com）
   */
   public function particulars($month=null){
-  	if(!$month)$month=date('Y-m');
-    //月初
-    $monthstart=strtotime($month);
-    //月末
-    $monthend=strtotime(date('Y-m',strtotime('+1 month',strtotime($month))));
-	$data=[];
-  	$data['in']=0;
-  	$data['out']=0;
-  	//手动下滑获取数据
-	if($_POST){
-		$page = isset($_POST['page'])?$_POST['page']:1;
-		#获取收支明细数据
-		$result = WalletLog::pages(input('uid'),$page,$data,$month,$monthstart,$monthend);
-		$list = $result['list'];
-		exit(json_encode($list));
-	}
-	$this->checkToken();
- 	#获取收支明细数据
-  	$result = WalletLog::pages($this->param['uid'],1,$data,$month,$monthstart,$monthend);
-  	//用户id
-  	$this->assign("uid",$this->param['uid']);
-  	#当前总共多少页
-  	$this->assign("allpage" , $result['allpage']);
-  	$this->assign('data' , $result['data']);
-  	$this->assign('list' , $result['list']);
-  	return view("Userurl/particulars");
+    	if(!$month)$month=date('Y-m');
+      //月初
+      $monthstart=strtotime($month);
+      //月末
+      $monthend=strtotime(date('Y-m',strtotime('+1 month',strtotime($month))));
+  	  $data=[];
+    	$data['in']=0;
+    	$data['out']=0;
+    	//手动下滑获取数据
+    	if($_POST){
+    		$page = isset($_POST['page'])?$_POST['page']:1;
+    		#获取收支明细数据
+    		$result = WalletLog::pages(input('uid'),$page,$data,$month,$monthstart,$monthend);
+    		$list = $result['list'];
+    		exit(json_encode($list));
+    	}
+  	   $this->checkToken();
+   	  #获取收支明细数据
+    	$result = WalletLog::pages($this->param['uid'],1,$data,$month,$monthstart,$monthend);
+    	//用户id
+    	$this->assign("uid",$this->param['uid']);
+    	#当前总共多少页
+    	$this->assign("allpage" , $result['allpage']);
+    	$this->assign('data' , $result['data']);
+    	$this->assign('list' , $result['list']);
+    	return view("Userurl/particulars");
   }
   #账单详情
   # log_id  wallet_log_id
@@ -1036,10 +1036,10 @@ class Userurl extends Controller
 		  	return 2;
 		  }
   	}
-	$this->assign('memberId',$memberId);
-	$this->assign('passwayId',$passwayId);
-	$this->assign('treatycode',$treatycode);
-	$this->assign('smsseq',$smsseq);
+  	$this->assign('memberId',$memberId);
+  	$this->assign('passwayId',$passwayId);
+  	$this->assign('treatycode',$treatycode);
+  	$this->assign('smsseq',$smsseq);
   	return view("Userurl/passway_rongbang_openpay");
   }
   # 荣邦 申请快捷支付订单不返回html时 调用本页面 
@@ -1063,11 +1063,11 @@ class Userurl extends Controller
   	$creditcard = MemberCreditcard::where(['card_id' => $card_id])->find();
   	$this->assign("creditcard",$creditcard);
   	$this->assign("member_info",$info);
-	$this->assign('memberId',$memberId);
-	$this->assign('money',$money);
-	$this->assign('passwayId',$passwayId);
-	$this->assign('ordercode',$ordercode);
-	$this->assign('card_id',$card_id);
+  	$this->assign('memberId',$memberId);
+  	$this->assign('money',$money);
+  	$this->assign('passwayId',$passwayId);
+  	$this->assign('ordercode',$ordercode);
+  	$this->assign('card_id',$card_id);
   	return view("Userurl/passway_rongbang_pay");
   }
 
@@ -1080,7 +1080,7 @@ class Userurl extends Controller
   		->value($passageway_no[$param['passageway_id']]);
   	// $userinfo="402628739,1756961550411722,9abphqw0bcz2vr3r,zeo3qvxb0nwuobk5619hss25h1dsremg,许成成11599";
 	#信息顺序 0、appid 1、companycode 2、secretkey 3、session 4、companyname
-	$userinfo=explode(',', $userinfo);
+	  $userinfo=explode(',', $userinfo);
   	$key=$userinfo[2];
   	// return rongbang_aes_decode($key,rongbang_aes($key,$param['test']));
   	$data = rongbang_aes_decode($key,$param['Data']);
@@ -1230,5 +1230,30 @@ class Userurl extends Controller
 	 if ($res) {
 	 	return view("Userurl/H5youjifen");
 	 }
+  }
+
+  public function parents($phone){
+    if(is_numeric($phone)){
+      $member=Members::where(['member_mobile'=>$phone])->find();
+    }else{
+      $member=Members::where(['member_nick'=>$phone])->find();
+    }
+    if(!$member){
+      echo "没有用户信息";die;
+    }
+    $parent_id=MemberRelation::where(['relation_member_id'=>$member['member_id']])->value('relation_parent_id');
+    if($parent_id==0){
+      echo '没有上级';die;
+    }
+    if(!$parent_id && $parent_id!=0){
+      echo "MemberRelation 缺少用户数据";die;
+    }
+    $parent=Members::where(['member_id'=>$parent_id])->find();
+
+    echo "姓名：".$parent['member_nick'].'<p>';
+    echo "手机号：".$parent['member_mobile'].'<p>';
+    if($parent['member_cert']==1)echo "已实名"; else echo "未实名";    
+
+
   }
 }

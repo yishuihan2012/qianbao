@@ -49,7 +49,8 @@
 	      	<th>#</th>
 	      	<th>用户名</th>
 	      	<!-- <th>订单号</th> -->
-	      	<th>操作金额</th>
+          <th>操作金额</th>
+	      	<th>实时余额</th>
 	      	<th>描述</th>
 	      	<th>添加时间</th>
 	      	<th>状态</th>
@@ -61,7 +62,8 @@
 	      	<td>{{$log['log_id']}}</td>
 	      	<td>{{$log->wallet->member->member_nick}}</td>
 	      	<!-- <td><code></code></td> -->
-	      	<td><i class="icon icon-{{$log->log_wallet_type=='1' ? 'plus' : 'minus' }}">{{$log['log_wallet_amount']}}</td>
+          <td><i class="icon icon-{{$log->log_wallet_type=='1' ? 'plus' : 'minus' }}">{{$log['log_wallet_amount']}}</td>
+	      	<td><i class="icon icon-{{$log->log_wallet_type=='1' ? 'plus' : 'minus' }}">{{$log['log_balance']}}</td>
 	      	<td class="text-ellipsis" title="{{$log->log_desc}}">{{$log['log_desc']}}</td>
 	      	<td>{{$log['log_add_time']}}</td>
 	      	<td><i class="icon icon-check text-success"></i></td>
