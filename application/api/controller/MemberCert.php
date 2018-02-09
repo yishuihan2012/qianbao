@@ -237,7 +237,8 @@
            $card_validate=BankCertNew(['bankCardNo'=>$this->param['card_bankno'], 'identityNo'=>$this->param['card_idcard'], 'mobileNo'=>$this->param['card_phone'], 'name'=>$this->param['card_name']]);
            if($card_validate['code']!=0000) return ['code'=>351, 'msg'=>'实名认证失败。'];
            if($card_validate['data']['resultCode']!='R001')  return ['code'=>351, 'msg'=>'认证信息不匹配或您的储蓄卡尚未开通无卡支付功能，请联系发卡行。'];
-           if($card_validate['data']['bankCardBin']['cardTy']!='D')  return ['code'=>351, 'msg'=>'认证失败:请更换一个储蓄卡完成实名认证~'];
+           if(isset($card_validate['data']['bankCardBin']) && $card_validate['data']['bankCardBin']['cardTy']!='D')
+              return ['code'=>351, 'msg'=>'认证失败:请更换一个储蓄卡完成实名认证~'];
            Db::startTrans();
            try{
                 #写入认证表
@@ -257,11 +258,11 @@
                      //'card_bank_area' => '',//$this->param['card_bank_area'],
                      //'card_bank_address' => $bankInfo['bank_name'],
                      //'card_bank_lang'   => $bankInfo['bank_code'],
-                     'card_ident'          =>$card_validate['data']['bankCardBin']['id'],
-                     'card_rname'          =>$card_validate['data']['bankCardBin']['cardName'],
-                     'card_type'          =>$card_validate['data']['bankCardBin']['cardTy'],
-                     'card_bankid'        => $card_validate['data']['bankCardBin']['bankId'],
-                     'card_binstart'       => $card_validate['data']['bankCardBin']['binStat'],
+                     'card_ident'          =>$card_validate['data']['bankCardBin']['id'] ?? 0,
+                     'card_rname'          =>$card_validate['data']['bankCardBin']['cardName'] ?? 0 ,
+                     'card_type'          =>$card_validate['data']['bankCardBin']['cardTy'] ?? 0,
+                     'card_bankid'        => $card_validate['data']['bankCardBin']['bankId'] ?? 0,
+                     'card_binstart'       => $card_validate['data']['bankCardBin']['binStat'] ?? 0,
                      'card_channel'       => $card_validate['data']['channel'],
                      'card_state'          => '1',
                      'card_return'        =>json_encode($card_validate),
