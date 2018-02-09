@@ -359,7 +359,7 @@ use app\index\model\Member;
           #1获取费率
           #1判断当天有没有失败的订单  
           $today=date('Y-m-d',strtotime($pay['order_time']));
-          $fail_order=GenerationOrder::where(['order_no'=>$pay['order_no'],'order_status'=>'-1','order_type'=>1])->where('order_time','like',$today.'%')->find();
+          $fail_order=GenerationOrder::where(['order_no'=>$pay['order_no'],'order_type'=>1])->where('order_status','neq','2')->where('order_time','like',$today.'%')->find();
           // $remain_money=Reimbur::where(['reimbur_generation'=>$pay['order_no']])->find();
           // if($remain_money && $remain_money['reimbur_left']<$pay['order_money']){/
           if($fail_order){//如果当天有失败订单
