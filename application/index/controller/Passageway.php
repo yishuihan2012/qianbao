@@ -541,7 +541,7 @@ class Passageway extends Common{
 	     			}else{
 	     				$huankuan++;
 	     			}
-	     			$lirun=$order_pound-($tongdao+$huankuan*$passageway['passageway_income']);
+	     			$lirun+=$order_pound-($tongdao+$huankuan*$passageway['passageway_income']);
 	     		}
 	     		
 	     	}
