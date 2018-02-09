@@ -972,7 +972,7 @@ function SortByASCII($arr)
     //   4.平台公告铃声提示。
     function jpush($uid=null, $title=null, $content=null, $item=null, $type='2')
     {
-        // return true;
+        return true;
         $jpush=new con\Push();
         if ($uid && $title && $content) {
             //获取registration_id
