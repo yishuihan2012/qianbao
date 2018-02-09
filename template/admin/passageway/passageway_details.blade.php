@@ -66,9 +66,9 @@
              <td>{{$v['order_no']}}</td>
              <td>{{$v['member_nick']}}</td>
              <td>{{$v['order_money']}}</td>
-             <td>{{$v['order_pound']}}</td>
-             <td>{{$order_state[$v['order_status']]}}</td>
-             <td>{{$v['order_time']}}</td>
+             <td>@if (isset($v['order_pound'])){{$v['order_pound']}} @else{{$v['order_charge']}} @endif</td>
+             <td>@if (isset($v['order_status'])){{$v['order_status']}} @else{{$v['order_state']}} @endif</td>
+             <td>@if (isset($v['order_time'])){{$v['order_time']}} @else{{$v['order_update_time']}} @endif</td>
              <td>
                 <div class="btn-group"><a  data-remote="/index/passageway/passageway_details_info?id={{$v['order_id']}}&type={{$passageway->passageway_also==1 ? 1 : 3}}" data-toggle="modal" data-size="md" href="#" class="btn btn-sm">查看</a>
                 </div>
