@@ -10,6 +10,7 @@ use app\index\model\Passageway as Passageways;
 use app\index\model\PassagewayItem;
 use app\index\model\MemberGroup;
 use app\index\model\Cashout;
+use app\index\model\CashOrder;
 use app\index\model\CreditCard;
 use app\index\model\Member;
 use think\Controller;
@@ -481,5 +482,40 @@ class Passageway extends Common{
 		$this->assign('users',$users);
 		$this->assign('fenrun',$fenrun);
 	 	return view('admin/passageway/passageway_details_info');
+	}
+
+	#通道利润统计 每个通道成功的交易金额和交易笔数，利润（刷卡人的手续费-成本
+	public function passageway_statistics($passageway_id){
+		if(request()->param('beginTime') && request()->param('endTime')){
+			$endTime=strtotime(request()->param('endTime'))+24*3600;
+			$wheres['upgrade_creat_time']=["between time",[request()->param('beginTime'),$endTime]];
+			$where=array(
+				'order_update_time'=>["between time",[request()->param('beginTime'),request()->param('endTime')]],
+				'order_passway'=>$passageway_id,
+				'order_state'=>2
+			);
+			// var_dump($where);die;
+		}else{
+			$where=array(
+				'order_passway'=>$passageway_id,
+				'order_state'=>2
+			);
+		}
+
+		 #交易金额
+	     $ordersum=0;
+	     #利润
+	     $lirun=0;
+	     $passageway=Passageways::where(['passageway_id'=>$passageway_id])->find();
+	     $cashorder=CashOrder::where($where)->select();
+	    foreach ($cashorder as $key => $value) {
+	       $ordersum+=$value['order_money'];
+	       $lirun+=$value['order_money']*($value['order_also']-$passageway['passageway_rate'])/100+$value['order_buckle']-$passageway['passageway_income'];
+	    }
+	    $this->assign('passageway',$passageway);
+	    $this->assign('ordersum',$ordersum);
+		$this->assign('num',count($cashorder));
+		$this->assign('lirun',$lirun);
+	    return view('admin/passageway/passageway_statistics');
 	}
 }
