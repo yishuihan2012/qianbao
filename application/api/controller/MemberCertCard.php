@@ -182,7 +182,7 @@
               return $res;
           }
           $bindStatus=array(
-            'bindStatus'=>'01',
+            'bindStatus'=>'00',
             'card_state'  => 1,
           );
           $edit=MemberCreditcard::where("bindId='{$this->param['bindId']}' and mchno='{$creditcard['mchno']}'")->update($bindStatus);
