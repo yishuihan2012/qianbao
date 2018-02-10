@@ -64,7 +64,7 @@
 	      	<!-- <td><code></code></td> -->
           <td><i class="icon icon-{{$log->log_wallet_type=='1' ? 'plus' : 'minus' }}">{{$log['log_wallet_amount']}}</td>
 	      	<td><i class="icon icon-{{$log->log_wallet_type=='1' ? 'plus' : 'minus' }}">{{$log['log_balance']}}</td>
-	      	<td class="text-ellipsis" title="{{$log->log_desc}}">{{$log['log_desc']}}</td>
+	      	<td class="text-ellipsis" title="{{$log->log_desc}}"><a class="Listen" href="{{$log['hrefurl']}}">{{$log['log_desc']}}</a></td>
 	      	<td>{{$log['log_add_time']}}</td>
 	      	<td><i class="icon icon-check text-success"></i></td>
 	    </tr>
@@ -104,6 +104,14 @@ $(document).ready(function(){
 		        }
 		    }
 		});
+    })
+    $(".Listen").click(function(){
+      if($(this).attr('href')=="")
+      {
+        
+        new $.zui.Messager('暂无订单信息~', { type: 'error', close: true, }).show();
+        return false;
+      }
     })
 });
 $('#dateTimeRange').daterangepicker({
