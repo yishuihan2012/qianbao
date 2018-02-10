@@ -704,7 +704,7 @@ class Userurl extends Controller
 			#截取银行卡号
 		foreach ($CashOrder as $key => $value) {
 			$CashOrder[$key]["bank_ons"] = substr($value['order_creditcard'], -4);
-			$CashOrder[$key]['add_time'] = date("m-d H:s",strtotime($value['order_add_time']));
+			$CashOrder[$key]['add_time'] = date("m-d H:i",strtotime($value['order_add_time']));
 		}
 		if(!$CashOrder){
 			return view("Userurl/no_data");
