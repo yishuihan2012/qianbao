@@ -270,7 +270,7 @@ class Userurl extends Controller
        }
        //判断是否签约
        $MemberCreditcard=MemberCreditcard::where(['card_id'=>$param['cardId']])->find();
-       if(!$MemberCreditcard['bindId'] || strlen($MemberCreditcard['bindId'])<20){ //未绑定
+       if(!$MemberCreditcard['bindId'] || strlen($MemberCreditcard['bindId'])<20 || $MemberCreditcard['bindStatus']!='01'){ //未绑定
             //重定向到签约
              return redirect('Userurl/signed', ['passageway_id' =>$param['passageway'],'cardId'=>$param['cardId'],'order_no'=>$order_no]);
        }
