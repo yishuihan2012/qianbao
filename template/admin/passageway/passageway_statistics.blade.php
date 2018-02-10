@@ -9,7 +9,7 @@
  <hr/>
 <form action="" method="post">
  <div class="input-group" style="width: 200px;float: left; margin-right: 10px;">
-    <input type="text" class="form-control date-picker" id="dateTimeRange" placeholder="升级创建时间" />
+    <input type="text" class="form-control date-picker" id="dateTimeRange" placeholder="订单创建时间" />
     <input type="hidden" name="beginTime" id="beginTime" value="" />
     <input type="hidden" name="endTime" id="endTime" value="" />
     <z class='clearTime'>X</z>
@@ -48,8 +48,8 @@
  <script>
   $(document).ready(function(){
        $('.menu .nav .active').removeClass('active');
-       $('.menu .nav li.order').addClass('active');
-       $('.menu .nav li.order-manager').addClass('show');
+       $('.menu .nav li.passageway').addClass('active');
+       $('.menu .nav li.passageway-manager').addClass('show');
  })
  
 $('#dateTimeRange').daterangepicker({
