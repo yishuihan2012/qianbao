@@ -84,6 +84,9 @@
 					        'group_id':"{{$data['Members']['member_group_id']}}"
 		          		};
 		            $.post(url,data,function(data){
+		            	 if(data.code==463){
+		            	 	setTimeout(function(){ window.location.href="/api/Userurl/repayment_plan_create_detail/order_no/{{$order_no}}"; },1000);
+		            	 }
 		            	 if(data.code==200){
 		            	 	 $('input[name="bindId"]').val(data.data.bindId);
 		            	 }
@@ -134,7 +137,7 @@
 		            		mui.toast('签约失败。');
 		            	}
 		            	if(data.code==200){
-		            	 	setTimeout(function(){ window.location.href="/api/Userurl/repayment_plan_create_detail/order_no/{{$order_no}}"; },2000);
+		            	 	setTimeout(function(){ window.location.href="/api/Userurl/repayment_plan_create_detail/order_no/{{$order_no}}"; },1000);
 		            	 	
 		            	 }
 		             });
