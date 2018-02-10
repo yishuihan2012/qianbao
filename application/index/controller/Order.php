@@ -49,6 +49,10 @@ class Order extends Common{
 		}else{
 			$r['upgrade_state'] = '';
 		}
+
+		if(request()->param('upgrade_id')!=''){
+			$wheres['upgrade_id'] = request()->param('upgrade_id');
+		}
 		#支付类型
 		// #查询订单列表分页
 	 	$order_lists = Upgrade::haswhere('member',$where)
@@ -126,6 +130,11 @@ class Order extends Common{
 			$wheres['m.cert_member_idcard'] = ['like',"%".request()->param('cert_member_idcard')."%"];
 		}else{
 			$r['cert_member_idcard'] = '';
+		}
+
+		#是否传id
+		if(request()->param('withdraw_id')){
+			$wheres['withdraw_id'] = request()->param('withdraw_id');
 		}
 		//管理员列表
 		$admins=db('adminster')->column('adminster_id,adminster_login');
@@ -260,6 +269,10 @@ class Order extends Common{
 			$wheres['order_state'] = ['like',"%".request()->param('order_state')."%"];
 		}else{
 			$r['order_state'] = '';
+		}
+
+		if(request()->param('order_id')){
+			$wheres['order_id'] = request()->param('order_id');
 		}
 	 	 // #查询订单列表分页
 	 	 $order_lists = CashOrder::with('passageway')->join('wt_member m',"m.member_id=wt_cash_order.order_member")->where($where)->join("wt_member_cert mc", "mc.cert_member_id=m.member_id","left")->where($wheres)->order("order_id desc")->paginate(Config::get('page_size'), false, ['query'=>Request::instance()->param()]);

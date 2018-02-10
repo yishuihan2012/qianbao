@@ -47,6 +47,10 @@ class Plan extends Common{
 		}else{
 			$r['generation_state'] = '';
 		}
+
+		if(request()->param('generation_id')){
+			$where['generation_id'] = request()->param("generation_id");
+		}
 		$data = Generation::with("member,creditcard")->where($where)->order("generation_id desc")->paginate(Config::get('page_size'), false, ['query'=>Request::instance()->param()]);
 		#还款总金额
 		$sum = Generation::with("member,creditcard")->where($where)->sum("generation_total");

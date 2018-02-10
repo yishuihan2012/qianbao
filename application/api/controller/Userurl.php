@@ -91,7 +91,9 @@ class Userurl extends Controller
             $data['order_card']        = substr($data['order_card'], -4);
             $data['order_money'] = number_format($data['order_money'], 2);
             $data['result']           = 1;
-        } else {
+        } elseif(empty($request)) {
+            $data['result'] = -1;
+        }elseif(!empty($request) && $request['status'] != '00'){
             $data['result'] = 0;
         }
 
