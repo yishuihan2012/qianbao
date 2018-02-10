@@ -311,7 +311,7 @@
        if(!isset($this->param['uid']) || empty($this->param['uid']) || !isset($this->param['token']) ||empty($this->param['token']))
             $this->error=314;
        #查找到当前用户信用卡列表
-       $data=MemberCreditcard::with("repayment")->where('card_member_id='.$this->param['uid'].' and card_state=1')->select();
+       $data=MemberCreditcard::with("repayment")->where('card_member_id='.$this->param['uid'].' and card_state=1 and bindStatus=01')->select();
        foreach ($data as $key => $value) {
          $data[$key]['card_bankicon']=System::getName('system_url').$value['card_bankicon'];
          $data[$key]['card_banktitle']=$value['card_bankname'].'(尾号'.substr($value['card_bankno'],-4).')';
