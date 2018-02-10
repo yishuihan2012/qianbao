@@ -23,6 +23,16 @@
 			    </div>
 			</div>
 		</div>
+		@elseif($data['result']==-1)
+			<div class="mui-content bg-w repay-suc">
+			<div class="fc">
+		    	<span class="mui-icon iconfont icon-successful f48"></span>
+		    	<p class="space-up2">交易正在处理中</p>
+			    <div class="fc my-btn-container">
+			    	<a class="my-btn-blue2 space-right2 f18" id="seeDetails">返回首页</a>
+			    </div>
+			</div>
+		</div>
 		@else
 			<div class="mui-content bg-w repay-error">
 			<div class="fc">

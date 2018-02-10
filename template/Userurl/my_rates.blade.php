@@ -33,9 +33,18 @@
 
 			      @foreach($v['details'] as $d)
 			      	@if($v['passageway_also'] == 1)
-			      		<td>{{$d['item_rate']}}</td>
+			      		 @if($d['item_charges'])
+			      			 <td>{{$d['item_rate']}}+{{$d['item_charges']/100}}</td>
+			      		 @else
+			      		 	 <td>{{$d['item_rate']}}</td>
+			      		 @endif
 			      	@else
-			      		<td>{{$d['item_also']}}</td>
+			      		 @if($d['item_charges'])
+			      		 
+			      		  	<td>{{$d['item_also']}}+{{$d['item_charges']/100}}</td>
+			      		 @else
+			      			<td>{{$d['item_also']}}</td>
+			      		 @endif
 			      	@endif
 			      @endforeach
 <!-- 			      <td>0.49%</td>
@@ -45,11 +54,11 @@
  -->			    </tr>
 			    <tr>
 			      <td>额度</td>
-			      <td colspan="{{count($v['details'])}}" align="left"><span class="space-left">{{$v['passageway_desc']}}</span></td>
+			      <td colspan="{{count($v['details'])}}" align="left"><span class="space-left">{{$v['passageway_limit']}}</span></td>
 			    </tr>
 			    <tr>
 			      <td>提示</td>
-			      <td colspan="{{count($v['details'])}}" align="left"><span class="space-left">{{$v['passageway_limit']}}</span></td>
+			      <td colspan="{{count($v['details'])}}" align="left"><span class="space-left">{{$v['passageway_desc']}}</span></td>
 			    </tr>
 			  </tbody>
 			</table>

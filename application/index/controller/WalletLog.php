@@ -8,6 +8,7 @@
 namespace app\index\controller;
 
 use app\index\model\WalletLog as WalletLogs;
+use app\index\model\Commission;
 use think\Controller;
 use think\Request;
 use think\Session;
@@ -36,6 +37,25 @@ class WalletLog extends Common
 			$where['member_nick'] =  array("like","%".request()->param('member_nick')."%");
 		}
 		$list = WalletLogs::with('wallet')->join("wt_member","member_id=wallet_member")->where($where)->order('log_id', 'desc')->paginate(Config::get('page_size'), false, ['query'=>Request::instance()->param()]);	
+		foreach ($list as $key => $value) {
+			if($value['log_relation_type']==1){
+				$commission=Commission::where(['commission_id'=>$value['log_relation_id']])->find();
+				#交易分润
+				if($commission['commission_type']==1){
+					$list[$key]['hrefurl']=$commission['commission_from']?'/index/Order/cash/order_id/'.$commission['commission_from'] : '';
+				}elseif($commission['commission_type']==2){//分佣
+					$list[$key]['hrefurl']=$commission['commission_from']?'/index/Order/index/upgrade_id/'.$commission['commission_from'] : '';
+				}elseif($commission['commission_type']==3){//代还分润
+					$list[$key]['hrefurl']=$commission['commission_from']?'/index/Plan/index/generation_id/'.$commission['commission_from'] : '';
+				}else{
+					$list[$key]['hrefurl']='';
+				}
+			}elseif($value['log_relation_type']==2){
+				$list[$key]['hrefurl']=$value['log_relation_id']?'/index/Order/withdraw/withdraw_id/'.$value['log_relation_id'] : '';
+			}else{
+				$list[$key]['hrefurl']='';
+			}
+		}
 		$count = WalletLogs::with('wallet')->join("wt_member","member_id=wallet_member")->where($where)->count();
 		$this->assign("count",$count);
 		#计算进账总额

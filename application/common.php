@@ -978,7 +978,6 @@ function SortByASCII($arr)
             //获取registration_id
         $member=Members::get($uid);
             $member_token=$member->memberLogin->login_token;
-
         //写入记录
         Notice::create([
           'notice_title'=>$title,

@@ -85,17 +85,25 @@ class Userurl extends Controller
 
 	#取现现成功页面
 	public function calllback_success(){
-		$request = $this->param;
+		// $request = $this->param;
+    $request=file_get_contents("php://input");
+    if(empty($request)){
+       $data['result'] = -1;
+      $this->assign('data',$data);
+      return view("Userurl/calllback_success");
+    }
         $data    = CashOrder::where(['order_thead_no' => $request['transNo']])->find();
         if ($request['status'] == '00') {
             $data['order_card']        = substr($data['order_card'], -4);
             $data['order_money'] = number_format($data['order_money'], 2);
             $data['result']           = 1;
-        } else {
+        } elseif(empty($request)) {
+            $data['result'] = -1;
+        }elseif(!empty($request) && $request['status'] != '00'){
             $data['result'] = 0;
         }
 
-        $this->assign('data',$data);
+      $this->assign('data',$data);
 	    return view("Userurl/calllback_success");
 	}
 	/**
@@ -268,7 +276,7 @@ class Userurl extends Controller
        }
        //判断是否签约
        $MemberCreditcard=MemberCreditcard::where(['card_id'=>$param['cardId']])->find();
-       if(!$MemberCreditcard['bindId'] || strlen($MemberCreditcard['bindId'])<20){ //未绑定
+       if(!$MemberCreditcard['bindId'] || strlen($MemberCreditcard['bindId'])<20 || $MemberCreditcard['bindStatus']!='01'){ //未绑定
             //重定向到签约
              return redirect('Userurl/signed', ['passageway_id' =>$param['passageway'],'cardId'=>$param['cardId'],'order_no'=>$order_no]);
        }
