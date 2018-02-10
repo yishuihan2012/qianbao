@@ -34,14 +34,14 @@
 			      @foreach($v['details'] as $d)
 			      	@if($v['passageway_also'] == 1)
 			      		 @if($d['item_charges'])
-			      			 <td>{{$d['item_rate']}}+{{$d['item_charges']}}</td>
+			      			 <td>{{$d['item_rate']}}+{{$d['item_charges']/100}}</td>
 			      		 @else
 			      		 	 <td>{{$d['item_rate']}}</td>
 			      		 @endif
 			      	@else
 			      		 @if($d['item_charges'])
 			      		 
-			      		  	<td>{{$d['item_also']}}+{{$d['item_charges']}}</td>
+			      		  	<td>{{$d['item_also']}}+{{$d['item_charges']/100}}</td>
 			      		 @else
 			      			<td>{{$d['item_also']}}</td>
 			      		 @endif
