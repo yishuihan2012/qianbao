@@ -659,7 +659,8 @@ use app\index\model\Member;
             
             if($income['code']=='200'){
               if($income['bindStatus']=='01'){
-                return ['code'=>463,'msg'=>'此卡已签约'];//此卡已签约
+                $card=MemberCreditcard::where(["card_bankno"=>$params['creditCardNo']])->update(['bindId'=>$income['bindId'],'bindStatus'=>$income['bindStatus'],'mchno'=>$passageway['passageway_mech']]);
+                return ['code'=>463,'msg'=>'签约成功'];//此卡已签约
               }
                  #更新信用卡表
                  $card=MemberCreditcard::where(["card_bankno"=>$params['creditCardNo']])->update(['bindId'=>$income['bindId'],'bindStatus'=>$income['bindStatus'],'mchno'=>$passageway['passageway_mech']]);
