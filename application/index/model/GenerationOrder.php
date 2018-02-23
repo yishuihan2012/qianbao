@@ -41,4 +41,8 @@ class GenerationOrder extends Model{
       public function member(){
            return $this->hasOne("Member","member_id","order_member",'','left')->bind("member_nick")->setEagerlyType(0);
       }
+      #关联信用卡表
+      public function memberCreditcard(){
+          return  $this->hasOne("MemberCreditcard","card_bankno","order_card")->bind("card_bankname");
+      }
 }
