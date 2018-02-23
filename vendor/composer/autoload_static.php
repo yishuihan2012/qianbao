@@ -9,11 +9,13 @@ class ComposerStaticInit478f2749b4766991aa1921b2939f8c6b
     public static $files = array (
         '036ec262f4bcc331fe80b225c0cd7b46' => __DIR__ . '/..' . '/terranc/blade/src/helpers.php',
         'c594688b3441835d5575f3085da4a242' => __DIR__ . '/..' . '/webonyx/graphql-php/src/deprecated.php',
+        'ddc3cd2a04224f9638c5d0de6a69c7e3' => __DIR__ . '/..' . '/topthink/think-migration/src/config.php',
     );
 
     public static $prefixLengthsPsr4 = array (
         't' => 
         array (
+            'think\\migration\\' => 16,
             'think\\composer\\' => 15,
             'think\\' => 6,
             'terranc\\Blade\\' => 14,
@@ -25,6 +27,10 @@ class ComposerStaticInit478f2749b4766991aa1921b2939f8c6b
         'W' => 
         array (
             'WXPay\\' => 6,
+        ),
+        'P' => 
+        array (
+            'Phinx\\' => 6,
         ),
         'O' => 
         array (
@@ -45,6 +51,10 @@ class ComposerStaticInit478f2749b4766991aa1921b2939f8c6b
     );
 
     public static $prefixDirsPsr4 = array (
+        'think\\migration\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/topthink/think-migration/src',
+        ),
         'think\\composer\\' => 
         array (
             0 => __DIR__ . '/..' . '/topthink/think-installer/src',
@@ -64,6 +74,10 @@ class ComposerStaticInit478f2749b4766991aa1921b2939f8c6b
         'WXPay\\' => 
         array (
             0 => __DIR__ . '/..' . '/wxpay/wxpay/src',
+        ),
+        'Phinx\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/topthink/think-migration/phinx/src/Phinx',
         ),
         'OSS\\' => 
         array (

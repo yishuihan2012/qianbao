@@ -322,7 +322,7 @@ use app\index\model\Member;
       //9状态查询 unfinished
       //http://pay.mishua.cn/zhonlinepay/service/rest/creditTrans/payResultQuery
       //计划id
-      public function payResultQuery($id){
+      public function payResultQuery($id,is_print=''){
         $generation_order=GenerationOrder::where(['order_id'=>$id])->find();
         if(!$generation_order){
             return false;
@@ -343,15 +343,20 @@ use app\index\model\Member;
         $params=array(
           'mchNo'=>$merch->passageway_mech, //机构号 必填  由平台统一分配
           'userNo'=>$MemberNets->LkYQJ,  //平台用户标识  必填  平台下发用户标识
-          'orderNo'=>'',  //订单流水号 必填  机构订单流水号，需唯一
+          'orderNo'=>$generation_order->order_platform_no,  //订单流水号 必填  机构订单流水号，需唯一
           'tradeNo'=>$generation_order->back_tradeNo,  //平台流水号 必填  绑卡支付返回的流水号
-          'tradeDate'=>date('Ymd',strtotime($generation_order->order_time)),  //交易日期  可填  格式：yyyyMMdd为空时，仅查询仅3日内的交易数据；传入指定日期，可以查询更早前的数据
+          'tradeDate'=>'',
+          // 'tradeDate'=>date('Ymd',strtotime($generation_order->order_time)),  //交易日期  可填  格式：yyyyMMdd为空时，仅查询仅3日内的交易数据；传入指定日期，可以查询更早前的数据
           // 'tradeDate'=>'',
         );
         // echo $generation_order->order_time;die;
         // echo json_encode($params);die;
         $income=repay_request($params,$merch->passageway_mech,'http://pay.mishua.cn/zhonlinepay/service/rest/creditTrans/payResultQuery',$merch->iv,$merch->secretkey,$merch->signkey);
-        echo json_encode($income);
+        if($is_print){
+           echo json_encode($income);
+        }else{
+          return $income;
+        }
       }
       //10.余额提现
       //http://pay.mishua.cn/zhonlinepay/service/rest/creditTrans/transferApply
@@ -360,6 +365,8 @@ use app\index\model\Member;
           #1判断当天有没有失败的订单  
           $today=date('Y-m-d',strtotime($pay['order_time']));
           $fail_order=GenerationOrder::where(['order_no'=>$pay['order_no'],'order_type'=>1])->where('order_status','neq','2')->where('order_time','like',$today.'%')->find();
+          $member_base=Member::where(['member_id'=>$pay['order_member']])->find();
+          $merch=Passageway::where(['passageway_id'=>$pay['order_passageway']])->find();
           // $remain_money=Reimbur::where(['reimbur_generation'=>$pay['order_no']])->find();
           // if($remain_money && $remain_money['reimbur_left']<$pay['order_money']){/
           if($fail_order){//如果当天有失败订单
@@ -373,15 +380,13 @@ use app\index\model\Member;
               $rate=PassagewayItem::where(['item_passageway'=>$pay['order_passageway'],'item_group'=>$member_group_id])->find();
               $also=($rate->item_also)*10;
               $daikou=($rate->item_charges);
-              #2获取通道信息
-              $merch=Passageway::where(['passageway_id'=>$pay['order_passageway']])->find();
               // print_r($merch->passageway_mech);die;
               #3获取银行卡信息
               $card_info=MemberCreditcard::where(['card_bankno'=>$pay['order_card']])->find();
               #4获取用户信息
               $member=MemberNets::where(['net_member_id'=>$pay['order_member']])->find();
               #5:获取用户基本信息
-              $member_base=Member::where(['member_id'=>$pay['order_member']])->find();
+              
               $orderTime=date('YmdHis',time()+60);
               if(!$pay['order_platform_no'] || $pay['order_status']!=1){
                   $update_order['order_platform_no']=$pay['order_platform_no']=uniqid();
@@ -668,5 +673,30 @@ use app\index\model\Member;
             }else{
                   return ['code'=>400, 'msg'=> $income['message']];
             }
+      }
+      //处理没有结果的订单
+      public function no_result_order(){
+          $time=date('Y-m-d H:i:s',time()-60*30);
+          $list=GenerationOrder::where(['order_status'=>4])->where('order_time','lt',$time)->select();
+          foreach ($list as $key => $order) {
+              $generation=Generation::where(['generation_id'=>$order['order_no']])->find();
+              if($generation['generation_state']==2){
+                  $result=$this->payResultQuery($order['order_id']);
+                  if($result && $result['code']==200 && $result['status']){
+                      $arr['back_statusDesc']=$result['statusDesc'];
+                      if($result['status']=="SUCCESS"){
+                          $arr['order_status']='2';
+                      }else if($result['status']=="FAIL"){
+                          $arr['order_status']='-1';
+                          
+                      }else{
+                          $arr['order_status']='4';
+                          //带查证或者支付中。。。mchNo
+                      }
+                      $update=GenerationOrder::where(['order_id'=>$order['order_id']])->update($arr);
+                  }
+              }
+          }
+         
       }
  }
