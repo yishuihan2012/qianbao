@@ -26,6 +26,7 @@
 		 		<th>会员名称</th>
 		 		<th>订单消费类型</th>
 		 		<th>信用卡号</th>
+		 		<th>银行名称</th>
 		 		<th>订单金额</th>
 		 		<th>订单手续费</th>
 		 		<th>订单状态</th>
@@ -44,6 +45,7 @@
 			 <td>{{$value->member_nick}}</td>
 			 <td>@if($value->order_type == 1) <em style="color:#00FF00;"> 消费</em> @else <em style="color:#00FFFF;">还款</em>@endif </td>
 			 <td>{{$value->order_card}}</td>
+			 <td>{{$value->card_bankname}}</td>
 			 <td>{{$value->order_money}}</td>
 			 <td>{{$value->order_pound}}</td>
 			 <td>@if($value->order_status == 1)<em style="color:#FF9900;">  待执行 </em>@elseif($value->order_status == 2)<em style="color:#33FF33;"> 成功</em> @elseif($value->order_status == 3)<em style="color:#FF00FF;"> 取消</em> @elseif($value->order_status ==4) <em style="color:#00FFFF;">带查证</em> @else <em style="color:red;">失败 </em>@endif </td>
