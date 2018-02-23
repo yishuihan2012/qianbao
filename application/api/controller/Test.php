@@ -83,7 +83,8 @@ class Test
 			$data=$index->encryption_data(json_encode($data));
 			$request['data']=$data;
 			$host=System::getName('system_url');
-			$host='wallet.dev.com/index.php';
+			$host="localhost";
+			// $host='wallet.dev.com/index.php';
 			$data = $this->curlPost($host.'/api', 'post',$request);
 			$res=json_decode($data,true);
 			if(is_array($res) && $res['code']==200){
@@ -95,5 +96,35 @@ class Test
 			}
 			print_r($data);die;
 		}
+		public function yibao(){
+		 	 $membernetObject=new \app\api\payment\yibaoPay(12, 99);
+		 	 return json_encode($membernetObject->queryFee("10019100228",3));
+		 	 // return json_encode($membernetObject->fee("10019100228"));
+		}
+		#修正平台收益
+		public function cashorder(){
+			$order=db('cash_order')->select();
+			$passway=db('passageway')->column("*","passageway_id");
+			$passwayitem=db('passageway_item')->select();
+			$members=db('member')->alias('m')
+					->join('member_group g','m.member_group_id=g.group_id')
+					->column("*","member_id");;
+			foreach ($order as $k => $v) {
+				if($v['order_platform']>$v['order_charge']){
+					$passway_data=$passway[$v['order_passway']];
+					$user=$members[$v['order_member']];
+					foreach ($passwayitem as $key => $value) {
+						if($value['item_passageway']==$v['order_passway'] && $value['item_group']==$user['member_group_id']){
+							$passagewayitem_data=$value;
+							break;
+						}
+					}
 
+                    $platform=$v['order_charge']-($v['order_money']*$passway_data['passageway_rate']/100)+$passagewayitem_data['item_charges']/100-$passway_data['passageway_income'];
+
+                    db('cash_order')->where("order_id",$v['order_id'])->update(["order_platform"=>$platform]);
+                    echo sprintf("ID%d由%s修正为%s\n",$v['order_id'],$v['order_platform'],$platform);
+				}
+			}
+		}
 }
