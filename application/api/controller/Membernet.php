@@ -322,7 +322,7 @@ use app\index\model\Member;
       //9状态查询 unfinished
       //http://pay.mishua.cn/zhonlinepay/service/rest/creditTrans/payResultQuery
       //计划id
-      public function payResultQuery($id,is_print=''){
+      public function payResultQuery($id,$is_print=''){
         $generation_order=GenerationOrder::where(['order_id'=>$id])->find();
         if(!$generation_order){
             return false;
