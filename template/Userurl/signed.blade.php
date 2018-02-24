@@ -39,7 +39,7 @@
 	    </li>
 	    <div class="bg-color wrap f14 normal-color">*若CVV2或有效期信息有误请返回"信用卡管理"进行修改</div>
 	    <li class="mui-table-view-cell bg-w bor-bot">
-	    	银行预留手机号：<span class="poa-r invalid-color">{{$data['Members']['member_mobile']}}</span>
+	    	银行预留手机号：<span class="poa-r invalid-color">{{$data['MemberCreditcard']['card_phone']}}</span>
 	    </li>
 	    <li class="mui-table-view-cell bg-w">
 	    	验证码：
@@ -74,7 +74,7 @@
 		          			'uid':"{{$data['MemberCreditcard']['card_member_id']}}",
 					        // 'token': "{$data['Members']['memberLogin']['login_token']}",
 					        'creditCardNo':"{{$data['MemberCreditcard']['card_bankno']}}",
-					        'phone':"{{$data['Members']['member_mobile']}}",
+					        'phone':"{{$data['MemberCreditcard']['card_phone']}}",
 					        'bank_name': "{{$data['MemberCreditcard']['card_bankname']}}",
 					        'cvv':"{{$data['MemberCreditcard']['card_Ident']}}",
 					        'expireDate':"{{$data['MemberCreditcard']['card_expireDate']}}",

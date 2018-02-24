@@ -118,7 +118,7 @@
            $card_validate=BankCertNew(['bankCardNo'=>$this->param['creditCardNo'], 'identityNo'=>$this->idcard, 'mobileNo'=>$this->param['phone'], 'name'=>$this->name]);
            if($card_validate['code']!=0000) return ['code'=>351, 'msg'=>'实名认证失败'];
            if($card_validate['data']['resultCode']!='R001')  return ['code'=>351, 'msg'=>'认证失败:'.$card_validate['data']['remark']];
-           if($card_validate['data']['bankCardBin']['cardTy']!='C')  return ['code'=>351, 'msg'=>'认证失败:只能绑定信用卡'];
+           if(isset($card_validate['data']['bankCardBin']) && $card_validate['data']['bankCardBin']['cardTy']!='C')  return ['code'=>351, 'msg'=>'认证失败:只能绑定信用卡'];
             $ident_code=substr($this->param['creditCardNo'],0,6);
             $ident_icon=BankIdent::where(['ident_code'=>$ident_code])->value('ident_icon');
             $passageway=Passageway::where('passageway_also=2 and passageway_state=1')->find();

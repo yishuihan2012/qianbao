@@ -63,7 +63,7 @@
 	      	<td>{{$log->wallet->member->member_nick}}</td>
 	      	<!-- <td><code></code></td> -->
           <td><i class="icon icon-{{$log->log_wallet_type=='1' ? 'plus' : 'minus' }}">{{$log['log_wallet_amount']}}</td>
-	      	<td><i class="icon icon-{{$log->log_wallet_type=='1' ? 'plus' : 'minus' }}">{{$log['log_balance']}}</td>
+	      	<td><i class="">{{$log['log_balance']}}</td>
 	      	<td class="text-ellipsis" title="{{$log->log_desc}}"><a class="Listen" href="{{$log['hrefurl']}}">{{$log['log_desc']}}</a></td>
 	      	<td>{{$log['log_add_time']}}</td>
 	      	<td><i class="icon icon-check text-success"></i></td>

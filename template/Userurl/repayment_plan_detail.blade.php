@@ -9,6 +9,9 @@
 		<link href="/static/css/base.css" rel="stylesheet" />
 		<link href="/static/css/page.css" rel="stylesheet" />
 		<link href="/static/css/themes.css" rel="stylesheet"/>
+		<style type="text/css">
+			.mui-popup{position:fixed;}
+		</style>
 	</head>
 	<body>
 		<div class="mui-content repayment-detail">
