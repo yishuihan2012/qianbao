@@ -72,7 +72,13 @@ class Plan extends Common{
 	}
 	#还款详情
 	public function info(){
-		$where['order_no'] = input('id');
+		#从钱包日志跳转来 单条详情
+		if(input('order_id')){
+			$where['order_id'] = input('order_id');
+		}else{
+			#从菜单点击来 计划所有详情
+			$where['order_no'] = input('id');
+		}
 		$list = GenerationOrder::with("passageway,member,memberCreditcard")->where($where)->select();
 		$this->assign("list",$list);
 		return view("/admin/plan/info");
