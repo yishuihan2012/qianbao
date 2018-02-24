@@ -1270,6 +1270,10 @@ class Userurl extends Controller
   * @author 杨成志 （3115317085@qq.com）
   */
   public function credit_card(){
+    //获取父类名称
+    $wheres['list_id'] = input("parent_id");
+    $info=ServiceItemList::where($wheres)->order("list_id desc")->find();
+    $this->assign("info",$info);
     $where['list_parent_id'] = input("parent_id");
     $list=ServiceItemList::where($where)->order("list_id desc")->select();
     $this->assign("list",$list);

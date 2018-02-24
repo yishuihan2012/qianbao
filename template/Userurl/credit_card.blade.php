@@ -20,7 +20,7 @@
 				<!--轮播2结束-->
 				<!--列表-->
 				<div class="wrap-bt">
-					<p>推荐银行</p>
+					<p>{{$info->list_name}}</p>
 				    <div class="mui-row space-up2">
 				    	@foreach($list as $k => $v)
 				        <div class="mui-col-sm-4 mui-col-xs-4">
