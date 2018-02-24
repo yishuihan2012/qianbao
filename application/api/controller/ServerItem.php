@@ -39,13 +39,16 @@
                  foreach ($model as $key => $value) {
                        $data[$key]['serviceName']=$value['item_name'];
                        $data[$key]['serviceIcon']=System::getName('system_url').$value['item_icon'];
-                       $data[$key]['serviceItems']=ServiceItemList::where(['list_state'=>'1','list_item_id'=>$value['item_id']])->order('list_weight','asc')->limit(6)->select();
+                       $data[$key]['serviceItems']=ServiceItemList::where(['list_state'=>'1','list_item_id'=>$value['item_id'],"list_parent_id"=>0])->order('list_weight','asc')->limit(6)->select();
                        foreach ($data[$key]['serviceItems'] as $k => $v) {
                            $data[$key]['serviceItems'][$k]['list_icon'] =System::getName('system_url').$data[$key]['serviceItems'][$k]['list_icon'];
                           if($v['list_authority'] == 0){
                             $data[$key]['serviceItems'][$k]['list_status'] = 0;
                           }else{
                             $data[$key]['serviceItems'][$k]['list_status'] = ($userinfo['group_salt']==1)?1:0;
+                          }
+                          if(!strpos($v['list_url'],"http")){
+                            $data[$key]['serviceItems'][$k]['list_url'] = "http://".$_SERVER['HTTP_HOST'].$v['list_url'];
                           }
                        }
                  }

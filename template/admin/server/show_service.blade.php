@@ -47,7 +47,15 @@
       <div id="announcement_content" class="col-sm-6">
         <input type="checkbox" name="list_authority" {{$data['list_authority'] ? 'checked=""' :''}} value="1"></div>
     </div>
-
+      <div class="row form-group">
+            <label for="list_parent_status" class="col-sm-2 text-right"><b>是否顶级父类</b></label>
+            <div id="list_parent_status" class="col-sm-6">
+                 <select name="list_parent_status" class="form-control">
+                      <option value="0" {{$data['list_parent_status']==0 ? 'selected' : ' '}}>不是</option>
+                      <option value="1" {{$data['list_parent_status']==1 ? 'selected' : ' '}}>是</option>
+                 </select>
+            </div>
+      </div>
     <div class="row form-group">
       <label for="announcement_content" class="col-sm-2 text-right">
         <b>图标</b>
@@ -79,7 +87,17 @@
                  <input type="text" class="form-control list_url" name="list_url" placeholder="服务地址" value="{{$data['list_url']}}">
            </div>
       </div>
-
+      <div class="row form-group url">
+        <label for="announcement_content" class="col-sm-2 text-right"><b>所属父类</b></label>
+        <div id="announcement_content" class="col-sm-6">
+          <select name="list_parent_id" class="form-control">
+            <option value="0">默认分类</option>
+            @foreach($list as $v)
+              <option value="{{$v->list_id}}" {{$data['list_parent_id']==$v['list_id'] ? 'selected' : ' '}}>{{$v->list_name}}</option>
+            @endforeach
+          </select>
+        </div>
+       </div>
       <div class="row form-group">
             <label for="list_weight" class="col-sm-2 text-right"><b>权重</b></label>
             <div id="list_weight" class="col-sm-6">

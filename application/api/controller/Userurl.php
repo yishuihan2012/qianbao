@@ -39,6 +39,7 @@ use app\index\model\SmsCode;
 use app\index\model\ArticleCategory;
 use app\index\model\Article;
 use app\index\model\WalletLog;
+ use app\index\model\ServiceItemList;
 /**
  *  此处放置一些固定的web地址
  */
@@ -1263,5 +1264,16 @@ class Userurl extends Controller
     if($parent['member_cert']==1)echo "已实名"; else echo "未实名";    
 
 
+  }
+  /**
+  * @version credit_card 推广模块子类页面
+  * @author 杨成志 （3115317085@qq.com）
+  */
+  public function credit_card(){
+    dump($_SERVER);die;
+    $where['list_parent_id'] = input("parent_id");
+    $list=ServiceItemList::where($where)->order("list_id desc")->select();
+    $this->assign("list",$list);
+    return view("Userurl/credit_card");
   }
 }
