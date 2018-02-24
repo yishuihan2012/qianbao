@@ -26,21 +26,31 @@
  	protected $url;
  	public function __construct(){
  		$this->url='http://120.77.180.22:8089/v1.0/facade';
- 		$
+ 		
  	}
  	/**
  	 * 进件请求
  	 * @return [type] [description]
  	 */
- 	public function income(){
+ 	public function income($card_id){
+ 		$card_info=MemberCreditcard::where(['card_id'=>$card_id])->find();
+ 		if(!$card_info){
+ 			exit();
+ 		}
+ 		$member_info=Member::where(['member_id'=>$card_info['card_member_id']])->find();
+ 		if(!$member_info){
+ 			exit();
+ 		}
+ 		print_r();die;
+ 		
  		$agentId=1001001;
- 		$idcard='370983199109202832';
- 		$name="许成成";
+ 		$idcard=$member_info->membercert->cert_member_idcard;
+ 		$name=$card_info['card_name'];
  		$bankId=122;
- 		$bankCard='6215590200003242971';
+ 		$bankCard=$card_info['card_bankno'];
  		$bankName='招商银行';
  		$arr=array(
- 			'version'=>1.0
+ 			'version'=>'1.0',
 			'charset'=>'UTF-8',//	编码方式UTF-8
 			'agentId'=>$agentId,//受理方预分配的渠道代理商标识
 			'nonceStr'=>make_rand_code(),//随机字符串，字符范围a-zA-Z0-9
@@ -54,15 +64,17 @@
 			'bankCard'=>$bankCard,//银行卡号
 			'bankName'=>$bankName,//开户行名称
 			'bankNo'=>$bankNo,//开户行代码(PAB)
-			'rate'=>$rate//费率‱ ，不小于代理商费率
+			'rate'=>$rate,//费率‱ ，不小于代理商费率
 			'extraFee'=>$extraFee,//手续费(分)
 			'address'=>'',//N(String)	地址
 			'remark'=>'汇联金创代还',//备注
  		);
  		$
  		$sign=$this->get_string($arr);
- 		$arr['sign']=$sign,//签名数据
+ 		$arr['sign']=$sign;//签名数据
  		$url=$this->url.'/report';
+ 		$res=curl_post($url,'post',json_encode($arr));
+
  	}
  	/**
  	 * 下单支付
@@ -107,7 +119,7 @@
  	public function get_string($arr){
  		$arr=$this->SortByASCII($arr);
  		$string=http_build_query($arr);
-
+ 		echo $string;die;
  	}
  	/**
      * 数组按照ASCII码排序
