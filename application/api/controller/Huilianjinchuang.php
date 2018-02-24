@@ -122,11 +122,13 @@
  	 * @return [type]      [description]
  	 */
  	public function get_string($arr){
+ 		$private_key="./static/rsakey/1001001_prv.pem";
+		$pub_key="./static/rsakey/1001001_pub.pem";
  		$arr=$this->SortByASCII($arr);
  		$string=http_build_query($arr);
- 		$rsa=new \app\api\controller\Rsa();
+ 		$rsa=new \app\api\controller\Rsa($pub_key,$private_key);
  		$res=$rsa->encrypt($string);
- 		echo $string;die;
+ 		echo $res;die;
  	}
  	/**
      * 数组按照ASCII码排序

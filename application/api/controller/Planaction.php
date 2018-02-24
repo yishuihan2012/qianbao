@@ -24,7 +24,6 @@
  use app\index\model\PassagewayItem;
  use app\index\model\Wallet;
  use app\index\model\Recomment;
- use app\index\model\Commission;
  use app\index\model\Upgrade;
  use app\index\model\Notice;
  use app\index\model\Announcement;
