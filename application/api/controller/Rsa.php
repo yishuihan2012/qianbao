@@ -12,7 +12,7 @@
  * @version: 1.0.0 
  * @date: 2017/06/30 
  */  
-class RSA  
+class Rsa 
 {  
     private $pubKey = null;  
     private $priKey = null;  
@@ -23,14 +23,32 @@ class RSA
      * @param string 公钥文件（验签和加密时传入） 
      * @param string 私钥文件（签名和解密时传入） 
      */  
-    public function __construct($public_key_file = '', $private_key_file = '')  
+    public function __construct()  
     {  
-        if ($public_key_file) {  
-            $this->_getPublicKey($public_key_file);  
-        }  
-        if ($private_key_file) {  
-            $this->_getPrivateKey($private_key_file);  
-        }  
+        // if ($public_key_file) {  
+        //     $this->_getPublicKey($public_key_file);  
+        // }  
+        // if ($private_key_file) {  
+        //     $this->_getPrivateKey($private_key_file);  
+        // }  
+        $this->priKey="MIICdwIBADANBgkqhkiG9w0BAQEFAASCAmEwggJdAgEAAoGBALdCegu0Rz9lKjVY
+LC5Jqwq9pkbNdmJQWSztFE2zgjQ1mSinnuUTnzLDM1Njl0W1Cw+g2RY9NTAekg9t
+I2C+v64zn+oiKSzDdmw/6ODKeuTUBIN1lWhl8bk22RGsknX8AMOh3DCgvDUaw7XD
+GqfhiGc+29ogTV3D1xmPgk9lgBgHAgMBAAECgYBTPJ+Ah27BDashNZ5Dm/RTWZaX
+nCUEPKh0bm6FaF5gZmPdglz6gXIStXSvkJGZ+MRAYfeYUU7CP3BqD1E9VQZsTX5q
+nbymC40tsbEqnOf2jmGCuEHD4zcJdmxNufEzjoZ2gMlfVNP296bIRzk7Y7kHHb6C
+fonN8RdICbynAPl3mQJBANxQyvhKuWgRQbk56IVL9Vm8C3Ku7sxbT443TM1QIvH6
+zy1b+g4/HlJ9sVzjIbYsAPcZqu3NbeG7rs1xfaKuy2UCQQDU8TCwdWtMBlsvzmIp
+ug5FkoPY29OpIO3dUXxNV2G9NyFUEiFqB/T+51bHpLKL4psc4953qwLN7eU7efMW
+9zz7AkEAv1FNoKXLMaripwW5fJ+ElQMt8c4lQsL8Z+Rvxk8TuYxygtI/aEW5gCr0
+bVQz/y1hPTNF8rGU/RRtbKxkTHR73QJAI66+//LNJhIymZI19NQOrC3fFinQEBlK
+grmy4Krx3+krFpFrM/9dWJGfgxjgKnywjWjJ0LfBYoyoywymZYTMnQJBANYRnnvi
+Fb57dQYrgKohmkMHPYDc/5sF7VnvjMMPSqyNhOomf3fcnm0vRH3wRnmpt1wm4Dh9
+PILT+5/tZtpnNMQ=";
+        $this->pubKey="MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQC3QnoLtEc/ZSo1WCwuSasKvaZG
+zXZiUFks7RRNs4I0NZkop57lE58ywzNTY5dFtQsPoNkWPTUwHpIPbSNgvr+uM5/q
+Iiksw3ZsP+jgynrk1ASDdZVoZfG5NtkRrJJ1/ADDodwwoLw1GsO1wxqn4YhnPtva
+IE1dw9cZj4JPZYAYBwIDAQAB";
     }  
   
     // 私有方法  
@@ -114,7 +132,7 @@ class RSA
   
     private function _getPrivateKey($file)  
     {  
-        $key_content = $this->_readFile($file);  
+        $key_content = $this->_readFile($file);
         if ($key_content) {  
             $this->priKey = openssl_get_privatekey($key_content);  
         }  
@@ -122,6 +140,7 @@ class RSA
   
     private function _readFile($file)  
     {  
+        return $file;
         $ret = false;  
         if (!file_exists($file)) {  
             $this->_error("The file {$file} is not exists");  
@@ -189,6 +208,7 @@ class RSA
      */  
     public function encrypt($data, $code = 'base64', $padding = OPENSSL_PKCS1_PADDING)  
     {  
+        
         $ret = false;  
         if (!$this->_checkPadding($padding, 'en')) $this->_error('padding error');  
         if (openssl_public_encrypt($data, $result, $this->pubKey, $padding)) {  

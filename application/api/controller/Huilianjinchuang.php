@@ -16,6 +16,7 @@
  use app\index\model\Reimbur;
  use app\index\model\MemberNet as MemberNets;
  use app\index\model\MemberCreditcard;
+ use app\index\model\BankInfo;
  /**
  *  @version Huilianjinchuang controller / Api 代还入网
  *  @author 许成成(1015571416@qq.com)
@@ -32,7 +33,7 @@
  	 * 进件请求
  	 * @return [type] [description]
  	 */
- 	public function income($card_id){
+ 	public function income($Passageway,$card_id){
  		$card_info=MemberCreditcard::where(['card_id'=>$card_id])->find();
  		if(!$card_info){
  			exit();
@@ -41,14 +42,20 @@
  		if(!$member_info){
  			exit();
  		}
- 		print_r();die;
- 		
+ 		$bank_name=mb_substr($card_info['card_bankname'],-4,2);
+ 		// echo $bank_name;die;
+ 		$BankInfo=BankInfo::where('info_sortname','like','%'.$bank_name.'%')->find();
+ 		// print_r($BankInfo);die;
  		$agentId=1001001;
  		$idcard=$member_info->membercert->cert_member_idcard;
  		$name=$card_info['card_name'];
- 		$bankId=122;
+ 		$bankId=$BankInfo['info_pab'];
  		$bankCard=$card_info['card_bankno'];
- 		$bankName='招商银行';
+ 		$bankName=$BankInfo['info_name'];
+
+ 		$rate=PassagewayItem::where(['item_passageway'=>$Passageway,'item_group'=>$member_info['member_group_id']])->find();
+        $also=($rate->item_also)*10;
+        $daikou=($rate->item_charges);
  		$arr=array(
  			'version'=>'1.0',
 			'charset'=>'UTF-8',//	编码方式UTF-8
@@ -59,22 +66,20 @@
 			'idcardType'=>'01',//证件类型 暂只支持 01 身份证
 			'idcard'=>$idcard,//证件号码
 			'name'=>$name,//姓名
-			'phone'=>$phone,//手机号
+			'phone'=>$member_info['member_mobile'],//手机号
 			'bankId'=>$bankId,//联行号
 			'bankCard'=>$bankCard,//银行卡号
 			'bankName'=>$bankName,//开户行名称
-			'bankNo'=>$bankNo,//开户行代码(PAB)
-			'rate'=>$rate,//费率‱ ，不小于代理商费率
-			'extraFee'=>$extraFee,//手续费(分)
-			'address'=>'',//N(String)	地址
-			'remark'=>'汇联金创代还',//备注
+			'bankNo'=>$BankInfo['info_pab'],//开户行代码(PAB)
+			'rate'=>$also,//费率‱ ，不小于代理商费率
+			'extraFee'=>$daikou,//手续费(分)
+			// 'address'=>'',//N(String)	地址
+			'remark'=>'汇联金创代还进件',//备注
  		);
- 		$
  		$sign=$this->get_string($arr);
  		$arr['sign']=$sign;//签名数据
  		$url=$this->url.'/report';
  		$res=curl_post($url,'post',json_encode($arr));
-
  	}
  	/**
  	 * 下单支付
@@ -119,6 +124,8 @@
  	public function get_string($arr){
  		$arr=$this->SortByASCII($arr);
  		$string=http_build_query($arr);
+ 		$rsa=new \app\api\controller\Rsa();
+ 		$res=$rsa->encrypt($string);
  		echo $string;die;
  	}
  	/**
