@@ -101,7 +101,7 @@ class Test
 		 	 return json_encode($membernetObject->queryFee("10019100228",3));
 		 	 // return json_encode($membernetObject->fee("10019100228"));
 		}
-		#修正平台收益
+		#修正平台收益 修正之前未计算固定附加费除100的数据
 		public function cashorder(){
 			$order=db('cash_order')->select();
 			$passway=db('passageway')->column("*","passageway_id");
@@ -126,5 +126,13 @@ class Test
                     echo sprintf("ID%d由%s修正为%s\n",$v['order_id'],$v['order_platform'],$platform);
 				}
 			}
+		}
+		#修正分润类型 部分代还的类型在分润表中记录为快捷支付，将此部分找出并修正
+		public function commission(){
+			$commission=db('commission')->where(['commission_type'=>1,'commission_desc'=>['like','代还%']])->select();
+			foreach ($commission as $k => $v) {
+				db('commission')->where('commission_id',$v['commission_id'])->update(['commission_type'=>3]);
+			}
+			echo sprintf("finished,num:%d",count($commission));
 		}
 }
