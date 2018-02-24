@@ -10,7 +10,7 @@
         },
         "dist": {
             "type": "zip",
-            "url": "https://files.phpcomposer.com/files/top-think/think-installer/1be326e68f63de4e95977ed50f46ae75f017556d.zip",
+            "url": "https://api.github.com/repos/top-think/think-installer/zipball/1be326e68f63de4e95977ed50f46ae75f017556d",
             "reference": "1be326e68f63de4e95977ed50f46ae75f017556d",
             "shasum": ""
         },
@@ -53,7 +53,7 @@
         },
         "dist": {
             "type": "zip",
-            "url": "https://files.phpcomposer.com/files/wxpay/WXPay-SDK-PHP/6bf6918257886b35327d86371a05f145997b8deb.zip",
+            "url": "https://api.github.com/repos/wxpay/WXPay-SDK-PHP/zipball/6bf6918257886b35327d86371a05f145997b8deb",
             "reference": "6bf6918257886b35327d86371a05f145997b8deb",
             "shasum": ""
         },
@@ -87,7 +87,7 @@
         },
         "dist": {
             "type": "zip",
-            "url": "https://files.phpcomposer.com/files/luoyt/auth/d8f6147754284c04eb9f8cab9db05ab9e0fb53d6.zip",
+            "url": "https://api.github.com/repos/luoyt/auth/zipball/d8f6147754284c04eb9f8cab9db05ab9e0fb53d6",
             "reference": "d8f6147754284c04eb9f8cab9db05ab9e0fb53d6",
             "shasum": ""
         },
@@ -125,7 +125,7 @@
         },
         "dist": {
             "type": "zip",
-            "url": "https://files.phpcomposer.com/files/webonyx/graphql-php/b17b1c33366d07877feb4299f207a420fbfe53b5.zip",
+            "url": "https://api.github.com/repos/webonyx/graphql-php/zipball/b17b1c33366d07877feb4299f207a420fbfe53b5",
             "reference": "b17b1c33366d07877feb4299f207a420fbfe53b5",
             "shasum": ""
         },
@@ -174,7 +174,7 @@
         },
         "dist": {
             "type": "zip",
-            "url": "https://files.phpcomposer.com/files/top-think/framework/0fb51680e8d62495d27f17a0e6cf889b763a6d3c.zip",
+            "url": "https://api.github.com/repos/top-think/framework/zipball/0fb51680e8d62495d27f17a0e6cf889b763a6d3c",
             "reference": "0fb51680e8d62495d27f17a0e6cf889b763a6d3c",
             "shasum": ""
         },
@@ -227,7 +227,7 @@
         },
         "dist": {
             "type": "zip",
-            "url": "https://files.phpcomposer.com/files/terranc/blade/e6a879aaa1b45c7f779a69d4831db2f7e6d66e73.zip",
+            "url": "https://api.github.com/repos/terranc/blade/zipball/e6a879aaa1b45c7f779a69d4831db2f7e6d66e73",
             "reference": "e6a879aaa1b45c7f779a69d4831db2f7e6d66e73",
             "shasum": ""
         },
@@ -269,7 +269,7 @@
         },
         "dist": {
             "type": "zip",
-            "url": "https://files.phpcomposer.com/files/terranc/think-blade/20c2d86e15bd782f0e2ff9e77c4ecad47558ff62.zip",
+            "url": "https://api.github.com/repos/terranc/think-blade/zipball/20c2d86e15bd782f0e2ff9e77c4ecad47558ff62",
             "reference": "20c2d86e15bd782f0e2ff9e77c4ecad47558ff62",
             "shasum": ""
         },
@@ -310,7 +310,7 @@
         },
         "dist": {
             "type": "zip",
-            "url": "https://files.phpcomposer.com/files/aliyun/aliyun-oss-php-sdk/0b9b85b6c5c38cfc4ef3b0205a5a62d1e36acf2e.zip",
+            "url": "https://api.github.com/repos/aliyun/aliyun-oss-php-sdk/zipball/0b9b85b6c5c38cfc4ef3b0205a5a62d1e36acf2e",
             "reference": "0b9b85b6c5c38cfc4ef3b0205a5a62d1e36acf2e",
             "shasum": ""
         },
@@ -353,7 +353,7 @@
         },
         "dist": {
             "type": "zip",
-            "url": "https://files.phpcomposer.com/files/jpush/jpush-api-php-client/921b491fa36e96d58431cefade5f4782d09690e4.zip",
+            "url": "https://api.github.com/repos/jpush/jpush-api-php-client/zipball/921b491fa36e96d58431cefade5f4782d09690e4",
             "reference": "921b491fa36e96d58431cefade5f4782d09690e4",
             "shasum": ""
         },
@@ -398,7 +398,7 @@
         },
         "dist": {
             "type": "zip",
-            "url": "https://files.phpcomposer.com/files/flc1125/dysms/a60645c6b35a15fe7fed6282784d2094368fc8f5.zip",
+            "url": "https://api.github.com/repos/flc1125/dysms/zipball/a60645c6b35a15fe7fed6282784d2094368fc8f5",
             "reference": "a60645c6b35a15fe7fed6282784d2094368fc8f5",
             "shasum": ""
         },
@@ -422,6 +422,47 @@
             "dysms",
             "flc",
             "阿里短信"
+        ]
+    },
+    {
+        "name": "topthink/think-migration",
+        "version": "v2.0.2",
+        "version_normalized": "2.0.2.0",
+        "source": {
+            "type": "git",
+            "url": "https://github.com/top-think/think-migration.git",
+            "reference": "debc818a4e3b3baff2f7295f1e693653c5ebd02e"
+        },
+        "dist": {
+            "type": "zip",
+            "url": "https://api.github.com/repos/top-think/think-migration/zipball/debc818a4e3b3baff2f7295f1e693653c5ebd02e",
+            "reference": "debc818a4e3b3baff2f7295f1e693653c5ebd02e",
+            "shasum": ""
+        },
+        "require-dev": {
+            "topthink/framework": "5.1.x-dev"
+        },
+        "time": "2017-10-23T06:22:42+00:00",
+        "type": "library",
+        "installation-source": "dist",
+        "autoload": {
+            "psr-4": {
+                "Phinx\\": "phinx/src/Phinx",
+                "think\\migration\\": "src"
+            },
+            "files": [
+                "src/config.php"
+            ]
+        },
+        "notification-url": "https://packagist.org/downloads/",
+        "license": [
+            "Apache-2.0"
+        ],
+        "authors": [
+            {
+                "name": "yunwuxin",
+                "email": "448901948@qq.com"
+            }
         ]
     }
 ]
