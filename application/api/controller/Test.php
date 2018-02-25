@@ -227,6 +227,90 @@ class Test
 			}
 			echo sprintf("user %d reduce %s,order_id %d,log_id %s;</br>",$c['commission_member_id'],$c['commission_money'],$c['commission_from'],$log_id);
 		}
+		#重新生成wallet数据
+		#先使用wallet函数删除重复分润，再使用本函数根据commission表进行重新分润
+		public function wallet_reset(){
+			set_time_limit(0);
+			#将钱包归零
+			db('wallet')->where("1=1")->update(['wallet_amount'=>0,'wallet_total_revenue'=>0,'wallet_fenrun'=>0]);
+			// 删除分润钱包日志
+			db('wallet_log')->where(['log_form'=>['like','%分润%']])->delete();
+			$generation_order=db("generation_order")->select();
+			#构建失败订单的id组
+			$fail_order_ids=[];
+			foreach ($generation_order as $k => $v) {
+				if($v['order_status']!=2)
+					$fail_order_ids[]=$v['order_id'];
+			}
+			#删除失败订单对应的commission
+			$count=db("commission")->where("commission_type","in","1,3")->where("commission_from","in",$fail_order_ids)->delete();
+			echo "delete commission ".$count."</br>";
+			#取出commission
+			$cms=db("commission")->where("commission_member_id","<>",-1)->where("commission_from","not null")->where("commission_type","in","1,3")->select();
+			#会员数据
+			$member=db('member')->alias('m')
+			    ->join('wallet w','w.wallet_member=m.member_id')
+			    ->column("*","member_id");
+			#会员关系
+			$relation=db('member_relation')->column("relation_member_id,relation_parent_id");
+			#初始化balance
+			foreach ($member as $k => $v) {
+				$member[$k]['balance']=0;
+			}
+			#在无限极中3级外的统称下级
+			$arr=['直接','间接','三级','下级'];
+			foreach ($cms as $k => $v) {
+				#实时余额累加
+				$member[$v['commission_member_id']]['balance']+=$v['commission_money'];
+				$type=$v['commission_type']==1 ? "快捷支付" : "代还";
+				#分析层级 
+				$cid=$v['commission_childen_member'];
+				for($i=0;$i<4;$i++){
+					#判断是否是本次上级
+					if($relation[$cid]==$v['commission_member_id']){
+						$this_relation=$arr[$i];
+						break;
+					}
+					$cid=$relation[$cid];
+					if($cid==0){
+						echo "err! commission ".$v['commission_id']."对应的上下级关系出错,已跳过</br>";
+						break;
+					}
+					#4级以上的
+					if($i==3)
+						$this_relation=$arr[3];
+				}
+				if($cid==0)
+					continue;
+				$desc=$type."分润-".$this_relation."分润:";
+				if($v['commission_money']==0){
+					$desc.="与下级会员级别相同或比下级级别低,不获得分润~";
+				}else{
+					$desc.="邀请的".$member[$v['commission_childen_member']]['member_nick'].$type."分润成功,获得收益".$v['commission_money']."元~";
+				}
+				#插入钱包日志
+				db('wallet_log')->insert([
+					'log_wallet_id'=>$member[$v['commission_member_id']]['wallet_id'],
+					'log_wallet_amount'=>$v['commission_money'],
+					'log_balance'=>$member[$v['commission_member_id']]['balance'],
+					'log_wallet_type'=>1,
+					'log_relation_id'=>$v['commission_id'],
+					'log_relation_type'=>1,
+					'log_form'=>$type."分润收益~",
+					'log_desc'=>$desc,
+					'log_add_time'=>$v['commission_creat_time'],
+				]);
+			}
+			#更新钱包余额
+			$i=0;
+			foreach ($member as $k => $v) {
+				if($v['balance']>0){
+					db('wallet')->where('wallet_id',$v['wallet_id'])->update(['wallet_amount'=>$v['balance'],'wallet_total_revenue'=>$v['balance'],'wallet_fenrun'=>$v['balance']]);
+					$i++;
+				}
+			}
+			echo "finished,update ".$i;
+		}
 		public function tests(){
 			echo "finished";
 		}
