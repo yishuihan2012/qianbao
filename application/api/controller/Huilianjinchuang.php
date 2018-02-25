@@ -25,39 +25,45 @@
  */
  class Huilianjinchuang{
  	protected $url;
+    private $version;
  	public function __construct(){
+        $this->version='1.0';
  		$this->url='http://120.77.180.22:8089/v1.0/facade';
- 		
  	}
  	/**
  	 * 进件请求
  	 * @return [type] [description]
  	 */
  	public function income($Passageway,$card_id){
+        //获取行用卡新
  		$card_info=MemberCreditcard::where(['card_id'=>$card_id])->find();
  		if(!$card_info){
  			exit();
  		}
+        //获取用户信息
  		$member_info=Member::where(['member_id'=>$card_info['card_member_id']])->find();
  		if(!$member_info){
  			exit();
  		}
+        //获取卡对应银行信息
  		$bank_name=mb_substr($card_info['card_bankname'],-4,2);
  		// echo $bank_name;die;
  		$BankInfo=BankInfo::where('info_sortname','like','%'.$bank_name.'%')->find();
  		// print_r($BankInfo);die;
- 		$agentId=1001001;
+ 		
  		$idcard=$member_info->membercert->cert_member_idcard;
  		$name=$card_info['card_name'];
  		$bankId=$BankInfo['info_pab'];
  		$bankCard=$card_info['card_bankno'];
  		$bankName=$BankInfo['info_name'];
-
+        //获取通道费率
  		$rate=PassagewayItem::where(['item_passageway'=>$Passageway,'item_group'=>$member_info['member_group_id']])->find();
         $also=($rate->item_also)*10;
         $daikou=($rate->item_charges);
+        //获取通道信息
+        $agentId='1001001';
  		$arr=array(
- 			'version'=>'1.0',
+ 			'version'=>$this->version,
 			'charset'=>'UTF-8',//	编码方式UTF-8
 			'agentId'=>$agentId,//受理方预分配的渠道代理商标识
 			'nonceStr'=>make_rand_code(),//随机字符串，字符范围a-zA-Z0-9
@@ -80,27 +86,116 @@
  		$arr['sign']=$sign;//签名数据
  		$url=$this->url.'/report';
  		$res=curl_post($url,'post',json_encode($arr));
+        print_r($res);die;
  	}
  	/**
  	 * 下单支付
  	 * @return [type] [description]
  	 */
- 	public function pay(){
+ 	public function pay($order){
+        $agentid=1001001;
+        $merId=122;
 
+        $card_info=MemberCreditcard::where(['card_idcard'=>$order['order_card']])->find();
+
+        $member_info=Member::where(['member_id'=>$order['order_member']])->find();
+
+        $bank_name=mb_substr($card_info['card_bankname'],-4,2);
+        // echo $bank_name;die;
+        $BankInfo=BankInfo::where('info_sortname','like','%'.$bank_name.'%')->find();
+        $expDate=$card_info['card_expireDate'];
+        // $expDate=
+        $arr=array(
+            'version'=>$this->version,
+            'charset'=>'UTF-8',//编码方式UTF-8
+            'agentId'=>$agentid,//受理方预分配的渠道代理商标识
+            'merId'=>$merId,//子商户号
+            'nonceStr'=>make_rand_code(),//随机字符串，字符范围a-zA-Z0-9
+            'signType'=>'RSA',//签名方式，固定RSA
+            'isCompay'=>'0',//对公对私标识0为对私，1为对公
+            'idcardType'=>'01',//证件类型 暂只支持 01 身份证
+            'orderNo'=>make_rand_code(),//订单号
+            'idcard' =>$member_info->membercert->cert_member_idcard,//证件号码
+            'name'=>$member_info->membercert->cert_member_idcard, //姓名
+            'phone'=>$member_info['member_mobile'],//手机号
+            'bankId'=>$BankInfo['info_pab'],//联行号
+            'bankCard'=>$order['order_card'],//银行卡号
+            'notifyUrl'=>System::getName('system_url').'/Api/Huilianjinchuang/payCallback',//异步通知地址
+            // 'returnUrl'=>'', //N(String)   返回地址
+            'CVN2'=>$card_info['card_Ident'],//CVN2
+            'expDate'=>$expDate,//信用卡有效期，格式 MM-yy
+            'amount'=>$order['order_money']*100,//金额(分)
+        );
+        $url=$this->url.'/report';
+        $res=$this->request($url,$arr);
+        print_r($res);die;
  	}
+    /**
+     * 支付回调
+     * @return [type] [description]
+     */
+    public function payCallback(){
+        $data = file_get_contents("php://input");
+        file_put_contents('huilianpay_callback.txt', $data);
+    }
  	/**
  	 * 代付
  	 * @return [type] [description]
  	 */
- 	public function qfpay(){
+ 	public function qfpay($order){
+        $agentid=1001001;
+        $merId=122;
 
+        $card_info=MemberCreditcard::where(['card_idcard'=>$order['order_card']])->find();
+
+        $member_info=Member::where(['member_id'=>$order['order_member']])->find();
+
+        $bank_name=mb_substr($card_info['card_bankname'],-4,2);
+        // echo $bank_name;die;
+        $BankInfo=BankInfo::where('info_sortname','like','%'.$bank_name.'%')->find();
+        $expDate=$card_info['card_expireDate'];
+
+        $arr=array(
+            'version'=>$this->version,
+            'charset'=>'UTF-8',//编码方式UTF-8
+            'agentId'=>$agentid,//受理方预分配的渠道代理商标识
+            'merId'=>$merId,//子商户号
+            'nonceStr'=>make_rand_code(),//随机字符串，字符范围a-zA-Z0-9
+            'signType'=>"RSA",//签名方式，固定RSA
+            'orderNo'=>make_rand_code(),//订单号
+            'notifyUrl'=>System::getName('system_url').'/Api/Huilianjinchuang/cashCallback',//异步通知地址
+            // 'returnUrl'=>'', //N(String)   返回地址
+            'amount'=>$order['order_money']*100,//金额(分)
+        );
+        $url=$this->url.'/mercPay';
+        $res=$this->request($url,$arr);
+        print_r($res);die;
  	}
+    public function cashCallback(){
+        $data = file_get_contents("php://input");
+        file_put_contents('huilianpay_cashcallback.txt', $data);
+    }
  	/**
  	 * 订单状态查询
  	 * @return [type] [description]
  	 */
- 	public function order_status(){
+ 	public function order_status($order_id,$is_print=''){
+        $arr=array(
+            'version'=>$this->version,
+            'charset'=>'UTF-8',//编码方式UTF-8
+            'agentId'=>$agentid,//受理方预分配的渠道代理商标识
+            'nonceStr'=>make_rand_code(),//随机字符串，字符范围a-zA-Z0-9
+            'signType'=>"RSA",//签名方式，固定RSA
+            'orderNo'=>$order_detail[''],//订单号
 
+        );
+        $url=$this->url.'/query';
+        $res=$this->request($url,$arr);
+        if($is_print){
+            echo json_encode($res);
+        }else{
+            return $res;
+        }
  	}
  	/**
  	 * 余额查询
@@ -126,10 +221,24 @@
 		$pub_key="./static/rsakey/1001001_pub.pem";
  		$arr=$this->SortByASCII($arr);
  		$string=http_build_query($arr);
- 		$rsa=new \app\api\controller\Rsa($pub_key,$private_key);
- 		$res=$rsa->encrypt($string);
- 		echo $res;die;
+        $res=$this->pri_encode($string);
+ 		// $rsa=new \app\api\controller\Rsa($pub_key,$private_key);
+ 		// $res=$rsa->encrypt($string);
+ 		return $res;
+        
  	}
+    function pri_encode($data){
+        $encrypted='';
+        $private_key=file_get_contents('./static/rsakey/1001001_prv.pem');  //秘钥
+        $pi_key =  openssl_pkey_get_private($private_key);  //这个函数可用来判断私钥是否是可用的，可用返回资源id Resource id  
+        $str='';
+        foreach (str_split($data, 117) as $chunk) {
+            openssl_private_encrypt($chunk,$encryptedTemp,$pi_key);  //私钥加密  
+            $str .= $encryptedTemp;
+        }
+        $encrypted = base64_encode($str);//加密后的内容通常含有特殊字符，需要编码转换下，在网络间通过url传输时要注意base64编码是否是url安全的
+        return $encrypted;
+    }
  	/**
      * 数组按照ASCII码排序
      * @return [type] [description]
@@ -151,5 +260,18 @@
            $return[$v['key']]=$arr[$v['key']];
         }
         return $return;
+    }
+    /**
+     * 发送请求
+     * @param  [type] $url [description]
+     * @param  [type] $arr [description]
+     * @return [type]      [description]
+     */
+    public function request($url,$arr){
+        $sign=$this->get_string($arr);
+        $arr['sign']=$sign;//签名数据
+        $res=curl_post($url,'post',json_encode($arr));
+        $result=json_decode($res,true);
+        return $result;
     }
  }

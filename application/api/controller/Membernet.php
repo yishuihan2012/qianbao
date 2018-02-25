@@ -165,59 +165,57 @@ use app\index\model\Member;
             $update_order['order_platform_no']=$pay['order_platform_no']=uniqid();
             $update_res=GenerationOrder::where(['order_id'=>$pay['order_id']])->update($update_order);
         }
-        // $params=array(
-        //   'mchNo'=>$merch->passageway_mech, //机构号 必填  由平台统一分配 16
-        //   'userNo'=>$member->LkYQJ,  //平台用户标识  必填  平台下发用户标识  32
-        //   'payCardId'=>$card_info->bindId, //支付卡签约ID 必填  支付签约ID，传入签约返回的平台签约ID  32
-        //   'notifyUrl'=>System::getName('system_url').'/Api/Membernet/payCallback',  //异步通知地址  可填  异步回调地址，为空时不起推送  200
-        //   'orderNo'=>$pay['order_platform_no'], //订单流水号 必填  机构订单流水号，需唯一 64
-        //   'orderTime'=>date('YmdHis',time()+60),  //订单时间  必填  格式：yyyyMMddHHmmss 14
-        //   'goodsName'=>'虚拟商品',  //商品名称  必填    50
-        //   'orderDesc'=>'米刷信用卡还款', //订单描述  必填    50
-        //   'clientIp'=>$_SERVER['REMOTE_ADDR'],  //终端IP  必填  格式：127.0.0.1  20
-        //   'orderAmt'=>$pay['order_money']*100, //交易金额  必填  单位：分  整型(9,0)
-        //   'feeRatio'=>$also,  //交易费率  必填  需与用户入网信息保持一致  数值(5,2)
-        //   'feeAmt'=>$daikou, //交易单笔手续费   需与用户入网信息保持一致  整型(4,0)
-        // );  
-        // // print_r($params);
-        // $income=repay_request($params,$merch->passageway_mech,'http://pay.mishua.cn/zhonlinepay/service/rest/creditTrans/payBindCard',$merch->iv,$merch->secretkey,$merch->signkey);
-        // // print_r($income);die;
-        // //判断执行结果
-        // $is_commission=0;
-        // // $arr['income_tradeNo']=$params['orderNo'];
-        // if($income['code']=='200'){
-        //      $arr['back_tradeNo']=$income['tradeNo'];
-        //      $arr['back_statusDesc']=$income['statusDesc'];
-        //      $arr['back_status']=$income['status'];
-        //     if($income['status']=="SUCCESS"){
-        //         $arr['order_status']='2';
-        //         // $generation['generation_state']=3;
-        //         $arr['order_platform']=$pay['order_pound']-($pay['order_money']*$merch['passageway_rate']/100)-$merch['passageway_income'];
-        //         $is_commission=1;
-        //         ##记录余额
-        //         #0在此计划的还款卡余额中增加本次的金额 除去手续费
-        //         db('reimbur')->where('reimbur_generation',$pay['order_no'])->setInc('reimbur_left',$pay['order_money']-$pay['order_pound']);
-        //     }else if($income['status']=="FAIL"){
-        //         //失败推送消息
-        //         $arr['order_status']='-1';
-        //     }else{
-        //         $arr['order_status']='4';
-        //         //带查证或者支付中。。。
-        //     }
-        // }else{
-        //   $arr['back_statusDesc']=$income['message'];
-        //   $arr['back_status']='FAIL';
-        //   $arr['order_status']='-1';
-        //   $generation['generation_state']=-1;
-        //   $arr['order_buckle']=$rate['item_charges']/100;        
-        // }
-        // //添加执行记录
-        // $res=GenerationOrder::where(['order_id'=>$pay['order_id']])->update($arr);
-        //更新卡计划
-        // Generation::where(['generation_id'=>$pay['order_no']])->update($generation);
+        $params=array(
+          'mchNo'=>$merch->passageway_mech, //机构号 必填  由平台统一分配 16
+          'userNo'=>$member->LkYQJ,  //平台用户标识  必填  平台下发用户标识  32
+          'payCardId'=>$card_info->bindId, //支付卡签约ID 必填  支付签约ID，传入签约返回的平台签约ID  32
+          'notifyUrl'=>System::getName('system_url').'/Api/Membernet/payCallback',  //异步通知地址  可填  异步回调地址，为空时不起推送  200
+          'orderNo'=>$pay['order_platform_no'], //订单流水号 必填  机构订单流水号，需唯一 64
+          'orderTime'=>date('YmdHis',time()+60),  //订单时间  必填  格式：yyyyMMddHHmmss 14
+          'goodsName'=>'虚拟商品',  //商品名称  必填    50
+          'orderDesc'=>'米刷信用卡还款', //订单描述  必填    50
+          'clientIp'=>$_SERVER['REMOTE_ADDR'],  //终端IP  必填  格式：127.0.0.1  20
+          'orderAmt'=>$pay['order_money']*100, //交易金额  必填  单位：分  整型(9,0)
+          'feeRatio'=>$also,  //交易费率  必填  需与用户入网信息保持一致  数值(5,2)
+          'feeAmt'=>$daikou, //交易单笔手续费   需与用户入网信息保持一致  整型(4,0)
+        );  
+        // print_r($params);
+        $income=repay_request($params,$merch->passageway_mech,'http://pay.mishua.cn/zhonlinepay/service/rest/creditTrans/payBindCard',$merch->iv,$merch->secretkey,$merch->signkey);
+        // print_r($income);die;
+        //判断执行结果
+        $is_commission=0;
+        // $arr['income_tradeNo']=$params['orderNo'];
+        if($income['code']=='200'){
+             $arr['back_tradeNo']=$income['tradeNo'];
+             $arr['back_statusDesc']=$income['statusDesc'];
+             $arr['back_status']=$income['status'];
+            if($income['status']=="SUCCESS"){
+                $arr['order_status']='2';
+                // $generation['generation_state']=3;
+                $arr['order_platform']=$pay['order_pound']-($pay['order_money']*$merch['passageway_rate']/100)-$merch['passageway_income'];
+                $is_commission=1;
+                ##记录余额
+                #0在此计划的还款卡余额中增加本次的金额 除去手续费
+                db('reimbur')->where('reimbur_generation',$pay['order_no'])->setInc('reimbur_left',$pay['order_money']-$pay['order_pound']);
+            }else if($income['status']=="FAIL"){
+                //失败推送消息
+                $arr['order_status']='-1';
+            }else{
+                $arr['order_status']='4';
+                //带查证或者支付中。。。
+            }
+        }else{
+          $arr['back_statusDesc']=$income['message'];
+          $arr['back_status']='FAIL';
+          $arr['order_status']='-1';
+          $generation['generation_state']=-1;
+          $arr['order_buckle']=$rate['item_charges']/100;        
+        }
+        //添加执行记录
+        $res=GenerationOrder::where(['order_id'=>$pay['order_id']])->update($arr);
+        // 更新卡计划
+        Generation::where(['generation_id'=>$pay['order_no']])->update($generation);
         #更改完状态后续操作
-        $income['code']=200;
-        $income['status']='SUCCESS';
         $action=$this->plan_notice($pay,$income,$member_base,1,$merch);
       }
       //计划执行完之后推送通知，分润
