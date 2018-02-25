@@ -346,8 +346,8 @@ use app\index\model\Member;
           'userNo'=>$MemberNets->LkYQJ,  //平台用户标识  必填  平台下发用户标识
           'orderNo'=>$generation_order->order_platform_no,  //订单流水号 必填  机构订单流水号，需唯一
           'tradeNo'=>$generation_order->back_tradeNo,  //平台流水号 必填  绑卡支付返回的流水号
-          'tradeDate'=>'',
-          // 'tradeDate'=>date('Ymd',strtotime($generation_order->order_time)),  //交易日期  可填  格式：yyyyMMdd为空时，仅查询仅3日内的交易数据；传入指定日期，可以查询更早前的数据
+          // 'tradeDate'=>'', 
+          'tradeDate'=>date('Ymd',strtotime($generation_order->order_time)),  //交易日期  可填  格式：yyyyMMdd为空时，仅查询仅3日内的交易数据；传入指定日期，可以查询更早前的数据
           // 'tradeDate'=>'',
         );
         // echo $generation_order->order_time;die;
