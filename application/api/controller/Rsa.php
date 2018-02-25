@@ -211,12 +211,12 @@ class Rsa
         
         $ret = false;  
         if (!$this->_checkPadding($padding, 'en')) $this->_error('padding error');  
+        var_dump(openssl_public_encrypt($data, $result, $this->pubKey, $padding));die;
         if (openssl_public_encrypt($data, $result, $this->pubKey, $padding)) {  
             $ret = $this->_encode($result, $code);  
         }  
-        return $ret;  
+        return $ret;
     }  
-  
     /** 
      * 解密 
      * 
