@@ -274,6 +274,48 @@ class Order extends Common{
 		if(request()->param('order_id')){
 			$wheres['order_id'] = request()->param('order_id');
 		}
+		if(input('is_export')==1){
+			set_time_limit(0);
+	 	    $limit=20000;
+	 	    $max=100000;
+	 	    $i=intval(input('start_p')) ?? 0;
+	 	    $n=0;
+	 	    $fp = fopen('php://output', 'a');
+	 	    #算出乘数
+	 	    if($i)
+	 	    	$i=($i-1)*$max/$limit;
+	 	    do{
+	 	    	#取数据
+		 	    $order_lists=db("cash_order")->alias('o')
+		 	    	->join('passageway p','o.order_passway=p.passageway_id')
+		 	    	->join('member m','o.order_member=m.member_id')
+		 	    	->join('member_cert c','c.cert_member_id=m.member_id','left')
+		 	    	->where($where)
+		 	    	->where($wheres)
+		 	    	->order("order_id desc")
+		 	    	->field('order_id,order_no,order_name,order_card,order_creditcard,order_money,order_charge,order_also,order_state,order_desc,order_add_time')
+		 	    	->limit($i*$limit,$limit)
+		 	    	->select();
+		 	    	$i++;
+		 	    // halt($order_lists);
+		 	    $status=[
+		 	    	'1'=>'待支付',
+		 	    	'-1'=>'失败',
+		 	    	'2'=>'成功',
+		 	    	'-2'=>'超时',
+		 	    ];
+		 	    $list=[];
+		 	    foreach ($order_lists as $k => $v) {
+		 	    	$order_lists[$k]['order_state']=$status[$v['order_state']];
+		 	    }
+		 	    $head=['#','交易流水号','用户名','结算卡','信用卡','总金额','手续费','费率','订单状态','备注','创建时间'];
+		 	    export_csv($head,$order_lists,$fp);
+		 	    $count=count($order_lists);
+		 	    unset($order_lists);
+		 	    $n++;
+	 	    }while($count==$limit && $n<$max/$limit);
+	 	    return;
+		}
 	 	 // #查询订单列表分页
 	 	 $order_lists = CashOrder::with('passageway')->join('wt_member m',"m.member_id=wt_cash_order.order_member")->where($where)->join("wt_member_cert mc", "mc.cert_member_id=m.member_id","left")->where($wheres)->order("order_id desc")->paginate(Config::get('page_size'), false, ['query'=>Request::instance()->param()]);
 	 	
