@@ -47,7 +47,7 @@
                           }else{
                             $data[$key]['serviceItems'][$k]['list_status'] = ($userinfo['group_salt']==1)?1:0;
                           }
-                          if(!strpos($v['list_url'],"http")){
+                          if(strpos($v['list_url'],"http")===false){
                             $data[$key]['serviceItems'][$k]['list_url'] = "http://".$_SERVER['HTTP_HOST'].$v['list_url'];
                           }
                        }
