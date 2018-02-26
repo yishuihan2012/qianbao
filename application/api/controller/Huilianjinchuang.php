@@ -201,22 +201,30 @@
  	 * 余额查询
  	 * @return [type] [description]
  	 */
- 	public function query_remain(){
-
- 	}
- 	/**
- 	 * 验签
- 	 * @return [type] [description]
- 	 */
- 	public function get_sign(){
-
+ 	public function query_remain($uid,$is_print=''){
+        $agentid=1001001;
+        $merId=122;
+        $arr=array(
+            'version'=> $this->version,
+            'charset'=>'UTF-8',//编码方式UTF-8
+            'agentId'=>$agentid,//受理方预分配的渠道代理商标识
+            'nonceStr'=>make_rand_code(),//随机字符串，字符范围a-zA-Z0-9
+            'signType'=>'RSA',// 签名方式，固定RSA
+        );
+        $url=$this->url.'/queryBalance';
+        $res=$this->request($url,$arr);
+        if($is_print){
+            echo json_encode($res);
+        }else{
+            return $res;
+        }
  	}
  	/**
  	 * 获取请求字符串
  	 * @param  [type] $arr [description]
  	 * @return [type]      [description]
  	 */
- 	public function get_string($arr){
+ 	public function get_sign($arr){
  		$private_key="./static/rsakey/1001001_prv.pem";
 		$pub_key="./static/rsakey/1001001_pub.pem";
  		$arr=$this->SortByASCII($arr);
@@ -268,7 +276,7 @@
      * @return [type]      [description]
      */
     public function request($url,$arr){
-        $sign=$this->get_string($arr);
+        $sign=$this->get_sign($arr);
         $arr['sign']=$sign;//签名数据
         $res=curl_post($url,'post',json_encode($arr));
         $result=json_decode($res,true);
