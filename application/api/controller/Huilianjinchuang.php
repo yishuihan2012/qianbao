@@ -232,8 +232,7 @@
         $res=$this->pri_encode($string);
  		// $rsa=new \app\api\controller\Rsa($pub_key,$private_key);
  		// $res=$rsa->encrypt($string);
- 		return $res;
-        
+ 		return $res;  
  	}
     function pri_encode($data){
         $encrypted='';
