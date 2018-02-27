@@ -77,13 +77,16 @@
 			'bankCard'=>$bankCard,//银行卡号
 			'bankName'=>$bankName,//开户行名称
 			'bankNo'=>$BankInfo['info_pab'],//开户行代码(PAB)
-			'rate'=>$also,//费率‱ ，不小于代理商费率
+			'rate'=>$also*10,//费率万分制 ，不小于代理商费率
 			'extraFee'=>$daikou,//手续费(分)
 			// 'address'=>'',//N(String)	地址
 			'remark'=>'汇联金创代还进件',//备注
  		);
  		$url=$this->url.'/report';
  		$res=$this->request($url,$arr);
+        if($res['message']=="SUCCESS" && $respCode=10000){
+            $merId=$res['merId'];
+        }
         echo json_encode($res);die;
  	}
  	/**
@@ -227,7 +230,9 @@
 		$pub_key="./static/rsakey/1001001_pub.pem";
  		$arr=$this->SortByASCII($arr);
  		$string=http_build_query($arr);
+        $string=urldecode($string);
         $res=$this->pri_encode($string);
+        // echo $res;die;
  		// $rsa=new \app\api\controller\Rsa($pub_key,$private_key);
  		// $res=$rsa->encrypt($string);
  		return $res;  
@@ -275,8 +280,9 @@
     public function request($url,$arr){
         $sign=$this->get_sign($arr);
         $arr['sign']=$sign;//签名数据
-        $res=curl_post($url,'post',json_encode($arr));
-        $result=json_decode($res,true);
+        $return=curl_post($url,'post',$arr,0);
+        echo $return;die;
+        // $result=json_decode($ch,true);
         return $result;
     }
  }
