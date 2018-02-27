@@ -125,5 +125,80 @@ class Plan extends Common{
 		 #重定向控制器 跳转到列表页
 		 $this->redirect("Plan/index");
 	}
+
+	 /**
+	 *  @version detail controller / 总还款列表详情
+	 *  @author $Mr.gao$(928791694@qq.com)
+	 *   @datetime    2017-02-27 09:34:05
+	 *   @return 
+	 */
+
+	 public function detail(){
+
+	 	$r=request()->param();
+	 	 #搜索条件
+	 	$data = memberwhere($r);
+	 	$r = $data['r'];
+	 	$where = $data['where'];
+		$where['order_status'] = -1;
+		if(request()->param('beginTime') && request()->param('endTime')){
+			// $endTime=strtotime(request()->param('endTime'))+24*3600;
+			$where['order_time']=["between time",[request()->param('beginTime'),request()->param('endTime')]];
+		}
+		if(request()->param('order_money')!=''){
+			$where['order_money'] = request()->param('order_money');
+		}else{
+			$r['order_money'] = ''; 
+		}
+		if(request()->param('order_no')!=''){
+			$where['order_no'] = request()->param('order_no');
+		}else{
+			$r['order_no'] = '';
+		}
+
+		#计划状态查询
+		$where['order_status'] = array("<>",1);
+		#计划订单列表
+		if(request()->param('order_status')){
+			$where['order_status'] = request()->param("order_status");
+		}else{
+			$r['order_status'] = '';
+		}
+
+	 	$list = GenerationOrder::with("passageway,member,memberCreditcard")->where($where)->paginate(Config::get('page_size'), false, ['query'=>Request::instance()->param()]);
+
+
+	 	$this->assign('r',$r);
+		$this->assign("list",$list);
+
+	 	return view("admin/plan/detail");
+	 }
+
+	  /**
+	 *  @version edit_status controller / 修改订单状态
+	 *  @author $Mr.gao$(928791694@qq.com)
+	 *   @datetime    2017-02-27 09:34:05
+	 *   @return 
+	 */
+
+	  public function edit_status(){
+	  	$order_status = GenerationOrder::where(['order_id'=>request()->param('id')])->value('order_status');
+
+	  	$this->assign("order_status",$order_status);
+	  	$this->assign("id",request()->param('id'));
+	  	if($_POST){
+	  		$data=array(
+	  			'order_status'=>request()->param('order_status')
+	  		);
+	  		$status=GenerationOrder::where(['order_id'=>request()->param('id')])->update($data);
+
+	  		$content = ($status===false) ? ['type'=>'error','msg'=>'修改状态失败'] : ['type'=>'success','msg'=>'修改状态成功'];
+
+	  		Session::set('jump_msg', $content);
+	 		$this->redirect("plan/detail");
+	  	}
+
+	 	return view("admin/plan/edit_status");
+	  }
 	
 }
