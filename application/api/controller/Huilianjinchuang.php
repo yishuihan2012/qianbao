@@ -38,12 +38,12 @@
         //获取行用卡新
  		$card_info=MemberCreditcard::where(['card_id'=>$card_id])->find();
  		if(!$card_info){
- 			exit();
+ 			exit('1231');
  		}
         //获取用户信息
  		$member_info=Member::where(['member_id'=>$card_info['card_member_id']])->find();
  		if(!$member_info){
- 			exit();
+ 			exit('456');
  		}
         //获取卡对应银行信息
  		$bank_name=mb_substr($card_info['card_bankname'],-4,2);
@@ -82,11 +82,9 @@
 			// 'address'=>'',//N(String)	地址
 			'remark'=>'汇联金创代还进件',//备注
  		);
- 		$sign=$this->get_string($arr);
- 		$arr['sign']=$sign;//签名数据
  		$url=$this->url.'/report';
- 		$res=curl_post($url,'post',json_encode($arr));
-        print_r($res);die;
+ 		$res=$this->request($url,$arr);
+        echo json_encode($res);die;
  	}
  	/**
  	 * 下单支付
