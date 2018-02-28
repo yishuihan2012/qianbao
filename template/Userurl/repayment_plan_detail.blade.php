@@ -9,6 +9,9 @@
 		<link href="/static/css/base.css" rel="stylesheet" />
 		<link href="/static/css/page.css" rel="stylesheet" />
 		<link href="/static/css/themes.css" rel="stylesheet"/>
+		<style type="text/css">
+			.mui-popup{position:fixed;}
+		</style>
 	</head>
 	<body>
 		<div class="mui-content repayment-detail">
@@ -177,7 +180,7 @@
 		})
 		$("#resetBtn").click(function(){
 				var plan_id=$(this).attr('plan_id');
-				mui.confirm('计划失败原因通常是因为余额不足，请确保卡内余额充足再执行计划,您最多有三次重新执行机会，如有疑问，请联系客服。', '重新执行计划', ['否', '是，重新执行'], function(e) {  
+				mui.confirm('如提示：交易已被系统阻断，请于次日清晨重新执行计划。如提示：卡上余额不足，请确保卡内余额充足再执行计划。您最多有三次重新执行机会，如有疑问，请联系客服。', '重新执行计划', ['否', '是，重新执行'], function(e) {  
                     if (e.index == 1) {  
                     	$.post('/api/userurl/reset_one_repayment',{plan_id:plan_id},function(res){
 								res=JSON.parse(res);

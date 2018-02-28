@@ -87,6 +87,12 @@
 	 #查看自定义模块服务列表 
 	 public function show_service(){
 		 if(Request::instance()->isPost()){
+		 	 if($_POST['list_parent_status']==1){
+			 	
+			
+				$_POST['list_url'] = "/api/userurl/credit_card?parent_id=".Request::instance()->param('list_id');
+				
+			 }
 		 	 $ServiceItemList =ServiceItemList::get(Request::instance()->param('list_id'));
 			 $result= $ServiceItemList->allowField(true)->save($_POST);
 
@@ -97,6 +103,8 @@
 		 }
 		 $data=ServiceItemList::get(Request::instance()->param('list_id'));
 		 $service=ServiceItem::all();
+		 $list=ServiceItemList::where(["list_parent_status"=>1])->order("list_id desc")->select();
+		 $this->assign("list",$list);
 		 $this->assign('service', $service);
 		 $this->assign('data', $data);
 		 #渲染视图
@@ -109,10 +117,18 @@
 
 		 	 $ServiceItemList = new ServiceItemList($_POST);
 			 $result = $ServiceItemList->allowField(true)->save();
+			 if($_POST['list_parent_status']==1){
+			 	$info=ServiceItemList::where(["list_name"=>$_POST['list_name']])->find();
+				$ServiceItemLists = ServiceItemList::get($info['list_id']);
+				$data['list_url'] = "/api/userurl/credit_card?parent_id=".$info['list_id'];
+				$results= $ServiceItemLists->allowField(true)->save($data);
+			 }
 			 $content = ($result===false) ? ['type'=>'error','msg'=>'保存失败'] : ['type'=>'success','msg'=>'保存成功'];
 			 Session::set('jump_msg', $content);
 			 $this->redirect('server_model/service_list');
 		 }
+		 $list=ServiceItemList::where(["list_parent_status"=>1])->order("list_id desc")->select();
+		 $this->assign("list",$list);
 		 $service=ServiceItem::all();
 		 $this->assign('service', $service);
 		 #渲染视图

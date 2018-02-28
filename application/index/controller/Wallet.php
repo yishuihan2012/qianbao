@@ -43,6 +43,40 @@ class Wallet extends Common
 		}else{
 			$r['cert_member_idcard'] = '';
 		}
+
+		if(input('is_export')==1){
+			set_time_limit(0);
+	 	    $limit=20000;
+	 	    $max=100000;
+	 	    $i=intval(input('start_p')) ?? 0;
+	 	    $n=0;
+	 	    $fp = fopen('php://output', 'a');
+	 	    #算出乘数
+	 	    if($i)
+	 	    	$i=($i-1)*$max/$limit;
+	 	    do{
+	 	    	#取数据
+		 	    $order_lists=db("wallet")->alias('w')
+		 	    	->join('member m','w.wallet_member=m.member_id')
+		 	    	->join('member_cert c','c.cert_member_id=m.member_id','left')
+		 	    	->where($wheres)
+		 	    	->order("wallet_id desc")
+		 	    	->field('member_nick,wallet_amount,wallet_total_revenue,wallet_invite,wallet_commission,wallet_fenrun,wallet_state,wallet_update_time,wallet_add_time')
+		 	    	->limit($i*$limit,$limit)
+		 	    	->select();
+		 	    	$i++;
+		 	    // halt($order_lists);
+		 	    $list=[];
+		 	    $head=['会员名','钱包余额','总收益','邀请收益','分佣收益','分润收益','钱包状态2为正常-2冻结','更新时间','添加时间'];
+		 	    export_csv($head,$order_lists,$fp);
+		 	    $count=count($order_lists);
+		 	    unset($order_lists);
+		 	    $n++;
+	 	    }while($count==$limit && $n<$max/$limit);
+	 	    return;
+		}
+
+
 		#查询出会员列表
 		$list = Wallets::haswhere('member',$where)->join("wt_member_cert m", "m.cert_member_id=Member.member_id","left")->field("member_nick")->where($wheres)->order('wallet_id', 'desc')->paginate(Config::get('page_size'), false, ['query'=>Request::instance()->param()]);
 		$this->assign('list', $list);

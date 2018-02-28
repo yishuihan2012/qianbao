@@ -58,6 +58,12 @@
       <z class='clearTime'>X</z>
   </div>
   <button class="btn btn-primary" type="submit">搜索</button>
+  <input type="hidden" name="is_export" class="is_export" value="0">
+  <div class="input-group" style="width: 180px;float: left; margin-right: 10px;">
+    <span class="input-group-addon">导出页码,10万/页</span>
+    <input type="text" name="start_p" class="form-control start_p" value="">
+  </div>
+  <button class="btn btn-primary export" type="submit">导出</button>
 </form>
   <div class="items items-hover">
       <!-- HTML 代码-->
@@ -165,6 +171,23 @@ $('.clearTime').click(begin_end_time_clear);
         $('#endTime').val('');
     }
 
+$('.export').click(function(){
+  $(".is_export").val(1);
+  setTimeout(function(){
+    $(".is_export").val(0);
+  },100);
+  var start_p=$('.start_p').val();
+  var end_p=$('.end_p').val();
+  if(start_p){
+    var re=/^\d+$/;
+    if(!re.test(start_p)){
+      alert('导出页码请输入数字');
+      return false;
+    }
+  }
+  alert("数据量大的话请耐心等待不要重复点击导出\n单次最大10万条数据\n点击确定开始导出");
+})
+
 </script>
  <style type="text/css">
    .clearTime{
@@ -177,6 +200,5 @@ $('.clearTime').click(begin_end_time_clear);
     font-size: .6rem;
     padding: 0 5px;
    }
-
  </style>
 @endsection

@@ -92,7 +92,6 @@
 }
 /*还款计划提交成功*/
 .repay-suc .iconfont{margin-top:70px;color:#27c25a;}
-.repay-error .iconfont{margin-top:70px;color:#fc5c51;}
 .repay-suc .my-btn-container{margin-top:100px;}
 
 
@@ -172,7 +171,9 @@
 .my-confirm2:link,.my-confirm2:visited,.my-confirm2:hover,.my-confirm2:active{color:#fff;}
 .media-pic2{width:27%;height:auto;}
 .signed-list li:nth-child(3){margin-top:10px;}
-<<<<<<< HEAD
-=======
-
->>>>>>> qianyue
+/*列表页面*/
+.my-slide-con{width:50%;line-height:1.6;}
+.my-slide-btn{display:block;width:30%;background-color:#F2C43B;color:#fff;text-align:center;position:absolute;bottom:10px;}
+.media-img{width:100%;height:auto;}
+.wrap-list{margin:2%;}
+.my-badge-org{display:inline-block;font-size:14px;padding:2px 5px;background-color:#ff4400;color:#fff;border-radius:3px;position:absolute;top:-25%;-webkit-transform: translateX(-50%);transform: translateX(-50%);}

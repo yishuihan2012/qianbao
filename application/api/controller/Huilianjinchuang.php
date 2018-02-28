@@ -24,69 +24,69 @@
  *   @return 
  */
  class Huilianjinchuang{
- 	protected $url;
+    protected $url;
     private $version;
- 	public function __construct(){
+    public function __construct(){
         $this->version='1.0';
- 		$this->url='http://120.77.180.22:8089/v1.0/facade';
- 	}
- 	/**
- 	 * 进件请求
- 	 * @return [type] [description]
- 	 */
- 	public function income($Passageway,$card_id){
+        $this->url='http://120.77.180.22:8089/v1.0/facade';
+    }
+    /**
+     * 进件请求
+     * @return [type] [description]
+     */
+    public function income($Passageway,$card_id){
         //获取行用卡新
- 		$card_info=MemberCreditcard::where(['card_id'=>$card_id])->find();
- 		if(!$card_info){
- 			exit('1231');
- 		}
+        $card_info=MemberCreditcard::where(['card_id'=>$card_id])->find();
+        if(!$card_info){
+            exit('1231');
+        }
         //获取用户信息
- 		$member_info=Member::where(['member_id'=>$card_info['card_member_id']])->find();
- 		if(!$member_info){
- 			exit('456');
- 		}
+        $member_info=Member::where(['member_id'=>$card_info['card_member_id']])->find();
+        if(!$member_info){
+            exit('456');
+        }
         //获取卡对应银行信息
- 		$bank_name=mb_substr($card_info['card_bankname'],-4,2);
- 		// echo $bank_name;die;
- 		$BankInfo=BankInfo::where('info_sortname','like','%'.$bank_name.'%')->find();
- 		// print_r($BankInfo);die;
- 		
- 		$idcard=$member_info->membercert->cert_member_idcard;
+        $bank_name=mb_substr($card_info['card_bankname'],-4,2);
+        // echo $bank_name;die;
+        $BankInfo=BankInfo::where('info_sortname','like','%'.$bank_name.'%')->find();
+        // print_r($BankInfo);die;
+        
+        $idcard=$member_info->membercert->cert_member_idcard;
         //获取通道费率
- 		$rate=PassagewayItem::where(['item_passageway'=>$Passageway,'item_group'=>$member_info['member_group_id']])->find();
+        $rate=PassagewayItem::where(['item_passageway'=>$Passageway,'item_group'=>$member_info['member_group_id']])->find();
         $also=($rate->item_also)*100;
         $daikou=($rate->item_charges);
         //获取通道信息
         $agentId='1001001';//****
- 		$arr=array(
- 			'version'=>$this->version,
-			'charset'=>'UTF-8',//	编码方式UTF-8
-			'agentId'=>$agentId,//受理方预分配的渠道代理商标识
-			'nonceStr'=>make_rand_code(),//随机字符串，字符范围a-zA-Z0-9
-			'signType'=>'RSA',//签名方式，固定RSA
-			'isCompay'=>'0',//对公对私标识0为对私，1为对公
-			'idcardType'=>'01',//证件类型 暂只支持 01 身份证
-			'idcard'=>$idcard,//证件号码
-			'name'=>$card_info['card_name'],//姓名
-			'phone'=>$member_info['member_mobile'],//手机号
-			'bankId'=>$BankInfo['info_union'],//联行号
-			'bankCard'=>$card_info['card_bankno'],//银行卡号
-			'bankName'=>$BankInfo['info_name'],//开户行名称
-			'bankNo'=>$BankInfo['info_pab'],//开户行代码(PAB)
-			'rate'=>$also,//费率万分制 ，不小于代理商费率
-			'extraFee'=>$daikou,//手续费(分)
-			// 'address'=>'',//N(String)	地址
-			'remark'=>'汇联金创代还进件',//备注
- 		);
+        $arr=array(
+            'version'=>$this->version,
+            'charset'=>'UTF-8',//   编码方式UTF-8
+            'agentId'=>$agentId,//受理方预分配的渠道代理商标识
+            'nonceStr'=>make_rand_code(),//随机字符串，字符范围a-zA-Z0-9
+            'signType'=>'RSA',//签名方式，固定RSA
+            'isCompay'=>'0',//对公对私标识0为对私，1为对公
+            'idcardType'=>'01',//证件类型 暂只支持 01 身份证
+            'idcard'=>$idcard,//证件号码
+            'name'=>$card_info['card_name'],//姓名
+            'phone'=>$member_info['member_mobile'],//手机号
+            'bankId'=>$BankInfo['info_union'],//联行号
+            'bankCard'=>$card_info['card_bankno'],//银行卡号
+            'bankName'=>$BankInfo['info_name'],//开户行名称
+            'bankNo'=>$BankInfo['info_pab'],//开户行代码(PAB)
+            'rate'=>$also,//费率万分制 ，不小于代理商费率
+            'extraFee'=>$daikou,//手续费(分)
+            // 'address'=>'',//N(String)    地址
+            'remark'=>'汇联金创代还进件',//备注
+        );
         // var_dump($arr);die;
- 		$url=$this->url.'/report';
- 		$res=$this->request($url,$arr);
+        $url=$this->url.'/report';
+        $res=$this->request($url,$arr);
         return $res;
         // if($res['code']=="10000" && $res['respCode']=10000){
         //     $merId=$res['merId'];
         // }
         // echo json_encode($res);die;
- 	}
+    }
     /**
      * 重新进件
      * @return [type] [description]
@@ -134,11 +134,11 @@
         }
         
     }
- 	/**
- 	 * 下单支付
- 	 * @return [type] [description]
- 	 */
- 	public function pay($order,$passageway_mech){
+    /**
+     * 下单支付
+     * @return [type] [description]
+     */
+    public function pay($order,$passageway_mech){
         $card_info=MemberCreditcard::where(['card_bankno'=>$order['order_card']])->find();
         $member_info=Member::where(['member_id'=>$order['order_member']])->find();
 
@@ -171,7 +171,7 @@
         $url=$this->url.'/pay';
         $res=$this->request($url,$arr);
         print_r($res);die;
- 	}
+    }
     /**
      * 支付回调
      * @return [type] [description]
@@ -196,11 +196,11 @@
         //添加执行记录
         $res=GenerationOrder::where(['order_id'=>$pay['order_id']])->update($arr);
     }
- 	/**
- 	 * 代付
- 	 * @return [type] [description]
- 	 */
- 	public function qfpay($order,$passageway_mech){
+    /**
+     * 代付
+     * @return [type] [description]
+     */
+    public function qfpay($order,$passageway_mech){
 
         $card_info=MemberCreditcard::where(['card_idcard'=>$order['order_card']])->find();
 
@@ -227,7 +227,7 @@
         $url=$this->url.'/mercPay';
         $res=$this->request($url,$arr);
         print_r($res);die;
- 	}
+    }
     /**
      * 还款回调
      * @return [type] [description]
@@ -236,11 +236,11 @@
         $data = file_get_contents("php://input");
         file_put_contents('huilianpay_cashcallback.txt', $data);
     }
- 	/**
- 	 * 订单状态查询
- 	 * @return [type] [description]
- 	 */
- 	public function order_status($id,$is_print=''){
+    /**
+     * 订单状态查询
+     * @return [type] [description]
+     */
+    public function order_status($id,$is_print=''){
         $agentid=1001001;
         $order_detail=GenerationOrder::where(['order_id'=>$id])->find();
         $arr=array(
@@ -259,12 +259,12 @@
         }else{
             return $res;
         }
- 	}
- 	/**
- 	 * 余额查询
- 	 * @return [type] [description]
- 	 */
- 	public function query_remain($uid,$is_print=''){
+    }
+    /**
+     * 余额查询
+     * @return [type] [description]
+     */
+    public function query_remain($uid,$is_print=''){
         $agentid=1001001;
         $merId=9000000530;
         $arr=array(
@@ -281,24 +281,24 @@
         }else{
             return $res;
         }
- 	}
- 	/**
- 	 * 获取请求字符串
- 	 * @param  [type] $arr [description]
- 	 * @return [type]      [description]
- 	 */
- 	public function get_sign($arr){
- 		$private_key="./static/rsakey/1001001_prv.pem";
-		$pub_key="./static/rsakey/1001001_pub.pem";
- 		$arr=$this->SortByASCII($arr);
- 		$string=http_build_query($arr);
+    }
+    /**
+     * 获取请求字符串
+     * @param  [type] $arr [description]
+     * @return [type]      [description]
+     */
+    public function get_sign($arr){
+        $private_key="./static/rsakey/1001001_prv.pem";
+        $pub_key="./static/rsakey/1001001_pub.pem";
+        $arr=$this->SortByASCII($arr);
+        $string=http_build_query($arr);
         $string=urldecode($string);
         $res=$this->pri_encode($string);
         // echo $res;die;
- 		// $rsa=new \app\api\controller\Rsa($pub_key,$private_key);
- 		// $res=$rsa->encrypt($string);
- 		return $res;  
- 	}
+        // $rsa=new \app\api\controller\Rsa($pub_key,$private_key);
+        // $res=$rsa->encrypt($string);
+        return $res;  
+    }
     /**
      * 加密
      * @param  [type] $data [description]
@@ -316,7 +316,7 @@
         $encrypted = base64_encode($str);//加密后的内容通常含有特殊字符，需要编码转换下，在网络间通过url传输时要注意base64编码是否是url安全的
         return $encrypted;
     }
- 	/**
+    /**
      * 数组按照ASCII码排序
      * @return [type] [description]
      */

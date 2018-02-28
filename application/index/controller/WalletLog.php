@@ -36,6 +36,40 @@ class WalletLog extends Common
 		if(request()->param('member_nick')!=''){
 			$where['member_nick'] =  array("like","%".request()->param('member_nick')."%");
 		}
+
+		if(input('is_export')==1){
+			set_time_limit(0);
+	 	    $limit=20000;
+	 	    $max=100000;
+	 	    $i=intval(input('start_p')) ?? 0;
+	 	    $n=0;
+	 	    $fp = fopen('php://output', 'a');
+	 	    #算出乘数
+	 	    if($i)
+	 	    	$i=($i-1)*$max/$limit;
+	 	    do{
+	 	    	#取数据
+		 	    $order_lists=db("wallet_log")->alias('l')
+		 	    	->join('wallet w','l.log_wallet_id=w.wallet_id')
+		 	    	->join('member m','w.wallet_member=m.member_id')
+		 	    	->where($where)
+		 	    	->order("log_id desc")
+		 	    	->field('log_id,member_nick,log_wallet_amount,log_balance,log_desc,log_add_time')
+		 	    	->limit($i*$limit,$limit)
+		 	    	->select();
+		 	    	$i++;
+		 	    // halt($order_lists);
+		 	    $list=[];
+		 	    $head=['#','用户名','操作金额','实时余额','描述','添加时间'];
+		 	    export_csv($head,$order_lists,$fp);
+		 	    $count=count($order_lists);
+		 	    unset($order_lists);
+		 	    $n++;
+	 	    }while($count==$limit && $n<$max/$limit);
+	 	    return;
+		}
+
+
 		$list = WalletLogs::with('wallet')->join("wt_member","member_id=wallet_member")->where($where)->order('log_id', 'desc')->paginate(Config::get('page_size'), false, ['query'=>Request::instance()->param()]);	
 		foreach ($list as $key => $value) {
 			if($value['log_relation_type']==1){
@@ -46,7 +80,7 @@ class WalletLog extends Common
 				}elseif($commission['commission_type']==2){//分佣
 					$list[$key]['hrefurl']=$commission['commission_from']?'/index/Order/index/upgrade_id/'.$commission['commission_from'] : '';
 				}elseif($commission['commission_type']==3){//代还分润
-					$list[$key]['hrefurl']=$commission['commission_from']?'/index/Plan/index/generation_id/'.$commission['commission_from'] : '';
+					$list[$key]['hrefurl']=$commission['commission_from']?'/index/Plan/info/order_id/'.$commission['commission_from'] : '';
 				}else{
 					$list[$key]['hrefurl']='';
 				}

@@ -38,6 +38,12 @@
             <div class="col-sm-1">
                 <button class="btn btn-primary" type="submit">搜索  </button>
             </div>
+  <input type="hidden" name="is_export" class="is_export" value="0">
+  <div class="input-group" style="width: 180px;float: left; margin-right: 10px;">
+    <span class="input-group-addon">导出页码,10万/页</span>
+    <input type="text" name="start_p" class="form-control start_p" value="">
+  </div>
+  <button class="btn btn-primary export" type="submit">导出</button>
 		</form>
   	</div>
 
@@ -63,7 +69,7 @@
 	      	<td>{{$log->wallet->member->member_nick}}</td>
 	      	<!-- <td><code></code></td> -->
           <td><i class="icon icon-{{$log->log_wallet_type=='1' ? 'plus' : 'minus' }}">{{$log['log_wallet_amount']}}</td>
-	      	<td><i class="icon icon-{{$log->log_wallet_type=='1' ? 'plus' : 'minus' }}">{{$log['log_balance']}}</td>
+	      	<td><i class="">{{$log['log_balance']}}</td>
 	      	<td class="text-ellipsis" title="{{$log->log_desc}}"><a class="Listen" href="{{$log['hrefurl']}}">{{$log['log_desc']}}</a></td>
 	      	<td>{{$log['log_add_time']}}</td>
 	      	<td><i class="icon icon-check text-success"></i></td>
@@ -159,7 +165,22 @@ $('.clearTime').click(begin_end_time_clear);
         $('#beginTime').val('');
         $('#endTime').val('');
     }
-
+$('.export').click(function(){
+  $(".is_export").val(1);
+  setTimeout(function(){
+    $(".is_export").val(0);
+  },100);
+  var start_p=$('.start_p').val();
+  var end_p=$('.end_p').val();
+  if(start_p){
+    var re=/^\d+$/;
+    if(!re.test(start_p)){
+      alert('导出页码请输入数字');
+      return false;
+    }
+  }
+  alert("数据量大的话请耐心等待不要重复点击导出\n单次最大10万条数据\n点击确定开始导出");
+})
  </script>
  <style type="text/css">
    .clearTime{

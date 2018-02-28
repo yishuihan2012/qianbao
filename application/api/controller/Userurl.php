@@ -40,6 +40,7 @@ use app\index\model\ArticleCategory;
 use app\index\model\Article;
 use app\index\model\WalletLog;
 use app\api\controller\Huilianjinchuang;
+ use app\index\model\ServiceItemList;
 /**
  *  此处放置一些固定的web地址
  */
@@ -560,12 +561,12 @@ class Userurl extends Controller
 	  	return view("Userurl/repayment_plan_detail");
 	}
 	//根据开始时间结束时间随机每天刷卡时间---有问题
-      public function get_random_time($day,$count,$begin=9,$end=14){
+      public function get_random_time($day,$count,$begin=5,$end=10){
         //如果日期为今天，刷卡时间大于当前小时
         $now_h=date('Y-m-d',time());
         if($day==$now_h){
-           if($now_h<8){
-               $begin =9;
+           if($now_h<6){
+               $begin =6;
            }else{
                $begin=date('H',time())+1;
            }
@@ -1284,5 +1285,19 @@ class Userurl extends Controller
     if($parent['member_cert']==1)echo "已实名"; else echo "未实名";    
 
 
+  }
+  /**
+  * @version credit_card 推广模块子类页面
+  * @author 杨成志 （3115317085@qq.com）
+  */
+  public function credit_card(){
+    //获取父类名称
+    $wheres['list_id'] = input("parent_id");
+    $info=ServiceItemList::where($wheres)->order("list_id desc")->find();
+    $this->assign("info",$info);
+    $where['list_parent_id'] = input("parent_id");
+    $list=ServiceItemList::where($where)->order("list_id desc")->select();
+    $this->assign("list",$list);
+    return view("Userurl/credit_card");
   }
 }

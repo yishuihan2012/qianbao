@@ -48,33 +48,51 @@ hr{margin:0 5px!important;}
                            </ul>  
                       </div>
                      </div>
-
+                      <div class="row form-group">
+                      <label for="announcement_content" class="col-sm-2 text-right"><b>是否顶级分类</b></label>
+                      <div id="announcement_content" class="col-sm-6">
+                           <ul class="dowebok tags">
+                                <li><input type="radio" name="list_parent_status" checked value="0" data-labelauty="不是" /></li>
+                                <li><input type="radio" name="list_parent_status"  value="1" data-labelauty="是" /></li>
+                           </ul>  
+                      </div>
+                     </div>
                      <div class="row form-group">
                       <label for="generalize_thumb" class="col-sm-2 text-right"><b>图标</b></label>
                       <!-- <div id="announcement_title" class="col-sm-6"><input type="text" class="form-control announcement_title" name="list_icon" placeholder="图标url" value=""></div> -->
-     <div id="generalize_thumb" class="col-sm-6">
-       <div id='uploaderExample3' class="uploader">
-         <div class="uploader-message text-center">
-               <div class="content"></div>
-               <button type="button" class="close">×</button>
-           </div>
-           <div class="uploader-files file-list file-list-grid"></div>
-         <div>
-           <hr class="divider">
-           <div class="uploader-status pull-right text-muted"></div>
-           <button type="button" class="btn btn-link uploader-btn-browse"><i class="icon icon-plus"></i> 选择文件</button>
-           <button type="button" class="btn btn-link uploader-btn-start"><i class="icon icon-cloud-upload"></i> 开始上传</button>
-         </div>
-       </div>
-       <input type="hidden" class="form-control generalize_thumb" name="list_icon" value="">
-     </div>   
+                     <div id="generalize_thumb" class="col-sm-6">
+                       <div id='uploaderExample3' class="uploader">
+                         <div class="uploader-message text-center">
+                               <div class="content"></div>
+                               <button type="button" class="close">×</button>
+                           </div>
+                           <div class="uploader-files file-list file-list-grid"></div>
+                         <div>
+                           <hr class="divider">
+                           <div class="uploader-status pull-right text-muted"></div>
+                           <button type="button" class="btn btn-link uploader-btn-browse"><i class="icon icon-plus"></i> 选择文件</button>
+                           <button type="button" class="btn btn-link uploader-btn-start"><i class="icon icon-cloud-upload"></i> 开始上传</button>
+                         </div>
+                       </div>
+                       <input type="hidden" class="form-control generalize_thumb" name="list_icon" value="">
+                     </div>   
                       </div>
                       
-                     <div class="row form-group">
+                     <div class="row form-group url">
                       <label for="announcement_content" class="col-sm-2 text-right"><b>服务地址</b></label>
                       <div id="announcement_title" class="col-sm-6"><input type="text" class="form-control announcement_title" name="list_url" placeholder="服务地址" value=""></div>
                       </div>
-
+                      <div class="row form-group url">
+                      <label for="announcement_content" class="col-sm-2 text-right"><b>所属父类</b></label>
+                      <div id="announcement_content" class="col-sm-6">
+                        <select name="list_parent_id" class="form-control">
+                          <option value="0">默认分类</option>
+                          @foreach($list as $v)
+                            <option value="{{$v->list_id}}">{{$v->list_name}}</option>
+                          @endforeach
+                        </select>
+                      </div>
+                     </div>
                      <div class="row form-group">
                       <label for="announcement_content" class="col-sm-2 text-right"><b>权重</b></label>
                       <div id="announcement_title" class="col-sm-6"><input type="text" class="form-control announcement_title" name="list_weight" placeholder="权重" value=""></div>
@@ -102,6 +120,13 @@ hr{margin:0 5px!important;}
  <script src="/static/js/jquery-labelauty.js"></script>
   
  <script type="text/javascript">
+  $("[name='list_parent_status']").click(function(){
+    if($(this).val()==1){
+      $(".url").hide();
+    }else{
+      $(".url").show();
+    }
+  })
   //验证form表单
   function verification(){
   var list_name = $("[name='list_name']").val();
