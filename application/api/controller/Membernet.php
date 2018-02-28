@@ -16,6 +16,7 @@ use app\index\model\Member;
  use app\index\model\Reimbur;
  use app\index\model\MemberNet as MemberNets;
  use app\index\model\MemberCreditcard;
+ use app\api\controller\Huilianjinchuang;
  /**
  *  @version MemberNet controller / Api 代还入网
  *  @author $bill$(755969423@qq.com)
@@ -104,11 +105,24 @@ use app\index\model\Member;
                 $value=$v->toArray();
                 $card_status=Generation::where(['generation_id'=>$value['order_no']])->value('generation_state');
                 if($card_status==2){//如果是执行中的卡
-                     if($value['order_type']==1){ //消费
-                          $this->payBindCard($value);
-                      }else if($value['order_type']==2){//提现
-                          $this->transferApply($value);
-                      }
+                    //判断是哪个通道
+                     $passageway=Passageway::where(['passageway_id'=>$value['order_passageway']])->find();
+                     $passageway_mech=$passageway['passageway_mech'];
+                     if($passageway['passageway_method']=='income'){
+                           $huilian=new Huilianjinchuang();//实例化那个类先写死
+                           if($value['order_type']==1){ //消费
+                              $huilian->pay($value,$passageway_mech);
+                           }else if($value['order_type']==2){//提现
+                               $huilian->qfpay($value,$passageway_mech);
+                           }
+                     }else{
+                          if($value['order_type']==1){ //消费
+                              $this->payBindCard($value);
+                          }else if($value['order_type']==2){//提现
+                              $this->transferApply($value);
+                          }
+                     }
+                     
                 }
              }
         }
