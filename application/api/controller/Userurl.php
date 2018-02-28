@@ -540,7 +540,7 @@ class Userurl extends Controller
 	  	return view("Userurl/repayment_plan_detail");
 	}
 	//根据开始时间结束时间随机每天刷卡时间---有问题
-      public function get_random_time($day,$count,$begin=5,$end=10){
+      public function get_random_time($day,$count,$begin=6,$end=10){
         //如果日期为今天，刷卡时间大于当前小时
         $now_h=date('Y-m-d',time());
         if($day==$now_h){
