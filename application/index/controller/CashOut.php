@@ -242,7 +242,8 @@ class CashOut
 		 	 }
 	 	 }
 	 	 //快捷支付 调用开通快捷支付接口
-	 	 if($this->passway_info->passageway_mech==402512992){
+	 	 if(in_array($this->passway_info->passageway_mech, [402512992,402512936])){
+	 	 // if($this->passway_info->passageway_mech==402512992){
 	 	 	$result=$membernetObject->rongbang_in();
 	 	 	if(is_string($result)){
 	 	 		return ['code'=>500,'msg'=>$result];
