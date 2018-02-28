@@ -553,12 +553,14 @@ class Userurl extends Controller
         $last=$begin;
          $step=floor(($end-$begin)/$count)-1;
          for ($i=0; $i <$count ; $i++) { 
-            $time[$i]=$day.' '.get_hours($last,$last+$step).':'.get_minites();
+            // $time[$i]=$day.' '.get_hours($last,$last+$step).':'.get_minites();
+               $time[$i]=$day.' '.get_hours($begin,$end).':'.get_minites();
             // $time[$i]['time']=$day.' '.get_hours($last,$last+$step).':'.get_minites();
             // $time[$i]['begin']=$last;
             // $time[$i]['end']=$last+$step;
             $last=$last+$step+1;
          }
+         sort($time);
          // print_r($time);die;
          return $time;
       }
