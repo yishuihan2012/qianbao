@@ -255,7 +255,7 @@
           'treatycode'=>$treatycode,
         ];
           $data=rongbang_curl(rongbang_foruser($this->member,$this->passway),$arr,'masget.pay.collect.router.treaty.query');
-          var_dump($data);die;
+          // var_dump($data);die;
          if($data['ret']==0 && $data['data']['status']==2){
           //返回商户信息
           return $data['data'];
