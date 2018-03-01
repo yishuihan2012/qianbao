@@ -130,8 +130,8 @@
            'address'             =>"山东省济南市天桥区泺口皮革城",
            'ratecode'         =>$rate_code,
          );
-        // var_dump($arr);die;
         $data=rongbang_curl($this->passway,$arr,'masget.webapi.com.subcompany.add');
+        // var_dump($arr);die;
         if($data['ret']==0){
           #储存商户信息到memberNet关联字段中，因为信息有多条，以,分割后存储。
           #信息顺序 0、appid 1、companycode 2、secretkey 3、session 4、companyname
@@ -160,7 +160,8 @@
       public function rongbang_getinfo(){
         trace("rongbang_getinfo");
         $arr=[
-          'companycode'=>$this->member->member_mobile ,
+          // 'companycode'=>$this->member->member_mobile ,
+          'mobilephone'=>$this->member->member_mobile ,
         ];
           $data=rongbang_curl($this->passway,$arr,'masget.webapi.com.subcompany.get');
            // var_dump($data);die;
