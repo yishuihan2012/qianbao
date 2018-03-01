@@ -126,7 +126,7 @@ class Plan extends Common{
 		 $this->redirect("Plan/index");
 	}
 
-	 /**
+	/**
 	 *  @version detail controller / 总还款列表详情
 	 *  @author $Mr.gao$(928791694@qq.com)
 	 *   @datetime    2017-02-27 09:34:05
@@ -142,19 +142,35 @@ class Plan extends Common{
 	 	$where = $data['where'];
 		$where['order_status'] = -1;
 		if(request()->param('beginTime') && request()->param('endTime')){
-			// $endTime=strtotime(request()->param('endTime'))+24*3600;
-			$where['order_time']=["between time",[request()->param('beginTime'),request()->param('endTime')]];
+			$endTime=date("Y-m-d",strtotime(request()->param('endTime'))+24*3600);
+			$where['order_time']=["between",[request()->param('beginTime'),$endTime]];
+			$this->assign('beginTime',request()->param('beginTime'));
+			$this->assign('endTime',request()->param('endTime'));
 		}
 		if(request()->param('order_money')!=''){
 			$where['order_money'] = request()->param('order_money');
 		}else{
 			$r['order_money'] = ''; 
 		}
-		if(request()->param('order_no')!=''){
-			$where['order_no'] = request()->param('order_no');
+
+		if(request()->param('order_type')!=''){
+			$where['order_type'] = request()->param('order_type');
 		}else{
-			$r['order_no'] = '';
+			$r['order_type'] = ''; 
 		}
+
+		if(request()->param('id')!=''){
+			$where['order_id'] = request()->param('id');
+			$r['order_id']=request()->param('id');
+		}else{
+			$r['order_id'] = '';
+		}
+
+		// if(request()->param('order_no')!=''){
+		// 	$where['order_no'] = request()->param('order_no');
+		// }else{
+		// 	$r['order_no'] = '';
+		// }
 
 		#计划状态查询
 		$where['order_status'] = array("<>",1);
@@ -165,11 +181,32 @@ class Plan extends Common{
 			$r['order_status'] = '';
 		}
 
-	 	$list = GenerationOrder::with("passageway,member,memberCreditcard")->where($where)->paginate(Config::get('page_size'), false, ['query'=>Request::instance()->param()]);
+		// $generation = db("Generation")->alias('w')->where('generation_state=1')->field('generation_id')->select();
+		// $generation_id=array();
+		// foreach ($generation as $key => $value) {
+		// 	$generation_id[]=$value['generation_id'];
+		// }
 
+	 	// $list = GenerationOrder::with("passageway,member,memberCreditcard")->where($where)->paginate(Config::get('page_size'), false, ['query'=>Request::instance()->param()]);
+	 	// foreach ($list as $key => $value) {
+	 	// 	if(in_array($value->order_no, $generation_id)){
+	 	// 		unset($list[$key]);
+	 	// 	}
+	 	// }
+
+	 	$generation = Generation::where('generation_state!=1')->select();
+	 	$generation_id=array();
+	 	foreach ($generation as $key => $value) {
+			$generation_id[]=$value['generation_id'];
+		}
+	 	$generation_id=implode(',', $generation_id);
+
+	 	$list=GenerationOrder::with("passageway,member,memberCreditcard")->where($where)->where('order_no in ('.$generation_id.')')->paginate(Config::get('page_size'), false, ['query'=>Request::instance()->param()]);
+	 	$count = GenerationOrder::with("passageway,member,memberCreditcard")->where($where)->where('order_no in ('.$generation_id.')')->count();
 
 	 	$this->assign('r',$r);
 		$this->assign("list",$list);
+		$this->assign("count",$count);
 
 	 	return view("admin/plan/detail");
 	 }
