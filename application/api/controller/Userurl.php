@@ -1040,7 +1040,7 @@ class Userurl extends Controller
   		if($authcode){
 		  	$Membernets=new con\Membernets($memberId,$passwayId);
 		  	$result=$Membernets->rongbang_confirm_openpay($treatycode,$smsseq,$authcode);
-		  	return $result ? 1 : 3;
+		  	return is_array($result) ? 1 : $result;
 		  }else{
 		  	return 2;
 		  }
@@ -1104,17 +1104,26 @@ class Userurl extends Controller
   			#仅对待支付状态下的订单进行更新并分润
   			if($cash_order->order_state==1){
   				$cash_order->order_state=2;
-  				$cash_order->save();
 				//分润
 			    $fenrun= new con\Commission();
-			    $fenrun_result=$fenrun->MemberFenRun($param['member_id'],$data['amount'],$param['passageway_id'],1,'交易手续费分润',$cash_order->order_id);
+			    $fenrun_result=$fenrun->MemberFenRun($param['member_id'],$data['amount'],$param['passageway_id'],1,'快捷支付手续费分润',$cash_order->order_id);
+          if($fenrun_result['code']=="200"){
+            $cash_order->order_fen=$fenrun_result['leftmoney'];
+            $cash_order->order_buckle=$passwayitem->item_charges/100;
+            $cash_order->order_platform=$order->order_charge-($order->order_money*$passway->passageway_rate/100)+$passwayitem->item_charges/100-$passway->passageway_income;
+          }else{
+            $cash_order->order_fen=-1;
+            $cash_order->order_buckle=$passwayitem->item_charges/100;
+            $cash_order->order_platform=$order->order_charge-($order->order_money*$passway->passageway_rate/100)+$passwayitem->item_charges/100-$passway->passageway_income;
+          }
+          $cash_order->save();
   			}else{
   				trace("rongbang_repeat_request,not fenrun");
   			}
   		}else{
-			$cash_order->order_state=-1;
-			$cash_order->order_desc.=$data['respmsg'];
-			$cash_order->save();
+  			$cash_order->order_state=-1;
+  			$cash_order->order_desc.=$data['respmsg'];
+  			$cash_order->save();
   		}
   	}
   	//按文档要求返回
