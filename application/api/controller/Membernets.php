@@ -108,14 +108,17 @@
           ->value('r.rate_code');
         if(!$rate_code)
           return '该用户对应的费率无套餐编码，请管理员核对！';
+
+        #取数据库名 作为区分所有项目的依据
+        $c_name= config("database.database");
          #定义请求报文组装
          $arr=array(
           //全平台唯一 加通道id以区分
-           'companyname'    =>$this->membercard->card_name . $this->passway->passageway_id .rand(10000,99999),
+           'companyname'    =>$this->membercard->card_name . $this->passway->passageway_id . $c_name . rand(100,999),
            // 'companyname'    =>"test".time(),
            // 'companycode'     =>$this->member->member_mobile,
           //全平台唯一 加通道id以区分
-           'companycode'     =>$this->member->member_mobile . $this->passway->passageway_id.rand(10000,99999),
+           'companycode'     =>$this->member->member_mobile . $this->passway->passageway_id . $c_name . rand(100,999),
            'accountname'      =>$this->membercard->card_name,
            'bankaccount'       =>$this->membercard->card_bankno,
            'bank'                   =>$this->membercard->card_bank_address,
@@ -252,7 +255,7 @@
           'treatycode'=>$treatycode,
         ];
           $data=rongbang_curl(rongbang_foruser($this->member,$this->passway),$arr,'masget.pay.collect.router.treaty.query');
-          // var_dump($data);die;
+          var_dump($data);die;
          if($data['ret']==0 && $data['data']['status']==2){
           //返回商户信息
           return $data['data'];
