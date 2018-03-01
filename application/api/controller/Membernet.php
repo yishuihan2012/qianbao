@@ -136,10 +136,21 @@ use app\index\model\Member;
         }
         try {
             // print_r($value);die;
-            if($value['order_type']==1){ //消费
-                $res=$this->payBindCard($value);
-            }else if($value['order_type']==2){//提现
-                $res=$this->transferApply($value);
+            $passageway=Passageway::where(['passageway_id'=>$value['order_passageway']])->find();
+            $passageway_mech=$passageway['passageway_mech'];
+            if($passageway['passageway_method']=='income'){
+                 $huilian=new Huilianjinchuang();//实例化那个类先写死
+                 if($value['order_type']==1){ //消费
+                    $huilian->pay($value,$passageway_mech);
+                 }else if($value['order_type']==2){//提现
+                     $huilian->qfpay($value,$passageway_mech);
+                 }
+            }else{
+              if($value['order_type']==1){ //消费
+                  $res=$this->payBindCard($value);
+              }else if($value['order_type']==2){//提现
+                  $res=$this->transferApply($value);
+              }
             }
              return json_encode(['code'=>200,'msg'=>'执行成功。']);
         } catch (Exception $e) {

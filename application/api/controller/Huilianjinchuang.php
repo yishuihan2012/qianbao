@@ -146,7 +146,12 @@
         // echo $bank_name;die;
         $BankInfo=BankInfo::where('info_sortname','like','%'.$bank_name.'%')->find();
         $expDate=$card_info['card_expireDate'];
-
+        $merch=Passageway::where(['passageway_id'=>$order['order_passageway']])->find();
+        $rate=PassagewayItem::where(['item_passageway'=>$order['order_passageway'],'item_group'=>$member_info['member_group_id']])->find();
+        if(!$order['order_platform_no'] || $order['order_status']!=1){
+            $update_order['order_platform_no']=$order['order_platform_no']=uniqid();
+            $update_res=GenerationOrder::where(['order_id'=>$order['order_id']])->update($update_order);
+        }
         $arr=array(
             'version'=>$this->version,
             'charset'=>'UTF-8',//编码方式UTF-8
@@ -168,9 +173,46 @@
             'expDate'=>$expDate,//信用卡有效期，格式 MM-yy
             'amount'=>$order['order_money']*100,//金额(分)
         );
+        // var_dump($arr);die;
+        // $update=GenerationOrder::where(['order_id'=>$order['order_id']])->update([''=>$arr['orderNo']]);
         $url=$this->url.'/pay';
         $res=$this->request($url,$arr);
-        print_r($res);die;
+        // return $res;
+        // var_dump($res);
+        $is_commission=0;
+        // $arr['income_tradeNo']=$params['orderNo'];
+        if($res['code']=='10000'){
+             $update['back_tradeNo']=$res['orderNo'];
+             $update['back_status']=$res['message'];
+            if($res['respCode']=="10000"){
+                $update['back_statusDesc']=$res['respMessage'];
+                $update['order_status']='2';
+                // $generation['generation_state']=3;
+                $update['order_platform']=$order['order_pound']-($order['order_money']*$merch['passageway_rate']/100)-$merch['passageway_income'];
+                $is_commission=1;//++++++++++++++++++++++
+                ##记录余额
+                #0在此计划的还款卡余额中增加本次的金额 除去手续费
+                db('reimbur')->where('reimbur_generation',$order['order_no'])->setInc('reimbur_left',$order['order_money']-$order['order_pound']);
+            }else if($res['respCode']=="10002"){
+                //失败推送消息
+                $update['order_status']='4';
+            }else{
+                $update['order_status']='-1';
+                //带查证或者支付中。。。
+            }
+        }else{
+          $update['back_statusDesc']=$res['message'];
+          $update['back_status']='FAIL';
+          $update['order_status']='-1';
+          $generation['generation_state']=-1;
+          $update['order_buckle']=$rate['item_charges']/100;        
+        }
+        //添加执行记录
+        $res=GenerationOrder::where(['order_id'=>$order['order_id']])->update($update);
+        // 更新卡计划
+        Generation::where(['generation_id'=>$order['order_no']])->update($generation);
+        #更改完状态后续操作
+        // $action=$this->plan_notice($order,$res,$member_info,1,$merch);
     }
     /**
      * 支付回调
@@ -180,10 +222,14 @@
         $data = file_get_contents("php://input");
         file_put_contents('huilianpay_callback.txt', $data);
         if($data['code']==10000){ //是否处理成功
-                if($data['code']==10000){
+                if($data['respCode']==10000){
                     $arr['order_status']='2';
+                }else if($data['respCode']=="10002"){
+                    //处理中
+                    $update['order_status']='4';
                 }else{
-                    $arr['order_status']='-1';
+                    $update['order_status']='-1';
+                    //失败
                 }
                 $arr['back_statusDesc']=$data['respMessage'];
         }else{
@@ -202,7 +248,7 @@
      */
     public function qfpay($order,$passageway_mech){
 
-        $card_info=MemberCreditcard::where(['card_idcard'=>$order['order_card']])->find();
+        $card_info=MemberCreditcard::where(['card_bankno'=>$order['order_card']])->find();
 
         $member_info=Member::where(['member_id'=>$order['order_member']])->find();
 
@@ -210,7 +256,12 @@
         // echo $bank_name;die;
         $BankInfo=BankInfo::where('info_sortname','like','%'.$bank_name.'%')->find();
         $expDate=$card_info['card_expireDate'];
-
+        $merch=Passageway::where(['passageway_id'=>$order['order_passageway']])->find();
+        $rate=PassagewayItem::where(['item_passageway'=>$order['order_passageway'],'item_group'=>$member_info['member_group_id']])->find();
+        if(!$order['order_platform_no'] || $order['order_status']!=1){
+            $update_order['order_platform_no']=$order['order_platform_no']=uniqid();
+            $update_res=GenerationOrder::where(['order_id'=>$order['order_id']])->update($update_order);
+        }
         $arr=array(
             'version'=>$this->version,
             'charset'=>'UTF-8',//编码方式UTF-8
@@ -226,7 +277,38 @@
         // echo json_encode($arr);die;
         $url=$this->url.'/mercPay';
         $res=$this->request($url,$arr);
-        print_r($res);die;
+        print_r($res);
+        if($res['code']=='10000'){
+             $update['back_tradeNo']=$res['orderNo'];
+             $update['back_status']=$res['message'];
+             $update['back_statusDesc']=$res['respMessage'];
+            if($res['respCode']=="10000"){
+                $update['order_status']='2';
+                // $generation['generation_state']=3;
+                $update['order_platform']=$order['order_pound']-($order['order_money']*$merch['passageway_rate']/100)-$merch['passageway_income'];
+                ##记录余额
+                #0在此计划的还款卡余额中增加本次的金额 除去手续费
+                db('reimbur')->where('reimbur_generation',$order['order_no'])->setInc('reimbur_left',$order['order_money']-$order['order_pound']);
+            }else if($res['respCode']=="10002"){
+                //处理中
+                $update['order_status']='4';
+            }else{
+                $update['order_status']='-1';
+                //失败
+            }
+        }else{
+          $update['back_statusDesc']=$res['message'];
+          $update['back_status']='FAIL';
+          $update['order_status']='-1';
+          $generation['generation_state']=-1;
+          $update['order_buckle']=$rate['item_charges']/100;        
+        }
+        //添加执行记录
+        $res=GenerationOrder::where(['order_id'=>$order['order_id']])->update($update);
+        // 更新卡计划
+        if(isset($generation)){
+            Generation::where(['generation_id'=>$order['order_no']])->update($generation);
+        }
     }
     /**
      * 还款回调
@@ -235,18 +317,38 @@
     public function cashCallback(){
         $data = file_get_contents("php://input");
         file_put_contents('huilianpay_cashcallback.txt', $data);
+        if($data['code']==10000){ //是否处理成功
+                if($data['respCode']==10000){
+                    $arr['order_status']='2';
+                }else if($data['respCode']=="10002"){
+                    //处理中
+                    $update['order_status']='4';
+                }else{
+                    $update['order_status']='-1';
+                    //失败
+                }
+                $arr['back_statusDesc']=$data['respMessage'];
+        }else{
+            $arr['order_status']='-1';
+            $arr['back_statusDesc']=$data['message'];
+        }
+        // $arr['back_status']=$data['status'];
+        // $arr['back_statusDesc']=$data['statusDesc'];
+        $arr['back_tradeNo']=$data['orderNum'];
+        //添加执行记录
+        $res=GenerationOrder::where(['order_id'=>$pay['order_id']])->update($arr);
     }
     /**
      * 订单状态查询
      * @return [type] [description]
      */
     public function order_status($id,$is_print=''){
-        $agentid=1001001;
         $order_detail=GenerationOrder::where(['order_id'=>$id])->find();
+        $passageway=Passageway::where(['passageway_id'=>$order_detail['order_passageway']])->find();
         $arr=array(
             'version'=>$this->version,
             'charset'=>'UTF-8',//编码方式UTF-8
-            'agentId'=>$agentid,//受理方预分配的渠道代理商标识
+            'agentId'=>$passageway['passageway_mech'],//受理方预分配的渠道代理商标识
             'nonceStr'=>make_rand_code(),//随机字符串，字符范围a-zA-Z0-9
             'signType'=>"RSA",//签名方式，固定RSA
             'orderNo'=>$order_detail['order_platform_no'],//订单号
