@@ -35,15 +35,15 @@
      * @return [type] [description]
      */
     public function income($Passageway,$card_id){
-        //获取行用卡新
+        //获取行用卡信息
         $card_info=MemberCreditcard::where(['card_id'=>$card_id])->find();
         if(!$card_info){
-            exit('1231');
+            return ['code'=>'101','msg'=>'获取信用卡信息失败'];
         }
         //获取用户信息
         $member_info=Member::where(['member_id'=>$card_info['card_member_id']])->find();
         if(!$member_info){
-            exit('456');
+            return ['code'=>'102','msg'=>'获取用户信息失败'];
         }
         //获取卡对应银行信息
         $bank_name=mb_substr($card_info['card_bankname'],-4,2);
@@ -113,26 +113,29 @@
             'merId'=> $merId,//要修改的商户号
             'nonceStr'=>make_rand_code(),//随机字符串，字符范围a-zA-Z0-9
             'signType'=>'RSA',//签名方式，固定RSA
-            'type'=>$type,//R、N、B
         );
-        $arr=array_merge($arr,$data);
+        //修改费率
+        if(isset($data['rate'])){
+            $arr['extraFee']=$data['daikou'];
+            $arr['rate']=$data['rate']*100;
+            $arr['type']='R';
+        }
+        //如果更换卡号就像当于重新绑新卡了，不用重新进件
+        if(isset($arr['bankCard'])){
+            // $arr['type']='N';
+            // $arr['bankCard']=$data['bankCard'];
+            // $arr['bankNo']=
+            // $arr['bankId']=
+        }
+        // 修改预留手机
+        if(isset($data['phone'])){
+            $arr['type']='B';
+            $arr['phone']=$data['phone'];
+        }
         $url=$this->url.'/updateMid';
         $res=$this->request($url,$arr);
+        return $res;
         print_r($res);die;
-    }
-    /**
-     * 执行某个计划
-     * @param  [type] $id [description]
-     * @return [type]     [description]
-     */
-    public function action_single_plan($id){
-        $order_info=GenerationOrder::where(['order_id'=>$id])->find();
-        if($order_info['order_type']==1){
-            $this->pay($order_info);
-        }else{
-            $this->qfpay($order_info);
-        }
-        
     }
     /**
      * 下单支付
@@ -183,7 +186,7 @@
         // $arr['income_tradeNo']=$params['orderNo'];
         if($res['code']=='10000'){
              $update['back_tradeNo']=$res['orderNo'];
-             $update['back_status']=$res['message'];
+             $update['back_status']=$res['respCode'];
             if($res['respCode']=="10000"){
                 $update['back_statusDesc']=$res['respMessage'];
                 $update['order_status']='2';
@@ -232,11 +235,12 @@
                     //失败
                 }
                 $arr['back_statusDesc']=$data['respMessage'];
+                $arr['back_status']=$data['respCode'];
         }else{
             $arr['order_status']='-1';
             $arr['back_statusDesc']=$data['message'];
         }
-        // $arr['back_status']=$data['status'];
+        $arr['back_status']='FAIL';
         // $arr['back_statusDesc']=$data['statusDesc'];
         $arr['back_tradeNo']=$data['orderNum'];
         //添加执行记录
@@ -280,7 +284,7 @@
         print_r($res);
         if($res['code']=='10000'){
              $update['back_tradeNo']=$res['orderNo'];
-             $update['back_status']=$res['message'];
+             $update['back_status']=$res['respCode'];
              $update['back_statusDesc']=$res['respMessage'];
             if($res['respCode']=="10000"){
                 $update['order_status']='2';
@@ -328,11 +332,12 @@
                     //失败
                 }
                 $arr['back_statusDesc']=$data['respMessage'];
+                $arr['back_status']=$data['respCode'];
         }else{
             $arr['order_status']='-1';
             $arr['back_statusDesc']=$data['message'];
         }
-        // $arr['back_status']=$data['status'];
+        $arr['back_status']='FAIL';
         // $arr['back_statusDesc']=$data['statusDesc'];
         $arr['back_tradeNo']=$data['orderNum'];
         //添加执行记录
@@ -352,7 +357,6 @@
             'nonceStr'=>make_rand_code(),//随机字符串，字符范围a-zA-Z0-9
             'signType'=>"RSA",//签名方式，固定RSA
             'orderNo'=>$order_detail['order_platform_no'],//订单号
-
         );
         $url=$this->url.'/query';
         $res=$this->request($url,$arr);
@@ -366,13 +370,13 @@
      * 余额查询
      * @return [type] [description]
      */
-    public function query_remain($uid,$is_print=''){
+    public function query_remain($Passageway,$is_print=''){
+        $passageway=Passageway::where(['passageway_id'=>$Passageway])->find();
         $agentid=1001001;
-        $merId=9000000530;
         $arr=array(
             'version'=> $this->version,
             'charset'=>'UTF-8',//编码方式UTF-8
-            'agentId'=>$agentid,//受理方预分配的渠道代理商标识
+            'agentId'=>$passageway['passageway_mech'],//受理方预分配的渠道代理商标识
             'nonceStr'=>make_rand_code(),//随机字符串，字符范围a-zA-Z0-9
             'signType'=>'RSA',// 签名方式，固定RSA
         );

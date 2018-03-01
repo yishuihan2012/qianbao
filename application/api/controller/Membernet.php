@@ -702,24 +702,44 @@ use app\index\model\Member;
       //处理没有结果的订单
       public function no_result_order(){
           $time=date('Y-m-d H:i:s',time()-60*30);
+          //查询半小时前状态为带查证的订单
           $list=GenerationOrder::where(['order_status'=>4])->where('order_time','lt',$time)->select();
           foreach ($list as $key => $order) {
               $generation=Generation::where(['generation_id'=>$order['order_no']])->find();
+              //如果计划是执行中的
               if($generation['generation_state']==2){
-                  $result=$this->payResultQuery($order['order_id']);
-                  if($result && $result['code']==200 && $result['status']){
-                      $arr['back_statusDesc']=$result['statusDesc'];
-                      if($result['status']=="SUCCESS"){
-                          $arr['order_status']='2';
-                      }else if($result['status']=="FAIL"){
-                          $arr['order_status']='-1';
-                          
-                      }else{
-                          $arr['order_status']='4';
-                          //带查证或者支付中。。。mchNo
+                  //判断哪个通道
+                   $passageway=Passageway::where(['passageway_id'=>$value['order_passageway']])->find();
+                   $passageway_mech=$passageway['passageway_mech'];
+                   if($passageway['passageway_method']=='income'){
+                       $huilian=new Huilianjinchuang();//实例化那个类先写死
+                       $res=$huilian->order_status($order['order_id']);
+                       if(isset($res['']) ){
+                        if($res['respCode']=='10000'){
+                             $arr['order_status']=2;
+                        }else if($res['respCode']=='10001'){
+                              $arr['order_status']=-1;
+                        }
+                        $arr['back_statusDesc']=$res['respCode'];
+                        $update=GenerationOrder::where(['order_id'=>$order['order_id']])->update($arr);
+                       }
+                   }else{
+                      //米刷通道
+                      $result=$this->payResultQuery($order['order_id']);
+                      if($result && $result['code']==200 && $result['status']){
+                          $arr['back_statusDesc']=$result['statusDesc'];
+                          if($result['status']=="SUCCESS"){
+                              $arr['order_status']='2';
+                          }else if($result['status']=="FAIL"){
+                              $arr['order_status']='-1';
+                              
+                          }else{
+                              $arr['order_status']='4';
+                              //带查证或者支付中。。。mchNo
+                          }
+                          $update=GenerationOrder::where(['order_id'=>$order['order_id']])->update($arr);
                       }
-                      $update=GenerationOrder::where(['order_id'=>$order['order_id']])->update($arr);
-                  }
+                    }
               }
           }
          
