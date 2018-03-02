@@ -55,7 +55,8 @@
             <a href="javascript:;"><i class="icon icon-user"></i> 自动代还</a>
             <ul class="nav">
                     <li class="plan"><a href="{{url('/index/plan/index')}}"><i class="icon icon-sliders"></i> 计划列表</a></li>
-                    <li class="plan_fail"><a href="{{url('/index/plan/fail')}}"><i class="icon icon-sliders"></i> 失败计划列表</a></li>
+                    <li class="plan_detail"><a href="{{url('/index/plan/detail')}}"><i class="icon icon-sliders"></i> 计划列表详情</a></li>
+                    <!-- <li class="plan_fail"><a href="{{url('/index/plan/fail')}}"><i class="icon icon-sliders"></i> 失败计划列表</a></li> -->
             </ul>
         </li>
         <li class="nav-parent financial-manager">

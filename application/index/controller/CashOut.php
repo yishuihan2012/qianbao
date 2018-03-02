@@ -242,7 +242,8 @@ class CashOut
 		 	 }
 	 	 }
 	 	 //快捷支付 调用开通快捷支付接口
-	 	 if($this->passway_info->passageway_mech==402512992){
+	 	 if(in_array($this->passway_info->passageway_mech, [402512992,402512936])){
+	 	 // if($this->passway_info->passageway_mech==402512992){
 	 	 	$result=$membernetObject->rongbang_in();
 	 	 	if(is_string($result)){
 	 	 		return ['code'=>500,'msg'=>$result];
@@ -253,29 +254,24 @@ class CashOut
 		 	 $member_credit_pas=db('member_credit_pas')->where($pas_where)->find();
 		 	 //是否需要调用开通快捷支付变量
 		 	 $needToOpen=false;
-		 	 //从数据库检查是否开通
+		 	 //从数据库检查是否开通 不满足条件调用查询接口
 		 	 if(!$member_credit_pas || !$member_credit_pas['member_credit_pas_info'] || $member_credit_pas['member_credit_pas_status']==0){
 		 	 	//通用数据
 	 	 		$data=[
 	 	 			'member_credit_pas_creditid'=>$this->card_info->card_id,
 	 	 			'member_credit_pas_pasid'=>$this->passway_info->passageway_id,
 	 	 		];
-		 	 	//如果有 treatycode 调用查询接口
-		 	 	if(isset($member_credit_pas['member_credit_pas_info']) && $member_credit_pas['member_credit_pas_info']!=1){
-			 	 	//调用接口检查是否开通
-			 	 	$result=$membernetObject->rongbang_check($member_credit_pas['member_credit_pas_info']);
-			 	 	if(is_array($result)){
-			 	 		//接口有数据，更新本地数据库 这个用户已经开通了快捷支付
-			 	 		$data['member_credit_pas_info']=$result['treatycode'];
-			 	 		$data['member_credit_pas_status']=1;
-			 	 		if($member_credit_pas){
-			 	 			db('member_credit_pas')->where($pas_where)->update($data);
-			 	 		}else{
-			 	 			db('member_credit_pas')->insert($data);
-			 	 		}
-			 	 	}else{
-					 	 $needToOpen=true;
-			 	 	}
+		 	 	//调用接口检查是否开通
+		 	 	$result=$membernetObject->rongbang_check($member_credit_pas['member_credit_pas_info']);
+		 	 	if(is_array($result)){
+		 	 		//接口有数据，更新本地数据库 这个用户已经开通了快捷支付
+		 	 		$data['member_credit_pas_info']=$result['treatycode'];
+		 	 		$data['member_credit_pas_status']=1;
+		 	 		if($member_credit_pas){
+		 	 			db('member_credit_pas')->where($pas_where)->update($data);
+		 	 		}else{
+		 	 			db('member_credit_pas')->insert($data);
+		 	 		}
 		 	 	}else{
 				 	 $needToOpen=true;
 		 	 	}

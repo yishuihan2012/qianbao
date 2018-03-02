@@ -15,7 +15,7 @@
 		<div class="mui-content wrap3">
 			<div class="space-up">
 				<h1 style="text-align: center;">订单提交成功</h1>
-				<p style="margin-top: 50vh"><a class="my-btn-blue4" id="regBtn">返回首页</a></p>
+				<p style="margin-top: 200px"><a class="my-btn-blue4" id="regBtn">返回首页</a></p>
 			</div>
 		</div>
 		<script src="/static/js/mui.min.js"></script>

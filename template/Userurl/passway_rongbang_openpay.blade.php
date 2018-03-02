@@ -3,7 +3,7 @@
 	<head>
 		<!-- 荣邦快捷支付开通 ishtml=2 时调用本页面 填入验证码调用确认接口 -->
 		<meta charset="UTF-8">
-		<title>请输入验证码</title>
+		<title>开通快捷支付</title>
 		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
 		<link href="/static/css/mui.min.css" rel="stylesheet" />
 		<link href="/static/css/iconfont.css" rel="stylesheet" />
@@ -13,8 +13,10 @@
 	</head>
 	<body>
 		<div class="mui-content wrap3">
-			<h1 style="text-align: center;">请输入验证码</h1>
-			<form class="mui-input-group bg-color" style="margin-top: 50vh">
+			<h1 style="text-align: center;">首次需开通快捷支付</h1>
+			<br>
+			<h3 style="text-align: center;">请输入验证码</h3>
+			<form class="mui-input-group bg-color" style="margin-top: 100px">
 				<div class="bg-w f-br-top">
 				    <div class="mui-input-row">
 				        <label>验证码:</label>
@@ -46,11 +48,11 @@
 						};
 						$.post('',data,function(res){
 							if(res==1){
-								alert('成功开通快捷支付！')
-							}elseif(res==2){
-								alert('验证码异常！')
+								alert("成功开通快捷支付！\n请重新执行取款操作");
+							}else if(res==2){
+								alert('验证码异常！');
 							}else{
-								alert('开通快捷支付失败！')
+								alert("开通快捷支付失败！\nerr:"+res);
 							}
 					      if(!isAndroid){
 					        window.webkit.messageHandlers.returnIndex.postMessage(1);
@@ -67,3 +69,5 @@
 	</body>
 
 </html>
+<style type="text/css">
+</style>
