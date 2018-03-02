@@ -79,7 +79,7 @@ class Plan extends Common{
 			#从菜单点击来 计划所有详情
 			$where['order_no'] = input('id');
 		}
-		$list = GenerationOrder::with("passageway,member,memberCreditcard")->where($where)->select();
+		$list = GenerationOrder::with("passageway,member,memberCreditcard")->where($where)->order('order_time','asc')->select();
 		$this->assign("list",$list);
 		return view("/admin/plan/info");
 	}

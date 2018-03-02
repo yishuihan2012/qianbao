@@ -30,7 +30,7 @@
 		 		<th>订单金额</th>
 		 		<th>订单手续费</th>
 		 		<th>订单状态</th>
-		 		<th>订单描述</th>
+		 		<th>订单返回结果描述</th>
 		 		<th>订单执行时间</th>
 		 		<th>订单更新时间</th>
 		 		<th>订单创建时间</th>
@@ -49,7 +49,7 @@
 			 <td>{{$value->order_money}}</td>
 			 <td>{{$value->order_pound}}</td>
 			 <td>@if($value->order_status == 1)<em style="color:#FF9900;">  待执行 </em>@elseif($value->order_status == 2)<em style="color:#33FF33;"> 成功</em> @elseif($value->order_status == 3)<em style="color:#FF00FF;"> 取消</em> @elseif($value->order_status ==4) <em style="color:#00FFFF;">带查证</em> @else <em style="color:red;">失败 </em>@endif </td>
-			 <td>{{$value->order_desc}}</td>
+			 <td>{{$value->back_statusDesc?$value->back_statusDesc:'没有执行'}}</td>
 			 <td>{{$value->order_time}}</td>
 			 <td>{{$value->order_edit_time}}</td>
 			 <td>{{$value->order_add_time}}</td>
