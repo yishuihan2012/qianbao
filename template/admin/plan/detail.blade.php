@@ -120,6 +120,9 @@
 			  	@endif
 			  	@if($value->order_status == -1)
 			  	<a class="remove" href="#" data-url="{{url('/api/Membernet/action_single_plan/id/'.$value['order_id'])}}"><i class="icon-pencil"></i> 重新执行 </a>
+				  	@if($value->order_type == 2)
+				  	<a class="remove" href="#" data-url="{{url('/api/Membernet/update_bak_money/id/'.$value['order_id'])}}"><i class="icon-pencil"></i> 修改还款金额 </a>
+				  	@endif
 			  	@endif
 			  	@if($value->order_status ==4) 
 			  	<a class="remove1" data-toggle="modal" data-remote="{{url('/index/Plan/edit_status/id/'.$value['order_id'])}}" href="#"><i class="icon-pencil"></i> 更改状态 </a>
