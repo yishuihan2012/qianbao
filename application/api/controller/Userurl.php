@@ -53,40 +53,40 @@ class Userurl extends Controller
        $this->param=request()->param();
         try{
              if(!isset($this->param['uid']) || empty($this->param['uid']) || !isset($this->param['token']) ||empty($this->param['token'])){
-             	echo '<li style="margin-top:13rem;text-align:center;list-style:none;font-size:1.4rem;color:#999;">当前登录已过期，请重新登录</li>';die;
+                echo '<li style="margin-top:13rem;text-align:center;list-style:none;font-size:1.4rem;color:#999;">当前登录已过期，请重新登录</li>';die;
              }
-             	 
+                 
                    // $this->error=314;
              #查找到当前用户
              $member=Members::haswhere('memberLogin',['login_token'=>$this->param['token']])->where('member_id', $this->param['uid'])->find();
              if(!$member && !$this->error){
-             	echo '<li style="margin-top:13rem;text-align:center;list-style:none;font-size:1.4rem;color:#999;">当前登录已过期，请重新登录</li>';die;
+                echo '<li style="margin-top:13rem;text-align:center;list-style:none;font-size:1.4rem;color:#999;">当前登录已过期，请重新登录</li>';die;
              }
         }catch (\Exception $e) {
-        	echo '<li style="margin-top:13rem;text-align:center;list-style:none;font-size:1.4rem;color:#999;">当前登录已过期，请重新登录</li>';die;
-        	  $this->assign('msg','当前登录已过期，请重新登录');
+            echo '<li style="margin-top:13rem;text-align:center;list-style:none;font-size:1.4rem;color:#999;">当前登录已过期，请重新登录</li>';die;
+              $this->assign('msg','当前登录已过期，请重新登录');
              // $this->error=317;
         }
         if($this->error){
-			$msg=Config::get('response.'.$this->error) ? Config::get('response.'.$this->error) : "系统错误~";
-				echo "<li style='margin-top:13rem;text-align:center;list-style:none;font-size:1.4rem;color:#999;'>{$msg}}</li>";die;
+            $msg=Config::get('response.'.$this->error) ? Config::get('response.'.$this->error) : "系统错误~";
+                echo "<li style='margin-top:13rem;text-align:center;list-style:none;font-size:1.4rem;color:#999;'>{$msg}}</li>";die;
             // exit(json_encode(['code'=>$this->error, 'msg'=>$msg, 'data'=>[]]));
         }
-		$this->assign('uid',$this->param['uid']);
-		$this->assign('token',$this->param['token']);
+        $this->assign('uid',$this->param['uid']);
+        $this->assign('token',$this->param['token']);
       }
 
       #专属二维码列表
-	public function exclusive_code(){
-		$this->assign("name",System::getName("sitename"));
-	    $list = Exclusive::all();
-	    $this->assign("list",$list);
-	    return view("api/logic/share_code_list");
-	}
+    public function exclusive_code(){
+        $this->assign("name",System::getName("sitename"));
+        $list = Exclusive::all();
+        $this->assign("list",$list);
+        return view("api/logic/share_code_list");
+    }
 
-	#取现现成功页面
-	public function calllback_success(){
-		// $request = $this->param;
+    #取现现成功页面
+    public function calllback_success(){
+        // $request = $this->param;
     $request=file_get_contents("php://input");
     if(empty($request)){
        $data['result'] = -1;
@@ -105,169 +105,169 @@ class Userurl extends Controller
         }
 
       $this->assign('data',$data);
-	    return view("Userurl/calllback_success");
-	}
-	/**
-	 * @Author   Star(794633291@qq.com)
-	 * @DateTime 2017-12-25T14:01:55+0800
-	 * @version  [专属二维码]
-	 * @return   [type]
-	 */
-	public function exclusive_code_detail(){
-		$this->checkToken();
-		//获取当前手机号
-		$tel=Members::get($this->param['uid']);
-		$tel=$tel->member_mobile;
-		//推广连接
-		$url='http://'.$_SERVER['HTTP_HOST'].'/api/userurl/register/recomment/'.$tel;
-		//背景图片ID
-		$exclusive_id=$this->param['exclusive_id'];
-		//调取数据库url
-		$img=db('qrcode')->where(['qrcode_member_id'=>$this->param['uid'],'qrcode_exclusive_id'=>$exclusive_id])->find();
-			// dump($img);die;
-		if(!$img || !$img['qrcode_url']){
-			$imgurl='autoimg/qrcode_'.$exclusive_id.'_'.$tel.'.png';
-			//若未生成过
-			if(!is_file($imgurl)){
-				Vendor('phpqrcode.phpqrcode');
-				$QRcode=new \QRcode();
-				//生成二维码
-				$QRcode->png($url, 'autoimg/qrcode'.$tel.'.png','H',8,5);
-				$qrurl=ROOT_PATH.'public/autoimg/qrcode'.$tel.'.png';
-				$logourl=ROOT_PATH.'public/static/images/logo.png';
-				// 二维码加入logo
-				 $QR = imagecreatefromstring(file_get_contents($qrurl)); 
-				 $logo = imagecreatefromstring(file_get_contents($logourl)); 
-				 $logo_width = imagesx($logo);
-				 $logo_height = imagesy($logo);
-				 #动态计算取中心点 让你丫不居中
-				 $qr_width = imagesx($QR);
-				 $scale=0.18;
-				 $logo_line=$scale*$qr_width;
-				 $xy=$qr_width*0.5-$logo_line*0.5;
-				 imagecopyresampled( $QR,$logo, $xy, $xy, 0, 0, $logo_line, $logo_line, $logo_width, $logo_height); 
-				imagepng($QR, 'autoimg/qrcode'.$tel.'.png'); 
-				// 背景
-				$bg_url=Exclusive::get($exclusive_id);
-				$bg_url=$bg_url->exclusive_thumb;
-				$bg_url=preg_replace('/\\\\/', '/', $bg_url);
-				$bg_url=ROOT_PATH.'public'.$bg_url;
-				// $bg=ROOT_PATH.'public\static\images\exclusice_code_bg.png';
-				//合成专属二维码
-				 $bg = imagecreatefromstring(file_get_contents($bg_url)); 
-				 $QR_width = imagesx($QR);//二维码图片宽度 
-				 $QR_height = imagesy($QR);//二维码图片高度 
-				 imagecopyresampled( $bg,$QR, 240, 710, 0, 0, 280, 280, $QR_width, $QR_height); 
-				imagejpeg($bg, $imgurl,65); 
-			}
-			if(!$img){
-				db('qrcode')->insert(['qrcode_member_id'=>$this->param['uid'],'qrcode_exclusive_id'=>$exclusive_id,'qrcode_url'=>$imgurl]);
-			}else{
-				db('qrcode')->where(['qrcode_member_id'=>$this->param['uid'],'qrcode_exclusive_id'=>$exclusive_id])->update(['qrcode_url'=>$imgurl]);
-			}
-		}else{
-			$imgurl=$img['qrcode_url'];
-		}
-		//返回图片地址
-		$url='http://'.$_SERVER['HTTP_HOST'].'/'.$imgurl;
-		$this->assign('url',$url);
-	  	return view("Userurl/exclusive_code_detail");
-	}
-	/**
-	 * @Author   Star(794633291@qq.com)
-	 * @DateTime 2017-12-25T14:10:55+0800
-	 * @version  [用户还款计划]
-	 * @return   [type]
-	 */
+        return view("Userurl/calllback_success");
+    }
+    /**
+     * @Author   Star(794633291@qq.com)
+     * @DateTime 2017-12-25T14:01:55+0800
+     * @version  [专属二维码]
+     * @return   [type]
+     */
+    public function exclusive_code_detail(){
+        $this->checkToken();
+        //获取当前手机号
+        $tel=Members::get($this->param['uid']);
+        $tel=$tel->member_mobile;
+        //推广连接
+        $url='http://'.$_SERVER['HTTP_HOST'].'/api/userurl/register/recomment/'.$tel;
+        //背景图片ID
+        $exclusive_id=$this->param['exclusive_id'];
+        //调取数据库url
+        $img=db('qrcode')->where(['qrcode_member_id'=>$this->param['uid'],'qrcode_exclusive_id'=>$exclusive_id])->find();
+            // dump($img);die;
+        if(!$img || !$img['qrcode_url']){
+            $imgurl='autoimg/qrcode_'.$exclusive_id.'_'.$tel.'.png';
+            //若未生成过
+            if(!is_file($imgurl)){
+                Vendor('phpqrcode.phpqrcode');
+                $QRcode=new \QRcode();
+                //生成二维码
+                $QRcode->png($url, 'autoimg/qrcode'.$tel.'.png','H',8,5);
+                $qrurl=ROOT_PATH.'public/autoimg/qrcode'.$tel.'.png';
+                $logourl=ROOT_PATH.'public/static/images/logo.png';
+                // 二维码加入logo
+                 $QR = imagecreatefromstring(file_get_contents($qrurl)); 
+                 $logo = imagecreatefromstring(file_get_contents($logourl)); 
+                 $logo_width = imagesx($logo);
+                 $logo_height = imagesy($logo);
+                 #动态计算取中心点 让你丫不居中
+                 $qr_width = imagesx($QR);
+                 $scale=0.18;
+                 $logo_line=$scale*$qr_width;
+                 $xy=$qr_width*0.5-$logo_line*0.5;
+                 imagecopyresampled( $QR,$logo, $xy, $xy, 0, 0, $logo_line, $logo_line, $logo_width, $logo_height); 
+                imagepng($QR, 'autoimg/qrcode'.$tel.'.png'); 
+                // 背景
+                $bg_url=Exclusive::get($exclusive_id);
+                $bg_url=$bg_url->exclusive_thumb;
+                $bg_url=preg_replace('/\\\\/', '/', $bg_url);
+                $bg_url=ROOT_PATH.'public'.$bg_url;
+                // $bg=ROOT_PATH.'public\static\images\exclusice_code_bg.png';
+                //合成专属二维码
+                 $bg = imagecreatefromstring(file_get_contents($bg_url)); 
+                 $QR_width = imagesx($QR);//二维码图片宽度 
+                 $QR_height = imagesy($QR);//二维码图片高度 
+                 imagecopyresampled( $bg,$QR, 240, 710, 0, 0, 280, 280, $QR_width, $QR_height); 
+                imagejpeg($bg, $imgurl,65); 
+            }
+            if(!$img){
+                db('qrcode')->insert(['qrcode_member_id'=>$this->param['uid'],'qrcode_exclusive_id'=>$exclusive_id,'qrcode_url'=>$imgurl]);
+            }else{
+                db('qrcode')->where(['qrcode_member_id'=>$this->param['uid'],'qrcode_exclusive_id'=>$exclusive_id])->update(['qrcode_url'=>$imgurl]);
+            }
+        }else{
+            $imgurl=$img['qrcode_url'];
+        }
+        //返回图片地址
+        $url='http://'.$_SERVER['HTTP_HOST'].'/'.$imgurl;
+        $this->assign('url',$url);
+        return view("Userurl/exclusive_code_detail");
+    }
+    /**
+     * @Author   Star(794633291@qq.com)
+     * @DateTime 2017-12-25T14:10:55+0800
+     * @version  [用户还款计划]
+     * @return   [type]
+     */
 
-	public function repayment_plan_list(){
-		$this->checkToken();
-		#全部
-		$order=GenerationOrder::where(['order_member'=>$this->param['uid']])->select();
+    public function repayment_plan_list(){
+        $this->checkToken();
+        #全部
+        $order=GenerationOrder::where(['order_member'=>$this->param['uid']])->select();
 
-		#已执行
-		$order2=GenerationOrder::where(['order_member'=>$this->param['uid'],'order_status'=>2])->select();
+        #已执行
+        $order2=GenerationOrder::where(['order_member'=>$this->param['uid'],'order_status'=>2])->select();
 
-		#未执行
-		$order1=GenerationOrder::where(['order_member'=>$this->param['uid'],'order_status'=>1])->select();
-		
-		$this->assign('order',$order);
-		$this->assign('order2',$order2);
-		$this->assign('order1',$order1);
-	  	return view("Userurl/repayment_plan_list");
-	}
-	/**
-	 * @Author   Star(794633291@qq.com)
-	 * @DateTime 2017-12-25T14:10:55+0800
-	 * @version  [还款计划已完成列表]
-	 * @return   [type]
-	 */
-	public function repayment_history(){
-		$this->checkToken();
-		#进行中
-		// $this->param['uid']=16;
-		$generation=Generation::with('creditcard')->where(['generation_member'=>$this->param['uid'],'generation_state'=>2])->order('generation_add_time','desc')->select();
-		foreach ($generation as $key => $value) {
-			//判断自动执行表 是否全部完成执行 取未执行的计划
-			$haventDone=GenerationOrder::where(['order_no'=>$value['generation_id'],'order_status'=>1])->find();
-			if(!$haventDone){
-				//若全部完成执行 更改主表计划执行状态
-				Generation::where(['generation_member'=>$this->param['uid'],'generation_id'=>$value['generation_id']])->update(['generation_state'=>3]);
-				unset($generation['$key']);
-				continue;
-			}else{
-				$generation[$key]['generation_card']=substr($value['generation_card'], -4);
-				$generation[$key]['count']=GenerationOrder::where(['order_no'=>$value['generation_id']])->count();
-			}
-		}
+        #未执行
+        $order1=GenerationOrder::where(['order_member'=>$this->param['uid'],'order_status'=>1])->select();
+        
+        $this->assign('order',$order);
+        $this->assign('order2',$order2);
+        $this->assign('order1',$order1);
+        return view("Userurl/repayment_plan_list");
+    }
+    /**
+     * @Author   Star(794633291@qq.com)
+     * @DateTime 2017-12-25T14:10:55+0800
+     * @version  [还款计划已完成列表]
+     * @return   [type]
+     */
+    public function repayment_history(){
+        $this->checkToken();
+        #进行中
+        // $this->param['uid']=16;
+        $generation=Generation::with('creditcard')->where(['generation_member'=>$this->param['uid'],'generation_state'=>2])->order('generation_add_time','desc')->select();
+        foreach ($generation as $key => $value) {
+            //判断自动执行表 是否全部完成执行 取未执行的计划
+            $haventDone=GenerationOrder::where(['order_no'=>$value['generation_id'],'order_status'=>1])->find();
+            if(!$haventDone){
+                //若全部完成执行 更改主表计划执行状态
+                Generation::where(['generation_member'=>$this->param['uid'],'generation_id'=>$value['generation_id']])->update(['generation_state'=>3]);
+                unset($generation['$key']);
+                continue;
+            }else{
+                $generation[$key]['generation_card']=substr($value['generation_card'], -4);
+                $generation[$key]['count']=GenerationOrder::where(['order_no'=>$value['generation_id']])->count();
+            }
+        }
 
-		#待确认 不需要了
-		// $generation1=Generation::with('creditcard')->where(['generation_member'=>$this->param['uid'],'generation_state'=>1])->select();
-		// foreach ($generation1 as $key => $value) {
-		// 		$generation1[$key]['generation_card']=substr($value['generation_card'], -4);
-		// 		$generation1[$key]['count']=GenerationOrder::where(['order_no'=>$value['generation_id']])->count();
-		// }
+        #待确认 不需要了
+        // $generation1=Generation::with('creditcard')->where(['generation_member'=>$this->param['uid'],'generation_state'=>1])->select();
+        // foreach ($generation1 as $key => $value) {
+        //      $generation1[$key]['generation_card']=substr($value['generation_card'], -4);
+        //      $generation1[$key]['count']=GenerationOrder::where(['order_no'=>$value['generation_id']])->count();
+        // }
 
-		#完成
-		$generation3=Generation::with('creditcard')->where(['generation_member'=>$this->param['uid'],'generation_state'=>['in','3,4']])->order('generation_add_time','desc')->select();
-		foreach ($generation3 as $key => $value) {
-				$generation3[$key]['generation_card']=substr($value['generation_card'], -4);
-				$generation3[$key]['count']=GenerationOrder::where(['order_no'=>$value['generation_id']])->count();
-		}
-		// var_dump($generation);die;
+        #完成
+        $generation3=Generation::with('creditcard')->where(['generation_member'=>$this->param['uid'],'generation_state'=>['in','3,4']])->order('generation_add_time','desc')->select();
+        foreach ($generation3 as $key => $value) {
+                $generation3[$key]['generation_card']=substr($value['generation_card'], -4);
+                $generation3[$key]['count']=GenerationOrder::where(['order_no'=>$value['generation_id']])->count();
+        }
+        // var_dump($generation);die;
 
-		$this->assign('generation',$generation);
-		$this->assign('generation3',$generation3);
-	  	return view("Userurl/repayment_history");
-	}
-	/**
-	 * @Author   Star(794633291@qq.com)
-	 * @DateTime 2017-12-25T14:10:55+0800
-	 * @version  [还款计划创建 #1]
-	 * @version  [还款计划创建下一步后显示的详情页]
-	 * @return   [type]
-	 */
+        $this->assign('generation',$generation);
+        $this->assign('generation3',$generation3);
+        return view("Userurl/repayment_history");
+    }
+    /**
+     * @Author   Star(794633291@qq.com)
+     * @DateTime 2017-12-25T14:10:55+0800
+     * @version  [还款计划创建 #1]
+     * @version  [还款计划创建下一步后显示的详情页]
+     * @return   [type]
+     */
 
-	public function repayment_plan_create_detail(){
-		// $this->checkToken();
-		// $order_no=$this->param['order_no'];
-		$order_no=input('order_no');
-		$data=explode('_', $order_no);
-		// print_r($data);die;
-		$this->param['uid']=$param['uid']=$data[0];
+    public function repayment_plan_create_detail(){
+        // $this->checkToken();
+        // $order_no=$this->param['order_no'];
+        $order_no=input('order_no');
+        $data=explode('_', $order_no);
+        // print_r($data);die;
+        $this->param['uid']=$param['uid']=$data[0];
         $this->param['cardId']=$param['cardId']=$data[1];
         $this->param['billMoney']=$param['billMoney']=$data[2];
         $this->param['payCount']=$param['payCount']=$data[3];
         $this->param['startDate']=$param['startDate']=$data[4];
         $this->param['endDate']=$param['endDate']=$data[5];
         $this->param['passageway']=$param['passageway']=$data[6];
-		#1判断当前通道当前卡用户有没有入网和签约
+        #1判断当前通道当前卡用户有没有入网和签约
         // 获取通道信息
        $passageway=Passageway::get($param['passageway']);
        $members=Members::haswhere('memberLogin','')->where(['member_id'=>$param['uid']])->find();
        if(!$passageway || !$members){
-       		$this->assign('data','获取数据失败，请重试。');
-       		return view("Userurl/show_error");
+            $this->assign('data','获取数据失败，请重试。');
+            return view("Userurl/show_error");
        }
        // 判断是否入网
        $member_net=MemberNet::where(['net_member_id'=>$param['uid']])->find();
@@ -288,7 +288,7 @@ class Userurl extends Controller
           $card_info=MemberCreditcard::where('card_id='.$this->param['cardId'])->find();
           if(!$card_info){
               $this->assign('data','获取数据失败，请重试。');
-       		  return view("Userurl/show_error");
+              return view("Userurl/show_error");
           }
           #获取后台费率
           $member_group_id=Members::where(['member_id'=>$this->param['uid']])->value('member_group_id');
@@ -323,7 +323,7 @@ class Userurl extends Controller
           if($Generation_result->save()==false){
               Db::rollback();
                 $this->assign('data','生成计划失败，请重试');
-       			return view("Userurl/show_error");
+                return view("Userurl/show_error");
           }
           //写入还款卡表
            $reimbur_result=new Reimbur([
@@ -333,7 +333,7 @@ class Userurl extends Controller
            if(!$reimbur_result->save()){
                 Db::rollback();
                 $this->assign('data','生成计划失败，请重试');
-       			return view("Userurl/show_error");
+                return view("Userurl/show_error");
            }
           ####################################
           #3确定每天还款金额
@@ -406,140 +406,140 @@ class Userurl extends Controller
          }else{
                Db::rollback();
                $this->assign('data','生成计划失败，请重试');
-       		   return view("Userurl/show_error");
+               return view("Userurl/show_error");
          }
         $order_no=$Generation_result->generation_id;
         // *************************************展示计划****************************************************
-		$order=array();
-		//主计划
-		$generation=Generation::with('creditcard')->where(['generation_id'=>$order_no])->find();
-		//执行计划表
-		$order=GenerationOrder::where(['order_no'=>$order_no])->order('order_time','asc')->select();
-		foreach ($order as $key => $value) {
-			$value=$value->toArray();
-			// print_r($value);die;
-			$list[$key]=$value;
-			$list[$key]['day_time']=date("m月d日",strtotime($value['order_time']));
-			$list[$key]['current_time']=date("H:i",strtotime($value['order_time']));
-		}
-		$data=[];
-		//以日期为键
-		foreach ($list as $key => $value) {
-			$data[$value['day_time']][]=$value;
-		}
-		//手续费
-		$order_pound=0;
-		// print_r($data);die;
-		//处理每日累计金额
+        $order=array();
+        //主计划
+        $generation=Generation::with('creditcard')->where(['generation_id'=>$order_no])->find();
+        //执行计划表
+        $order=GenerationOrder::where(['order_no'=>$order_no])->order('order_time','asc')->select();
+        foreach ($order as $key => $value) {
+            $value=$value->toArray();
+            // print_r($value);die;
+            $list[$key]=$value;
+            $list[$key]['day_time']=date("m月d日",strtotime($value['order_time']));
+            $list[$key]['current_time']=date("H:i",strtotime($value['order_time']));
+        }
+        $data=[];
+        //以日期为键
+        foreach ($list as $key => $value) {
+            $data[$value['day_time']][]=$value;
+        }
+        //手续费
+        $order_pound=0;
+        // print_r($data);die;
+        //处理每日累计金额
         foreach($data as $k=>$v){
-        		$data[$k]['pay']=0;
-        		$data[$k]['get']=0;
-        	foreach ($v as $key => $vv) {
-        		if($vv['order_type']==1){
-        		  $data[$k]['pay']+=$vv['order_money'];
-        		}else if($vv['order_type']==2){
-        		  $data[$k]['get']+=$vv['order_money'];
-        		}
-        		$order_pound+=$vv['order_pound'];
-        	}
+                $data[$k]['pay']=0;
+                $data[$k]['get']=0;
+            foreach ($v as $key => $vv) {
+                if($vv['order_type']==1){
+                  $data[$k]['pay']+=$vv['order_money'];
+                }else if($vv['order_type']==2){
+                  $data[$k]['get']+=$vv['order_money'];
+                }
+                $order_pound+=$vv['order_pound'];
+            }
         }
         $this->assign('uid',$param['uid']);
         $this->assign('token',$members['memberLogin']['login_token']);
-		$this->assign('order_pound',$order_pound);
-		$this->assign('generation',$generation);
-		$this->assign('order',$data);
-	  	return view("Userurl/repayment_plan_create_detail");
-	}
-	/**
-	 * @Author   Star(794633291@qq.com)
-	 * @DateTime 2017-12-25T14:10:55+0800
-	 * @version  [还款计划创建 #2]
-	 * @version  [用户还款计划确认提交页]
-	 * param   $id  为generation表主键 generation_id
-	 * @return   [type]
-	 */
-	public function repayment_plan_confirm($id){
-		$this->checkToken();
-		$GenerationOrder=GenerationOrder::order('order_money desc')->where('order_no',$id)->find();
-		$creaditcard=MemberCreditcard::where('card_bankno',$GenerationOrder->order_card)->find();
-		$this->assign('generationorder',$GenerationOrder);
-		$this->assign('creaditcard',$creaditcard);
-		return view("Userurl/repayment_plan_confirm");
-	}
-	  //确认执行还款计划
-	  //$id  为generation表主键 generation_id
-	  public function confirmPlan($id){
-		$this->checkToken();
-		$res=Generation::update(['generation_id'=>$id,'generation_state'=>2]);
-		return json_encode($res ? ['code'=>200] : ['code'=>472,'msg'=>get_status_text(472)]);
-	  }
-	  #还款计划提交成功提示页
-	  #@version  [还款计划创建 #3]
-	  #
-	  public function repayment_plan_success(){
-		return view("Userurl/repayment_plan_success");
-	  }
-	/**
-	 * @Author   Star(794633291@qq.com)
-	 * @DateTime 2017-12-25T14:10:55+0800
-	 * @version  [还款计划详情]
-	 * @return   [type]
-	 */
+        $this->assign('order_pound',$order_pound);
+        $this->assign('generation',$generation);
+        $this->assign('order',$data);
+        return view("Userurl/repayment_plan_create_detail");
+    }
+    /**
+     * @Author   Star(794633291@qq.com)
+     * @DateTime 2017-12-25T14:10:55+0800
+     * @version  [还款计划创建 #2]
+     * @version  [用户还款计划确认提交页]
+     * param   $id  为generation表主键 generation_id
+     * @return   [type]
+     */
+    public function repayment_plan_confirm($id){
+        $this->checkToken();
+        $GenerationOrder=GenerationOrder::order('order_money desc')->where('order_no',$id)->find();
+        $creaditcard=MemberCreditcard::where('card_bankno',$GenerationOrder->order_card)->find();
+        $this->assign('generationorder',$GenerationOrder);
+        $this->assign('creaditcard',$creaditcard);
+        return view("Userurl/repayment_plan_confirm");
+    }
+      //确认执行还款计划
+      //$id  为generation表主键 generation_id
+      public function confirmPlan($id){
+        $this->checkToken();
+        $res=Generation::update(['generation_id'=>$id,'generation_state'=>2]);
+        return json_encode($res ? ['code'=>200] : ['code'=>472,'msg'=>get_status_text(472)]);
+      }
+      #还款计划提交成功提示页
+      #@version  [还款计划创建 #3]
+      #
+      public function repayment_plan_success(){
+        return view("Userurl/repayment_plan_success");
+      }
+    /**
+     * @Author   Star(794633291@qq.com)
+     * @DateTime 2017-12-25T14:10:55+0800
+     * @version  [还款计划详情]
+     * @return   [type]
+     */
 
-	public function repayment_plan_detail(){
-		#1获取参数判断需不需要去签约
-		// $this->checkToken();
-		$order_no=input('order_no');
+    public function repayment_plan_detail(){
+        #1获取参数判断需不需要去签约
+        // $this->checkToken();
+        $order_no=input('order_no');
        #33展示计划页面
-		$order=array();
-		//主计划
-		$generation=Generation::with('creditcard')->where(['generation_id'=>$order_no])->find();
-		//执行计划表
-		$order=GenerationOrder::where(['order_no'=>$order_no])->order('order_time','asc')->select();
-		if(!$order){
-			echo '<li style="margin-top:13rem;text-align:center;list-style:none;font-size:1.4rem;color:#999;">暂无计划详情</li>';die;
-		}
-		$is_first=0;
-		foreach ($order as $key => $value) {
-			$value=$value->toArray();
-			$list[$key]=$value;
-			$list[$key]['day_time']=date("m月d日",strtotime($value['order_time']));
-			$list[$key]['current_time']=date("H:i",strtotime($value['order_time']));
-			if($value['order_status']=='-1' && $is_first==0 && $generation['generation_state']==2){//失败
-				$list[$key]['is_first']=1;
-				$is_first=1;
-			}
-			
-		}
-		// print_r($list);die;
-		$data=[];
-		//以日期为键
-		foreach ($list as $key => $value) {
-			$data[$value['day_time']][]=$value;
-		}
-		//手续费
-		$order_pound=0;
-		// print_r($data);die;
-		//处理每日累计金额
+        $order=array();
+        //主计划
+        $generation=Generation::with('creditcard')->where(['generation_id'=>$order_no])->find();
+        //执行计划表
+        $order=GenerationOrder::where(['order_no'=>$order_no])->order('order_time','asc')->select();
+        if(!$order){
+            echo '<li style="margin-top:13rem;text-align:center;list-style:none;font-size:1.4rem;color:#999;">暂无计划详情</li>';die;
+        }
+        $is_first=0;
+        foreach ($order as $key => $value) {
+            $value=$value->toArray();
+            $list[$key]=$value;
+            $list[$key]['day_time']=date("m月d日",strtotime($value['order_time']));
+            $list[$key]['current_time']=date("H:i",strtotime($value['order_time']));
+            if($value['order_status']=='-1' && $is_first==0 && $generation['generation_state']==2){//失败
+                $list[$key]['is_first']=1;
+                $is_first=1;
+            }
+            
+        }
+        // print_r($list);die;
+        $data=[];
+        //以日期为键
+        foreach ($list as $key => $value) {
+            $data[$value['day_time']][]=$value;
+        }
+        //手续费
+        $order_pound=0;
+        // print_r($data);die;
+        //处理每日累计金额
         foreach($data as $k=>$v){
-        		$data[$k]['pay']=0;
-        		$data[$k]['get']=0;
-        	foreach ($v as $key => $vv) {
-        		if($vv['order_type']==1){
-        		  $data[$k]['pay']+=$vv['order_money'];
-        		}else if($vv['order_type']==2){
-        		  $data[$k]['get']+=$vv['order_money'];
-        		}
-        		$order_pound+=$vv['order_pound'];
-        	}
+                $data[$k]['pay']=0;
+                $data[$k]['get']=0;
+            foreach ($v as $key => $vv) {
+                if($vv['order_type']==1){
+                  $data[$k]['pay']+=$vv['order_money'];
+                }else if($vv['order_type']==2){
+                  $data[$k]['get']+=$vv['order_money'];
+                }
+                $order_pound+=$vv['order_pound'];
+            }
         }
         // print_r($data);die;
-		$this->assign('order_pound',$order_pound);
-		$this->assign('generation',$generation);
-		$this->assign('order',$data);
-	  	return view("Userurl/repayment_plan_detail");
-	}
-	//根据开始时间结束时间随机每天刷卡时间---有问题
+        $this->assign('order_pound',$order_pound);
+        $this->assign('generation',$generation);
+        $this->assign('order',$data);
+        return view("Userurl/repayment_plan_detail");
+    }
+    //根据开始时间结束时间随机每天刷卡时间---有问题
       public function get_random_time($day,$count,$begin=9,$end=14){
         //如果日期为今天，刷卡时间大于当前小时
         $now_h=date('Y-m-d',time());
@@ -644,140 +644,140 @@ class Userurl extends Controller
            }
            return $arr;
       }
-	/**
-	 * @Author   Star(794633291@qq.com)
-	 * @DateTime 2017-12-25T14:10:55+0800
-	 * @version  [消息]
-	 * @return   [type]
-	 */
-	 public function notify(){
-		 $this->checkToken();
-	 	$count=Notice::where(['notice_recieve'=>$this->param['uid'],'notice_status'=>0])->count();
-		$this->assign('count',$count);
-	  	return view("Userurl/notify");
-	 }
-	/**
-	 * @Author   Star(794633291@qq.com)
-	 * @DateTime 2017-12-25T14:10:55+0800
-	 * @version  [平台公告列表]
-	 * @return   [type]
-	 */
-	public function notify_list(){
-		$this->checkToken();
-		$notice=Notice::where(['notice_recieve'=>$this->param['uid']])->order('notice_createtime desc')->select();
-		if(!$notice){
-			return view("Userurl/no_data");
-		}
-		$this->assign('notice',$notice);
-	  	return view("Userurl/notify_list");
-	}
-	/**
-	 * @Author   Star(794633291@qq.com)
-	 * @DateTime 2017-12-26T16:29:39+0800
-	 * @version  [version]
-	 * @param    [type]                   $id [announcement_id]
-	 * @return   [type]                       [平台公告详情]
-	 */
-	public function notify_list_detail($id){
-		$this->checkToken();
-		$notice=Notice::get($id);
-		$notice->save(['notice_status'=>1]);
-		$this->assign('notice',$notice);
-	  	return view("Userurl/notify_list_detail");
-	}
-	/**
-	 * @Author   Star(794633291@qq.com)
-	 * @DateTime 2017-12-25T14:10:55+0800
-	 * @version  [动账交易列表]
-	 * @return   [type]
-	 */
-	public function deal_list(){
-		// $this->checkToken();
-		$this->param['uid']=input("uid");
-		$page = empty(input("page"))?1:input("page");
-		if($_POST){
-			$start = ($page-1)*10;
-			$CashOrder=CashOrder::with("passageway")->where(['order_member'=>$this->param['uid'],'order_money' => ['<>' , 0]])->order('order_id desc')->limit($start,10)->select();
+    /**
+     * @Author   Star(794633291@qq.com)
+     * @DateTime 2017-12-25T14:10:55+0800
+     * @version  [消息]
+     * @return   [type]
+     */
+     public function notify(){
+         $this->checkToken();
+        $count=Notice::where(['notice_recieve'=>$this->param['uid'],'notice_status'=>0])->count();
+        $this->assign('count',$count);
+        return view("Userurl/notify");
+     }
+    /**
+     * @Author   Star(794633291@qq.com)
+     * @DateTime 2017-12-25T14:10:55+0800
+     * @version  [平台公告列表]
+     * @return   [type]
+     */
+    public function notify_list(){
+        $this->checkToken();
+        $notice=Notice::where(['notice_recieve'=>$this->param['uid']])->order('notice_createtime desc')->select();
+        if(!$notice){
+            return view("Userurl/no_data");
+        }
+        $this->assign('notice',$notice);
+        return view("Userurl/notify_list");
+    }
+    /**
+     * @Author   Star(794633291@qq.com)
+     * @DateTime 2017-12-26T16:29:39+0800
+     * @version  [version]
+     * @param    [type]                   $id [announcement_id]
+     * @return   [type]                       [平台公告详情]
+     */
+    public function notify_list_detail($id){
+        $this->checkToken();
+        $notice=Notice::get($id);
+        $notice->save(['notice_status'=>1]);
+        $this->assign('notice',$notice);
+        return view("Userurl/notify_list_detail");
+    }
+    /**
+     * @Author   Star(794633291@qq.com)
+     * @DateTime 2017-12-25T14:10:55+0800
+     * @version  [动账交易列表]
+     * @return   [type]
+     */
+    public function deal_list(){
+        // $this->checkToken();
+        $this->param['uid']=input("uid");
+        $page = empty(input("page"))?1:input("page");
+        if($_POST){
+            $start = ($page-1)*10;
+            $CashOrder=CashOrder::with("passageway")->where(['order_member'=>$this->param['uid'],'order_money' => ['<>' , 0]])->order('order_id desc')->limit($start,10)->select();
 
-			foreach ($CashOrder as $key => $value) {
-			 	$CashOrder[$key]["bank_ons"] = substr($value['order_creditcard'], -4);
-			 	$CashOrder[$key]['add_time'] = date("m-d H:s",strtotime($value['order_add_time']));
-			}
-			echo json_encode(["data" => $CashOrder, "page" => $page+1]);die;
-		}
-		$CashOrder=CashOrder::with("passageway")->where(['order_member'=>$this->param['uid'],'order_money' => ['<>' , 0]])->order('order_id desc')->limit(0,10)->select();
-		$count = CashOrder::where(['order_member'=>$this->param['uid'],'order_money' => ['<>' , 0]])->order('order_id desc')->count();
-			$pages = ceil($count/10);
-			#截取银行卡号
-		foreach ($CashOrder as $key => $value) {
-			$CashOrder[$key]["bank_ons"] = substr($value['order_creditcard'], -4);
-			$CashOrder[$key]['add_time'] = date("m-d H:s",strtotime($value['order_add_time']));
-		}
-		if(!$CashOrder){
-			return view("Userurl/no_data");
-		}
-		$this->assign("pages",$pages);
-		$this->assign('data',$CashOrder);
-	  	return view("Userurl/deal_list");
-	}
-	/**
-	 * @Author   Star(794633291@qq.com)
-	 * @DateTime 2017-12-25T14:10:55+0800
-	 * @version  [平台福利列表]
-	 * @return   [type]
-	 */
-	public function welfare_list(){
-		$this->checkToken();
-		//取Recomment内容
-		$Recomment=Recomment::all(['recomment_member_id'=>$this->param['uid']]);
-		$data=[];
-		//转存
-		foreach ($Recomment as $k => $v) {
-			$data[$k]['recomment_money']=$v['recomment_money'];
-			$data[$k]['recomment_desc']=$v['recomment_desc'];
-			$data[$k]['recomment_creat_time']=$v['recomment_creat_time'];
-		}
-		if(!$data){
-			return view("Userurl/no_data");
-		}
-		//Todo 对应事件数据 被推荐用户  操作
-		$this->assign('data',$data);
-	  	return view("Userurl/welfare_list");
-	}
-	/**
-	 * @Author   Star(794633291@qq.com)
-	 * @DateTime 2017-12-25T14:10:55+0800
-	 * @version  [注册页面]
-	 * @return   [type]
-	 */
-	public function register(){
-		$this->param=request()->param();
-		//是否携带手机号
-		if(!isset($this->param['recomment']))
-			return 'miss telephone number';
-		$recomment=$this->param['recomment'];
-		//手机号格式
-		if(!preg_match('/1\d{10}/', $recomment))
-			return 'incorrect telephone number';
-		$recommentid=Members::get(['member_mobile'=>$recomment]);
-		//该手机号是否存在
-		if(!$recommentid)
-			return 'recomment telephone isnt exist';
-		$this->assign('tel',$recomment);
-	  	return view("Userurl/register");
-	}
-	/**
-	 * @Author   Star(794633291@qq.com)
-	 * @DateTime 2017-12-25T14:10:55+0800
-	 * @version  [下载页面]
-	 * @return   [type]
-	 */
-	public function download(){
-		$data['android_url']=Appversion::where(['version_type'=>'android','version_state'=>1])->value('version_link');
-		$data['ios_url']=Appversion::where(['version_type'=>'ios','version_state'=>1])->value('version_link');
-		$this->assign('data',$data);
-	  	return view("Userurl/download");
-	}
+            foreach ($CashOrder as $key => $value) {
+                $CashOrder[$key]["bank_ons"] = substr($value['order_creditcard'], -4);
+                $CashOrder[$key]['add_time'] = date("m-d H:s",strtotime($value['order_add_time']));
+            }
+            echo json_encode(["data" => $CashOrder, "page" => $page+1]);die;
+        }
+        $CashOrder=CashOrder::with("passageway")->where(['order_member'=>$this->param['uid'],'order_money' => ['<>' , 0]])->order('order_id desc')->limit(0,10)->select();
+        $count = CashOrder::where(['order_member'=>$this->param['uid'],'order_money' => ['<>' , 0]])->order('order_id desc')->count();
+            $pages = ceil($count/10);
+            #截取银行卡号
+        foreach ($CashOrder as $key => $value) {
+            $CashOrder[$key]["bank_ons"] = substr($value['order_creditcard'], -4);
+            $CashOrder[$key]['add_time'] = date("m-d H:s",strtotime($value['order_add_time']));
+        }
+        if(!$CashOrder){
+            return view("Userurl/no_data");
+        }
+        $this->assign("pages",$pages);
+        $this->assign('data',$CashOrder);
+        return view("Userurl/deal_list");
+    }
+    /**
+     * @Author   Star(794633291@qq.com)
+     * @DateTime 2017-12-25T14:10:55+0800
+     * @version  [平台福利列表]
+     * @return   [type]
+     */
+    public function welfare_list(){
+        $this->checkToken();
+        //取Recomment内容
+        $Recomment=Recomment::all(['recomment_member_id'=>$this->param['uid']]);
+        $data=[];
+        //转存
+        foreach ($Recomment as $k => $v) {
+            $data[$k]['recomment_money']=$v['recomment_money'];
+            $data[$k]['recomment_desc']=$v['recomment_desc'];
+            $data[$k]['recomment_creat_time']=$v['recomment_creat_time'];
+        }
+        if(!$data){
+            return view("Userurl/no_data");
+        }
+        //Todo 对应事件数据 被推荐用户  操作
+        $this->assign('data',$data);
+        return view("Userurl/welfare_list");
+    }
+    /**
+     * @Author   Star(794633291@qq.com)
+     * @DateTime 2017-12-25T14:10:55+0800
+     * @version  [注册页面]
+     * @return   [type]
+     */
+    public function register(){
+        $this->param=request()->param();
+        //是否携带手机号
+        if(!isset($this->param['recomment']))
+            return 'miss telephone number';
+        $recomment=$this->param['recomment'];
+        //手机号格式
+        if(!preg_match('/1\d{10}/', $recomment))
+            return 'incorrect telephone number';
+        $recommentid=Members::get(['member_mobile'=>$recomment]);
+        //该手机号是否存在
+        if(!$recommentid)
+            return 'recomment telephone isnt exist';
+        $this->assign('tel',$recomment);
+        return view("Userurl/register");
+    }
+    /**
+     * @Author   Star(794633291@qq.com)
+     * @DateTime 2017-12-25T14:10:55+0800
+     * @version  [下载页面]
+     * @return   [type]
+     */
+    public function download(){
+        $data['android_url']=Appversion::where(['version_type'=>'android','version_state'=>1])->value('version_link');
+        $data['ios_url']=Appversion::where(['version_type'=>'ios','version_state'=>1])->value('version_link');
+        $this->assign('data',$data);
+        return view("Userurl/download");
+    }
 
   /**
    * @Author   杨成志(3115317085@qq.com)
@@ -798,7 +798,7 @@ class Userurl extends Controller
    * @return   [type]
    */
   public function web_marketing_media_library(){
-  	$this->assign("name",System::getName("sitename"));
+    $this->assign("name",System::getName("sitename"));
     $generalizelist =  Generalize::generalizelist();
     $this->assign("generalizelist",$generalizelist);
     return view("api/logic/web_marketing_media_library");
@@ -820,10 +820,10 @@ class Userurl extends Controller
     $phoneInfo = CustomerService::customerinfo("电话");
     $this->assign("phoneInfo",$phoneInfo);
 
-  	
-  	$server['working_hours'] =  System::getName('working_hours');
-  	$server['phone'] = System::getName('contact_tel');//公司联系电话
-  	$this->assign("server",$server);
+    
+    $server['working_hours'] =  System::getName('working_hours');
+    $server['phone'] = System::getName('contact_tel');//公司联系电话
+    $this->assign("server",$server);
     return $this->fetch("api/logic/web_contact_us");
   }
   /**
@@ -847,11 +847,11 @@ class Userurl extends Controller
    * @return [type] [description]
    */
   public function share_link_list(){
-	$this->checkToken();
-	$phone=Members::get($this->param['uid']);
-	$phone=$phone->member_mobile;
-	$url='http://'.$_SERVER['HTTP_HOST'].'/api/userurl/gotoregister/recomment/'.$phone;
-	$this->assign('url',$url);
+    $this->checkToken();
+    $phone=Members::get($this->param['uid']);
+    $phone=$phone->member_mobile;
+    $url='http://'.$_SERVER['HTTP_HOST'].'/api/userurl/gotoregister/recomment/'.$phone;
+    $this->assign('url',$url);
     $list = Share::all();
     $this->assign("name",System::getName("sitename"));
     $this->assign("list",$list);
@@ -863,250 +863,252 @@ class Userurl extends Controller
    * @return [type] [description]
    */
   public function share_link(){
-	$this->checkToken();
-	$phone=Members::get($this->param['uid']);
-	$phone=$phone->member_mobile;
-	$url='http://'.$_SERVER['HTTP_HOST'].'/api/userurl/register/recomment/'.$phone;
-	$this->assign('url',$url);
+    $this->checkToken();
+    $phone=Members::get($this->param['uid']);
+    $phone=$phone->member_mobile;
+    $url='http://'.$_SERVER['HTTP_HOST'].'/api/userurl/register/recomment/'.$phone;
+    $this->assign('url',$url);
     return view("Userurl/share_link");
   }
   #分享的注册页 只有一个按钮的那个
   public function gotoregister(){
-  	$this->param=request()->param();
-  	#鑫鑫钱柜ngix报错 改用id查询src 兼容以前链接
-  	if(isset($this->param['share_thumb'])){
-	  	$share_thumb=preg_replace('/~/', '/', $this->param['share_thumb']);
-  	}else{
-	  	$Share=Share::get($this->param['share_id']);
-	  	$share_thumb=$Share->share_thumb;
-  	}
-  	$url='http://'.$_SERVER['HTTP_HOST'].'/api/userurl/register/recomment/'.$this->param['recomment'];
-	$this->assign('url',$url);
-	$this->assign('share_thumb',$share_thumb);
-  	return view("Userurl/gotoregister");
+    $this->param=request()->param();
+    #鑫鑫钱柜ngix报错 改用id查询src 兼容以前链接
+    if(isset($this->param['share_thumb'])){
+        $share_thumb=preg_replace('/~/', '/', $this->param['share_thumb']);
+    }else{
+        $Share=Share::get($this->param['share_id']);
+        $share_thumb=$Share->share_thumb;
+    }
+    $url='http://'.$_SERVER['HTTP_HOST'].'/api/userurl/register/recomment/'.$this->param['recomment'];
+    $this->assign('url',$url);
+    $this->assign('share_thumb',$share_thumb);
+    return view("Userurl/gotoregister");
   }
   #费率说明
   public function my_rates(){
-  	// $this->param['uid']=26;
+    // $this->param['uid']=26;
 
-  	// $passageway=Passageway::where(['passageway_state'=>1,'passageway_also'=>1])->select();
-  	// var_dump($passageway);die;
-  	 #获取所有通道
-  	#获取所有税率
-  	// $also=PassagewayItem::haswhere('passageway',['passageway_state'=>1])->select();
-  	$also=db('passageway')->where(['passageway_state'=>1])->order('passageway_also')->select();
-  	foreach ($also as $k => $v) {
-  		$also[$k]['details']=db('passageway_item')->alias('i')
-  			->join('member_group g','i.item_group=g.group_id')
-  			->where('i.item_passageway',$v['passageway_id'])->select();
-  	}
-  	$this->assign('also',$also);
-  	return view("Userurl/my_rates");
+    // $passageway=Passageway::where(['passageway_state'=>1,'passageway_also'=>1])->select();
+    // var_dump($passageway);die;
+     #获取所有通道
+    #获取所有税率
+    // $also=PassagewayItem::haswhere('passageway',['passageway_state'=>1])->select();
+    $also=db('passageway')->where(['passageway_state'=>1])->order('passageway_also')->select();
+    foreach ($also as $k => $v) {
+        $also[$k]['details']=db('passageway_item')->alias('i')
+            ->join('member_group g','i.item_group=g.group_id')
+            ->where('i.item_passageway',$v['passageway_id'])->select();
+    }
+    $this->assign('also',$also);
+    return view("Userurl/my_rates");
   }
   #盈利模式说明
   public function explain(){
-  		$description=Article::hasWhere('articleCategorys',['category_name'=>'盈利模式说明'])->join("wt_article_data","data_article=article_id")->field("data_text")->find();
-  		$this->assign('data',$description);
-	  	return view("Userurl/explain");
+        $description=Article::hasWhere('articleCategorys',['category_name'=>'盈利模式说明'])->join("wt_article_data","data_article=article_id")->field("data_text")->find();
+        $this->assign('data',$description);
+        return view("Userurl/explain");
   }
   #关于我们
   public function about_us(){
-  	$data=Page::get(1);
-  	$server['weixin']=CustomerService::where('service_title','微信')->find();
-  	#资格证书
-  	$datas = Page::get(4);
-  	$this->assign("datas",$datas);
-  	$server['qq']=CustomerService::where('service_title','QQ')->find();
+    $data=Page::get(1);
+    $server['weixin']=CustomerService::where('service_title','微信')->find();
+    #资格证书
+    $datas = Page::get(4);
+    $this->assign("datas",$datas);
+    $server['qq']=CustomerService::where('service_title','QQ')->find();
 
-  	$server['tel']=CustomerService::where('service_title','电话')->find();
-  	$server['company_address'] = System::getName('company_address');
-  	$server['working_hours'] = System::getName('working_hours');
-  	$server['phone'] = System::getName('contact_tel');//公司联系电话
-  	$this->assign('data', $data);
-  	$this->assign('server', $server);
-  	return view("Userurl/about_us");
+    $server['tel']=CustomerService::where('service_title','电话')->find();
+    $server['company_address'] = System::getName('company_address');
+    $server['working_hours'] = System::getName('working_hours');
+    $server['phone'] = System::getName('contact_tel');//公司联系电话
+    $this->assign('data', $data);
+    $this->assign('server', $server);
+    return view("Userurl/about_us");
   }
   /**
    * [web_freshman_guide 新手指引]
    * @return [type] [description]
    */
    public function web_freshman_guide(){
-   		// $class = NoviceClasss::all();
-   		// #还款列表
-   		// foreach ($class as $key => $value) {
-   		// 	$class[$key]['repaymentList'] = MemberNovice::lists($value['novice_class_id']);
-   		// }
-   		// $this->assign("class",$class);
-    	return view("api/logic/web_freshman_guide");
+        // $class = NoviceClasss::all();
+        // #还款列表
+        // foreach ($class as $key => $value) {
+        //  $class[$key]['repaymentList'] = MemberNovice::lists($value['novice_class_id']);
+        // }
+        // $this->assign("class",$class);
+        return view("api/logic/web_freshman_guide");
   }
   /**
   *@version [instructicons_detail 新手指引详情页面]
   *@author 杨成志 【3115317085@qq.com】
   */
   public function instructions_detail(){
-  	$title = input('title');
-  	$this->assign("title",$title);
-  	$info = MemberNovice::where(['novice_name' => $title])->find();
-  	$this->assign("info",$info);
-  	return view('api/logic/instructions_detail');
+    $title = input('title');
+    $this->assign("title",$title);
+    $info = MemberNovice::where(['novice_name' => $title])->find();
+    $this->assign("info",$info);
+    return view('api/logic/instructions_detail');
   }
   #信用卡说明
   public function card_description(){
-  	$CreditCard = new CreditCard();
-  	$list = $CreditCard->where(['bank_passageway_id'=>Request::instance()->param('id')])->select();
-  	$this->assign('list',$list);
-  	return view("api/logic/card_description");
+    $CreditCard = new CreditCard();
+    $list = $CreditCard->where(['bank_passageway_id'=>Request::instance()->param('id')])->select();
+    $this->assign('list',$list);
+    return view("api/logic/card_description");
   }
   /**
   *@version particulars 收支明细
   *@author 杨成志 （3115317085@qq.com）
   */
   public function particulars($month=null){
-    	if(!$month)$month=date('Y-m');
+        if(!$month)$month=date('Y-m');
       //月初
       $monthstart=strtotime($month);
       //月末
       $monthend=strtotime(date('Y-m',strtotime('+1 month',strtotime($month))));
-  	  $data=[];
-    	$data['in']=0;
-    	$data['out']=0;
-    	//手动下滑获取数据
-    	if($_POST){
-    		$page = isset($_POST['page'])?$_POST['page']:1;
-    		#获取收支明细数据
-    		$result = WalletLog::pages(input('uid'),$page,$data,$month,$monthstart,$monthend);
-    		$list = $result['list'];
-    		exit(json_encode($list));
-    	}
-  	   $this->checkToken();
-   	  #获取收支明细数据
-    	$result = WalletLog::pages($this->param['uid'],1,$data,$month,$monthstart,$monthend);
-    	//用户id
-    	$this->assign("uid",$this->param['uid']);
-    	#当前总共多少页
-    	$this->assign("allpage" , $result['allpage']);
-    	$this->assign('data' , $result['data']);
-    	$this->assign('list' , $result['list']);
-    	return view("Userurl/particulars");
+      $data=[];
+        $data['in']=0;
+        $data['out']=0;
+        //手动下滑获取数据
+        if($_POST){
+            $page = isset($_POST['page'])?$_POST['page']:1;
+            #获取收支明细数据
+            $result = WalletLog::pages(input('uid'),$page,$data,$month,$monthstart,$monthend);
+            $list = $result['list'];
+            exit(json_encode($list));
+        }
+       $this->checkToken();
+      #获取收支明细数据
+        $result = WalletLog::pages($this->param['uid'],1,$data,$month,$monthstart,$monthend);
+        //用户id
+        $this->assign("uid",$this->param['uid']);
+        #当前总共多少页
+        $this->assign("allpage" , $result['allpage']);
+        $this->assign('data' , $result['data']);
+        $this->assign('list' , $result['list']);
+        return view("Userurl/particulars");
   }
   #账单详情
   # log_id  wallet_log_id
   public function bills_detail($log_id){
-  	$this->checkToken();
-  	$wallet_log=db('wallet_log')->where('log_id',$log_id)->find();
-  	switch ($wallet_log['log_relation_type']){
-  		//分润分佣
-  		case 1:
-  			$commission=db('commission')->alias('c')
-  				->join('member m','c.commission_childen_member=m.member_id')
-  				->where('c.commission_id',$wallet_log['log_relation_id'])
-  				->find();
-  			if($commission){
-	  			$tel=$commission['member_mobile'];
-	  			$commission['member_mobile']=substr($tel,0,3).'****'.substr($tel,7);
-	  			$this->assign('commission',$commission);
-  			}
-  			break;
-  		//提现操作
-  		case 2:
-  			$withdraw=db('withdraw')->where('withdraw_id',$wallet_log['log_relation_id'])->find();
-  			if($withdraw)$withdraw['info']=state_info($withdraw['withdraw_state']);
-  			$this->assign('withdraw',$withdraw);
-  			break;
-  			//推荐红包
-  		case 5:
-  			$recomment=db('recomment')->alias('r')
-  				->join('member m','r.recomment_children_member=m.member_id')
-  				->where('r.recomment_id',$wallet_log['log_relation_id'])
-  				->find();
-  			if($recomment){
-	  			$tel=$recomment['member_mobile'];
-	  			$recomment['member_mobile']=substr($tel,0,3).'****'.substr($tel,7);
-	 			$this->assign('recomment',$recomment);
-  			}
-  		default:
-  			# code...
-  			break;
-  	}
-  	$this->assign('wallet_log',$wallet_log);
-  	return view("Userurl/bills_detail");
+    $this->checkToken();
+    $wallet_log=db('wallet_log')->where('log_id',$log_id)->find();
+    switch ($wallet_log['log_relation_type']){
+        //分润分佣
+        case 1:
+            $commission=db('commission')->alias('c')
+                ->join('member m','c.commission_childen_member=m.member_id')
+                ->where('c.commission_id',$wallet_log['log_relation_id'])
+                ->find();
+            if($commission){
+                $tel=$commission['member_mobile'];
+                $commission['member_mobile']=substr($tel,0,3).'****'.substr($tel,7);
+                $this->assign('commission',$commission);
+            }
+            break;
+        //提现操作
+        case 2:
+            $withdraw=db('withdraw')->where('withdraw_id',$wallet_log['log_relation_id'])->find();
+            if($withdraw)$withdraw['info']=state_info($withdraw['withdraw_state']);
+            $this->assign('withdraw',$withdraw);
+            break;
+            //推荐红包
+        case 5:
+            $recomment=db('recomment')->alias('r')
+                ->join('member m','r.recomment_children_member=m.member_id')
+                ->where('r.recomment_id',$wallet_log['log_relation_id'])
+                ->find();
+            if($recomment){
+                $tel=$recomment['member_mobile'];
+                $recomment['member_mobile']=substr($tel,0,3).'****'.substr($tel,7);
+                $this->assign('recomment',$recomment);
+            }
+        default:
+            # code...
+            break;
+    }
+    $this->assign('wallet_log',$wallet_log);
+    return view("Userurl/bills_detail");
   }
   # 荣邦 开通快捷支付不返回html时 调用本页面 
   # memberId 用户id passwayId 通道id
   # treatycode 协议号 smsseq 短信验证码流水号
   public function passway_rongbang_openpay($memberId,$passwayId,$treatycode,$smsseq){
-  	if(request()->ispost()){
-  		$authcode=request()->param()['authcode'];
-  		if($authcode){
-		  	$Membernets=new con\Membernets($memberId,$passwayId);
-		  	$result=$Membernets->rongbang_confirm_openpay($treatycode,$smsseq,$authcode);
-		  	return is_array($result) ? 1 : $result;
-		  }else{
-		  	return 2;
-		  }
-  	}
-  	$this->assign('memberId',$memberId);
-  	$this->assign('passwayId',$passwayId);
-  	$this->assign('treatycode',$treatycode);
-  	$this->assign('smsseq',$smsseq);
-  	return view("Userurl/passway_rongbang_openpay");
+    if(request()->ispost()){
+        $authcode=request()->param()['authcode'];
+        if($authcode){
+            $Membernets=new con\Membernets($memberId,$passwayId);
+            $result=$Membernets->rongbang_confirm_openpay($treatycode,$smsseq,$authcode);
+            return is_array($result) ? 1 : $result;
+          }else{
+            return 2;
+          }
+    }
+    $this->assign('memberId',$memberId);
+    $this->assign('passwayId',$passwayId);
+    $this->assign('treatycode',$treatycode);
+    $this->assign('smsseq',$smsseq);
+    return view("Userurl/passway_rongbang_openpay");
   }
   # 荣邦 申请快捷支付订单不返回html时 调用本页面 
   # memberId 用户id passwayId 通道id
   # ordercode 订单号 card_id 卡号
 
   public function passway_rongbang_pay($memberId,$passwayId,$ordercode,$card_id){
-  	if(request()->ispost()){
-  		$authcode=request()->param()['authcode'];
-  		if($authcode){
-		  	$Membernets=new con\Membernets($memberId,$passwayId);
-		  	$result=$Membernets->rongbang_confirm_pay($ordercode,$card_id,$authcode);
-		  	return is_array($result) ? 1 : $result;
-		  }else{
-		  	return 2;
-		  }
-  	}
-  	#用户信息
-  	$info = Members::with("memberCashcard")->where(['member_id' => $memberId])->find();
-  	$money=db('cash_order')->where('order_thead_no',$ordercode)->value('order_money');
-  	$creditcard = MemberCreditcard::where(['card_id' => $card_id])->find();
-  	$this->assign("creditcard",$creditcard);
-  	$this->assign("member_info",$info);
-  	$this->assign('memberId',$memberId);
-  	$this->assign('money',$money);
-  	$this->assign('passwayId',$passwayId);
-  	$this->assign('ordercode',$ordercode);
-  	$this->assign('card_id',$card_id);
-  	return view("Userurl/passway_rongbang_pay");
+    if(request()->ispost()){
+        $authcode=request()->param()['authcode'];
+        if($authcode){
+            $Membernets=new con\Membernets($memberId,$passwayId);
+            $result=$Membernets->rongbang_confirm_pay($ordercode,$card_id,$authcode);
+            return is_array($result) ? 1 : $result;
+          }else{
+            return 2;
+          }
+    }
+    #用户信息
+    $info = Members::with("memberCashcard")->where(['member_id' => $memberId])->find();
+    $money=db('cash_order')->where('order_thead_no',$ordercode)->value('order_money');
+    $creditcard = MemberCreditcard::where(['card_id' => $card_id])->find();
+    $this->assign("creditcard",$creditcard);
+    $this->assign("member_info",$info);
+    $this->assign('memberId',$memberId);
+    $this->assign('money',$money);
+    $this->assign('passwayId',$passwayId);
+    $this->assign('ordercode',$ordercode);
+    $this->assign('card_id',$card_id);
+    return view("Userurl/passway_rongbang_pay");
   }
 
   #荣邦支付回调
   public function passway_rongbang_paycallback(){
-  	$param=request()->param();
-  	#荣邦通道键位
-  	$passageway_no=db('passageway')->column("passageway_id,passageway_no");
-  	$userinfo=db('member_net')->where('net_member_id',$param['member_id'])
-  		->value($passageway_no[$param['passageway_id']]);
-  	// $userinfo="402628739,1756961550411722,9abphqw0bcz2vr3r,zeo3qvxb0nwuobk5619hss25h1dsremg,许成成11599";
-	#信息顺序 0、appid 1、companycode 2、secretkey 3、session 4、companyname
-	  $userinfo=explode(',', $userinfo);
-  	$key=$userinfo[2];
-  	// return rongbang_aes_decode($key,rongbang_aes($key,$param['test']));
-  	$data = rongbang_aes_decode($key,$param['Data']);
-  	// var_dump($data);die;
-  	if($data=='err'){
-  		#失败日志
-  		trace("rongbang_aes_decode_err");
-  	}else{
-  		$data=json_decode($data,1);
-  		if($data['respcode']==2){
-  			$cash_order=CashOrder::where('order_no',$param['order_no'])->find();
-  			#仅对待支付状态下的订单进行更新并分润
-  			if($cash_order->order_state==1){
-  				$cash_order->order_state=2;
-				//分润
-			    $fenrun= new con\Commission();
-			    $fenrun_result=$fenrun->MemberFenRun($param['member_id'],$data['amount'],$param['passageway_id'],1,'快捷支付手续费分润',$cash_order->order_id);
+    $param=request()->param();
+    #荣邦通道键位
+    $passageway_no=db('passageway')->column("passageway_id,passageway_no");
+    $userinfo=db('member_net')->where('net_member_id',$param['member_id'])
+        ->value($passageway_no[$param['passageway_id']]);
+    // $userinfo="402628739,1756961550411722,9abphqw0bcz2vr3r,zeo3qvxb0nwuobk5619hss25h1dsremg,许成成11599";
+    #信息顺序 0、appid 1、companycode 2、secretkey 3、session 4、companyname
+      $userinfo=explode(',', $userinfo);
+    $key=$userinfo[2];
+    // return rongbang_aes_decode($key,rongbang_aes($key,$param['test']));
+    $data = rongbang_aes_decode($key,$param['Data']);
+    // var_dump($data);die;
+    if($data=='err'){
+        #失败日志
+        trace("rongbang_aes_decode_err");
+    }else{
+        $data=json_decode($data,1);
+            $cash_order=CashOrder::where('order_no',$param['order_no'])->find();
+        if($data['respcode']==2){
+          #查看是否有该订单的分润记录
+          $hasCommission=db('commission')->where(['commission_from'=>$cash_order->order_id,'commission_type'=>1])->count();
+            #仅对待支付状态下的订单进行更新并分润
+            if($cash_order->order_state==1 && $hasCommission == 0){
+                $cash_order->order_state=2;
+                //分润
+                $fenrun= new con\Commission();
+                $fenrun_result=$fenrun->MemberFenRun($param['member_id'],$data['amount'],$param['passageway_id'],1,'快捷支付手续费分润',$cash_order->order_id);
           if($fenrun_result['code']=="200"){
             $cash_order->order_fen=$fenrun_result['leftmoney'];
             $cash_order->order_buckle=$passwayitem->item_charges/100;
@@ -1117,86 +1119,86 @@ class Userurl extends Controller
             $cash_order->order_platform=$order->order_charge-($order->order_money*$passway->passageway_rate/100)+$passwayitem->item_charges/100-$passway->passageway_income;
           }
           $cash_order->save();
-  			}else{
-  				trace("rongbang_repeat_request,not fenrun");
-  			}
-  		}else{
-  			$cash_order->order_state=-1;
-  			$cash_order->order_desc.=$data['respmsg'];
-  			$cash_order->save();
-  		}
-  	}
-  	//按文档要求返回
-  	return json_encode(['message'=>'ok','response'=>'00']);
+            }else{
+                trace("rongbang_repeat_request,not fenrun");
+            }
+        }else{
+            $cash_order->order_state=-1;
+            $cash_order->order_desc.=$data['respmsg'];
+            $cash_order->save();
+        }
+    }
+    //按文档要求返回
+    return json_encode(['message'=>'ok','response'=>'00']);
   }
   #为无需短信确认的情况 直接显示一个成功页面
   public function passway_success(){
-  	return view("Userurl/passway_success");
+    return view("Userurl/passway_success");
   }
   # 开通快捷支付 前台回调成功页面
   public function passway_open_success(){
-  	return view("Userurl/passway_open_success");
+    return view("Userurl/passway_open_success");
   }
   #取消还款计划【整体】
   public function cancel_repayment($generation_id){
-  	$membernet=new con\Membernet();
-  	return json_encode($membernet->cancle_plan($generation_id));
+    $membernet=new con\Membernet();
+    return json_encode($membernet->cancle_plan($generation_id));
   }
   //重新执行某个计划
   public function reset_one_repayment($plan_id){
-  		$membernet=new con\Membernet();
-  		$res=$membernet->action_single_plan($plan_id);
-  		echo $res;die;
+        $membernet=new con\Membernet();
+        $res=$membernet->action_single_plan($plan_id);
+        echo $res;die;
   }
   //代还，用户签约界面
   public function signed($passageway_id,$cardId,$order_no){
-  		#信用卡信息
-  		$data['MemberCreditcard']=$MemberCreditcard=MemberCreditcard::where(['card_id'=>$cardId])->find();
-  		#通道信息
-  		$data['passageway']=$passageway=Passageway::get($passageway_id);
-  		#通道入网信息
-  		$member_net=MemberNet::where(['net_member_id'=>$MemberCreditcard['card_member_id']])->find();
-  		#用户基本信息
-  		$data['Members']=$Members=Members::haswhere('memberLogin','')->where(['member_id'=>$MemberCreditcard['card_member_id']])->find();
-  		#登录信息
-  		// if(!$MemberCreditcard || !$passageway || $member_net){
-  		// 	exit('获取信息失败');
-  		// }
-  		$this->assign('order_no',$order_no);
-  		$this->assign('passageway_id',$passageway_id);
-  		$this->assign('data',$data);
-  		return view("Userurl/signed");
+        #信用卡信息
+        $data['MemberCreditcard']=$MemberCreditcard=MemberCreditcard::where(['card_id'=>$cardId])->find();
+        #通道信息
+        $data['passageway']=$passageway=Passageway::get($passageway_id);
+        #通道入网信息
+        $member_net=MemberNet::where(['net_member_id'=>$MemberCreditcard['card_member_id']])->find();
+        #用户基本信息
+        $data['Members']=$Members=Members::haswhere('memberLogin','')->where(['member_id'=>$MemberCreditcard['card_member_id']])->find();
+        #登录信息
+        // if(!$MemberCreditcard || !$passageway || $member_net){
+        //  exit('获取信息失败');
+        // }
+        $this->assign('order_no',$order_no);
+        $this->assign('passageway_id',$passageway_id);
+        $this->assign('data',$data);
+        return view("Userurl/signed");
   }
   #金易付验证码页面
   public function jinyifu($memberId,$passagewayId,$cardId,$price){
 
-  	if(request()->ispost()){
-  		// var_dump(Request::instance()->post('passagewayId'));die;
-  		$jinyifu=new \app\index\controller\CashOut(Request::instance()->post('memberId'),Request::instance()->post('passwayId'),Request::instance()->post('cardId'));
-  		$res=$jinyifu->jinyifu_pay(Request::instance()->post());
+    if(request()->ispost()){
+        // var_dump(Request::instance()->post('passagewayId'));die;
+        $jinyifu=new \app\index\controller\CashOut(Request::instance()->post('memberId'),Request::instance()->post('passwayId'),Request::instance()->post('cardId'));
+        $res=$jinyifu->jinyifu_pay(Request::instance()->post());
 
-  		return $res;
-  	}
-  	//$member=Members::with('memberCashcard,memberCreditcard')->where(['member_id'=>$memberId,'card_id'])->find();
-  	$info=Members::haswhere('memberCreditcard',['card_id'=>$cardId])->where(['member_id'=>$memberId])->find();
-  	// //var_dump($info::getLastSql());
-  	// dump($info->memberCreditcard->card_bankname);
-  	// dump($info->memberCashcard->card_bankname);
-  	// die;
+        return $res;
+    }
+    //$member=Members::with('memberCashcard,memberCreditcard')->where(['member_id'=>$memberId,'card_id'])->find();
+    $info=Members::haswhere('memberCreditcard',['card_id'=>$cardId])->where(['member_id'=>$memberId])->find();
+    // //var_dump($info::getLastSql());
+    // dump($info->memberCreditcard->card_bankname);
+    // dump($info->memberCashcard->card_bankname);
+    // die;
 
-  	$this->assign('info',$info);
-  	$this->assign('price',$price);
-  	$this->assign('passagewayId',$passagewayId);
+    $this->assign('info',$info);
+    $this->assign('price',$price);
+    $this->assign('passagewayId',$passagewayId);
 
-  	return view("Userurl/jinyifu");
+    return view("Userurl/jinyifu");
   }
 
   #金易付发送验证码
   public function jinyifu_sms(){
-  	// var_dump(Request::instance()->param('phone'));die;
-  	 #验证手机/发送对象是否存在
-      	 if(!phone_check(Request::instance()->param('phone')))
-      	 	 return ['code'=>401];
+    // var_dump(Request::instance()->param('phone'));die;
+     #验证手机/发送对象是否存在
+         if(!phone_check(Request::instance()->param('phone')))
+             return ['code'=>401];
            #随机一个验证码
            $code=verify_code(System::getName('code_number'));
            // var_dump($code);die;
@@ -1220,12 +1222,12 @@ class Userurl extends Controller
 
   #H5有积分前台通知地址
   public function H5youjifen($tradeNo){
-  	$order=CashOrder::get(['order_no'=>$tradeNo]);
-  	$passway=Passageway::get($order->order_passway);
-  	$member=Member::get($order->order_member);
-  	#通道费率
+    $order=CashOrder::get(['order_no'=>$tradeNo]);
+    $passway=Passageway::get($order->order_passway);
+    $member=Member::get($order->order_member);
+    #通道费率
      $passwayitem=PassagewayItem::get(['item_group'=>$member->member_group_id,'item_passageway'=>$passway->passageway_id]);
-  	 $Commission_info=Commissions::where(['commission_from'=>$order->order_id,'commission_type'=>1])->find();
+     $Commission_info=Commissions::where(['commission_from'=>$order->order_id,'commission_type'=>1])->find();
      if(!$Commission_info){
             $fenrun= new \app\api\controller\Commission();
             $fenrun_result=$fenrun->MemberFenRun($order->order_member,$order->order_money,$order->order_passway,1,'套现手续费分润',$order->order_id);
@@ -1235,19 +1237,19 @@ class Userurl extends Controller
 
      if($fenrun_result['code']=="200")
      {
-		 $order->order_fen=$fenrun_result['leftmoney'];
+         $order->order_fen=$fenrun_result['leftmoney'];
          $order->order_buckle=$passwayitem->item_charges/100;
          $order->order_platform=$order->order_charge-($order->order_money*$passway->passageway_rate/100)+$passwayitem->item_charges-$passway->passageway_income;
      }
-		else	
+        else    
      {
-			 $order->order_fen=-1;
+             $order->order_fen=-1;
      }
 
       $res = $order->save();
-	 if ($res) {
-	 	return view("Userurl/H5youjifen");
-	 }
+     if ($res) {
+        return view("Userurl/H5youjifen");
+     }
   }
 
   public function parents($phone){

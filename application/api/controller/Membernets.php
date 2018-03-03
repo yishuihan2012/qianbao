@@ -14,6 +14,7 @@
  use app\index\model\System;
  use app\index\model\MemberNet;
  use app\index\model\PassagewayItem;
+ use app\index\model\CashOrder;
  use app\api\controller\Commission;
 
  class Membernets{ 
@@ -159,12 +160,13 @@
       #已存在 返回data字段 不存在返回false
       public function rongbang_getinfo(){
         trace("rongbang_getinfo");
+        // $userinfo=db('member_net')->where('net_member_id',$this->member->member_id)->value($this->passway->passageway_no);
+        // $userinfo=explode(',', $userinfo);
         $arr=[
-          // 'companycode'=>$this->member->member_mobile ,
+          // 'companycode'=>$userinfo[1],
           'mobilephone'=>$this->member->member_mobile ,
         ];
           $data=rongbang_curl($this->passway,$arr,'masget.webapi.com.subcompany.get');
-           // var_dump($data);die;
           if($data['ret']==0){
             return $data['data'];
           }else{
@@ -361,16 +363,29 @@
           $data=$data['data'];
           if($data['respcode']==2){
             //支付成功 更新快捷支付订单表状态
-            $order=db('cash_order')->where('order_no',$data['ordernumber'])->find();
+            $order=CashOrder::where('order_no',$data['ordernumber'])->find();
             //仅在待支付情况下操作
-            if($order['order_state']==1){
-              db('cash_order')->where('order_no',$data['ordernumber'])->update(['order_state'=>2]);
+            if($order->order_state==1){
+              $order->order_state=2;
               //进行分润
               $fenrun= new \app\api\controller\Commission();
               $fenrun_result=$fenrun->MemberFenRun($this->member->member_id,$order['order_money'],$this->passway->passageway_id,1,'交易手续费分润',$order['order_id']);
+              if($fenrun_result['code']=="200"){
+                $order->order_fen=$fenrun_result['leftmoney'];
+                $order->order_buckle=$passwayitem->item_charges/100;
+                $order->order_platform=$order->order_charge-($order->order_money*$passway->passageway_rate/100)+$passwayitem->item_charges/100-$passway->passageway_income;
+              }else{
+                $order->order_fen=-1;
+                $order->order_buckle=$passwayitem->item_charges/100;
+                $order->order_platform=$order->order_charge-($order->order_money*$passway->passageway_rate/100)+$passwayitem->item_charges/100-$passway->passageway_income;
+              }
+              $cash_order->save();
               #交易失败 待支付 已关闭 交易撤销
               return $data;
             }else{
+              $cash_order->order_state=-1;
+              $cash_order->order_desc.=$data['respmsg'];
+              $cash_order->save();
               return $data['respmsg'];
             }
           }else{
@@ -398,8 +413,8 @@
         // echo json_encode($arr);die;
         $data=rongbang_curl(rongbang_foruser($this->member,$this->passway),$arr,'masget.pay.compay.router.sign.card');
         #成功返回html，是一个string
-        // return $data;
-        var_dump($data);die;
+        return $data;
+        // var_dump($data);die;
       }
       #荣邦银行签约状态查询
       public function rongbang_signquery_card($card_id){
