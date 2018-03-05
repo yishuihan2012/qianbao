@@ -64,7 +64,6 @@
     </div>
 </div>
 
-
 </form>
   <div class="items items-hover">
       <!-- HTML 代码 -->
@@ -120,6 +119,9 @@
 			  	@endif
 			  	@if($value->order_status == -1)
 			  	<a class="remove" href="#" data-url="{{url('/api/Membernet/action_single_plan/id/'.$value['order_id'])}}"><i class="icon-pencil"></i> 重新执行 </a>
+				  	@if($value->order_type == 2)
+				  	<a class="remove" href="#" data-url="{{url('/api/Membernet/update_bak_money/id/'.$value['order_id'])}}"><i class="icon-pencil"></i> 修改还款金额 </a>
+				  	@endif
 			  	@endif
 			  	@if($value->order_status ==4) 
 			  	<a class="remove1" data-toggle="modal" data-remote="{{url('/index/Plan/edit_status/id/'.$value['order_id'])}}" href="#"><i class="icon-pencil"></i> 更改状态 </a>
@@ -196,17 +198,18 @@ $(document).ready(function(){
       }
  });
 
- $(".parent li a").click(function(){
-    	 	$("input[name='article_parent']").val($(this).attr('data-id'));
-    	 	$("input[name='article_category']").val(0);
-    	 	$("#myform").submit();
-    	 })
+		 $(".parent li a").click(function(){
+		 	$("input[name='article_parent']").val($(this).attr('data-id'));
+		 	$("input[name='article_category']").val(0);
+		 	$("#myform").submit();
+		 })
     	 $(".son li a").click(function(){
     	 	$("input[name='article_category']").val($(this).attr('data-id'));
     	 	$("#myform").submit();
     	 })
     	 $(".remove").click(function(){
     	 	 var url=$(this).attr('data-url');
+    	 	 var ths=$(this);
 		 bootbox.confirm({
 		    title: "计划列表详情",
 		    message: "是否执行此操作",
@@ -220,14 +223,13 @@ $(document).ready(function(){
 		    	 		url:url,
 		    	 		type : 'POST',
 		        		dataType : 'json',
+		        		beforeSend:function(){
+		        			ths.parent().html('<i class="icon icon-spin icon-spinner-indicator" style="z-index: 999;"></i>');
+		        		},
 		        		success:function(data){
 		        			data = JSON.parse(data);
-		        			if(data.code==200){
-		        				alert(data.msg);
-		        				window.location.reload(true);
-		        			}else{
-		        				alert(data.msg);
-		        			}
+		        			alert(data.msg);
+		        			window.location.reload(true);
 		        		}
 		    	 	})
 		    	 	// window.location.href=url;

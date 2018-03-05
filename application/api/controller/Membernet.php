@@ -643,6 +643,9 @@ use app\index\model\Member;
                   $Members=Member::where(['member_id'=>$params['uid']])->find();
                   $rate=PassagewayItem::where('item_passageway='.$params['passageway_id'].' and item_group='.$Members['member_group_id'])->find();
                   $mishua_res=mishua($passageway, $rate, $member_info, $params['phone']);
+                  if($mishua_res['code']!=200){
+                    return ['code'=>'101','msg'=>$mishua_res['message']];
+                  }
                   $arr=array(
                        'net_member_id'=>$member_info['cert_member_id'],
                        "{$passageway['passageway_no']}"=>$mishua_res['userNo']
@@ -699,5 +702,31 @@ use app\index\model\Member;
               }
           }
          
+      }
+      /**
+       * 修改还款金额
+       * @param  [type] $id [description]
+       * @return [type]     [description]
+       */
+      public function update_bak_money($id){
+          $order_info=GenerationOrder::where(['order_id'=>$id])->find();
+          $time=date('Y-m-d',strtotime($order_info['order_time']));
+          $list=GenerationOrder::where(['order_no'=>$order_info['order_no'],'order_type'=>1])->where('order_time','like',$time.'%')->select();
+          $back_money=0;
+          foreach ($list as $k => $v) {
+              if($v['order_status']==2){
+                  $back_money+=($v['order_money']-$v['order_pound']);
+              }  
+          }
+          if($back_money==$order_info['order_money']){
+              return json_encode(['code'=>'101','msg'=>'当前计划还款额不需要变更。']);die;
+          }
+          $res=GenerationOrder::where(['order_id'=>$id])->update(['order_money'=>$back_money]);
+          if($res){
+              return json_encode(['code'=>'200','msg'=>'变更成功，当前金额为'.$back_money]);die;
+          }else{
+              return json_encode(['code'=>'101','msg'=>'变更失败']);die;
+          }
+
       }
  }

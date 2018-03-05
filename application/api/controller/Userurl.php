@@ -534,18 +534,18 @@ class Userurl extends Controller
             }
         }
         // print_r($data);die;
-        $this->assign('order_pound',$order_pound);
-        $this->assign('generation',$generation);
-        $this->assign('order',$data);
-        return view("Userurl/repayment_plan_detail");
-    }
-    //根据开始时间结束时间随机每天刷卡时间---有问题
-      public function get_random_time($day,$count,$begin=9,$end=14){
+		$this->assign('order_pound',$order_pound);
+		$this->assign('generation',$generation);
+		$this->assign('order',$data);
+	  	return view("Userurl/repayment_plan_detail");
+	}
+	//根据开始时间结束时间随机每天刷卡时间---有问题
+      public function get_random_time($day,$count,$begin=6,$end=10){
         //如果日期为今天，刷卡时间大于当前小时
         $now_h=date('Y-m-d',time());
         if($day==$now_h){
-           if($now_h<8){
-               $begin =9;
+           if($now_h<6){
+               $begin =6;
            }else{
                $begin=date('H',time())+1;
            }
@@ -553,12 +553,14 @@ class Userurl extends Controller
         $last=$begin;
          $step=floor(($end-$begin)/$count)-1;
          for ($i=0; $i <$count ; $i++) { 
-            $time[$i]=$day.' '.get_hours($last,$last+$step).':'.get_minites();
+            // $time[$i]=$day.' '.get_hours($last,$last+$step).':'.get_minites();
+               $time[$i]=$day.' '.get_hours($begin,$end).':'.get_minites();
             // $time[$i]['time']=$day.' '.get_hours($last,$last+$step).':'.get_minites();
             // $time[$i]['begin']=$last;
             // $time[$i]['end']=$last+$step;
             $last=$last+$step+1;
          }
+         sort($time);
          // print_r($time);die;
          return $time;
       }

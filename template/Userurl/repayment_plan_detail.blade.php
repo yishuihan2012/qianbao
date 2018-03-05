@@ -9,6 +9,7 @@
 		<link href="/static/css/base.css" rel="stylesheet" />
 		<link href="/static/css/page.css" rel="stylesheet" />
 		<link href="/static/css/themes.css" rel="stylesheet"/>
+		<link href="http://static.xijiakeji.com/css/myloading.css" rel="stylesheet"/>
 		<style type="text/css">
 			.mui-popup{position:fixed;}
 		</style>
@@ -158,6 +159,7 @@
 		</div>
 		<script src="/static/js/mui.min.js"></script>
 		<script src="/static/js/jquery-2.1.4.min.js"></script>
+		<script src="http://static.xijiakeji.com/js/myloading.js"></script>
 		<script type="text/javascript">
 			mui.init();
 	$(function(){
@@ -182,11 +184,23 @@
 				var plan_id=$(this).attr('plan_id');
 				mui.confirm('如提示：交易已被系统阻断，请于次日清晨重新执行计划。如提示：卡上余额不足，请确保卡内余额充足再执行计划。您最多有三次重新执行机会，如有疑问，请联系客服。', '重新执行计划', ['否', '是，重新执行'], function(e) {  
                     if (e.index == 1) {  
-                    	$.post('/api/userurl/reset_one_repayment',{plan_id:plan_id},function(res){
-								res=JSON.parse(res);
+                    	$.ajax({
+                    		url:'/api/userurl/reset_one_repayment',
+                    		type:'post',
+                    		data:{plan_id:plan_id},
+                    		dataType:'json',
+                    		beforeSend:function(){
+                    			$("body").mLoading("show");
+                    		},
+                    		success:function($res){
+                    			res=JSON.parse(res);
 								mui.toast(res.msg);
 								setTimeout(function(){ location.reload(); }, 3000);
-						})
+                    		},
+                    		complete:function(){
+                    			$("body").mLoading("hide");
+                    		}
+                    	})
                     }
                 })  
 		})
