@@ -9,6 +9,9 @@
 		<link href="/static/css/themes.css" rel="stylesheet" />
 		<link href="/static/css/page.css" rel="stylesheet" />
 	</head>
+	<style type="text/css">
+		.f16{font-size: 13px}
+	</style>
 	<body>
 		<div class="mui-content my-rates">
 			<div id="myRatesList">
