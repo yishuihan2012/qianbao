@@ -109,6 +109,7 @@
 			 <!-- <td>{{$value->order_edit_time}}</td> -->
 			 <td>{{$value->order_add_time}}</td>
 			 <td>
+			 	<a class="remove1"  data-remote="{{url('/index/Plan/info/id/'.$value['passageway_id'])}}" href="{{url('/index/Plan/info/id/'.$value['passageway_id'])}}"><i class="icon-pencil"></i> 查看详情 </a><br/>
 			 	@if($value->order_status == 3)
 			  	<!-- <a class="remove" href="#" data-url="{{url('/index/Plan/order_status/status/1/id/'.$value['order_id'])}}"><i class="icon-pencil"></i> 继续执行 </a> -->
 			  	@endif
@@ -126,6 +127,7 @@
 			  	@if($value->order_status ==4) 
 			  	<a class="remove1" data-toggle="modal" data-remote="{{url('/index/Plan/edit_status/id/'.$value['order_id'])}}" href="#"><i class="icon-pencil"></i> 更改状态 </a>
 			  	@endif
+
 			 </td>
 			 <!-- <td>{{$value->back_tradeNo}}</td>
 			 <td>{{$value->back_statusDesc}}</td>

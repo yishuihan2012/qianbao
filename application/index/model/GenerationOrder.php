@@ -35,7 +35,7 @@ class GenerationOrder extends Model{
       }
       #关联模型 一对一关联 (Passageway) 通道关联表
       public function passageway(){
-          return $this->hasOne("Passageway","passageway_id","order_passageway")->bind("passageway_name");
+          return $this->hasOne("Passageway","passageway_id","order_passageway")->bind("passageway_name,passageway_id");
       }
       #关联用户表
       public function member(){

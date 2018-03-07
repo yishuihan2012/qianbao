@@ -54,7 +54,7 @@
 			 <td>{{$value->order_edit_time}}</td>
 			 <td>{{$value->order_add_time}}</td>
 			 <td>
-			 	@if($value->order_status == 3)
+			 		@if($value->order_status == 3)
 			  	<!-- <a class="remove" href="#" data-url="{{url('/index/Plan/order_status/status/1/id/'.$value['order_id'])}}"><i class="icon-pencil"></i> 继续执行 </a> -->
 			  	@endif
 			  	@if($value->order_status == 1)
@@ -64,6 +64,12 @@
 			  	@endif
 			  	@if($value->order_status == -1)
 			  	<a class="remove" href="#" data-url="{{url('/api/Membernet/action_single_plan/id/'.$value['order_id'])}}"><i class="icon-pencil"></i> 重新执行 </a>
+				  	@if($value->order_type == 2)
+				  	<a class="remove" href="#" data-url="{{url('/api/Membernet/update_bak_money/id/'.$value['order_id'])}}"><i class="icon-pencil"></i> 修改还款金额 </a>
+				  	@endif
+			  	@endif
+			  	@if($value->order_status ==4) 
+			  	<a class="remove1" data-toggle="modal" data-remote="{{url('/index/Plan/edit_status/id/'.$value['order_id'])}}" href="#"><i class="icon-pencil"></i> 更改状态 </a>
 			  	@endif
 			 </td>
 			 <!-- <td>{{$value->back_tradeNo}}</td>
