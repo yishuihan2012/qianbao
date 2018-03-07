@@ -33,7 +33,7 @@
   <div class="input-group" style="width: 150px;float: left;margin-right: 10px;">
      <span class="input-group-addon">订单状态</span>
   <select name="order_state" class="form-control">
-      <option value="">全部</option>
+      <option value="all">全部</option>
       <option value="1" @if($r['order_state']==1) selected @endif>待支付</option>
       <option value="2" @if($r['order_state']==2) selected @endif>成功</option>
       <option value="-1" @if($r['order_state']==-1) selected @endif>失败</option>
@@ -47,6 +47,15 @@
       <option value="" @if ($r['member_group_id']=='') selected="" @endif>全部</option>
     @foreach($member_group as $v)
       <option value="{{$v['group_id']}}" @if ($r['member_group_id']==$v['group_id']) selected @endif>{{$v['group_name']}}</option>
+    @endforeach
+  </select>
+  </div>
+  <div class="input-group" style="width: 180px;float: left;margin-right: 10px;">
+     <span class="input-group-addon">通道</span>
+  <select name="passageway_id" class="form-control">
+      <option value="" @if ($r['passageway_id']=='') selected="" @endif>全部</option>
+    @foreach($passageway as $v)
+      <option value="{{$v['passageway_id']}}" @if ($r['passageway_id']==$v['passageway_id']) selected @endif>{{$v['passageway_name']}}</option>
     @endforeach
   </select>
   </div>
@@ -80,6 +89,7 @@
                       <!-- <th class="flex-col">分润消耗</th>  -->
                       <th class="flex-col">手续费</th> 
                       <th class="flex-col">费率</th> 
+                      <th class="flex-col">通道</th> 
                       <th>订单状态</th>
                       <th>备注</th>
                       <th>创建时间</th>
@@ -99,6 +109,7 @@
                  <!-- <td>{{$list->order_fen}}</td> -->
                  <td>{{$list->order_charge}}</td>
                  <td>{{$list->order_also}}%</td>
+                 <td>{{$list->passageway_name}}</td>
 
                  <td>@if($list->order_state==1)待支付@elseif($list->order_state==2)成功@elseif($list->order_state==-1)失败@else 超时@endif</td>
                  <td>{{$list->order_desc}}</td>
@@ -106,9 +117,6 @@
                  <td>
                       <div class="btn-group">
                            <button type="button" data-toggle="modal" data-remote="{{url('/index/order/showcash/id/'.$list->order_id)}}" class="btn btn-default btn-sm">详细信息</button>
-                      </div>
-                      <div class="btn-group">
-                           <button type="button" data-toggle="modal" data-remote="{{url('/index/order/showcash/id/'.$list->order_id)}}" class="btn btn-default btn-sm">审核</button>
                       </div>
                  </td>
            </tr>
@@ -166,9 +174,9 @@ begin_end_time_clear();
 $('.clearTime').click(begin_end_time_clear);
   //清除时间
     function begin_end_time_clear() {
-        $('#dateTimeRange').val('');
-        $('#beginTime').val('');
-        $('#endTime').val('');
+        $('#dateTimeRange').val('{{$r["beginTime"]}} - {{$r["endTime"]}}');
+        $('#beginTime').val('{{$r["beginTime"]}}');
+        $('#endTime').val('{{$r["endTime"]}}');
     }
 
 $('.export').click(function(){

@@ -51,8 +51,8 @@ class Cashoutcallback
              #通道费率
               $passwayitem=PassagewayItem::get(['item_group'=>$member->member_group_id,'item_passageway'=>$passway->passageway_id]);
               // var_dump($passwayitem);die;
-        	 //00代表成功
-        	 if ($resul['status'] == '00' && $order) {
+        	 //代付成功
+    	 if ($resul['qfSatus'] == 'SUCCESS' && $order) {
 		 	 $order->order_state=2;
 		 	 //进行分润
              //判断之前有没有分润过
@@ -83,7 +83,18 @@ class Cashoutcallback
                 	 echo 'success';
                 	 die;
             	 }
-       	 } 
+                 #交易成功 代付未成功
+       	 }else if($resul['status'] == '00'){
+             $order->order_state=3;
+             $order->order_desc.=$resul['statusDesc'];
+             $order->save();
+             #交易未成功
+         }else{
+             $order->order_state=-1;
+             $order->order_desc.=$resul['statusDesc'];
+             $order->save();
+         }
+         echo 'success';die;
 	 }
 
 	 /**

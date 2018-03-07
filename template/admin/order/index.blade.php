@@ -35,8 +35,8 @@
      <span class="input-group-addon">订单状态</span>
   <select name="upgrade_state" class="form-control">
     <option value="" >全部</option>
-    <option value="1" @if($r['upgrade_state']==0) selected @endif>已支付</option>
-    <option value="0" @if($r['upgrade_state']==1) selected @endif>未支付</option>
+    <option value="1" @if($r['upgrade_state']===1) selected @endif>已支付</option>
+    <option value="0" @if($r['upgrade_state']===0) selected @endif>未支付</option>
   </select>
  
   </div>
@@ -150,9 +150,9 @@ begin_end_time_clear();
 $('.clearTime').click(begin_end_time_clear);
   //清除时间
     function begin_end_time_clear() {
-        $('#dateTimeRange').val('');
-        $('#beginTime').val('');
-        $('#endTime').val('');
+        $('#dateTimeRange').val('{{$r["beginTime"]}} - {{$r["endTime"]}}');
+        $('#beginTime').val('{{$r["beginTime"]}}');
+        $('#endTime').val('{{$r["endTime"]}}');
     }
 </script>
 <style type="text/css">

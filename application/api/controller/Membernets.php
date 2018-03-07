@@ -559,4 +559,5 @@
       public function api0117_reg(){
         return config('weipay.check_name');
       }
+
  }

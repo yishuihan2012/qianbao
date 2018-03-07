@@ -19,6 +19,7 @@
  use app\index\model\MemberCashcard;
  use app\index\model\ChannelRate;
  use app\index\model\ChannelType;
+ use app\index\model\CashOrder;
  use app\index\model\MemberCert;
  use app\index\model\Passageway;
  use app\index\model\PassagewayItem;
@@ -83,5 +84,37 @@
 		 		}
  			}
  		}
+ 	}
+ 	#查询当天所有快捷支付订单的状态 次日1点定时执行
+ 	public function mishua_pay_check(){
+ 		$passageway=db('passageway')->where('passageway_true_name','like','%米刷%')->where('passageway_also',1)->column('*',"passageway_id");
+ 		$passageway_id=[];
+ 		foreach ($passageway as $k => $v) {
+ 			$passageway_id[]=$k;
+ 		}
+ 		$orders=db('cash_order')->where([
+ 			'order_passway'=>['in',$passageway_id],
+ 			'order_state'=>['<>',2]
+ 		])->whereTime('order_add_time','yesterday')
+ 			->select();
+ 		$url='http://pay.mishua.cn/zhonlinepay/service/down/trans/checkDzero';
+		foreach ($orders as $k => $v) {
+			$data=[
+				'versionNo'=>1,
+				'mchNo'=>$passageway[$v['order_passway']]['passageway_mech'],
+				'transNo'=>$v['order_thead_no']
+			];
+			$res=repay_request($data,$passageway[$v['order_passway']]['passageway_mech'],$url,'0102030405060708',$passageway[$v['order_passway']]['passageway_pwd_key'],$passageway[$v['order_passway']]['passageway_key']);
+			$order=CashOrder::get($v['order_id']);
+ 			if($res['qfStatus']=='SUCCESS'){
+ 				$order->order_state=2;
+ 			}elseif($res['status']==00){
+ 				$order->order_state=3;
+ 			}else{
+ 				$order->order_state=-1;
+ 			}
+            $order->order_desc.=$res['statusDesc'];
+			$order->save();
+		}
  	}
  }

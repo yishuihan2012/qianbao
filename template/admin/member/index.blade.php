@@ -58,6 +58,8 @@
 </div>
 
 	<button class="btn btn-primary" type="submit">搜索</button>
+  <input type="hidden" name="is_export" class="is_export" value="0">
+  <button class="btn btn-primary export" type="submit">导出</button>
 </form>
 </blockquote>
  <hr/>
@@ -209,6 +211,12 @@ $('.clearTime').click(begin_end_time_clear);
         $('#endTime').val('');
     }
  });
+$('.export').click(function(){
+  $(".is_export").val(1);
+  setTimeout(function(){
+    $(".is_export").val(0);
+  },100);
+})
  </script>
  <style type="text/css">
    .clearTime{

@@ -183,9 +183,9 @@ begin_end_time_clear();
 $('.clearTime').click(begin_end_time_clear);
   //清除时间
     function begin_end_time_clear() {
-        $('#dateTimeRange').val('');
-        $('#beginTime').val('');
-        $('#endTime').val('');
+        $('#dateTimeRange').val('{{$r["beginTime"]}} - {{$r["endTime"]}}');
+        $('#beginTime').val('{{$r["beginTime"]}}');
+        $('#endTime').val('{{$r["endTime"]}}');
     }
 </script>
 <style type="text/css">
