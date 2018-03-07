@@ -119,7 +119,7 @@
 			  	<a class="remove" href="#" data-url="{{url('/index/Plan/order_status/status/3/id/'.$value['order_id'])}}"><i class="icon-pencil"></i> 取消执行 </a>
 			  	@endif
 			  	@if($value->order_status == -1)
-			  	<a class="remove" href="#" data-url="{{url('/api/Membernet/action_single_plan/id/'.$value['order_id'])}}"><i class="icon-pencil"></i> 重新执行 </a>
+			  	<a class="remove" href="#" data-url="{{url('/api/Membernet/action_single_plan/id/'.$value['order_id'].'/is_admin/1')}}"><i class="icon-pencil"></i> 重新执行 </a>
 				  	@if($value->order_type == 2)
 				  	<a class="remove" href="#" data-url="{{url('/api/Membernet/update_bak_money/id/'.$value['order_id'])}}"><i class="icon-pencil"></i> 修改还款金额 </a>
 				  	@endif

@@ -125,7 +125,13 @@ use app\index\model\Member;
             if($value['order_type']==1){ //消费
                 $res=$this->payBindCard($value);
             }else if($value['order_type']==2){//提现
-                $res=$this->transferApply($value);
+
+                if(!empty(input("is_admin"))){
+                  $res=$this->transferApply($value,null,1);
+                }else{
+                  $res=$this->transferApply($value);
+                }
+                
             }
              return json_encode(['code'=>200,'msg'=>'执行成功。']);
         } catch (Exception $e) {
@@ -361,7 +367,7 @@ use app\index\model\Member;
       }
       //10.余额提现
       //http://pay.mishua.cn/zhonlinepay/service/rest/creditTrans/transferApply
-      public function transferApply($pay,$isCancel=null){
+      public function transferApply($pay,$isCancel=null,$is_admin = ''){
           #1获取费率
           #1判断当天有没有失败的订单  
           $today=date('Y-m-d',strtotime($pay['order_time']));
@@ -370,7 +376,7 @@ use app\index\model\Member;
           $merch=Passageway::where(['passageway_id'=>$pay['order_passageway']])->find();
           // $remain_money=Reimbur::where(['reimbur_generation'=>$pay['order_no']])->find();
           // if($remain_money && $remain_money['reimbur_left']<$pay['order_money']){/
-          if($fail_order){//如果当天有失败订单
+          if($fail_order && empty($is_admin)){//如果当天有失败订单
                 $arr['back_status']='FAIL';
                 $arr['back_statusDesc']='当天有失败的订单无法进行还款，请先处理失败的订单。';
                 $arr['order_status']='-1';
