@@ -141,6 +141,10 @@
        $('.menu .nav .active').removeClass('active');
        $('.menu .nav li.withdraw').addClass('active');
        $('.menu .nav li.order-manager').addClass('show');
+    //初始化时间
+        $('#dateTimeRange').val('{{$r["beginTime"]}} - {{$r["endTime"]}}');
+        $('#beginTime').val('{{$r["beginTime"]}}');
+        $('#endTime').val('{{$r["endTime"]}}');
  })
   $('#dateTimeRange').daterangepicker({
         applyClass : 'btn-sm btn-success',
@@ -183,9 +187,9 @@ begin_end_time_clear();
 $('.clearTime').click(begin_end_time_clear);
   //清除时间
     function begin_end_time_clear() {
-        $('#dateTimeRange').val('{{$r["beginTime"]}} - {{$r["endTime"]}}');
-        $('#beginTime').val('{{$r["beginTime"]}}');
-        $('#endTime').val('{{$r["endTime"]}}');
+        $('#dateTimeRange').val('');
+        $('#beginTime').val('');
+        $('#endTime').val('');
     }
 </script>
 <style type="text/css">

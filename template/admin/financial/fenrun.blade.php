@@ -25,8 +25,8 @@
            <div class="col-sm-2">
                 <div class="input-group">
                      <input type="text" class="form-control date-picker" id="dateTimeRange" placeholder="收益时间查询" value="" readonly/>
-                     <input type="hidden" name="beginTime" id="beginTime" value="" />
-                     <input type="hidden" name="endTime" id="endTime" value="" />
+                     <input type="hidden" name="beginTime" id="beginTime" value="{{isset($beginTime)?$beginTime:''}}" />
+                     <input type="hidden" name="endTime" id="endTime" value="{{isset($endTime)?$endTime:''}}" />
                      <z class='clearTime'>X</z>
                 </div>
            </div>
@@ -111,8 +111,9 @@
  setTimeout(function(){
       $('#beginTime').val(start.format('YYYY-MM-DD'));
       $('#endTime').val(end.format('YYYY-MM-DD'));
-      $('#dateTimeRange').val();
-      console.log(start);
+           if(start){
+               $('#dateTimeRange').val(start+'-'+end);
+           }
 },100);
  begin_end_time_clear();
  $('.clearTime').click(begin_end_time_clear);

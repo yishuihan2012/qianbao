@@ -37,9 +37,9 @@ class Order extends Common{
 			$endTime=strtotime(request()->param('endTime'))+24*3600;
 			$wheres['upgrade_creat_time']=["between time",[request()->param('beginTime'),$endTime]];
 		}else{
-			#默认显示昨天一天的
-			$r['beginTime']=strtotime(date('Y-m-d',strtotime("-0 days")));
-			$r['endTime']=$r['beginTime']+24*3600;
+			#默认显示昨天一天 至现在的
+			$r['beginTime']=strtotime(date('Y-m-d',strtotime("-1 days")));
+			$r['endTime']=time();
 			$wheres['upgrade_creat_time']=["between time",[$r['beginTime'],$r['endTime']]];
 			$r['beginTime']=date('Y-m-d',$r['beginTime']);
 			$r['endTime']=date('Y-m-d',$r['endTime']-1);
@@ -118,8 +118,8 @@ class Order extends Common{
 			$wheres['withdraw_add_time']=["between time",[request()->param('beginTime'),$endTime]];
 		}else{
 			#默认显示昨天一天的
-			$r['beginTime']=strtotime(date('Y-m-d',strtotime("-0 days")));
-			$r['endTime']=$r['beginTime']+24*3600;
+			$r['beginTime']=strtotime(date('Y-m-d',strtotime("-1 days")));
+			$r['endTime']=time();
 			$wheres['withdraw_add_time']=["between time",[$r['beginTime'],$r['endTime']]];
 			$r['beginTime']=date('Y-m-d',$r['beginTime']);
 			$r['endTime']=date('Y-m-d',$r['endTime']-1);
@@ -269,8 +269,8 @@ class Order extends Common{
 			$where['order_add_time']=["between time",[request()->param('beginTime'),$endTime]];
 		}else{
 			#默认显示今天一天的
-			$r['beginTime']=strtotime(date('Y-m-d',strtotime("-0 days")));
-			$r['endTime']=$r['beginTime']+24*3600;
+			$r['beginTime']=strtotime(date('Y-m-d',strtotime("-1 days")));
+			$r['endTime']=time();
 			$where['order_add_time']=["between time",[$r['beginTime'],$r['endTime']]];
 			$r['beginTime']=date('Y-m-d',$r['beginTime']);
 			$r['endTime']=date('Y-m-d',$r['endTime']-1);
@@ -393,8 +393,8 @@ class Order extends Common{
 			$where['order_add_time']=["between time",[request()->param('beginTime'),$endTime]];
 		}else{
 			#默认显示昨天一天的
-			$r['beginTime']=strtotime(date('Y-m-d',strtotime("-0 days")));
-			$r['endTime']=$r['beginTime']+24*3600;
+			$r['beginTime']=strtotime(date('Y-m-d',strtotime("-1 days")));
+			$r['endTime']=time();
 			$where['order_add_time']=["between time",[$r['beginTime'],$r['endTime']]];
 			$r['beginTime']=date('Y-m-d',$r['beginTime']);
 			$r['endTime']=date('Y-m-d',$r['endTime']-1);
@@ -451,8 +451,8 @@ class Order extends Common{
 			$wheres['recomment_creat_time']=["between time",[request()->param('beginTime'),$endTime]];
 		}else{
 			#默认显示昨天一天的
-			$r['beginTime']=strtotime(date('Y-m-d',strtotime("-0 days")));
-			$r['endTime']=$r['beginTime']+24*3600;
+			$r['beginTime']=strtotime(date('Y-m-d',strtotime("-1 days")));
+			$r['endTime']=time();
 			$wheres['recomment_creat_time']=["between time",[$r['beginTime'],$r['endTime']]];
 			$r['beginTime']=date('Y-m-d',$r['beginTime']);
 			$r['endTime']=date('Y-m-d',$r['endTime']-1);

@@ -25,7 +25,7 @@
 			    <input type="text" class="form-control" name="cert_member_idcard" value="{{$r['cert_member_idcard']}}" placeholder="身份号">
 			  </div>
 			  <div class="input-group" style="width: 150px;float: left;margin-right: 10px;">
-			     <span class="input-group-addon">红包状态</span>
+			     <span class="input-group-addon">钱包状态</span>
 			  <select name="wallet_state" class="form-control">
 			    <option value="" >全部</option>
 			    <option value="2" @if($r['wallet_state']==2) selected @endif>正常</option>
@@ -44,7 +44,7 @@
 			  </div>
 
 			<div class="input-group" style="width: 200px;float: left; margin-right: 10px;">
-			    <input type="text" class="form-control date-picker" id="dateTimeRange" placeholder="红包生成时间"/>
+			    <input type="text" class="form-control date-picker" id="dateTimeRange" placeholder="钱包生成时间"/>
 			    <input type="hidden" name="beginTime" id="beginTime" value=""/>
 			    <input type="hidden" name="endTime" id="endTime" value=""/>
 			    <z class='clearTime'>X</z>
@@ -141,6 +141,12 @@
 		    	 }
 		 });
       })
+    @if(isset($r["beginTime"]))
+    //初始化时间
+        $('#dateTimeRange').val('{{$r["beginTime"]}} - {{$r["endTime"]}}');
+        $('#beginTime').val('{{$r["beginTime"]}}');
+        $('#endTime').val('{{$r["endTime"]}}'); 
+    @endif
  });
 
 $('#dateTimeRange').daterangepicker({

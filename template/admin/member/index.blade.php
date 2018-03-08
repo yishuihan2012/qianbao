@@ -210,7 +210,13 @@ $('.clearTime').click(begin_end_time_clear);
         $('#beginTime').val('');
         $('#endTime').val('');
     }
- });
+    @if(isset($r["beginTime"]))
+    //初始化时间
+        $('#dateTimeRange').val('{{$r["beginTime"]}} - {{$r["endTime"]}}');
+        $('#beginTime').val('{{$r["beginTime"]}}');
+        $('#endTime').val('{{$r["endTime"]}}'); 
+    @endif
+});
 $('.export').click(function(){
   $(".is_export").val(1);
   setTimeout(function(){

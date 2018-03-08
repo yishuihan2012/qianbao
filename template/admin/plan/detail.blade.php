@@ -55,8 +55,8 @@
 		  </div>
           <div class="input-group" style="width: 200px;float: left; margin-right: 10px;">
               <input type="text" class="form-control date-picker" id="dateTimeRange" placeholder="执行时间" />
-              <input type="hidden" name="beginTime" id="beginTime" value="{{isset($beginTime)?$beginTime:'1'}}" />
-              <input type="hidden" name="endTime" id="endTime" value="{{isset($endTime)?$endTime:'2'}}" />
+              <input type="hidden" name="beginTime" id="beginTime" value="{{isset($beginTime)?$beginTime:''}}" />
+              <input type="hidden" name="endTime" id="endTime" value="{{isset($endTime)?$endTime:''}}" />
               <z class='clearTime'>X</z>
           </div>
           <button class="btn btn-primary" type="submit">搜索</button>
@@ -183,14 +183,14 @@ $(document).ready(function(){
       }, function(start, end, label) { // 格式化日期显示框
            $('#beginTime').val(start.format('YYYY-MM-DD'));
            $('#endTime').val(end.format('YYYY-MM-DD'));
-           $('#dateTimeRange').val(start+'-'+end);
       });
       setTimeout(function(){
            $('#beginTime').val(start.format('YYYY-MM-DD'));
            $('#endTime').val(end.format('YYYY-MM-DD'));
-           $('#dateTimeRange').val(start+'-'+end);
-           console.log(start);
-      },100);
+           if(start){
+               $('#dateTimeRange').val(start+'-'+end);
+           }
+      },10);
       begin_end_time_clear();
       $('.clearTime').click(begin_end_time_clear);
       function begin_end_time_clear() {
@@ -239,4 +239,17 @@ $(document).ready(function(){
 		 });
     	 })
 </script>
+ <style type="text/css">
+   .clearTime{
+    position: absolute;
+    right: 5px;
+    top: 5px;
+    z-index: 99;
+    border: 1px solid;
+    color: red;
+    font-size: .6rem;
+    padding: 0 5px;
+   }
+
+ </style>
 @endsection
