@@ -36,6 +36,13 @@ class Order extends Common{
 		if(request()->param('beginTime') && request()->param('endTime')){
 			$endTime=strtotime(request()->param('endTime'))+24*3600;
 			$wheres['upgrade_creat_time']=["between time",[request()->param('beginTime'),$endTime]];
+		}else{
+			#默认显示昨天一天的
+			$r['beginTime']=strtotime(date('Y-m-d',strtotime("-0 days")));
+			$r['endTime']=$r['beginTime']+24*3600;
+			$wheres['upgrade_creat_time']=["between time",[$r['beginTime'],$r['endTime']]];
+			$r['beginTime']=date('Y-m-d',$r['beginTime']);
+			$r['endTime']=date('Y-m-d',$r['endTime']-1);
 		}
 		#身份证查询
 		if( request()->param('cert_member_idcard')){
@@ -46,12 +53,9 @@ class Order extends Common{
 		#订单支付状态
 		if(request()->param('upgrade_state')!=''){
 			$wheres['upgrade_state'] = request()->param('upgrade_state');
+			$r['upgrade_state']=intval(request()->param('upgrade_state'));
 		}else{
 			$r['upgrade_state'] = '';
-		}
-
-		if(request()->param('upgrade_id')!=''){
-			$wheres['upgrade_id'] = request()->param('upgrade_id');
 		}
 		#支付类型
 		// #查询订单列表分页
@@ -64,9 +68,9 @@ class Order extends Common{
 	 	 #升级总金额
 	 	$count['upgrade_money'] = Upgrade::haswhere('member',$where)->join("wt_member_cert m", "m.cert_member_id=Member.member_id","left")->where($wheres)->sum("upgrade_money");
 	 	 #升级未支付金额
-	 	  $count['upgrade_money_del'] = Upgrade::haswhere('member',$where)->join("wt_member_cert m", "m.cert_member_id=Member.member_id","left")->where($wheres)->where(['upgrade_state'=>0])->sum("upgrade_money");
+	 	  $count['upgrade_money_del'] = Upgrade::haswhere('member',$where)->join("wt_member_cert m", "m.cert_member_id=Member.member_id","left")->where(array_merge($wheres,['upgrade_state'=>1]))->sum("upgrade_money");
 	 	  #升级已支付的金额
-	 	   $count['upgrade_money_yes'] = Upgrade::haswhere('member',$where)->join("wt_member_cert m", "m.cert_member_id=Member.member_id","left")->where($wheres)->where(['upgrade_state'=>1])->sum("upgrade_money");
+	 	   $count['upgrade_money_yes'] = Upgrade::haswhere('member',$where)->join("wt_member_cert m", "m.cert_member_id=Member.member_id","left")->where(array_merge($wheres,['upgrade_state'=>1]))->sum("upgrade_money");
 
 	 	$count['upgrade_commission'] = Upgrade::haswhere('member',$where)->join("wt_member_cert m", "m.cert_member_id=Member.member_id","left")->where($wheres)->sum("upgrade_commission");
 		$this->assign('order_lists', $order_lists);
@@ -111,7 +115,14 @@ class Order extends Common{
 	 	$wheres = array();
 		if(request()->param('beginTime') && request()->param('endTime')){
 			$endTime=strtotime(request()->param('endTime'))+24*3600;
-			$wheres['withdraw_creat_time']=["between time",[request()->param('beginTime'),$endTime]];
+			$wheres['withdraw_add_time']=["between time",[request()->param('beginTime'),$endTime]];
+		}else{
+			#默认显示昨天一天的
+			$r['beginTime']=strtotime(date('Y-m-d',strtotime("-0 days")));
+			$r['endTime']=$r['beginTime']+24*3600;
+			$wheres['withdraw_add_time']=["between time",[$r['beginTime'],$r['endTime']]];
+			$r['beginTime']=date('Y-m-d',$r['beginTime']);
+			$r['endTime']=date('Y-m-d',$r['endTime']-1);
 		}
 		#提现状态
 		if(request()->param('withdraw_state') ){
@@ -256,6 +267,13 @@ class Order extends Common{
 		if(request()->param('beginTime') && request()->param('endTime')){
 			$endTime=strtotime(request()->param('endTime'))+24*3600;
 			$where['order_add_time']=["between time",[request()->param('beginTime'),$endTime]];
+		}else{
+			#默认显示今天一天的
+			$r['beginTime']=strtotime(date('Y-m-d',strtotime("-0 days")));
+			$r['endTime']=$r['beginTime']+24*3600;
+			$where['order_add_time']=["between time",[$r['beginTime'],$r['endTime']]];
+			$r['beginTime']=date('Y-m-d',$r['beginTime']);
+			$r['endTime']=date('Y-m-d',$r['endTime']-1);
 		}
 		#身份证查询
 		
@@ -266,13 +284,21 @@ class Order extends Common{
 		}
 		#订单状态
 		if( request()->param('order_state')){
-			$wheres['order_state'] = ['like',"%".request()->param('order_state')."%"];
+			if(request()->param('order_state')!='all'){
+				$wheres['order_state'] = ['like',"%".request()->param('order_state')."%"];
+			}
 		}else{
-			$r['order_state'] = '';
+			$r['order_state'] = '2';
 		}
 
 		if(request()->param('order_id')){
 			$wheres['order_id'] = request()->param('order_id');
+		}
+		#通道
+		if(request()->param('passageway_id')){
+			$wheres['passageway_id'] = request()->param('passageway_id');
+		}else{
+			$r['passageway_id'] = '';
 		}
 		if(input('is_export')==1){
 			set_time_limit(0);
@@ -340,6 +366,8 @@ class Order extends Common{
 		 }
 		 $member_group=MemberGroup::all();
 		$this->assign('member_group', $member_group);
+		 $passageway=db('passageway')->where('passageway_state',1)->select();
+		$this->assign('passageway', $passageway);
 		$this->assign('r', $r);
 		 #渲染视图
 	 	return view('admin/order/cash');
@@ -363,6 +391,13 @@ class Order extends Common{
 		if(request()->param('beginTime') && request()->param('endTime')){
 			$endTime=strtotime(request()->param('endTime'))+24*3600;
 			$where['order_add_time']=["between time",[request()->param('beginTime'),$endTime]];
+		}else{
+			#默认显示昨天一天的
+			$r['beginTime']=strtotime(date('Y-m-d',strtotime("-0 days")));
+			$r['endTime']=$r['beginTime']+24*3600;
+			$where['order_add_time']=["between time",[$r['beginTime'],$r['endTime']]];
+			$r['beginTime']=date('Y-m-d',$r['beginTime']);
+			$r['endTime']=date('Y-m-d',$r['endTime']-1);
 		}
 		#身份证查询
 		if( request()->param('order_creditcard')){
@@ -414,6 +449,13 @@ class Order extends Common{
 		if(request()->param('beginTime') && request()->param('endTime')){
 			$endTime=strtotime(request()->param('endTime'))+24*3600;
 			$wheres['recomment_creat_time']=["between time",[request()->param('beginTime'),$endTime]];
+		}else{
+			#默认显示昨天一天的
+			$r['beginTime']=strtotime(date('Y-m-d',strtotime("-0 days")));
+			$r['endTime']=$r['beginTime']+24*3600;
+			$wheres['recomment_creat_time']=["between time",[$r['beginTime'],$r['endTime']]];
+			$r['beginTime']=date('Y-m-d',$r['beginTime']);
+			$r['endTime']=date('Y-m-d',$r['endTime']-1);
 		}
 		#身份证查询
 		 if( request()->param('cert_member_idcard')){
