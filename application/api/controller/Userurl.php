@@ -1292,4 +1292,48 @@ class Userurl extends Controller
     $this->assign("list",$list);
     return view("Userurl/credit_card");
   }
+
+
+    public function get_team($id){
+      $parent=$this->get($id);
+        // 输出Excel文件头，可把user.csv换成你要的文件名  
+  header('Content-Type: application/vnd.ms-excel');  
+  header('Content-Disposition: attachment;filename="user.csv"');  
+  header('Cache-Control: max-age=0');     
+  // 从数据库中获取数据，为了节省内存，不要把数据一次性读到内存，从句柄中一行一行读即可      
+  // 打开PHP文件句柄，php://output 表示直接输出到浏览器  
+ $fp = fopen('php://output', 'a');    
+ // 输出Excel列名信息  
+ $head = array('姓名');  
+ // foreach ($head as $i => $v) {  
+     // CSV的Excel支持GBK编码，一定要转换，否则乱码  
+     $head[0] = iconv('utf-8', 'gbk', $head[0]);  
+ // }    
+ // 将数据通过fputcsv写到文件句柄  
+ fputcsv($fp, $head);   
+ // 计数器   
+ // 每隔$limit行，刷新一下输出buffer，不要太大，也不要太小  
+   
+ // 逐行取出数据，不浪费内存  
+ foreach ($parent as $key => $value) {
+         ob_flush();  
+         flush();  
+         $row[0] = iconv('utf-8', 'gbk', $value['member_nick']);  
+     fputcsv($fp, $row);  
+ }
+
+      
+    }
+    public function get($id){
+        $parent=MemberRelation::with('member')->where(['relation_parent_id'=>$id])->select();
+        $data=[];
+        foreach ($parent as $key => $value) {
+            $re=$this->get($value['relation_member_id']);
+
+              $data=array_merge($data,$re);
+
+        }
+              $data=array_merge($data,$parent);
+        return $data;
+      }
 }
