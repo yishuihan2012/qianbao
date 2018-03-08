@@ -28,7 +28,7 @@ class Helibao{
 	 * @return [type] [description]
 	 */
 	public function income(){ //register
-		$post=array(
+		$arr=array(
 			'firstClassMerchantNo'=>'370983199109202832',	//平台商商编是	String(16)	C1800000002	平台商编号
 			'orderNo'=>make_rand_code(),	//商户订单号	是	String(50)	p_20170731163713	商户系统内部订单号，要求50字符以内，同一商户号下订单号唯一
 			'signName'=>'许成成',	//子商户签约名	 是	String(150)	测试子商户01	签约名
@@ -61,23 +61,45 @@ class Helibao{
 			'authorizationFlag'=>'true',//授权使用平台商秘钥		是	Boolean true	true代表授权，false代表不授权
 			'unionPayQrCode'=>'',//银联二维码		否	String(100)	子商户若需绑定银联二维码，可填写
 		);
-		$post['sign']=$this->get_sign();
-		$res=
+		$post['body']=$this->get_body($arr);
+		$post['sign']=$this->get_sign($post['body']);
+		$post['interfaceName']='register';
+		$res=$this->send_request($test_url,$post);
+	}
+	/**
+	 * 获取加密主体信息
+	 * @return [type] [description]
+	 */
+	public function get_body($arr){
+		$json=json_encode($arr);
+		$return=$this->des3($json);
+		return $return;
+	}
+	/**
+	 * 加密
+	 * @return [type] [description]
+	 */
+	public function des3($str){
+		return $str;
 	}
 	/**
 	 * 获取签名
 	 * @return [type] [description]
 	 */
-	public function get_sign(){
+	public function get_sign($body){
 		//拼接的原文串加上商户号再加上商户签名秘钥
-		$merch_id='';
+		$merch_id='C1800001025';
 		$sign_key='rV8u3c2n2hlTCIDWyzei7iz66DiQlYTh';
+		return md5($body.'&'.$merch_id.'&'.$sign_key);
 	}
 	/**
 	 * 发送请求
 	 * @return [type] [description]
 	 */
-	public function send_request(){
-
+	public function send_request($url,$post){
+		$res=curl_post($url,'post',json_encode($post));
+		echo $res;die;
+        $result=json_decode($res,true);
+        return $result;
 	}
 }
