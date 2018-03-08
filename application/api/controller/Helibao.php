@@ -17,11 +17,13 @@
  use app\index\model\CashOrder;
  use app\api\controller\Commission;
 class Helibao{
-
+	public $test_url;
+	public $product_url;
+	public $scan_test;
 	public function __construct(){
-		$test_url='http://test.trx.helipay.com/trx/merchantEntry/interface.action';
-		$product_url='http://pay.trx.helipay.com/trx/merchantEntry/interface.action';
-		$scan_test='http://test.trx.helipay.com/trx/app/interface.action';
+		$this->test_url='http://test.trx.helipay.com/trx/merchantEntry/interface.action';
+		$this->product_url='http://pay.trx.helipay.com/trx/merchantEntry/interface.action';
+		$this->scan_test='http://test.trx.helipay.com/trx/app/interface.action';
 	}
 	/**
 	 * 商户进件
@@ -64,7 +66,7 @@ class Helibao{
 		$post['body']=$this->get_body($arr);
 		$post['sign']=$this->get_sign($post['body']);
 		$post['interfaceName']='register';
-		$res=$this->send_request($test_url,$post);
+		$res=$this->send_request($this->test_url,$post);
 	}
 	/**
 	 * 获取加密主体信息

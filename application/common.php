@@ -769,6 +769,26 @@ function SortByASCII($arr)
      $encryptedData = mdecrypt_generic($module, $encryptedData);
      return $encryptedData;
  }
+ public function encrypt3DES($str,$key,$iv){  
+    $td = mcrypt_module_open(MCRYPT_3DES, "", MCRYPT_MODE_CBC, "");  
+    if ($td === false) {  
+        return false;  
+    }  
+    //检查加密key，iv的长度是否符合算法要求  
+    $key = $this->fixLen($key, mcrypt_enc_get_key_size($td));  
+    $iv = $this->fixLen($iv, mcrypt_enc_get_iv_size($td));  
+      
+    //加密数据长度处理  
+    $str = $this->strPad($str, mcrypt_enc_get_block_size($td));  
+      
+    if (mcrypt_generic_init($td, $key, $iv) !== 0) {  
+        return false;  
+    }  
+    $result = mcrypt_generic($td, $str);  
+    mcrypt_generic_deinit($td);  
+    mcrypt_module_close($td);  
+    return $result;  
+}  
   //-----------------------------------------------------------
  // @version  urlsafe base64加密
  // @author   $bill$
