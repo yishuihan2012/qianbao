@@ -16,6 +16,7 @@
  use app\index\model\PassagewayItem;
  use app\index\model\CashOrder;
  use app\api\controller\Commission;
+ use Think\Crypt\Driver\Des; //导入类库
 class Helibao{
 	public $test_url;
 	public $product_url;
@@ -64,26 +65,83 @@ class Helibao{
 			'unionPayQrCode'=>'',//银联二维码		否	String(100)	子商户若需绑定银联二维码，可填写
 		);
 		$post['body']=$this->get_body($arr);
+		// echo $post['body'];die;
 		$post['sign']=$this->get_sign($post['body']);
 		$post['interfaceName']='register';
 		$res=$this->send_request($this->test_url,$post);
+	}
+	public function scan_pay(){
+		$arr=array(
+			'P2_orderId'=>make_rand_code(),//商户订单号		是	String(50)	p_20170302185347	商户系统内部订单号，要求50字符以内，同一商户号下订单号唯一
+			'P3_customerNumber'=>"C1800193823",//商户编号		是	String(15)	C1800000002	合利宝分配的商户号
+			'P4_payType'=>'SCAN',//支付类型		是	String(15)	SCAN	SWIPE:刷卡(被扫)SCAN:扫码(主扫)
+			'P5_orderAmount'=>'0.01',//交易金额		是	Number(10,2)	0.01	订单金额，以元为单位，最小金额为0.01
+			'P6_currency'=>"CNY",//币种类型		是	String(30)	CNY	CNY:人民币
+			'P7_authcode'=>'1',//授权码		是	String(50)		payType为刷卡(被扫)时传入一组字符串(付款码),主扫支付类型传入1即可
+			'P8_appType'=>'ALIPAY',//客户端类型		是	String(20)	WXPAY	ALIPAY：支付宝WXPAY:微信UNIONPAY:银联JDPAY:京东钱包QQPAY:QQ钱包
+			'P9_notifyUrl'=>'',//通知回调地址		是	String(300)	http://wap.helipay.com/notify.php	异步接收合利宝支付结果通知的回调地址，通知url必须为外网可访问的url，不能携带参数。
+			'P10_successToUrl'=>'',//成功跳转URL		否	String(300)	http://wap.helipay.com/success.php	支付完成后，展示支付结果的页面地址(暂不用)
+			'P11_orderIp'=>"127.0.0.1",//商户IP		是	String(20)	192.168.10.1	用户下单IP
+			'P12_goodsName'=>'三星s9',//商品名称		是	String(128)	Iphone7	商品名称
+			'P13_goodsDetail'=>"三星手机",//商户描述		否	String(255)	Iphone7	对交易或商品的描述
+			'P14_desc'=>"我是备注",//备注		否	String(100)	备注	订单备注信息，原样返回
+		);
+		$
 	}
 	/**
 	 * 获取加密主体信息
 	 * @return [type] [description]
 	 */
 	public function get_body($arr){
+		$str = json_encode($arr);
+		$key = 'E2ASpz3kPCZW3HJVeoQTqj0IOwMSR0F8';
+		$des = new Des();
+		$re = $des->encrypt($str, $key); //加密
+
+		echo bin2hex($re);die; //给二进制转为16进制，所谓的解决乱码
+		// return 'C0HdQBfH3pJ2iBH6zEM9udEvoPW7k8AqLIvdOqpskQ+jomvhpC1pf7uy1kk/+B5sF9GbM8yDjuANrqu+er5GXmHskmvi4arr2WxWhWQAiQ/HTjufLU8Qb5Z9ZkHOnR2u';
 		$json=json_encode($arr);
-		$return=$this->des3($json);
+		$return=AESencode($json,'E2ASpz3kPCZW3HJVeoQTqj0IOwMSR0F8','Ke0xG8INoyRkoRXxBe98uYUG');
 		return $return;
 	}
-	/**
-	 * 加密
-	 * @return [type] [description]
-	 */
-	public function des3($str){
-		return $str;
-	}
+
+	function encrypt3DES($str,$key,$iv){  
+	    $td = mcrypt_module_open(MCRYPT_3DES, "", MCRYPT_MODE_CBC, "");  
+	    if ($td === false) {  
+	        return false;  
+	    }  
+	    echo $key;
+	    // 检查加密key，iv的长度是否符合算法要求  
+	    $key = $this->fixLen($key, mcrypt_enc_get_key_size($td));  
+	    $iv =$this->fixLen($iv, mcrypt_enc_get_iv_size($td));  
+	    echo '<br/>';
+	    echo $key;die;
+	    //加密数据长度处理  
+	    $str = $this->strPad($str, mcrypt_enc_get_block_size($td));  
+	      
+	    if (mcrypt_generic_init($td, $key, $iv) !== 0) {  
+	        return false;  
+	    }  
+	    $result = mcrypt_generic($td, $str);  
+	    mcrypt_generic_deinit($td);  
+	    mcrypt_module_close($td);  
+	    return $result;  
+	}  
+    function fixLen($str, $td_len)  
+    {  
+        $str_len = strlen($str);  
+        if ($str_len > $td_len) {  
+            return substr($str, 0, $td_len);  
+        } else if($str_len < $td_len) {  
+            return str_pad($str, $td_len, '0');  
+        }  
+        return $str;  
+    }  
+    function strPad($str, $td_group_len)  
+    {  
+        $padding_len = $td_group_len - (strlen($str) % $td_group_len);  
+        return str_pad($str, strlen($str) + $padding_len, "\0");  
+    }  
 	/**
 	 * 获取签名
 	 * @return [type] [description]
@@ -99,7 +157,8 @@ class Helibao{
 	 * @return [type] [description]
 	 */
 	public function send_request($url,$post){
-		$res=curl_post($url,'post',json_encode($post));
+		var_dump($post);die;
+		$res=curl_post($url,'post',$post);
 		echo $res;die;
         $result=json_decode($res,true);
         return $result;
