@@ -19,6 +19,7 @@
  use app\index\model\MemberCashcard;
  use app\index\model\ChannelRate;
  use app\index\model\ChannelType;
+ use app\index\model\Commission;
  use app\index\model\CashOrder;
  use app\index\model\MemberCert;
  use app\index\model\Passageway;
@@ -99,14 +100,28 @@
  			->select();
  		$url='http://pay.mishua.cn/zhonlinepay/service/down/trans/checkDzero';
 		foreach ($orders as $k => $v) {
+			$p=$passageway[$v['order_passway']];
+			$member=Member::get($v['order_member']);
+            #通道费率
+            $passwayitem=PassagewayItem::get(['item_group'=>$member->member_group_id,'item_passageway'=>$v['order_passway']]);
 			$data=[
 				'versionNo'=>1,
-				'mchNo'=>$passageway[$v['order_passway']]['passageway_mech'],
+				'mchNo'=>$p['passageway_mech'],
 				'transNo'=>$v['order_thead_no']
 			];
-			$res=repay_request($data,$passageway[$v['order_passway']]['passageway_mech'],$url,'0102030405060708',$passageway[$v['order_passway']]['passageway_pwd_key'],$passageway[$v['order_passway']]['passageway_key']);
+			$res=repay_request($data,$p['passageway_mech'],$url,'0102030405060708',$p['passageway_pwd_key'],$p['passageway_key']);
 			$order=CashOrder::get($v['order_id']);
  			if($res['qfStatus']=='SUCCESS'){
+	            $Commission_info=Commission::where(['commission_from'=>$order->order_id,'commission_type'=>1])->find();
+	            if(!$Commission_info){
+	                $fenrun= new \app\api\controller\Commission();
+	                $fenrun_result=$fenrun->MemberFenRun($order->order_member,$order->order_money,$order->order_passway,1,'快捷支付手续费分润',$order->order_id);
+				 	if($fenrun_result['code']=="200"){
+		 				$order->order_fen=$fenrun_result['leftmoney'];
+		                $order->order_buckle=$passwayitem->item_charges/100;
+		                $order->order_platform=$order->order_charge-($order->order_money*$p['passageway_rate']/100)+$passwayitem->item_charges/100-$p['passageway_income'];
+		            }
+	            }
  				$order->order_state=2;
  			}elseif($res['status']==00){
  				$order->order_state=3;

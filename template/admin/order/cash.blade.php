@@ -37,7 +37,8 @@
       <option value="1" @if($r['order_state']==1) selected @endif>待支付</option>
       <option value="2" @if($r['order_state']==2) selected @endif>成功</option>
       <option value="-1" @if($r['order_state']==-1) selected @endif>失败</option>
-      <option value="=-2" @if($r['order_state']==-2) selected @endif>超时</option>
+      <option value="-2" @if($r['order_state']==-2) selected @endif>超时</option>
+      <option value="3" @if($r['order_state']==3) selected @endif>代付未成功</option>
   </select>
  
   </div>
@@ -111,7 +112,7 @@
                  <td>{{$list->order_also}}%</td>
                  <td>{{$list->passageway_name}}</td>
 
-                 <td>@if($list->order_state==1)待支付@elseif($list->order_state==2)成功@elseif($list->order_state==-1)失败@else 超时@endif</td>
+                 <td>@if($list->order_state==1)待支付@elseif($list->order_state==2)成功@elseif($list->order_state==-1)失败elseif($list->order_state==-2) 超时@else代付未成功@endif</td>
                  <td>{{$list->order_desc}}</td>
                  <td>{{$list->order_add_time}}</td>
                  <td>
