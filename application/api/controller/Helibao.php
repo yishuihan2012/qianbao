@@ -16,7 +16,7 @@
  use app\index\model\PassagewayItem;
  use app\index\model\CashOrder;
  use app\api\controller\Commission;
- use Think\Crypt\Driver\Des; //导入类库
+ use app\api\controller\HttpClient;
 class Helibao{
 	public $test_url;
 	public $product_url;
@@ -70,6 +70,10 @@ class Helibao{
 		$post['interfaceName']='register';
 		$res=$this->send_request($this->test_url,$post);
 	}
+	/**
+	 * 扫码支付
+	 * @return [type] [description]
+	 */
 	public function scan_pay(){
 		$arr=array(
 			'P2_orderId'=>make_rand_code(),//商户订单号		是	String(50)	p_20170302185347	商户系统内部订单号，要求50字符以内，同一商户号下订单号唯一
@@ -85,63 +89,133 @@ class Helibao{
 			'P12_goodsName'=>'三星s9',//商品名称		是	String(128)	Iphone7	商品名称
 			'P13_goodsDetail'=>"三星手机",//商户描述		否	String(255)	Iphone7	对交易或商品的描述
 			'P14_desc'=>"我是备注",//备注		否	String(100)	备注	订单备注信息，原样返回
+			'signKey'=>'E2ASpz3kPCZW3HJVeoQTqj0IOwMSR0F8',
 		);
-		$
+		$post['body']=$this->get_body($arr);
+		echo $post['body'];die;
+		$post['sign']=$this->get_sign($post['body']);
+		$post['interfaceName']='register';
+		$res=$this->send_request($this->scan_test,$post);
+		var_dump($res);die;
 	}
+	public function test(){
+		$params=array(
+			'P1_bizType'=> "AppPay",
+			'P2_orderId'=>make_rand_code(),//商户订单号		是	String(50)	p_20170302185347	商户系统内部订单号，要求50字符以内，同一商户号下订单号唯一
+			'P3_customerNumber'=>"C1800193823",//商户编号		是	String(15)	C1800000002	合利宝分配的商户号
+			'P4_payType'=>'SCAN',//支付类型		是	String(15)	SCAN	SWIPE:刷卡(被扫)SCAN:扫码(主扫)
+			'P5_orderAmount'=>'0.01',//交易金额		是	Number(10,2)	0.01	订单金额，以元为单位，最小金额为0.01
+			'P6_currency'=>"CNY",//币种类型		是	String(30)	CNY	CNY:人民币
+			'P7_authcode'=>'1',//授权码		是	String(50)		payType为刷卡(被扫)时传入一组字符串(付款码),主扫支付类型传入1即可
+			'P8_appType'=>'ALIPAY',//客户端类型		是	String(20)	WXPAY	ALIPAY：支付宝WXPAY:微信UNIONPAY:银联JDPAY:京东钱包QQPAY:QQ钱包
+			'P9_notifyUrl'=>'',//通知回调地址		是	String(300)	http://wap.helipay.com/notify.php	异步接收合利宝支付结果通知的回调地址，通知url必须为外网可访问的url，不能携带参数。
+			'P10_successToUrl'=>'',//成功跳转URL		否	String(300)	http://wap.helipay.com/success.php	支付完成后，展示支付结果的页面地址(暂不用)
+			'P11_orderIp'=>"127.0.0.1",//商户IP		是	String(20)	192.168.10.1	用户下单IP
+			'P12_goodsName'=>'三星s9',//商品名称		是	String(128)	Iphone7	商品名称
+			'P13_goodsDetail'=>"三星手机",//商户描述		否	String(255)	Iphone7	对交易或商品的描述
+			'P14_desc'=>"我是备注",//备注		否	String(100)	备注	订单备注信息，原样返回
+		);
+		$str=$this->buildQueryString($params);
+		$source=$str."&E2ASpz3kPCZW3HJVeoQTqj0IOwMSR0F8";
+		// $source = "&".$P1_bizType."&".$P2_orderId."&".$P3_customerNumber."&".$P4_payType."&".$P5_orderAmount."&".$P6_currency."&".$P7_authcode."&".$P8_appType."&".$P9_notifyUrl."&".$P10_successToUrl."&".$P11_orderIp."&".$P12_goodsName."&".$P13_goodsDetail."&".$P14_desc."&".$signKey;
+
+		// echo "source:".$source."<br/>";die;
+		$sign= md5($source);
+        $Client = new HttpClient("127.0.0.1"); 
+        $url = "http://test.trx.helipay.com/trx/app/interface.action";
+        //post的参数 
+        // $params = array('P1_bizType'=>$P1_bizType,'P3_customerNumber'=>$P3_customerNumber,'P2_orderId'=>$P2_orderId,'sign'=>$sign,'source'=>$source);
+        $params['sign']=$sign;
+        $pageContents=$this->send_request($url,$params);
+        // $pageContents = $Client->quickPost($url, $params); 
+        echo "back msg:".$pageContents."<br/>"; die;
+		$obj = json_decode($pageContents);
+		$rt1_bizType = $obj->{'rt1_bizType'};
+		$rt2_retCode = $obj->{'rt2_retCode'};
+		$rt3_retMsg = $obj->{'rt3_retMsg'};
+		$rt4_customerNumber = $obj->{'rt4_customerNumber'};
+		$rt5_orderId = $obj->{'rt5_orderId'};
+		$rt6_serialNumber = $obj->{'rt6_serialNumber'};
+		$rt7_orderStatus = $obj->{'rt7_orderStatus'};
+		$rt8_orderAmount = $obj->{'rt8_orderAmount'};
+		$rt9_currency = $obj->{'rt9_currency'};
+		$rt10_desc = $obj->{'rt10_desc'};
+		$json_sign = $obj->{'sign'};
+
+		echo "rt1_bizType:".$rt1_bizType."<br/>";
+		echo "rt2_retCode:".$rt2_retCode."<br/>";
+		echo "rt3_retMsg:".$rt3_retMsg."<br/>";
+		echo "rt4_customerNumber:".$rt4_customerNumber."<br/>";
+		echo "rt5_orderId:".$rt5_orderId."<br/>";
+		echo "rt6_serialNumber:".$rt6_serialNumber."<br/>";
+		echo "rt7_orderStatus:".$rt7_orderStatus."<br/>";
+		echo "rt8_orderAmount:".$rt8_orderAmount."<br/>";
+		echo "rt9_currency:".$rt9_currency."<br/>";
+		echo "rt10_desc:".$rt10_desc."<br/>";
+		echo "json_sign:".$json_sign."<br/>";
+	
+	//当retCode为0000证明查询请求受理成功，订单是否支付成功根据r4_orderStatus判断，INIT:已接收;DOING: 处理中;SUCCESS:成功; FAIL:失败;CLOSE:关闭
+	}
+	function buildQueryString($data) {
+        $querystring = '';
+        if (is_array($data)) {
+            // Change data in to postable data
+    		foreach ($data as $key => $val) {
+    			$querystring.="&".$val;
+    		}
+    	} 
+    	return $querystring;
+    }
 	/**
 	 * 获取加密主体信息
 	 * @return [type] [description]
 	 */
 	public function get_body($arr){
 		$str = json_encode($arr);
-		$key = 'E2ASpz3kPCZW3HJVeoQTqj0IOwMSR0F8';
-		$des = new Des();
-		$re = $des->encrypt($str, $key); //加密
-
-		echo bin2hex($re);die; //给二进制转为16进制，所谓的解决乱码
+		$key = 'Ke0xG8INoyRkoRXxBe98uYUG';
 		// return 'C0HdQBfH3pJ2iBH6zEM9udEvoPW7k8AqLIvdOqpskQ+jomvhpC1pf7uy1kk/+B5sF9GbM8yDjuANrqu+er5GXmHskmvi4arr2WxWhWQAiQ/HTjufLU8Qb5Z9ZkHOnR2u';
 		$json=json_encode($arr);
-		$return=AESencode($json,'E2ASpz3kPCZW3HJVeoQTqj0IOwMSR0F8','Ke0xG8INoyRkoRXxBe98uYUG');
+		$return=AESencode($json,'Ke0xG8INoyRkoRXxBe98uYUG','Ke0xG8INoyRkoRXxBe98uYUG');
 		return $return;
 	}
 
-	function encrypt3DES($str,$key,$iv){  
-	    $td = mcrypt_module_open(MCRYPT_3DES, "", MCRYPT_MODE_CBC, "");  
-	    if ($td === false) {  
-	        return false;  
-	    }  
-	    echo $key;
-	    // 检查加密key，iv的长度是否符合算法要求  
-	    $key = $this->fixLen($key, mcrypt_enc_get_key_size($td));  
-	    $iv =$this->fixLen($iv, mcrypt_enc_get_iv_size($td));  
-	    echo '<br/>';
-	    echo $key;die;
-	    //加密数据长度处理  
-	    $str = $this->strPad($str, mcrypt_enc_get_block_size($td));  
+	// function encrypt3DES($str,$key,$iv){  
+	//     $td = mcrypt_module_open(MCRYPT_3DES, "", MCRYPT_MODE_CBC, "");  
+	//     if ($td === false) {  
+	//         return false;  
+	//     }  
+	//     echo $key;
+	//     // 检查加密key，iv的长度是否符合算法要求  
+	//     $key = $this->fixLen($key, mcrypt_enc_get_key_size($td));  
+	//     $iv =$this->fixLen($iv, mcrypt_enc_get_iv_size($td));  
+	//     echo '<br/>';
+	//     echo $key;die;
+	//     //加密数据长度处理  
+	//     $str = $this->strPad($str, mcrypt_enc_get_block_size($td));  
 	      
-	    if (mcrypt_generic_init($td, $key, $iv) !== 0) {  
-	        return false;  
-	    }  
-	    $result = mcrypt_generic($td, $str);  
-	    mcrypt_generic_deinit($td);  
-	    mcrypt_module_close($td);  
-	    return $result;  
-	}  
-    function fixLen($str, $td_len)  
-    {  
-        $str_len = strlen($str);  
-        if ($str_len > $td_len) {  
-            return substr($str, 0, $td_len);  
-        } else if($str_len < $td_len) {  
-            return str_pad($str, $td_len, '0');  
-        }  
-        return $str;  
-    }  
-    function strPad($str, $td_group_len)  
-    {  
-        $padding_len = $td_group_len - (strlen($str) % $td_group_len);  
-        return str_pad($str, strlen($str) + $padding_len, "\0");  
-    }  
+	//     if (mcrypt_generic_init($td, $key, $iv) !== 0) {  
+	//         return false;  
+	//     }  
+	//     $result = mcrypt_generic($td, $str);  
+	//     mcrypt_generic_deinit($td);  
+	//     mcrypt_module_close($td);  
+	//     return $result;  
+	// }  
+ //    function fixLen($str, $td_len)  
+ //    {  
+ //        $str_len = strlen($str);  
+ //        if ($str_len > $td_len) {  
+ //            return substr($str, 0, $td_len);  
+ //        } else if($str_len < $td_len) {  
+ //            return str_pad($str, $td_len, '0');  
+ //        }  
+ //        return $str;  
+ //    }  
+ //    function strPad($str, $td_group_len)  
+ //    {  
+ //        $padding_len = $td_group_len - (strlen($str) % $td_group_len);  
+ //        return str_pad($str, strlen($str) + $padding_len, "\0");  
+ //    }  
 	/**
 	 * 获取签名
 	 * @return [type] [description]
@@ -157,7 +231,6 @@ class Helibao{
 	 * @return [type] [description]
 	 */
 	public function send_request($url,$post){
-		var_dump($post);die;
 		$res=curl_post($url,'post',$post);
 		echo $res;die;
         $result=json_decode($res,true);
