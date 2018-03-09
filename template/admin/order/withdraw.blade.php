@@ -59,6 +59,8 @@
       <z class='clearTime'>X</z>
   </div>
   <button class="btn btn-primary" type="submit">搜索</button>
+  <input type="hidden" name="is_export" class="is_export" value="0">
+  <button class="btn btn-primary export" type="submit">导出</button>
 </form>
 </blockquote>
   <div class="items items-hover">
@@ -141,6 +143,10 @@
        $('.menu .nav .active').removeClass('active');
        $('.menu .nav li.withdraw').addClass('active');
        $('.menu .nav li.order-manager').addClass('show');
+    //初始化时间
+        $('#dateTimeRange').val('{{$r["beginTime"]}} - {{$r["endTime"]}}');
+        $('#beginTime').val('{{$r["beginTime"]}}');
+        $('#endTime').val('{{$r["endTime"]}}');
  })
   $('#dateTimeRange').daterangepicker({
         applyClass : 'btn-sm btn-success',
@@ -183,10 +189,16 @@ begin_end_time_clear();
 $('.clearTime').click(begin_end_time_clear);
   //清除时间
     function begin_end_time_clear() {
-        $('#dateTimeRange').val('{{$r["beginTime"]}} - {{$r["endTime"]}}');
-        $('#beginTime').val('{{$r["beginTime"]}}');
-        $('#endTime').val('{{$r["endTime"]}}');
+        $('#dateTimeRange').val('');
+        $('#beginTime').val('');
+        $('#endTime').val('');
     }
+$('.export').click(function(){
+  $(".is_export").val(1);
+  setTimeout(function(){
+    $(".is_export").val(0);
+  },100);
+})
 </script>
 <style type="text/css">
    .clearTime{

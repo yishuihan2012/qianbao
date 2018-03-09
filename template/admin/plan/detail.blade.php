@@ -55,11 +55,13 @@
 		  </div>
           <div class="input-group" style="width: 200px;float: left; margin-right: 10px;">
               <input type="text" class="form-control date-picker" id="dateTimeRange" placeholder="执行时间" />
-              <input type="hidden" name="beginTime" id="beginTime" value="{{isset($beginTime)?$beginTime:'1'}}" />
-              <input type="hidden" name="endTime" id="endTime" value="{{isset($endTime)?$endTime:'2'}}" />
+              <input type="hidden" name="beginTime" id="beginTime" value="{{isset($beginTime)?$beginTime:''}}" />
+              <input type="hidden" name="endTime" id="endTime" value="{{isset($endTime)?$endTime:''}}" />
               <z class='clearTime'>X</z>
           </div>
           <button class="btn btn-primary" type="submit">搜索</button>
+  <input type="hidden" name="is_export" class="is_export" value="0">
+  <button class="btn btn-primary export" type="submit">导出</button>
     </form>
     </div>
 </div>
@@ -101,7 +103,7 @@
 			 <td>{{$value->card_bankname}}</td>
 			 <td>{{$value->order_money}}</td>
 			 <td>{{$value->order_pound}}</td>
-			 <td>@if($value->order_status == 1)<em style="color:#FF9900;">  待执行 </em>@elseif($value->order_status == 2)<em style="color:#33FF33;"> 成功</em> @elseif($value->order_status == 3)<em style="color:#FF00FF;"> 取消</em> @elseif($value->order_status ==4) <em style="color:#00FFFF;">带查证</em> @else <em style="color:red;">失败 </em>@endif </td>
+			 <td>@if($value->order_status == 1)<em style="color:#FF9900;">  待执行 </em>@elseif($value->order_status == 2)<em style="color:#33FF33;"> 成功</em> @elseif($value->order_status == 3)<em style="color:#FF00FF;"> 取消</em> @elseif($value->order_status ==4) <em style="color:#00FFFF;">待查证</em> @else <em style="color:red;">失败 </em>@endif </td>
 			 <td>{{$value->order_retry_count}}</td>
 			 <td>{{$value->back_statusDesc}}</td>
 			 <td>{{$value->order_desc}}</td>
@@ -183,14 +185,14 @@ $(document).ready(function(){
       }, function(start, end, label) { // 格式化日期显示框
            $('#beginTime').val(start.format('YYYY-MM-DD'));
            $('#endTime').val(end.format('YYYY-MM-DD'));
-           $('#dateTimeRange').val(start+'-'+end);
       });
       setTimeout(function(){
            $('#beginTime').val(start.format('YYYY-MM-DD'));
            $('#endTime').val(end.format('YYYY-MM-DD'));
-           $('#dateTimeRange').val(start+'-'+end);
-           console.log(start);
-      },100);
+           if(start){
+               $('#dateTimeRange').val(start+'-'+end);
+           }
+      },10);
       begin_end_time_clear();
       $('.clearTime').click(begin_end_time_clear);
       function begin_end_time_clear() {
@@ -198,6 +200,12 @@ $(document).ready(function(){
            $('#beginTime').val('');
            $('#endTime').val('');
       }
+$('.export').click(function(){
+  $(".is_export").val(1);
+  setTimeout(function(){
+    $(".is_export").val(0);
+  },100);
+})
  });
 
 		 $(".parent li a").click(function(){
@@ -239,4 +247,17 @@ $(document).ready(function(){
 		 });
     	 })
 </script>
+ <style type="text/css">
+   .clearTime{
+    position: absolute;
+    right: 5px;
+    top: 5px;
+    z-index: 99;
+    border: 1px solid;
+    color: red;
+    font-size: .6rem;
+    padding: 0 5px;
+   }
+
+ </style>
 @endsection

@@ -28,7 +28,7 @@
     <option value="" >全部</option>
     <option value="2" @if($r['generation_state']==2) selected @endif>还款中</option>
     <option value="3" @if($r['generation_state']==3) selected @endif>还款结束</option>
-    <option value="-1" @if($r['generation_state']==-1) selected @endif>还款失败</option>
+    <!-- <option value="-1" @if($r['generation_state']==-1) selected @endif>还款失败</option> -->
     <option value="4" @if($r['generation_state']==4) selected @endif>取消</option>
   </select>
  
@@ -50,6 +50,8 @@
     <z class='clearTime'>X</z>
 </div>
     <button class="btn btn-primary" type="submit">搜索</button>
+  <input type="hidden" name="is_export" class="is_export" value="0">
+  <button class="btn btn-primary export" type="submit">导出</button>
 </form>
 
 
@@ -143,6 +145,12 @@ $(document).ready(function(){
 		    }
 		});
     })
+  @if(isset($r["beginTime"]))
+  //初始化时间
+      $('#dateTimeRange').val('{{$r["beginTime"]}} - {{$r["endTime"]}}');
+      $('#beginTime').val('{{$r["beginTime"]}}');
+      $('#endTime').val('{{$r["endTime"]}}'); 
+  @endif
 });
 $('#dateTimeRange').daterangepicker({
         applyClass : 'btn-sm btn-success',
@@ -167,14 +175,6 @@ $('#dateTimeRange').daterangepicker({
         opens : 'left',    // 日期选择框的弹出位置
         separator : ' 至 ',
         showWeekNumbers : true,     // 是否显示第几周
-
- 
-        //timePicker: true,
-        //timePickerIncrement : 10, // 时间的增量，单位为分钟
-        //timePicker12Hour : false, // 是否使用12小时制来显示时间
- 
-         
-        //maxDate : moment(),           // 最大时间
         format: 'YYYY-MM-DD'
  
     }, function(start, end, label) { // 格式化日期显示框
@@ -189,6 +189,12 @@ $('.clearTime').click(begin_end_time_clear);
         $('#beginTime').val('');
         $('#endTime').val('');
     }
+$('.export').click(function(){
+  $(".is_export").val(1);
+  setTimeout(function(){
+    $(".is_export").val(0);
+  },100);
+})
 </script>
 <style type="text/css">
    .clearTime{

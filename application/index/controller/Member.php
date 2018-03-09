@@ -50,6 +50,8 @@ namespace app\index\controller;
 			$where['member_creat_time']=["between time",[request()->param('beginTime'),$endTime]];
 			$this->assign('beginTime',request()->param('beginTime'));
 			$this->assign('endTime',request()->param('endTime'));
+		}else{
+			
 		}
 
 		#身份证查询

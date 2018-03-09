@@ -37,9 +37,9 @@ class Order extends Common{
 			$endTime=strtotime(request()->param('endTime'))+24*3600;
 			$wheres['upgrade_creat_time']=["between time",[request()->param('beginTime'),$endTime]];
 		}else{
-			#默认显示昨天一天的
-			$r['beginTime']=strtotime(date('Y-m-d',strtotime("-0 days")));
-			$r['endTime']=$r['beginTime']+24*3600;
+			#默认显示昨天一天 至现在的
+			$r['beginTime']=strtotime(date('Y-m-d',strtotime("-1 days")));
+			$r['endTime']=time();
 			$wheres['upgrade_creat_time']=["between time",[$r['beginTime'],$r['endTime']]];
 			$r['beginTime']=date('Y-m-d',$r['beginTime']);
 			$r['endTime']=date('Y-m-d',$r['endTime']-1);
@@ -118,8 +118,8 @@ class Order extends Common{
 			$wheres['withdraw_add_time']=["between time",[request()->param('beginTime'),$endTime]];
 		}else{
 			#默认显示昨天一天的
-			$r['beginTime']=strtotime(date('Y-m-d',strtotime("-0 days")));
-			$r['endTime']=$r['beginTime']+24*3600;
+			$r['beginTime']=strtotime(date('Y-m-d',strtotime("-1 days")));
+			$r['endTime']=time();
 			$wheres['withdraw_add_time']=["between time",[$r['beginTime'],$r['endTime']]];
 			$r['beginTime']=date('Y-m-d',$r['beginTime']);
 			$r['endTime']=date('Y-m-d',$r['endTime']-1);
@@ -149,6 +149,26 @@ class Order extends Common{
 		}
 		//管理员列表
 		$admins=db('adminster')->column('adminster_id,adminster_login');
+		if(input('is_export')==1){
+	 	    $fp = fopen('php://output', 'a');
+ 	    	#取数据
+	 	    $order_lists=db("withdraw")->alias('w')
+	 	    	->join('member m','m.member_id=w.withdraw_member')
+	 	    	->join('member_cert c','c.cert_member_id=m.member_id','left')
+	 	    	->where($where)
+	 	    	->where($wheres)
+	 	    	->order("withdraw_add_time desc")
+	 	    	->field('withdraw_id,withdraw_no,withdraw_name,withdraw_method,withdraw_account,withdraw_total_money,withdraw_amount,withdraw_charge,withdraw_state,withdraw_bak,withdraw_option,withdraw_add_time')
+	 	    	->select();
+		 	foreach ($order_lists as $k => $v) {
+		 		if($v['withdraw_option']!=0)
+		 			$order_lists[$k]['withdraw_option']=$admins[$v['withdraw_option']];
+		 	}
+
+	 	    $head=['ID','提现流水号','姓名','收款方式','收款账号','总金额','操作全额','手续费','订单状态','备注','操作人','创建时间'];
+	 	    export_csv($head,$order_lists,$fp);
+	 	    return;
+		}
 	 	 // #查询订单列表分页
 	 	$order_lists = Withdraw::haswhere('member',$where)
 	 	 	->join("wt_member_cert m", "m.cert_member_id=Member.member_id","left")
@@ -269,8 +289,8 @@ class Order extends Common{
 			$where['order_add_time']=["between time",[request()->param('beginTime'),$endTime]];
 		}else{
 			#默认显示今天一天的
-			$r['beginTime']=strtotime(date('Y-m-d',strtotime("-0 days")));
-			$r['endTime']=$r['beginTime']+24*3600;
+			$r['beginTime']=strtotime(date('Y-m-d',strtotime("-1 days")));
+			$r['endTime']=time();
 			$where['order_add_time']=["between time",[$r['beginTime'],$r['endTime']]];
 			$r['beginTime']=date('Y-m-d',$r['beginTime']);
 			$r['endTime']=date('Y-m-d',$r['endTime']-1);
@@ -393,8 +413,8 @@ class Order extends Common{
 			$where['order_add_time']=["between time",[request()->param('beginTime'),$endTime]];
 		}else{
 			#默认显示昨天一天的
-			$r['beginTime']=strtotime(date('Y-m-d',strtotime("-0 days")));
-			$r['endTime']=$r['beginTime']+24*3600;
+			$r['beginTime']=strtotime(date('Y-m-d',strtotime("-1 days")));
+			$r['endTime']=time();
 			$where['order_add_time']=["between time",[$r['beginTime'],$r['endTime']]];
 			$r['beginTime']=date('Y-m-d',$r['beginTime']);
 			$r['endTime']=date('Y-m-d',$r['endTime']-1);
@@ -451,8 +471,8 @@ class Order extends Common{
 			$wheres['recomment_creat_time']=["between time",[request()->param('beginTime'),$endTime]];
 		}else{
 			#默认显示昨天一天的
-			$r['beginTime']=strtotime(date('Y-m-d',strtotime("-0 days")));
-			$r['endTime']=$r['beginTime']+24*3600;
+			$r['beginTime']=strtotime(date('Y-m-d',strtotime("-1 days")));
+			$r['endTime']=time();
 			$wheres['recomment_creat_time']=["between time",[$r['beginTime'],$r['endTime']]];
 			$r['beginTime']=date('Y-m-d',$r['beginTime']);
 			$r['endTime']=date('Y-m-d',$r['endTime']-1);

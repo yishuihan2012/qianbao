@@ -24,11 +24,14 @@ class WalletLog extends Common
     //-------------------------------------------------------
 	public function index($member_nick='')
 	{
+		$r=[];
 		#查询出会员列表
 		$where['log_wallet_amount'] = array("<>",0);
 		if(request()->param('beginTime') && request()->param('endTime')){
 			$endTime=strtotime(request()->param('endTime'))+24*3600;
 			$where['log_add_time']=["between time",[request()->param('beginTime'),$endTime]];
+			$r['beginTime']=request()->param('beginTime');
+			$r['endTime']=request()->param('endTime');
 		}
 		if(request()->param('log_wallet_type')!=''){
 			$where['log_relation_type'] = array("=",request()->param('log_wallet_type'));
@@ -99,6 +102,7 @@ class WalletLog extends Common
 		$leavetotal = WalletLogs::with('wallet')->join("wt_member","member_id=wallet_member")->where($where)->where(['log_relation_type' => 2])->order('log_id', 'desc')->sum("log_wallet_amount");
 		$this->assign("leavetotal",$leavetotal);
 		$this->assign('list', $list);
+		$this->assign('r', $r);
 		return view('admin/walletlog/index');
 	}
 }
