@@ -184,14 +184,31 @@ $(document).ready(function(){
            $('#beginTime').val(start.format('YYYY-MM-DD'));
            $('#endTime').val(end.format('YYYY-MM-DD'));
       });
-      setTimeout(function(){
-           $('#beginTime').val(start.format('YYYY-MM-DD'));
-           $('#endTime').val(end.format('YYYY-MM-DD'));
-           if(start){
-               $('#dateTimeRange').val(start+'-'+end);
-           }
-      },10);
-      begin_end_time_clear();
+      // setTimeout(function(){
+      //      $('#beginTime').val(start.format('YYYY-MM-DD'));
+      //      $('#endTime').val(end.format('YYYY-MM-DD'));
+      //      if(start){
+      //          $('#dateTimeRange').val(start+'-'+end);
+      //      }
+      // },10);
+      function getNowFormatDate() {
+        var date = new Date();
+        var seperator1 = "-";
+        var year = date.getFullYear();
+        var month = date.getMonth() + 1;
+        var strDate = date.getDate();
+        if (month >= 1 && month <= 9) {
+            month = "0" + month;
+        }
+        if (strDate >= 0 && strDate <= 9) {
+            strDate = "0" + strDate;
+        }
+        var currentdate = year + seperator1 + month + seperator1 + strDate;
+        
+        return currentdate;
+    }
+     $('#beginTime').val(getNowFormatDate());
+     $('#endTime').val(getNowFormatDate());
       $('.clearTime').click(begin_end_time_clear);
       function begin_end_time_clear() {
            $('#dateTimeRange').val('');

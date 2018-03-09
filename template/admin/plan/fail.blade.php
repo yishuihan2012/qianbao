@@ -188,7 +188,7 @@
         $('#beginTime').val(start.format('YYYY-MM-DD'));
         $('#endTime').val(end.format('YYYY-MM-DD'));
     });
-begin_end_time_clear();
+// begin_end_time_clear();
 $('.clearTime').click(begin_end_time_clear);
   //清除时间
     function begin_end_time_clear() {
@@ -196,6 +196,24 @@ $('.clearTime').click(begin_end_time_clear);
         $('#beginTime').val('');
         $('#endTime').val('');
     }
+    function getNowFormatDate() {
+        var date = new Date();
+        var seperator1 = "-";
+        var year = date.getFullYear();
+        var month = date.getMonth() + 1;
+        var strDate = date.getDate();
+        if (month >= 1 && month <= 9) {
+            month = "0" + month;
+        }
+        if (strDate >= 0 && strDate <= 9) {
+            strDate = "0" + strDate;
+        }
+        var currentdate = year + seperator1 + month + seperator1 + strDate;
+        
+        return currentdate;
+    }
+     $('#beginTime').val(getNowFormatDate());
+     $('#endTime').val(getNowFormatDate());
 </script>
 <style type="text/css">
    .clearTime{
