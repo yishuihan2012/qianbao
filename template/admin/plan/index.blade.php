@@ -28,7 +28,7 @@
     <option value="" >全部</option>
     <option value="2" @if($r['generation_state']==2) selected @endif>还款中</option>
     <option value="3" @if($r['generation_state']==3) selected @endif>还款结束</option>
-    <option value="-1" @if($r['generation_state']==-1) selected @endif>还款失败</option>
+    <!-- <option value="-1" @if($r['generation_state']==-1) selected @endif>还款失败</option> -->
     <option value="4" @if($r['generation_state']==4) selected @endif>取消</option>
   </select>
  
