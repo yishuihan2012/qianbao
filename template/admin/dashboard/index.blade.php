@@ -156,7 +156,7 @@
     </div>
     <div class="z-card">
       本月:
-      <span>{{$v['allsum']}}</span>
+      <span>{{$v['monthsum']}}</span>
     </div>
   </div>
     @endforeach

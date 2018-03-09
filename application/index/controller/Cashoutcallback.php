@@ -52,7 +52,7 @@ class Cashoutcallback
               $passwayitem=PassagewayItem::get(['item_group'=>$member->member_group_id,'item_passageway'=>$passway->passageway_id]);
               // var_dump($passwayitem);die;
         	 //代付成功
-    	 if ($resul['qfSatus'] == 'SUCCESS' && $order) {
+    	 if ($resul['qfStatus'] == 'SUCCESS' && $order) {
 		 	 $order->order_state=2;
 		 	 //进行分润
              //判断之前有没有分润过

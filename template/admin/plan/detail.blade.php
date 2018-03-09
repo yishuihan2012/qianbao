@@ -60,6 +60,8 @@
               <z class='clearTime'>X</z>
           </div>
           <button class="btn btn-primary" type="submit">搜索</button>
+  <input type="hidden" name="is_export" class="is_export" value="0">
+  <button class="btn btn-primary export" type="submit">导出</button>
     </form>
     </div>
 </div>
@@ -101,7 +103,7 @@
 			 <td>{{$value->card_bankname}}</td>
 			 <td>{{$value->order_money}}</td>
 			 <td>{{$value->order_pound}}</td>
-			 <td>@if($value->order_status == 1)<em style="color:#FF9900;">  待执行 </em>@elseif($value->order_status == 2)<em style="color:#33FF33;"> 成功</em> @elseif($value->order_status == 3)<em style="color:#FF00FF;"> 取消</em> @elseif($value->order_status ==4) <em style="color:#00FFFF;">带查证</em> @else <em style="color:red;">失败 </em>@endif </td>
+			 <td>@if($value->order_status == 1)<em style="color:#FF9900;">  待执行 </em>@elseif($value->order_status == 2)<em style="color:#33FF33;"> 成功</em> @elseif($value->order_status == 3)<em style="color:#FF00FF;"> 取消</em> @elseif($value->order_status ==4) <em style="color:#00FFFF;">待查证</em> @else <em style="color:red;">失败 </em>@endif </td>
 			 <td>{{$value->order_retry_count}}</td>
 			 <td>{{$value->back_statusDesc}}</td>
 			 <td>{{$value->order_desc}}</td>
@@ -198,6 +200,12 @@ $(document).ready(function(){
            $('#beginTime').val('');
            $('#endTime').val('');
       }
+$('.export').click(function(){
+  $(".is_export").val(1);
+  setTimeout(function(){
+    $(".is_export").val(0);
+  },100);
+})
  });
 
 		 $(".parent li a").click(function(){
