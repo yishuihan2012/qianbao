@@ -51,6 +51,21 @@ class Plan extends Common{
 		if(request()->param('generation_id')){
 			$where['generation_id'] = request()->param("generation_id");
 		}
+		if(input('is_export')==1){
+	 	    $fp = fopen('php://output', 'a');
+ 	    	#取数据
+	 	    $generation_list=db("generation")->alias('g')
+	 	    	->join('member m','m.member_id=g.generation_member')
+	 	    	->join('member_creditcard c','c.card_bankno=g.generation_card')
+	 	    	->where($where)
+	 	    	->order("generation_id desc")
+	 	    	->field('generation_id,member_nick,member_mobile,generation_no,card_bankno,generation_total,generation_count,generation_has,generation_left,generation_pound,generation_start,generation_end,generation_state,generation_desc')
+	 	    	->select();
+
+	 	    $head=['ID','还款会员','手机号码','计划代号','需还信用卡','需还款总额','还款次数','已还款总额','剩余总额','手续费','开始还款日期','最后还款日期','计划状态','还款失败原因'];
+	 	    export_csv($head,$generation_list,$fp);
+	 	    return;
+		}
 		$data = Generation::with("member,creditcard")->where($where)->order("generation_id desc")->paginate(Config::get('page_size'), false, ['query'=>Request::instance()->param()]);
 		#还款总金额
 		$sum = Generation::with("member,creditcard")->where($where)->sum("generation_total");
@@ -200,6 +215,23 @@ class Plan extends Common{
 			$generation_id[]=$value['generation_id'];
 		}
 	 	$generation_id=implode(',', $generation_id);
+		if(input('is_export')==1){
+	 	    $fp = fopen('php://output', 'a');
+ 	    	#取数据
+	 	    $order_list=db("generation_order")->alias('o')
+	 	    	->join('passageway p','p.passageway_id=o.order_passageway')
+	 	    	->join('member m','m.member_id=o.order_member')
+	 	    	->join('member_creditcard c','c.card_bankno=o.order_card')
+	 	    	->where($where)
+	 	    	->where('order_no in ('.$generation_id.')')
+	 	    	->order("order_id desc")
+	 	    	->field('order_id,passageway_name,member_nick,member_mobile,order_type,order_card,card_bankname,order_money,order_pound,order_status,order_retry_count,back_statusDesc,order_desc,order_time,order_add_time')
+	 	    	->select();
+
+	 	    $head=['ID','通道','姓名','手机号','订单类型','信用卡号','银行名称','订单金额','订单手续费','订单状态','重新执行次数','执行结果','订单描述','订单执行时间','订单创建时间'];
+	 	    export_csv($head,$order_list,$fp);
+	 	    return;
+		}
 
 	 	$list=GenerationOrder::with("passageway,member,memberCreditcard")->where($where)->where('order_no in ('.$generation_id.')')->paginate(Config::get('page_size'), false, ['query'=>Request::instance()->param()]);
 	 	$count = GenerationOrder::with("passageway,member,memberCreditcard")->where($where)->where('order_no in ('.$generation_id.')')->count();

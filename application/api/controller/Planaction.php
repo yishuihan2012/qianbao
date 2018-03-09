@@ -88,7 +88,7 @@
  	}
  	#查询当天所有快捷支付订单的状态 次日1点定时执行
  	public function mishua_pay_check(){
- 		$passageway=db('passageway')->where('passageway_true_name','like','%米刷%')->where('passageway_also',1)->column('*',"passageway_id");
+ 		$passageway=db('passageway')->where('passageway_true_name','like','%mi%')->where('passageway_also',1)->column('*',"passageway_id");
  		$passageway_id=[];
  		foreach ($passageway as $k => $v) {
  			$passageway_id[]=$k;
@@ -98,6 +98,7 @@
  			'order_state'=>['<>',2]
  		])->whereTime('order_add_time','yesterday')
  			->select();
+ 			// halt($orders);
  		$url='http://pay.mishua.cn/zhonlinepay/service/down/trans/checkDzero';
 		foreach ($orders as $k => $v) {
 			$p=$passageway[$v['order_passway']];
@@ -110,6 +111,7 @@
 				'transNo'=>$v['order_thead_no']
 			];
 			$res=repay_request($data,$p['passageway_mech'],$url,'0102030405060708',$p['passageway_pwd_key'],$p['passageway_key']);
+			// halt($res);
 			$order=CashOrder::get($v['order_id']);
  			if($res['qfStatus']=='SUCCESS'){
 	            $Commission_info=Commission::where(['commission_from'=>$order->order_id,'commission_type'=>1])->find();

@@ -30,3 +30,9 @@
   <script src="dist/lib/ieonly/respond.js"></script>
   <script src="dist/lib/ieonly/excanvas.js"></script>
 <![endif]-->
+<script type="text/javascript">
+  $(document).on("click",".date-picker,.ranges li,.glyphicon-chevron-right,.glyphicon-chevron-left,.daterangepicker",function(){
+    $('.glyphicon-chevron-right').addClass('icon-chevron-right nav-parent-fold-icon');
+    $('.glyphicon-chevron-left').addClass('icon-chevron-left nav-parent-fold-icon');
+  })
+</script>
