@@ -30,8 +30,8 @@ class Plan extends Common{
 	 	$where = $data['where'];
 	 	 //注册时间
 		if(request()->param('beginTime') && request()->param('endTime')){
-			// $endTime=strtotime(request()->param('endTime'))+24*3600;
-			$where['generation_add_time']=["between time",[request()->param('beginTime'),request()->param('endTime')]];
+			$endTime=strtotime(request()->param('endTime'))+24*3600;
+			$where['generation_add_time']=["between time",[request()->param('beginTime'),$endTime]];
 		}
 		#需还款信用卡
 		if( request()->param('generation_card')){
@@ -107,8 +107,8 @@ class Plan extends Common{
 	 	$where = $data['where'];
 		$where['order_status'] = -1;
 		if(request()->param('beginTime') && request()->param('endTime')){
-			// $endTime=strtotime(request()->param('endTime'))+24*3600;
-			$where['order_time']=["between time",[request()->param('beginTime'),request()->param('endTime')]];
+			$endTime=strtotime(request()->param('endTime'))+24*3600;
+			$where['order_time']=["between time",[request()->param('beginTime'),$endTime]];
 		}
 		if(request()->param('order_money')!=''){
 			$where['order_money'] = request()->param('order_money');
@@ -120,7 +120,7 @@ class Plan extends Common{
 		}else{
 			$r['order_no'] = '';
 		}
-		$list = GenerationOrder::with("passageway,member")->join("wt_generation","generation_id=order_no")->where($where)->where(['wt_generation.generation_state' => 2])->paginate(Config::get('page_size'), false, ['query'=>Request::instance()->param()]);
+		$list = GenerationOrder::with("passageway,member")->join("wt_generation","generation_id=order_no")->where($where)->where([])->paginate(Config::get('page_size'), false, ['query'=>Request::instance()->param()]);
 		$this->assign('r',$r);
 		$this->assign("list",$list);
 		return view("admin/plan/fail");

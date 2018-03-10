@@ -83,7 +83,6 @@ class Userurl extends Controller
         $this->assign("list",$list);
         return view("api/logic/share_code_list");
     }
-
     #取现现成功页面
     public function calllback_success(){
         // $request = $this->param;
@@ -1226,7 +1225,7 @@ class Userurl extends Controller
   public function H5youjifen($tradeNo){
     $order=CashOrder::get(['order_no'=>$tradeNo]);
     $passway=Passageway::get($order->order_passway);
-    $member=Member::get($order->order_member);
+    $member=Members::get($order->order_member);
     #通道费率
      $passwayitem=PassagewayItem::get(['item_group'=>$member->member_group_id,'item_passageway'=>$passway->passageway_id]);
      $Commission_info=Commissions::where(['commission_from'=>$order->order_id,'commission_type'=>1])->find();

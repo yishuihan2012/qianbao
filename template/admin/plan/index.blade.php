@@ -43,7 +43,8 @@
   </select>
   </div>
 
-<div class="input-group" style="width: 200px;float: left; margin-right: 10px;">
+<div class="input-group" style="width: 290px;float: left; margin-right: 10px;">
+    <span class="input-group-addon">还款创建时间</span>
     <input type="text" class="form-control date-picker" id="dateTimeRange" placeholder="还款创建时间" />
     <input type="hidden" name="beginTime" id="beginTime" value="" />
     <input type="hidden" name="endTime" id="endTime" value="" />
@@ -164,7 +165,7 @@ $('#dateTimeRange').daterangepicker({
             firstDay : 1
         },
         ranges : {
-            //'最近1小时': [moment().subtract('hours',1), moment()],
+            // '选择时间': [moment().subtract('hours',1), moment()],
             '今日': [moment().startOf('day'), moment()],
             '昨日': [moment().subtract('days', 1).startOf('day'), moment().subtract('days', 1).endOf('day')],
             '最近7日': [moment().subtract('days', 6), moment()],
@@ -178,10 +179,30 @@ $('#dateTimeRange').daterangepicker({
         format: 'YYYY-MM-DD'
  
     }, function(start, end, label) { // 格式化日期显示框
+      console.log(start);
         $('#beginTime').val(start.format('YYYY-MM-DD'));
         $('#endTime').val(end.format('YYYY-MM-DD'));
     });
-begin_end_time_clear();
+
+ function getNowFormatDate() {
+        var date = new Date();
+        var seperator1 = "-";
+        var year = date.getFullYear();
+        var month = date.getMonth() + 1;
+        var strDate = date.getDate();
+        if (month >= 1 && month <= 9) {
+            month = "0" + month;
+        }
+        if (strDate >= 0 && strDate <= 9) {
+            strDate = "0" + strDate;
+        }
+        var currentdate = year + seperator1 + month + seperator1 + strDate;
+        
+        return currentdate;
+    }
+     $('#beginTime').val(getNowFormatDate());
+     $('#endTime').val(getNowFormatDate());
+// begin_end_time_clear();
 $('.clearTime').click(begin_end_time_clear);
   //清除时间
     function begin_end_time_clear() {
