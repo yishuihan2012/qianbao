@@ -17,6 +17,7 @@
  use app\index\model\CashOrder;
  use app\api\controller\Commission;
  use app\api\controller\HttpClient;
+ use app\index\controller\Tool;
 class Helibao extends Controller{
 	public $test_url;
 	public $product_url;
@@ -120,40 +121,124 @@ class Helibao extends Controller{
 	 * @return [type] [description]
 	 */
 	public function uploadCredential(){
-		$encKey='lENn7v8OZ1z7WdlMKMgu5KNj';
-		$data='"E+YSRSwmgW5YVfdZELt0mAWgh2Y9iAdzZ6ruAWinQICSWm3hjsDA3KPyMxBTs598vNJIRToVp9kgMhu/KY6S9pMtKAlrJgXrDt0WgwhApZmvaWdn3OTd0vfQYCL665LfoacfCzEYoAfbcXWcjg/sQ9isQvHGP/GA';
-		$res=$this->decrypt($data,$encKey);
-				// $result=json_decode($res,true);
-		echo $res;die;
-		if($file = request()->file('file')){
-			$file = request()->file('file');
+
+		if(1){
+			$file_url='http://wallet.dev.com/uploads/aptitude/20180310/a68caa8d66816c946af1a99d55e29e75.jpg';
+			$file_info = file_get_contents($file_url);
+			// $file = request()->file('file');
 			// var_dump($file);die;
+			// $tool=new Tool();
+   //    	    $images=$tool->uploads($file, 'aptitude');
+   //    	    $images=json_decode($images,true);
+   //    	    if($images['code']==200){
+   //    	    	$img_url=$images['data']['link'];
+   //    	    	// echo $img_url;die;
+   //    	    }else{
+   //    	    	exit(json_encode(['code'=>101,'msg'=>'上传失败']));
+   //    	    }
 			$arr=array(
 				'merchantNo'=>'E1800195861',//子商户编号		是	String(16)	C1800001025	进件审核通过后才有的商户号
 				'orderNo'=>make_rand_code(),//请求单号		是	String(30)	P_20171022123bsff23	
 				'credentialType'=>'FRONT_OF_ID_CARD',//资质类型	credentialType	是	String(30)	BUSINESS_LICENSE	见附录5.2
-				'fileSign'=>hash('md5',file_get_contents('1.jpg')),//资质文件 HASH 值	fileSign	是	String(32)	c81e728d9d4c2f636f067f89cc14862c	文件 MD5 校验码
+				'fileSign'=>hash('md5',$file_info),//资质文件 HASH 值	fileSign	是	String(32)	c81e728d9d4c2f636f067f89cc14862c	文件 MD5 校验码
 			);
+		    $file_path=__DIR__.'/1.jpg';
+		    // echo $file_path;die;
+		    file_put_contents($file_path, $file_info);
 			$encKey='lENn7v8OZ1z7WdlMKMgu5KNj';
 			$signKey='blYXETCKznBGIcdEWlwgg1WeA8TVGuA6';
 			$post['interfaceName']='uploadCredential';
 			// $post['body']=$this->get_body($arr);
 			// $post['sign']=$this->get_sign($post['body']);
 			$post['merchantNo']='C1800193823';
-			$post['body']=$this->encrypt(json_encode($arr,JSON_UNESCAPED_UNICODE), $encKey);
+			$post['body']=$this->encrypt(json_encode($arr,JSON_UNESCAPED_UNICODE),$encKey);
 			$post['sign']=md5($post['body']."&".$post['merchantNo']."&".$signKey);
-			$post['file']=$file;
-			print_r($post);die;
-			$res=curl_post('http://test.trx.helipay.com/trx/merchantEntry/upload.action','post',$post,'enctype="multipart/form-data"');
-			echo $res;die;
+			// $post['file']=$file;
+			// $file = new \CURLFile($upload['file'], $upload['type'], $upload['name']);
+			$file = new \CURLFile($file_path);
+			// var_dump($file);die;
+            // $post[$upload['get_name']] = $file;
+            $post['file'] = $file;
+			// print_r($file);die;
+			$res=curl_post('http://test.trx.helipay.com/trx/merchantEntry/upload.action','post',$post,'multipart/form-data');
+			unlink ($file_path);
+			// echo $res;die;
+			$res=json_decode($res,true);
 			if($res['code']=='0000'){
 				$res=$this->decrypt($res['data'],$encKey);
-				$result=json_decode($res,true);
-				var_dump($result);die;
+				// $result=json_decode($res,true);
+				echo $res;die;
 			}
+			echo $red;die;
 		}else{
 			return view('/Userurl/uploadCredential');
 		}
+	}
+	/**
+	 * 商户信息变更
+	 * @return [type] [description]
+	 */
+	public function infoAlteration(){
+		$arr=array(
+			'orderNo'=>make_rand_code(),//订单号		是	String(50)	p_20170726140544	变更请求订单号
+			'merchantNo'=>'E1800195861',//子商户编号		是	String(16)	C1800000002	子商户编号
+			'merchantEntryAlterationType'=>'MERCHANT_CREDENTIAL',//变更类型		是	String(20)	MERCHANT_INFO	见附录5.18
+			'updateShowName'=>"许成成",//变更展示名		是	String(100)	张三	
+			'updateLinkPhone'=>'17569615504',//变更客服联系电话		是	String(20)	18812345678	
+		);
+		$encKey='lENn7v8OZ1z7WdlMKMgu5KNj';
+		$signKey='blYXETCKznBGIcdEWlwgg1WeA8TVGuA6';
+
+		$post['interfaceName']='infoAlteration';
+		// $post['body']=$this->get_body($arr);
+		// $post['sign']=$this->get_sign($post['body']);
+		$post['merchantNo']='C1800193823';
+		$post['body']=$this->encrypt(json_encode($arr,JSON_UNESCAPED_UNICODE), $encKey);
+		$post['sign']=md5($post['body']."&".$post['merchantNo']."&".$signKey);
+		$res=$this->send_request($this->test_url,$post);
+		// echo json_encode($res);die;
+		if($res['code']=='0000'){
+			$data='KHh+C5F4fAoDOFJ9TUiAzh2kw6wPLT5wOdExS8C/WmHznini7URbXU/k6mMBPMagp4LUin03Kjw93JMWGqLvbqPuDL27Wr3zdXyN4qGSmaU=';
+			$res=$this->decrypt($data,$encKey);
+			echo $res;die;
+			$result=json_decode($res,true);
+			var_dump($result);die;
+		}else{
+			echo json_encode($res);die;
+			echo $res;die;
+		}
+	}
+	/**
+	 * 资质变更
+	 * @return [type] [description]
+	 */
+	public function uploadAlterationAptitude(){
+		$file_url='http://wallet.dev.com/uploads/aptitude/20180310/a68caa8d66816c946af1a99d55e29e75.jpg';
+		$file_info = file_get_contents($file_url);
+		$arr=array(
+			'orderNo'=>make_rand_code(),//订单号		是	String(50)	p_20170726140544	变更请求订单号
+			'merchantNo'=>'E1800195861',//子商户编号		是	String(16)	C1800000002	子商户编号
+			'merchantCredentialType'=>'FRONT_OF_ID_CARD',//资质类型		是	String(20)	BUSINESS_LICENSE	见附录5.21
+			'fileSign'=>hash('md5',$file_info),//资质文件 HASH 值		是	String(32)	c81e728d9d4c2f636f067f89cc14862c	文件 MD5 校验码
+		);
+		$file_path=__DIR__.'/'.time().'.jpg';
+	    // echo $file_path;die;
+	    file_put_contents($file_path, $file_info);
+		$encKey='lENn7v8OZ1z7WdlMKMgu5KNj';
+		$signKey='blYXETCKznBGIcdEWlwgg1WeA8TVGuA6';
+		$post['interfaceName']='uploadAlterationAptitude';
+		// $post['body']=$this->get_body($arr);
+		// $post['sign']=$this->get_sign($post['body']);
+		$post['merchantNo']='C1800193823';
+		$post['body']=$this->encrypt(json_encode($arr,JSON_UNESCAPED_UNICODE),$encKey);
+		$post['sign']=md5($post['body']."&".$post['merchantNo']."&".$signKey);
+		// $post['merchantCredentialType']='FRONT_OF_ID_CARD';
+		$file = new \CURLFile($file_path);
+        $post['file'] = $file;
+		// print_r($post);die;
+		$res=curl_post('http://test.trx.helipay.com/trx/merchantEntry/upload.action','post',$post,'multipart/form-data');
+		unlink ($file_path);
+		echo $res;die;
 	}
 	/**
 	 * 扫码支付
@@ -322,7 +407,7 @@ class Helibao extends Controller{
 	 */
 	public function send_request($url,$post){
 		$res=curl_post($url,'post',$post,0);
-		echo $res;die;
+		// echo $res;die;
         $result=json_decode($res,true);
         return $result;
 	}
