@@ -141,7 +141,6 @@ function encryption($str, $salt, $method='md5')
  function curl_post($url, $method = 'post', $data='', $type="Content-Type: application/json; charset=utf-8")
  {
      //echo '<meta http-equiv="Content-Type" content="text/html; charset=GBK">';
-      //$data=iconv("UTF-8","GBK",$data);
       $ch = curl_init();
      curl_setopt($ch, CURLOPT_HTTPHEADER, array($type));
      curl_setopt($ch, CURLOPT_URL, $url);
