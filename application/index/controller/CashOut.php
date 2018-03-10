@@ -25,7 +25,7 @@ use app\index\model\CallbackLog as CallbackLogs;
 use app\api\controller\Membernets; //入网
 use app\index\model\MemberNet;//入网模型
 use app\index\model\SmsCode;
-
+use app\api\controller\Helibao; //入网
 class CashOut
 {
 	public $error;
@@ -667,8 +667,16 @@ class CashOut
  	 	 $order_result=$this->writeorder($tradeNo, $price, $price*$also ,$description, $memberTrade['data']['data']['requestId']);//写入套现订单
  	 	 return  !$order_result ? ['code'=>327] : ['code'=>200,'msg'=>'订单获取成功~', 'data'=>['url'=>$memberTrade['data']['url'],'type'=>1]];
 	 }
-
-
+	/**
+	 * 合利宝扫码付
+	 * @return [type] [description]
+	 */
+	public function hlbsacn(){
+		//检测是否入网
+		$helibao= new Helibao();
+		$res=$helibao->scan_pay();
+		
+	}
 
 	 /**
 	 * @version  获取订单成功的时候写入订单数据
