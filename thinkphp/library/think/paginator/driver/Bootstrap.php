@@ -117,10 +117,14 @@ class Bootstrap extends Paginator
                 );
             } else {
                 return sprintf(
-                    '<ul class="pager">%s %s %s</ul>',
+                    '<ul class="pager">%s %s %s %s</ul>',
                     $this->getPreviousButton(),
                     $this->getLinks(),
-                    $this->getNextButton()
+                    $this->getNextButton(),
+                    '<li>
+                      <input type="text" class="form-control reloadpage" style="display:inline;width:60px" placeholder="页码" >
+                        <button class="btn btn-primary reloadhref" href="'.$this->url(1).'" type="button">跳转</button>
+                    </li>'
                 );
             }
         }
