@@ -246,8 +246,7 @@ class Userurl extends Controller
      * @version  [还款计划创建下一步后显示的详情页]
      * @return   [type]
      */
-
-    public function repayment_plan_detail(){
+    public function repayment_plan_create_detail(){
         // $this->checkToken();
         // $order_no=$this->param['order_no'];
         $order_no=input('order_no');
