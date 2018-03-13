@@ -15,6 +15,12 @@
     <i class="icon icon-yen"></i>未支付金额 <small><strong class="text-danger">{{$count['order_money_del']}}</strong>元</small>
     <i class="icon icon-yen"></i>全部手续费 <small><strong class="text-danger">{{$count['order_charge']}}</strong>元</small></h3>
     </h3>
+    <h3>
+      <i class="icon-list-ul"></i> 成本手续费 <small>共 <strong class="text-danger">{{$count['chengben']}}</strong> 元</small>
+      <i class="icon-list-ul"></i> 盈利分润 <small>共 <strong class="text-danger">{{$count['yingli']}}</strong> 元</small>
+      <i class="icon-list-ul"></i> 三级分润金额 <small>共 <strong class="text-danger">{{$count['sanji']}}</strong> 元</small>
+      <i class="icon-list-ul"></i> 三级分润后盈利 <small>共 <strong class="text-danger">{{$count['fenrunhou']}}</strong> 元</small>
+    </h3>
   </header>
    <form action="" method="post">
     <div class="input-group" style="width: 150px;float: left;margin-right: 20px;">
@@ -82,14 +88,18 @@
                  <tr>
                  <!-- 以下两列左侧固定 -->
                       <th>#</th>
-                      <th>交易流水号</th>
-                      <th>用户名</th>
-                      <th>结算卡</th>
-                      <th>信用卡</th>
+                      <!-- <th>交易流水号</th> -->
+                      <!-- <th>受益人</th> -->
+                      <th>刷卡人</th>
+                      <!-- <th>结算卡</th> -->
+                      <!-- <th>信用卡</th> -->
                       <th class="flex-col">总金额</th>
                       <!-- <th class="flex-col">分润消耗</th>  -->
-                      <th class="flex-col">手续费</th> 
-                      <th class="flex-col">费率</th> 
+                      <th class="flex-col">刷卡手续费</th> 
+                      <!-- <th class="flex-col">费率</th>  -->
+                      <th class="flex-col">成本手续费</th>
+                      <th class="flex-col">分润金额</th>
+                      <th class="flex-col">盈利分润</th>
                       <th class="flex-col">通道</th> 
                       <th>订单状态</th>
                       <th>备注</th>
@@ -101,15 +111,19 @@
            @foreach ($order_lists as $list)
            <tr>
                  <td>{{$list->order_id}}</td>
-                 <td><code>{{$list->order_no}}</code></td>
+                 <!-- <td><code>{{$list->order_no}}</code></td> -->
+                 <!-- <td>{{$list->shouyiren}}</td> -->
                  <td>{{$list->order_name}}</td>
-                 <td>{{$list->order_card}}</td>
-                 <td>{{$list->order_creditcard}}</td>
+                 <!-- <td>{{$list->order_card}}</td> -->
+                 <!-- <td>{{$list->order_creditcard}}</td> -->
 
                  <td>{{$list->order_money}}</td>
                  <!-- <td>{{$list->order_fen}}</td> -->
-                 <td>{{$list->order_charge}}</td>
-                 <td>{{$list->order_also}}%</td>
+                 <td>{{$list->order_charge+$list->order_buckle}}</td>
+                 <!-- <td>{{$list->order_also}}%</td> -->
+                 <td>{{$list->chengben}}</td>
+                 <td>{{$list->fenrun}}</td>
+                 <td>{{$list->yingli}}</td>
                  <td>{{$list->passageway_name}}</td>
 
                  <td>@if($list->order_state==1)待支付@elseif($list->order_state==2)成功@elseif($list->order_state==-1)失败elseif($list->order_state==-2) 超时@else代付未成功@endif</td>
