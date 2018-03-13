@@ -579,7 +579,7 @@ class Userurl extends Controller
          //费率向上取整
           $return['fee']=ceil($pay*100*$rate+$fix*100)/100;
           $return['passageway_fee']=ceil($pay*100*$passageway_rate+$passageway_income*100)/100;
-          $return['plantform_fee']=$return['fee']-$return['Passageway_fee'];
+          $return['plantform_fee']=$return['fee']-$return['passageway_fee'];
           $return['money']=$pay-$return['fee'];
           return $return;
       }
