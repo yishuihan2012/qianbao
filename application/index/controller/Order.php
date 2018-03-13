@@ -285,16 +285,17 @@ class Order extends Common{
 	 	 //注册时间
 	 	$wheres = array();
 		if(request()->param('beginTime') && request()->param('endTime')){
-			$endTime=strtotime(request()->param('endTime'))+24*3600;
+			$endTime=date("Y-m-d",strtotime(request()->param('endTime'))+24*3600);
 			$where['order_add_time']=["between time",[request()->param('beginTime'),$endTime]];
 		}else{
 			#默认显示今天一天的
-			$r['beginTime']=strtotime(date('Y-m-d',strtotime("-1 days")));
-			$r['endTime']=time();
+			$r['beginTime']=strtotime(date('Y-m-d',time()));
+			$r['endTime']=strtotime(date('Y-m-d',strtotime("-1 days")));
 			$where['order_add_time']=["between time",[$r['beginTime'],$r['endTime']]];
 			$r['beginTime']=date('Y-m-d',$r['beginTime']);
 			$r['endTime']=date('Y-m-d',$r['endTime']-1);
 		}
+		// var_dump($where['order_add_time']);die;
 		#身份证查询
 		
 		if( request()->param('order_creditcard')){
@@ -339,9 +340,10 @@ class Order extends Common{
 		 	    	->where($where)
 		 	    	->where($wheres)
 		 	    	->order("order_id desc")
-		 	    	->field('order_id,order_no,order_name,order_card,order_creditcard,order_money,order_charge,order_also,order_state,order_desc,order_add_time')
+		 	    	->field('order_id,order_no,order_name,order_member,order_passway,order_card,order_creditcard,order_money,order_charge,order_also,order_state,order_desc,order_add_time')
 		 	    	->limit($i*$limit,$limit)
 		 	    	->select();
+
 		 	    	$i++;
 		 	    // halt($order_lists);
 		 	    $status=[
@@ -363,7 +365,30 @@ class Order extends Common{
 	 	    return;
 		}
 	 	 // #查询订单列表分页
+		$count['chengben']=0;
+		$count['yingli']=0;
+		$count['sanji']=0;
+		$count['fenrunhou']=0;
 	 	 $order_lists = CashOrder::with('passageway')->join('wt_member m',"m.member_id=wt_cash_order.order_member")->where($where)->join("wt_member_cert mc", "mc.cert_member_id=m.member_id","left")->where($wheres)->order("order_id desc")->paginate(Config::get('page_size'), false, ['query'=>Request::instance()->param()]);
+	 	 foreach ($order_lists as $key => $value) {
+	 	 	 $order_lists[$key]['fenrun']=db('commission')->alias('c')
+	 	 	 	->where('commission_from='.$value['order_id'].' and commission_type=1')
+	 	 	 	->sum('commission_money');
+
+	 	 	  $rate=db('passageway')->alias('p')
+			 	->where('passageway_id='.$value['order_passway'])
+			 	->find();
+			 $order_lists[$key]['chengben']=$rate['passageway_rate']*$value['order_money']/100+$rate['passageway_income'];
+			   #成本手续费
+	 	 	 $count['chengben']+=$order_lists[$key]['chengben'];
+
+	 	 	 $order_lists[$key]['yingli']=$value['order_charge']+$value['order_buckle']-$order_lists[$key]['chengben'];
+	 	 	 $order_lists[$key]['shouyiren']='无';
+
+	 	 	 $count['yingli']+=$order_lists[$key]['yingli'];
+	 	 	 $count['sanji']+=$order_lists[$key]['fenrun'];			
+		}
+		 $count['fenrunhou']=$count['yingli']+$count['sanji'];
 	 	
 	 	 #统计订单条数
 	 	 $count['count_size']=CashOrder::with('passageway')->join('wt_member m',"m.member_id=wt_cash_order.order_member")->where($where)->join("wt_member_cert mc", "mc.cert_member_id=m.member_id","left")->where($wheres)->count();
