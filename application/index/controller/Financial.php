@@ -263,7 +263,7 @@
 					//刷卡手续费
 					$list[$key]['order_charge']=$order['order_charge']+$order['order_buckle'];
 					//成本手续费
-					$list[$key]['charge']=$passageway['passageway_rate']/100*$order['order_money']+$passageway['passageway_income']/100;
+					$list[$key]['charge']=number_format($passageway['passageway_rate']/100*$order['order_money']+$passageway['passageway_income']/100,2);
 					//通道类型
 					$list[$key]['passageway']=$passageway['passageway_name'];
 					//盈利分润
@@ -287,7 +287,7 @@
 					//刷卡手续费
 					$list[$key]['order_charge']=$order['order_pound']+$order['order_buckle'];
 					//成本手续费
-					$list[$key]['charge']=$passageway['passageway_rate']/100*$order['order_money']+$passageway['passageway_income']/100;
+					$list[$key]['charge']=number_format($passageway['passageway_rate']/100*$order['order_money']+$passageway['passageway_income']/100,2);
 					//通道类型
 					$list[$key]['passageway']=$passageway['passageway_name'];
 					//盈利分润
