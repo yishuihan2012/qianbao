@@ -6,6 +6,17 @@
       .clearTime{ position: absolute; right: 5px; top: 5px; z-index: 99; border: 1px solid; color: red; font-size: .6rem; padding: 0 5px;}
  </style>
  <div class="panel">
+    <header>
+    <h3>
+      <i class="icon-list-ul"></i> 刷卡金额 <small>共 <strong class="text-danger">{{$count['money']}}</strong> 元</small>
+      <i class="icon-list-ul"></i> 刷卡手续费 <small>共 <strong class="text-danger">{{$count['order_charge']}}</strong> 元</small>
+      <i class="icon-list-ul"></i> 成本手续费 <small>共 <strong class="text-danger">{{$count['charge']}}</strong> 元</small>
+      <i class="icon-list-ul"></i> 盈利分润 <small>共 <strong class="text-danger">{{$count['yingli']}}</strong> 元</small>
+      <i class="icon-list-ul"></i> 分润金额 <small>共 <strong class="text-danger">{{$count['fenrun']}}</strong> 元</small>
+      <i class="icon-list-ul"></i> 分润后盈利金额 <small>共 <strong class="text-danger">{{$count['fenrun_yingli']}}</strong> 元</small>
+    </h3>
+
+  </header>
       <div class="panel-body">
       <form action="{{url('index/Financial/fenrun')}}" method="post">
            <div class="col-sm-2">
@@ -46,26 +57,37 @@
                 <th>#</th>
                 <th>收益人</th>
                 <th>触发人</th>
-                <th>金额</th>
+                <th>刷卡金额</th>
+                <th>刷卡手续费</th>
+                <th>成本手续费</th>
+                <th>通道类型</th>
+                <th>分润金额</th>
+                <th>盈利分润</th>
                 <th>备注</th>
                 <th>时间</th>
            </tr>
       </thead>
       <tbody>
-        @foreach($data['list'] as $key)
+        @foreach($list as $key)
            <tr>
               <td>{{$key->commission_id}}</td>
               <td>{{$key->member_nick}}</td>
               <td>{{$key->nick}}</td>
+              <td>{{$key->order_money}}</td>
+              <td>{{$key->order_charge}}</td>
+              <td>{{$key->charge}}</td>
+              <td>{{$key->passageway}}</td>
               <td>{{$key->commission_money}}</td>
+              <td>{{$key->yingli}}</td>
               <td>{{$key->commission_desc}}</td>
               <td>{{$key->commission_creat_time}}</td>
+  
            </tr>
         @endforeach
       </tbody>
       <tfoot>
            <tr>
-                <td colspan="10">{!! $data['list']->render() !!}</td>
+                <td colspan="10">{!! $list->render() !!}</td>
            </tr>
       </tfoot>
  </table>
