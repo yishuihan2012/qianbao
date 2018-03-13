@@ -267,8 +267,8 @@ class Userurl extends Controller
             $this->assign('data','获取数据失败，请重试。');
             return view("Userurl/show_error");
        }
-       $passageway_rate=$passageway->passageway_rate;
-       $passageway_income=$passageway->passageway_income;
+       $passageway_rate=$passageway->passageway_rate/100;
+       $passageway_income=$passageway->passageway_income/100;
        // 判断是否入网
        $member_net=MemberNet::where(['net_member_id'=>$param['uid']])->find();
        if(!$member_net[$passageway->passageway_no]){ //没有入网
