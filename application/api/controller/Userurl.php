@@ -246,7 +246,6 @@ class Userurl extends Controller
      * @version  [还款计划创建下一步后显示的详情页]
      * @return   [type]
      */
-
     public function repayment_plan_create_detail(){
         // $this->checkToken();
         // $order_no=$this->param['order_no'];
@@ -268,6 +267,8 @@ class Userurl extends Controller
             $this->assign('data','获取数据失败，请重试。');
             return view("Userurl/show_error");
        }
+       $passageway_rate=$passageway->passageway_rate;
+       $passageway_income=$passageway->passageway_income;
        // 判断是否入网
        $member_net=MemberNet::where(['net_member_id'=>$param['uid']])->find();
        if(!$member_net[$passageway->passageway_no]){ //没有入网
@@ -354,7 +355,7 @@ class Userurl extends Controller
                   //获取每次实际需要支付金额
                   $real_each_pay_money=$this->get_need_pay($also,$daikou,$each_money);
                   //获取每次实际到账金额
-                  $real_each_get=$this->get_real_money($also,$daikou,$real_each_pay_money);
+                  $real_each_get=$this->get_real_money($also,$daikou,$real_each_pay_money,$passageway_rate,$passageway_income);
 
                   $plan[$i]['pay'][$k]=$Generation_order_insert[]=array(
                       'order_no'       =>$Generation_result->generation_id,
@@ -363,6 +364,12 @@ class Userurl extends Controller
                       'order_card'     =>$card_info->card_bankno,
                       'order_money'    =>$real_each_pay_money,
                       'order_pound'    =>$real_each_get['fee'],
+                      'order_platform_fee'=>$real_each_get['plantform_fee'],
+                      'order_passageway_fee'=>$real_each_get['passageway_fee'],
+                      'passageway_rate'=>$passageway_rate,
+                      'passageway_fix'=>$passageway_income,
+                      'user_fix'=>$daikou,
+                      'user_rate'=>$also*100,
                       // 'real_each_get'  =>$real_each_get['money'],
                       'order_desc'     =>'自动代还消费~',
                       'order_time'     =>$each_pay_time[$k],
@@ -572,9 +579,11 @@ class Userurl extends Controller
       }
       //根据支付的金额获取实际到账金额
        //传入单位元，转成分计算，再返回单位元
-      public function get_real_money($rate,$fix,$pay){
+      public function get_real_money($rate,$fix,$pay,$passageway_rate,$passageway_income){
          //费率向上取整
           $return['fee']=ceil($pay*100*$rate+$fix*100)/100;
+          $return['passageway_fee']=ceil($pay*100*$passageway_rate/100+$passageway_income*100)/100;
+          $return['plantform_fee']=$return['fee']-$return['passageway_fee'];
           $return['money']=$pay-$return['fee'];
           return $return;
       }

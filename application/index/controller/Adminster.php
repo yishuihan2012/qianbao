@@ -59,8 +59,8 @@ class Adminster extends Common {
 			 if($this->admin['adminster_group_id']==5){
 			 	$r['login_group']=5;
 			 }
-
-			 if($r['login_group']==5){
+			 $login_group = empty($r['login_group'])?'':$r['login_group'];
+			 if($login_group==5){
 			 	if($r['adminster_user_id']){
 			 		$admin=Adminsters::get(['adminster_user_id'=>$r['adminster_user_id']]);
 			 		if($admin){
@@ -83,12 +83,13 @@ class Adminster extends Common {
 					 $this->redirect($this->history['0']);
 				 }
 			 }
-			 $check_login_name=Adminsters::get(['adminster_login'=>$r['adminster_login']]);
+			 $adminster_login = empty($r['adminster_login'])?'':$r['adminster_login'];
+			 $check_login_name=Adminsters::get(['adminster_login'=>$adminster_login]);
 			 if($check_login_name){
 				 Session::set('jump_msg',['type'=>'warning','msg'=>'用户名已存在~请重试','data'=>'']);
 				 $this->redirect($this->history['0']);
 			 }
-			 $adminster->adminster_login=$r['adminster_login'];
+			 $adminster->adminster_login=$adminster_login;
 			 if(!$r['login_passwd']){
 		     	 Session::set('jump_msg',['type'=>'warning','msg'=>'密码不能为空!','data'=>'']);
 				 $this->redirect($this->history['0']);
@@ -99,7 +100,7 @@ class Adminster extends Common {
 			 $adminster->adminster_update_time=date('Y-m-d H:i:s');
 			 $adminster->adminster_email=$r['login_email'] ?? '';
 			 $authGroupAccesss=new AuthGroupAccesss;
-			 $authGroupAccesss->group_id=$r['login_group']?$r['login_group']:Config::get('default_groups');
+			 $authGroupAccesss->group_id=$login_group?$login_group:Config::get('default_groups');
 			 $adminster->profile=$authGroupAccesss;
 			 if(false===$adminster->together('profile')->save()){
 			      Session::set('jump_msg',['type'=>'warning','msg'=>'管理员添加失败~请重试','data'=>'']);

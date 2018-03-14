@@ -65,24 +65,50 @@ class Helibao extends Controller{
 			'authorizationFlag'=>'true',//授权使用平台商秘钥		是	Boolean true	true代表授权，false代表不授权
 			// 'unionPayQrCode'=>'',//银联二维码		否	String(100)	子商户若需绑定银联二维码，可填写
 		);
-		// $arr=json_decode('{"accessUrl":"http://www.merchant.com","accountName":"张三","accountNo":"9071901000010000053423","address":"天河区珠江东路28号","authorizationFlag":true,"bankCode":"102100000048","bindMobile":"14718090064","businessLicense":"44522114452211224","city":"广州市","email":"286227731@qq.com","legalPerson":"张三","legalPersonID":"440101199201010171","linkPhone":"14718090064","linkman":"李四","merchantCategory":"OFFLINE_RETAIL","merchantType":"ENTERPRISE","orderNo":"p_20170801202916","orgNum":"44522114452211224","province":"广东省","reserveDays":1,"settleBankType":"TOPUBLIC","settlementPeriod":"T1","showName":"测试子商户301","signName":"测试子商户301","webSite":"http://www.merchant.com","withDrawPrice":1}',true);
-		// print_r($arr);die;
 		$encKey='lENn7v8OZ1z7WdlMKMgu5KNj';
 		$signKey='blYXETCKznBGIcdEWlwgg1WeA8TVGuA6';
-
 		$post['interfaceName']='register';
 		// $post['body']=$this->get_body($arr);
 		// $post['sign']=$this->get_sign($post['body']);
 		$post['merchantNo']='C1800193823';
 		$post['body']=$this->encrypt(json_encode($arr,JSON_UNESCAPED_UNICODE), $encKey);
 		$post['sign']=md5($post['body']."&".$post['merchantNo']."&".$signKey);
-		// $res=$this->send_request($this->test_url,$post);
-		// if($res['code']=='0000'){
+		$res=$this->send_request($this->test_url,$post);
+		if($res['code']=='0000'){
 			$data='KHh+C5F4fAoDOFJ9TUiAzh2kw6wPLT5wOdExS8C/WmHznini7URbXU/k6mMBPMagp4LUin03Kjw93JMWGqLvbqPuDL27Wr3zdXyN4qGSmaU=';
 			$res=$this->decrypt($data,$encKey);
+			echo json_encode($res);die;
 			$result=json_decode($res,true);
 			var_dump($result);die;
-		// }
+		}else{
+			echo json_encode($res);die;
+		}
+	}
+	/**
+	 * 入网进件查看查询
+	 * @return [type] [description]
+	 */
+	public function registerQuery(){
+		$arr=array(
+			'orderNo'=>'2GLD1SSS',//是	String(50)	p_20170731163713	进件下单时的订单号
+			'firstClassMerchantNo'=>'C1800193823',//平台商商编		是	String(16)	C1800000002	平台商编号
+		);
+		$encKey='lENn7v8OZ1z7WdlMKMgu5KNj';
+		$signKey='blYXETCKznBGIcdEWlwgg1WeA8TVGuA6';
+		$post['interfaceName']='registerQuery';
+		$post['merchantNo']='C1800193823';
+		$post['body']=$this->encrypt(json_encode($arr,JSON_UNESCAPED_UNICODE), $encKey);
+		$post['sign']=md5($post['body']."&".$post['merchantNo']."&".$signKey);
+		$res=$this->send_request($this->test_url,$post);
+		if($res['code']=='0000'){
+			$data='KHh+C5F4fAoDOFJ9TUiAzh2kw6wPLT5wOdExS8C/WmHznini7URbXU/k6mMBPMagp4LUin03Kjw93JMWGqLvbqPuDL27Wr3zdXyN4qGSmaU=';
+			$res=$this->decrypt($data,$encKey);
+			// echo json_encode($res);die;
+			$result=json_decode($res,true);
+			var_dump($result);die;
+		}else{
+			echo json_encode($res);die;
+		}
 	}
 	/**
 	 * 开通产品扫码
@@ -114,6 +140,39 @@ class Helibao extends Controller{
 			$res=$this->decrypt($data,$encKey);
 			$result=json_decode($res,true);
 			var_dump($result);die;
+		}
+	}
+	/**
+	 * 产品扫码查询
+	 * @return [type] [description]
+	 */
+	public function productQuery(){
+		$arr=array(
+			'productType'=>'APPPAY',//产品类型		是	String(20)	APPPAY	扫码产品
+			'firstClassMerchantNo'=>'C1800193823',//平台商商编		是	String(16)	C1800000002	平台商编号
+			'merchantNo'=>'E1800195861',//子商户编号		是	String(16)	C1800001025	进件审核通过后才有的商户号
+			'payType'=>'SCAN',//支付类型		是	String(20)		见附录5.11
+			'appPayType'=>'WXPAY',//客户端类型		是	String(20)		见附录5.2
+		);
+		$encKey='lENn7v8OZ1z7WdlMKMgu5KNj';
+		$signKey='blYXETCKznBGIcdEWlwgg1WeA8TVGuA6';
+
+		$post['interfaceName']='openProduct';
+		// $post['body']=$this->get_body($arr);
+		// $post['sign']=$this->get_sign($post['body']);
+		$post['merchantNo']='C1800193823';
+		$post['body']=$this->encrypt(json_encode($arr,JSON_UNESCAPED_UNICODE), $encKey);
+		$post['sign']=md5($post['body']."&".$post['merchantNo']."&".$signKey);
+		$res=$this->send_request($this->test_url,$post);
+		// var_dump($res);
+		if($res['code']=='0000'){
+			$data='KHh+C5F4fAoDOFJ9TUiAzh2kw6wPLT5wOdExS8C/WmHznini7URbXU/k6mMBPMagp4LUin03Kjw93JMWGqLvbqPuDL27Wr3zdXyN4qGSmaU=';
+			$res=$this->decrypt($data,$encKey);
+			echo $res;die;
+			$result=json_decode($res,true);
+			var_dump($result);die;
+		}else{
+			echo $res;die;
 		}
 	}
 	/**
@@ -175,6 +234,83 @@ class Helibao extends Controller{
 		}
 	}
 	/**
+	 * 子商户资质上传结果查询接口
+	 * @return [type] [description]
+	 */
+	public function credentialQuery(){
+		$arr=array(
+			'merchantNo'=>'E1800195861',//子商户编号		是	String(16)	C1800001025	进件审核通过后才有的商户号
+			'orderNo'=>make_rand_code(),//请求单号		是	String(30)	P_20171022123bsff23	
+			'credentialType'=>'FRONT_OF_ID_CARD',//资质类型		是	String(30)	BUSINESS_LICENSE	见附录5.1
+		);
+		$encKey='lENn7v8OZ1z7WdlMKMgu5KNj';
+		$signKey='blYXETCKznBGIcdEWlwgg1WeA8TVGuA6';
+		$post['interfaceName']='credentialQuery';
+		// $post['body']=$this->get_body($arr);
+		// $post['sign']=$this->get_sign($post['body']);
+		$post['merchantNo']='C1800193823';
+		$post['body']=$this->encrypt(json_encode($arr,JSON_UNESCAPED_UNICODE), $encKey);
+		$post['sign']=md5($post['body']."&".$post['merchantNo']."&".$signKey);
+		$res=$this->send_request($this->test_url,$post);
+		// var_dump($res);
+		if($res['code']=='0000'){
+			$res=$this->decrypt($res['data'],$encKey);
+			echo $res;die;
+			$result=json_decode($res,true);
+			var_dump($result);die;
+		}else{
+			echo $res;die;
+		}
+	}
+	/**
+	 * 结算卡信息变更
+	 * @return [type] [description]
+	 */
+	public function settlementCardAlteration(){
+		$arr=array(
+			'orderNo'=>make_rand_code(),//订单号		是	String(50)	p_20170726140544	变更请求订单号
+			'merchantNo'=>'',//子商户编号		是	String(16)	C1800000002	进件审核通过后才有的子商户编号
+			'accountName'=>'',//开户人名称		是	String(50)	张三	开户人名称
+			'updateAccountName'=>'',//变更后开户人名称		否	String(50)	张三	变更后开户人名称，输入该字段需上传结算账户指定书
+			'accountNo'=>'',//原结算卡号		是	String(30)	9071901000010000053423	原结算卡号
+			'updateAccountNo'=>'',//变更后结算卡号		否	String(30)	9071901000010000053423	变更后结算卡号
+			'settleBankType'=>'',//结算卡类型		是	String(20)	TOPRIVATE	见附录5.9
+			'updateSettleBankType'=>'',//变更后结算卡类型		否	String(20)	TOPRIVATE	见附录5.9
+			'bankCode'=>'',//结算卡联行号		是	String(20)	104100004048	结算卡联行号
+			'updateBankCode'=>'',//变更后结算卡联行号		否	String(20)	104100004048	变更后结算卡联行号
+			'merchantEntryAlterationType',//变更类型		是	String(20)	SETTLE_BANKCARD	见附录5.18
+			'file'=>'',//结算账户指定书		否	Multipart File		变更开户人名称或结算卡号时必须上传
+			'frontOfIdCard'=>'',//持卡人身份证正面照		否	Multipart File		变更开户人名称或结算卡号时并且结算卡类型对私必须上传
+			'backOfIdCard'=>'',//持卡人身份证反面照		否	Multipart File		变更开户人名称或结算卡号时并且结算卡类型对私必须上传
+			'handheldOfIdCard'=>'',//持卡人手持身份证照		否	Multipart File		变更开户人名称或结算卡号时并且结算卡类型对私必须上传
+			'handheldOfBankCard'=>'',//持卡人手持银行卡照		否	Multipart File		变更开户人名称或结算卡号时并且结算卡类型对私必须上传
+			'accountOpeningCertificate'=>'',//银行开户证明		否	Multipart File		变更开户人名称或结算卡号时并且结算卡类型对公必须上传
+			'fileSign'=>'',//结算账户指定书文件 HASH 值		否	String(32)	c81e728d9d4c2f636f067f89cc14862c	结算账户指定书上传时必填，文件 MD5 校验码
+			'frontOfIdCard'=>'',//持卡人身份证正面照文件 HASH 值	 FileSign	否	String(32)	c81e728d9d4c2f636f067f89cc14862c	持卡人身份证正面照上传时必填，文件 MD5 校验码
+			'backOfIdCard'=>'',//持卡人身份证反面照文件 HASH 值	 FileSign	是	String(32)	c81e728d9d4c2f636f067f89cc14862c	持卡人身份证反面照上传时必填，文件 MD5 校验码
+			'handheldOfIdCardFileSign'=>'',//持卡人手持身份证照文件 HASH 值		是	String(32)	c81e728d9d4c2f636f067f89cc14862c	持卡人手持身份证照上传时必填，文件 MD5 校验码
+			'handheldOfBankCardFileSign'=>'',//持卡人手持银行卡照文件 HASH 值		是	String(32)	c81e728d9d4c2f636f067f89cc14862c	持卡人手持银行卡照上传时必填，文件 MD5 校验码
+			'accountOpeningCertificate'=>'',//银行开户证明文件 HASH 值	 FileSign	是	String(32)	c81e728d9d4c2f636f067f89cc14862c	银行开户证明上传时必填，文件 MD5 校验码
+		);
+		$encKey='lENn7v8OZ1z7WdlMKMgu5KNj';
+		$signKey='blYXETCKznBGIcdEWlwgg1WeA8TVGuA6';
+		$post['interfaceName']='infoAlteration';
+		$post['merchantNo']='C1800193823';
+		$post['body']=$this->encrypt(json_encode($arr,JSON_UNESCAPED_UNICODE), $encKey);
+		$post['sign']=md5($post['body']."&".$post['merchantNo']."&".$signKey);
+		$res=$this->send_request($this->test_url,$post);
+		// echo json_encode($res);die;
+		if($res['code']=='0000'){
+			$res=$this->decrypt($res['data'],$encKey);
+			echo $res;die;
+			$result=json_decode($res,true);
+			var_dump($result);die;
+		}else{
+			echo json_encode($res);die;
+			echo $res;die;
+		}
+	}
+	/**
 	 * 商户信息变更
 	 * @return [type] [description]
 	 */
@@ -218,7 +354,8 @@ class Helibao extends Controller{
 		$arr=array(
 			'orderNo'=>make_rand_code(),//订单号		是	String(50)	p_20170726140544	变更请求订单号
 			'merchantNo'=>'E1800195861',//子商户编号		是	String(16)	C1800000002	子商户编号
-			'merchantCredentialType'=>'FRONT_OF_ID_CARD',//资质类型		是	String(20)	BUSINESS_LICENSE	见附录5.21
+			'credentialType'=>'FRONT_OF_ID_CARD',//资质类型		是	String(20)	BUSINESS_LICENSE	见附录5.21
+			'merchantEntryAlterationType'=>'MERCHANT_CREDENTIAL',//见附录5.18
 			'fileSign'=>hash('md5',$file_info),//资质文件 HASH 值		是	String(32)	c81e728d9d4c2f636f067f89cc14862c	文件 MD5 校验码
 		);
 		$file_path=__DIR__.'/'.time().'.jpg';
@@ -238,7 +375,18 @@ class Helibao extends Controller{
 		// print_r($post);die;
 		$res=curl_post('http://test.trx.helipay.com/trx/merchantEntry/upload.action','post',$post,'multipart/form-data');
 		unlink ($file_path);
-		echo $res;die;
+		// echo $res;die;
+		$res=json_decode($res,true);
+		if($res['code']=='0000'){
+			$data='KHh+C5F4fAoDOFJ9TUiAzh2kw6wPLT5wOdExS8C/WmHznini7URbXU/k6mMBPMagp4LUin03Kjw93JMWGqLvbqPuDL27Wr3zdXyN4qGSmaU=';
+			$res=$this->decrypt($data,$encKey);
+			echo $res;die;
+			$result=json_decode($res,true);
+			var_dump($result);die;
+		}else{
+			echo json_encode($res);die;
+			echo $res;die;
+		}
 	}
 	/**
 	 * 扫码支付
