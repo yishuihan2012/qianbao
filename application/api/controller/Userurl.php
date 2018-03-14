@@ -369,7 +369,7 @@ class Userurl extends Controller
                       'passageway_rate'=>$passageway_rate,
                       'passageway_fix'=>$passageway_income,
                       'user_fix'=>$daikou,
-                      'user_rate'=>$also,
+                      'user_rate'=>$also*100,
                       // 'real_each_get'  =>$real_each_get['money'],
                       'order_desc'     =>'自动代还消费~',
                       'order_time'     =>$each_pay_time[$k],
