@@ -686,6 +686,7 @@ class CashOut
 	 */
 	 public function writeorder($tradeNo, $price, $charge, $desc, $order_thead='')
 	 {
+	 	 $info = PassagewayItem::where(['item_passageway'=>$this->passway_info->passageway_id,'item_group'=>$this->member_infos->member_group_id])->find();
 	      $data=array(
 	      	 'order_no'=>$tradeNo,
 	      	 'order_thead_no'=>$order_thead,
@@ -703,6 +704,10 @@ class CashOut
 	      	 'order_passway_profit' =>$price*$this->passway_info->passageway_rate/100,
 	      	 'order_platform' =>$charge-($price*$this->passway_info->passageway_rate/100),
 	      	 // 'order_root'		=>find_root($this->member_infos->member_id)
+	      	 'passageway_rate' => $this->passway_info->passageway_rate,
+	      	 'passageway_fix' => $this->passway_info->passageway_income,
+	      	 'user_rate' => $info['item_rate'],
+	      	 'user_fix' => $info['item_charges']/100,
 	      );
 	      #1记录为 shangji 有效推荐人
 	      $Plan_cation=new \app\api\controller\Planaction();
