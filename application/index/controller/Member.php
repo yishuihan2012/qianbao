@@ -47,7 +47,7 @@ namespace app\index\controller;
 	 	 //注册时间
 		if(request()->param('beginTime') && request()->param('endTime')){
 			$endTime=strtotime(request()->param('endTime'))+24*3600;
-			dump($endTime);
+			
 			$where['member_creat_time']=["between time",[request()->param('beginTime'),$endTime]];
 			$this->assign('beginTime',request()->param('beginTime'));
 			$this->assign('endTime',request()->param('endTime'));
