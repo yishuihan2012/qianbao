@@ -150,6 +150,13 @@
         }
      });
        })
+  @if(isset($r["beginTime"]))
+      console.log(666);
+  //初始化时间
+      $('#dateTimeRange').val('{{$r["beginTime"]}} - {{$r["endTime"]}}');
+      $('#beginTime').val('{{$r["beginTime"]}}');
+      $('#endTime').val('{{$r["endTime"]}}'); 
+  @endif
 });
   $('#dateTimeRange').daterangepicker({
         applyClass : 'btn-sm btn-success',
