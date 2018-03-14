@@ -378,7 +378,7 @@ class Order extends Common{
 	 	 	  $rate=db('passageway')->alias('p')
 			 	->where('passageway_id='.$value['order_passway'])
 			 	->find();
-			 $order_lists[$key]['chengben']=number_format($rate['passageway_rate']*$value['order_money']/100+$rate['passageway_income'],2);
+			 $order_lists[$key]['chengben']=$value['order_passway_profit'];
 			 
 			   #成本手续费
 	 	 	 $count['chengben']+=$order_lists[$key]['chengben'];
