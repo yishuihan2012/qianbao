@@ -267,8 +267,8 @@ class Userurl extends Controller
             $this->assign('data','获取数据失败，请重试。');
             return view("Userurl/show_error");
        }
-       $passageway_rate=$passageway->passageway_rate/100;
-       $passageway_income=$passageway->passageway_income/100;
+       $passageway_rate=$passageway->passageway_rate;
+       $passageway_income=$passageway->passageway_income;
        // 判断是否入网
        $member_net=MemberNet::where(['net_member_id'=>$param['uid']])->find();
        if(!$member_net[$passageway->passageway_no]){ //没有入网
@@ -366,10 +366,10 @@ class Userurl extends Controller
                       'order_pound'    =>$real_each_get['fee'],
                       'order_platform_fee'=>$real_each_get['plantform_fee'],
                       'order_passageway_fee'=>$real_each_get['passageway_fee'],
-                      'passageway_rate'=>$passageway_rate*100,
+                      'passageway_rate'=>$passageway_rate,
                       'passageway_fix'=>$passageway_income,
                       'user_fix'=>$daikou,
-                      'user_rate'=>$also*100,
+                      'user_rate'=>$also,
                       // 'real_each_get'  =>$real_each_get['money'],
                       'order_desc'     =>'自动代还消费~',
                       'order_time'     =>$each_pay_time[$k],
@@ -582,7 +582,7 @@ class Userurl extends Controller
       public function get_real_money($rate,$fix,$pay,$passageway_rate,$passageway_income){
          //费率向上取整
           $return['fee']=ceil($pay*100*$rate+$fix*100)/100;
-          $return['passageway_fee']=ceil($pay*100*$passageway_rate+$passageway_income*100)/100;
+          $return['passageway_fee']=ceil($pay*100*$passageway_rate/100+$passageway_income*100)/100;
           $return['plantform_fee']=$return['fee']-$return['passageway_fee'];
           $return['money']=$pay-$return['fee'];
           return $return;
