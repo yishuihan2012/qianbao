@@ -165,7 +165,7 @@
  	 	 	 	 $leftmoney+=$member_fatherAlsoMoney;
  	 	 	 	 $str=$desction."-直接分润:邀请的".$memberInfo['member_nick'].$action."成功,获得收益".$member_fatherAlsoMoney."元~";
  	 	 	 	 $father_result=$this->commissionOrder($memberId,$member_faterId,$member_fatherAlsoMoney,$type,$str,$order_id);
- 	 	 	 	 // jpush($member_faterId,'分润收益到账提醒~',$str,$str);
+ 	 	 	 	 jpush($member_faterId,'分润收益到账提醒~',$str,$str);
  	 	 	 }
  	 	 }
 
@@ -203,7 +203,7 @@
 	 	 	 	 $leftmoney+=$member_grandFatherAlsoMoney;
 	 	 	 	 $str1=$desction."-间接分润:邀请的".$memberInfo['member_nick'].$action."成功,获得收益".$member_grandFatherAlsoMoney."元~";
 	 	 	 	 $grandResult=$this->commissionOrder($memberId,$member_grandFaterId,$member_grandFatherAlsoMoney,$type,$str1,$order_id);
-	 	 	 	  // jpush($member_grandFaterId,'分润收益到账提醒~',$str1,$str1);
+	 	 	 	  jpush($member_grandFaterId,'分润收益到账提醒~',$str1,$str1);
  	 	 	 }
  	 	 }
  	 	 #查询第三级上级
@@ -242,7 +242,7 @@
  	 	 	 	 $leftmoney+=$member_endFatherAlsoMoney;
  	 	 	 	 $str2=$desction."-三级分润:邀请的".$memberInfo['member_nick'].$action."成功,获得收益".$member_endFatherAlsoMoney."元~";
  	 	 	 	 $endFather_result=$this->commissionOrder($memberId,$member_endFatherId,$member_endFatherAlsoMoney,$type,$str2,$order_id);
- 	 	 	 	  // jpush($member_endFatherId,'分润收益到账提醒~',$str2,$str2);
+ 	 	 	 	  jpush($member_endFatherId,'分润收益到账提醒~',$str2,$str2);
  	 	 	 }
  	 	 }
  	 	 #查询第三季上级税率和用户组是否允许分润
