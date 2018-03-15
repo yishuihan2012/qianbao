@@ -200,9 +200,10 @@
          if($request->param('beginTime') && $request->param('endTime')){
             $where['timeBetween']=['commission_creat_time'=>['between time',[$request->param('beginTime'), $request->param('endTime')]]];
          }else{
-            $where['timeBetween']=['commission_creat_time'=>['between time',[strtotime("-7 days"),time()]]];
-            $r['beginTime']=date('Y-m-d',strtotime("-7 days"));
-            $r['endTime']=date('Y-m-d',time());
+            // $where['timeBetween']=['commission_creat_time'=>['between time',[strtotime("-7 days"),time()]]];
+            // $r['beginTime']=date('Y-m-d',strtotime("-7 days"));
+            // $r['endTime']=date('Y-m-d',time());
+             $where['timeBetween']='';
          }
   	 	 // $where['timeBetween']=($request->param('beginTime') && $request->param('endTime')) ? ['commission_creat_time'=>['between',[$request->param('beginTime'), $request->param('endTime')]]] : '';
   	 	 //获取分佣列表
@@ -255,9 +256,10 @@
          if($request->param('beginTime') && $request->param('endTime')){
             $where['timeBetween']=['commission_creat_time'=>['between time',[$request->param('beginTime'), $request->param('endTime')]]];
          }else{
-            $where['timeBetween']=['commission_creat_time'=>['between time',[strtotime("-7 days"),time()]]];
-            $r['beginTime']=date('Y-m-d',strtotime("-7 days"));
-            $r['endTime']=date('Y-m-d',time());
+            // $where['timeBetween']=['commission_creat_time'=>['between time',[strtotime("-7 days"),time()]]];
+            // $r['beginTime']=date('Y-m-d',strtotime("-7 days"));
+            // $r['endTime']=date('Y-m-d',time());
+            $where['timeBetween']='';
          }
   	 	 // $where['timeBetween']=($request->param('beginTime') && $request->param('endTime')) ? ['commission_creat_time'=>['between time',[$request->param('beginTime'), $endTime]]] : '';
   	 	 // var_dump($where['whereBetween']);die;

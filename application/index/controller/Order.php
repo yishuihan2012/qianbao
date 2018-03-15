@@ -288,14 +288,15 @@ class Order extends Common{
 		if(request()->param('beginTime') && request()->param('endTime')){
 			$endTime=date("Y-m-d",strtotime(request()->param('endTime'))+24*3600);
 			$where['order_add_time']=["between time",[request()->param('beginTime'),$endTime]];
-		}else{
-			#默认显示今天一天的
-			$r['beginTime']=strtotime(date('Y-m-d',time()));
-			$r['endTime']=strtotime(date('Y-m-d',strtotime("+1 days")));
-			$where['order_add_time']=["between time",[$r['beginTime'],$r['endTime']]];
-			$r['beginTime']=date('Y-m-d',$r['beginTime']);
-			$r['endTime']=date('Y-m-d',$r['endTime']-1);
 		}
+		// else{
+		// 	#默认显示今天一天的
+		// 	$r['beginTime']=strtotime(date('Y-m-d',time()));
+		// 	$r['endTime']=strtotime(date('Y-m-d',strtotime("+1 days")));
+		// 	$where['order_add_time']=["between time",[$r['beginTime'],$r['endTime']]];
+		// 	$r['beginTime']=date('Y-m-d',$r['beginTime']);
+		// 	$r['endTime']=date('Y-m-d',$r['endTime']-1);
+		// }
 		// print_r($where);die;
 		// var_dump($where['order_add_time']);die;
 		#身份证查询
