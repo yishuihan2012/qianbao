@@ -51,7 +51,7 @@
  	 	 	 	}else{
  	 	 	 		$fatherMoney=$total_money*(System::getName('direct_total')/100);
  	 	 	 	}
- 	 	 	 	 
+ 	 	 	 	  $fatherMoney=round($fatherMoney, 2);
  	 	 	 	  $leftmoney+=$fatherMoney;
  	 	 	 	 if(!$this->commissionOrder($memberId,$member_fater_id,$fatherMoney,2,$desction."-直接分佣",$order_id)){
  	 	 	 	 	 return ['code'=>465];
@@ -76,7 +76,7 @@
  	 	 	 	 	 }else{
  	 	 	 	 	 	 $grandFatherMoney=$total_money*(System::getName('indirect_total')/100);
  	 	 	 	 	 }
- 	 	 	 	 
+ 	 	 	 	 	 $grandFatherMoney=round($grandFatherMoney, 2);
  	 	 	 	 	 $leftmoney+=$grandFatherMoney;
 	 	 	 	 	 if(!$this->commissionOrder($memberId,$member_grandFater_id,$grandFatherMoney,2,$desction."-间接分佣",$order_id)){
 	 	 	 	 	 	 return ['code'=>465];
@@ -97,7 +97,7 @@
 	 	 	 	 	 	}else{
 	 	 	 	 	 		$endFatherMoney=$total_money*(System::getName('indirect_3rd_total')/100);
 	 	 	 	 	 	}
-	 	 	 	 	 	    
+	 	 	 	 	 	 $endFatherMoney=round($endFatherMoney, 2);
 	 	 	 	 	 	 $leftmoney+=$endFatherMoney;
 		 	 	 	 	 if(!$this->commissionOrder($memberId,$member_endFather_id,$endFatherMoney,2,$desction."-三级分佣",$order_id)){
 		 	 	 	 	 	 return ['code'=>465];
