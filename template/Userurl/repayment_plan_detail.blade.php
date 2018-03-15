@@ -155,7 +155,7 @@
 								<span><strong>{{$v['order_money']}}元</strong></span>
 							</p>
 							<p class="f16 yellow-color">
-							  <span class="">已作废</span>
+							  <span class="">已处理</span>
 							  <span class="iconfont icon-shijian-copy-copy f20 v-m"></span>
 					        </p>
 						</div>
@@ -208,13 +208,13 @@
                     		beforeSend:function(){
                     			$("body").mLoading("show");
                     		},
+                    		complete:function(){
+                    			$("body").mLoading("hide");
+                    		},
                     		success:function($res){
                     			res=JSON.parse(res);
 								mui.toast(res.msg);
 								setTimeout(function(){ location.reload(); }, 3000);
-                    		},
-                    		complete:function(){
-                    			$("body").mLoading("hide");
                     		}
                     	})
                     }

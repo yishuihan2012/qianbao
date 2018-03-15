@@ -41,6 +41,7 @@
 		    <option value="3" @if($r['order_status']==3) selected @endif>取消</option>
 		    <option value="-1" @if($r['order_status']==-1) selected @endif>失败</option>
 		    <option value="4" @if($r['order_status']==4) selected @endif>待查证</option>
+        <option value="5" @if($r['order_status']==5) selected @endif>已处理</option>
 		  </select>
 		 
 		  </div>
