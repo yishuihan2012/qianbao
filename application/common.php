@@ -972,29 +972,33 @@ function SortByASCII($arr)
     function jpush($uid=null, $title=null, $content=null, $item=null, $type='2')
     {
         // return true;
-        $jpush=new con\Push();
-        if ($uid && $title && $content) {
-            //获取registration_id
-        $member=Members::get($uid);
-        $member_token=$member->member_token;
-        //写入记录
-        Notice::create([
-          'notice_title'=>$title,
-          'notice_content'=>$content,
-          'notice_recieve'=>$uid,
-          'notice_registration_id'=>$member_token,
-        ]);
-            $jpush->set_message_title($title);
-        // $jpush->set_audience('all');
-        $jpush->set_registration_id($member_token);
-            $jpush->set_message_sort_desc($content);
-            if ($item) {
-                $jpush->set_message_info_type($type);
+        try{
+            $jpush=new con\Push();
+            if ($uid && $title && $content) {
+                //获取registration_id
+            $member=Members::get($uid);
+            $member_token=$member->member_token;
+            //写入记录
+            Notice::create([
+              'notice_title'=>$title,
+              'notice_content'=>$content,
+              'notice_recieve'=>$uid,
+              'notice_registration_id'=>$member_token,
+            ]);
+                $jpush->set_message_title($title);
+            // $jpush->set_audience('all');
+            $jpush->set_registration_id($member_token);
+                $jpush->set_message_sort_desc($content);
+                if ($item) {
+                    $jpush->set_message_info_type($type);
+                }
+                if ($item) {
+                    $jpush->set_message_info_item($item);
+                }
+                return $jpush->sign_push();
             }
-            if ($item) {
-                $jpush->set_message_info_item($item);
-            }
-            return $jpush->sign_push();
+        } catch (\Exception $e) {
+            return true;
         }
     }
     #截取中文字符串
