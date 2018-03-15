@@ -43,7 +43,7 @@ class Cashoutcallback
              $datas = substr($datas, 0, strpos($datas, '}') + 1);
              //返回结果
              $resul = json_decode($datas, true);
-             file_put_contents('datas3.txt',$resul);
+             // file_put_contents('datas3.txt',$resul);
              //订单详情
              $order   = CashOrder::where(array('order_thead_no' => $resul['transNo']))->find();
 
