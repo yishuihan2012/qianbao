@@ -971,12 +971,12 @@ function SortByASCII($arr)
     //   4.平台公告铃声提示。
     function jpush($uid=null, $title=null, $content=null, $item=null, $type='2')
     {
-        return true;
+        // return true;
         $jpush=new con\Push();
         if ($uid && $title && $content) {
             //获取registration_id
         $member=Members::get($uid);
-            $member_token=$member->memberLogin->login_token;
+        $member_token=$member->member_token;
         //写入记录
         Notice::create([
           'notice_title'=>$title,
