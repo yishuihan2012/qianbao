@@ -9,17 +9,17 @@
 <hr/>
 <div class="list">
   <header>
-    <h3><i class="icon-list-ul"></i> 交易订单 <small>共 <strong class="text-danger">{{$count['count_size']}}</strong> 条</small>
-    <i class="icon icon-yen"></i>全部总金额 <small><strong class="text-danger">{{$count['order_money']}}</strong>元</small>
-    <i class="icon icon-yen"></i>取现成功金额 <small><strong class="text-danger">{{$count['order_money_yes']}}</strong>元</small>
-    <i class="icon icon-yen"></i>未支付金额 <small><strong class="text-danger">{{$count['order_money_del']}}</strong>元</small>
-    <i class="icon icon-yen"></i>全部手续费 <small><strong class="text-danger">{{$count['order_charge']}}</strong>元</small></h3>
+    <h3><i class="icon-list-ul"></i> 交易订单 <small>共 <strong class="text-danger" style="font-size: 16px">{{$count['count_size']}}</strong> 条</small>
+    <i class="icon icon-yen"></i>全部总金额 <small><strong class="text-danger" style="font-size: 16px">{{$count['order_money']}}</strong>元</small>
+    <i class="icon icon-yen"></i>取现成功金额 <small><strong class="text-danger" style="font-size: 16px">{{$count['order_money_yes']}}</strong>元</small>
+    <i class="icon icon-yen"></i>未支付金额 <small><strong class="text-danger" style="font-size: 16px">{{$count['order_money_del']}}</strong>元</small>
+    <i class="icon icon-yen"></i>全部手续费 <small><strong class="text-danger" style="font-size: 16px">{{$count['order_charge']}}</strong>元</small></h3>
     </h3>
     <h3>
-      <i class="icon-list-ul"></i> 成本手续费 <small>共 <strong class="text-danger">{{$count['chengben']}}</strong> 元</small>
-      <i class="icon-list-ul"></i> 盈利分润 <small>共 <strong class="text-danger">{{$count['yingli']}}</strong> 元</small>
-      <i class="icon-list-ul"></i> 三级分润金额 <small>共 <strong class="text-danger">{{$count['sanji']}}</strong> 元</small>
-      <i class="icon-list-ul"></i> 三级分润后盈利 <small>共 <strong class="text-danger">{{$count['fenrunhou']}}</strong> 元</small>
+      <i class="icon-list-ul"></i> 成本手续费 <small>共 <strong class="text-danger" style="font-size: 16px">{{$count['chengben']}}</strong> 元</small>
+      <i class="icon-list-ul"></i> 盈利分润 <small>共 <strong class="text-danger" style="font-size: 16px">{{$count['yingli']}}</strong> 元</small>
+      <i class="icon-list-ul"></i> 三级分润金额 <small>共 <strong class="text-danger" style="font-size: 16px">{{$count['sanji']}}</strong> 元</small>
+      <i class="icon-list-ul"></i> 三级分润后盈利 <small>共 <strong class="text-danger" style="font-size: 16px">{{$count['fenrunhou']}}</strong> 元</small>
     </h3>
   </header>
    <form action="" method="post">
@@ -27,6 +27,10 @@
     <span class="input-group-addon">用户名</span>
     <input type="text" class="form-control" name="member_nick" value="{{$r['member_nick']}}" placeholder="用户名">
   </div>
+  <!-- <div class="input-group" style="width: 150px;float: left;margin-right: 20px;">
+    <span class="input-group-addon">交易流水号</span>
+    <input type="text" class="form-control" name="order_no" value="{{$r['order_no']}}" placeholder="交易流水号">
+  </div> -->
 
   <div class="input-group" style="width: 200px;float: left;margin-right: 20px;">
     <span class="input-group-addon">手机号</span>
@@ -57,15 +61,7 @@
     @endforeach
   </select>
   </div>
-  <div class="input-group" style="width: 180px;float: left;margin-right: 10px;">
-     <span class="input-group-addon">通道</span>
-  <select name="passageway_id" class="form-control">
-      <option value="" @if ($r['passageway_id']=='') selected="" @endif>全部</option>
-    @foreach($passageway as $v)
-      <option value="{{$v['passageway_id']}}" @if ($r['passageway_id']==$v['passageway_id']) selected @endif>{{$v['passageway_name']}}</option>
-    @endforeach
-  </select>
-  </div>
+<!--  -->
 
   <div class="input-group" style="width: 200px;float: left; margin-right: 10px;">
       <input type="text" class="form-control date-picker" id="dateTimeRange" placeholder="交易订单添加时间" />
@@ -88,11 +84,11 @@
                  <tr>
                  <!-- 以下两列左侧固定 -->
                       <th>#</th>
-                      <!-- <th>交易流水号</th> -->
+                      <th>交易流水号</th>
                       <!-- <th>受益人</th> -->
                       <th>刷卡人</th>
-                      <!-- <th>结算卡</th> -->
-                      <!-- <th>信用卡</th> -->
+                      <th>结算卡</th>
+                      <th>信用卡</th>
                       <th class="flex-col">总金额</th>
                       <!-- <th class="flex-col">分润消耗</th>  -->
                       <th class="flex-col">刷卡手续费</th> 
@@ -111,17 +107,17 @@
            @foreach ($order_lists as $list)
            <tr>
                  <td>{{$list->order_id}}</td>
-                 <!-- <td><code>{{$list->order_no}}</code></td> -->
-                 <!-- <td>{{$list->shouyiren}}</td> -->
+                 <td><code>{{$list->order_no}}</code></td>
+                 <!-- <td></td> -->
                  <td>{{$list->order_name}}</td>
-                 <!-- <td>{{$list->order_card}}</td> -->
-                 <!-- <td>{{$list->order_creditcard}}</td> -->
+                 <td>{{$list->order_card}}</td>
+                 <td>{{$list->order_creditcard}}</td>
 
                  <td>{{$list->order_money}}</td>
                  <!-- <td>{{$list->order_fen}}</td> -->
                  <td>{{$list->order_charge+$list->order_buckle}}</td>
                  <!-- <td>{{$list->order_also}}%</td> -->
-                 <td>{{$list->chengben}}</td>
+                 <td>{{$list->order_passway_profit}}</td>
                  <td>{{$list->fenrun}}</td>
                  <td>{{$list->yingli}}</td>
                  <td>{{$list->passageway_name}}</td>

@@ -1036,6 +1036,12 @@ function SortByASCII($arr)
        } else {
            $r['member_group_id']='';
        }
+       //流水号
+       if (!empty($r['order_no'])) {
+           $where['order_no'] = $r['order_no'];
+       } else {
+           $r['order_no']='';
+       }
 
         return ['r'=>$r, 'where' => $where];
     }
