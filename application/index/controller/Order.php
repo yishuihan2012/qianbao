@@ -220,7 +220,8 @@ class Order extends Common{
 		}
 		#订单状态
 		if( request()->param('order_state')){
-			$wheres['order_state'] = ['like',"%".request()->param('order_state')."%"];
+			$wheres['order_state'] = array("eq",2);
+
 		}else{
 			$r['order_state'] = '';
 		}
@@ -277,6 +278,7 @@ class Order extends Common{
 	 	    }while($count==$limit && $n<$max/$limit);
 	 	    return;
 		}
+	
 	 	 // #查询订单列表分页
 	 	 $order_lists = CashOrder::with('passageway')->join('wt_member m',"m.member_id=wt_cash_order.order_member")->where($where)->join("wt_member_cert mc", "mc.cert_member_id=m.member_id","left")->where($wheres)->order("order_id desc")->paginate(Config::get('page_size'), false, ['query'=>Request::instance()->param()]);
 	 	 // var_dump($order_lists);die;
@@ -284,7 +286,8 @@ class Order extends Common{
 	 	 $count['yingli']=0;
 	 	 $count['sanji']=0;
 	 	 $count['fenrunhou']=0;
-	 	 $list = CashOrder::with('passageway')->join('wt_member m',"m.member_id=wt_cash_order.order_member")->where($where)->join("wt_member_cert mc", "mc.cert_member_id=m.member_id","left")->where($wheres)->order("order_id desc")->select();
+	 	
+	 	 $list = CashOrder::with('passageway')->join('wt_member m',"m.member_id=wt_cash_order.order_member")->where($where)->where(["order_state" => 2])->join("wt_member_cert mc", "mc.cert_member_id=m.member_id","left")->order("order_id desc")->select();
 	 	 foreach ($order_lists as $key => $value) {
 	 	 	 $order_lists[$key]['fenrun']=db('commission')->alias('c')
 	 	 	 	->where('commission_from='.$value['order_id'].' and commission_type=1')
@@ -300,7 +303,7 @@ class Order extends Common{
 
 		foreach ($list as $k => $order) {
 			$list[$k]['fenrun']=db('commission')->alias('c')
-	 	 	 	->where('commission_from='.$value['order_id'].' and commission_type=1')
+	 	 	 	->where('commission_from='.$order['order_id'].' and commission_type=1')
 	 	 	 	->sum('commission_money');	
 			$count['chengben']+=$order['order_passway_profit'];
 			 $list[$k]['yingli']=$order['order_charge']+$order['order_buckle']-$order['order_passway_profit'];
