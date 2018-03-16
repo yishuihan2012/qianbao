@@ -235,13 +235,6 @@ class Order extends Common{
 		if(request()->param('order_id')){
 			$wheres['order_id'] = request()->param('order_id');
 		}
-		#通道
-		if(request()->param('passageway_id')){
-			$wheres['passageway_id'] = request()->param('passageway_id');
-			$r['passageway_id']=request()->param('passageway_id');
-		}else{
-			$r['passageway_id'] = '';
-		}
 		if(input('is_export')==1){
 			set_time_limit(0);
 	 	    $limit=20000;
@@ -314,7 +307,7 @@ class Order extends Common{
 	 	  $count['order_money_del']=$count['order_money'] - $count['order_money_yes'];
 
 	 	 #交易总手续费
-	 	 $count['order_charge']=CashOrder::with('passageway')->join('wt_member m',"m.member_id=wt_cash_order.order_member")->where($where)->join("wt_member_cert mc", "mc.cert_member_id=m.member_id","left")->where($wheres)->sum("order_charge");
+	 	 $count['order_charge']=CashOrder::with('passageway')->join('wt_member m',"m.member_id=wt_cash_order.order_member")->where($where)->join("wt_member_cert mc", "mc.cert_member_id=m.member_id","left")->where($wheres)->where('order_state=2')->sum("order_charge");
 
 		 $this->assign('order_lists', $order_lists);
 		 $this->assign('count', $count);
@@ -324,6 +317,8 @@ class Order extends Common{
 		 if(!Request::instance()->param('member_mobile')){
 		 	$where['member_mobile']='';
 		 }
+		 $passageway=db('passageway')->where('passageway_state',1)->select();
+		$this->assign('passageway', $passageway);
 		 $member_group=MemberGroup::all();
 		$this->assign('member_group', $member_group);
 		$this->assign('r', $r);

@@ -61,7 +61,15 @@
     @endforeach
   </select>
   </div>
-<!--  -->
+<div class="input-group" style="width: 180px;float: left;margin-right: 10px;">
+     <span class="input-group-addon">通道</span>
+  <select name="passageway_id" class="form-control">
+      <option value="" @if ($r['passageway_id']=='') selected="" @endif>全部</option>
+    @foreach($passageway as $v)
+      <option value="{{$v['passageway_id']}}" @if ($r['passageway_id']==$v['passageway_id']) selected @endif>{{$v['passageway_name']}}</option>
+    @endforeach
+  </select>
+  </div>
 
   <div class="input-group" style="width: 200px;float: left; margin-right: 10px;">
       <input type="text" class="form-control date-picker" id="dateTimeRange" placeholder="交易订单添加时间" />

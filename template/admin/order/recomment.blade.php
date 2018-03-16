@@ -99,9 +99,9 @@
        $('.menu .nav li.recomment').addClass('active');
        $('.menu .nav li.order-manager').addClass('show');
     //初始化时间
-        $('#dateTimeRange').val('{{$r["beginTime"]}} - {{$r["endTime"]}}');
-        $('#beginTime').val('{{$r["beginTime"]}}');
-        $('#endTime').val('{{$r["endTime"]}}');
+       $('#dateTimeRange').val('');
+        $('#beginTime').val('');
+        $('#endTime').val('');
  })
    $('#dateTimeRange').daterangepicker({
         applyClass : 'btn-sm btn-success',
