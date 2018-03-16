@@ -93,11 +93,14 @@
 						};
 						$.post('',data,function(res){
 							if(res==1){
+								alert("申请快捷支付成功");
 								window.top.location.href='/api/userurl/passway_success';
 							}else if(res==2){
 								alert('验证码异常！');
 							}else{
-								alert("申请快捷支付失败！\nerr:"+res);
+								//无积分的只能在回调返回结果 ，所以当时返回的不是成功 但一般会成功
+								alert(res);
+								// alert("申请快捷支付失败！\nerr:"+res);
 								if(!isAndroid){
 									window.webkit.messageHandlers.returnIndex.postMessage(1);
 								}else{

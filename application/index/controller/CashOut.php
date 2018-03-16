@@ -237,6 +237,11 @@ class CashOut
 		 	 	 $res=$membernetObject->$method();
 		 	 	 if($res!==true)
 		 	 	 	 return  ['code'=>462,'msg'=>$res]; //入网失败
+	 	 	 	#入驻
+		 	 	$result=$membernetObject->rongbang_in();
+		 	 	if(is_string($result)){
+		 	 		return ['code'=>500,'msg'=>$result];
+		 	 	}
 		 	 }else{
 		 	 	// $userinfo=$member_net[$this->passway_info->passageway_no];
 		 	 }
@@ -244,10 +249,6 @@ class CashOut
 	 	 //快捷支付 调用开通快捷支付接口
 	 	 if(in_array($this->passway_info->passageway_mech, [402512992,402512936])){
 	 	 // if($this->passway_info->passageway_mech==402512992){
-	 	 	$result=$membernetObject->rongbang_in();
-	 	 	if(is_string($result)){
-	 	 		return ['code'=>500,'msg'=>$result];
-	 	 	}
 		 	 //复用查询条件
 		 	 $pas_where=['member_credit_pas_pasid'=>$this->passway_info->passageway_id,'member_credit_pas_creditid'=>$this->card_info->card_id];
 		 	 #查询用户是否开通快捷支付
@@ -261,20 +262,20 @@ class CashOut
 	 	 			'member_credit_pas_creditid'=>$this->card_info->card_id,
 	 	 			'member_credit_pas_pasid'=>$this->passway_info->passageway_id,
 	 	 		];
-		 	 	//调用接口检查是否开通
-		 	 	$result=$membernetObject->rongbang_check($member_credit_pas['member_credit_pas_info']);
-		 	 	if(is_array($result)){
-		 	 		//接口有数据，更新本地数据库 这个用户已经开通了快捷支付
-		 	 		$data['member_credit_pas_info']=$result['treatycode'];
-		 	 		$data['member_credit_pas_status']=1;
-		 	 		if($member_credit_pas){
-		 	 			db('member_credit_pas')->where($pas_where)->update($data);
-		 	 		}else{
-		 	 			db('member_credit_pas')->insert($data);
-		 	 		}
-		 	 	}else{
-				 	 $needToOpen=true;
-		 	 	}
+                if($member_credit_pas && $member_credit_pas['member_credit_pas_info']){
+                    //调用接口检查是否开通
+                    $result=$membernetObject->rongbang_check($member_credit_pas['member_credit_pas_info']);
+                    if(is_array($result)){
+                        //接口有数据，更新本地数据库 这个用户已经开通了快捷支付
+                        $data['member_credit_pas_info']=$result['treatycode'];
+                        $data['member_credit_pas_status']=1;
+                        db('member_credit_pas')->where($pas_where)->update($data);
+                    }else{
+                         $needToOpen=true;
+                    }
+                 }else{
+                    $needToOpen=true;
+                 }
 		 	 	if($needToOpen){
 		 	 		//没有数据，调用开通快捷支付接口
 			 	 	$result=$membernetObject->rongbang_openpay($this->card_info->card_id);
@@ -291,25 +292,32 @@ class CashOut
 		              	'code'=>200,
 		              	'msg'=>'荣邦开通快捷支付接口调用成功',
 	                ];
+	                #已开通过协议
+	                #根据treatycode 修改对应的信用卡id 若没有 则新增
+	                if(isset($result['isopen'])){
+	                	#留空 上面会插入一条新的信息
 		            //返回了html代码
-		            if($result['ishtml']==1){
+	                }elseif($result['ishtml']==1){
 		            	$res['data']=[
 		            		'type'=>2,
 		            		'url'=>base64_decode($result['html']),
 		            	];
+			            return $res;
 		            }else{
 		              //返回我们自己建的html
 			            $res['data']=[
 	            			'type'=>1,
 	            			'url'=>request()->domain() . "/api/Userurl/passway_rongbang_openpay/treatycode/".$result['treatycode']."/smsseq/".$result['smsseq']."/memberId/" . $this->member_infos->member_id . "/passwayId/" . $this->passway_info->passageway_id,
 		            	];
+			            return $res;
 		            }
-		            return $res;
 		 	 	}
 		 	 }
+		 	 #修改费率接口 封顶的限制1天1次 并且还没有套餐 先不启用
+		 	 $Membernetsedit = new \app\api\controller\Membernetsedit($this->member_infos->member_id, $this->passway_info->passageway_id);
+		 	 $Membernetsedit->rongbangnet();
 		 	 #封顶 调用银行签约接口
 	 	 }elseif($this->passway_info->passageway_mech==402573747){
-	 	 	#商户入驻
 	 	 	$isSign=$membernetObject->rongbang_signquery_card($this->card_info->card_id);
 	 	 	#未签约 或签约状态不是 成功
 	 	 	if(is_string($isSign) || $isSign['status']!=2){
@@ -332,11 +340,8 @@ class CashOut
 	 	 		}
 	 	 		return $res;
 	 	 	}
-	 	 	$result=$membernetObject->rongbang_in();
-	 	 	if(is_string($result)){
-	 	 		return ['code'=>500,'msg'=>$result];
-	 	 	}
 	 	 }
+
 	 	 //开始调用支付接口
 	 	 $result=$membernetObject->rongbang_pay($this->card_info->card_id,$tradeNo,$price,$description);
         // var_dump($result);die;
