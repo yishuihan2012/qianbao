@@ -130,7 +130,7 @@
                  <td>{{$list->yingli}}</td>
                  <td>{{$list->passageway_name}}</td>
 
-                 <td>@if($list->order_state==1)待支付@elseif($list->order_state==2)成功@elseif($list->order_state==-1)失败elseif($list->order_state==-2) 超时@else代付未成功@endif</td>
+                 <td>@if($list->order_state==1)待支付 @elseif($list->order_state==2) 成功@elseif($list->order_state==-1)失败@elseif($list->order_state==-2) 超时@else代付未成功@endif</td>
                  <td>{{$list->order_desc}}</td>
                  <td>{{$list->order_add_time}}</td>
                  <td>
