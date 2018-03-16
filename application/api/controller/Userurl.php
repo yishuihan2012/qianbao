@@ -541,12 +541,12 @@ class Userurl extends Controller
             }
         }
         // print_r($data);die;
-		$this->assign('order_pound',$order_pound);
-		$this->assign('generation',$generation);
-		$this->assign('order',$data);
-	  	return view("Userurl/repayment_plan_detail");
-	}
-	//根据开始时间结束时间随机每天刷卡时间---有问题
+        $this->assign('order_pound',$order_pound);
+        $this->assign('generation',$generation);
+        $this->assign('order',$data);
+        return view("Userurl/repayment_plan_detail");
+    }
+    //根据开始时间结束时间随机每天刷卡时间---有问题
       public function get_random_time($day,$count,$begin=6,$end=10){
         //如果日期为今天，刷卡时间大于当前小时
         $now_h=date('Y-m-d',time());
@@ -1115,19 +1115,22 @@ class Userurl extends Controller
           #查看是否有该订单的分润记录
           $hasCommission=db('commission')->where(['commission_from'=>$cash_order->order_id,'commission_type'=>1])->count();
             #仅对待支付状态下的订单进行更新并分润
-            if($cash_order->order_state==1 && $hasCommission == 0){
+            if($cash_order->order_state!=2 && $hasCommission == 0){
                 $cash_order->order_state=2;
                 //分润
                 $fenrun= new con\Commission();
-                $fenrun_result=$fenrun->MemberFenRun($param['member_id'],$data['amount'],$param['passageway_id'],1,'快捷支付手续费分润',$cash_order->order_id);
+                $fenrun_result=$fenrun->MemberFenRun($param['member_id'],$cash_order->order_money,$param['passageway_id'],1,'快捷支付手续费分润',$cash_order->order_id);
+            $member=Members::get($param['member_id']);
+            $passway=Passageway::get($param['passageway_id']);
+            $passwayitem=PassagewayItem::get(['item_group'=>$member->member_group_id,'item_passageway'=>$passway->passageway_id]);
           if($fenrun_result['code']=="200"){
             $cash_order->order_fen=$fenrun_result['leftmoney'];
             $cash_order->order_buckle=$passwayitem->item_charges/100;
-            $cash_order->order_platform=$order->order_charge-($order->order_money*$passway->passageway_rate/100)+$passwayitem->item_charges/100-$passway->passageway_income;
+            $cash_order->order_platform=$cash_order->order_charge-($cash_order->order_money*$passway->passageway_rate/100)+$passwayitem->item_charges/100-$passway->passageway_income;
           }else{
             $cash_order->order_fen=-1;
             $cash_order->order_buckle=$passwayitem->item_charges/100;
-            $cash_order->order_platform=$order->order_charge-($order->order_money*$passway->passageway_rate/100)+$passwayitem->item_charges/100-$passway->passageway_income;
+            $cash_order->order_platform=$cash_order->order_charge-($cash_order->order_money*$passway->passageway_rate/100)+$passwayitem->item_charges/100-$passway->passageway_income;
           }
           $cash_order->save();
             }else{

@@ -114,16 +114,18 @@
         $c_name= config("database.database");
          #定义请求报文组装
          $arr=array(
-          //全平台唯一 加通道id以区分
-           'companyname'    =>$this->membercard->card_name . $this->passway->passageway_id . $c_name . rand(100,999),
+          //全平台唯一 加商户id确保全平台唯一 设定固定值 
+           'companyname'    =>$this->membercard->card_name . $this->member->member_mobile . '_xijia_'. $this->passway->passageway_mech,
+           // 'companyname'    =>$this->membercard->card_name . $this->passway->passageway_id . $c_name . rand(100,999),
            // 'companyname'    =>"test".time(),
            // 'companycode'     =>$this->member->member_mobile,
           //全平台唯一 加通道id以区分
-           'companycode'     =>$this->member->member_mobile . $this->passway->passageway_id . $c_name . rand(100,999),
+           'companycode'     =>$this->member->member_mobile . '_xijia',
+           // 'companycode'     =>$this->member->member_mobile . $this->passway->passageway_id . $c_name . rand(100,999),
            'accountname'      =>$this->membercard->card_name,
            'bankaccount'       =>$this->membercard->card_bankno,
-           'bank'                   =>$this->membercard->card_bank_address,
-           "bankcode"          =>$this->membercard->card_bank_lang,
+           // 'bank'                   =>$this->membercard->card_bank_address,
+           // "bankcode"          =>$this->membercard->card_bank_lang,
            "accounttype"      =>"1",
            "bankcardtype"    =>"1",
            'mobilephone'      =>$this->membercard->card_phone,
@@ -132,6 +134,7 @@
            'ratecode'         =>$rate_code,
          );
         $data=rongbang_curl($this->passway,$arr,'masget.webapi.com.subcompany.add');
+        trace($data);
         // var_dump($arr);die;
         if($data['ret']==0){
           #储存商户信息到memberNet关联字段中，因为信息有多条，以,分割后存储。
@@ -139,8 +142,9 @@
           $passageway_no=$data['data']['appid'].','.$data['data']['companycode'].','.$data['data']['secretkey'].','.$data['data']['session'].','.$data['data']['companyname'];
           $res=MemberNet::where(['net_member_id'=>$this->member->member_id])->setField($this->passway->passageway_no, $passageway_no);
             return true;
-        }elseif($data['ret']==34){
+        }elseif($data['ret']==34 || $data['ret']==502){
           //34 为该商户商户名称已存在 调用该商户的信息
+          //502 为该商户公司代码已存在 调用该商户的信息
           $data=$this->rongbang_getinfo();
           if(is_array($data)){
             //存储拉取的商户信息
@@ -163,10 +167,12 @@
         // $userinfo=db('member_net')->where('net_member_id',$this->member->member_id)->value($this->passway->passageway_no);
         // $userinfo=explode(',', $userinfo);
         $arr=[
+          'companycode'=>$this->member->member_mobile . '_xijia',
           // 'companycode'=>$userinfo[1],
-          'mobilephone'=>$this->member->member_mobile ,
+          // 'mobilephone'=>$this->member->member_mobile ,
         ];
           $data=rongbang_curl($this->passway,$arr,'masget.webapi.com.subcompany.get');
+        // var_dump($data);die;
           if($data['ret']==0){
             return $data['data'];
           }else{
@@ -186,7 +192,8 @@
         );
         // echo json_encode($arr);die;
         $data=rongbang_curl(rongbang_foruser($this->member,$this->passway),$arr,'masget.pay.compay.router.samename.open');
-           // var_dump($data);die;
+        // var_dump($data);die;
+        trace($data);
            // 5041 为已经进件
         if($data['ret']==0 ||$data['ret']==5041){
           return $data;
@@ -213,6 +220,7 @@
         ];
          // var_dump($arr);die;
         $data=rongbang_curl(rongbang_foruser($this->member,$this->passway),$arr,'masget.pay.collect.router.treaty.apply');
+        trace($data);
         // var_dump($data);die;
          if($data['ret']==0){
             //$arr=$data['data']['html'];
@@ -221,6 +229,12 @@
            //$arr=base64_decode($data['data']['html']);
            // var_dump($data['data']['html']);die;
           return $data['data'];
+          #504为 公司id[66666]未通道入驻 通常是入驻完立即调用开通支付接口所致
+         }elseif($data['ret']==504){
+          return "入驻生效有延迟时间，请稍后1~3分钟再试";
+          #506为 已开通协议 调取返回的data中的treatycode
+         }elseif($data['ret']==506){
+          return ['isopen'=>1,'treatycode'=>$data['data']['treatycode']];
          }else{
           return $data['message'];
          }
@@ -358,34 +372,36 @@
           'authcode'=>$authcode,
         ];
         $data=rongbang_curl($this->passway,$arr,'masget.pay.compay.router.confirmpay');
-          w_log($data);
+          trace($data);
         if($data['ret']==0){
           $data=$data['data'];
           if($data['respcode']==2){
             //支付成功 更新快捷支付订单表状态
             $order=CashOrder::where('order_no',$data['ordernumber'])->find();
             //仅在待支付情况下操作
-            if($order->order_state==1){
+          $hasCommission=db('commission')->where(['commission_from'=>$order->order_id,'commission_type'=>1])->count();
+            if($order->order_state!=2  && $hasCommission == 0){
               $order->order_state=2;
               //进行分润
               $fenrun= new \app\api\controller\Commission();
               $fenrun_result=$fenrun->MemberFenRun($this->member->member_id,$order['order_money'],$this->passway->passageway_id,1,'交易手续费分润',$order['order_id']);
+              $passwayitem=PassagewayItem::get(['item_group'=>$this->member->member_group_id,'item_passageway'=>$this->passway->passageway_id]);
               if($fenrun_result['code']=="200"){
                 $order->order_fen=$fenrun_result['leftmoney'];
                 $order->order_buckle=$passwayitem->item_charges/100;
-                $order->order_platform=$order->order_charge-($order->order_money*$passway->passageway_rate/100)+$passwayitem->item_charges/100-$passway->passageway_income;
+                $order->order_platform=$order->order_charge-($order->order_money*$this->passway->passageway_rate/100)+$passwayitem->item_charges/100-$this->passway->passageway_income;
               }else{
                 $order->order_fen=-1;
                 $order->order_buckle=$passwayitem->item_charges/100;
-                $order->order_platform=$order->order_charge-($order->order_money*$passway->passageway_rate/100)+$passwayitem->item_charges/100-$passway->passageway_income;
+                $order->order_platform=$order->order_charge-($order->order_money*$this->passway->passageway_rate/100)+$passwayitem->item_charges/100-$this->passway->passageway_income;
               }
-              $cash_order->save();
+              $order->save();
               #交易失败 待支付 已关闭 交易撤销
               return $data;
             }else{
-              $cash_order->order_state=-1;
-              $cash_order->order_desc.=$data['respmsg'];
-              $cash_order->save();
+              $order->order_state=-1;
+              $order->order_desc.=$data['respmsg'];
+              $order->save();
               return $data['respmsg'];
             }
           }else{
