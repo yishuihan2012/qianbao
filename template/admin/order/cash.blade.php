@@ -39,7 +39,7 @@
   <div class="input-group" style="width: 150px;float: left;margin-right: 10px;">
      <span class="input-group-addon">订单状态</span>
   <select name="order_state" class="form-control">
-      <option value="all">全部</option>
+      <option value="">全部</option>
       <option value="1" @if($r['order_state']==1) selected @endif>待支付</option>
       <option value="2" @if($r['order_state']==2) selected @endif>成功</option>
       <option value="-1" @if($r['order_state']==-1) selected @endif>失败</option>

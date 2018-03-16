@@ -78,7 +78,7 @@
        <td>{{$value->order_card}}</td>
        <td>{{$value->order_money}}</td>
        <td>{{$value->order_pound}}</td>
-       <td>@if($value->order_status == 1)<em style="color:#FF9900;">  待执行 </em>@elseif($value->order_status == 2)<em style="color:#33FF33;"> 成功</em> @elseif($value->order_status == 3)<em style="color:#FF00FF;"> 取消</em> @elseif($value->order_status ==4) <em style="color:#00FFFF;">带查证</em> @else <em style="color:red;">失败 </em>@endif </td>
+       <td>@if($value->order_status == 1)<em style="color:#FF9900;">  待执行 </em>@elseif($value->order_status == 2)<em style="color:#33FF33;"> 成功</em> @elseif($value->order_status == 3)<em style="color:#FF00FF;"> 取消</em> @elseif($value->order_status ==4) <em style="color:#00FFFF;">带查证<@elseif($value->order_status == 5)<em style="color:#FF00FF;"> 已处理</em> /em> @else <em style="color:red;">失败 </em>@endif </td>
        <td>{{$value->order_desc}}</td>
        <td>{{$value->order_time}}</td>
        <td>{{$value->order_edit_time}}</td>
@@ -124,7 +124,8 @@
        })
        $(".remove").click(function(){
          var url=$(this).attr('data-url');
-     bootbox.confirm({
+         var ths=$(this);
+        bootbox.confirm({
         title: "计划列表详情",
         message: "是否执行此操作",
         buttons: {
@@ -134,9 +135,12 @@
         callback: function (result) {
            if(result)
             $.ajax({
-              url:url,
-              type : 'POST',
+                url:url,
+                type : 'POST',
                 dataType : 'json',
+                beforeSend:function(){
+                  ths.parent().html('<i class="icon icon-spin icon-spinner-indicator" style="z-index: 999;"></i>');
+                },
                 success:function(data){
                   data = JSON.parse(data);
                   if(data.code==200){
@@ -150,6 +154,13 @@
         }
      });
        })
+  @if(isset($r["beginTime"]))
+      console.log(666);
+  //初始化时间
+      $('#dateTimeRange').val('{{$r["beginTime"]}} - {{$r["endTime"]}}');
+      $('#beginTime').val('{{$r["beginTime"]}}');
+      $('#endTime').val('{{$r["endTime"]}}'); 
+  @endif
 });
   $('#dateTimeRange').daterangepicker({
         applyClass : 'btn-sm btn-success',

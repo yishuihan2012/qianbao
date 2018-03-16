@@ -723,6 +723,9 @@ use app\index\model\Member;
               if($v['order_status']==2){
                   $back_money+=($v['order_money']-$v['order_pound']);
               }  
+              if($v['order_status']!=2){
+                  $update=GenerationOrder::where(['order_id'=>$v['order_id']])->update(['order_status'=>5]);
+              }
           }
           if($back_money==$order_info['order_money']){
               return json_encode(['code'=>'101','msg'=>'当前计划还款额不需要变更。']);die;

@@ -193,10 +193,19 @@
 	 */
   	 public function commiss(Request $request)
   	 {
+        $r= $request->param();
   	 	 $where['conditions']=['commission_type'=>2,'commission_state'=>1];
   	 	 $where['conditions_member']=$request->param('member_nick') ? ['member_nick|member_mobile'=>['like','%'.$request->param('member_nick').'%']] : '';
   	 	 $where['whereBetween']=($request->param('min_money') && $request->param('max_money')) ? ['commission_money'=>['between',[$request->param('min_money'), $request->param('max_money')]]] : '';
-  	 	 $where['timeBetween']=($request->param('beginTime') && $request->param('endTime')) ? ['commission_creat_time'=>['between',[$request->param('beginTime'), $request->param('endTime')]]] : '';
+         if($request->param('beginTime') && $request->param('endTime')){
+            $where['timeBetween']=['commission_creat_time'=>['between time',[$request->param('beginTime'), $request->param('endTime')]]];
+         }else{
+            // $where['timeBetween']=['commission_creat_time'=>['between time',[strtotime("-7 days"),time()]]];
+            // $r['beginTime']=date('Y-m-d',strtotime("-7 days"));
+            // $r['endTime']=date('Y-m-d',time());
+             $where['timeBetween']='';
+         }
+  	 	 // $where['timeBetween']=($request->param('beginTime') && $request->param('endTime')) ? ['commission_creat_time'=>['between',[$request->param('beginTime'), $request->param('endTime')]]] : '';
   	 	 //获取分佣列表
   	 	 $data['list']=Commission::haswhere('member',$where['conditions_member'])->with('member,members')
 				  	 	 ->where($where['conditions'])
@@ -220,7 +229,7 @@
 				  	 	 ->where(['commission_money' => ['<>' , 0]])
 				  	 	 ->sum('commission_money');
   	 	 $this->assign('data',$data);
-  	 	 $this->assign('conditions', $request->param());
+  	 	 $this->assign('conditions', $r);
 		 #渲染视图
 		 return view('admin/financial/commiss');
   	 }
@@ -233,7 +242,7 @@
 	 */
   	 public function fenrun(Request $request)
   	 {
-
+        $r=input();
   	 	 $count['money']=0;
   	 	 $count['order_charge']=0;
   	 	 $count['charge']=0;
@@ -244,7 +253,15 @@
   	 	 $where['conditions_member']=$request->param('member_nick') ? ['member_nick|member_mobile'=>['like','%'.$request->param('member_nick').'%']] : '';
   	 	 $where['whereBetween']=($request->param('min_money') && $request->param('max_money')) ? ['commission_money'=>['between',[$request->param('min_money'), $request->param('max_money')]]] : '';
   	 	 $endTime=date("Y-m-d",strtotime(request()->param('endTime'))+24*3600);
-  	 	 $where['timeBetween']=($request->param('beginTime') && $request->param('endTime')) ? ['commission_creat_time'=>['between time',[$request->param('beginTime'), $endTime]]] : '';
+         if($request->param('beginTime') && $request->param('endTime')){
+            $where['timeBetween']=['commission_creat_time'=>['between time',[$request->param('beginTime'), $request->param('endTime')]]];
+         }else{
+            // $where['timeBetween']=['commission_creat_time'=>['between time',[strtotime("-7 days"),time()]]];
+            // $r['beginTime']=date('Y-m-d',strtotime("-7 days"));
+            // $r['endTime']=date('Y-m-d',time());
+            $where['timeBetween']='';
+         }
+  	 	 // $where['timeBetween']=($request->param('beginTime') && $request->param('endTime')) ? ['commission_creat_time'=>['between time',[$request->param('beginTime'), $endTime]]] : '';
   	 	 // var_dump($where['whereBetween']);die;
   	 	 //获取分佣列表
   	 	 $list=Commission::haswhere('member',$where['conditions_member'])->with('member,members')
@@ -334,7 +351,7 @@
   	 	 $this->assign('list',$list);
   	 	 $this->assign('count',$count);
   	 	 $this->assign('data',$data);
-  	 	 $this->assign('conditions', $request->param());
+  	 	 $this->assign('conditions', $r);
 		 #渲染视图
 		 return view('admin/financial/fenrun');
   	 }

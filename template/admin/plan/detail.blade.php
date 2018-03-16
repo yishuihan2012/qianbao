@@ -41,6 +41,7 @@
 		    <option value="3" @if($r['order_status']==3) selected @endif>取消</option>
 		    <option value="-1" @if($r['order_status']==-1) selected @endif>失败</option>
 		    <option value="4" @if($r['order_status']==4) selected @endif>待查证</option>
+        <option value="5" @if($r['order_status']==5) selected @endif>已处理</option>
 		  </select>
 		 
 		  </div>
@@ -223,6 +224,15 @@ $('.export').click(function(){
     $(".is_export").val(0);
   },100);
 })
+
+  @if(isset($r["beginTime"]))
+      console.log(666);
+  //初始化时间
+      $('#dateTimeRange').val('{{$r["beginTime"]}} - {{$r["endTime"]}}');
+      $('#beginTime').val('{{$r["beginTime"]}}');
+      $('#endTime').val('{{$r["endTime"]}}'); 
+  @endif
+
  });
 
 		 $(".parent li a").click(function(){

@@ -32,6 +32,10 @@ class Plan extends Common{
 		if(request()->param('beginTime') && request()->param('endTime')){
 			$endTime=strtotime(request()->param('endTime'))+24*3600;
 			$where['generation_add_time']=["between time",[request()->param('beginTime'),$endTime]];
+		}else{
+			$where['generation_add_time']=["between time",[strtotime("-7 days"),time()]];
+			$r['beginTime']=date('Y-m-d',strtotime("-7 days"));
+			$r['endTime']=date('Y-m-d',time());
 		}
 		#需还款信用卡
 		if( request()->param('generation_card')){
@@ -109,6 +113,10 @@ class Plan extends Common{
 		if(request()->param('beginTime') && request()->param('endTime')){
 			$endTime=strtotime(request()->param('endTime'))+24*3600;
 			$where['order_time']=["between time",[request()->param('beginTime'),$endTime]];
+		}else{
+			$where['order_time']=["between time",[strtotime("-7 days"),time()]];
+			$r['beginTime']=date('Y-m-d',strtotime("-7 days"));
+			$r['endTime']=date('Y-m-d',time());
 		}
 		if(request()->param('order_money')!=''){
 			$where['order_money'] = request()->param('order_money');
@@ -161,6 +169,10 @@ class Plan extends Common{
 			$where['order_time']=["between",[request()->param('beginTime'),$endTime]];
 			$this->assign('beginTime',request()->param('beginTime'));
 			$this->assign('endTime',request()->param('endTime'));
+		}else{
+			$where['order_time']=["between time",[strtotime("-7 days"),time()]];
+			$r['beginTime']=date('Y-m-d',strtotime("-7 days"));
+			$r['endTime']=date('Y-m-d',time());
 		}
 		if(request()->param('order_money')!=''){
 			$where['order_money'] = request()->param('order_money');
