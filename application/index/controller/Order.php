@@ -287,7 +287,7 @@ class Order extends Common{
 	 	 $count['sanji']=0;
 	 	 $count['fenrunhou']=0;
 	 	
-	 	 $list = CashOrder::with('passageway')->join('wt_member m',"m.member_id=wt_cash_order.order_member")->where($where)->where(["order_state" => 2])->join("wt_member_cert mc", "mc.cert_member_id=m.member_id","left")->order("order_id desc")->select();
+	 	 $list = CashOrder::with('passageway')->join('wt_member m',"m.member_id=wt_cash_order.order_member")->where(["order_state" => 2])->join("wt_member_cert mc", "mc.cert_member_id=m.member_id","left")->order("order_id desc")->select();
 	 	 foreach ($order_lists as $key => $value) {
 	 	 	 $order_lists[$key]['fenrun']=db('commission')->alias('c')
 	 	 	 	->where('commission_from='.$value['order_id'].' and commission_type=1')
