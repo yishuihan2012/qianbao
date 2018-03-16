@@ -35,6 +35,7 @@ use app\index\model\MemberCert;
 use app\index\model\MemberNet;
 use app\index\model\Reimbur;
 use app\index\model\Appversion; 
+use app\index\model\Commission as Commissions; 
 use app\index\model\SmsCode; 
 use app\index\model\ArticleCategory;
 use app\index\model\Article;
