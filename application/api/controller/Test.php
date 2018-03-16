@@ -7,6 +7,8 @@ use think\Db;
 use app\index\model\System;
 use think\Request;
 use think\Config;
+use app\index\model\CashOrder;
+use app\index\model\PassagewayItem;
 
 class Test 
 {
@@ -314,4 +316,22 @@ class Test
 		public function tests(){
 			echo "finished";
 		}
+
+	public function order_rate(){
+	 	$order=CashOrder::with('member,passageway')->where('order_state=2 and order_add_time > 2018-01-08')->limit(0,10000)->select();
+	 	foreach ($order as $key => $value) {
+	 		//用户费率
+	 		$rate=PassagewayItem::where('item_passageway='.$value['order_passway']. ' and item_group='.$value['member_group_id'])->field('item_rate,item_charges')->find();
+	 		$data=array(
+	 			'user_rate'=>$rate->item_rate,
+	 			'user_fix'=>$rate->item_charges/100,
+	 			'passageway_rate'=>$value->passageway->passageway_rate,
+	 			'passageway_fix' =>$value->passageway->passageway_income,
+	 			'order_passway_profit'=>$value->order_money*$value->passageway->passageway_rate+$value->passageway->passageway_income
+	 		);
+	 		CashOrder::where('order_id='.$value['order_id'])->update($data);
+
+	 	}
+	 	echo 'success';die;
+	 }
 }
