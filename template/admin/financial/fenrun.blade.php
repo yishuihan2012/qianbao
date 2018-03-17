@@ -12,7 +12,7 @@
       <i class="icon-list-ul"></i> 刷卡手续费 <small>共 <strong class="text-danger">{{$count['order_charge']}}</strong> 元</small>
       <i class="icon-list-ul"></i> 成本手续费 <small>共 <strong class="text-danger">{{$count['charge']}}</strong> 元</small>
       <i class="icon-list-ul"></i> 盈利分润 <small>共 <strong class="text-danger">{{$count['yingli']}}</strong> 元</small>
-      <i class="icon-list-ul"></i> 分润金额 <small>共 <strong class="text-danger">{{$count['fenrun']}}</strong> 元</small>
+      <i class="icon-list-ul"></i> 分润金额 <small>共 <strong class="text-danger">{{ $data['money']}}</strong> 元</small>
       <i class="icon-list-ul"></i> 分润后盈利金额 <small>共 <strong class="text-danger">{{$count['fenrun_yingli']}}</strong> 元</small>
     </h3>
 
@@ -25,6 +25,14 @@
                      <label for="inputAccountExample1" class="input-control-icon-left"><i class="icon icon-user "></i></label>
                 </div>
            </div>
+    <div class="input-group" style="width: 180px;float: left;margin-right: 10px;">
+         <span class="input-group-addon">通道</span> 
+      <select name="passway" class="form-control">
+          <option value="" @if($conditions['passway'] =='') selected="" @endif>全部</option>
+          <option value="1" @if($conditions['passway'] ==1) selected="" @endif>快捷支付</option>
+          <option value="3" @if($conditions['passway'] ==3) selected="" @endif>代还</option>
+      </select>
+   </div>
            <div class="col-sm-2">
                 <div class="input-group">
                      <span class="input-group-btn"><button class="btn btn-default" type="button">金额</button></span>
