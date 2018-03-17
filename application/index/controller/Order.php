@@ -288,7 +288,7 @@ class Order extends Common{
 	 	 $count['fenrunhou']=0;
 	 	 $where1=array_merge($where,$wheres);
 	 	 $where1['order_state'] = array("eq",2);
-	 	 $list = CashOrder::with('passageway')->join('wt_member m',"m.member_id=wt_cash_order.order_member")->where($where)->join("wt_member_cert mc", "mc.cert_member_id=m.member_id","left")->order("order_id desc")->select();
+	 	 $list = CashOrder::with('passageway')->join('wt_member m',"m.member_id=wt_cash_order.order_member")->where($where1)->join("wt_member_cert mc", "mc.cert_member_id=m.member_id","left")->order("order_id desc")->select();
 
 	 	 foreach ($order_lists as $key => $value) {
 	 	 	 $order_lists[$key]['fenrun']=db('commission')->alias('c')
