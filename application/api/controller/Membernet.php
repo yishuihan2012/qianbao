@@ -237,9 +237,12 @@ use app\index\model\Member;
                         #1分润
                         //先判断有没有分润
                         if($pay['is_commission']=='0' && $is_commission==1){
-                             $fenrun= new \app\api\controller\Commission();
-                             $fenrun_result=$fenrun->MemberFenRun($pay['order_member'],$pay['order_money'],$merch->passageway_id,3,'代还分润',$pay['order_id']);
+                          $has_fenrun=db('commission')->where('commission_from',$pay['order_id'])->find();
+                          if(!$has_fenrun){
                              $update_res=GenerationOrder::where(['order_id'=>$pay['order_id']])->update(['is_commission'=>1]);
+                             $fenrun= new \app\api\controller\Commissions();
+                             $fenrun_result=$fenrun->MemberFenRun($pay['order_member'],$pay['order_money'],$merch->passageway_id,3,'代还分润',$pay['order_id']);
+                           }
                         }
                         #2记录为 shangji 有效推荐人
                         $Plan_cation=new \app\api\controller\Planaction();
@@ -317,8 +320,12 @@ use app\index\model\Member;
                 }
                 //成功-分润先判断有没有分润
                 if($pay['is_commission']=='0'){
-                    $fenrun= new \app\api\controller\Commission();
+                  $has_fenrun=db('commission')->where('commission_from',$pay['order_id'])->find();
+                  if(!$has_fenrun){
+                    $update_res=GenerationOrder::where(['order_id'=>$pay['order_id']])->update(['is_commission'=>1]);
+                    $fenrun= new \app\api\controller\Commissions();
                     $fenrun_result=$fenrun->MemberFenRun($pay['order_member'],$pay['order_money'],$merch->passageway_id,3,'代还分润',$pay['order_id']);
+                  }
                 }
                 // 极光推送
                 $card_num=substr($pay['order_card'],-4);
