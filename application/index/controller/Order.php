@@ -293,12 +293,12 @@ class Order extends Common{
 	 	 	 	->where('commission_from='.$value['order_id'].' and commission_type=1')
 	 	 	 	->sum('commission_money');			 
 			   #成本手续费
-	 	 	 $count['chengben']+=$value['order_passway_profit'];
+	 	 	 // $count['chengben']+=$value['order_passway_profit'];
 
 	 	 	 $order_lists[$key]['yingli']=$value['order_charge']+$value['order_buckle']-$value['order_passway_profit'];
 
-	 	 	 $count['yingli']+=$order_lists[$key]['yingli'];
-	 	 	 $count['sanji']+=$order_lists[$key]['fenrun'];			
+	 	 	 // $count['yingli']+=$order_lists[$key]['yingli'];
+	 	 	 // $count['sanji']+=$order_lists[$key]['fenrun'];			
 		}
 
 		foreach ($list as $k => $order) {
