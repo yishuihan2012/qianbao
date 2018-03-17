@@ -54,6 +54,50 @@ class Order extends Common{
 		if(request()->param('upgrade_id')!=''){
 			$wheres['upgrade_id'] = request()->param('upgrade_id');
 		}
+
+		if(input('is_export')==1){
+			set_time_limit(0);
+	 	    $limit=20000;
+	 	    $max=100000;
+	 	    $i=intval(input('start_p')) ?? 0;
+	 	    $n=0;
+	 	    $fp = fopen('php://output', 'a');
+	 	    #算出乘数
+	 	    if($i)
+	 	    	$i=($i-1)*$max/$limit;
+	 	    do{
+	 	    	#取数据
+		 	    $order_lists=db("upgrade")->alias('o')
+		 	    	->join('member m','o.upgrade_member_id=m.member_id')
+		 	    	->join('member_cert c','c.cert_member_id=m.member_id','left')
+		 	    	->where($where)
+		 	    	->where($wheres)
+		 	    	->order("upgrade_id desc")
+		 	    	->field("member_nick,upgrade_type,upgrade_no,upgrade_money,upgrade_commission,upgrade_state,upgrade_bak,member_creat_time")
+		 	    	->limit($i*$limit,$limit)
+		 	    	->select();
+		 	    	$i++;
+		 	    	// var_dump($order_lists);die;
+		 	    // halt($order_lists);
+		 	    $status=[
+		 	    	'0'=>'待支付',
+		 	    	'1'=>'已支付',
+		 	    ];
+		 	    $list=[];
+		 	    foreach ($order_lists as $k => $v) {
+		 	    	$order_lists[$k]['upgrade_state']=$status[$v['upgrade_state']];
+		 	    }
+		 	    $head=['用户名','升级方式','流水号','升级金额','分佣金额','支付状态','备注','创建时间'];
+		 	    export_csv($head,$order_lists,$fp);
+		 	    $count=count($order_lists);
+		 	    unset($order_lists);
+		 	    $n++;
+	 	    }while($count==$limit && $n<$max/$limit);
+	 	    return;
+		}
+
+
+
 		#支付类型
 	 	$order_lists = Upgrade::haswhere('member',$where)
 	 		->join("wt_member_cert m", "m.cert_member_id=Member.member_id","left")
