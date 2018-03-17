@@ -297,8 +297,8 @@ class Order extends Common{
 
 	 	 	 $order_lists[$key]['yingli']=$value['order_charge']+$value['order_buckle']-$value['order_passway_profit'];
 
-	 	 	 $count['yingli']+=$order_lists[$key]['yingli'];
-	 	 	 $count['sanji']+=$order_lists[$key]['fenrun'];			
+	 	 	 // $count['yingli']+=$order_lists[$key]['yingli'];
+	 	 	 // $count['sanji']+=$order_lists[$key]['fenrun'];			
 		}
 
 		foreach ($list as $k => $order) {
