@@ -220,7 +220,7 @@ class Order extends Common{
 		}
 		#订单状态
 		if( request()->param('order_state')){
-			$wheres['order_state'] = array("eq",2);
+			$wheres['order_state'] = array("eq",request()->param('order_state'));
 
 		}else{
 			$r['order_state'] = '';
@@ -286,8 +286,10 @@ class Order extends Common{
 	 	 $count['yingli']=0;
 	 	 $count['sanji']=0;
 	 	 $count['fenrunhou']=0;
-	 	
-	 	 $list = CashOrder::with('passageway')->join('wt_member m',"m.member_id=wt_cash_order.order_member")->where(["order_state" => 2])->where($where)->join("wt_member_cert mc", "mc.cert_member_id=m.member_id","left")->order("order_id desc")->select();
+	 	 $where1=array_merge($where,$wheres);
+	 	 $where1['order_state'] = array("eq",2);
+	 	 $list = CashOrder::with('passageway')->join('wt_member m',"m.member_id=wt_cash_order.order_member")->where($where)->join("wt_member_cert mc", "mc.cert_member_id=m.member_id","left")->order("order_id desc")->select();
+
 	 	 foreach ($order_lists as $key => $value) {
 	 	 	 $order_lists[$key]['fenrun']=db('commission')->alias('c')
 	 	 	 	->where('commission_from='.$value['order_id'].' and commission_type=1')
