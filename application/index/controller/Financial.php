@@ -285,51 +285,31 @@
 				  	 	 ->paginate(Config::get('page_size'), false, ['query'=>Request::instance()->param()]);
 				  	 	 // var_dump($list[0]);die;
 		//总刷卡金额
-		 $count['money']=db('commission')->alias('c')
-		 	 ->join("cash_order o","o.order_id=c.commission_from")
+		 $from_ids=db('commission')->alias('c')
 		 	 ->where($where['conditions'])
 	  	 	 ->where($where['whereBetween'])
 	  	 	 ->where($where['timeBetween'])
 	  	 	 ->where($where['passway'])
 	  	 	 ->where(['commission_money' => ['<>' , 0]])
-	  	 	 ->group('commission_from')
-	  	 	 ->sum('order_money');
+	  	 	 ->column('commission_from');
+  	 	 //总刷卡金额
+  	 	 $count['money']=db('cash_order')->where('order_id','in',$from_ids)->sum('order_money');
 	  	 //刷卡总手续费
-	  	  $count['order_charge']=db('commission')->alias('c')
-		 	 ->join("cash_order o","o.order_id=c.commission_from")
-		 	 ->where($where['conditions'])
-	  	 	 ->where($where['whereBetween'])
-	  	 	 ->where($where['timeBetween'])
-	  	 	 ->where($where['passway'])
-	  	 	 ->where(['commission_money' => ['<>' , 0]])
-	  	 	 ->group('commission_from')
-	  	 	 ->sum('order_charge');
-		 // var_dump($count['order_charge']);die;
+	  	 $count['order_charge']=db('cash_order')->where('order_id','in',$from_ids)->sum('order_charge');
 	  	 //成本总手续费
-	  	  $count['charge']=db('commission')->alias('c')
-		 	 ->join("cash_order o","o.order_id=c.commission_from")
-		 	 ->where($where['conditions'])
-	  	 	 ->where($where['whereBetween'])
-	  	 	 ->where($where['timeBetween'])
-	  	 	 ->where($where['passway'])
-	  	 	 ->where(['commission_money' => ['<>' , 0]])
-	  	 	 ->group('commission_from')
-	  	 	 ->sum('order_passway_profit');
-		 // var_dump($count['charge']);die;
+	  	 $count['charge']=db('cash_order')->where('order_id','in',$from_ids)->sum('order_passway_profit');
 	  	 //总分润金额
-	  	  $count['fenrun']=db('commission')->alias('c')
-		 	 ->join("cash_order o","o.order_id=c.commission_from")
+	  	  $from_ids=db('commission')->alias('c')
 		 	 ->where($where['conditions'])
 	  	 	 ->where($where['whereBetween'])
 	  	 	 ->where($where['timeBetween'])
 	  	 	 ->where($where['passway'])
 	  	 	 ->where(['commission_money' => ['<>' , 0]])
-	  	 	 ->group('commission_from')
 	  	 	 ->sum('commission_money');
-		 // var_dump($count['fenrun']);die;
-	  	 	 $count['yingli']=$count['order_charge']-$count['charge'];
-	  	 	 //平台的盈利
-	  	 	 $count['fenrun_yingli']=$count['yingli']-$count['fenrun'];
+
+	  	 $count['yingli']=$count['order_charge']-$count['charge'];
+  	 	 //平台的盈利
+  	 	 $count['fenrun_yingli']=$count['yingli']-$count['fenrun'];
 			foreach ($list as $key => $value) {
 				if($value['commission_type']==1){
 					$order=CashOrder::where(['order_id'=>$value['commission_from']])->find();
