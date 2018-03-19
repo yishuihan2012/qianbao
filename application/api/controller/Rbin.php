@@ -21,7 +21,6 @@ class Rbin
             ->join('member_net n', 'm.member_id=n.net_member_id')
             ->where('member_cert', 1)
             ->where($passway->passageway_no, "null")
-            ->limit(200)
             ->select();
         w_log("数量:" . count($members));
         foreach ($members as $k => $v) {
