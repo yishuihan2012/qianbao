@@ -158,8 +158,8 @@
       }
       //绑定信用卡
       public function addition_card_code(){
-          if(!isset($this->param['bindId']) || empty($this->param['bindId']))
-                 return ['code'=>441];
+          // if(!isset($this->param['bindId']) || empty($this->param['bindId']))
+          //        return ['code'=>441];
            #查询信用卡信息
           $creditcard=MemberCreditcard::where("bindId='{$this->param['bindId']}' and card_member_id={$this->param['uid']}")->find();
            // return ['code'=>441,'msg'=>'13','data'=>$creditcard];
