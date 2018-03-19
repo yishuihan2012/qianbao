@@ -251,7 +251,7 @@ use app\index\model\Member;
                           $has_fenrun=db('commission')->where('commission_from',$pay['order_id'])->find();
                           if(!$has_fenrun){
                              $update_res=GenerationOrder::where(['order_id'=>$pay['order_id']])->update(['is_commission'=>1]);
-                             $fenrun= new \app\api\controller\Commissions();
+                             $fenrun= new \app\api\controller\Commission();
                              $fenrun_result=$fenrun->MemberFenRun($pay['order_member'],$pay['order_money'],$merch->passageway_id,3,'代还分润',$pay['order_id']);
                            }
                         }
@@ -334,7 +334,7 @@ use app\index\model\Member;
                   $has_fenrun=db('commission')->where('commission_from',$pay['order_id'])->find();
                   if(!$has_fenrun){
                     $update_res=GenerationOrder::where(['order_id'=>$pay['order_id']])->update(['is_commission'=>1]);
-                    $fenrun= new \app\api\controller\Commissions();
+                    $fenrun= new \app\api\controller\Commission();
                     $fenrun_result=$fenrun->MemberFenRun($pay['order_member'],$pay['order_money'],$merch->passageway_id,3,'代还分润',$pay['order_id']);
                   }
                 }
