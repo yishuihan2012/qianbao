@@ -41,7 +41,7 @@
                  #获取通道信息
                  $this->passway=Passageway::get($passwayId);
                  if(!$this->passway)
-                      $this->error=454; 
+                      $this->error=454;
            }catch (\Exception $e) {
                  $this->error=460; //TODO 更改错误码 入网失败错误码
            }
@@ -115,12 +115,16 @@
          #定义请求报文组装
          $arr=array(
           //全平台唯一 加商户id确保全平台唯一 设定固定值 
-           'companyname'    =>$this->membercard->card_name . $this->member->member_mobile . '_xijia_'. $this->passway->passageway_mech,
+          //姓名 + 身份证号 + "_xj_" + 通道商户号
+           // 'companyname'    =>$this->membercard->card_name . $this->member->member_mobile . '_xijia_'. $this->passway->passageway_mech,
+           'companyname'    =>$this->membercard->card_name . $this->membercard->card_idcard . '_xj_'. $this->passway->passageway_mech,
            // 'companyname'    =>$this->membercard->card_name . $this->passway->passageway_id . $c_name . rand(100,999),
            // 'companyname'    =>"test".time(),
            // 'companycode'     =>$this->member->member_mobile,
           //全平台唯一 加通道id以区分
-           'companycode'     =>$this->member->member_mobile . '_xijia',
+          //身份证号 + "_xj"
+           // 'companycode'     =>$this->member->member_mobile . '_xijia',
+           'companycode'     =>$this->membercard->card_idcard . '_xj',
            // 'companycode'     =>$this->member->member_mobile . $this->passway->passageway_id . $c_name . rand(100,999),
            'accountname'      =>$this->membercard->card_name,
            'bankaccount'       =>$this->membercard->card_bankno,
@@ -167,7 +171,8 @@
         // $userinfo=db('member_net')->where('net_member_id',$this->member->member_id)->value($this->passway->passageway_no);
         // $userinfo=explode(',', $userinfo);
         $arr=[
-          'companycode'=>$this->member->member_mobile . '_xijia',
+          'companycode'     =>$this->membercard->card_idcard . '_xj',
+          // 'companycode'=>$this->member->member_mobile . '_xijia',
           // 'companycode'=>$userinfo[1],
           // 'mobilephone'=>$this->member->member_mobile ,
         ];
