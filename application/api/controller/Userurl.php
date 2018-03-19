@@ -342,7 +342,7 @@ class Userurl extends Controller
           ####################################
           #3确定每天实际还款金额
           $day_pay_real_money=$this->get_random_money($days,$this->param['billMoney'],$is_int=1);
-          print_r($day_pay_real_money);
+          // print_r($day_pay_real_money);
           #4确定每天还款次数
           $day_pay_count=$this->get_day_count($this->param['payCount'],$days);
           #5计算出每天实际刷卡金额，和实际到账金额

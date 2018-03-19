@@ -56,7 +56,7 @@
 								<span class="my-badge-success">还款</span>
 								@endif
 								<span class="invalid-color space-lr2">{{date('H:i',strtotime($v['order_time']))}}</span>
-								<span><strong>{{$v['order_money']}}元</strong></span>
+								<span><strong>{{$v['order_real_get']}}元</strong></span>
 							</p>
 <!-- 							<p class="f16 yellow-color">
 							  <span class="">进行中</span>

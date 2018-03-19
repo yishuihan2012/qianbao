@@ -62,7 +62,7 @@
 								<span class="my-badge-success">还款</span>
 								@endif
 								<span class="invalid-color space-lr2">{{date('H:i',strtotime($v['order_time']))}}</span>
-								<span><strong>{{$v['order_money']}}元</strong></span>
+								<span><strong>{{$v['order_real_get']}}元</strong></span>
 							</p>
 							<p class="f16 yellow-color">
 							  <span class="">进行中</span>
@@ -79,7 +79,7 @@
 								<span class="my-badge-success">还款</span>
 								@endif
 								<span class="invalid-color space-lr2">{{date('H:i',strtotime($v['order_time']))}}</span>
-								<span><strong>{{$v['order_money']}}元</strong></span>
+								<span><strong>{{$v['order_real_get']}}元</strong></span>
 							</p>
 							<p class="f16 red-color">
 							  <span class="">执行失败</span>
@@ -103,7 +103,7 @@
 								<span class="my-badge-success">还款</span>
 								@endif
 								<span class="invalid-color space-lr2">{{date('H:i',strtotime($v['order_time']))}}</span>
-								<span><strong>{{$v['order_money']}}元</strong></span>
+								<span><strong>{{$v['order_real_get']}}元</strong></span>
 							</p>
 							<p class="f16 green-color2">
 							  <span>执行成功</span>
@@ -119,7 +119,7 @@
 								<span class="my-badge-success">还款</span>
 								@endif
 								<span class="invalid-color space-lr2">{{date('H:i',strtotime($v['order_time']))}}</span>
-								<span><strong>{{$v['order_money']}}元</strong></span>
+								<span><strong>{{$v['order_real_get']}}元</strong></span>
 							</p>
 							<p class="f16 red-color2">
 							  <span>计划取消</span>
@@ -136,7 +136,7 @@
 								<span class="my-badge-success">还款</span>
 								@endif
 								<span class="invalid-color space-lr2">{{date('H:i',strtotime($v['order_time']))}}</span>
-								<span><strong>{{$v['order_money']}}元</strong></span>
+								<span><strong>{{$v['order_real_get']}}元</strong></span>
 							</p>
 							<p class="f16 yellow-color">
 							  <span class="">处理中</span>
@@ -152,7 +152,7 @@
 								<span class="my-badge-success">还款</span>
 								@endif
 								<span class="invalid-color space-lr2">{{date('H:i',strtotime($v['order_time']))}}</span>
-								<span><strong>{{$v['order_money']}}元</strong></span>
+								<span><strong>{{$v['order_real_get']}}元</strong></span>
 							</p>
 							<p class="f16 yellow-color">
 							  <span class="">已处理</span>
