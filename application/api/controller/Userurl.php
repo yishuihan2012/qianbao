@@ -462,7 +462,7 @@ class Userurl extends Controller
                 if($vv['order_type']==1){
                   $data[$k]['pay']+=$vv['order_money'];
                 }else if($vv['order_type']==2){
-                  $data[$k]['get']+=$vv['order_money'];
+                  $data[$k]['get']+=$vv['order_real_get'];
                 }
                 $order_pound+=$vv['order_pound'];
             }
@@ -552,7 +552,7 @@ class Userurl extends Controller
                 if($vv['order_type']==1){
                   $data[$k]['pay']+=$vv['order_money'];
                 }else if($vv['order_type']==2){
-                  $data[$k]['get']+=$vv['order_money'];
+                  $data[$k]['get']+=$vv['order_real_get'];
                 }
                 $order_pound+=$vv['order_pound'];
             }
