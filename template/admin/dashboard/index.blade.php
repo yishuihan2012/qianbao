@@ -82,7 +82,7 @@
                 },
                 data:[
                      {value:{{$data['cert']}}, name:'实名认证人数'},
-                     {value:{{$data['Todaycount']}}, name:'今日注册会员'},
+                     {value:{{$data['count']-$data['cert']}}, name:'未实名会员'},
                 ]
            }
       ]

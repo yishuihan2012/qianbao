@@ -89,6 +89,23 @@
  	 	 $where['conditions_member']=(!empty($conditions) && $conditions['member_nick']!='') ? ['member_nick|member_mobile'=>['like','%'.$conditions['member_nick'].'%']] : '';
  	 	 $where['upgradeBetween']=(!empty($conditions) && $conditions['min_money']!='' && $conditions['max_money']!='') ? ['upgrade_money'=>['between',[$conditions['min_money'], $conditions['max_money']]]] : '';
  	 	 $where['upgradeTime']=(!empty($conditions) && $conditions['beginTime']!='' && $conditions['endTime']!='') ? ['upgrade_update_time'=>['between',[$conditions['beginTime'], $conditions['endTime']]]] : '';
+         #导出
+         if(input('is_export')){
+            $fp = fopen('php://output', 'a');
+            $data=db('upgrade')->alias('u')
+                ->join('member m','u.upgrade_member_id=m.member_id')
+                 ->where(['upgrade_state'=>1])
+                 ->where($where['conditions_member'])
+                 ->where($where['upgradeTime'])
+                 ->where($where['upgradeBetween'])
+                 ->where(['upgrade_money' => ['<>',0]])
+                 ->order('upgrade_id','desc')
+                 ->field('upgrade_id,member_nick,upgrade_money,upgrade_update_time')
+                 ->select();
+            $head=['ID','会员','金额','时间'];
+            export_csv($head,$data,$fp);
+            return;
+         }
   	 	 #查询升级记录表 支付订单表 成功的信息
   	 	 $data=Upgrade::with('member')
 		  	 	 ->where(['upgrade_state'=>1])
@@ -116,6 +133,23 @@
  	 	 $where['conditions_member']=(!empty($conditions) && $conditions['member_nick']!='') ? ['member_nick|member_mobile'=>['like','%'.$conditions['member_nick'].'%']] : '';
  	 	 $where['payBetween']=(!empty($conditions) && $conditions['min_money']!='' && $conditions['max_money']!='') ? ['order_platform'=>['between',[$conditions['min_money'], $conditions['max_money']]]] : '';
  	 	 $where['cashTime']=(!empty($conditions) && $conditions['beginTime']!='' && $conditions['endTime']!='') ? ['order_update_time'=>['between',[$conditions['beginTime'], $conditions['endTime']]]] : '';
+         #导出
+         if(input('is_export')){
+            $fp = fopen('php://output', 'a');
+            $data=db('cash_order')->alias('g')
+                ->join('member m','g.order_member=m.member_id')
+                 ->where(['order_state'=>2])
+                 ->where($where['conditions_member'])
+                 ->where($where['cashTime'])
+                 ->where($where['payBetween'])
+                 ->where(['order_platform' => ['<>',0]])
+                 ->order('order_id','desc')
+                 ->field('order_id,concat("`",order_no),member_nick,order_money,order_platform,order_buckle,order_update_time')
+                 ->select();
+            $head=['ID','订单号','会员','订单金额','平台收益','代扣费','时间'];
+            export_csv($head,$data,$fp);
+            return;
+         }
   	 	 #查询快捷支付订单
   	 	 $data=CashOrder::with('member')
 		  	 	 ->where(['order_state'=>2])
@@ -143,6 +177,22 @@
  	 	 $where['conditions_member']=(!empty($conditions) && $conditions['member_nick']!='') ? ['member_nick|member_mobile'=>['like','%'.$conditions['member_nick'].'%']] : '';
  	 	 $where['autoBetween']=(!empty($conditions) && $conditions['min_money']!='' && $conditions['max_money']!='') ? ['order_platform'=>['between',[$conditions['min_money'], $conditions['max_money']]]] : ''; 
  	 	 $where['autoTime']=(!empty($conditions) && $conditions['beginTime']!='' && $conditions['endTime']!='') ? ['order_edit_time'=>['between',[$conditions['beginTime'], $conditions['endTime']]]] : '';
+         #导出
+         if(input('is_export')){
+            $fp = fopen('php://output', 'a');
+            $data=db('generation_order')->alias('g')
+                ->join('member m','g.order_member=m.member_id')
+                 ->where($where['conditions_member'])
+                 ->where(['order_type'=>1,'order_status'=>2])
+                 ->where($where['autoBetween'])
+                 ->where(['order_platform' => ['<>' , 0]])
+                 ->where($where['autoTime'])
+                 ->field('order_id,order_no,member_nick,order_money,order_platform,order_buckle,order_edit_time')
+                 ->select();
+            $head=['ID','订单号','会员','订单金额','平台收益','代扣费','时间'];
+            export_csv($head,$data,$fp);
+            return;
+         }
   	 	 #查询快捷支付订单
   	 	 $data=GenerationOrder::with('member')
   	 	 		 ->where($where['conditions_member'])
@@ -170,6 +220,23 @@
  	 	 $where['conditions_member']=(!empty($conditions) && $conditions['member_nick']!='') ? ['member_nick|member_mobile'=>['like','%'.$conditions['member_nick'].'%']] : '';
  	 	 $where['drawBetween']=(!empty($conditions) && $conditions['min_money']!='' && $conditions['max_money']!='') ? ['withdraw_amount'=>['between',[$conditions['min_money'], $conditions['max_money']]]] : ''; 
  	 	 $where['drawTime']=(!empty($conditions) && $conditions['beginTime']!='' && $conditions['endTime']!='') ? ['withdraw_update_time'=>['between',[$conditions['beginTime'], $conditions['endTime']]]] : '';
+         #导出
+         if(input('is_export')){
+            $fp = fopen('php://output', 'a');
+            $data=db('withdraw')->alias('w')
+                ->join('member m','w.withdraw_member=m.member_id')
+                 ->where(['withdraw_state'=>12])
+                 ->where($where['conditions_member'])
+                 ->where($where['drawBetween'])
+                 ->where($where['drawTime'])
+                 ->where(['withdraw_amount' => ['<>' , 0]])
+                 ->order('withdraw_id', 'desc')
+                 ->field('withdraw_id,concat("`",withdraw_no),member_nick,withdraw_method,withdraw_amount,withdraw_bak,withdraw_update_time')
+                 ->select();
+            $head=['ID','流水号','会员','方式','金额','备注','时间'];
+            export_csv($head,$data,$fp);
+            return;
+         }
   	 	 #查询快捷支付订单
   	 	 $data=withdraw::with('member')
 		  	 	 ->where(['withdraw_state'=>12])
@@ -396,5 +463,4 @@
 		 #渲染视图
 		 return view('admin/financial/fenrun');
   	 }
-
  }
