@@ -273,6 +273,23 @@
              $where['timeBetween']='';
          }
   	 	 // $where['timeBetween']=($request->param('beginTime') && $request->param('endTime')) ? ['commission_creat_time'=>['between',[$request->param('beginTime'), $request->param('endTime')]]] : '';
+    if(input('is_export')==1){
+        $fp = fopen('php://output', 'a');
+        #取数据
+        $data=db("commission")->alias('c')
+          ->join("member m1",'c.commission_member_id=m1.member_id')
+          ->join("member m2",'c.commission_childen_member=m2.member_id')
+               ->where($where['conditions'])
+               ->where($where['whereBetween'])
+               ->where($where['timeBetween'])
+               ->where(['commission_money' => ['<>',0]])
+          ->order("commission_id desc")
+          ->field('commission_id,m1.member_nick,m2.member_nick as nick,commission_money,commission_desc,commission_creat_time')
+          ->select();
+        $head=['ID','收益人','购买人','金额','备注','时间'];
+        export_csv($head,$data,$fp);
+        return;
+    }
   	 	 //获取分佣列表
   	 	 $data['list']=Commission::haswhere('member',$where['conditions_member'])->with('member,members')
 				  	 	 ->where($where['conditions'])
