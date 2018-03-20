@@ -1239,15 +1239,37 @@ class Userurl extends Controller
     $order=CashOrder::get(['order_no'=>$tradeNo]);
     $passway=Passageway::get($order->order_passway);
     $member=Members::get($order->order_member);
-    #通道费率
-     $passwayitem=PassagewayItem::get(['item_group'=>$member->member_group_id,'item_passageway'=>$passway->passageway_id]);
-     $Commission_info=Commissions::where(['commission_from'=>$order->order_id,'commission_type'=>1])->find();
-     if(!$Commission_info){
-            $fenrun= new \app\api\controller\Commission();
-            $fenrun_result=$fenrun->MemberFenRun($order->order_member,$order->order_money,$order->order_passway,1,'套现手续费分润',$order->order_id);
-     }else{
-        $fenrun_result['code']=-1;
-     }
+
+    #查询订单是否成功
+    $url="http://kjnq.jct8.com/quickpay/Query/".$passway->passageway_mech."/".$tradeNo;
+    $curl = curl_init(); // 启动一个CURL会话
+    curl_setopt($curl, CURLOPT_URL, $url);
+    curl_setopt($curl, CURLOPT_HEADER, 0);
+    curl_setopt($curl, CURLOPT_RETURNTRANSFER, 1);
+    curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, false); // 跳过证书检查
+    $data = curl_exec($curl);     //返回api的json对象
+    //关闭URL请求
+    curl_close($curl);
+    $return=json_decode($data,true);
+    // var_dump($return);die;
+    if($return['code']=='00'){
+      if(isset($return['payStatus']) && $return['payStatus']=='Y'){
+         $passwayitem=PassagewayItem::get(['item_group'=>$member->member_group_id,'item_passageway'=>$passway->passageway_id]);
+         $Commission_info=Commissions::where(['commission_from'=>$order->order_id,'commission_type'=>1])->find();
+         if(!$Commission_info){
+                $fenrun= new \app\api\controller\Commission();
+                $fenrun_result=$fenrun->MemberFenRun($order->order_member,$order->order_money,$order->order_passway,1,'套现手续费分润',$order->order_id);
+         }else{
+            $fenrun_result['code']=-1;
+         }
+
+      }else{
+         $fenrun_result['code']=-1;
+      }
+
+    }elseif($return['code']=='01'){
+       $fenrun_result['code']=-1;
+    }
 
      if($fenrun_result['code']=="200")
      {
@@ -1262,6 +1284,7 @@ class Userurl extends Controller
 
       $res = $order->save();
      if ($res) {
+      $this->assign('data',$fenrun_result);
         return view("Userurl/H5youjifen");
      }
   }

@@ -11,7 +11,7 @@
 		<link href="/static/css/themes.css" rel="stylesheet" />
 	</head>
 	<body>
-		@if($data['result']==1)
+		@if($data['code']==200)
 		<div class="mui-content bg-w repay-suc">
 			<div class="fc">
 		    	<span class="mui-icon iconfont icon-successful f48"></span>
