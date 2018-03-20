@@ -39,5 +39,10 @@ class Commission extends Model{
       {
            return $this->hasOne('Member', 'member_id', 'commission_childen_member','','left')->field('member_id,member_nick as nick')->bind('nick');
       }
+      #一对一关联用户表
+      public function cashorder()
+      {
+           return $this->hasOne('CashOrder', 'order_id', 'commission_from','','left')->bind('order_money');
+      }
 
 }

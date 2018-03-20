@@ -141,13 +141,20 @@ use app\index\model\Member;
      //7绑卡支付
       //http://pay.mishua.cn/zhonlinepay/service/rest/creditTrans/payBindCard
       public function payBindCard($pay){
-
+        $order_rate=0;//0代表系统费率1代表订单上费率
         #1获取费率
         // print_r($pay);die;
-        $member_group_id=Member::where(['member_id'=>$pay['order_member']])->value('member_group_id');
-        $rate=PassagewayItem::where(['item_passageway'=>$pay['order_passageway'],'item_group'=>$member_group_id])->find();
-        $also=($rate->item_also)*10;
-        $daikou=($rate->item_charges);
+        // 兼容老的数据没有费率的情况，新的订单都直接取订单里的费率
+        if($pay['passageway_rate'] || $pay['passageway_fix'] || $pay['user_rate'] || $pay['user_fix']){ //如果设置了费率
+            $order_rate=1;
+            $also=$pay['user_rate']*10;
+            $daikou=$pay['user_fix']*100;
+        }else{
+              $member_group_id=Member::where(['member_id'=>$pay['order_member']])->value('member_group_id');
+              $rate=PassagewayItem::where(['item_passageway'=>$pay['order_passageway'],'item_group'=>$member_group_id])->find();
+              $also=($rate->item_also)*10;
+              $daikou=($rate->item_charges);
+        }
         #2获取通道信息
         $merch=Passageway::where(['passageway_id'=>$pay['order_passageway']])->find();
         // print_r($merch->passageway_mech);die;
@@ -164,7 +171,11 @@ use app\index\model\Member;
         if(isset($passway_info['feeRatio']) && isset($passway_info['feeAmt'])){
             if($passway_info['feeRatio']!=$also || $passway_info['feeAmt']!=$daikou){//不一致重新报备,修改商户信息
                   $Membernetsedits=new \app\api\controller\Membernetsedit($pay['order_member'],$pay['order_passageway'],'M03','',$member_base['member_mobile']);
-                  $update=$Membernetsedits->mishuadaihuan();
+                  if($order_rate==1){
+                      $update=$Membernetsedits->mishuadaihuan($also,$daikou);
+                  }else{
+                      $update=$Membernetsedits->mishuadaihuan();
+                  }
             }
         }
         if(!$pay['order_platform_no'] || $pay['order_status']!=1){
@@ -237,9 +248,12 @@ use app\index\model\Member;
                         #1分润
                         //先判断有没有分润
                         if($pay['is_commission']=='0' && $is_commission==1){
+                          $has_fenrun=db('commission')->where('commission_from',$pay['order_id'])->find();
+                          if(!$has_fenrun){
+                             $update_res=GenerationOrder::where(['order_id'=>$pay['order_id']])->update(['is_commission'=>1]);
                              $fenrun= new \app\api\controller\Commission();
                              $fenrun_result=$fenrun->MemberFenRun($pay['order_member'],$pay['order_money'],$merch->passageway_id,3,'代还分润',$pay['order_id']);
-                             $update_res=GenerationOrder::where(['order_id'=>$pay['order_id']])->update(['is_commission'=>1]);
+                           }
                         }
                         #2记录为 shangji 有效推荐人
                         $Plan_cation=new \app\api\controller\Planaction();
@@ -317,8 +331,12 @@ use app\index\model\Member;
                 }
                 //成功-分润先判断有没有分润
                 if($pay['is_commission']=='0'){
+                  $has_fenrun=db('commission')->where('commission_from',$pay['order_id'])->find();
+                  if(!$has_fenrun){
+                    $update_res=GenerationOrder::where(['order_id'=>$pay['order_id']])->update(['is_commission'=>1]);
                     $fenrun= new \app\api\controller\Commission();
                     $fenrun_result=$fenrun->MemberFenRun($pay['order_member'],$pay['order_money'],$merch->passageway_id,3,'代还分润',$pay['order_id']);
+                  }
                 }
                 // 极光推送
                 $card_num=substr($pay['order_card'],-4);
@@ -368,7 +386,6 @@ use app\index\model\Member;
       //10.余额提现
       //http://pay.mishua.cn/zhonlinepay/service/rest/creditTrans/transferApply
       public function transferApply($pay,$isCancel=null,$is_admin = ''){
-          #1获取费率
           #1判断当天有没有失败的订单  
           $today=date('Y-m-d',strtotime($pay['order_time']));
           $fail_order=GenerationOrder::where(['order_no'=>$pay['order_no'],'order_type'=>1])->where('order_status','neq','2')->where('order_time','like',$today.'%')->find();
@@ -383,17 +400,39 @@ use app\index\model\Member;
                 $income['code']='200';
                 $income['status']="FAIL";
           }else{
-              $member_group_id=Member::where(['member_id'=>$pay['order_member']])->value('member_group_id');
-              $rate=PassagewayItem::where(['item_passageway'=>$pay['order_passageway'],'item_group'=>$member_group_id])->find();
-              $also=($rate->item_also)*10;
-              $daikou=($rate->item_charges);
+              // 兼容老的数据没有费率的情况，新的订单都直接取订单里的费率
+              $order_rate=0;//0代表系统费率1代表订单上费率
+              if($pay['passageway_rate'] || $pay['passageway_fix'] || $pay['user_rate'] || $pay['user_fix']){ //如果设置了费率
+                  $order_rate=1;
+                  $also=$pay['user_rate']*10;
+                  $daikou=$pay['user_fix']*100;
+              }else{
+                  $member_group_id=Member::where(['member_id'=>$pay['order_member']])->value('member_group_id');
+                  $rate=PassagewayItem::where(['item_passageway'=>$pay['order_passageway'],'item_group'=>$member_group_id])->find();
+                  $also=($rate->passageway_qf_rate)*10;
+                  $daikou=($rate->passageway_qf_fix);
+              }
+
               // print_r($merch->passageway_mech);die;
               #3获取银行卡信息
               $card_info=MemberCreditcard::where(['card_bankno'=>$pay['order_card']])->find();
               #4获取用户信息
               $member=MemberNets::where(['net_member_id'=>$pay['order_member']])->find();
               #5:获取用户基本信息
-              
+              $member_base=Member::where(['member_id'=>$pay['order_member']])->find(); 
+              #6获取渠道提供的费率，如果不一致，重新报备费率
+              $passway_info=$this->accountQuery($pay['order_member']);
+              if(isset($passway_info['drawFeeRatio']) && isset($passway_info['drawFeeAmt'])){
+                  if($passway_info['drawFeeRatio']!=$also || $passway_info['drawFeeAmt']!=$daikou){//不一致重新报备,修改商户信息
+                        $Membernetsedits=new \app\api\controller\Membernetsedit($pay['order_member'],$pay['order_passageway'],'M03','',$member_base['member_mobile']);
+                        if($order_rate==1){
+                          $update=$Membernetsedits->mishuadaihuan('','',$also,$daikou);
+                        }else{
+                          $update=$Membernetsedits->mishuadaihuan();
+                        }
+                  }
+              }
+
               $orderTime=date('YmdHis',time()+60);
               if(!$pay['order_platform_no'] || $pay['order_status']!=1){
                   $update_order['order_platform_no']=$pay['order_platform_no']=uniqid();
@@ -407,8 +446,8 @@ use app\index\model\Member;
                   'orderNo'=>$pay['order_platform_no'], //提现流水号 必填  机构订单流水号，需唯一 64
                   'orderTime'=>$orderTime,//  提现时间点 必填  格式：yyyyMMddHHmmss 14
                   'depositAmt'=>$pay['order_money']*100,  //提现金额  必填  单位：分  整型(9,0)
-                  'feeRatio'=>0,  //提现费率  必填  需与用户入网信息保持一致  数值(5,2)
-                  'feeAmt'=>0,//提现单笔手续费   需与用户入网信息保持一致  整型(4,0)
+                  'feeRatio'=>$also,  //提现费率  必填  需与用户入网信息保持一致  数值(5,2)
+                  'feeAmt'=>$daikou,//提现单笔手续费   需与用户入网信息保持一致  整型(4,0)
               );
               $income=repay_request($params,$merch->passageway_mech,'http://pay.mishua.cn/zhonlinepay/service/rest/creditTrans/transferApply',$merch->iv,$merch->secretkey,$merch->signkey);
               // print_r($income);

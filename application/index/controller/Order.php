@@ -54,6 +54,50 @@ class Order extends Common{
 		if(request()->param('upgrade_id')!=''){
 			$wheres['upgrade_id'] = request()->param('upgrade_id');
 		}
+
+		if(input('is_export')==1){
+			set_time_limit(0);
+	 	    $limit=20000;
+	 	    $max=100000;
+	 	    $i=intval(input('start_p')) ?? 0;
+	 	    $n=0;
+	 	    $fp = fopen('php://output', 'a');
+	 	    #算出乘数
+	 	    if($i)
+	 	    	$i=($i-1)*$max/$limit;
+	 	    do{
+	 	    	#取数据
+		 	    $order_lists=db("upgrade")->alias('o')
+		 	    	->join('member m','o.upgrade_member_id=m.member_id')
+		 	    	->join('member_cert c','c.cert_member_id=m.member_id','left')
+		 	    	->where($where)
+		 	    	->where($wheres)
+		 	    	->order("upgrade_id desc")
+		 	    	->field("member_nick,upgrade_type,upgrade_no,upgrade_money,upgrade_commission,upgrade_state,upgrade_bak,member_creat_time")
+		 	    	->limit($i*$limit,$limit)
+		 	    	->select();
+		 	    	$i++;
+		 	    	// var_dump($order_lists);die;
+		 	    // halt($order_lists);
+		 	    $status=[
+		 	    	'0'=>'待支付',
+		 	    	'1'=>'已支付',
+		 	    ];
+		 	    $list=[];
+		 	    foreach ($order_lists as $k => $v) {
+		 	    	$order_lists[$k]['upgrade_state']=$status[$v['upgrade_state']];
+		 	    }
+		 	    $head=['用户名','升级方式','流水号','升级金额','分佣金额','支付状态','备注','创建时间'];
+		 	    export_csv($head,$order_lists,$fp);
+		 	    $count=count($order_lists);
+		 	    unset($order_lists);
+		 	    $n++;
+	 	    }while($count==$limit && $n<$max/$limit);
+	 	    return;
+		}
+
+
+
 		#支付类型
 	 	$order_lists = Upgrade::haswhere('member',$where)
 	 		->join("wt_member_cert m", "m.cert_member_id=Member.member_id","left")
@@ -223,7 +267,7 @@ class Order extends Common{
 		}
 		#订单状态
 		if( request()->param('order_state')){
-			$wheres['order_state'] = array("eq",2);
+			$wheres['order_state'] = array("eq",request()->param('order_state'));
 
 		}else{
 			$r['order_state'] = '';
@@ -289,19 +333,21 @@ class Order extends Common{
 	 	 $count['yingli']=0;
 	 	 $count['sanji']=0;
 	 	 $count['fenrunhou']=0;
-	 	
-	 	 $list = CashOrder::with('passageway')->join('wt_member m',"m.member_id=wt_cash_order.order_member")->where(["order_state" => 2])->join("wt_member_cert mc", "mc.cert_member_id=m.member_id","left")->order("order_id desc")->select();
+	 	 $where1=array_merge($where,$wheres);
+	 	 $where1['order_state'] = array("eq",2);
+	 	 $list = CashOrder::with('passageway')->join('wt_member m',"m.member_id=wt_cash_order.order_member")->where($where1)->join("wt_member_cert mc", "mc.cert_member_id=m.member_id","left")->order("order_id desc")->select();
+
 	 	 foreach ($order_lists as $key => $value) {
 	 	 	 $order_lists[$key]['fenrun']=db('commission')->alias('c')
 	 	 	 	->where('commission_from='.$value['order_id'].' and commission_type=1')
 	 	 	 	->sum('commission_money');			 
 			   #成本手续费
-	 	 	 $count['chengben']+=$value['order_passway_profit'];
+	 	 	 // $count['chengben']+=$value['order_passway_profit'];
 
 	 	 	 $order_lists[$key]['yingli']=$value['order_charge']+$value['order_buckle']-$value['order_passway_profit'];
 
-	 	 	 $count['yingli']+=$order_lists[$key]['yingli'];
-	 	 	 $count['sanji']+=$order_lists[$key]['fenrun'];			
+	 	 	 // $count['yingli']+=$order_lists[$key]['yingli'];
+	 	 	 // $count['sanji']+=$order_lists[$key]['fenrun'];			
 		}
 
 		foreach ($list as $k => $order) {

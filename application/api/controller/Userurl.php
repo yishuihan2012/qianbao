@@ -298,11 +298,14 @@ class Userurl extends Controller
            $also=($rate->item_also)/100;
            #定义代扣费
            $daikou=($rate->item_charges)/100;
+           #获取代付费率
+           $item_qfalso=($rate->item_qfalso)/100;
+           #获取代付定额
+           $item_qffix=($rate->item_qffix)/100;
           //如果还款次数小于天数
           $days=days_between_dates($this->param['startDate'],$this->param['endDate'])+1;
           $date=prDates($this->param['startDate'],$this->param['endDate']);
           if($this->param['payCount']<$days){
-               shuffle($date);
                 #消费几次就取几个随机日期
                $date=array_slice($date,0,$this->param['payCount']);
                $days=$this->param['payCount'];
@@ -337,8 +340,9 @@ class Userurl extends Controller
                 return view("Userurl/show_error");
            }
           ####################################
-          #3确定每天还款金额
-          $day_pay_money=$this->get_random_money($days,$this->param['billMoney'],$is_int=1);
+          #3确定每天实际还款金额
+          $day_pay_real_money=$this->get_random_money($days,$this->param['billMoney'],$is_int=1);
+          // print_r($day_pay_real_money);
           #4确定每天还款次数
           $day_pay_count=$this->get_day_count($this->param['payCount'],$days);
           #5计算出每天实际刷卡金额，和实际到账金额
@@ -348,6 +352,9 @@ class Userurl extends Controller
               $day_real_get_money=0;
               //刷卡信息
               #计算每次需要刷卡的理论金额
+              #还款也有手续费，计算出每次需要还款金额,$passageway->passageway_qf_rate,$passageway->passageway_qf_rate
+              $day_pay_money[$i]=$this->get_need_pay($item_qfalso,$item_qffix,$day_pay_real_money[$i]);
+              // print_r($day_pay_money[$i]);die;
               $each_pay_money=$this->get_random_money($day_pay_count[$i],$day_pay_money[$i],$is_int=1);
               #计算每次刷卡的时间
               $each_pay_time=$this->get_random_time($date[$i],$day_pay_count[$i]);
@@ -365,13 +372,13 @@ class Userurl extends Controller
                       'order_card'     =>$card_info->card_bankno,
                       'order_money'    =>$real_each_pay_money,
                       'order_pound'    =>$real_each_get['fee'],
+                      'order_real_get' =>$real_each_get['money'],
                       'order_platform_fee'=>$real_each_get['plantform_fee'],
                       'order_passageway_fee'=>$real_each_get['passageway_fee'],
                       'passageway_rate'=>$passageway_rate,
                       'passageway_fix'=>$passageway_income,
                       'user_fix'=>$daikou,
                       'user_rate'=>$also*100,
-                      // 'real_each_get'  =>$real_each_get['money'],
                       'order_desc'     =>'自动代还消费~',
                       'order_time'     =>$each_pay_time[$k],
                       'order_passageway'=>$this->param['passageway'],
@@ -382,6 +389,8 @@ class Userurl extends Controller
                   $generation_pound += $real_each_get['fee'];
                 $day_real_get_money+=$real_each_get['money'];
               }
+              //获取代还每次实际到账金额
+              $real_qf_get=$this->get_real_money($item_qfalso,$item_qffix,$day_real_get_money,$passageway->passageway_qf_rate,$passageway->passageway_qf_rate);
               //提现信息
               $plan[$i]['cash']=$Generation_order_insert[]=array(
                   'order_no'         =>$Generation_result->generation_id,
@@ -389,7 +398,15 @@ class Userurl extends Controller
                   'order_type'       =>2,
                   'order_card'       =>$card_info->card_bankno,
                   'order_money'      =>$day_real_get_money,//每天实际打回的金额
-                  'order_pound'      =>0,
+                  'order_pound'      =>$real_qf_get['fee'],
+
+                  'order_real_get' =>$real_qf_get['money'],
+                  'order_platform_fee'=>$real_qf_get['plantform_fee'],
+                  'order_passageway_fee'=>$real_qf_get['passageway_fee'],
+                  'passageway_rate'=>$passageway->passageway_qf_rate,
+                  'passageway_fix'=> $passageway->passageway_qf_fix,
+                  'user_fix'=>$item_qffix/100,
+                  'user_rate'=>$item_qfalso*100,
                   'order_desc'       =>'自动代还还款~',
                   'order_time'       =>$date[$i]." ".get_hours(15,16).":".get_minites(0,59),
                   'order_passageway'=>$this->param['passageway'],
@@ -445,7 +462,7 @@ class Userurl extends Controller
                 if($vv['order_type']==1){
                   $data[$k]['pay']+=$vv['order_money'];
                 }else if($vv['order_type']==2){
-                  $data[$k]['get']+=$vv['order_money'];
+                  $data[$k]['get']+=$vv['order_real_get'];
                 }
                 $order_pound+=$vv['order_pound'];
             }
@@ -535,7 +552,7 @@ class Userurl extends Controller
                 if($vv['order_type']==1){
                   $data[$k]['pay']+=$vv['order_money'];
                 }else if($vv['order_type']==2){
-                  $data[$k]['get']+=$vv['order_money'];
+                  $data[$k]['get']+=$vv['order_real_get'];
                 }
                 $order_pound+=$vv['order_pound'];
             }

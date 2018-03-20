@@ -20,17 +20,19 @@
  <!--dialog Content-->
  <div class="modal-content animated fadeInLeft">
 	 <form action="{{url('/index/Passageway/rate/id/'.$id)}}" method="post" class="form-horizontal" id="myform">
-	 <h2></h2>
+	 <!-- <h2></h2> -->
 	 @foreach($group as $group)
 	 <div class="row form-group">
 		 <label for="bank_name" class="col-sm-2 text-right"><b>{{$group['group_name']}}:</b></label>
-		 <div class="col-sm-3 input-group" id="bank_name">
-		 	 <span class="input-group-addon">快捷支付</span>
-		 	 <input type="number" class="form-control bank_name" name="rate_{{$group['group_id']}}" placeholder="{{$group['group_name']}}组此通道的快捷支付税率" 
-		 	 @foreach($list as $lists) 
-		 	 	@if($lists['item_group']==$group['group_id']) value="{{$lists['item_rate'] or '0.00'}}" @endif 
-		 	 @endforeach >
-		 	 <span class="input-group-addon">%</span>
+		 <div class="ts">
+			 <div class="col-sm-3 input-group" id="bank_name">
+			 	 <span class="input-group-addon">快捷支付</span>
+			 	 <input type="number" class="form-control bank_name" name="rate_{{$group['group_id']}}" placeholder="{{$group['group_name']}}组此通道的快捷支付税率" 
+			 	 @foreach($list as $lists) 
+			 	 	@if($lists['item_group']==$group['group_id']) value="{{$lists['item_rate'] or '0.00'}}" @endif 
+			 	 @endforeach >
+			 	 <span class="input-group-addon">%</span>
+			 </div>	
 		 </div>	
 		 <div class="ts">
 			 <div class="col-sm-3 input-group " id="item_also">
@@ -52,7 +54,29 @@
 			 	 <span class="input-group-addon">分</span>
 			 </div>	
 		  </div>
-	 </div>
+
+		    <div class="ts">
+				 <div class="col-sm-3 input-group " id="item_also">
+				 	 <span class="input-group-addon">代付费率</span>
+				 	 <input type="number" class="form-control item_also" name="qfalso_{{$group['group_id']}}" placeholder="{{$group['group_name']}}组此通道的代付费率" 
+				 	 @foreach($list as $lists) 
+				 	 	@if($lists['item_group']==$group['group_id']) value="{{$lists['item_qfalso'] or '0.00'}}" @endif 
+				 	 @endforeach >
+				 	 <span class="input-group-addon">%</span>
+				 </div>	
+			</div>
+
+			<div class="ts">
+				 <div class="col-sm-3 input-group " id="item_also">
+				 	 <span class="input-group-addon">代付定额</span>
+				 	 <input type="number" class="form-control item_also" name="qffix_{{$group['group_id']}}" placeholder="{{$group['group_name']}}组此通道的代付定额" 
+				 	 @foreach($list as $lists) 
+				 	 	@if($lists['item_group']==$group['group_id']) value="{{$lists['item_qffix'] or '0.00'}}" @endif 
+				 	 @endforeach >
+				 	 <span class="input-group-addon">分</span>
+				 </div>	
+			</div>
+		</div>
 	 @endforeach
 	 <h2></h2>
 	 </form>

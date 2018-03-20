@@ -249,6 +249,7 @@
   	 	 $count['yingli']=0;
   	 	 $count['fenrun']=0;
   	 	 $count['fenrun_yingli']=0;
+
   	 	 $where['conditions']=['commission_type'=>['<>','2'],'commission_state'=>1];
   	 	 $where['conditions_member']=$request->param('member_nick') ? ['member_nick|member_mobile'=>['like','%'.$request->param('member_nick').'%']] : '';
   	 	 $where['whereBetween']=($request->param('min_money') && $request->param('max_money')) ? ['commission_money'=>['between',[$request->param('min_money'), $request->param('max_money')]]] : '';
@@ -261,16 +262,54 @@
             // $r['endTime']=date('Y-m-d',time());
             $where['timeBetween']='';
          }
+
+          if($request->param('passway')){
+  	 	 	$where['passway']=['commission_type'=>$request->param('passway')];
+  	 	 	$r['passway']=$request->param('passway');
+  	 	 }else{
+  	 	 	$r['passway']='';
+  	 	 	$where['passway']='';
+  	 	 }
+  	 	 // var_dump($where['passway']);die;
+
   	 	 // $where['timeBetween']=($request->param('beginTime') && $request->param('endTime')) ? ['commission_creat_time'=>['between time',[$request->param('beginTime'), $endTime]]] : '';
   	 	 // var_dump($where['whereBetween']);die;
   	 	 //获取分佣列表
-  	 	 $list=Commission::haswhere('member',$where['conditions_member'])->with('member,members')
+  	 	 $list=Commission::haswhere('member',$where['conditions_member'])->with('member,members,cashorder')
 				  	 	 ->where($where['conditions'])
 				  	 	 ->where($where['whereBetween'])
 				  	 	 ->where($where['timeBetween'])
+				  	 	 ->where($where['passway'])
 				  	 	 ->where(['commission_money' => ['<>' , 0]])
 				  	 	 ->order('commission_id', 'desc')
 				  	 	 ->paginate(Config::get('page_size'), false, ['query'=>Request::instance()->param()]);
+				  	 	 // var_dump($list[0]);die;
+		//总刷卡金额
+		 $from_ids=db('commission')->alias('c')
+		 	 ->where($where['conditions'])
+	  	 	 ->where($where['whereBetween'])
+	  	 	 ->where($where['timeBetween'])
+	  	 	 ->where($where['passway'])
+	  	 	 ->where(['commission_money' => ['<>' , 0]])
+	  	 	 ->column('commission_from');
+  	 	 //总刷卡金额
+  	 	 $count['money']=db('cash_order')->where('order_id','in',$from_ids)->sum('order_money');
+	  	 //刷卡总手续费
+	  	 $count['order_charge']=db('cash_order')->where('order_id','in',$from_ids)->sum('order_charge');
+	  	 //成本总手续费
+	  	 $count['charge']=db('cash_order')->where('order_id','in',$from_ids)->sum('order_passway_profit');
+	  	 //总分润金额
+	  	  $from_ids=db('commission')->alias('c')
+		 	 ->where($where['conditions'])
+	  	 	 ->where($where['whereBetween'])
+	  	 	 ->where($where['timeBetween'])
+	  	 	 ->where($where['passway'])
+	  	 	 ->where(['commission_money' => ['<>' , 0]])
+	  	 	 ->sum('commission_money');
+
+	  	 $count['yingli']=$count['order_charge']-$count['charge'];
+  	 	 //平台的盈利
+  	 	 $count['fenrun_yingli']=$count['yingli']-$count['fenrun'];
 			foreach ($list as $key => $value) {
 				if($value['commission_type']==1){
 					$order=CashOrder::where(['order_id'=>$value['commission_from']])->find();
@@ -290,12 +329,12 @@
 						$list[$key]['yingli']=$list[$key]['order_charge']-$list[$key]['charge']-$value['commission_money'];
 					}
 					
-					$count['money']+=$order['order_money'];
-					$count['order_charge']+=$list[$key]['order_charge'];
-					$count['charge']+=$list[$key]['charge'];
-					$count['yingli']+=$list[$key]['order_charge']-$list[$key]['charge'];
-					$count['fenrun']+=$value['commission_money'];
-					$count['fenrun_yingli']+=$list[$key]['yingli'];
+					// $count['money']+=$order['order_money'];
+					// $count['order_charge']+=$list[$key]['order_charge'];
+					// $count['charge']+=$list[$key]['charge'];
+					// $count['yingli']+=$list[$key]['order_charge']-$list[$key]['charge'];
+					// $count['fenrun']+=$value['commission_money'];
+					// $count['fenrun_yingli']+=$list[$key]['yingli'];
 				}elseif($value['commission_type']==3){
 					$order=GenerationOrder::where(['order_id'=>$value['commission_from']])->find();
 					$passageway=Passageway::where(['passageway_id'=>$order['order_passageway']])->find();
@@ -313,12 +352,12 @@
 					}else{
 						$list[$key]['yingli']=$list[$key]['order_charge']-$list[$key]['charge']-$value['commission_money'];
 					}
-					$count['money']+=$order['order_money'];
-					$count['order_charge']+=$list[$key]['order_charge'];
-					$count['charge']+=$list[$key]['charge'];
-					$count['yingli']+=$list[$key]['order_charge']-$list[$key]['charge'];
-					$count['fenrun']+=$value['commission_money'];
-					$count['fenrun_yingli']+=$list[$key]['yingli'];
+					// $count['money']+=$order['order_money'];
+					// $count['order_charge']+=$list[$key]['order_charge'];
+					// $count['charge']+=$list[$key]['charge'];
+					// $count['yingli']+=$list[$key]['order_charge']-$list[$key]['charge'];
+					// $count['fenrun']+=$value['commission_money'];
+					// $count['fenrun_yingli']+=$list[$key]['yingli'];
 				}else{
 					//刷卡金额
 					$list[$key]['order_money']=0;
@@ -338,6 +377,7 @@
 				  	 	 ->where($where['conditions'])
 				  	 	 ->where($where['whereBetween'])
 				  	 	 ->where($where['timeBetween'])
+				  	 	 ->where($where['passway'])
 				  	 	 ->where(['commission_money' => ['<>' , 0]])
 				  	 	 ->count();
   	 	 //获取总金额
@@ -345,6 +385,7 @@
 				  	 	 ->where($where['conditions'])
 				  	 	 ->where($where['whereBetween'])
 				  	 	 ->where($where['timeBetween'])
+				  	 	 ->where($where['passway'])
 				  	 	 ->where(['commission_money' => ['<>' , 0]])
 				  	 	 ->sum('commission_money');
 				  	 	 // var_dump($data['list'][0]->toArray());die;
