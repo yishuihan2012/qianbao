@@ -138,6 +138,73 @@
         print_r($res);die;
     }
     /**
+     * 协议申请
+     * @return [type] [description]
+     */
+    public function treatyApply($card_id){
+        $card_info=MemberCreditcard::where(['card_id'=>$card_id])->find();
+        $agentId=1001003;
+        $arr=array(
+            'version'=>$this->version,// M(String)   1.0
+            'charset'=>'UTF-8',// M(String)   编码方式UTF-8
+            'agentId'=>$agentId,// M(String)   受理方预分配的渠道代理商标识
+            'nonceStr'=>make_rand_code(),// M(String)   随机字符串，字符范围a-zA-Z0-9
+            'signType'=>'RSA',//    M(String)   签名方式，固定RSA
+            'orderNo'=>make_rand_code(),// M(String)   本次请求订单号
+            'idcard'=>$card_info['card_idcard'], //M(String)   证件号码（暂只支持身份证）
+            'name'=>$card_info['card_name'],// M(String)   姓名
+            'phone'=>$card_info['card_phone'],// M(String)   手机号
+            'bankCard'=>$card_info['card_bankno'],// M(String)   银行卡号
+            'bankName'=>$card_info['card_bankname'],//M(String)   开户行名称
+            'expDate'=>substr($card_info['card_expireDate'], 0,2).'-'.substr($card_info['card_expireDate'], 2,2),
+            'CVN2'=>$card_info['card_Ident'],
+        );
+        $url=$this->url.'/treatyApply';
+        $res=$this->request($url,$arr);
+        echo $res;die;
+    }
+    /**
+     * 协议确定
+     * @return [type] [description]
+     */
+    public function treatyConfirm(){
+        $agentId=1001003;
+        $arr=array(
+            'version'=>$this->version,// M(String)   1.0
+            'charset'=>'UTF-8',//编码方式UTF-8
+            'agentId'=>$agentId,// M(String)   受理方预分配的渠道代理商标识
+            'nonceStr'=>2231,//M(String)   随机字符串，字符范围a-zA-Z0-9
+            'signType'=>'RSA',// M(String)   签名方式，固定RSA
+            'orderNo'=>'',//N(String)   申请协议的订单号
+            'authCode'=>'',//    N(String)   手机发送的验证码
+        );
+        $url=$this->url.'/treatyConfirm';
+        $res=$this->request($url,$arr);
+        echo $res;die;
+    }
+    /**
+     * 支付请求
+     * @return [type] [description]
+     */
+    public function treatyPay(){
+        $agentId=1001003;
+        $arr=array(
+            'version'=>$this->version,// M(String)   1.0
+            'charset'=>'UTF-8',// M(String)   编码方式UTF-8
+            'agentId'=>$agentId ,//M(String)   受理方预分配的渠道代理商标识
+            'merId'=>'',// M(String)   子商户号
+            'nonceStr'=>'1234567',// M(String)   随机字符串，字符范围a-zA-Z0-9
+            'signType'=>'RSA',//  M(String)   签名方式，固定RSA
+            'orderNo'=>'123456',// M(String)   订单号
+            'notifyUrl'=>'',// M(String)   异步通知地址
+            'treatyId'=>'',// N(String)   协议号
+            'amount'=>'' ,//M(String)   金额(分)
+        );
+        $url=$this->url.'/treatyPay';
+        $res=$this->request($url,$arr);
+        echo $res;die;
+    }
+    /**
      * 下单支付
      * @return [type] [description]
      */
