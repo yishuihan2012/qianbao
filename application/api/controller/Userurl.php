@@ -40,6 +40,7 @@ use app\index\model\SmsCode;
 use app\index\model\ArticleCategory;
 use app\index\model\Article;
 use app\index\model\WalletLog;
+use app\api\controller\Huilianjinchuang;
  use app\index\model\ServiceItemList;
 /**
  *  此处放置一些固定的web地址
@@ -235,7 +236,6 @@ class Userurl extends Controller
                 $generation3[$key]['count']=GenerationOrder::where(['order_no'=>$value['generation_id']])->count();
         }
         // var_dump($generation);die;
-
         $this->assign('generation',$generation);
         $this->assign('generation3',$generation3);
         return view("Userurl/repayment_history");
@@ -278,11 +278,37 @@ class Userurl extends Controller
        }
        //判断是否签约
        $MemberCreditcard=MemberCreditcard::where(['card_id'=>$param['cardId']])->find();
-       if(!$MemberCreditcard['bindId'] || strlen($MemberCreditcard['bindId'])<20 || $MemberCreditcard['bindStatus']!='01'){ //未绑定
-            //重定向到签约
-             return redirect('Userurl/signed', ['passageway_id' =>$param['passageway'],'cardId'=>$param['cardId'],'order_no'=>$order_no]);
-       }
-      
+       //判断哪个通道
+       if($passageway['passageway_method']=='income'){  //暂时这么判断是汇联金创还是米刷
+            if(!$MemberCreditcard['huilian_income']){
+                $huilian=new Huilianjinchuang();
+                $res=$huilian->income($this->param['passageway'],$this->param['cardId']);
+                // var_dump($res);die;
+                if($res['code']=="10000" && $res['respCode']==10000){
+                    $merId=$res['merId'];
+                    $update=MemberCreditcard::where(['card_id'=>$param['cardId']])->update(['huilian_income'=>$merId]);
+                    if(!$update){
+                        $this->assign('data',"商户入网失败，{$res['respMessage']}请重试。");
+                        return view("Userurl/show_error");
+                    }
+                }else{
+                      $this->assign('data',"商户入网失败，{$res['respMessage']}请重试。");
+                      return view("Userurl/show_error");
+                }
+            }
+       }else{
+           // 判断是否入网
+           $member_net=MemberNet::where(['net_member_id'=>$param['uid']])->find();
+           if(!$member_net[$passageway->passageway_no]){ //没有入网
+               // 重定向到签约页面
+               return redirect('Userurl/signed', ['passageway_id' =>$param['passageway'],'cardId'=>$param['cardId'],'order_no'=>$order_no]);
+           }
+           //判断是否签约
+           if(!$MemberCreditcard['bindId'] || strlen($MemberCreditcard['bindId'])<20 || $MemberCreditcard['bindStatus']!='01'){ //未绑定
+                //重定向到签约
+                 return redirect('Userurl/signed', ['passageway_id' =>$param['passageway'],'cardId'=>$param['cardId'],'order_no'=>$order_no]);
+           }
+        }
        // ***************************************2生成计划**************************************************
        #2生成计划
           #卡详情
