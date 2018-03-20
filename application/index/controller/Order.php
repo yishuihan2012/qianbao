@@ -113,8 +113,9 @@ class Order extends Common{
 	 	$wheres = array();
 		if(request()->param('beginTime') && request()->param('endTime')){
 			$endTime=strtotime(request()->param('endTime'))+24*3600;
-			$wheres['withdraw_creat_time']=["between time",[request()->param('beginTime'),$endTime]];
+			$wheres['withdraw_add_time']=["between time",[request()->param('beginTime'),$endTime]];
 		}
+
 		#提现状态
 		if(request()->param('withdraw_state') ){
 			$wheres['withdraw_state'] = request()->param('withdraw_state');
@@ -140,12 +141,14 @@ class Order extends Common{
 		}
 		//管理员列表
 		$admins=db('adminster')->column('adminster_id,adminster_login');
+		
 	 	 // #查询订单列表分页
 	 	$order_lists = Withdraw::haswhere('member',$where)
 	 	 	->join("wt_member_cert m", "m.cert_member_id=Member.member_id","left")
 	 	 	->where($wheres)
 	 	 	->order('withdraw_add_time desc')
 	 	 	->paginate(Config::get('page_size'), false, ['query'=>Request::instance()->param()]);
+
 	 	//取出审批人姓名替换
 	 	foreach ($order_lists as $k => $v) {
 	 		if($v['withdraw_option']!=0)
