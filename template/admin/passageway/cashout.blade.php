@@ -58,7 +58,7 @@
 		  <span class="input-group-addon">回调地址</span>
 		  <input type="text" class="form-control" style="width: 200px;" name="cashout_callback" value="{{$data['cashout_callback']}}">
 		</div>
-
+		
 	 </div>
 	 <h2></h2>
 	 </form>

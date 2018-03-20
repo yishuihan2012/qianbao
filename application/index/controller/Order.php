@@ -157,8 +157,9 @@ class Order extends Common{
 	 	$wheres = array();
 		if(request()->param('beginTime') && request()->param('endTime')){
 			$endTime=strtotime(request()->param('endTime'))+24*3600;
-			$wheres['withdraw_creat_time']=["between time",[request()->param('beginTime'),$endTime]];
+			$wheres['withdraw_add_time']=["between time",[request()->param('beginTime'),$endTime]];
 		}
+
 		#提现状态
 		if(request()->param('withdraw_state') ){
 			$wheres['withdraw_state'] = request()->param('withdraw_state');
@@ -184,12 +185,14 @@ class Order extends Common{
 		}
 		//管理员列表
 		$admins=db('adminster')->column('adminster_id,adminster_login');
+		
 	 	 // #查询订单列表分页
 	 	$order_lists = Withdraw::haswhere('member',$where)
 	 	 	->join("wt_member_cert m", "m.cert_member_id=Member.member_id","left")
 	 	 	->where($wheres)
 	 	 	->order('withdraw_add_time desc')
 	 	 	->paginate(Config::get('page_size'), false, ['query'=>Request::instance()->param()]);
+
 	 	//取出审批人姓名替换
 	 	foreach ($order_lists as $k => $v) {
 	 		if($v['withdraw_option']!=0)
@@ -232,6 +235,62 @@ class Order extends Common{
 	 #审核提现列表
 	 public function toexminewithdraw()
 	 {
+	 	if(request()->isPost()){
+	 		$param=request()->param();
+ 			$Withdraw = Withdraw::get($param['withdraw_id']);
+			$result=true;
+	 		//审核通过
+	 		if($param['withdraw_state']==12){
+	 			//支付宝仅支持小数点后2位，数据库中存储的为小数点后4位，转换
+	 			
+              $Withdraw->withdraw_amount=round($Withdraw->withdraw_amount, 0,2);
+	 			//调用支付接口
+              $payMethod="\app\index\controller\\".$Withdraw->withdraw_method;
+              $payment=new $payMethod();
+              $return=$payment->transfer($Withdraw); //转账
+              if ($return['code'] != "200") {
+              	trace($return);
+               	$result=false;
+              }else{
+              	$param['withdraw_option']=session('adminster.id');
+              	$Withdraw->allowField(['withdraw_state','withdraw_option'])->save($param);
+	              $message="您的提现已经通过,请查收~";
+	              jpush($Withdraw->withdraw_member,$message,$message,$message,4);
+              }
+	 		//审核不通过
+	 		}else{
+	           Db::startTrans();
+	           try{
+					$Withdraw->withdraw_state=-12;
+					$Withdraw->withdraw_information=$param['withdraw_information'];
+					$Withdraw->withdraw_option=session('adminster.id');
+
+					//恢复用户钱包数据
+					$Wallet=Wallet::get(['wallet_member'=>$Withdraw->withdraw_member]);
+					$Wallet->wallet_total_withdraw=$Wallet['wallet_total_withdraw']-$Withdraw['withdraw_total_money'];
+					$Wallet->wallet_amount=$Wallet['wallet_amount']+$Withdraw['withdraw_total_money'];
+					//对钱包日志修改描述说明还有实时余额
+					$wallet_log=WalletLog::get(['log_wallet_id'=>$Wallet->wallet_id,'log_relation_type'=>2,'log_relation_id'=>$Withdraw->withdraw_id]);
+					// trace($wallet_log);
+					$wallet_log->log_desc="您的提现已驳回,驳回原因：".$param['withdraw_information'];
+					$wallet_log->log_balance=$Wallet->wallet_amount;
+					if($Wallet->save()===false || $Withdraw->save()===false || $wallet_log->save()===false){
+                      Db::rollback();
+                      $result=false;
+					}else{
+						Db::commit();
+						jpush($Withdraw->withdraw_member,$wallet_log->log_desc,$wallet_log->log_desc,$wallet_log->log_desc,4);
+					}
+	           } catch (\Exception $e) {
+	                 Db::rollback();
+	           	trace($e->getMessage());
+	                 $result=false;
+	           }
+	 		}
+			$content = $result ? ['type'=>'success','msg'=>'审核成功'] : ['type'=>'warning','msg'=>'审核失败'];
+			Session::set('jump_msg', $content);
+			$this->redirect('order/withdraw');
+	 	}
 	 	$this->assign("id",input("id"));
 	 	return view("admin/order/toexminewithdraw");
 	 }
@@ -264,7 +323,7 @@ class Order extends Common{
 		}
 		#订单状态
 		if( request()->param('order_state')){
-			$wheres['order_state'] = array("eq",2);
+			$wheres['order_state'] = array("eq",request()->param('order_state'));
 
 		}else{
 			$r['order_state'] = '';
@@ -337,6 +396,17 @@ class Order extends Common{
 	 	 foreach ($order_lists as $key => $value) {
 	 	 	 $order_lists[$key]['yingli']=$value['order_charge']+$value['order_buckle']-$value['order_passway_profit'];			
 		}
+
+	 	 $where1=array_merge($where,$wheres);
+	 	 $where1['order_state'] = array("eq",2);
+	 	 $list = CashOrder::with('passageway')->join('wt_member m',"m.member_id=wt_cash_order.order_member")->where($where1)->join("wt_member_cert mc", "mc.cert_member_id=m.member_id","left")->order("order_id desc")->select();
+
+	 	 foreach ($order_lists as $key => $value) {
+	 	 	 $order_lists[$key]['fenrun']=db('commission')->alias('c')
+	 	 	 	->where('commission_from='.$value['order_id'].' and commission_type=1')
+	 	 	 	->sum('commission_money');			 
+			   #成本手续费
+	 	 	 // $count['chengben']+=$value['order_passway_profit'];
 
 		$count['yingli']+=CashOrder::with('passageway')->join('wt_member m',"m.member_id=wt_cash_order.order_member")->where(["order_state" => 2])->join("wt_member_cert mc", "mc.cert_member_id=m.member_id","left")->order("order_id desc")->sum('order_charge-order_passway_profit');
 		// var_dump($a);die;
