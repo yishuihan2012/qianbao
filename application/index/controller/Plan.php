@@ -229,6 +229,8 @@ class Plan extends Common{
 	 	$generation_id=implode(',', $generation_id);
 		if(input('is_export')==1){
 	 	    $fp = fopen('php://output', 'a');
+	 	    $type=['1'=>'消费','2'=>'还款'];
+	 	    $status=['1'=>'待执行','-1'=>'失败','2'=>'成功','3'=>'取消','4'=>'待查证处理中'];
  	    	#取数据
 	 	    $order_list=db("generation_order")->alias('o')
 	 	    	->join('passageway p','p.passageway_id=o.order_passageway')
@@ -237,9 +239,12 @@ class Plan extends Common{
 	 	    	->where($where)
 	 	    	->where('order_no in ('.$generation_id.')')
 	 	    	->order("order_id desc")
-	 	    	->field('order_id,passageway_name,member_nick,member_mobile,order_type,order_card,card_bankname,order_money,order_pound,order_status,order_retry_count,back_statusDesc,order_desc,order_time,order_add_time')
+	 	    	->field('order_id,passageway_name,member_nick,member_mobile,order_type,concat("`",order_card),card_bankname,order_money,order_pound,order_status,order_retry_count,back_statusDesc,order_desc,order_time,order_add_time')
 	 	    	->select();
-
+	 	    foreach ($order_list as $k => $v) {
+	 	    	$order_list[$k]['order_type']=$type[$v['order_type']];
+	 	    	$order_list[$k]['order_status']=$status[$v['order_status']];
+	 	    }
 	 	    $head=['ID','通道','姓名','手机号','订单类型','信用卡号','银行名称','订单金额','订单手续费','订单状态','重新执行次数','执行结果','订单描述','订单执行时间','订单创建时间'];
 	 	    export_csv($head,$order_list,$fp);
 	 	    return;

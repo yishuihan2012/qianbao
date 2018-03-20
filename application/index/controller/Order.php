@@ -73,7 +73,7 @@ class Order extends Common{
 		 	    	->where($where)
 		 	    	->where($wheres)
 		 	    	->order("upgrade_id desc")
-		 	    	->field("member_nick,upgrade_type,upgrade_no,upgrade_money,upgrade_commission,upgrade_state,upgrade_bak,member_creat_time")
+		 	    	->field("member_nick,upgrade_type,concat('`',upgrade_no),upgrade_money,upgrade_commission,upgrade_state,upgrade_bak,member_creat_time")
 		 	    	->limit($i*$limit,$limit)
 		 	    	->select();
 		 	    	$i++;
