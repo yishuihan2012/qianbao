@@ -51,8 +51,11 @@ namespace app\index\controller;
 			$where['member_creat_time']=["between time",[request()->param('beginTime'),$endTime]];
 			$this->assign('beginTime',request()->param('beginTime'));
 			$this->assign('endTime',request()->param('endTime'));
+			$r['beginTime']=input('beginTime');
+			$r['endTime']=input('endTime');
 		}else{
-			
+			$r['beginTime']='';
+			$r['endTime']='';
 		}
 
 		#身份证查询
