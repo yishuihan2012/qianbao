@@ -332,28 +332,20 @@ class Order extends Common{
 	 	 $count['fenrunhou']=0;
 	 	
 	 	 $list = CashOrder::with('passageway')->join('wt_member m',"m.member_id=wt_cash_order.order_member")->where(["order_state" => 2])->join("wt_member_cert mc", "mc.cert_member_id=m.member_id","left")->order("order_id desc")->select();
+	 	  $count['sanji'] = CashOrder::with('passageway')->join('wt_member m',"m.member_id=wt_cash_order.order_member")->where(["order_state" => 2])->join("wt_member_cert mc", "mc.cert_member_id=m.member_id","left")->order("order_id desc")->sum('order_fen');
+	 	  $count['chengben'] = CashOrder::with('passageway')->join('wt_member m',"m.member_id=wt_cash_order.order_member")->where(["order_state" => 2])->join("wt_member_cert mc", "mc.cert_member_id=m.member_id","left")->order("order_id desc")->sum('order_passway_profit');
 	 	 foreach ($order_lists as $key => $value) {
-	 	 	 $order_lists[$key]['fenrun']=db('commission')->alias('c')
-	 	 	 	->where('commission_from='.$value['order_id'].' and commission_type=1')
-	 	 	 	->sum('commission_money');			 
-			   #成本手续费
-	 	 	 $count['chengben']+=$value['order_passway_profit'];
-
-	 	 	 $order_lists[$key]['yingli']=$value['order_charge']+$value['order_buckle']-$value['order_passway_profit'];
-
-	 	 	 // $count['yingli']+=$order_lists[$key]['yingli'];
-	 	 	 // $count['sanji']+=$order_lists[$key]['fenrun'];			
+	 	 	 $order_lists[$key]['yingli']=$value['order_charge']+$value['order_buckle']-$value['order_passway_profit'];			
 		}
 
-		foreach ($list as $k => $order) {
-			$list[$k]['fenrun']=db('commission')->alias('c')
-	 	 	 	->where('commission_from='.$order['order_id'].' and commission_type=1')
-	 	 	 	->sum('commission_money');	
-			$count['chengben']+=$order['order_passway_profit'];
-			 $list[$k]['yingli']=$order['order_charge']+$order['order_buckle']-$order['order_passway_profit'];
-	 	 	 $count['yingli']+=$list[$k]['yingli'];
-	 	 	 $count['sanji']+=$list[$k]['fenrun'];			
-		}
+		$count['yingli']+=CashOrder::with('passageway')->join('wt_member m',"m.member_id=wt_cash_order.order_member")->where(["order_state" => 2])->join("wt_member_cert mc", "mc.cert_member_id=m.member_id","left")->order("order_id desc")->sum('order_charge-order_passway_profit');
+		// var_dump($a);die;
+
+		// foreach ($list as $k => $order) {
+
+	 // 	 	 $count['yingli']+=$list[$k]['yingli'];
+	 // 	 	 // $count['sanji']+=$list[$k]['fenrun'];			
+		// }
 	 	$count['fenrunhou']=$count['yingli']-$count['sanji'];
 	 	 #统计订单条数
 	 	 $count['count_size']=CashOrder::with('passageway')->join('wt_member m',"m.member_id=wt_cash_order.order_member")->where($where)->join("wt_member_cert mc", "mc.cert_member_id=m.member_id","left")->where($wheres)->count();

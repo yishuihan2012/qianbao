@@ -1236,6 +1236,18 @@ class Userurl extends Controller
 
   #H5有积分前台通知地址
   public function H5youjifen($tradeNo){
+
+    //   echo "666";
+    //   // echo str_pad("",4096);
+    // {//断开连接的代码    
+    //     $size=ob_get_length();    
+    //     header("Content-Length: $size");  //告诉浏览器数据长度,浏览器接收到此长度数据后就不再接收数据  
+    //     header("Connection: Close");      //告诉浏览器关闭当前连接,即为短连接  
+    //     ob_flush();    
+    //     flush();    
+    // }    
+      sleep(3);
+      // var_dump(132);die;
     $order=CashOrder::get(['order_no'=>$tradeNo]);
     $passway=Passageway::get($order->order_passway);
     $member=Members::get($order->order_member);
@@ -1262,12 +1274,15 @@ class Userurl extends Controller
          }else{
             $fenrun_result['code']=-1;
          }
+         $order->order_state=2;
 
       }else{
+        $order->order_state=-1;
          $fenrun_result['code']=-1;
       }
 
     }elseif($return['code']=='01'){
+      $order->order_state=-1;
        $fenrun_result['code']=-1;
     }
 
@@ -1285,6 +1300,7 @@ class Userurl extends Controller
       $res = $order->save();
      if ($res) {
       $this->assign('data',$fenrun_result);
+      $this->assign('url',$url);
         return view("Userurl/H5youjifen");
      }
   }

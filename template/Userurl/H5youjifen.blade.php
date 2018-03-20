@@ -16,9 +16,6 @@
 			<div class="fc">
 		    	<span class="mui-icon iconfont icon-successful f48"></span>
 		    	<p class="space-up2">交易成功</p>
-		    	<!-- <p class="space-up2 invalid-color">您已成功支付</p>
-		    	<p class="space-up2 f36 f-bold">{{$data->order_money}}<span class="f24">元</span></p>
-			    <div class="fc my-btn-container"> -->
 			    	<a class="my-btn-blue2 space-right2 f18" id="seeDetails">返回首页</a>
 			    </div>
 			</div>
@@ -26,8 +23,8 @@
 		@else
 			<div class="mui-content bg-w repay-suc">
 			<div class="fc">
-		    	<span class="mui-icon iconfont icon-successful f48"></span>
-		    	<p class="space-up2">交易失败</p>
+		    	<span class="mui-icon iconfont icon-quxiao f48"></span>
+		    	<p class="space-up2">交易处理中</p>
 		    	<!-- <p class="space-up2 invalid-color">已成功向尾号2971银行卡转入</p>
 		    	<p class="space-up2 f36 f-bold">500<span class="f24">元</span></p> -->
 			    <div class="fc my-btn-container">
@@ -45,6 +42,7 @@
 		      var isAndroid = u.indexOf('Android') > -1 || u.indexOf('Adr') > -1; //android终端
 		      var isiOS = !!u.match(/\(i[^;]+;( U;)? CPU.+Mac OS X/); //ios终端
 				mui(document).on('tap','a',function(){
+
 			      if(!isAndroid){
 			        window.webkit.messageHandlers.returnIndex.paySus();
 			      }else{
