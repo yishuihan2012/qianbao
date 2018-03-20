@@ -66,7 +66,10 @@
   <select name="passageway_id" class="form-control">
       <option value="" @if ($r['passageway_id']=='') selected="" @endif>全部</option>
     @foreach($passageway as $v)
+      @if($v['passageway_state']!=1)
+      @else
       <option value="{{$v['passageway_id']}}" @if ($r['passageway_id']==$v['passageway_id']) selected @endif>{{$v['passageway_name']}}</option>
+      @endif
     @endforeach
   </select>
   </div>
@@ -128,7 +131,7 @@
                  <td>{{$list->order_passway_profit}}</td>
                  <td>{{$list->fenrun}}</td>
                  <td>{{$list->yingli}}</td>
-                 <td>{{$list->passageway_name}}</td>
+                 <td>{{$passageway[$list->order_passway]['passageway_name']}}</td>
 
                  <td>@if($list->order_state==1)待支付 @elseif($list->order_state==2) 成功@elseif($list->order_state==-1)失败@elseif($list->order_state==-2) 超时@else代付未成功@endif</td>
                  <td>{{$list->order_desc}}</td>
@@ -137,6 +140,9 @@
                       <div class="btn-group">
                            <button type="button" data-toggle="modal" data-remote="{{url('/index/order/showcash/id/'.$list->order_id)}}" class="btn btn-default btn-sm">详细信息</button>
                       </div>
+                      <!-- <div class="btn-group">
+                           <button type="button" data-toggle="modal" data-remote="{{url('/index/order/showcash/id/'.$list->order_id)}}" class="btn btn-default btn-sm">审核</button>
+                      </div> -->
                  </td>
            </tr>
            @endforeach

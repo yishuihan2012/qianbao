@@ -1036,6 +1036,12 @@ function SortByASCII($arr)
        } else {
            $r['member_group_id']='';
        }
+       //信用卡号
+       if (!empty($r['order_creditcard'])) {
+           $where['order_creditcard'] = $r['order_creditcard'];
+       } else {
+           $r['order_creditcard']='';
+       }
        //流水号
        if (!empty($r['order_no'])) {
            $where['order_no'] = $r['order_no'];

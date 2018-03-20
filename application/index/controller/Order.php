@@ -236,8 +236,122 @@ class Order extends Common{
 	 	return view("admin/order/toexminewithdraw");
 	 }
 
-	  #快捷支付订单
+	 #快捷支付订单 优化
 	 public function cash(){
+	 	$r=request()->param();
+	 	#根据搜索条件获取order_id
+	 	$data = memberwhere($r);
+	 	$r = array_merge($r,$data['r']);
+	 	$where = $data['where'];
+	 	$member_ids=Member::where($where)->column('member_id');
+	 	$where=['order_member'=>['in',$member_ids]];
+	 	if(input('order_creditcard'))
+	 		$where['order_creditcard']=['like',"%".input('order_creditcard')."%"];
+	 	if(input('order_state'))
+	 		$where['order_state']=input('order_state');
+	 	if(input('passageway_id')){
+	 		$where['passageway_id']=input('passageway_id');
+	 	}else{
+	 		$r['passageway_id']='';
+	 	}
+	 	if(input('beginTime') && input('endTime')){
+			$endTime=strtotime(request()->param('endTime'))+24*3600;
+			$where['order_add_time']=["between time",[request()->param('beginTime'),$endTime]];
+	 	}else{
+	 		$r['beginTime']='';
+	 		$r['endTime']='';
+	 	}
+		$passageway=db('passageway')->column("*","passageway_id");
+		if(input('is_export')==1){
+			set_time_limit(0);
+	 	    $limit=20000;
+	 	    $max=100000;
+	 	    $i=intval(input('start_p')) ?? 0;
+	 	    $n=0;
+	 	    $fp = fopen('php://output', 'a');
+	 	    $status=['1'=>'待支付','2'=>'成功','-1'=>'失败','-2'=>'超时','3'=>'代付未成功'];
+	 	    #算出乘数
+	 	    if($i)
+	 	    	$i=($i-1)*$max/$limit;
+	 	    do{
+	 	    	#取数据
+			 	#统计数据
+			 	$order_data=CashOrder::where($where)->order("order_id desc")->field('order_id,order_money,order_charge,order_passway_profit,order_buckle,order_state')->column("*","order_id");
+			 	$cms=db('commission')->where('commission_from','in',array_column($order_data, 'order_id'))->where('commission_type',1)->group('commission_from')->column("commission_from,sum(commission_money) as sum");
+			 	#重组导出数据
+			 	$list=[];
+			 	foreach ($order_data as $k => $v) {
+			 		$list[$k]=[];
+			 		$list[$k][]=$v['order_id'];
+			 		$list[$k][]=$v['order_no'];
+			 		$list[$k][]=$v['order_name'];
+			 		$list[$k][]=$v['order_card'];
+			 		$list[$k][]=$v['order_creditcard'];
+			 		$list[$k][]=$v['order_money'];
+			 		$list[$k][]=$v['order_charge']+$v['order_buckle'];
+			 		$list[$k][]=$v['order_passway_profit'];
+			 	 	$list[$k][]=isset($cms[$v['order_id']])?$cms[$v['order_id']]:0;			 
+			 	 	$list[$k][]=$v['order_charge']+$v['order_buckle']-$v['order_passway_profit'];
+			 		$list[$k][]=$v['order_passway_profit'];
+			 		$list[$k][]=$passageway[$v['order_passway']]['passageway_name'];
+			 		$list[$k][]=$status[$v['order_state']];
+			 		$list[$k][]=$v['order_desc'];
+			 		$list[$k][]=$v['order_add_time'];
+			 	}
+		 	    	$i++;
+		 	    // halt($order_lists);
+		 	    $head=['#','交易流水号','刷卡人','结算卡','信用卡','总金额','刷卡手续费','成本手续费','分润金额','盈利分润','通道','订单状态','备注','创建时间'];
+		 	    export_csv($head,$list,$fp);
+		 	    $count=count($list);
+		 	    unset($order_lists);
+		 	    $n++;
+	 	    }while($count==$limit && $n<$max/$limit);
+	 	    return;
+		}
+	 	#统计数据
+	 	$order_data=CashOrder::where($where)->order("order_id desc")->field('order_id,order_money,order_charge,order_passway_profit,order_buckle,order_state')->column("*","order_id");
+	 	$cms=db('commission')->where('commission_from','in',array_column($order_data, 'order_id'))->where('commission_type',1)->group('commission_from')->column("commission_from,sum(commission_money) as sum");
+	 	#分页数据
+	 	$order_lists=CashOrder::where($where)->order("order_id desc")->paginate(Config::get('page_size'), false, ['query'=>Request::instance()->param()]);
+	 	#分页数据补充
+	 	foreach ($order_lists as $k => $v) {
+	 	 	 $order_lists[$k]['fenrun']=isset($cms[$v['order_id']])?$cms[$v['order_id']]:0;			 
+	 	 	 $order_lists[$k]['yingli']=$v['order_charge']+$v['order_buckle']-$v['order_passway_profit'];
+	 	}
+	 	$count=[
+	 		'order_buckle'=>array_sum(array_column($order_data,'order_buckle')),
+	 		'order_charge'=>array_sum(array_column($order_data,'order_charge')),
+	 		'order_money'=>array_sum(array_column($order_data,'order_money')),
+	 		'chengben'=>array_sum(array_column($order_data,'order_passway_profit')),
+	 		'sanji'=>array_sum(array_column($cms,'commission_money')),
+	 		'count_size'=>count($order_data),
+	 	];
+	 	#订单状态
+ 		$count['order_money_yes']=0;
+	 	if(!input('order_state')){
+	 		foreach ($order_data as $k => $v) {
+	 			if($v['order_state']==2)
+		 			$count['order_money_yes']+=$v['order_money'];
+	 		}
+	 		$r['order_state']='';
+	 	}elseif(input('order_state')==2){
+	 		$count['order_money_yes']=$count['order_money'];
+	 	}
+	 	$count['order_money_del']=$count['order_money']-$count['order_money_yes'];
+	 	$count['yingli']=$count['order_charge']+$count['order_charge']-$count['order_buckle'];
+	 	$count['fenrunhou']=$count['yingli']-$count['sanji'];
+		$this->assign('order_lists', $order_lists);
+		$this->assign('count', $count);
+		$this->assign('passageway', $passageway);
+		$member_group=MemberGroup::all();
+		$this->assign('member_group', $member_group);
+		$this->assign('r', $r);
+		 #渲染视图
+	 	return view('admin/order/cash');
+	 }
+
+	  #快捷支付订单
+	 public function cash2(){
 	 	$r=request()->param();
 	 	 #搜索条件
 	 	$data = memberwhere($r);
@@ -377,7 +491,7 @@ class Order extends Common{
 		 if(!Request::instance()->param('member_mobile')){
 		 	$where['member_mobile']='';
 		 }
-		 $passageway=db('passageway')->where('passageway_state',1)->select();
+		$passageway=db('passageway')->select();
 		$this->assign('passageway', $passageway);
 		 $member_group=MemberGroup::all();
 		$this->assign('member_group', $member_group);
