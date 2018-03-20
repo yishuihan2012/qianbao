@@ -270,12 +270,7 @@ class Userurl extends Controller
        }
        $passageway_rate=$passageway->passageway_rate;
        $passageway_income=$passageway->passageway_income;
-       // 判断是否入网
-       $member_net=MemberNet::where(['net_member_id'=>$param['uid']])->find();
-       if(!$member_net[$passageway->passageway_no]){ //没有入网
-           // 重定向到签约页面
-           return redirect('Userurl/signed', ['passageway_id' =>$param['passageway'],'cardId'=>$param['cardId'],'order_no'=>$order_no]);
-       }
+       
        //判断是否签约
        $MemberCreditcard=MemberCreditcard::where(['card_id'=>$param['cardId']])->find();
        //判断哪个通道
