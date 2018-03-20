@@ -412,7 +412,7 @@
      */
     function pri_encode($data){
         $encrypted='';
-        $private_key=file_get_contents('./static/rsakey/1001001_prv.pem');  //秘钥
+        $private_key=file_get_contents('./static/rsakey/1001003_prv.pem');  //秘钥
         $pi_key =  openssl_pkey_get_private($private_key);  //这个函数可用来判断私钥是否是可用的，可用返回资源id Resource id  
         $str='';
         foreach (str_split($data, 117) as $chunk) {
