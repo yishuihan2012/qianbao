@@ -57,12 +57,13 @@
         $also=($rate->item_also)*100;
         $daikou=($rate->item_charges);
         //获取通道信息
-        $agentId='1001001';//****
+        $Passageway=Passageway::where(['passageway_id'=>$Passageway])->find();
+        $agentId=$Passageway->passageway_mech;
         $arr=array(
             'version'=>$this->version,
             'charset'=>'UTF-8',//   编码方式UTF-8
             'agentId'=>$agentId,//受理方预分配的渠道代理商标识
-            'nonceStr'=>make_rand_code(),//随机字符串，字符范围a-zA-Z0-9
+            'nonceStr'=>123,//随机字符串，字符范围a-zA-Z0-9
             'signType'=>'RSA',//签名方式，固定RSA
             'isCompay'=>'0',//对公对私标识0为对私，1为对公
             'idcardType'=>'01',//证件类型 暂只支持 01 身份证
@@ -75,8 +76,9 @@
             'bankNo'=>$BankInfo['info_pab'],//开户行代码(PAB)
             'rate'=>$also,//费率万分制 ，不小于代理商费率
             'extraFee'=>$daikou,//手续费(分)
+            'expDate'=>substr($card_info['card_expireDate'],0,2).'-'.substr($card_info['card_expireDate'],2,2),//N(String)   信用卡时必填，格式:mm-YY
+            'CVN2'=>$card_info['card_Ident'] ,//N(String)   信用卡时必填
             // 'address'=>'',//N(String)    地址
-            'remark'=>'汇联金创代还进件',//备注
         );
         // var_dump($arr);die;
         $url=$this->url.'/report';
@@ -461,8 +463,8 @@
      * @return [type]      [description]
      */
     public function get_sign($arr){
-        $private_key="./static/rsakey/1001001_prv.pem";
-        $pub_key="./static/rsakey/1001001_pub.pem";
+        $private_key="./static/rsakey/1001003_prv.pem";
+        $pub_key="./static/rsakey/1001003_pub.pem";
         $arr=$this->SortByASCII($arr);
         $string=http_build_query($arr);
         $string=urldecode($string);
@@ -520,8 +522,9 @@
     public function request($url,$arr){
         $sign=$this->get_sign($arr);
         $arr['sign']=$sign;//签名数据
+        print_r($arr);die;
         $return=curl_post($url,'post',$arr,0);
-        // echo $return;die;
+        echo $return;die;
         $result=json_decode($return,true);
         return $result;
     }

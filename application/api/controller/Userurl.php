@@ -692,6 +692,9 @@ class Userurl extends Controller
 		$this->assign('notice',$notice);
 	  	return view("Userurl/notify_list");
 	}
+  public function no_data(){
+    return view("Userurl/no_data");
+  }
 	/**
 	 * @Author   Star(794633291@qq.com)
 	 * @DateTime 2017-12-26T16:29:39+0800
