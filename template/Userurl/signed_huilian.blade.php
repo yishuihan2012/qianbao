@@ -19,7 +19,7 @@
   <div class="mui-content order-payment">
   	<div class="f16 normal-color wrap">
   		<img src="/static/images/unionpay.png" class="v-m space-right media-pic2">
-  		<span>首次使用银联还款通道需签约，请确认您的信用卡信息无误，完成签约。</span>
+  		<span>首次使用银联还款通道需签约，请确认您的信用卡信息无误，完成预付款。</span>
   	</div>
   	<ul class="mui-table-view bg-color signed-list">
 	    <li class="mui-table-view-cell bg-w bor-bot">
@@ -69,7 +69,7 @@
 		          $(".code-btn2").val("" + curCount + "秒");
 		          InterValObj = window.setInterval(SetRemainTime, 1000); //启动计时器，1秒执行一次
 		          //向后台发送处理数据
-		            var url = 'index.php/api/Huilianjinchuang/treatyApply';
+		            var url = 'http://wallet.dev.com/index.php/api/Huilianjinchuang/treatyApply';
 		            var data={
 		          			'uid':"{{$data['MemberCreditcard']['card_member_id']}}",
 					        // 'token': "{$data['Members']['memberLogin']['login_token']}",
@@ -83,12 +83,13 @@
 					        'billDate': "{{$data['MemberCreditcard']['card_billDate']}}",
 					        'deadline':"{{$data['MemberCreditcard']['card_deadline']}}",
 					        "passageway_id":"{{$passageway_id}}",
-					        'group_id':"{{$data['Members']['member_group_id']}}"
+					        'group_id':"{{$data['Members']['member_group_id']}}",
+					        'agentid':"{{$data['passageway']['passageway_mech']}}"
 		          		};
 		            $.post(url,data,function(data){
-		            	 console.log(data);return;
+
 		            	 if(data.code==200){
-		            	 	 $('input[name="bindId"]').val(data.data.bindId);
+		            	 	 $('input[name="bindId"]').val(data.orderNo);
 		            	 }
 		            	 mui.toast(data.msg); 
 		             });
@@ -116,16 +117,14 @@
 		      		if(!bindId){
 		      			mui.toast('获取数据失败，请重新发送验证码'); return;
 		      		}
-		      		var url = '/api/Member_cert_card/addition_card_codes';
+		      		var url = 'http://wallet.dev.com/index.php/api/Huilianjinchuang/treatyConfirm';
 		            var data={
-		          		action:'MemberCertCard',
-		          		method:'addition_card_codes',
-		          		param:{
-		          			'uid':"{{$data['MemberCreditcard']['card_member_id']}}",
-					        'token': "{{$data['Members']['memberLogin']['login_token']}}",
-					        'bindId':$('input[name="bindId"]').val(),
-					        'smsCode':vcode
-		          		}
+	          			'uid':"{{$data['MemberCreditcard']['card_member_id']}}",
+				        'token': "{{$data['Members']['memberLogin']['login_token']}}",
+				        'orderNo':$('input[name="bindId"]').val(),
+				        'smsCode':vcode,
+				        'agentid':"{{$data['passageway']['passageway_mech']}}",
+				        'merId':"{{$data['merId']}}"
 		          	};
 		            $.post(url,data,function(data){
 
