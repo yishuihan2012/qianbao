@@ -270,7 +270,7 @@ class Userurl extends Controller
        }
        $passageway_rate=$passageway->passageway_rate;
        $passageway_income=$passageway->passageway_income;
-       
+       // var_dump($passageway->toArray());die;
        //判断是否签约
        $MemberCreditcard=MemberCreditcard::where(['card_id'=>$param['cardId']])->find();
        //判断哪个通道
@@ -411,7 +411,8 @@ class Userurl extends Controller
                 $day_real_get_money+=$real_each_get['money'];
               }
               //获取代还每次实际到账金额
-              $real_qf_get=$this->get_real_money($item_qfalso,$item_qffix,$day_real_get_money,$passageway->passageway_qf_rate,$passageway->passageway_qf_rate);
+              $real_qf_get=$this->get_real_money($item_qfalso,$item_qffix,$day_real_get_money,$passageway->passageway_qf_rate,$passageway->passageway_qf_fix);
+              // print_r($real_qf_get);die;
               //提现信息
               $plan[$i]['cash']=$Generation_order_insert[]=array(
                   'order_no'         =>$Generation_result->generation_id,
@@ -619,7 +620,7 @@ class Userurl extends Controller
       //根据支付的金额获取实际到账金额
        //传入单位元，转成分计算，再返回单位元
       public function get_real_money($rate,$fix,$pay,$passageway_rate,$passageway_income){
-         //费率向上取整
+         //费率向上取整  0,1  0 
           $return['fee']=ceil($pay*100*$rate+$fix*100)/100;
           $return['passageway_fee']=ceil($pay*100*$passageway_rate/100+$passageway_income*100)/100;
           $return['plantform_fee']=$return['fee']-$return['passageway_fee'];
