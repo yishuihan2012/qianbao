@@ -445,6 +445,7 @@ class Order extends Common{
 		 #渲染视图
 	 	return view('admin/order/cash');
 	 }
+	}
 	 #银行交易信息详情
 	 public function showcash(){
 	 	$where['order_id'] = request()->param("id");
