@@ -285,22 +285,9 @@ class Userurl extends Controller
                     return view("Userurl/show_error");die;
                 }
             }
-            // if(!$MemberCreditcard['huilian_income']){
-            //     $huilian=new Huilianjinchuang();
-            //     $res=$huilian->income($this->param['passageway'],$this->param['cardId']);
-            //     // var_dump($res);die;
-            //     if($res['code']=="10000" && $res['respCode']==10000){
-            //         $merId=$res['merId'];
-            //         $update=MemberCreditcard::where(['card_id'=>$param['cardId']])->update(['huilian_income'=>$merId]);
-            //         if(!$update){
-            //             $this->assign('data',"商户入网失败，{$res['respMessage']}请重试。");
-            //             return view("Userurl/show_error");
-            //         }
-            //     }else{
-            //           $this->assign('data',"商户入网失败，{$res['respMessage']}请重试。");
-            //           return view("Userurl/show_error");
-            //     }
-            // }
+            if(!$MemberCreditcard['huilian_income']){
+                return redirect('Userurl/signed_huilian', ['passageway_id' =>$param['passageway'],'cardId'=>$param['cardId'],'order_no'=>$order_no]);
+            }
        }else{
            // 判断是否入网
            $member_net=MemberNet::where(['net_member_id'=>$param['uid']])->find();
@@ -1192,6 +1179,24 @@ class Userurl extends Controller
   		$this->assign('passageway_id',$passageway_id);
   		$this->assign('data',$data);
   		return view("Userurl/signed");
+  }
+  public function signed_huilian($passageway_id,$cardId,$order_no){
+      #信用卡信息
+      $data['MemberCreditcard']=$MemberCreditcard=MemberCreditcard::where(['card_id'=>$cardId])->find();
+      #通道信息
+      $data['passageway']=$passageway=Passageway::get($passageway_id);
+      #通道入网信息
+      $member_net=MemberNet::where(['net_member_id'=>$MemberCreditcard['card_member_id']])->find();
+      #用户基本信息
+      $data['Members']=$Members=Members::haswhere('memberLogin','')->where(['member_id'=>$MemberCreditcard['card_member_id']])->find();
+      #登录信息
+      // if(!$MemberCreditcard || !$passageway || $member_net){
+      //  exit('获取信息失败');
+      // }
+      $this->assign('order_no',$order_no);
+      $this->assign('passageway_id',$passageway_id);
+      $this->assign('data',$data);
+      return view("Userurl/signed_huilian");
   }
   #金易付验证码页面
   public function jinyifu($memberId,$passagewayId,$cardId,$price){
