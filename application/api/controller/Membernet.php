@@ -231,7 +231,7 @@ use app\index\model\Member;
              $arr['back_status']=$income['status'];
             if($income['status']=="SUCCESS"){
                 $arr['order_status']='2';
-                // $generation['generation_state']=3;
+                $generation['generation_state']=3;
                 $arr['order_platform']=$pay['order_pound']-($pay['order_money']*$merch['passageway_rate']/100)-$merch['passageway_income'];
                 $is_commission=1;
                 ##记录余额
