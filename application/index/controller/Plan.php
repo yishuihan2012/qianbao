@@ -227,6 +227,7 @@ class Plan extends Common{
 			$generation_id[]=$value['generation_id'];
 		}
 	 	$generation_id=implode(',', $generation_id);
+
 		if(input('is_export')==1){
 	 	    $fp = fopen('php://output', 'a');
 	 	    $type=['1'=>'消费','2'=>'还款'];
@@ -250,12 +251,27 @@ class Plan extends Common{
 	 	    return;
 		}
 
+		//消费总金额
+		$order['money']=GenerationOrder::with("passageway,member,memberCreditcard")->where('order_status=2 and order_type=1')->where($where)->sum('order_money');
+		//全部手续费
+		$order['change']=GenerationOrder::with("passageway,member,memberCreditcard")->where('order_status=2 and order_type=1')->where($where)->sum('order_pound');
+		//成本手续费
+		$order['chengben']=GenerationOrder::with("passageway,member,memberCreditcard")->where('order_status=2 and order_type=1')->where($where)->sum('order_passageway_fee');
+		//盈利分润
+		$order['yingli']=$order['change']-$order['chengben'];
+		//三级分润消耗
+		$order['fen']=GenerationOrder::with("passageway,member,memberCreditcard")->where('order_status=2 and order_type=1')->where($where)->sum('order_fen');
+		//分润后平台盈利
+		$order['fenrunhou']=$order['yingli']-$order['fen'];
+
+
 	 	$list=GenerationOrder::with("passageway,member,memberCreditcard")->where($where)->where('order_no in ('.$generation_id.')')->paginate(Config::get('page_size'), false, ['query'=>Request::instance()->param()]);
 	 	$count = GenerationOrder::with("passageway,member,memberCreditcard")->where($where)->where('order_no in ('.$generation_id.')')->count();
 
 	 	$this->assign('r',$r);
 		$this->assign("list",$list);
 		$this->assign("count",$count);
+		$this->assign("order",$order);
 
 	 	return view("admin/plan/detail");
 	 }
