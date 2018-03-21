@@ -63,7 +63,7 @@
             'version'=>$this->version,
             'charset'=>'UTF-8',//   编码方式UTF-8
             'agentId'=>$agentId,//受理方预分配的渠道代理商标识
-            'nonceStr'=>123,//随机字符串，字符范围a-zA-Z0-9
+            'nonceStr'=>make_rand_code(),//随机字符串，字符范围a-zA-Z0-9
             'signType'=>'RSA',//签名方式，固定RSA
             'isCompay'=>'0',//对公对私标识0为对私，1为对公
             'idcardType'=>'01',//证件类型 暂只支持 01 身份证
@@ -83,11 +83,20 @@
         // var_dump($arr);die;
         $url=$this->url.'/report';
         $res=$this->request($url,$arr);
-        return $res;
-        // if($res['code']=="10000" && $res['respCode']=10000){
-        //     $merId=$res['merId'];
-        // }
-        // echo json_encode($res);die;
+        // return $res;
+        if($res['code']=="10000" && $res['respCode']=10000){
+            $merId=$res['merId'];
+            //setField([$Passageway->passageway_no->$merId])
+            $member_net=MemberNets::where(['net_member_id'=>$card_info['card_member_id']])->setField($Passageway->passageway_no,$merId);
+            if($member_net){
+                return true;
+            }else{
+                return false;
+            }
+        }else{
+                return false;
+        }
+       // echo json_encode($res);die;
     }
     /**
      * 重新进件
@@ -161,8 +170,11 @@
             'expDate'=>substr($card_info['card_expireDate'], 0,2).'-'.substr($card_info['card_expireDate'], 2,2),
             'CVN2'=>$card_info['card_Ident'],
         );
+        print_r($arr);
         $url=$this->url.'/treatyApply';
         $res=$this->request($url,$arr);
+        //错误 $res['message']
+        print_r($res);die;
         echo $res;die;
     }
     /**
@@ -175,13 +187,15 @@
             'version'=>$this->version,// M(String)   1.0
             'charset'=>'UTF-8',//编码方式UTF-8
             'agentId'=>$agentId,// M(String)   受理方预分配的渠道代理商标识
-            'nonceStr'=>2231,//M(String)   随机字符串，字符范围a-zA-Z0-9
+            'nonceStr'=>make_rand_code(),//M(String)   随机字符串，字符范围a-zA-Z0-9
             'signType'=>'RSA',// M(String)   签名方式，固定RSA
-            'orderNo'=>'',//N(String)   申请协议的订单号
-            'authCode'=>'',//    N(String)   手机发送的验证码
+            'orderNo'=>'TNS1SMM0',//N(String)   申请协议的订单号
+            'authCode'=>'17569615504',//    N(String)   手机发送的验证码
         );
+        print_r($arr);
         $url=$this->url.'/treatyConfirm';
         $res=$this->request($url,$arr);
+        print_r($res);die;
         echo $res;die;
     }
     /**
@@ -345,6 +359,7 @@
             'orderNo'=>$order['order_platform_no'],//订单号
             'notifyUrl'=>System::getName('system_url').'/Api/Huilianjinchuang/cashCallback',//异步通知地址
             // 'returnUrl'=>'', //N(String)   返回地址
+            // 'date'='' ,//N(String)   支付日期，格式:yyyyMMdd
             'amount'=>$order['order_money']*100,//金额(分)
         );
         // echo json_encode($arr);die;
@@ -522,9 +537,8 @@
     public function request($url,$arr){
         $sign=$this->get_sign($arr);
         $arr['sign']=$sign;//签名数据
-        print_r($arr);die;
+        $arr=http_build_query($arr);
         $return=curl_post($url,'post',$arr,0);
-        echo $return;die;
         $result=json_decode($return,true);
         return $result;
     }

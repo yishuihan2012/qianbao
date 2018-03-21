@@ -274,22 +274,33 @@ class Userurl extends Controller
        $MemberCreditcard=MemberCreditcard::where(['card_id'=>$param['cardId']])->find();
        //判断哪个通道
        if($passageway['passageway_method']=='income'){  //暂时这么判断是汇联金创还是米刷
-            if(!$MemberCreditcard['huilian_income']){
+
+            $member_net=MemberNet::where(['net_member_id'=>$param['uid']])->find();
+            if(!$member_net[$passageway->passageway_no]){ //没有入网
+               // 重定向到签约页面
                 $huilian=new Huilianjinchuang();
                 $res=$huilian->income($this->param['passageway'],$this->param['cardId']);
-                // var_dump($res);die;
-                if($res['code']=="10000" && $res['respCode']==10000){
-                    $merId=$res['merId'];
-                    $update=MemberCreditcard::where(['card_id'=>$param['cardId']])->update(['huilian_income'=>$merId]);
-                    if(!$update){
-                        $this->assign('data',"商户入网失败，{$res['respMessage']}请重试。");
-                        return view("Userurl/show_error");
-                    }
-                }else{
-                      $this->assign('data',"商户入网失败，{$res['respMessage']}请重试。");
-                      return view("Userurl/show_error");
+                if(!$res){
+                    $this->assign('data','商户入网失败，请重试。');
+                    return view("Userurl/show_error");die;
                 }
             }
+            // if(!$MemberCreditcard['huilian_income']){
+            //     $huilian=new Huilianjinchuang();
+            //     $res=$huilian->income($this->param['passageway'],$this->param['cardId']);
+            //     // var_dump($res);die;
+            //     if($res['code']=="10000" && $res['respCode']==10000){
+            //         $merId=$res['merId'];
+            //         $update=MemberCreditcard::where(['card_id'=>$param['cardId']])->update(['huilian_income'=>$merId]);
+            //         if(!$update){
+            //             $this->assign('data',"商户入网失败，{$res['respMessage']}请重试。");
+            //             return view("Userurl/show_error");
+            //         }
+            //     }else{
+            //           $this->assign('data',"商户入网失败，{$res['respMessage']}请重试。");
+            //           return view("Userurl/show_error");
+            //     }
+            // }
        }else{
            // 判断是否入网
            $member_net=MemberNet::where(['net_member_id'=>$param['uid']])->find();
