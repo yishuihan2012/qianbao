@@ -66,8 +66,7 @@
   <select name="passageway_id" class="form-control">
       <option value="" @if ($r['passageway_id']=='') selected="" @endif>全部</option>
     @foreach($passageway as $v)
-      @if($v['passageway_state']!=1)
-      @else
+      @if($v['passageway_state']==1 && $v['passageway_also']==1)
       <option value="{{$v['passageway_id']}}" @if ($r['passageway_id']==$v['passageway_id']) selected @endif>{{$v['passageway_name']}}</option>
       @endif
     @endforeach
