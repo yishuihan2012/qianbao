@@ -426,7 +426,7 @@ class Userurl extends Controller
                   'order_passageway_fee'=>$real_qf_get['passageway_fee'],
                   'passageway_rate'=>$passageway->passageway_qf_rate,
                   'passageway_fix'=> $passageway->passageway_qf_fix,
-                  'user_fix'=>$item_qffix/100,
+                  'user_fix'=>$item_qffix,
                   'user_rate'=>$item_qfalso*100,
                   'order_desc'       =>'自动代还还款~',
                   'order_time'       =>$date[$i]." ".get_hours(15,16).":".get_minites(0,59),
