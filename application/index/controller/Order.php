@@ -29,7 +29,7 @@ class Order extends Common{
         $r=request()->param();
          #搜索条件
         $data = memberwhere($r);
-        $r = $data['r'];
+        $r = array_merge($r,$data['r']);
         $where = $data['where'];
          //订单创建时间
         $wheres = array();
@@ -109,14 +109,13 @@ class Order extends Common{
          #升级总金额
         $count['upgrade_money'] = Upgrade::haswhere('member',$where)->join("wt_member_cert m", "m.cert_member_id=Member.member_id","left")->where($wheres)->sum("upgrade_money");
          #升级未支付金额
-          $count['upgrade_money_del'] = Upgrade::haswhere('member',$where)->join("wt_member_cert m", "m.cert_member_id=Member.member_id","left")->where($wheres)->where(['upgrade_state'=>0])->sum("upgrade_money");
+          $count['upgrade_money_del'] = Upgrade::haswhere('member',$where)->join("wt_member_cert m", "m.cert_member_id=Member.member_id","left")->where(array_merge($wheres,['upgrade_state'=>0]))->sum("upgrade_money");
           #升级已支付的金额
-           $count['upgrade_money_yes'] = Upgrade::haswhere('member',$where)->join("wt_member_cert m", "m.cert_member_id=Member.member_id","left")->where($wheres)->where(['upgrade_state'=>1])->sum("upgrade_money");
+           $count['upgrade_money_yes'] = Upgrade::haswhere('member',$where)->join("wt_member_cert m", "m.cert_member_id=Member.member_id","left")->where(array_merge($wheres,['upgrade_state'=>1]))->sum("upgrade_money");
 
         $count['upgrade_commission'] = Upgrade::haswhere('member',$where)->join("wt_member_cert m", "m.cert_member_id=Member.member_id","left")->where($wheres)->sum("upgrade_commission");
         $this->assign('order_lists', $order_lists);
         $this->assign('count', $count);
-         
         $this->assign('r', $r);
          #获取用户分组
         $member_group=MemberGroup::all();
@@ -307,7 +306,7 @@ class Order extends Common{
         if(input('order_state'))
             $where['order_state']=input('order_state');
         if(input('passageway_id')){
-            $where['passageway_id']=input('passageway_id');
+            $where['order_passway']=input('passageway_id');
         }else{
             $r['passageway_id']='';
         }

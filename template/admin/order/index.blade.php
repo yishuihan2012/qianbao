@@ -2,7 +2,7 @@
 @section('title','订单列表管理~')
 @section('wrapper')
 <style>
-	 h4 > a,.pull-right > a{color:#145ccd;}
+   h4 > a,.pull-right > a{color:#145ccd;}
 </style>
 
 <section>
@@ -35,8 +35,8 @@
      <span class="input-group-addon">订单状态</span>
   <select name="upgrade_state" class="form-control">
     <option value="" >全部</option>
-    <option value="1" @if($r['upgrade_state']===1) selected @endif>已支付</option>
-    <option value="0" @if($r['upgrade_state']===0) selected @endif>未支付</option>
+    <option value="1" @if($r['upgrade_state']==1) selected @endif>已支付</option>
+    <option value="0" @if($r['upgrade_state']==="0") selected @endif>未支付</option>
   </select>
  
   </div>
