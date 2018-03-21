@@ -254,7 +254,7 @@ use app\index\model\Member;
         //添加执行记录
         $res=GenerationOrder::where(['order_id'=>$pay['order_id']])->update($arr);
         // 更新卡计划
-        Generation::where(['generation_id'=>$pay['order_no']])->update($generation);
+        // Generation::where(['generation_id'=>$pay['order_no']])->update($generation);
         #更改完状态后续操作
         $action=$this->plan_notice($pay,$income,$member_base,1,$merch);
       }
