@@ -157,7 +157,7 @@ class Order extends Common{
         $wheres = array();
         if(request()->param('beginTime') && request()->param('endTime')){
             $endTime=strtotime(request()->param('endTime'))+24*3600;
-            $wheres['withdraw_creat_time']=["between time",[request()->param('beginTime'),$endTime]];
+            $wheres['withdraw_add_time']=["between time",[request()->param('beginTime'),$endTime]];
         }
         #提现状态
         if(request()->param('withdraw_state') ){
