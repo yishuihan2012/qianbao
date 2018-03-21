@@ -270,10 +270,7 @@
   	 	 	$r['passway']='';
   	 	 	$where['passway']='';
   	 	 }
-  	 	 // var_dump($where['passway']);die;
 
-  	 	 // $where['timeBetween']=($request->param('beginTime') && $request->param('endTime')) ? ['commission_creat_time'=>['between time',[$request->param('beginTime'), $endTime]]] : '';
-  	 	 // var_dump($where['whereBetween']);die;
   	 	 //获取分佣列表
   	 	 $list=Commission::haswhere('member',$where['conditions_member'])->with('member,members,cashorder')
 				  	 	 ->where($where['conditions'])
@@ -286,6 +283,8 @@
 				  	 	 // var_dump($list[0]);die;
 		//总刷卡金额
 		 $from_ids=db('commission')->alias('c')
+		 	 ->join('member m','m.member_id=c.commission_member_id')
+		 	 ->where($where['conditions_member'])
 		 	 ->where($where['conditions'])
 	  	 	 ->where($where['whereBetween'])
 	  	 	 ->where($where['timeBetween'])
@@ -300,6 +299,8 @@
 	  	 $count['charge']=db('cash_order')->where('order_id','in',$from_ids)->sum('order_passway_profit');
 	  	 //总分润金额
 	  	  $from_ids=db('commission')->alias('c')
+	  	     ->join('member m','m.member_id=c.commission_member_id')
+		 	 ->where($where['conditions_member'])
 		 	 ->where($where['conditions'])
 	  	 	 ->where($where['whereBetween'])
 	  	 	 ->where($where['timeBetween'])
@@ -310,6 +311,8 @@
 	  	 $count['yingli']=$count['order_charge']-$count['charge'];
   	 	 //平台的盈利
   	 	 $count['fenrun_yingli']=$count['yingli']-$count['fenrun'];
+
+  	 	 
 			foreach ($list as $key => $value) {
 				if($value['commission_type']==1){
 					$order=CashOrder::where(['order_id'=>$value['commission_from']])->find();
