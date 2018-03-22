@@ -91,30 +91,31 @@ class Passageway extends Common{
 	 	 	 	 				$PassagewayItem = new PassagewayItem();
 	 	 	 	 				$wheres['item_id'] = $v['item_id'];
 	 	 	 	 				$PassagewayItem->where($wheres)->update($data[$v['item_group']]);
+	 	 	 	 				Db::commit();
 	 	 	 	 				//取出该用户组下所有会员
-	 	 	 	 				$members=Member::where(['member_group_id'=>$v['item_group']])->select();
-	 	 	 	 				 //遍历进行 第三方资料变更 
-	 	 	 	 				foreach($members as $member){
-	 	 	 	 					$membernet=db('member_net')->where('net_member_id',$member['member_id'])->find();
-	 	 	 	 					if(empty($membernet[$passageway->passageway_no]))continue;
-	 	 	 	 					//修改费率 如果是必须入网就修改费率
-									if($passageway->passageway_status==1){
-							 			 $Membernetsedit=new \app\api\controller\Membernetsedit($member['member_id'],$passageway->passageway_id,'M03','',$member['member_mobile']);
-							 			 $method=$passageway->passageway_method;
-							 			 $success=$Membernetsedit->$method();
-						 	 	 		//通过是否存在返回更新
-						 	 	 		if($success!==true){
-						 	 	 			$content=['type'=>'warning','msg'=>$success];
-						 	 	 			break;
-						 	 	 		}
-						 	 	 	}
-	 	 	 	 				}
-	 	 	 	 				if($content){
-	 	 	 	 					Db::rollback();
-	 	 	 	 					break;
-	 	 	 	 				}else{
-					           		Db::commit();
-	 	 	 	 				}
+	 	 	 	 	// 			$members=Member::where(['member_group_id'=>$v['item_group']])->select();
+	 	 	 	 	// 			 //遍历进行 第三方资料变更 
+	 	 	 	 	// 			foreach($members as $member){
+	 	 	 	 	// 				$membernet=db('member_net')->where('net_member_id',$member['member_id'])->find();
+	 	 	 	 	// 				if(empty($membernet[$passageway->passageway_no]))continue;
+	 	 	 	 	// 				//修改费率 如果是必须入网就修改费率
+									// if($passageway->passageway_status==1){
+							 	// 		 $Membernetsedit=new \app\api\controller\Membernetsedit($member['member_id'],$passageway->passageway_id,'M03','',$member['member_mobile']);
+							 	// 		 $method=$passageway->passageway_method;
+							 	// 		 $success=$Membernetsedit->$method();
+						 	 // 	 		//通过是否存在返回更新
+						 	 // 	 		if($success!==true){
+						 	 // 	 			$content=['type'=>'warning','msg'=>$success];
+						 	 // 	 			break;
+						 	 // 	 		}
+						 	 // 	 	}
+	 	 	 	 	// 			}
+	 	 	 	 	// 			if($content){
+	 	 	 	 	// 				Db::rollback();
+	 	 	 	 	// 				break;
+	 	 	 	 	// 			}else{
+					    //        		Db::commit();
+	 	 	 	 	// 			}
 				           } catch (\Exception $e) {
 				                Db::rollback();
 			 	 	 			$content=['type'=>'warning','msg'=>$e->getMessage()];
