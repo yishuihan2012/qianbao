@@ -26,10 +26,20 @@
                 </div>
            </div>
     <div class="input-group" style="width: 180px;float: left;margin-right: 10px;">
-         <span class="input-group-addon">通道</span> 
+         <span class="input-group-addon">消费类型</span> 
       <select name="passway" class="form-control">
           <option value="1" @if($conditions['passway'] ==1) selected="" @endif>快捷支付</option>
           <option value="3" @if($conditions['passway'] ==3) selected="" @endif>代还</option>
+      </select>
+   </div>
+
+    <div class="input-group" style="width: 180px;float: left;margin-right: 10px;">
+         <span class="input-group-addon">通道</span> 
+      <select name="passway_id" class="form-control">
+        <option value="" >请选择</option>
+        @foreach($passageway as $way)
+          <option value="{{$way->passageway_id}}" @if($conditions['passway_id'] ==$way->passageway_id) selected="" @endif>{{$way->passageway_name}}</option>
+        @endforeach
       </select>
    </div>
            <div class="col-sm-2">
