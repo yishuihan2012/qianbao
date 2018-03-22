@@ -128,7 +128,7 @@
                  <td>{{$list->order_charge+$list->order_buckle}}</td>
                  <!-- <td>{{$list->order_also}}%</td> -->
                  <td>{{$list->order_passway_profit}}</td>
-                 <td>{{$list->fenrun}}</td>
+                 <td>{{$list->order_fen}}</td>
                  <td>{{$list->yingli}}</td>
                  <td>{{$passageway[$list->order_passway]['passageway_name']}}</td>
 

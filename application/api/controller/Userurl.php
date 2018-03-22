@@ -40,6 +40,7 @@ use app\index\model\SmsCode;
 use app\index\model\ArticleCategory;
 use app\index\model\Article;
 use app\index\model\WalletLog;
+use app\api\controller\Huilianjinchuang;
  use app\index\model\ServiceItemList;
 /**
  *  此处放置一些固定的web地址
@@ -235,7 +236,6 @@ class Userurl extends Controller
                 $generation3[$key]['count']=GenerationOrder::where(['order_no'=>$value['generation_id']])->count();
         }
         // var_dump($generation);die;
-
         $this->assign('generation',$generation);
         $this->assign('generation3',$generation3);
         return view("Userurl/repayment_history");
@@ -270,19 +270,40 @@ class Userurl extends Controller
        }
        $passageway_rate=$passageway->passageway_rate;
        $passageway_income=$passageway->passageway_income;
-       // 判断是否入网
-       $member_net=MemberNet::where(['net_member_id'=>$param['uid']])->find();
-       if(!$member_net[$passageway->passageway_no]){ //没有入网
-           // 重定向到签约页面
-           return redirect('Userurl/signed', ['passageway_id' =>$param['passageway'],'cardId'=>$param['cardId'],'order_no'=>$order_no]);
-       }
+       // var_dump($passageway->toArray());die;
        //判断是否签约
        $MemberCreditcard=MemberCreditcard::where(['card_id'=>$param['cardId']])->find();
-       if(!$MemberCreditcard['bindId'] || strlen($MemberCreditcard['bindId'])<20 || $MemberCreditcard['bindStatus']!='01'){ //未绑定
-            //重定向到签约
-             return redirect('Userurl/signed', ['passageway_id' =>$param['passageway'],'cardId'=>$param['cardId'],'order_no'=>$order_no]);
-       }
-      
+       //判断哪个通道
+       if($passageway['passageway_method']=='income'){  //暂时这么判断是汇联金创还是米刷
+            if(!$MemberCreditcard['huilian_income']){
+                $huilian=new Huilianjinchuang();
+                $res=$huilian->income($this->param['passageway'],$this->param['cardId']);
+                // var_dump($res);die;
+                if($res['code']=="10000" && $res['respCode']==10000){
+                    $merId=$res['merId'];
+                    $update=MemberCreditcard::where(['card_id'=>$param['cardId']])->update(['huilian_income'=>$merId]);
+                    if(!$update){
+                        $this->assign('data',"商户入网失败，{$res['respMessage']}请重试。");
+                        return view("Userurl/show_error");
+                    }
+                }else{
+                      $this->assign('data',"商户入网失败，{$res['respMessage']}请重试。");
+                      return view("Userurl/show_error");
+                }
+            }
+       }else{
+           // 判断是否入网
+           $member_net=MemberNet::where(['net_member_id'=>$param['uid']])->find();
+           if(!$member_net[$passageway->passageway_no]){ //没有入网
+               // 重定向到签约页面
+               return redirect('Userurl/signed', ['passageway_id' =>$param['passageway'],'cardId'=>$param['cardId'],'order_no'=>$order_no]);
+           }
+           //判断是否签约
+           if(!$MemberCreditcard['bindId'] || strlen($MemberCreditcard['bindId'])<20 || $MemberCreditcard['bindStatus']!='01'){ //未绑定
+                //重定向到签约
+                 return redirect('Userurl/signed', ['passageway_id' =>$param['passageway'],'cardId'=>$param['cardId'],'order_no'=>$order_no]);
+           }
+        }
        // ***************************************2生成计划**************************************************
        #2生成计划
           #卡详情
@@ -298,11 +319,14 @@ class Userurl extends Controller
            $also=($rate->item_also)/100;
            #定义代扣费
            $daikou=($rate->item_charges)/100;
+           #获取代付费率
+           $item_qfalso=($rate->item_qfalso)/100;
+           #获取代付定额
+           $item_qffix=($rate->item_qffix)/100;
           //如果还款次数小于天数
           $days=days_between_dates($this->param['startDate'],$this->param['endDate'])+1;
           $date=prDates($this->param['startDate'],$this->param['endDate']);
           if($this->param['payCount']<$days){
-               shuffle($date);
                 #消费几次就取几个随机日期
                $date=array_slice($date,0,$this->param['payCount']);
                $days=$this->param['payCount'];
@@ -337,8 +361,9 @@ class Userurl extends Controller
                 return view("Userurl/show_error");
            }
           ####################################
-          #3确定每天还款金额
-          $day_pay_money=$this->get_random_money($days,$this->param['billMoney'],$is_int=1);
+          #3确定每天实际还款金额
+          $day_pay_real_money=$this->get_random_money($days,$this->param['billMoney'],$is_int=1);
+          // print_r($day_pay_real_money);
           #4确定每天还款次数
           $day_pay_count=$this->get_day_count($this->param['payCount'],$days);
           #5计算出每天实际刷卡金额，和实际到账金额
@@ -348,6 +373,9 @@ class Userurl extends Controller
               $day_real_get_money=0;
               //刷卡信息
               #计算每次需要刷卡的理论金额
+              #还款也有手续费，计算出每次需要还款金额,$passageway->passageway_qf_rate,$passageway->passageway_qf_rate
+              $day_pay_money[$i]=$this->get_need_pay($item_qfalso,$item_qffix,$day_pay_real_money[$i]);
+              // print_r($day_pay_money[$i]);die;
               $each_pay_money=$this->get_random_money($day_pay_count[$i],$day_pay_money[$i],$is_int=1);
               #计算每次刷卡的时间
               $each_pay_time=$this->get_random_time($date[$i],$day_pay_count[$i]);
@@ -365,13 +393,13 @@ class Userurl extends Controller
                       'order_card'     =>$card_info->card_bankno,
                       'order_money'    =>$real_each_pay_money,
                       'order_pound'    =>$real_each_get['fee'],
+                      'order_real_get' =>$real_each_get['money'],
                       'order_platform_fee'=>$real_each_get['plantform_fee'],
                       'order_passageway_fee'=>$real_each_get['passageway_fee'],
                       'passageway_rate'=>$passageway_rate,
                       'passageway_fix'=>$passageway_income,
                       'user_fix'=>$daikou,
                       'user_rate'=>$also*100,
-                      // 'real_each_get'  =>$real_each_get['money'],
                       'order_desc'     =>'自动代还消费~',
                       'order_time'     =>$each_pay_time[$k],
                       'order_passageway'=>$this->param['passageway'],
@@ -382,6 +410,9 @@ class Userurl extends Controller
                   $generation_pound += $real_each_get['fee'];
                 $day_real_get_money+=$real_each_get['money'];
               }
+              //获取代还每次实际到账金额
+              $real_qf_get=$this->get_real_money($item_qfalso,$item_qffix,$day_real_get_money,$passageway->passageway_qf_rate,$passageway->passageway_qf_fix);
+              // print_r($real_qf_get);die;
               //提现信息
               $plan[$i]['cash']=$Generation_order_insert[]=array(
                   'order_no'         =>$Generation_result->generation_id,
@@ -389,7 +420,15 @@ class Userurl extends Controller
                   'order_type'       =>2,
                   'order_card'       =>$card_info->card_bankno,
                   'order_money'      =>$day_real_get_money,//每天实际打回的金额
-                  'order_pound'      =>0,
+                  'order_pound'      =>$real_qf_get['fee'],
+
+                  'order_real_get' =>$real_qf_get['money'],
+                  'order_platform_fee'=>$real_qf_get['plantform_fee'],
+                  'order_passageway_fee'=>$real_qf_get['passageway_fee'],
+                  'passageway_rate'=>$passageway->passageway_qf_rate,
+                  'passageway_fix'=> $passageway->passageway_qf_fix,
+                  'user_fix'=>$item_qffix,
+                  'user_rate'=>$item_qfalso*100,
                   'order_desc'       =>'自动代还还款~',
                   'order_time'       =>$date[$i]." ".get_hours(15,16).":".get_minites(0,59),
                   'order_passageway'=>$this->param['passageway'],
@@ -445,7 +484,7 @@ class Userurl extends Controller
                 if($vv['order_type']==1){
                   $data[$k]['pay']+=$vv['order_money'];
                 }else if($vv['order_type']==2){
-                  $data[$k]['get']+=$vv['order_money'];
+                  $data[$k]['get']+=$vv['order_real_get'];
                 }
                 $order_pound+=$vv['order_pound'];
             }
@@ -535,7 +574,7 @@ class Userurl extends Controller
                 if($vv['order_type']==1){
                   $data[$k]['pay']+=$vv['order_money'];
                 }else if($vv['order_type']==2){
-                  $data[$k]['get']+=$vv['order_money'];
+                  $data[$k]['get']+=$vv['order_real_get'];
                 }
                 $order_pound+=$vv['order_pound'];
             }
@@ -581,7 +620,7 @@ class Userurl extends Controller
       //根据支付的金额获取实际到账金额
        //传入单位元，转成分计算，再返回单位元
       public function get_real_money($rate,$fix,$pay,$passageway_rate,$passageway_income){
-         //费率向上取整
+         //费率向上取整  0,1  0 
           $return['fee']=ceil($pay*100*$rate+$fix*100)/100;
           $return['passageway_fee']=ceil($pay*100*$passageway_rate/100+$passageway_income*100)/100;
           $return['plantform_fee']=$return['fee']-$return['passageway_fee'];
@@ -1236,18 +1275,55 @@ class Userurl extends Controller
 
   #H5有积分前台通知地址
   public function H5youjifen($tradeNo){
+
+    //   echo "666";
+    //   // echo str_pad("",4096);
+    // {//断开连接的代码    
+    //     $size=ob_get_length();    
+    //     header("Content-Length: $size");  //告诉浏览器数据长度,浏览器接收到此长度数据后就不再接收数据  
+    //     header("Connection: Close");      //告诉浏览器关闭当前连接,即为短连接  
+    //     ob_flush();    
+    //     flush();    
+    // }    
+      sleep(3);
+      // var_dump(132);die;
     $order=CashOrder::get(['order_no'=>$tradeNo]);
     $passway=Passageway::get($order->order_passway);
     $member=Members::get($order->order_member);
-    #通道费率
-     $passwayitem=PassagewayItem::get(['item_group'=>$member->member_group_id,'item_passageway'=>$passway->passageway_id]);
-     $Commission_info=Commissions::where(['commission_from'=>$order->order_id,'commission_type'=>1])->find();
-     if(!$Commission_info){
-            $fenrun= new \app\api\controller\Commission();
-            $fenrun_result=$fenrun->MemberFenRun($order->order_member,$order->order_money,$order->order_passway,1,'套现手续费分润',$order->order_id);
-     }else{
-        $fenrun_result['code']=-1;
-     }
+
+    #查询订单是否成功
+    $url="http://kjnq.jct8.com/quickpay/Query/".$passway->passageway_mech."/".$tradeNo;
+    $curl = curl_init(); // 启动一个CURL会话
+    curl_setopt($curl, CURLOPT_URL, $url);
+    curl_setopt($curl, CURLOPT_HEADER, 0);
+    curl_setopt($curl, CURLOPT_RETURNTRANSFER, 1);
+    curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, false); // 跳过证书检查
+    $data = curl_exec($curl);     //返回api的json对象
+    //关闭URL请求
+    curl_close($curl);
+    $return=json_decode($data,true);
+    // var_dump($return);die;
+    if($return['code']=='00'){
+      if(isset($return['payStatus']) && $return['payStatus']=='Y'){
+         $passwayitem=PassagewayItem::get(['item_group'=>$member->member_group_id,'item_passageway'=>$passway->passageway_id]);
+         $Commission_info=Commissions::where(['commission_from'=>$order->order_id,'commission_type'=>1])->find();
+         if(!$Commission_info){
+                $fenrun= new \app\api\controller\Commission();
+                $fenrun_result=$fenrun->MemberFenRun($order->order_member,$order->order_money,$order->order_passway,1,'套现手续费分润',$order->order_id);
+         }else{
+            $fenrun_result['code']=-1;
+         }
+         $order->order_state=2;
+
+      }else{
+        $order->order_state=-1;
+         $fenrun_result['code']=-1;
+      }
+
+    }elseif($return['code']=='01'){
+      $order->order_state=-1;
+       $fenrun_result['code']=-1;
+    }
 
      if($fenrun_result['code']=="200")
      {
@@ -1262,6 +1338,8 @@ class Userurl extends Controller
 
       $res = $order->save();
      if ($res) {
+      $this->assign('data',$fenrun_result);
+      $this->assign('url',$url);
         return view("Userurl/H5youjifen");
      }
   }
