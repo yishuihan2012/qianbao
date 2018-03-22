@@ -16,6 +16,7 @@
  </div>
 <style>
 	.input-group[class*=col-]{float:left; margin-left: 20px;}
+	.modal-lg{width:1200px;}
 </style>
  <!--dialog Content-->
  <div class="modal-content animated fadeInLeft">
@@ -35,7 +36,7 @@
 			 </div>	
 		 </div>	
 		 <div class="ts">
-			 <div class="col-sm-3 input-group " id="item_also">
+			 <div class="col-sm-3 input-group " id="item_also" style="width: 16%"> 
 			 	 <span class="input-group-addon">代还税率</span>
 			 	 <input type="number" class="form-control item_also" name="also_{{$group['group_id']}}" placeholder="{{$group['group_name']}}组此通道的代还税率" 
 			 	 @foreach($list as $lists) 
@@ -45,7 +46,7 @@
 			 </div>	
 		  </div>
 		 <div class="ts">
-			 <div class="col-sm-3 input-group " id="item_also">
+			 <div class="col-sm-3 input-group " id="item_also" style="width: 16%">
 			 	 <span class="input-group-addon">代还定额</span>
 			 	 <input type="number" class="form-control item_also" name="charges_{{$group['group_id']}}" placeholder="{{$group['group_name']}}组此通道的代还税率" 
 			 	 @foreach($list as $lists) 
@@ -56,7 +57,7 @@
 		  </div>
 
 		    <div class="ts">
-				 <div class="col-sm-3 input-group " id="item_also">
+				 <div class="col-sm-3 input-group " id="item_also" style="width: 16%">
 				 	 <span class="input-group-addon">代付费率</span>
 				 	 <input type="number" class="form-control item_also" name="qfalso_{{$group['group_id']}}" placeholder="{{$group['group_name']}}组此通道的代付费率" 
 				 	 @foreach($list as $lists) 
@@ -67,7 +68,7 @@
 			</div>
 
 			<div class="ts">
-				 <div class="col-sm-3 input-group " id="item_also">
+				 <div class="col-sm-3 input-group " id="item_also" style="width: 16%">
 				 	 <span class="input-group-addon">代付定额</span>
 				 	 <input type="number" class="form-control item_also" name="qffix_{{$group['group_id']}}" placeholder="{{$group['group_name']}}组此通道的代付定额" 
 				 	 @foreach($list as $lists) 
