@@ -19,7 +19,7 @@
   <div class="mui-content order-payment">
   	<div class="f16 normal-color wrap">
   		<img src="/static/images/unionpay.png" class="v-m space-right media-pic2">
-  		<span>首次使用银联还款通道需签约，请确认您的信用卡信息无误，完成预付款。</span>
+  		<span>首次使用银联还款通道需签约，完成预付款,请确认您的信用卡信息无误。</span>
   	</div>
   	<ul class="mui-table-view bg-color signed-list">
 	    <li class="mui-table-view-cell bg-w bor-bot">
@@ -69,7 +69,7 @@
 		          $(".code-btn2").val("" + curCount + "秒");
 		          InterValObj = window.setInterval(SetRemainTime, 1000); //启动计时器，1秒执行一次
 		          //向后台发送处理数据
-		            var url = 'http://wallet.dev.com/index.php/api/Huilianjinchuang/treatyApply';
+		            var url = '/api/Huilianjinchuang/treatyApply';
 		            var data={
 		          			'uid':"{{$data['MemberCreditcard']['card_member_id']}}",
 					        // 'token': "{$data['Members']['memberLogin']['login_token']}",
@@ -117,7 +117,7 @@
 		      		if(!bindId){
 		      			mui.toast('获取数据失败，请重新发送验证码'); return;
 		      		}
-		      		var url = 'http://wallet.dev.com/index.php/api/Huilianjinchuang/treatyConfirm';
+		      		var url = '/api/Huilianjinchuang/treatyConfirm';
 		            var data={
 	          			'uid':"{{$data['MemberCreditcard']['card_member_id']}}",
 				        'token': "{{$data['Members']['memberLogin']['login_token']}}",

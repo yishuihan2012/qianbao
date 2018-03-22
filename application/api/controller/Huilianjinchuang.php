@@ -80,9 +80,10 @@
             'CVN2'=>$card_info['card_Ident'] ,//N(String)   信用卡时必填
             // 'address'=>'',//N(String)    地址
         );
-        // var_dump($arr);die;
+        // var_dump($arr);
         $url=$this->url.'/report';
         $res=$this->request($url,$arr);
+        // var_dump($res);
         // return $res;
         if($res['code']=="10000" && $res['respCode']=10000){
             $merId=$res['merId'];
