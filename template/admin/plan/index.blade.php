@@ -3,7 +3,7 @@
 @section('wrapper')
 <style>
 	.text-ellipsis{cursor: pointer;}
-  .input-group{margin-top:10px;}
+ 
 </style>
 <div class="panel">
   	<div class="panel-body">
