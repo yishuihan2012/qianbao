@@ -58,11 +58,14 @@
 							<p class="f15">
 								@if($v['order_type']==1)
 								<span class="my-badge-inpro">消费</span>
-								@elseif($v['order_type']==2)
-								<span class="my-badge-success">还款</span>
-								@endif
 								<span class="invalid-color space-lr2">{{date('H:i',strtotime($v['order_time']))}}</span>
 								<span><strong>{{$v['order_money']}}元</strong></span>
+								@elseif($v['order_type']==2)
+								<span class="my-badge-success">还款</span>
+								<span class="invalid-color space-lr2">{{date('H:i',strtotime($v['order_time']))}}</span>
+								<span><strong>{{$v['order_real_get']}}元</strong></span>
+								@endif
+								
 							</p>
 							<p class="f16 yellow-color">
 							  <span class="">进行中</span>
@@ -75,11 +78,14 @@
 							<p class="f15">
 								@if($v['order_type']==1)
 								<span class="my-badge-inpro">消费</span>
-								@elseif($v['order_type']==2)
-								<span class="my-badge-success">还款</span>
-								@endif
 								<span class="invalid-color space-lr2">{{date('H:i',strtotime($v['order_time']))}}</span>
 								<span><strong>{{$v['order_money']}}元</strong></span>
+								@elseif($v['order_type']==2)
+								<span class="my-badge-success">还款</span>
+								<span class="invalid-color space-lr2">{{date('H:i',strtotime($v['order_time']))}}</span>
+								<span><strong>{{$v['order_real_get']}}元</strong></span>
+								@endif
+								
 							</p>
 							<p class="f16 red-color">
 							  <span class="">执行失败</span>
@@ -99,11 +105,13 @@
 							<p class="f15">
 								@if($v['order_type']==1)
 								<span class="my-badge-inpro">消费</span>
-								@elseif($v['order_type']==2)
-								<span class="my-badge-success">还款</span>
-								@endif
 								<span class="invalid-color space-lr2">{{date('H:i',strtotime($v['order_time']))}}</span>
 								<span><strong>{{$v['order_money']}}元</strong></span>
+								@elseif($v['order_type']==2)
+								<span class="my-badge-success">还款</span>
+								<span class="invalid-color space-lr2">{{date('H:i',strtotime($v['order_time']))}}</span>
+								<span><strong>{{$v['order_real_get']}}元</strong></span>
+								@endif
 							</p>
 							<p class="f16 green-color2">
 							  <span>执行成功</span>
@@ -115,12 +123,13 @@
 							<p class="f15">
 								@if($v['order_type']==1)
 								<span class="my-badge-inpro">消费</span>
-								@elseif($v['order_type']==2)
-								<span class="my-badge-success">还款</span>
-								@endif
 								<span class="invalid-color space-lr2">{{date('H:i',strtotime($v['order_time']))}}</span>
 								<span><strong>{{$v['order_money']}}元</strong></span>
-							</p>
+								@elseif($v['order_type']==2)
+								<span class="my-badge-success">还款</span>
+								<span class="invalid-color space-lr2">{{date('H:i',strtotime($v['order_time']))}}</span>
+								<span><strong>{{$v['order_real_get']}}元</strong></span>
+								@endif
 							<p class="f16 red-color2">
 							  <span>计划取消</span>
 							  <span class="iconfont icon-quxiao f20 v-m"></span>
@@ -132,11 +141,13 @@
 							<p class="f15">
 								@if($v['order_type']==1)
 								<span class="my-badge-inpro">消费</span>
-								@elseif($v['order_type']==2)
-								<span class="my-badge-success">还款</span>
-								@endif
 								<span class="invalid-color space-lr2">{{date('H:i',strtotime($v['order_time']))}}</span>
 								<span><strong>{{$v['order_money']}}元</strong></span>
+								@elseif($v['order_type']==2)
+								<span class="my-badge-success">还款</span>
+								<span class="invalid-color space-lr2">{{date('H:i',strtotime($v['order_time']))}}</span>
+								<span><strong>{{$v['order_real_get']}}元</strong></span>
+								@endif
 							</p>
 							<p class="f16 yellow-color">
 							  <span class="">处理中</span>
@@ -148,11 +159,13 @@
 							<p class="f15">
 								@if($v['order_type']==1)
 								<span class="my-badge-inpro">消费</span>
-								@elseif($v['order_type']==2)
-								<span class="my-badge-success">还款</span>
-								@endif
 								<span class="invalid-color space-lr2">{{date('H:i',strtotime($v['order_time']))}}</span>
 								<span><strong>{{$v['order_money']}}元</strong></span>
+								@elseif($v['order_type']==2)
+								<span class="my-badge-success">还款</span>
+								<span class="invalid-color space-lr2">{{date('H:i',strtotime($v['order_time']))}}</span>
+								<span><strong>{{$v['order_real_get']}}元</strong></span>
+								@endif
 							</p>
 							<p class="f16 yellow-color">
 							  <span class="">已处理</span>
