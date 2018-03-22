@@ -97,8 +97,6 @@ class Passageway extends Common{
 	 	 	 	 				foreach($members as $member){
 	 	 	 	 					$membernet=db('member_net')->where('net_member_id',$member['member_id'])->find();
 	 	 	 	 					if(empty($membernet[$passageway->passageway_no]))continue;
-	 	 	 	 					
-
 	 	 	 	 					//修改费率 如果是必须入网就修改费率
 									if($passageway->passageway_status==1){
 							 			 $Membernetsedit=new \app\api\controller\Membernetsedit($member['member_id'],$passageway->passageway_id,'M03','',$member['member_mobile']);
