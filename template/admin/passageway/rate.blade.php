@@ -23,9 +23,9 @@
 	 <!-- <h2></h2> -->
 	 @foreach($group as $group)
 	 <div class="row form-group">
-		 <label for="bank_name" class="col-sm-2 text-right"><b>{{$group['group_name']}}:</b></label>
+		 <label for="bank_name" class="col-sm-2 text-right" style="width:9%;"><b>{{$group['group_name']}}:</b></label>
 		 <div class="ts">
-			 <div class="col-sm-3 input-group" id="bank_name">
+			 <div class="col-sm-3 input-group" id="bank_name" style="width: 16%">
 			 	 <span class="input-group-addon">快捷支付</span>
 			 	 <input type="number" class="form-control bank_name" name="rate_{{$group['group_id']}}" placeholder="{{$group['group_name']}}组此通道的快捷支付税率" 
 			 	 @foreach($list as $lists) 
