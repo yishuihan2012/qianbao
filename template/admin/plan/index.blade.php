@@ -3,6 +3,7 @@
 @section('wrapper')
 <style>
 	.text-ellipsis{cursor: pointer;}
+  .input-group{margin-top:10px;}
 </style>
 <div class="panel">
   	<div class="panel-body">
@@ -21,6 +22,14 @@
   <div class="input-group" style="width: 240px;float: left;margin-right: 10px;">
     <span class="input-group-addon">身份号</span>
     <input type="text" class="form-control" name="generation_card" value="{{$r['generation_card']}}" placeholder="身份号">
+  </div>
+   <div class="input-group" style="width: 240px;float: left;margin-right: 10px;">
+    <span class="input-group-addon">计划代号</span>
+    <input type="text" class="form-control" name="generation_no" value="{{$r['generation_no']}}" placeholder="计划代号">
+  </div>
+  <div class="input-group" style="width: 240px;float: left;margin-right: 10px;">
+    <span class="input-group-addon">需还信用卡</span>
+    <input type="text" class="form-control" name="card_bankno" value="{{$r['card_bankno']}}" placeholder="需还信用卡">
   </div>
   <div class="input-group" style="width: 150px;float: left;margin-right: 10px;">
      <span class="input-group-addon">计划状态</span>

@@ -37,11 +37,23 @@ class Plan extends Common{
 			$r['beginTime']=date('Y-m-d',strtotime("-7 days"));
 			$r['endTime']=date('Y-m-d',time());
 		}
-		#需还款信用卡
+		#身份证号码
 		if( request()->param('generation_card')){
 			$where['generation_card'] = ['like',"%".request()->param('generation_card')."%"];
 		}else{
 			$r['generation_card'] = '';
+		}
+		#需还信用卡号
+		if( request()->param('card_bankno')){
+			$where['card_bankno'] = ['eq',request()->param('card_bankno')];
+		}else{
+			$r['card_bankno'] = '';
+		}
+		#代还计划号码
+		if( request()->param('generation_no')){
+			$where['generation_no'] = ['eq',request()->param('generation_no')];
+		}else{
+			$r['generation_no'] = '';
 		}
 		#计划状态查询
 		$where['generation_state'] = array("<>",1);
