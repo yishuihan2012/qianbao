@@ -28,7 +28,7 @@
     private $version;
     public function __construct(){
         $this->version='1.0';
-        $this->url='http://120.77.180.22:8089/v1.0/facade';
+        $this->url='http://39.108.137.8:8099/v1.0/facade';
     }
     /**
      * 进件请求
@@ -552,6 +552,7 @@
         $arr['sign']=$sign;//签名数据
         $arr=http_build_query($arr);
         $return=curl_post($url,'post',$arr,0);
+        echo $return;die;
         $result=json_decode($return,true);
         return $result;
     }
