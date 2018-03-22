@@ -12,6 +12,8 @@
   <header>
     <h3>
     <i class="icon-list-ul"></i> 计划列表详情 <small>共 <strong class="text-danger">{{$count}}</strong> 条</small>
+    <i class="icon-list-ul"></i> 消费笔数 <small>共 <strong class="text-danger" style="font-size: 16px">{{$order['consumption']}}</strong> 条</small>
+    <i class="icon-list-ul"></i> 还款笔数 <small>共 <strong class="text-danger" style="font-size: 16px">{{$order['repayment']}}</strong> 条</small>
     <i class="icon icon-yen"></i>消费总金额 <small><strong class="text-danger" style="font-size: 16px">{{$order['money']}}</strong>元</small>
     <i class="icon icon-yen"></i>全部手续费 <small><strong class="text-danger" style="font-size: 16px">{{$order['change']}}</strong>元</small>
     <i class="icon icon-yen"></i>成本手续费 <small><strong class="text-danger" style="font-size: 16px">{{$order['chengben']}}</strong>元</small>

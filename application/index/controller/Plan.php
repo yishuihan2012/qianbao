@@ -263,6 +263,10 @@ class Plan extends Common{
 		$order['fen']=GenerationOrder::with("passageway,member,memberCreditcard")->where('order_status=2 and order_type=1')->where($where)->sum('order_fen');
 		//分润后平台盈利
 		$order['fenrunhou']=$order['yingli']-$order['fen'];
+		//消费笔数
+		$order['consumption']=GenerationOrder::with("passageway,member,memberCreditcard")->where('order_status=2 and order_type=1')->where($where)->count();
+		//还款笔数
+		$order['repayment']=GenerationOrder::with("passageway,member,memberCreditcard")->where('order_status=2 and order_type=2')->where($where)->count();
 
 
 	 	$list=GenerationOrder::with("passageway,member,memberCreditcard")->where($where)->where('order_no in ('.$generation_id.')')->paginate(Config::get('page_size'), false, ['query'=>Request::instance()->param()]);

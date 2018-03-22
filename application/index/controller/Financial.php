@@ -354,7 +354,10 @@
   	 	 	$r['passway']=1;
   	 	 	$where['passway']=['commission_type'=>1];
   	 	 }
+  	 	 // var_dump($where['passway']);die;
 
+  	 	 // $where['timeBetween']=($request->param('beginTime') && $request->param('endTime')) ? ['commission_creat_time'=>['between time',[$request->param('beginTime'), $endTime]]] : '';
+  	 	 // var_dump($where['whereBetween']);die;
   	 	 //获取分佣列表
   	 	 if($r['passway']==1){
   	 	 	 $list=Commission::haswhere('member',$where['conditions_member'])->with('member,members,cashorder')
@@ -379,8 +382,6 @@
 				  	 	 // var_dump($list[0]);die;
 		//总刷卡金额
 		 $from_ids=db('commission')->alias('c')
-		 	 ->join('member m','m.member_id=c.commission_member_id')
-		 	 ->where($where['conditions_member'])
 		 	 ->where($where['conditions'])
 	  	 	 ->where($where['whereBetween'])
 	  	 	 ->where($where['timeBetween'])
@@ -405,8 +406,6 @@
   	 	
 	  	 //总分润金额
 	  	  $from_ids=db('commission')->alias('c')
-	  	     ->join('member m','m.member_id=c.commission_member_id')
-		 	 ->where($where['conditions_member'])
 		 	 ->where($where['conditions'])
 	  	 	 ->where($where['whereBetween'])
 	  	 	 ->where($where['timeBetween'])
@@ -417,8 +416,6 @@
 	  	 $count['yingli']=$count['order_charge']-$count['charge'];
   	 	 //平台的盈利
   	 	 $count['fenrun_yingli']=$count['yingli']-$count['fenrun'];
-
-  	 	 
 			foreach ($list as $key => $value) {
 				if($value['commission_type']==1){
 					$order=CashOrder::where(['order_id'=>$value['commission_from']])->find();
@@ -481,6 +478,76 @@
 				}
 
 			}
+
+
+      if(input('is_export')==1){
+        $fp = fopen('php://output', 'a');
+        #取数据
+        if($r['passway']==1){
+          $list=db("commission")->alias('c')
+          ->join("member m1",'c.commission_member_id=m1.member_id')
+          ->join("member m2",'c.commission_childen_member=m2.member_id')
+          ->join('cash_order o','c.commission_from=o.order_id')
+               ->where($where['conditions'])
+               ->where($where['whereBetween'])
+               ->where($where['timeBetween'])
+               ->where($where['passway'])
+               ->where(['commission_money' => ['<>',0]])
+          ->order("commission_id desc")
+          ->field('commission_from,m1.member_nick,m2.member_nick as nick,order_money,order_passway_profit,commission_money,commission_desc,commission_creat_time')
+          ->select();
+          foreach ($list as $key => $value) {
+            $order=CashOrder::where(['order_id'=>$value['commission_from']])->find();
+            $passageway=Passageway::where(['passageway_id'=>$order['order_passway']])->find();
+            //通道类型
+            $list[$key]['passageway']=$passageway['passageway_name'];
+            //刷卡金额
+            $list[$key]['order_money']=$order['order_money'];
+            //刷卡手续费
+            $list[$key]['order_charge']=$order['order_charge']+$order['order_buckle'];
+            
+            //盈利分润
+
+              $list[$key]['yingli']=$list[$key]['order_charge']-$order['order_passway_profit'];
+          }
+          
+
+        }else{
+           $list=db("commission")->alias('c')
+          ->join("member m1",'c.commission_member_id=m1.member_id')
+          ->join("member m2",'c.commission_childen_member=m2.member_id')
+          ->join('cash_order o','c.commission_from=o.order_id')
+               ->where($where['conditions'])
+               ->where($where['whereBetween'])
+               ->where($where['timeBetween'])
+               ->where($where['passway'])
+               ->where(['commission_money' => ['<>',0]])
+          ->order("commission_id desc")
+          ->field('commission_from,m1.member_nick,m2.member_nick as nick,order_money,order_passway_profit,commission_money,commission_desc,commission_creat_time')
+          ->select();
+          foreach ($list as $key => $value) {
+            $order=GenerationOrder::where(['order_id'=>$value['commission_from']])->find();
+          $passageway=Passageway::where(['passageway_id'=>$order['order_passageway']])->find();
+          //通道类型
+          $list[$key]['passageway']=$passageway['passageway_name'];
+          //刷卡金额
+          $list[$key]['order_money']=$order['order_money'];
+          //刷卡手续费
+          $list[$key]['order_charge']=$order['order_pound']+$order['order_buckle'];
+
+          
+          //盈利分润
+            $list[$key]['yingli']=$list[$key]['order_charge']-$order['order_passway_profit'];
+
+          }
+          
+        }
+          // var_dump($list);die;
+        $head=['订单ID','受益人','触发人','刷卡金额','成本手续费','分润金额','备注','时间','通道类型','刷卡手续费','盈利分润'];
+        export_csv($head,$list,$fp);
+        return;
+    }
+
 			// var_dump($list[1]['charge']);die;
   	 	 //获取共多少笔分佣
   	 	 $data['count']=Commission::haswhere('member',$where['conditions_member'])->with('member,members')
