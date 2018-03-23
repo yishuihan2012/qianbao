@@ -586,6 +586,7 @@
 				  	 	 ->where($where['timeBetween'])
 				  	 	 ->where($where['passway'])
 				  	 	 ->where(['commission_money' => ['<>' , 0]])
+               ->where('commission_from','>',0)
 				  	 	 ->count();
   	 	 //获取总金额
   	 	 $data['money']=Commission::haswhere('member',$where['conditions_member'])->with('member,members')
@@ -594,6 +595,7 @@
 				  	 	 ->where($where['timeBetween'])
 				  	 	 ->where($where['passway'])
 				  	 	 ->where(['commission_money' => ['<>' , 0]])
+               ->where('commission_from','>',0)
 				  	 	 ->sum('commission_money');
 				  	 	 // var_dump($data['list'][0]->toArray());die;
                // var_dump($r);die;

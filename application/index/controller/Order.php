@@ -318,6 +318,10 @@ class Order extends Common{
             $r['endTime']='';
         }
         $passageway=db('passageway')->column("*","passageway_id");
+        #共用数据
+        $order_data=CashOrder::where($where)->order("order_id desc")->field('order_id,order_money,order_charge,order_passway_profit,order_buckle,order_state')->column("*","order_id");
+        $cms=db('commission')->where('commission_from','in',array_column($order_data, 'order_id'))->where('commission_type',1)->group('commission_from')->column("commission_from,sum(commission_money) as sum");
+        
         if(input('is_export')==1){
             set_time_limit(0);
             $limit=20000;
@@ -330,10 +334,6 @@ class Order extends Common{
             if($i)
                 $i=($i-1)*$max/$limit;
             do{
-                #取数据
-                #统计数据
-                $order_data=CashOrder::where($where)->order("order_id desc")->field('order_id,order_money,order_charge,order_passway_profit,order_buckle,order_state')->column("*","order_id");
-                $cms=db('commission')->where('commission_from','in',array_column($order_data, 'order_id'))->where('commission_type',1)->group('commission_from')->column("commission_from,sum(commission_money) as sum");
                 #重组导出数据
                 $list=[];
                 foreach ($order_data as $k => $v) {
@@ -365,12 +365,12 @@ class Order extends Common{
             return;
         }
         #统计数据
-        $order_data=CashOrder::where($where)->order("order_id desc")->field('order_id,order_money,order_charge,order_passway_profit,order_buckle,order_state')->column("*","order_id");
+        // $order_data=CashOrder::where($where)->order("order_id desc")->field('order_id,order_money,order_charge,order_passway_profit,order_buckle,order_state')->column("*","order_id");
         #分页数据
         $order_lists=CashOrder::where($where)->order("order_id desc")->paginate(Config::get('page_size'), false, ['query'=>Request::instance()->param()]);
         #分页数据补充
         foreach ($order_lists as $k => $v) {
-             $order_lists[$k]['fenrun']=isset($cms[$v['order_id']])?$cms[$v['order_id']]:0;          
+             $order_lists[$k]['order_fen']=isset($cms[$v['order_id']])?$cms[$v['order_id']]:0;          
              $order_lists[$k]['yingli']=$v['order_charge']+$v['order_buckle']-$v['order_passway_profit'];
         }
         #非成功状态 应该为0分润 即分润为0
