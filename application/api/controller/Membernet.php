@@ -748,7 +748,7 @@ use app\index\model\Member;
       }
       //处理没有结果的订单
       public function no_result_order(){
-          $time=date('Y-m-d H:i:s',time()-60*30);
+          $time=date('Y-m-d H:i:s',time()-3600);
           //查询半小时前状态为带查证的订单
           $list=GenerationOrder::where(['order_status'=>4])->where('order_time','lt',$time)->select();
           foreach ($list as $key => $order) {
@@ -756,7 +756,7 @@ use app\index\model\Member;
               //如果计划是执行中的
               if($generation['generation_state']==2){
                   //判断哪个通道
-                   $passageway=Passageway::where(['passageway_id'=>$value['order_passageway']])->find();
+                   $passageway=Passageway::where(['passageway_id'=>$order['order_passageway']])->find();
                    $passageway_mech=$passageway['passageway_mech'];
                    if($passageway['passageway_method']=='income'){
                        $huilian=new Huilianjinchuang();//实例化那个类先写死
