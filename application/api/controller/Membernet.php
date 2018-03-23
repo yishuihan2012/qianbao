@@ -431,8 +431,8 @@ use app\index\model\Member;
               }else{
                   $member_group_id=Member::where(['member_id'=>$pay['order_member']])->value('member_group_id');
                   $rate=PassagewayItem::where(['item_passageway'=>$pay['order_passageway'],'item_group'=>$member_group_id])->find();
-                  $also=($rate->passageway_qf_rate)*10;
-                  $daikou=($rate->passageway_qf_fix);
+                  $also=($rate->item_qfalso)*10;
+                  $daikou=($rate->item_qffix);
               }
 
               // print_r($merch->passageway_mech);die;
