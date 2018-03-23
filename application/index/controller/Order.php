@@ -339,16 +339,15 @@ class Order extends Common{
                 foreach ($order_data as $k => $v) {
                     $list[$k]=[];
                     $list[$k][]=$v['order_id'];
-                    $list[$k][]=$v['order_no'];
+                    $list[$k][]="`".$v['order_no'];
                     $list[$k][]=$v['order_name'];
-                    $list[$k][]=$v['order_card'];
-                    $list[$k][]=$v['order_creditcard'];
+                    $list[$k][]="`".$v['order_card'];
+                    $list[$k][]="`".$v['order_creditcard'];
                     $list[$k][]=$v['order_money'];
                     $list[$k][]=$v['order_charge']+$v['order_buckle'];
-                    $list[$k][]=$v['order_passway_profit'];
+                    $list[$k][]=$v['order_passway_profit']+$v['passageway_fix'];
                     $list[$k][]=isset($cms[$v['order_id']])?$cms[$v['order_id']]:0;          
-                    $list[$k][]=$v['order_charge']+$v['order_buckle']-$v['order_passway_profit'];
-                    $list[$k][]=$v['order_passway_profit'];
+                    $list[$k][]=$v['order_charge']+$v['order_buckle']-$v['order_passway_profit']-$v['passageway_fix']-(isset($cms[$v['order_id']])?$cms[$v['order_id']]:0);
                     $list[$k][]=$passageway[$v['order_passway']]['passageway_name'];
                     $list[$k][]=$status[$v['order_state']];
                     $list[$k][]=$v['order_desc'];
@@ -356,7 +355,7 @@ class Order extends Common{
                 }
                     $i++;
                 // halt($order_lists);
-                $head=['#','交易流水号','刷卡人','结算卡','信用卡','总金额','刷卡手续费','成本手续费','分润金额','盈利分润','通道','订单状态','备注','创建时间'];
+                $head=['#','交易流水号','刷卡人','结算卡','信用卡','总金额','刷卡手续费','成本手续费','分润金额','盈利','通道','订单状态','备注','创建时间'];
                 export_csv($head,$list,$fp);
                 $count=count($list);
                 unset($order_lists);
@@ -371,7 +370,7 @@ class Order extends Common{
         #分页数据补充
         foreach ($order_lists as $k => $v) {
              $order_lists[$k]['order_fen']=isset($cms[$v['order_id']])?$cms[$v['order_id']]:0;          
-             $order_lists[$k]['yingli']=$v['order_charge']+$v['order_buckle']-$v['order_passway_profit'];
+             $order_lists[$k]['yingli']=$v['order_charge']+$v['order_buckle']-$v['order_passway_profit']-$v['passageway_fix']-$order_lists[$k]['order_fen'];
         }
         #非成功状态 应该为0分润 即分润为0
         $count=[
