@@ -113,7 +113,7 @@
       $rate=$rate?$rate:$memberAlso['item_also']*10;
       $fix=$fix?$fix:$memberAlso['item_charges'];
       $qf_rate=$qf_rate?$qf_rate:$memberAlso['item_qfalso']*10;
-      $qf_fix=$qf_fix?$qf_fix:$memberAlso['item_qffix']*100;
+      $qf_fix=$qf_fix?$qf_fix:$memberAlso['item_qffix'];
       $params=array(
         'versionNo'=>'1',//接口版本号 必填  值固定为1
         'mchNo'=>$this->passway->passageway_mech, //mchNo 商户号 必填  由米刷统一分配
