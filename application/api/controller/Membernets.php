@@ -213,9 +213,9 @@
         trace("rongbang_openpay");
        $credit=db('member_creditcard')->where('card_id',$cardid)->find();
         $arr=[
-          'mobilephone'=>$this->member->member_mobile,
-          'accountname'=>$this->member->member_nick,
-          'certificateno'=>$this->membercert->cert_member_idcard,
+          'mobilephone'=>$credit['card_phone'],
+          'accountname'=>$credit['card_name'],
+          'certificateno'=>$credit['card_idcard'],
           'accounttype'=>1,
           'certificatetype'=>1,
           'collecttype'=>1,
@@ -313,7 +313,7 @@
   "ordernumber": "test201801101523"
 }';
         //402573747  封顶通道 
-        if($this->passway->passageway_id==11){
+        if($this->passway->passageway_mech==402573747){
           $paymenttypeid='4';
           $payextraparams='"{\"bankaccount\":\"'.$credit['card_bankno'].'\"}"';
           //402512992 快捷无积分
@@ -333,7 +333,7 @@
           "ordernumber": "'.$tradeNo.'",
           "fronturl":"'. request()->domain() . '/api/Userurl/passway_success/order_no/'.$tradeNo.'"
         }';
-
+        // return $arr;
         // echo ($arr);die;
         // echo (json_encode($arr));die;
           $data=rongbang_curl(rongbang_foruser($this->member,$this->passway),$arr,'masget.pay.compay.router.back.pay');
@@ -350,6 +350,7 @@
               'ordercode'=>rand(100000,999999),
             ];
           }else{
+            trace($data);
             return $data['message'];
           }
       }
