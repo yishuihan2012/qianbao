@@ -168,7 +168,7 @@ use app\index\model\Member;
         #1获取费率
         // print_r($pay);die;
         // 兼容老的数据没有费率的情况，新的订单都直接取订单里的费率
-        if($pay['passageway_rate'] || $pay['passageway_fix'] || $pay['user_rate'] || $pay['user_fix']){ //如果设置了费率
+        if($pay['user_rate']>0 || $pay['user_fix']>0){ //如果设置了费率
             $order_rate=1;
             $also=$pay['user_rate']*10;
             $daikou=$pay['user_fix']*100;
