@@ -2,7 +2,7 @@
 @section('title','交易订单管理~')
 @section('wrapper')
 <style>
-	 h4 > a,.pull-right > a{color:#145ccd;}
+   h4 > a,.pull-right > a{color:#145ccd;}
 </style>
 
 <section>
@@ -105,7 +105,7 @@
                       <!-- <th class="flex-col">费率</th>  -->
                       <th class="flex-col">成本手续费</th>
                       <th class="flex-col">分润金额</th>
-                      <th class="flex-col">盈利分润</th>
+                      <th class="flex-col">盈利</th>
                       <th class="flex-col">通道</th> 
                       <th>订单状态</th>
                       <th>备注</th>
@@ -127,7 +127,7 @@
                  <!-- <td>{{$list->order_fen}}</td> -->
                  <td>{{$list->order_charge+$list->order_buckle}}</td>
                  <!-- <td>{{$list->order_also}}%</td> -->
-                 <td>{{$list->order_passway_profit}}</td>
+                 <td>{{$list->order_passway_profit+$list->passageway_fix}}</td>
                  <td>{{$list->order_fen}}</td>
                  <td>{{$list->yingli}}</td>
                  <td>{{$passageway[$list->order_passway]['passageway_name']}}</td>
