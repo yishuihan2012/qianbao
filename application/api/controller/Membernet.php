@@ -819,7 +819,7 @@ use app\index\model\Member;
           }
           $res=GenerationOrder::where(['order_id'=>$id])->update(['order_real_get'=>$order_real_get,'order_money'=>$back_money]);
           if($res){
-              return json_encode(['code'=>'200','msg'=>'变更成功，当前金额为'.$back_money]);die;
+              return json_encode(['code'=>'200','msg'=>'变更成功，当前金额为'.$order_real_get]);die;
           }else{
               return json_encode(['code'=>'101','msg'=>'变更失败']);die;
           }

@@ -29,6 +29,10 @@
             <input type="text" class="form-control" name="order_money" value="{{$r['order_money']}}" placeholder="订单金额">
           </div> 
           <div class="input-group" style="width: 200px;float: left;margin-right: 20px;">
+            <span class="input-group-addon">扣除手续费后金额</span>
+            <input type="text" class="form-control" name="order_real_get" value="{{$r['order_real_get']}}" placeholder="订单金额">
+          </div> 
+          <div class="input-group" style="width: 200px;float: left;margin-right: 20px;">
             <span class="input-group-addon">计划ID</span>
             <input type="text" class="form-control" name="id" value="{{$r['order_id']}}" placeholder="计划ID">
           </div> 

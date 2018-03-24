@@ -47,6 +47,7 @@
 			 <td>{{$value->order_card}}</td>
 			 <td>{{$value->card_bankname}}</td>
 			 <td>{{$value->order_money}}</td>
+			  <td>{{$value->order_real_get}}</td>
 			 <td>{{$value->order_pound}}</td>
 			 <td>@if($value->order_status == 1)<em style="color:#FF9900;">  待执行 </em>@elseif($value->order_status == 2)<em style="color:#33FF33;"> 成功</em> @elseif($value->order_status == 3)<em style="color:#FF00FF;"> 取消</em> @elseif($value->order_status ==4) <em style="color:#00FFFF;">带查证</em> @elseif($value->order_status ==5) <em style="color:#00FFFF;">已处理</em> @else <em style="color:red;">失败 </em>@endif </td>
 			 <td>{{$value->back_statusDesc?$value->back_statusDesc:'没有执行'}}</td>
