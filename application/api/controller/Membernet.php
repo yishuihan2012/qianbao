@@ -803,16 +803,21 @@ use app\index\model\Member;
           $back_money=0;
           foreach ($list as $k => $v) {
               if($v['order_status']==2){
-                  $back_money+=($v['order_money']-$v['order_pound']);
+                if($v['order_real_get']>0){
+                    $back_money=$v['order_real_get'];
+                }else{
+                    $back_money+=($v['order_money']-$v['order_pound']);
+                }
               }  
               if($v['order_status']!=2){
                   $update=GenerationOrder::where(['order_id'=>$v['order_id']])->update(['order_status'=>5]);
               }
           }
-          if($back_money==$order_info['order_money']){
+          $order_real_get=$back_money-($back_money*$order_info['user_rate']/100+$order_info['user_fix']);
+          if($order_real_get==$order_info['order_real_get']){
               return json_encode(['code'=>'101','msg'=>'当前计划还款额不需要变更。']);die;
           }
-          $res=GenerationOrder::where(['order_id'=>$id])->update(['order_money'=>$back_money]);
+          $res=GenerationOrder::where(['order_id'=>$id])->update(['order_real_get'=>$order_real_get,'order_money'=>$back_money]);
           if($res){
               return json_encode(['code'=>'200','msg'=>'变更成功，当前金额为'.$back_money]);die;
           }else{
