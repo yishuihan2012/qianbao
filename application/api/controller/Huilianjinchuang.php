@@ -171,8 +171,10 @@
             'expDate'=>substr($params['expireDate'], 0,2).'-'.substr($params['expireDate'], 2,2),
             'CVN2'=>$params['cvv'],
         );
+        // var_dump($arr);die;
         $url=$this->url.'/treatyApply';
         $res=$this->request($url,$arr);
+        // var_dump($res);die;
         //错误 $res['message']
         if(isset($res['respCode']) && $res['respCode']==10000){
             $return['code']=200;
@@ -181,7 +183,7 @@
         }else{
             $return['code']=-1;
             $return['orderNo']='';
-            $return['msg']=$res['message'];
+            $return['msg']=isset($res['respMessage'])?$res['respMessage']:$res['message'];
         }
         return $return;
     }
@@ -191,6 +193,7 @@
      */
     public function treatyConfirm(){
         $params=input('');
+        var_dump($params);die;
         $arr=array(
             'version'=>$this->version,// M(String)   1.0
             'charset'=>'UTF-8',//编码方式UTF-8
@@ -202,14 +205,15 @@
         );
         $url=$this->url.'/treatyConfirm';
         $res=$this->request($url,$arr);
-        var_dump($res);die;
+        // var_dump($res);
         if(isset($res['respCode']) && $res['respCode']==10000){
             $res=$this->treatyPay($params['agentid'],$params['merId'],$res['treatyId'],$arr['orderNo']);
         }else{
             $return['code']=-1;
             $return['orderNo']='';
-            $return['msg']='协议失败';
+            $return['msg']=isset($res['respMessage'])?$res['respMessage']:$res['message'];
         }
+        return $return;
     }
     /**
      * 支付请求
@@ -228,6 +232,7 @@
             'treatyId'=>$treatyId,// N(String)   协议号
             'amount'=>'1' ,//M(String)   金额(分)
         );
+        var_dump($arr);die;
         $url=$this->url.'/treatyPay';
         $res=$this->request($url,$arr);
         var_dump($res);die;
@@ -552,7 +557,7 @@
         $arr['sign']=$sign;//签名数据
         $arr=http_build_query($arr);
         $return=curl_post($url,'post',$arr,0);
-        echo $return;die;
+        // echo $return;die;
         $result=json_decode($return,true);
         return $result;
     }

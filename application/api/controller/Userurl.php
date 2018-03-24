@@ -1190,6 +1190,7 @@ class Userurl extends Controller
       #用户基本信息
       $data['Members']=$Members=Members::haswhere('memberLogin','')->where(['member_id'=>$MemberCreditcard['card_member_id']])->find();
       $data['merId']=$data['Members']['memberNet'][$data['passageway']['passageway_no']];
+      var_dump($data['merId']);die;
       #登录信息
       // if(!$MemberCreditcard || !$passageway || $member_net){
       //  exit('获取信息失败');
