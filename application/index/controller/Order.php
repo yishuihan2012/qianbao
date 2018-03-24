@@ -397,7 +397,7 @@ class Order extends Common{
             foreach ($order_data as $k => $v) {
                 if($v['order_state']==2){
                     $count['order_money_yes']+=$v['order_money'];
-                    $count['order_charge']+=$v['order_charge'];
+                    $count['order_charge']+=$v['order_charge']+$v['order_charge'];
                     $count['chengben']+=$v['order_passway_profit'];
                     $order_ids[]=$v['order_id'];
                 }
@@ -409,13 +409,13 @@ class Order extends Common{
             $cms=db('commission')->where('commission_from','in',array_column($order_data, 'order_id'))->where('commission_type',1)->group('commission_from')->column("commission_from,sum(commission_money) as sum");
             #指定成功状态时
             $count['order_money_yes']=$count['order_money'];
-            $count['order_charge']=array_sum(array_column($order_data,'order_charge'));
-            $count['chengben']=array_sum(array_column($order_data,'order_passway_profit'));
+            $count['order_charge']=array_sum(array_column($order_data,'order_charge'))+array_sum(array_column($order_data,'order_buckle'));
+            $count['chengben']=array_sum(array_column($order_data,'order_passway_profit'))+array_sum(array_column($order_data,'passageway_fix'));
             $count['sanji']=array_sum($cms);
         }
         
         $count['order_money_del']=$count['order_money']-$count['order_money_yes'];
-        $count['yingli']=$count['order_charge']+$count['order_buckle']-$count['chengben'];
+        $count['yingli']=$count['order_charge']-$count['chengben'];
         $count['fenrunhou']=$count['yingli']-$count['sanji'];
         $this->assign('order_lists', $order_lists);
         $this->assign('count', $count);
