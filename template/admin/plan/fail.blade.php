@@ -28,9 +28,6 @@
             <span class="input-group-addon">订单金额</span>
             <input type="text" class="form-control" name="order_money" value="{{$r['order_money']}}" placeholder="订单金额">
           </div> 
-             <span class="input-group-addon">扣除手续费后金额</span>
-            <input type="text" class="form-control" name="order_real_get" value="{{$r['order_real_get']}}" placeholder="订单金额">
-          </div> 
           <div class="input-group" style="width: 200px;float: left;margin-right: 20px;">
             <span class="input-group-addon">计划ID</span>
             <input type="text" class="form-control" name="order_no" value="{{$r['order_no']}}" placeholder="计划ID">
@@ -60,6 +57,7 @@
               <th>订单消费类型</th>
               <th>信用卡号</th>
               <th>订单金额</th>
+              <th>扣除手续费后金额</th>
               <th>订单手续费</th>
               <th>订单状态</th>
               <th>订单描述</th>
@@ -80,6 +78,7 @@
        <td>@if($value->order_type == 1) <em style="color:#00FF00;"> 消费</em> @else <em style="color:#00FFFF;">还款</em>@endif </td>
        <td>{{$value->order_card}}</td>
        <td>{{$value->order_money}}</td>
+       <td>{{$value->order_real_get}}</td>
        <td>{{$value->order_pound}}</td>
        <td>@if($value->order_status == 1)<em style="color:#FF9900;">  待执行 </em>@elseif($value->order_status == 2)<em style="color:#33FF33;"> 成功</em> @elseif($value->order_status == 3)<em style="color:#FF00FF;"> 取消</em> @elseif($value->order_status ==4) <em style="color:#00FFFF;">带查证<@elseif($value->order_status == 5)<em style="color:#FF00FF;"> 已处理</em> /em> @else <em style="color:red;">失败 </em>@endif </td>
        <td>{{$value->order_desc}}</td>
