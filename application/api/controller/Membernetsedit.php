@@ -188,15 +188,16 @@
 
       #荣邦 1.4.3.根据邀请码，修改商户费率与D0费率
       public function rongbangnet(){
-        return true;
+        trace("membernetedit_net");
         $memberAlso=PassagewayItem::where(['item_group'=>$this->member->member_group_id,'item_passageway'=>$this->passway->passageway_id])->find();
        
         //传入费率对应的在荣邦的编码
-        $rate_code=PassagewayRate::where(['rate_rate'=>$memberAlso['item_rate'],'rate_charge'=>$memberAlso['item_charges'],'rate_passway_id'=>$this->passway->passageway_id])->find();
 
+        $rate_code=db('passageway_rate')->where(['rate_rate'=>['like',$memberAlso['item_rate']],'rate_charge'=>$memberAlso['item_charges'],'rate_passway_id'=>$this->passway->passageway_id])->find();
         if($rate_code){
           $userinfo=db('member_net')->where('net_member_id',$this->member->member_id)->value($this->passway->passageway_no);
           $userinfo=explode(',', $userinfo);
+          // $rate_code['rate_code']=218822;
           $arr=array(
             #公司ID
             'companyid'   =>$userinfo[0],
@@ -206,13 +207,22 @@
             'ratecode'   =>$rate_code['rate_code'],
             // 'ratecode'   =>902429,
           );
-          // var_dump($arr);die;
+          #封顶 
+          if($this->passway->passageway_mech==402573747){
+            $arr['paymenttypeid']=4;
+            $arr['subpaymenttypeid']=4;
+          }else{
+            #积分 无积分
+            $arr['paymenttypeid']=25;
+            $arr['subpaymenttypeid']=25;
+          }
+
           // $data=rongbang_curl(rongbang_foruser($this->member,$this->passway),$arr,'masget.pay.compay.router.samename.update');
           $data=rongbang_curl($this->passway,$arr,'masget.pay.compay.router.samename.update');
+          trace($data);
           // var_dump($data);die;
           if($data['ret']==0){
-            return true;
-            return $data['data'];
+            return $data;
           }else{
             return $data['message'];
           }
