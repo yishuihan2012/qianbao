@@ -40,7 +40,8 @@ use app\index\model\ArticleCategory;
 use app\index\model\Article;
 use app\index\model\WalletLog;
 use app\api\controller\Huilianjinchuang;
- use app\index\model\ServiceItemList;
+use app\index\model\ServiceItemList;
+use app\index\model\MemberCreditPas;
 /**
  *  此处放置一些固定的web地址
  */
@@ -275,19 +276,31 @@ class Userurl extends Controller
        //判断哪个通道
        if($passageway['passageway_method']=='income'){  //暂时这么判断是汇联金创还是米刷
 
-            $member_net=MemberNet::where(['net_member_id'=>$param['uid']])->find();
-            if(!$member_net[$passageway->passageway_no]){ //没有入网
-               // 重定向到签约页面
-                $huilian=new Huilianjinchuang();
-                $res=$huilian->income($this->param['passageway'],$this->param['cardId']);
+            // $member_net=MemberNet::where(['net_member_id'=>$param['uid']])->find();
+            $has=MemberCreditPas::where(['member_credit_pas_creditid'=>$this->param['cardId'],'member_credit_pas_pasid'=>$this->param['passageway']])->find();
+            if(!$has){ //信用卡有没有签约
+                $MemberCreditPas=new MemberCreditPas;
+                $res=$MemberCreditPas->save(['member_credit_pas_creditid'=>$this->param['cardId'],'member_credit_pas_pasid'=>$this->param['passageway']]);
                 if(!$res){
                     $this->assign('data','商户入网失败，请重试。');
                     return view("Userurl/show_error");die;
                 }
+            }else{
+                if(!$has['member_credit_pas_info']){//判断有没有入网
+                    $huilian=new Huilianjinchuang();
+                    $res=$huilian->income($this->param['passageway'],$this->param['cardId']);
+                    if(!$res){
+                        $this->assign('data','商户入网失败，请重试。');
+                        return view("Userurl/show_error");die;
+                    }
+                }
+                if(!$has['member_credit_pas_smsseq']){ //判断有没有签协议
+                    return redirect('Userurl/signed_huilian', ['passageway_id' =>$param['passageway'],'cardId'=>$param['cardId'],'order_no'=>$order_no]);
+                } 
             }
-            if(!$MemberCreditcard['huilian_income']){
-                return redirect('Userurl/signed_huilian', ['passageway_id' =>$param['passageway'],'cardId'=>$param['cardId'],'order_no'=>$order_no]);
-            }
+            // if(!$MemberCreditcard['huilian_income']){
+            //     return redirect('Userurl/signed_huilian', ['passageway_id' =>$param['passageway'],'cardId'=>$param['cardId'],'order_no'=>$order_no]);
+            // }
        }else{
            // 判断是否入网
            $member_net=MemberNet::where(['net_member_id'=>$param['uid']])->find();
@@ -1190,7 +1203,7 @@ class Userurl extends Controller
       #用户基本信息
       $data['Members']=$Members=Members::haswhere('memberLogin','')->where(['member_id'=>$MemberCreditcard['card_member_id']])->find();
       $data['merId']=$data['Members']['memberNet'][$data['passageway']['passageway_no']];
-      var_dump($data['merId']);die;
+      // var_dump($data['merId']);die;
       #登录信息
       // if(!$MemberCreditcard || !$passageway || $member_net){
       //  exit('获取信息失败');

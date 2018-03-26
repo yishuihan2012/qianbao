@@ -17,6 +17,7 @@
  use app\index\model\MemberNet as MemberNets;
  use app\index\model\MemberCreditcard;
  use app\index\model\BankInfo;
+ use app\index\model\MemberCreditPas;
  /**
  *  @version Huilianjinchuang controller / Api 代还入网
  *  @author 许成成(1015571416@qq.com)
@@ -88,8 +89,8 @@
         if($res['code']=="10000" && $res['respCode']=10000){
             $merId=$res['merId'];
             //setField([$Passageway->passageway_no->$merId])
-            $member_net=MemberNets::where(['net_member_id'=>$card_info['card_member_id']])->setField($Passageway->passageway_no,$merId);
-            if($member_net){
+            $has=MemberCreditPas::where(['member_credit_pas_creditid'=>$card_info['card_id'],'member_credit_pas_pasid'=>$Passageway])->save(['member_credit_pas_info'=>$merId]);
+            if($has){
                 return true;
             }else{
                 return false;
@@ -193,7 +194,6 @@
      */
     public function treatyConfirm(){
         $params=input('');
-        var_dump($params);die;
         $arr=array(
             'version'=>$this->version,// M(String)   1.0
             'charset'=>'UTF-8',//编码方式UTF-8
@@ -203,14 +203,17 @@
             'orderNo'=>$params['orderNo'],//N(String)   申请协议的订单号
             'authCode'=>$params['smsCode'],//    N(String)   手机发送的验证码
         );
+        // var_dump($arr);
         $url=$this->url.'/treatyConfirm';
         $res=$this->request($url,$arr);
-        // var_dump($res);
         if(isset($res['respCode']) && $res['respCode']==10000){
-            $res=$this->treatyPay($params['agentid'],$params['merId'],$res['treatyId'],$arr['orderNo']);
+            $card_info=MemberCreditcard::where(['card_id'=>$card_id])->update(['huilian_income'=>$res['treatyId']]);
+            $return['code']=200;
+            // $return['orderNo']='';
+            $return['msg']='签约成功';
         }else{
             $return['code']=-1;
-            $return['orderNo']='';
+            // $return['orderNo']='';
             $return['msg']=isset($res['respMessage'])?$res['respMessage']:$res['message'];
         }
         return $return;
@@ -219,7 +222,7 @@
      * 支付请求
      * @return [type] [description]
      */
-    public function treatyPay($agentId,$merId,$treatyId,$orderNo){
+    public function treatyPay($agentId='1001034',$merId='9000103058',$treatyId='30000005270640',$orderNo='60M94JPS'){
         $arr=array(
             'version'=>$this->version,// M(String)   1.0
             'charset'=>'UTF-8',// M(String)   编码方式UTF-8
@@ -227,12 +230,13 @@
             'merId'=>$merId,// M(String)   子商户号
             'nonceStr'=>make_rand_code(),// M(String)   随机字符串，字符范围a-zA-Z0-9
             'signType'=>'RSA',//  M(String)   签名方式，固定RSA
-            'orderNo'=>$orderNo,// M(String)   订单号
+            'orderNo'=>make_rand_code(),// M(String)   订单号
             'notifyUrl'=>System::getName('system_url').'/Api/Huilianjinchuang/payCallback',// M(String)   异步通知地址
             'treatyId'=>$treatyId,// N(String)   协议号
-            'amount'=>'1' ,//M(String)   金额(分)
+            'amount'=>'1000' ,//M(String)   金额(分)
         );
-        var_dump($arr);die;
+        echo json_encode($arr);
+        // var_dump($arr);die;
         $url=$this->url.'/treatyPay';
         $res=$this->request($url,$arr);
         var_dump($res);die;
@@ -274,15 +278,15 @@
             'notifyUrl'=>System::getName('system_url').'/Api/Huilianjinchuang/payCallback',//异步通知地址
             // 'returnUrl'=>'', //N(String)   返回地址
             'CVN2'=>$card_info['card_Ident'],//CVN2
-            'expDate'=>$expDate,//信用卡有效期，格式 MM-yy
+            'expDate'=>substr($expDate, 0,2).'-'.substr($expDate, 2,2),//信用卡有效期，格式 MM-yy
             'amount'=>$order['order_money']*100,//金额(分)
         );
-        // var_dump($arr);die;
+        // echo json_encode($arr);
         // $update=GenerationOrder::where(['order_id'=>$order['order_id']])->update([''=>$arr['orderNo']]);
         $url=$this->url.'/pay';
         $res=$this->request($url,$arr);
         // return $res;
-        // var_dump($res);
+        // var_dump($res);die;
         $is_commission=0;
         // $arr['income_tradeNo']=$params['orderNo'];
         if($res['code']=='10000'){
@@ -352,7 +356,6 @@
      * @return [type] [description]
      */
     public function qfpay($order,$passageway_mech){
-
         $card_info=MemberCreditcard::where(['card_bankno'=>$order['order_card']])->find();
 
         $member_info=Member::where(['member_id'=>$order['order_member']])->find();
@@ -367,11 +370,13 @@
             $update_order['order_platform_no']=$order['order_platform_no']=uniqid();
             $update_res=GenerationOrder::where(['order_id'=>$order['order_id']])->update($update_order);
         }
+        //获取用户入网信息
+        $member_net=MemberNets::where(['net_member_id'=>$order['order_member']])->find();
         $arr=array(
             'version'=>$this->version,
             'charset'=>'UTF-8',//编码方式UTF-8
             'agentId'=>$passageway_mech,//受理方预分配的渠道代理商标识
-            'merId'=>$card_info['huilian_income'],//子商户号
+            'merId'=>$member_net[$merch['passageway_no']],//子商户号
             'nonceStr'=>make_rand_code(),//随机字符串，字符范围a-zA-Z0-9
             'signType'=>"RSA",//签名方式，固定RSA
             'orderNo'=>$order['order_platform_no'],//订单号
@@ -380,10 +385,10 @@
             // 'date'='' ,//N(String)   支付日期，格式:yyyyMMdd
             'amount'=>$order['order_money']*100,//金额(分)
         );
-        // echo json_encode($arr);die;
+        // echo json_encode($arr);
         $url=$this->url.'/mercPay';
         $res=$this->request($url,$arr);
-        print_r($res);
+        // print_r($res);
         if($res['code']=='10000'){
              $update['back_tradeNo']=$res['orderNo'];
              $update['back_status']=$res['respCode'];
@@ -474,7 +479,7 @@
      */
     public function query_remain($Passageway,$is_print=''){
         $passageway=Passageway::where(['passageway_id'=>$Passageway])->find();
-        $agentid=1001001;
+        // var_dump($passageway);die;
         $arr=array(
             'version'=> $this->version,
             'charset'=>'UTF-8',//编码方式UTF-8
