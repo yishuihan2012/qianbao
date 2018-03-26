@@ -188,7 +188,7 @@
 
       #荣邦 1.4.3.根据邀请码，修改商户费率与D0费率
       public function rongbangnet(){
-        trace("membernetedit_net")
+        trace("membernetedit_net");
         $memberAlso=PassagewayItem::where(['item_group'=>$this->member->member_group_id,'item_passageway'=>$this->passway->passageway_id])->find();
        
         //传入费率对应的在荣邦的编码
