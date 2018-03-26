@@ -91,6 +91,7 @@
 		 		<th>信用卡号</th>
 		 		<th>银行名称</th>
 		 		<th>订单金额</th>
+        <th>扣除手续费后金额</th>
 		 		<th>订单手续费</th>
 		 		<th>订单状态</th>
 		 		<th>重新执行次数</th>
@@ -113,6 +114,7 @@
 			 <td>{{$value->order_card}}</td>
 			 <td>{{$value->card_bankname}}</td>
 			 <td>{{$value->order_money}}</td>
+       <td>{{$value->order_real_get}}</td>
 			 <td>{{$value->order_pound}}</td>
 			 <td>@if($value->order_status == 1)<em style="color:#FF9900;">  待执行 </em>@elseif($value->order_status == 2)<em style="color:#33FF33;"> 成功</em> @elseif($value->order_status == 3)<em style="color:#FF00FF;"> 取消</em> @elseif($value->order_status ==4) <em style="color:#00FFFF;">待查证</em> @else <em style="color:red;">失败 </em>@endif </td>
 			 <td>{{$value->order_retry_count}}</td>
