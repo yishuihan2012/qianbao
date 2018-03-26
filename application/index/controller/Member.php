@@ -8,7 +8,7 @@
 namespace app\index\controller;
 
  use app\index\model\Member as Members;
- use app\index\model\{MemberLogin, MemberGroup, MemberRelation, MemberCert, MemberCashcard, Upgrade ,Passageway,MemberTeam,MemberNet};
+ use app\index\model\{MemberLogin, MemberGroup, MemberRelation, MemberCert, MemberCashcard, Upgrade ,Passageway,MemberTeam,MemberNet, CashOrder};
  use app\api\controller\Commission;
  use app\index\model\Commission as Commissions;
  use think\{Controller, Request, Session, Config, Loader, Db};
@@ -16,10 +16,8 @@ namespace app\index\controller;
   use app\index\model\Wallet;
  class Member extends Common{
  	 /**
-	 *  @version child method /  会员下级信息
-	 *  @author $GongKe$ (755969423@qq.com) 会员下级信息列表
-	 *  @datetime    2018-1-17 13:27
-	 *  @return  返回会员的下级信息 
+	 *  @version child method /  会员下级信息      @datetime    2018-1-17 13:27
+	 *  @author $GongKe$ (755969423@qq.com) 会员下级信息列表    @return  返回会员的下级信息 
 	 */
  	 public function child(Request $request)
  	 {
@@ -28,15 +26,29 @@ namespace app\index\controller;
 			 Session::set('jump_msg', ['type'=>'error','msg'=>'参数错误,缺少会员标识ID']);
 			 $this->redirect($this->history['1']);
 	 	 }
-	 	 
-	 	 $data=Members::getChild($request->param('memberId'));
+	 	 $data=$this->getChildInfo($request->param('memberId'));
 	 	 $this->assign('data', $data);
-	 	 //return view('admin/member/info');
+	 	 return view('admin/member/child');
+ 	 }
+ 	 public function getChildInfo(int $memberId, bool $json=false, int $page=1)
+ 	 {
+ 	 	 $data=Members::getChild($memberId);
+ 	 	 $r=input();
+ 	 	 $r['page']=$page;
+ 	 	 // $data=Members::haswhere('memberRelation',['relation_parent_id'=>$memberId])->field('member_id,member_nick,member_mobile,member_image,member_cert,member_creat_time')->paginate(Config::get('page_size'), false, ['query'=>$r]);
+           foreach($data as $key => $value)
+           {
+               	 $data[$key]['member_cash']=CashOrder::getMemberCash($value['member_id']); 	#统计该会员共套现多少金额
+               	 $data[$key]['member_son']=MemberRelation::getSonCount($value['member_id']);   #统计该会员共邀请了多少人
+           }
+           if($json)
+           	 echo json_encode($data);
+           else
+           	 return $data;
  	 }
 
-
 	 #会员列表
-	 public function index()
+	 public function index($member_id=null)
 	 {
 	 	//传入参数
 	 	$r=request()->param();
@@ -76,6 +88,18 @@ namespace app\index\controller;
 			$this->assign('admin_group_salt',$admin_group_salt);
 		}else{
 			$this->assign('button',['text'=>'添加新用户', 'link'=>url('/index/member/register'), 'modal'=>'modal']);
+		}
+		#查找指定会员下级
+		if($member_id){
+			$ids=MemberRelation::where(['relation_parent_id'=>$member_id])->column('relation_member_id');
+			#运营商用户 member_id 范围合并 取交集
+			if(isset($where['member_id'])){
+				$where['member_id'][1]=array_intersect($where['member_id'][1],$ids);
+			}else{
+				$where['member_id']=['in',$ids];
+			}
+			$current_member=Members::get($member_id);
+			$this->assign("current_member",$current_member);
 		}
 		if(input('is_export')==1){
 	 	    $fp = fopen('php://output', 'a');

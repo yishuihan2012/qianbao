@@ -52,5 +52,12 @@
         {
             return $this->hasOne('Member', 'member_id','relation_member_id')->bind('member_cert,member_group_id')->setEagerlyType(0);
         } 
-
+       /**
+       *  @version getSonCount method /  实例方法 返回会员的下级总数
+       *  @author $GongKe$ (755969423@qq.com)  Time  2018-1-17 13:27
+       */
+       public static function getSonCount(int $memberId) : int
+       {
+           return self::where(['relation_parent_id'=>$memberId])->count();
+       }
 }

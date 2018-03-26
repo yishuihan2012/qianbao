@@ -14,6 +14,11 @@
       <i class="icon-list-ul"></i> {{$val['group_name']}} <small>共 <strong class="text-danger">{{$val['count']}}</strong> 人</small>
     @endforeach
      </h3>
+     @if(isset($current_member))
+      <h3>
+        当前为  <strong class="text-danger">{{$current_member->member_nick}}</strong> 直接推荐会员列表
+      </h3>
+     @endif
   </header>
 <blockquote>
    
@@ -104,6 +109,8 @@
                  @if($admin['adminster_group_id']!=5)
                                 <li><a data-remote="{{url('/index/member/commiss',['memberId'=>$val->member_id])}}" href="{{url('/index/member/commiss',['memberId'=>$val->member_id])}}">分佣分润</a></li>
                                <!--  <li><a data-size='lg' data-toggle="modal" data-remote="{{url('/index/member/child',['memberId'=>$val->member_id])}}" href="#">下级信息</a></li> -->
+                              <!-- <li><a class="son" data-width='1440' data-toggle="modal" data-remote="{{url('/index/member/child',['memberId'=>$val->member_id])}}" href="#">下级信息</a></li> -->
+                              <li><a  href="/index/member?member_id={{$val->member_id}}">下级列表</a></li>
                      @endif
                            </ul>
                      </div>
