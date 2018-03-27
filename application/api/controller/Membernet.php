@@ -113,7 +113,7 @@ use app\index\model\Member;
                            if($value['order_type']==1){ //消费
                               $huilian->pay($value,$passageway_mech);
                            }else if($value['order_type']==2){//提现
-                               $huilian->qfpay($value,$passageway_mech);
+                               $res=$huilian->qfpay($value,$passageway_mech);
                            }
                      }else{
                           if($value['order_type']==1){ //消费
@@ -160,7 +160,6 @@ use app\index\model\Member;
      //7绑卡支付
       //http://pay.mishua.cn/zhonlinepay/service/rest/creditTrans/payBindCard
       public function payBindCard($pay){
-
         #1获取费率
         // print_r($pay);die;
         $member_group_id=Member::where(['member_id'=>$pay['order_member']])->value('member_group_id');

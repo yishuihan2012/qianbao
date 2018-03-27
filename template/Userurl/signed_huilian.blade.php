@@ -124,7 +124,9 @@
 				        'orderNo':$('input[name="bindId"]').val(),
 				        'smsCode':vcode,
 				        'agentid':"{{$data['passageway']['passageway_mech']}}",
-				        'merId':"{{$data['merId']}}"
+				        'merId':"{{$data['merId']}}",
+				        'cardid'=>"{{$data['MemberCreditcard']['card_id']}}",
+				        "passageway_id":"{{$passageway_id}}"
 		          	};
 		            $.post(url,data,function(data){
 
