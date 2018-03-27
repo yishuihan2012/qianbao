@@ -81,7 +81,7 @@
             'CVN2'=>$card_info['card_Ident'] ,//N(String)   信用卡时必填
             // 'address'=>'',//N(String)    地址
         );
-        var_dump($arr);die;
+        // var_dump($arr);die;
         $url=$this->url.'/report';
         $res=$this->request($url,$arr);
         // var_dump($res);
