@@ -127,8 +127,13 @@
         );
         //修改费率
         if(isset($data['rate'])){
-            $arr['extraFee']=$data['daikou'];
+            
             $arr['rate']=$data['rate']*100;
+            $arr['type']='R';
+        }
+        if(isset($data['extraFee'])){
+            
+            $arr['extraFee']=$data['extraFee']*100;
             $arr['type']='R';
         }
         //如果更换卡号就像当于重新绑新卡了，不用重新进件
@@ -421,6 +426,12 @@
         if(!$order['order_platform_no'] || $order['order_status']!=1){
             $update_order['order_platform_no']=$order['order_platform_no']=uniqid();
             $update_res=GenerationOrder::where(['order_id'=>$order['order_id']])->update($update_order);
+        }
+        //查询上次刷卡费率是否和这次一样，不一样需要变更费率。
+        $order_last=GenerationOrder::where(['order_type'=>1])->where('order_no','lt',$value['order_no'])->order('order_id desc')->find();
+        if($order_last['user_fix'] !=$order['user_fix']){//重新报备
+            $arr['extraFee']=$order['user_fix']*100;
+            $res=$this->reincome($passageway_mech,$member_pas['member_credit_pas_info'],$arr);
         }
         //获取用户入网信息
         // $member_net=MemberNets::where(['net_member_id'=>$order['order_member']])->find();
