@@ -89,7 +89,7 @@
         if($res['code']=="10000" && $res['respCode']=10000){
             $merId=$res['merId'];
             //setField([$Passageway->passageway_no->$merId])
-            $has=MemberCreditPas::where(['member_credit_pas_creditid'=>$card_info['card_id'],'member_credit_pas_pasid'=>$Passageway])->save(['member_credit_pas_info'=>$merId]);
+            $has=MemberCreditPas::where(['member_credit_pas_creditid'=>$card_info['card_id'],'member_credit_pas_pasid'=>$Passageway])->update(['member_credit_pas_info'=>$merId]);
             if($has){
                 return true;
             }else{
@@ -210,7 +210,7 @@
         $url=$this->url.'/treatyConfirm';
         $res=$this->request($url,$arr);
         if(isset($res['respCode']) && $res['respCode']==10000){
-            $res=MemberCreditPas::where(['member_credit_pas_creditid'=>$params['cardid'],'member_credit_pas_pasid'=>$params['passageway_id']])->save(['member_credit_pas_smsseq'=>$res['treatyId']]);
+            $res=MemberCreditPas::where(['member_credit_pas_creditid'=>$params['cardid'],'member_credit_pas_pasid'=>$params['passageway_id']])->update(['member_credit_pas_smsseq'=>$res['treatyId']]);
             if($res){
                 $return['code']=200;
                 // $return['orderNo']='';
