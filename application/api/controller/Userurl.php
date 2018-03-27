@@ -285,19 +285,18 @@ class Userurl extends Controller
                     $this->assign('data','商户入网失败，请重试。');
                     return view("Userurl/show_error");die;
                 }
-            }else{
-                if(!$has['member_credit_pas_info']){//判断有没有入网
-                    $huilian=new Huilianjinchuang();
-                    $res=$huilian->income($this->param['passageway'],$this->param['cardId']);
-                    if(!$res){
-                        $this->assign('data','商户入网失败，请重试。');
-                        return view("Userurl/show_error");die;
-                    }
-                }
-                if(!$has['member_credit_pas_smsseq']){ //判断有没有签协议
-                    return redirect('Userurl/signed_huilian', ['passageway_id' =>$param['passageway'],'cardId'=>$param['cardId'],'order_no'=>$order_no]);
-                } 
             }
+            if(!$has['member_credit_pas_info']){//判断有没有入网
+                $huilian=new Huilianjinchuang();
+                $res=$huilian->income($this->param['passageway'],$this->param['cardId']);
+                if(!$res){
+                    $this->assign('data','商户入网失败，请重试。');
+                    return view("Userurl/show_error");die;
+                }
+            }
+            if(!$has['member_credit_pas_smsseq']){ //判断有没有签协议
+                return redirect('Userurl/signed_huilian', ['passageway_id' =>$param['passageway'],'cardId'=>$param['cardId'],'order_no'=>$order_no]);
+            } 
             // if(!$MemberCreditcard['huilian_income']){
             //     return redirect('Userurl/signed_huilian', ['passageway_id' =>$param['passageway'],'cardId'=>$param['cardId'],'order_no'=>$order_no]);
             // }
