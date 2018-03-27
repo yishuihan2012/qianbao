@@ -121,7 +121,7 @@
         $arr=array(
             'version'=>$this->version,
             'charset'=>'UTF-8',//   编码方式UTF-8
-            'agentId'=>$agentId,//受理方预分配的渠道代理商标识
+            'agentId'=>$agentid,//受理方预分配的渠道代理商标识
             'merId'=> $merId,//要修改的商户号
             'nonceStr'=>make_rand_code(),//随机字符串，字符范围a-zA-Z0-9
             'signType'=>'RSA',//签名方式，固定RSA
@@ -235,8 +235,6 @@
      */
     public function pay($value,$passageway_mech){
         //$agentId='1001034',$merId='9000103058',$treatyId='30000005270640',$orderNo='60M94JPS'
-        
-       
         $card_info=MemberCreditcard::where(['card_bankno'=>$value['order_card']])->find();
         $member_pas=MemberCreditPas::where(['member_credit_pas_pasid'=>$value['order_passageway'],'member_credit_pas_creditid'=>$card_info['card_id']])->find();
         //查询上次刷卡费率是否和这次一样，不一样需要变更费率。
