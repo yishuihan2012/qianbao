@@ -9,6 +9,7 @@
 		<link href="/static/css/base.css" rel="stylesheet" />
 		<link href="/static/css/page.css" rel="stylesheet" />
 		<link href="/static/css/themes.css" rel="stylesheet"/>
+		<link href="http://static.xijiakeji.com/css/myloading.css" rel="stylesheet"/>
 		<style type="text/css">
 			.mui-popup{position:fixed;}
 		</style>
@@ -57,11 +58,14 @@
 							<p class="f15">
 								@if($v['order_type']==1)
 								<span class="my-badge-inpro">消费</span>
-								@elseif($v['order_type']==2)
-								<span class="my-badge-success">还款</span>
-								@endif
 								<span class="invalid-color space-lr2">{{date('H:i',strtotime($v['order_time']))}}</span>
 								<span><strong>{{$v['order_money']}}元</strong></span>
+								@elseif($v['order_type']==2)
+								<span class="my-badge-success">还款</span>
+								<span class="invalid-color space-lr2">{{date('H:i',strtotime($v['order_time']))}}</span>
+								<span><strong>{{$v['order_real_get']}}元</strong></span>
+								@endif
+								
 							</p>
 							<p class="f16 yellow-color">
 							  <span class="">进行中</span>
@@ -74,11 +78,14 @@
 							<p class="f15">
 								@if($v['order_type']==1)
 								<span class="my-badge-inpro">消费</span>
-								@elseif($v['order_type']==2)
-								<span class="my-badge-success">还款</span>
-								@endif
 								<span class="invalid-color space-lr2">{{date('H:i',strtotime($v['order_time']))}}</span>
 								<span><strong>{{$v['order_money']}}元</strong></span>
+								@elseif($v['order_type']==2)
+								<span class="my-badge-success">还款</span>
+								<span class="invalid-color space-lr2">{{date('H:i',strtotime($v['order_time']))}}</span>
+								<span><strong>{{$v['order_real_get']}}元</strong></span>
+								@endif
+								
 							</p>
 							<p class="f16 red-color">
 							  <span class="">执行失败</span>
@@ -98,11 +105,13 @@
 							<p class="f15">
 								@if($v['order_type']==1)
 								<span class="my-badge-inpro">消费</span>
-								@elseif($v['order_type']==2)
-								<span class="my-badge-success">还款</span>
-								@endif
 								<span class="invalid-color space-lr2">{{date('H:i',strtotime($v['order_time']))}}</span>
 								<span><strong>{{$v['order_money']}}元</strong></span>
+								@elseif($v['order_type']==2)
+								<span class="my-badge-success">还款</span>
+								<span class="invalid-color space-lr2">{{date('H:i',strtotime($v['order_time']))}}</span>
+								<span><strong>{{$v['order_real_get']}}元</strong></span>
+								@endif
 							</p>
 							<p class="f16 green-color2">
 							  <span>执行成功</span>
@@ -114,12 +123,13 @@
 							<p class="f15">
 								@if($v['order_type']==1)
 								<span class="my-badge-inpro">消费</span>
-								@elseif($v['order_type']==2)
-								<span class="my-badge-success">还款</span>
-								@endif
 								<span class="invalid-color space-lr2">{{date('H:i',strtotime($v['order_time']))}}</span>
 								<span><strong>{{$v['order_money']}}元</strong></span>
-							</p>
+								@elseif($v['order_type']==2)
+								<span class="my-badge-success">还款</span>
+								<span class="invalid-color space-lr2">{{date('H:i',strtotime($v['order_time']))}}</span>
+								<span><strong>{{$v['order_real_get']}}元</strong></span>
+								@endif
 							<p class="f16 red-color2">
 							  <span>计划取消</span>
 							  <span class="iconfont icon-quxiao f20 v-m"></span>
@@ -131,14 +141,34 @@
 							<p class="f15">
 								@if($v['order_type']==1)
 								<span class="my-badge-inpro">消费</span>
-								@elseif($v['order_type']==2)
-								<span class="my-badge-success">还款</span>
-								@endif
 								<span class="invalid-color space-lr2">{{date('H:i',strtotime($v['order_time']))}}</span>
 								<span><strong>{{$v['order_money']}}元</strong></span>
+								@elseif($v['order_type']==2)
+								<span class="my-badge-success">还款</span>
+								<span class="invalid-color space-lr2">{{date('H:i',strtotime($v['order_time']))}}</span>
+								<span><strong>{{$v['order_real_get']}}元</strong></span>
+								@endif
 							</p>
 							<p class="f16 yellow-color">
 							  <span class="">处理中</span>
+							  <span class="iconfont icon-shijian-copy-copy f20 v-m"></span>
+					        </p>
+						</div>
+						@elseif($v['order_status']==5)
+						<div class="dis-flex-be wrap-bt bor-bot">
+							<p class="f15">
+								@if($v['order_type']==1)
+								<span class="my-badge-inpro">消费</span>
+								<span class="invalid-color space-lr2">{{date('H:i',strtotime($v['order_time']))}}</span>
+								<span><strong>{{$v['order_money']}}元</strong></span>
+								@elseif($v['order_type']==2)
+								<span class="my-badge-success">还款</span>
+								<span class="invalid-color space-lr2">{{date('H:i',strtotime($v['order_time']))}}</span>
+								<span><strong>{{$v['order_real_get']}}元</strong></span>
+								@endif
+							</p>
+							<p class="f16 yellow-color">
+							  <span class="">已处理</span>
 							  <span class="iconfont icon-shijian-copy-copy f20 v-m"></span>
 					        </p>
 						</div>
@@ -158,6 +188,7 @@
 		</div>
 		<script src="/static/js/mui.min.js"></script>
 		<script src="/static/js/jquery-2.1.4.min.js"></script>
+		<script src="http://static.xijiakeji.com/js/myloading.js"></script>
 		<script type="text/javascript">
 			mui.init();
 	$(function(){
@@ -182,11 +213,23 @@
 				var plan_id=$(this).attr('plan_id');
 				mui.confirm('如提示：交易已被系统阻断，请于次日清晨重新执行计划。如提示：卡上余额不足，请确保卡内余额充足再执行计划。您最多有三次重新执行机会，如有疑问，请联系客服。', '重新执行计划', ['否', '是，重新执行'], function(e) {  
                     if (e.index == 1) {  
-                    	$.post('/api/userurl/reset_one_repayment',{plan_id:plan_id},function(res){
-								res=JSON.parse(res);
+                    	$.ajax({
+                    		url:'/api/userurl/reset_one_repayment',
+                    		type:'post',
+                    		data:{plan_id:plan_id},
+                    		dataType:'json',
+                    		beforeSend:function(){
+                    			$("body").mLoading("show");
+                    		},
+                    		complete:function(){
+                    			$("body").mLoading("hide");
+                    		},
+                    		success:function(res){
+                    			// res=JSON.parse(res);
 								mui.toast(res.msg);
 								setTimeout(function(){ location.reload(); }, 3000);
-						})
+                    		}
+                    	})
                     }
                 })  
 		})

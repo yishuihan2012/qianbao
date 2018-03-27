@@ -50,7 +50,8 @@
   </select>
   </div>
 
-<div class="input-group" style="width: 200px;float: left; margin-right: 10px;">
+<div class="input-group" style="width: 260px;float: left; margin-right: 10px;">
+  <span class="input-group-addon">注册时间</span>
     <input type="text" class="form-control date-picker" id="dateTimeRange" placeholder="注册时间" />
     <input type="hidden" name="beginTime" id="beginTime" value="" />
     <input type="hidden" name="endTime" id="endTime" value="" />
@@ -58,6 +59,8 @@
 </div>
 
 	<button class="btn btn-primary" type="submit">搜索</button>
+  <input type="hidden" name="is_export" class="is_export" value="0">
+  <button class="btn btn-primary export" type="submit">导出</button>
 </form>
 </blockquote>
  <hr/>
@@ -195,12 +198,12 @@ $('#dateTimeRange').daterangepicker({
         $('#dateTimeRange').val(start+'-'+end);
     });
   setTimeout(function(){
-        $('#beginTime').val(start.format('YYYY-MM-DD'));
-        $('#endTime').val(end.format('YYYY-MM-DD'));
-        $('#dateTimeRange').val();
+        // $('#beginTime').val(start.format('YYYY-MM-DD'));
+        // $('#endTime').val(end.format('YYYY-MM-DD'));
+        // $('#dateTimeRange').val();
         console.log(start);
       },100);
-begin_end_time_clear();
+// begin_end_time_clear();
 $('.clearTime').click(begin_end_time_clear);
   //清除时间
     function begin_end_time_clear() {
@@ -208,7 +211,37 @@ $('.clearTime').click(begin_end_time_clear);
         $('#beginTime').val('');
         $('#endTime').val('');
     }
- });
+    @if(isset($r["beginTime"]))
+    // //初始化时间
+    //     $('#dateTimeRange').val('{{$r["beginTime"]}} - {{$r["endTime"]}}');
+    //     $('#beginTime').val('{{$r["beginTime"]}}');
+    //     $('#endTime').val('{{$r["endTime"]}}'); 
+    @endif
+});
+ function getNowFormatDate() {
+        var date = new Date();
+        var seperator1 = "-";
+        var year = date.getFullYear();
+        var month = date.getMonth() + 1;
+        var strDate = date.getDate();
+        if (month >= 1 && month <= 9) {
+            month = "0" + month;
+        }
+        if (strDate >= 0 && strDate <= 9) {
+            strDate = "0" + strDate;
+        }
+        var currentdate = year + seperator1 + month + seperator1 + strDate;
+        return currentdate;
+    }
+    console.log(getNowFormatDate());
+     $('#beginTime').val(getNowFormatDate());
+     $('#endTime').val(getNowFormatDate());
+$('.export').click(function(){
+  $(".is_export").val(1);
+  setTimeout(function(){
+    $(".is_export").val(0);
+  },100);
+})
  </script>
  <style type="text/css">
    .clearTime{

@@ -83,6 +83,10 @@
           if($this->param['startDate']==date('Y-m-d',time())){
                return['code'=>485];//开始还款日期必须大于今天
           }
+          // $card_info=MemberCreditcard::where('card_id='.$this->param['cardId'])->find();
+          // if($card_info['card_bankname']=="招商银行"|| $card_info['card_bankname']=="交通银行" ){
+          //      return['code'=>486,'msg'=>'抱歉，还款功能暂时不支持交通银行和招商银行。'];//开始还款日期必须大于今天
+          // }
           // print_r($member_info);die;
          $generation_id=$this->param['uid'].'_'.$this->param['cardId'].'_'.$this->param['billMoney'].'_'.$this->param['payCount'].'_'.$this->param['startDate'].'_'.$this->param['endDate'].'_'.$this->param['passageway'];
          exit(json_encode(['code'=>200, 'msg'=> '正在跳转~','data'=>['repaymentScheduleId'=>$generation_id,'repaymentScheduleUrl'=>$_SERVER['SERVER_NAME'].'/api/Userurl/repayment_plan_create_detail/order_no/'.$generation_id]]));die;

@@ -141,7 +141,6 @@ function encryption($str, $salt, $method='md5')
  function curl_post($url, $method = 'post', $data='', $type="Content-Type: application/json; charset=utf-8")
  {
      //echo '<meta http-equiv="Content-Type" content="text/html; charset=GBK">';
-      //$data=iconv("UTF-8","GBK",$data);
       $ch = curl_init();
      curl_setopt($ch, CURLOPT_HTTPHEADER, array($type));
      curl_setopt($ch, CURLOPT_URL, $url);
@@ -972,30 +971,34 @@ function SortByASCII($arr)
     //   4.平台公告铃声提示。
     function jpush($uid=null, $title=null, $content=null, $item=null, $type='2')
     {
-        return true;
-        $jpush=new con\Push();
-        if ($uid && $title && $content) {
-            //获取registration_id
-        $member=Members::get($uid);
-            $member_token=$member->memberLogin->login_token;
-        //写入记录
-        Notice::create([
-          'notice_title'=>$title,
-          'notice_content'=>$content,
-          'notice_recieve'=>$uid,
-          'notice_registration_id'=>$member_token,
-        ]);
-            $jpush->set_message_title($title);
-        // $jpush->set_audience('all');
-        $jpush->set_registration_id($member_token);
-            $jpush->set_message_sort_desc($content);
-            if ($item) {
-                $jpush->set_message_info_type($type);
+        // return true;
+        try{
+            $jpush=new con\Push();
+            if ($uid && $title && $content) {
+                //获取registration_id
+            $member=Members::get($uid);
+            $member_token=$member->member_token;
+            //写入记录
+            Notice::create([
+              'notice_title'=>$title,
+              'notice_content'=>$content,
+              'notice_recieve'=>$uid,
+              'notice_registration_id'=>$member_token,
+            ]);
+                $jpush->set_message_title($title);
+            // $jpush->set_audience('all');
+            $jpush->set_registration_id($member_token);
+                $jpush->set_message_sort_desc($content);
+                if ($item) {
+                    $jpush->set_message_info_type($type);
+                }
+                if ($item) {
+                    $jpush->set_message_info_item($item);
+                }
+                return $jpush->sign_push();
             }
-            if ($item) {
-                $jpush->set_message_info_item($item);
-            }
-            return $jpush->sign_push();
+        } catch (\Exception $e) {
+            return true;
         }
     }
     #截取中文字符串
@@ -1032,6 +1035,12 @@ function SortByASCII($arr)
            $where['member_group_id'] = $r['member_group_id'];
        } else {
            $r['member_group_id']='';
+       }
+       //流水号
+       if (!empty($r['order_no'])) {
+           $where['order_no'] = $r['order_no'];
+       } else {
+           $r['order_no']='';
        }
 
         return ['r'=>$r, 'where' => $where];

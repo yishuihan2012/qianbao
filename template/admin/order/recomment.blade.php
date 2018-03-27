@@ -98,6 +98,10 @@
        $('.menu .nav .active').removeClass('active');
        $('.menu .nav li.recomment').addClass('active');
        $('.menu .nav li.order-manager').addClass('show');
+    //初始化时间
+       $('#dateTimeRange').val('');
+        $('#beginTime').val('');
+        $('#endTime').val('');
  })
    $('#dateTimeRange').daterangepicker({
         applyClass : 'btn-sm btn-success',

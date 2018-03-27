@@ -25,7 +25,7 @@
 			    <input type="text" class="form-control" name="cert_member_idcard" value="{{$r['cert_member_idcard']}}" placeholder="身份号">
 			  </div>
 			  <div class="input-group" style="width: 150px;float: left;margin-right: 10px;">
-			     <span class="input-group-addon">红包状态</span>
+			     <span class="input-group-addon">钱包状态</span>
 			  <select name="wallet_state" class="form-control">
 			    <option value="" >全部</option>
 			    <option value="2" @if($r['wallet_state']==2) selected @endif>正常</option>
@@ -43,8 +43,9 @@
 			  </select>
 			  </div>
 
-			<div class="input-group" style="width: 200px;float: left; margin-right: 10px;">
-			    <input type="text" class="form-control date-picker" id="dateTimeRange" placeholder="红包生成时间"/>
+			<div class="input-group" style="width: 290px;float: left; margin-right: 10px;">
+				<span class="input-group-addon">钱包生成时间</span>
+			    <input type="text" class="form-control date-picker" id="dateTimeRange" placeholder="钱包生成时间"/>
 			    <input type="hidden" name="beginTime" id="beginTime" value=""/>
 			    <input type="hidden" name="endTime" id="endTime" value=""/>
 			    <z class='clearTime'>X</z>
@@ -141,6 +142,12 @@
 		    	 }
 		 });
       })
+    @if(isset($r["beginTime"]))
+    //初始化时间
+        $('#dateTimeRange').val('{{$r["beginTime"]}} - {{$r["endTime"]}}');
+        $('#beginTime').val('{{$r["beginTime"]}}');
+        $('#endTime').val('{{$r["endTime"]}}'); 
+    @endif
  });
 
 $('#dateTimeRange').daterangepicker({
@@ -180,7 +187,24 @@ $('#dateTimeRange').daterangepicker({
         $('#beginTime').val(start.format('YYYY-MM-DD'));
         $('#endTime').val(end.format('YYYY-MM-DD'));
     });
-begin_end_time_clear();
+function getNowFormatDate() {
+        var date = new Date();
+        var seperator1 = "-";
+        var year = date.getFullYear();
+        var month = date.getMonth() + 1;
+        var strDate = date.getDate();
+        if (month >= 1 && month <= 9) {
+            month = "0" + month;
+        }
+        if (strDate >= 0 && strDate <= 9) {
+            strDate = "0" + strDate;
+        }
+        var currentdate = year + seperator1 + month + seperator1 + strDate;
+        
+        return currentdate;
+    }
+     $('#beginTime').val(getNowFormatDate());
+     $('#endTime').val(getNowFormatDate());
 $('.clearTime').click(begin_end_time_clear);
   //清除时间
     function begin_end_time_clear() {

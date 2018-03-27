@@ -47,9 +47,12 @@ namespace app\index\controller;
 	 	 //注册时间
 		if(request()->param('beginTime') && request()->param('endTime')){
 			$endTime=strtotime(request()->param('endTime'))+24*3600;
+			
 			$where['member_creat_time']=["between time",[request()->param('beginTime'),$endTime]];
 			$this->assign('beginTime',request()->param('beginTime'));
 			$this->assign('endTime',request()->param('endTime'));
+		}else{
+			
 		}
 
 		#身份证查询
@@ -70,6 +73,23 @@ namespace app\index\controller;
 			$this->assign('admin_group_salt',$admin_group_salt);
 		}else{
 			$this->assign('button',['text'=>'添加新用户', 'link'=>url('/index/member/register'), 'modal'=>'modal']);
+		}
+		if(input('is_export')==1){
+	 	    $fp = fopen('php://output', 'a');
+ 	    	#取数据
+	 	    $member_list=db("member")->alias('m')
+	 	    	->join('member_login l','l.login_member_id=m.member_id')
+	 	    	->join('member_group g','g.group_id=m.member_group_id')
+	 	    	->join('member_cert c','c.cert_member_id=m.member_id','left')
+	 	    	->where($where)
+	 	    	->where($wheres)
+	 	    	->order("member_id desc")
+	 	    	->field('member_id,member_nick,member_mobile,member_cert,group_name,login_state,member_creat_time')
+	 	    	->select();
+
+	 	    $head=['ID','用户名','手机号码','是否实名','会员等级','登录状态','注册时间'];
+	 	    export_csv($head,$member_list,$fp);
+	 	    return;
 		}
 	 	 //获取会员等级
 	 	 $member_group=MemberGroup::all();

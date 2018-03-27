@@ -30,3 +30,23 @@
   <script src="dist/lib/ieonly/respond.js"></script>
   <script src="dist/lib/ieonly/excanvas.js"></script>
 <![endif]-->
+<script type="text/javascript">
+  $(document).on("click",".date-picker,.ranges li,.glyphicon-chevron-right,.glyphicon-chevron-left,.daterangepicker",function(){
+    $('.glyphicon-chevron-right').addClass('icon-chevron-right nav-parent-fold-icon');
+    $('.glyphicon-chevron-left').addClass('icon-chevron-left nav-parent-fold-icon');
+  })
+  // $('.reloadhref').click(function(){
+$(document).on("click",".reloadhref",function(){
+    var page=parseInt($('.reloadpage').val());
+    if(page>0){
+        search=$(this).attr('href');
+        param=search.replace(/page\=\d+/,"page="+page);
+        if(!search)
+            param="?page="+page;
+        if(!param)
+            param=search+"&page="+page;
+        console.log(param);
+        location.href=location.origin+param;
+    }
+  })
+</script>

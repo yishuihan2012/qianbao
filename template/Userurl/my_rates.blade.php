@@ -9,11 +9,12 @@
 		<link href="/static/css/themes.css" rel="stylesheet" />
 		<link href="/static/css/page.css" rel="stylesheet" />
 	</head>
+	
 	<body>
 		<div class="mui-content my-rates">
 			<div id="myRatesList">
 				@foreach($also as $v)
-			<table class="f16">
+			<table class="f13">
 			  <caption>【{{$v['passageway_also']==1 ? '交易' : '代还'}}类】{{$v['passageway_name']}}</caption>
 			  <thead class="bg-table" align="center">
 			    <tr>
@@ -89,7 +90,7 @@
 		        //要执行的内容
 		        //isEnd =  ;
 		        for(var i=0;i<data.length;i++){
-		         $("#myRatesList").append("<table class='f16'>"+
+		         $("#myRatesList").append("<table class='f13'>"+
 					  "<caption>快捷支付一</caption>"+
 					  "<thead class='bg-table' align='center'>"+
 					    "<tr>"+

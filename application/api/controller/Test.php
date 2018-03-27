@@ -7,6 +7,8 @@ use think\Db;
 use app\index\model\System;
 use think\Request;
 use think\Config;
+use app\index\model\CashOrder;
+use app\index\model\PassagewayItem;
 
 class Test 
 {
@@ -314,4 +316,38 @@ class Test
 		public function tests(){
 			echo "finished";
 		}
+
+	public function order_rate($page){
+		$limit=($page-1)*3000;
+		// var_dump($limit);die;
+	 	$order=CashOrder::with('member,passageway')->where("order_state=2 and order_add_time>'2018-01-08 00:00:00'")->limit($limit,3000)->select();
+	 	// var_dump($order);die;
+	 	if(empty($order)){
+	 		echo "123123";die;
+	 	}
+	 	// $passway_item=PassagewayItem::all();
+			// $item=[];
+			// foreach ($passway_item as $k => $v) {
+			//     $key=$v['item_passageway'].'_'.$v['item_group'];
+			//     $item[$key]=$v;
+			// }
+			// var_dump($item['8_4']);die;
+	 	foreach ($order as $key => $value) {
+	 		//用户费率
+	 		// $rate=PassagewayItem::where('item_passageway='.$value['order_passway']. ' and item_group='.$value['member_group_id'])->field('item_rate,item_charges')->find();
+	 		// $k=$value['order_passway'].'_'.$value['member_group_id'];
+			 //    $rate=$item[$k]['item_rate'];
+			 //    $charges=$item[$k]['item_charges'];
+	 		$data=array(
+	 			// 'user_rate'=>$rate,
+	 			// 'user_fix'=>$charges/100,
+	 			'passageway_rate'=>$value->passageway->passageway_rate,
+	 			'passageway_fix' =>$value->passageway->passageway_income,
+	 			'order_passway_profit'=>$value->order_money*$value->passageway->passageway_rate/100+$value->passageway->passageway_income
+	 		);
+	 		CashOrder::where('order_id='.$value['order_id'])->update($data);
+
+	 	}
+	 	echo 'success';die;
+	 }
 }

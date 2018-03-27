@@ -43,6 +43,7 @@ class Order extends Common{
 		}else{
 			$r['cert_member_idcard'] = '';
 		}
+
 		#订单支付状态
 		if(request()->param('upgrade_state')!=''){
 			$wheres['upgrade_state'] = request()->param('upgrade_state');
@@ -53,12 +54,56 @@ class Order extends Common{
 		if(request()->param('upgrade_id')!=''){
 			$wheres['upgrade_id'] = request()->param('upgrade_id');
 		}
+
+		if(input('is_export')==1){
+			set_time_limit(0);
+	 	    $limit=20000;
+	 	    $max=100000;
+	 	    $i=intval(input('start_p')) ?? 0;
+	 	    $n=0;
+	 	    $fp = fopen('php://output', 'a');
+	 	    #算出乘数
+	 	    if($i)
+	 	    	$i=($i-1)*$max/$limit;
+	 	    do{
+	 	    	#取数据
+		 	    $order_lists=db("upgrade")->alias('o')
+		 	    	->join('member m','o.upgrade_member_id=m.member_id')
+		 	    	->join('member_cert c','c.cert_member_id=m.member_id','left')
+		 	    	->where($where)
+		 	    	->where($wheres)
+		 	    	->order("upgrade_id desc")
+		 	    	->field("member_nick,upgrade_type,upgrade_no,upgrade_money,upgrade_commission,upgrade_state,upgrade_bak,member_creat_time")
+		 	    	->limit($i*$limit,$limit)
+		 	    	->select();
+		 	    	$i++;
+		 	    	// var_dump($order_lists);die;
+		 	    // halt($order_lists);
+		 	    $status=[
+		 	    	'0'=>'待支付',
+		 	    	'1'=>'已支付',
+		 	    ];
+		 	    $list=[];
+		 	    foreach ($order_lists as $k => $v) {
+		 	    	$order_lists[$k]['upgrade_state']=$status[$v['upgrade_state']];
+		 	    }
+		 	    $head=['用户名','升级方式','流水号','升级金额','分佣金额','支付状态','备注','创建时间'];
+		 	    export_csv($head,$order_lists,$fp);
+		 	    $count=count($order_lists);
+		 	    unset($order_lists);
+		 	    $n++;
+	 	    }while($count==$limit && $n<$max/$limit);
+	 	    return;
+		}
+
+
+
 		#支付类型
-		// #查询订单列表分页
 	 	$order_lists = Upgrade::haswhere('member',$where)
 	 		->join("wt_member_cert m", "m.cert_member_id=Member.member_id","left")
 	 		->where($wheres)->field('wt_member.member_nick')->order("upgrade_id desc")
 	 		->paginate(Config::get('page_size'),false, ['query'=>Request::instance()->param()]);
+
 	 	 #统计订单条数
 	 	$count['count_size']=Upgrade::haswhere('member',$where)->join("wt_member_cert m", "m.cert_member_id=Member.member_id","left")->where($wheres)->count();
 	 	 #升级总金额
@@ -101,7 +146,8 @@ class Order extends Common{
 	 }
 
 	 #提现订单
-	 public function withdraw(){
+	 public function withdraw()
+	 {
 	 	$r=request()->param();
 	 	 #搜索条件
 	 	$data = memberwhere($r);
@@ -111,8 +157,9 @@ class Order extends Common{
 	 	$wheres = array();
 		if(request()->param('beginTime') && request()->param('endTime')){
 			$endTime=strtotime(request()->param('endTime'))+24*3600;
-			$wheres['withdraw_creat_time']=["between time",[request()->param('beginTime'),$endTime]];
+			$wheres['withdraw_add_time']=["between time",[request()->param('beginTime'),$endTime]];
 		}
+
 		#提现状态
 		if(request()->param('withdraw_state') ){
 			$wheres['withdraw_state'] = request()->param('withdraw_state');
@@ -138,12 +185,14 @@ class Order extends Common{
 		}
 		//管理员列表
 		$admins=db('adminster')->column('adminster_id,adminster_login');
+		
 	 	 // #查询订单列表分页
 	 	$order_lists = Withdraw::haswhere('member',$where)
 	 	 	->join("wt_member_cert m", "m.cert_member_id=Member.member_id","left")
 	 	 	->where($wheres)
 	 	 	->order('withdraw_add_time desc')
 	 	 	->paginate(Config::get('page_size'), false, ['query'=>Request::instance()->param()]);
+
 	 	//取出审批人姓名替换
 	 	foreach ($order_lists as $k => $v) {
 	 		if($v['withdraw_option']!=0)
@@ -184,7 +233,8 @@ class Order extends Common{
 	 	 return view('admin/order/showwithdraw');
 	 }
 	 #审核提现列表
-	 public function toexminewithdraw(){
+	 public function toexminewithdraw()
+	 {
 	 	if(request()->isPost()){
 	 		$param=request()->param();
  			$Withdraw = Withdraw::get($param['withdraw_id']);
@@ -192,7 +242,8 @@ class Order extends Common{
 	 		//审核通过
 	 		if($param['withdraw_state']==12){
 	 			//支付宝仅支持小数点后2位，数据库中存储的为小数点后4位，转换
-              $Withdraw->withdraw_amount=substr($Withdraw->withdraw_amount, 0,-2);
+	 			
+              $Withdraw->withdraw_amount=round($Withdraw->withdraw_amount, 0,2);
 	 			//调用支付接口
               $payMethod="\app\index\controller\\".$Withdraw->withdraw_method;
               $payment=new $payMethod();
@@ -251,11 +302,17 @@ class Order extends Common{
 	 	$data = memberwhere($r);
 	 	$r = $data['r'];
 	 	$where = $data['where'];
+	 	// var_dump($where);die;
 	 	 //注册时间
 	 	$wheres = array();
 		if(request()->param('beginTime') && request()->param('endTime')){
 			$endTime=strtotime(request()->param('endTime'))+24*3600;
 			$where['order_add_time']=["between time",[request()->param('beginTime'),$endTime]];
+			$r['beginTime']=request()->param('beginTime');
+			$r['endTime']=request()->param('endTime');
+		}else{
+			$r['beginTime']='';
+			$r['endTime']='';
 		}
 		#身份证查询
 		
@@ -266,11 +323,19 @@ class Order extends Common{
 		}
 		#订单状态
 		if( request()->param('order_state')){
-			$wheres['order_state'] = ['like',"%".request()->param('order_state')."%"];
+			$wheres['order_state'] = array("eq",request()->param('order_state'));
+
 		}else{
 			$r['order_state'] = '';
 		}
-
+		#通道
+		if( request()->param('passageway_id')){
+			$wheres['order_passway'] =  request()->param('passageway_id');
+			$r['passageway_id'] = request()->param('passageway_id');
+		}else{
+			$r['passageway_id'] = '';
+		}
+		// var_dump($where);die;
 		if(request()->param('order_id')){
 			$wheres['order_id'] = request()->param('order_id');
 		}
@@ -316,9 +381,42 @@ class Order extends Common{
 	 	    }while($count==$limit && $n<$max/$limit);
 	 	    return;
 		}
+	
 	 	 // #查询订单列表分页
 	 	 $order_lists = CashOrder::with('passageway')->join('wt_member m',"m.member_id=wt_cash_order.order_member")->where($where)->join("wt_member_cert mc", "mc.cert_member_id=m.member_id","left")->where($wheres)->order("order_id desc")->paginate(Config::get('page_size'), false, ['query'=>Request::instance()->param()]);
+	 	 // var_dump($order_lists);die;
+	 	 $count['chengben']=0;
+	 	 $count['yingli']=0;
+	 	 $count['sanji']=0;
+	 	 $count['fenrunhou']=0;
 	 	
+	 	 $list = CashOrder::with('passageway')->join('wt_member m',"m.member_id=wt_cash_order.order_member")->where(["order_state" => 2])->join("wt_member_cert mc", "mc.cert_member_id=m.member_id","left")->order("order_id desc")->select();
+	 	  $count['sanji'] = CashOrder::with('passageway')->join('wt_member m',"m.member_id=wt_cash_order.order_member")->where(["order_state" => 2])->join("wt_member_cert mc", "mc.cert_member_id=m.member_id","left")->order("order_id desc")->sum('order_fen');
+	 	  $count['chengben'] = CashOrder::with('passageway')->join('wt_member m',"m.member_id=wt_cash_order.order_member")->where(["order_state" => 2])->join("wt_member_cert mc", "mc.cert_member_id=m.member_id","left")->order("order_id desc")->sum('order_passway_profit');
+	 	 foreach ($order_lists as $key => $value) {
+	 	 	 $order_lists[$key]['yingli']=$value['order_charge']+$value['order_buckle']-$value['order_passway_profit'];			
+		}
+
+	 	 $where1=array_merge($where,$wheres);
+	 	 $where1['order_state'] = array("eq",2);
+	 	 $list = CashOrder::with('passageway')->join('wt_member m',"m.member_id=wt_cash_order.order_member")->where($where1)->join("wt_member_cert mc", "mc.cert_member_id=m.member_id","left")->order("order_id desc")->select();
+
+	 	 foreach ($order_lists as $key => $value) {
+	 	 	 $order_lists[$key]['fenrun']=db('commission')->alias('c')
+	 	 	 	->where('commission_from='.$value['order_id'].' and commission_type=1')
+	 	 	 	->sum('commission_money');			 
+			   #成本手续费
+	 	 	 // $count['chengben']+=$value['order_passway_profit'];
+
+		$count['yingli']+=CashOrder::with('passageway')->join('wt_member m',"m.member_id=wt_cash_order.order_member")->where(["order_state" => 2])->join("wt_member_cert mc", "mc.cert_member_id=m.member_id","left")->order("order_id desc")->sum('order_charge-order_passway_profit');
+		// var_dump($a);die;
+
+		// foreach ($list as $k => $order) {
+
+	 // 	 	 $count['yingli']+=$list[$k]['yingli'];
+	 // 	 	 // $count['sanji']+=$list[$k]['fenrun'];			
+		// }
+	 	$count['fenrunhou']=$count['yingli']-$count['sanji'];
 	 	 #统计订单条数
 	 	 $count['count_size']=CashOrder::with('passageway')->join('wt_member m',"m.member_id=wt_cash_order.order_member")->where($where)->join("wt_member_cert mc", "mc.cert_member_id=m.member_id","left")->where($wheres)->count();
 	 	 #交易总金额
@@ -327,8 +425,9 @@ class Order extends Common{
 	 	  $count['order_money_yes']=CashOrder::with('passageway')->join('wt_member m',"m.member_id=wt_cash_order.order_member")->where($where)->join("wt_member_cert mc", "mc.cert_member_id=m.member_id","left")->where($wheres)->where(['order_state'=>2])->sum("order_money");
 	 	 #交易未成功
 	 	  $count['order_money_del']=$count['order_money'] - $count['order_money_yes'];
+
 	 	 #交易总手续费
-	 	 $count['order_charge']=CashOrder::with('passageway')->join('wt_member m',"m.member_id=wt_cash_order.order_member")->where($where)->join("wt_member_cert mc", "mc.cert_member_id=m.member_id","left")->where($wheres)->sum("order_charge");
+	 	 $count['order_charge']=CashOrder::with('passageway')->join('wt_member m',"m.member_id=wt_cash_order.order_member")->where($where)->join("wt_member_cert mc", "mc.cert_member_id=m.member_id","left")->where($wheres)->where('order_state=2')->sum("order_charge");
 
 		 $this->assign('order_lists', $order_lists);
 		 $this->assign('count', $count);
@@ -338,12 +437,15 @@ class Order extends Common{
 		 if(!Request::instance()->param('member_mobile')){
 		 	$where['member_mobile']='';
 		 }
+		 $passageway=db('passageway')->where('passageway_state',1)->select();
+		$this->assign('passageway', $passageway);
 		 $member_group=MemberGroup::all();
 		$this->assign('member_group', $member_group);
 		$this->assign('r', $r);
 		 #渲染视图
 	 	return view('admin/order/cash');
 	 }
+	}
 	 #银行交易信息详情
 	 public function showcash(){
 	 	$where['order_id'] = request()->param("id");
