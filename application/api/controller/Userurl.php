@@ -279,6 +279,7 @@ class Userurl extends Controller
 
             // $member_net=MemberNet::where(['net_member_id'=>$param['uid']])->find();
             $has=MemberCreditPas::where(['member_credit_pas_creditid'=>$this->param['cardId'],'member_credit_pas_pasid'=>$this->param['passageway']])->find();
+            // var_dump($has->toArray());die;
             if(!$has){ //信用卡有没有签约
                 $MemberCreditPas=new MemberCreditPas;
                 $res=$MemberCreditPas->save(['member_credit_pas_creditid'=>$this->param['cardId'],'member_credit_pas_pasid'=>$this->param['passageway']]);

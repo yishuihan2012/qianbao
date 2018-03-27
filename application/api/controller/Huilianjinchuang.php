@@ -51,15 +51,14 @@
         // echo $bank_name;die;
         $BankInfo=BankInfo::where('info_sortname','like','%'.$bank_name.'%')->find();
         // print_r($BankInfo);die;
-        
         $idcard=$member_info->membercert->cert_member_idcard;
         //获取通道费率
         $rate=PassagewayItem::where(['item_passageway'=>$Passageway,'item_group'=>$member_info['member_group_id']])->find();
         $also=($rate->item_also)*100;
         $daikou=($rate->item_charges);
         //获取通道信息
-        $Passageway=Passageway::where(['passageway_id'=>$Passageway])->find();
-        $agentId=$Passageway->passageway_mech;
+        $Passageways=Passageway::where(['passageway_id'=>$Passageway])->find();
+        $agentId=$Passageways->passageway_mech;
         $arr=array(
             'version'=>$this->version,
             'charset'=>'UTF-8',//   编码方式UTF-8
@@ -87,9 +86,11 @@
         // var_dump($res);
         // return $res;
         if($res['code']=="10000" && $res['respCode']=10000){
-            $merId=$res['merId'];
+            echo $res['merId'];
             //setField([$Passageway->passageway_no->$merId])
-            $has=MemberCreditPas::where(['member_credit_pas_creditid'=>$card_info['card_id'],'member_credit_pas_pasid'=>$Passageway])->update(['member_credit_pas_info'=>$merId]);
+            $update['member_credit_pas_info']=$res['merId'];
+            $has=MemberCreditPas::where(['member_credit_pas_creditid'=>$card_info['card_id'],'member_credit_pas_pasid'=>$Passageway])->update($update);
+            // var_dump($has);die;
             if($has){
                 return true;
             }else{
