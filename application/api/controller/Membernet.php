@@ -168,7 +168,7 @@ use app\index\model\Member;
         #1获取费率
         // print_r($pay);die;
         // 兼容老的数据没有费率的情况，新的订单都直接取订单里的费率
-        if($pay['passageway_rate'] || $pay['passageway_fix'] || $pay['user_rate'] || $pay['user_fix']){ //如果设置了费率
+        if($pay['user_rate']>0 || $pay['user_fix']>0){ //如果设置了费率
             $order_rate=1;
             $also=$pay['user_rate']*10;
             $daikou=$pay['user_fix']*100;
@@ -249,7 +249,7 @@ use app\index\model\Member;
           $arr['back_status']='FAIL';
           $arr['order_status']='-1';
           $generation['generation_state']=-1;
-          $arr['order_buckle']=$rate['item_charges']/100;        
+          // $arr['order_buckle']=$rate['item_charges']/100;        
         }
         //添加执行记录
         $res=GenerationOrder::where(['order_id'=>$pay['order_id']])->update($arr);
@@ -424,15 +424,15 @@ use app\index\model\Member;
           }else{
               // 兼容老的数据没有费率的情况，新的订单都直接取订单里的费率
               $order_rate=0;//0代表系统费率1代表订单上费率
-              if($pay['passageway_rate'] || $pay['passageway_fix'] || $pay['user_rate'] || $pay['user_fix']){ //如果设置了费率
+              if($pay['user_rate']>0 || $pay['user_fix']>0){ //如果设置了费率
                   $order_rate=1;
                   $also=$pay['user_rate']*10;
                   $daikou=$pay['user_fix']*100;
               }else{
                   $member_group_id=Member::where(['member_id'=>$pay['order_member']])->value('member_group_id');
                   $rate=PassagewayItem::where(['item_passageway'=>$pay['order_passageway'],'item_group'=>$member_group_id])->find();
-                  $also=($rate->passageway_qf_rate)*10;
-                  $daikou=($rate->passageway_qf_fix);
+                  $also=($rate->item_qfalso)*10;
+                  $daikou=($rate->item_qffix);
               }
 
               // print_r($merch->passageway_mech);die;
@@ -748,7 +748,7 @@ use app\index\model\Member;
       }
       //处理没有结果的订单
       public function no_result_order(){
-          $time=date('Y-m-d H:i:s',time()-60*30);
+          $time=date('Y-m-d H:i:s',time()-3600);
           //查询半小时前状态为带查证的订单
           $list=GenerationOrder::where(['order_status'=>4])->where('order_time','lt',$time)->select();
           foreach ($list as $key => $order) {
@@ -756,7 +756,7 @@ use app\index\model\Member;
               //如果计划是执行中的
               if($generation['generation_state']==2){
                   //判断哪个通道
-                   $passageway=Passageway::where(['passageway_id'=>$value['order_passageway']])->find();
+                   $passageway=Passageway::where(['passageway_id'=>$order['order_passageway']])->find();
                    $passageway_mech=$passageway['passageway_mech'];
                    if($passageway['passageway_method']=='income'){
                        $huilian=new Huilianjinchuang();//实例化那个类先写死

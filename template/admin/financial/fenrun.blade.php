@@ -13,7 +13,7 @@
       <i class="icon-list-ul"></i> 成本手续费 <small>共 <strong class="text-danger">{{$count['charge']}}</strong> 元</small>
       <i class="icon-list-ul"></i> 盈利分润 <small>共 <strong class="text-danger">{{$count['yingli']}}</strong> 元</small>
       <i class="icon-list-ul"></i> 分润金额 <small>共 <strong class="text-danger">{{ $data['money']}}</strong> 元</small>
-      <i class="icon-list-ul"></i> 分润后盈利金额 <small>共 <strong class="text-danger">{{$count['fenrun_yingli']}}</strong> 元</small>
+      <i class="icon-list-ul"></i> 分润后盈利金额 <small>共 <strong class="text-danger">{{$count['yingli']-$data['money']}}</strong> 元</small>
     </h3>
 
   </header>
@@ -26,11 +26,20 @@
                 </div>
            </div>
     <div class="input-group" style="width: 180px;float: left;margin-right: 10px;">
-         <span class="input-group-addon">通道</span> 
+         <span class="input-group-addon">消费类型</span> 
       <select name="passway" class="form-control">
-          <option value="" @if($conditions['passway'] =='') selected="" @endif>全部</option>
           <option value="1" @if($conditions['passway'] ==1) selected="" @endif>快捷支付</option>
           <option value="3" @if($conditions['passway'] ==3) selected="" @endif>代还</option>
+      </select>
+   </div>
+
+    <div class="input-group" style="width: 180px;float: left;margin-right: 10px;">
+         <span class="input-group-addon">通道</span> 
+      <select name="passway_id" class="form-control">
+        <option value="" >请选择</option>
+        @foreach($passageway as $way)
+          <option value="{{$way->passageway_id}}" @if($conditions['passway_id'] ==$way->passageway_id) selected="" @endif>{{$way->passageway_name}}</option>
+        @endforeach
       </select>
    </div>
            <div class="col-sm-2">
@@ -52,6 +61,12 @@
            <div class="col-sm-1">
                 <button class="btn btn-primary" type="submit">搜索</button>
            </div>
+           <input type="hidden" name="is_export" class="is_export" value="0">
+           <div class="input-group" style="width: 180px;float: left; margin-right: 10px;">
+            <span class="input-group-addon">导出页码,10万/页</span>
+            <input type="text" name="start_p" class="form-control start_p" value="">
+          </div>
+  <button class="btn btn-primary export" type="submit">导出</button>
       </form>
     </div>
  </div>
@@ -102,6 +117,22 @@
  </section>
 
  <script type="text/javascript">
+  $('.export').click(function(){
+  $(".is_export").val(1);
+  setTimeout(function(){
+    $(".is_export").val(0);
+  },100);
+  var start_p=$('.start_p').val();
+  var end_p=$('.end_p').val();
+  if(start_p){
+    var re=/^\d+$/;
+    if(!re.test(start_p)){
+      alert('导出页码请输入数字');
+      return false;
+    }
+  }
+  alert("数据量大的话请耐心等待不要重复点击导出\n单次最大10万条数据\n点击确定开始导出");
+})
  $(document).ready(function(){
      	 $('.menu .nav .active').removeClass('active');
     	 $('.menu .nav li.fenrun_center').addClass('active');

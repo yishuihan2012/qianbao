@@ -27,20 +27,17 @@
            parent::initialize();
            #TODO:自定义的初始化
       }
+
        /**
-       *  @version getChild method /  实例方法 获取会员的直接下级信息
-       *  @author $GongKe$ (755969423@qq.com) 会员下级信息列表
-       *   @datetime    2018-1-17 13:27
-       *   @return  返回会员的下级信息 
+       *  @version getChild method /  实例方法 获取会员的直接下级信息   @datetime    2018-1-17 13:27
+       *  @author $GongKe$ (755969423@qq.com) @return  返回会员的下级基本信息 
        */
       public static function getChild(int $memberId) : array
       {
-           try {
-                not_exists_func();
-           } catch (\Exception $e) {
-                var_dump('123');
-           }
+            return self::haswhere('memberRelation',['relation_parent_id'=>$memberId])->column('member_id,member_nick,member_mobile,member_image,member_cert,member_creat_time');
+            // return self::haswhere('memberRelation',['relation_parent_id'=>$memberId])->field('member_id,member_nick,member_mobile,member_image,member_cert,member_creat_time')->select();
       }
+
       #关联模型 一对一关联 (MemberCertification) 用户实名表
       public function membercert()
       {

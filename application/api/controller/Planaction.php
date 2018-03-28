@@ -130,7 +130,7 @@
  			}else{
  				$order->order_state=-1;
  			}
-            $order->order_desc.=$res['statusDesc'];
+            $order->order_desc=$res['statusDesc'];
 			$order->save();
 		}
  	}

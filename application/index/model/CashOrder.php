@@ -47,5 +47,13 @@
       {
            return $this->hasOne('Member','member_id','order_member','','left')->bind("member_nick,member_mobile,member_group_id")->setEagerlyType(0);
       }
+       /**
+       *  @version getMemberCash method /  实例方法 返回会员的套现总额 订单总额
+       *  @author $GongKe$ (755969423@qq.com)  Time  2018-1-17 13:27
+       */
+      public static function getMemberCash(int $memberId) : float
+      {
+           return self::where(['order_member'=>$memberId])->sum('order_money');
+      }
 
 }

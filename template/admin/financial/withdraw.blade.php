@@ -4,11 +4,12 @@
  <head>
  <link href="/static/css/zui.min.css" rel="stylesheet">
  <link href="/static/css/animate.min.css" rel="stylesheet">
+<script src="/static/lib/jquery/jquery.js"></script>
  </head>
   <body class="main-container animated fadeInLeft" style="height: 100%">
 <table class="table table-hover">
 	 <tr>
-		 <th>#</th>
+         <th>#<a href="/index/financial/withdraw/is_export/1" class="btn btn-sm btn-primary ">导出</a></th>
 		 <th>流水号</th>
 		 <th>会员</th>
 		 <th>方式</th>
@@ -36,4 +37,18 @@
 </body>
 </html>
 
+<script type="text/javascript">
+$(document).on("click",".reloadhref",function(){
+    var page=parseInt($('.reloadpage').val());
+    if(page>0){
+        search=$(this).attr('href');
+        param=search.replace(/page\=\d+/,"page="+page);
+        if(!search)
+            param="?page="+page;
+        if(!param)
+            param=search+"&page="+page;
+        location.href=location.origin+param;
+    }
+  })
+</script>
 

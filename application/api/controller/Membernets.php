@@ -41,7 +41,7 @@
                  #获取通道信息
                  $this->passway=Passageway::get($passwayId);
                  if(!$this->passway)
-                      $this->error=454; 
+                      $this->error=454;
            }catch (\Exception $e) {
                  $this->error=460; //TODO 更改错误码 入网失败错误码
            }
@@ -102,11 +102,13 @@
       public function rongbangnet(){
         trace("rongbangnet");
         #取出荣邦对应的费率代码
-        $rate_code=db('passageway_rate')->alias('r')
-          ->join('passageway_item i','r.rate_rate=i.item_rate and r.rate_charge=i.item_charges')
-          // ->join('passageway_item i','r.rate_charge*100=i.item_charges')
-          ->where(['r.rate_passway_id'=>$this->passway->passageway_id,'i.item_group'=>$this->member->member_group_id,'i.item_passageway'=>$this->passway->passageway_id])
-          ->value('r.rate_code');
+        // $rate_code=db('passageway_rate')->alias('r')
+        //   ->join('passageway_item i','r.rate_rate=i.item_rate and r.rate_charge=i.item_charges')
+        //   // ->join('passageway_item i','r.rate_charge*100=i.item_charges')
+        //   ->where(['r.rate_passway_id'=>$this->passway->passageway_id,'i.item_group'=>$this->member->member_group_id,'i.item_passageway'=>$this->passway->passageway_id])
+        //   ->value('r.rate_code');
+        #设一个初始费率 积分 ？ 无积分
+        $rate_code=$this->passway->passageway_mech=='402512936' ? '669174' : '003867'; 
         if(!$rate_code)
           return '该用户对应的费率无套餐编码，请管理员核对！';
 
@@ -115,12 +117,16 @@
          #定义请求报文组装
          $arr=array(
           //全平台唯一 加商户id确保全平台唯一 设定固定值 
-           'companyname'    =>$this->membercard->card_name . $this->member->member_mobile . '_xijia_'. $this->passway->passageway_mech,
+          //姓名 + 身份证号 + "_xj_" + 通道商户号
+           // 'companyname'    =>$this->membercard->card_name . $this->member->member_mobile . '_xijia_'. $this->passway->passageway_mech,
+           'companyname'    =>$this->membercard->card_name . $this->membercard->card_idcard . '_xj_'. $this->passway->passageway_mech,
            // 'companyname'    =>$this->membercard->card_name . $this->passway->passageway_id . $c_name . rand(100,999),
            // 'companyname'    =>"test".time(),
            // 'companycode'     =>$this->member->member_mobile,
           //全平台唯一 加通道id以区分
-           'companycode'     =>$this->member->member_mobile . '_xijia',
+          //身份证号 + "_xj"
+           // 'companycode'     =>$this->member->member_mobile . '_xijia',
+           'companycode'     =>$this->membercard->card_idcard . '_xj',
            // 'companycode'     =>$this->member->member_mobile . $this->passway->passageway_id . $c_name . rand(100,999),
            'accountname'      =>$this->membercard->card_name,
            'bankaccount'       =>$this->membercard->card_bankno,
@@ -167,7 +173,8 @@
         // $userinfo=db('member_net')->where('net_member_id',$this->member->member_id)->value($this->passway->passageway_no);
         // $userinfo=explode(',', $userinfo);
         $arr=[
-          'companycode'=>$this->member->member_mobile . '_xijia',
+          'companycode'     =>$this->membercard->card_idcard . '_xj',
+          // 'companycode'=>$this->member->member_mobile . '_xijia',
           // 'companycode'=>$userinfo[1],
           // 'mobilephone'=>$this->member->member_mobile ,
         ];
@@ -206,9 +213,9 @@
         trace("rongbang_openpay");
        $credit=db('member_creditcard')->where('card_id',$cardid)->find();
         $arr=[
-          'mobilephone'=>$this->member->member_mobile,
-          'accountname'=>$this->member->member_nick,
-          'certificateno'=>$this->membercert->cert_member_idcard,
+          'mobilephone'=>$credit['card_phone'],
+          'accountname'=>$credit['card_name'],
+          'certificateno'=>$credit['card_idcard'],
           'accounttype'=>1,
           'certificatetype'=>1,
           'collecttype'=>1,
@@ -306,7 +313,7 @@
   "ordernumber": "test201801101523"
 }';
         //402573747  封顶通道 
-        if($this->passway->passageway_id==11){
+        if($this->passway->passageway_mech==402573747){
           $paymenttypeid='4';
           $payextraparams='"{\"bankaccount\":\"'.$credit['card_bankno'].'\"}"';
           //402512992 快捷无积分
@@ -326,7 +333,7 @@
           "ordernumber": "'.$tradeNo.'",
           "fronturl":"'. request()->domain() . '/api/Userurl/passway_success/order_no/'.$tradeNo.'"
         }';
-
+        // return $arr;
         // echo ($arr);die;
         // echo (json_encode($arr));die;
           $data=rongbang_curl(rongbang_foruser($this->member,$this->passway),$arr,'masget.pay.compay.router.back.pay');
@@ -343,6 +350,7 @@
               'ordercode'=>rand(100000,999999),
             ];
           }else{
+            trace($data);
             return $data['message'];
           }
       }
