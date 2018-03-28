@@ -1,50 +1,28 @@
 @extends('admin/layout/layout_main')
-@section('title','会员列表管理~')  
+@section('title',$current_member->member_nick.'下级用户列表')  
 @section('wrapper')
  <style>
   .content td{vertical-align: middle;}
  </style>
  <header>
-    <h3><i class="icon-list-ul"></i> 用户总人数 <small>共 <strong class="text-danger">{{$count}}</strong> 人</small>
-      <i class="icon-list-ul"></i> 未实名总人数 <small>共 <strong class="text-danger">{{$wei_count}}</strong> 人</small>
-      <i class="icon-list-ul"></i> 已实名总人数 <small>共 <strong class="text-danger">{{$yi_count}}</strong> 人</small>
-    </h3>
-     <h3>
-    @foreach($group_user as $key => $val)
-      <i class="icon-list-ul"></i> {{$val['group_name']}} <small>共 <strong class="text-danger">{{$val['count']}}</strong> 人</small>
-    @endforeach
-     </h3>
      @if(isset($current_member))
       <h3>
-        当前为  <strong class="text-danger">{{$current_member->member_nick}}</strong> 直接推荐会员列表
+          <strong class="text-danger">{{$current_member->member_nick}}</strong> 下级会员列表
       </h3>
      @endif
+     <h3>
+      <i class="icon-list-ul"></i> 会员数 <small>共 <strong class="text-danger">{{$data['count']}}</strong> 人</small>
+      <i class="icon-list-ul"></i> 分润 <small>共 <strong class="text-danger">{{$data['fenrun']}}</strong> 元</small>
+     </h3>
   </header>
 <blockquote>
    
 	<form action="" method="post">
-    <div class="input-group" style="width: 150px;float: left;margin-right: 10px;">
-    <span class="input-group-addon">用户名</span>
-    <input type="text" class="form-control" name="member_nick" value="{{$r['member_nick']}}" placeholder="用户名">
-  </div>
-  <div class="input-group" style="width: 180px;float: left;margin-right: 10px;">
-    <span class="input-group-addon">手机号</span>
-    <input type="text" class="form-control" name="member_mobile" value="{{$r['member_mobile']}}" placeholder="手机号">
-  </div>
-  
   <div class="input-group" style="width: 240px;float: left;margin-right: 10px;">
-    <span class="input-group-addon">身份号</span>
-    <input type="text" class="form-control" name="cert_member_idcard" value="{{$r['cert_member_idcard']}}" placeholder="身份号">
+    <span class="input-group-addon">用户名/手机号</span>
+    <input type="text" class="form-control" name="member_nick" value="{{$r['member_nick'] or ''}}" placeholder="用户名/手机号">
   </div>
-  <div class="input-group" style="width: 150px;float: left;margin-right: 10px;">
-     <span class="input-group-addon">实名状态</span>
-  <select name="member_cert" class="form-control">
-    <option value="" >全部</option>
-    <option value="1" @if($r['member_cert']==1) selected @endif>已认证</option>
-    <option value="2" @if($r['member_cert']==2) selected @endif>未认证</option>
-  </select>
  
-  </div>
   <div class="input-group" style="width: 180px;float: left;margin-right: 10px;">
      <span class="input-group-addon">会员级别</span>
   <select name="member_group_id" class="form-control">
@@ -54,13 +32,44 @@
     @endforeach
   </select>
   </div>
+  <div class="input-group" style="width: 180px;float: left;margin-right: 10px;">
+     <span class="input-group-addon">是否实名</span>
+    <select name="member_cert" class="form-control">
+        <option value="1" >是</option>
+        <option value="0" {{$r['member_cert']==0 ? 'selected' : ''}}>否</option>
+    </select>
+  </div>
 
-<div class="input-group" style="width: 260px;float: left; margin-right: 10px;">
+  <div class="input-group" style="width: 220px;float: left;margin-right: 10px;">
+     <span class="input-group-addon">统计通道</span>
+  <select name="passageway_id" class="form-control">
+      <option value="" @if ($r['passageway_id']=='') selected="" @endif>全部</option>
+    @foreach($passway as $v)
+      <?php if($v['passageway_state']!=1)continue; ?>
+      <option value="{{$v['passageway_id']}}" @if ($r['passageway_id']==$v['passageway_id']) selected @endif>({{$v['passageway_also']==1 ? '消费' : '代还'}}){{$v['passageway_name']}}</option>
+    @endforeach
+  </select>
+  </div>
+
+  <div class="input-group" style="width: 180px;float: left;margin-right: 10px;">
+     <span class="input-group-addon">推荐关系</span>
+  <select name="relation" class="form-control">
+      <option value="" @if ($r['relation']=='') selected="" @endif>全部</option>
+      <option value="1" {{$r['relation']==1 ? 'selected' : ''}} >直接</option>
+      <option value="2" {{$r['relation']==2 ? 'selected' : ''}} >间接</option>
+      <option value="3" {{$r['relation']==3 ? 'selected' : ''}} >三级</option>
+  </select>
+  </div>
+
+<div class="input-group" style="width: 380px;float: left; margin-right: 10px;">
   <span class="input-group-addon">注册时间</span>
-    <input type="text" class="form-control date-picker" id="dateTimeRange" placeholder="注册时间" />
-    <input type="hidden" name="beginTime" id="beginTime" value="" />
-    <input type="hidden" name="endTime" id="endTime" value="" />
-    <z class='clearTime'>X</z>
+    <input type="date" name="beginTime" id="beginTime" value="{{$r['beginTime'] or ''}}" />
+    <input type="date" name="endTime" id="endTime" value="{{$r['beginTime'] or ''}}" />
+</div>
+
+<div class="input-group" style="width: 380px;float: left; margin-right: 10px;">
+  <span class="input-group-addon">含零分润</span>
+  <input type="checkbox" name="hasNofenrun"  value="{{$r['hasNofenrun'] or ''}}" />
 </div>
 
 	<button class="btn btn-primary" type="submit">搜索</button>
@@ -77,10 +86,8 @@
           <th>ID</th>
           <th>用户名</th>
           <th>手机号码</th>
-          <th>用户头像</th>
-          <th>是否实名</th>
+          <th>分润总计</th>
           <th>会员等级</th>
-          <th>登录状态</th>
           <th>注册时间</th>
           <th>操作</th>
           
@@ -92,10 +99,8 @@
           <td>{{$val->member_id}}</td>
           <td>{{$val->member_nick}}</td>
           <td>{{$val->member_mobile}}</td>
-          <td><img src="{{$val->member_image}}" data-toggle="lightbox"  class="img-circle" style="max-width: 40px;"></td>
-          <td>@if($val->member_cert == 2) 审核未通过 @else {{state_preg($val->member_cert,1,'实名')}} @endif</td>
-          <td>{{$val->group_name}}</td>
-          <td>{{$val->login_state==1 ? '正常' : '封停'}}</td>
+          <td>{{$val->sum}}</td>
+          <td>{{$member_group[$val->member_group_id]['group_name']}}</td>
           <td>{{$val->member_creat_time}}</td>
           <td>
 <!--                      <button type="button" data-toggle="modal" data-size="lg" data-remote="{{url('/index/member/info/id/'.$val->member_id)}}" class="btn btn-sm">查看详情</button>
@@ -105,12 +110,11 @@
                      <div class="btn-group">
                            <button type="button" class="btn btn-sm dropdown-toggle" data-toggle="dropdown"><span class="caret"></span></button>
                            <ul class="dropdown-menu" role="menu">
-                                <li><a data-toggle="modal" data-remote="{{url('/index/member/upgrade/id/'.$val->member_id.'/member_group_id/'.$val->member_group_id)}}" href="#">升级会员</a></li>
                  @if($admin['adminster_group_id']!=5)
-                                <li><a data-remote="{{url('/index/member/commiss',['memberId'=>$val->member_id])}}" href="{{url('/index/member/commiss',['memberId'=>$val->member_id])}}">分佣分润</a></li>
+                                <li><a data-remote="{{url('/index/financial/fenrun',['memberId'=>$val->member_id])}}" href="{{url('/index/member/commiss',['memberId'=>$val->member_id])}}">分润明细</a></li>
                                <!--  <li><a data-size='lg' data-toggle="modal" data-remote="{{url('/index/member/child',['memberId'=>$val->member_id])}}" href="#">下级信息</a></li> -->
                               <!-- <li><a class="son" data-width='1440' data-toggle="modal" data-remote="{{url('/index/member/child',['memberId'=>$val->member_id])}}" href="#">下级信息</a></li> -->
-                              <!-- <li><a  href="/index/member/children?member_id={{$val->member_id}}">下级列表</a></li> -->
+                              <li><a  href="/index/member?member_id={{$val->member_id}}">下级列表</a></li>
                      @endif
                            </ul>
                      </div>
@@ -127,34 +131,7 @@
       </tr>
     </tfoot>
 </table>
-<!--  <div class="row">
-      @foreach ($member_list as $list)
-      <div class="col-sm-2">
-           <a class="card" href="###" class="btn btn-default btn-sm">
-              <img src="{{$list->member_image}}" data-toggle="lightbox"  class="img-circle" style="max-width: 30%">
-              <div class="card-heading"><strong>{{$list->member_nick}}<br/>({{$list->member_mobile}}){{state_preg($list->member_cert,1,'实名')}}</strong></div>
 
-
-              <div class="card-actions">
-                <span style="font-size: 12px;">会员等级:</span> <code>{{$list->group_name}}</code>
-              </div>
-
-
-              <div class="card-actions">
-                <span style="font-size: 12px;">登录状态:</span> <code>@if($list->login_state==1)正常@else封停@endif</code>
-                <div class="pull-right text-gray"><span style="font-size: 12px;">注册时间:</span> <code>{{$list->member_creat_time}}</code></div>
-              </div>
-              <div class="text-gray">
-                <button class="btn btn-sm" data-toggle="modal" data-remote="{{url('/index/member/info/id/'.$list->member_id)}}"  type="button">查看详情</button>
-                <button class="btn btn-sm" type="button">升级会员</button>
-              </div>
-
-           </a>
-      </div>
-      @endforeach
-</div> -->
-
-<!-- {!! $member_list->render() !!}<em>当前共{{$count}}条</em> -->
  <script type="text/javascript">
  $(document).ready(function(){
       $('table.datatable').datatable({sortable: true});

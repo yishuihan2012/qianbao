@@ -337,6 +337,7 @@ class Order extends Common{
                 #重组导出数据
                 $list=[];
                 foreach ($order_data as $k => $v) {
+                    $order_fen=isset($cms[$v['order_id']])?$cms[$v['order_id']]:0;
                     $list[$k]=[];
                     $list[$k][]=$v['order_id'];
                     $list[$k][]="`".$v['order_no'];
@@ -346,8 +347,9 @@ class Order extends Common{
                     $list[$k][]=$v['order_money'];
                     $list[$k][]=$v['order_charge']+$v['order_buckle'];
                     $list[$k][]=$v['order_passway_profit']+$v['passageway_fix'];
-                    $list[$k][]=isset($cms[$v['order_id']])?$cms[$v['order_id']]:0;          
-                    $list[$k][]=$v['order_charge']+$v['order_buckle']-$v['order_passway_profit']-$v['passageway_fix']-(isset($cms[$v['order_id']])?$cms[$v['order_id']]:0);
+                    $list[$k][]=$v['order_charge']+$v['order_buckle']-$v['order_passway_profit']-$v['passageway_fix'];
+                    $list[$k][]=$order_fen;
+                    $list[$k][]=$v['order_charge']+$v['order_buckle']-$v['order_passway_profit']-$v['passageway_fix']-$order_fen;
                     $list[$k][]=$passageway[$v['order_passway']]['passageway_name'];
                     $list[$k][]=$status[$v['order_state']];
                     $list[$k][]=$v['order_desc'];
@@ -355,7 +357,7 @@ class Order extends Common{
                 }
                     $i++;
                 // halt($order_lists);
-                $head=['#','交易流水号','刷卡人','结算卡','信用卡','总金额','刷卡手续费','成本手续费','分润金额','盈利','通道','订单状态','备注','创建时间'];
+                $head=['#','交易流水号','刷卡人','结算卡','信用卡','总金额','刷卡手续费','成本手续费','结算金额','分润金额','盈利','通道','订单状态','备注','创建时间'];
                 export_csv($head,$list,$fp);
                 $count=count($list);
                 unset($order_lists);
@@ -585,6 +587,7 @@ class Order extends Common{
      }
       #成功交易订单
      public function successCash(){
+        $this->redirect("order/cash",['order_state'=>2]);
         $r=request()->param();
          #搜索条件
         $data = memberwhere($r);
