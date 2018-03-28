@@ -427,7 +427,7 @@
             $update_res=GenerationOrder::where(['order_id'=>$order['order_id']])->update($update_order);
         }
         //查询上次刷卡费率是否和这次一样，不一样需要变更费率。
-        $order_last=GenerationOrder::where(['order_type'=>1])->where('order_no','lt',$value['order_no'])->order('order_id desc')->find();
+        $order_last=GenerationOrder::where(['order_type'=>1])->where('order_no','lt',$order['order_no'])->order('order_id desc')->find();
         if($order_last['user_fix'] !=$order['user_fix']){//重新报备
             $arr['extraFee']=$order['user_fix']*100;
             $res=$this->reincome($passageway_mech,$member_pas['member_credit_pas_info'],$arr);
