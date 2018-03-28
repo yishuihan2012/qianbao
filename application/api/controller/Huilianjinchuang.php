@@ -243,6 +243,9 @@
             $arr['rate']=$value['user_rate']*100;
             $res=$this->reincome($passageway_mech,$member_pas['member_credit_pas_info'],$arr);
         }
+        $member_base=Member::where(['member_id'=>$value['order_member']])->find(); 
+        #2获取通道信息
+        $merch=Passageway::where(['passageway_id'=>$value['order_passageway']])->find();
         //订单号
         if(!$value['order_platform_no'] || $value['order_status']!=1){
             $update_order['order_platform_no']=$value['order_platform_no']=uniqid();
@@ -264,12 +267,15 @@
         // var_dump($arr);die;
         $url=$this->url.'/treatyPay';
         $res=$this->request($url,$arr);
-        // var_dump($res);die;
+        $income['code']=-1;
+        $income['back_status']='FAIL';
         if($res['code']=='10000'){
             $update['back_tradeNo']=$res['orderNo'];
             $update['back_status']=$res['respCode'];
             $update['back_statusDesc']=$res['respMessage'];
             if($res['respCode']=="10000"){
+                $income['code']=200;
+                $income['back_status']='success';
                 $update['order_status']='2';
                 // $generation['generation_state']=3;
                 $update['order_platform']=$value['order_pound']-($value['order_money']*$merch['passageway_rate']/100)-$merch['passageway_income'];
@@ -296,6 +302,10 @@
         // if(isset($generation)){
         //     Generation::where(['generation_id'=>$order['order_no']])->update($generation);
         // }
+         #更改完状态后续操作
+        $notice=new \app\api\controller\Membernet();
+        $action=$notice->plan_notice($value,$income,$member_base,1,$merch);
+
     }
     /**
      * 下单支付
@@ -361,7 +371,6 @@
                 $update['order_status']='4';
             }else{
                 $update['order_status']='-1';
-                //带查证或者支付中。。。
             }
         }else{
           $update['back_statusDesc']=$res['message'];
@@ -384,6 +393,7 @@
     public function payCallback(){
         $data = file_get_contents("php://input");
         file_put_contents('huilianpay_callback.txt', $data);
+        $pay=GenerationOrder::where(['order_platform_no'=>$data['orderNo']])->find();
         if($data['code']==10000){ //是否处理成功
                 if($data['respCode']==10000){
                     $arr['order_status']='2';
@@ -405,6 +415,12 @@
         $arr['back_tradeNo']=$data['orderNum'];
         //添加执行记录
         $res=GenerationOrder::where(['order_id'=>$pay['order_id']])->update($arr);
+        if($data['code']==10000 && $data['respCode']==10000){
+            // 极光推送
+            $card_num=substr($pay['order_card'],-4);
+            jpush($pay['order_member'],'还款计划扣款成功通知',"您制定的尾号{$card_num}的还款计划成功扣款".$pay['order_money']."元，在APP内还款计划里即可查看详情。");
+            echo "success";die;
+        }
     }
     /**
      * 代付
@@ -421,7 +437,8 @@
         // echo $bank_name;die;
         // $BankInfo=BankInfo::where('info_sortname','like','%'.$bank_name.'%')->find();
         // $expDate=$card_info['card_expireDate'];
-        // $merch=Passageway::where(['passageway_id'=>$order['order_passageway']])->find();
+        $merch=Passageway::where(['passageway_id'=>$order['order_passageway']])->find();
+        $member_base=Member::where(['member_id'=>$order['order_member']])->find();
         // $rate=PassagewayItem::where(['item_passageway'=>$order['order_passageway'],'item_group'=>$member_info['member_group_id']])->find();
         if(!$order['order_platform_no'] || $order['order_status']!=1){
             $update_order['order_platform_no']=$order['order_platform_no']=uniqid();
@@ -452,6 +469,7 @@
         $url=$this->url.'/mercPay';
         $res=$this->request($url,$arr);
         // print_r($res);
+        $income['code']=-1;
         if($res['code']=='10000'){
              $update['back_tradeNo']=$res['orderNo'];
              $update['back_status']=$res['respCode'];
@@ -475,7 +493,7 @@
           $update['back_status']='FAIL';
           $update['order_status']='-1';
           $generation['generation_state']=-1;
-          // $update['order_buckle']=$rate['item_charges']/100;        
+          // $update['order_buckle']=$rate['item_charges']/100;         
         }
         //添加执行记录
         $res=GenerationOrder::where(['order_id'=>$order['order_id']])->update($update);
@@ -483,6 +501,9 @@
         if(isset($generation)){
             Generation::where(['generation_id'=>$order['order_no']])->update($generation);
         }
+         #更改完状态后续操作
+        $notice=new \app\api\controller\Membernet();
+        $action=$notice->plan_notice($order,$income,$member_base,0,$merch);
     }
     /**
      * 还款回调
