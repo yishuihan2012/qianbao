@@ -134,7 +134,7 @@
         }
         if(isset($data['extraFee'])){
             
-            $arr['extraFee']=$data['extraFee']*100;
+            $arr['extraFee']=$data['extraFee']; //文档上写的单位是分，但测试实际结果为元
             $arr['type']='R';
         }
         //如果更换卡号就像当于重新绑新卡了，不用重新进件
