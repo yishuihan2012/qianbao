@@ -355,7 +355,7 @@
         $is_commission=0;
         // $arr['income_tradeNo']=$params['orderNo'];
         if($res['code']=='10000'){
-             $update['back_tradeNo']=$res['orderNo'];
+             $update['back_tradeNo']=$res['orderNum'];
              $update['back_status']=$res['respCode'];
             if($res['respCode']=="10000"){
                 $update['back_statusDesc']=$res['respMessage'];
@@ -470,11 +470,14 @@
         $res=$this->request($url,$arr);
         // print_r($res);
         $income['code']=-1;
+        $income['status']="FAIL";
         if($res['code']=='10000'){
-             $update['back_tradeNo']=$res['orderNo'];
+             $update['back_tradeNo']=$res['orderNum'];
              $update['back_status']=$res['respCode'];
              $update['back_statusDesc']=$res['respMessage'];
             if($res['respCode']=="10000"){
+                $income['code']='200';
+                $income['status']="success";
                 $update['order_status']='2';
                 // $generation['generation_state']=3;
                 $update['order_platform']=$order['order_pound']-($order['order_money']*$merch['passageway_rate']/100)-$merch['passageway_income'];
@@ -511,7 +514,8 @@
      */
     public function cashCallback(){
         $data = file_get_contents("php://input");
-        file_put_contents('huilianpay_cashcallback.txt', $data);
+        file_put_contents('huiliancash_callback.txt', $data);
+        $pay=GenerationOrder::where(['order_platform_no'=>$data['orderNo']])->find();
         if($data['code']==10000){ //是否处理成功
                 if($data['respCode']==10000){
                     $arr['order_status']='2';
@@ -533,6 +537,12 @@
         $arr['back_tradeNo']=$data['orderNum'];
         //添加执行记录
         $res=GenerationOrder::where(['order_id'=>$pay['order_id']])->update($arr);
+        if($data['code']==10000 && $data['respCode']==10000){
+            // 极光推送
+            $card_num=substr($pay['order_card'],-4);
+            jpush($pay['order_member'],'还款计划扣款成功通知',"您制定的尾号{$card_num}的还款计划成功扣款".$pay['order_money']."元，在APP内还款计划里即可查看详情。");
+            echo "success";die;
+        }
     }
     /**
      * 订单状态查询
