@@ -55,7 +55,7 @@
         //获取通道费率
         $rate=PassagewayItem::where(['item_passageway'=>$Passageway,'item_group'=>$member_info['member_group_id']])->find();
         $also=($rate->item_also)*100;
-        $daikou=($rate->item_charges);
+        $daikou=($rate->item_qffix);
         //获取通道信息
         $Passageways=Passageway::where(['passageway_id'=>$Passageway])->find();
         $agentId=$Passageways->passageway_mech;
