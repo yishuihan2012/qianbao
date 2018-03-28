@@ -986,6 +986,7 @@ function SortByASCII($arr)
               'notice_registration_id'=>$member_token,
             ]);
                 $jpush->set_message_title($title);
+                $jpush->set_message_type($type);
             // $jpush->set_audience('all');
             $jpush->set_registration_id($member_token);
                 $jpush->set_message_sort_desc($content);
