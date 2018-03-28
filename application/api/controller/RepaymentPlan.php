@@ -97,7 +97,7 @@
                  }
            }
            if(!$support){
-              return['code'=>486,'msg'=>'当前通道暂不支持改卡'];//开始还款日期必须大于今天
+              return['code'=>486,'msg'=>'当前通道暂不支持该银行'];//开始还款日期必须大于今天
            }
           // if($card_info['card_bankname']=="招商银行"|| $card_info['card_bankname']=="交通银行" ){
           //      return['code'=>486,'msg'=>'抱歉，还款功能暂时不支持交通银行和招商银行。'];//开始还款日期必须大于今天
