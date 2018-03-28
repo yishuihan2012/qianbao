@@ -85,10 +85,18 @@
                return['code'=>485];//开始还款日期必须大于今天
           }
            //判断当前通道是否支持该银行
+           $support=0;
            $card_info=MemberCreditcard::where('card_id='.$this->param['cardId'])->find();
            $support_list=CreditCard::where(['bank_passageway_id'=>$this->param['passageway']])->select();
            $bank_list=array_column($support_list, 'card_name');
-           if(!in_array($card_info['card_bankname'], $bank_list)){
+           $card_bankname=mb_substr($card_info['card_bankname'],-4,2);
+           foreach ($bank_list as $key => $bank) {
+                 $bankname=mb_substr($bank,-4,2);
+                 if($bankname==$card_bankname){
+                    $support=1;
+                 }
+           }
+           if(!$support){
               return['code'=>486,'msg'=>'当前通道暂不支持改卡'];//开始还款日期必须大于今天
            }
           // if($card_info['card_bankname']=="招商银行"|| $card_info['card_bankname']=="交通银行" ){
