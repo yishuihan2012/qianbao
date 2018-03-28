@@ -36,10 +36,10 @@ class Appversion extends Controller
       protected $param;
       public $error=0;
       
-    public function __construct($param)
-	  {
-	    	 $this->param=$param;
-	  }
+   //  public function __construct($param)
+	  // {
+	  //   	 $this->param=$param;
+	  // }
    /**
    *杨成志[3115317085@QQ.com]
    *app版本接口
@@ -63,4 +63,18 @@ class Appversion extends Controller
 		      }
 		  // die;
    	}
-}
+   	/**
+   	 * 获取上线版本
+   	 * @return [type] [description]
+   	 */
+   	public function getVersion(){
+   		 $version= Appversions::where(['version_type'=>'android_sx'])->find();
+   		 if($version){
+   		 	$data['version']=$version['version_code'];
+   		 	$data['status']=$version['version_state'];
+   		 	return ['code'=>200,'msg'=>'success','data'=>$data];
+   		 }else{
+   		 	return ['code'=>100,'msg'=>'未查询到数据','data'=>[]];
+   		 }
+   	}
+} 
