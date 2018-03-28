@@ -475,7 +475,7 @@
           $update['back_status']='FAIL';
           $update['order_status']='-1';
           $generation['generation_state']=-1;
-          $update['order_buckle']=$rate['item_charges']/100;        
+          // $update['order_buckle']=$rate['item_charges']/100;        
         }
         //添加执行记录
         $res=GenerationOrder::where(['order_id'=>$order['order_id']])->update($update);
