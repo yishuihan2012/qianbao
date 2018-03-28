@@ -20,6 +20,7 @@
  use app\index\model\PassagewayItem;
  use app\index\model\Passageway;
  use app\index\model\MemberNet;
+ use app\index\model\CreditCard;
  class RepaymentPlan 
  {
       public $error;
@@ -49,12 +50,12 @@
       public function creatPlan(){
            // $this->param['uid']=42;
            // $this->param['token']=16;
-           // $this->param['cardId']=60;
+           // $this->param['cardId']=63;
            // $this->param['billMoney']=5000;
            // $this->param['payCount']=3;
-           // $this->param['startDate']="2018-02-08";
-           // $this->param['endDate']="2018-02-11";
-           // $this->param['passageway']='8';
+           // $this->param['startDate']="2018-04-08";
+           // $this->param['endDate']="2018-04-11";
+           // $this->param['passageway']='21';
            if(!$this->param['uid'] || !$this->param['token']=16 || !$this->param['cardId'] || !$this->param['billMoney'] || !$this->param['payCount'] || !$this->param['startDate'] || !$this->param['endDate'] || !$this->param['passageway']){
                return['code'=>'313','msg'=>'获取数据失败'];
            }
@@ -83,7 +84,14 @@
           if($this->param['startDate']==date('Y-m-d',time())){
                return['code'=>485];//开始还款日期必须大于今天
           }
-          // $card_info=MemberCreditcard::where('card_id='.$this->param['cardId'])->find();
+           //判断当前通道是否支持该银行
+           $card_info=MemberCreditcard::where('card_id='.$this->param['cardId'])->find();
+           $support_list=CreditCard::where(['bank_passageway_id'=>$this->param['passageway']])->select();
+           $bank_list=array_column($support_list, 'card_name');
+           echo $card_info['card_bankname'];
+           if(!in_array($card_info['card_bankname'], $bank_list)){
+              return['code'=>486,'msg'=>'当前通道暂不支持改卡'];//开始还款日期必须大于今天
+           }
           // if($card_info['card_bankname']=="招商银行"|| $card_info['card_bankname']=="交通银行" ){
           //      return['code'=>486,'msg'=>'抱歉，还款功能暂时不支持交通银行和招商银行。'];//开始还款日期必须大于今天
           // }

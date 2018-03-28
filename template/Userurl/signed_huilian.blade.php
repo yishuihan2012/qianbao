@@ -19,7 +19,8 @@
   <div class="mui-content order-payment">
   	<div class="f16 normal-color wrap">
   		<img src="/static/images/unionpay.png" class="v-m space-right media-pic2">
-  		<span>首次使用银联还款通道需签约，完成预付款,请确认您的信用卡信息无误。</span>
+  		<span>首次使用银联还款通道需签约,请确认您的信用卡信息无误。</span>
+  		<span style="color:red; display: block;">注意：最多有三次签约机会！请仔细核实信息，如果签约三次失败，将无法再签约。</span>
   	</div>
   	<ul class="mui-table-view bg-color signed-list">
 	    <li class="mui-table-view-cell bg-w bor-bot">
@@ -124,7 +125,9 @@
 				        'orderNo':$('input[name="bindId"]').val(),
 				        'smsCode':vcode,
 				        'agentid':"{{$data['passageway']['passageway_mech']}}",
-				        'merId':"{{$data['merId']}}"
+				        'merId':"{{$data['merId']}}",
+				        'cardid':"{{$data['MemberCreditcard']['card_id']}}",
+				        "passageway_id":"{{$passageway_id}}"
 		          	};
 		            $.post(url,data,function(data){
 
