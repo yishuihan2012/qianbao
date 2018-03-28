@@ -45,7 +45,7 @@
               }
                $passageway[$key]['item_rate'].=' 代付'.$rate->item_rate.'%';
               if($rate->item_qffix){
-                $passageway[$key]['item_qffix'].="+".$rate->item_qffix/100;
+                $passageway[$key]['item_rate'].="+".$rate->item_qffix/100;
               }
               $passageway[$key]['cashout']='最大交易额度：'.$value['cashout_max'].'最小交易额度：'.$value['cashout_min'];
               $passageway[$key]['passageway_id']=$value['passageway_id'];
