@@ -70,7 +70,7 @@
 		          $(".code-btn2").val("" + curCount + "秒");
 		          InterValObj = window.setInterval(SetRemainTime, 1000); //启动计时器，1秒执行一次
 		          //向后台发送处理数据
-		            var url = 'http://wallet.dev.com/index.php/api/Huilianjinchuang/treatyApply';
+		            var url = '/api/Huilianjinchuang/treatyApply';
 		            var data={
 		          			'uid':"{{$data['MemberCreditcard']['card_member_id']}}",
 					        // 'token': "{$data['Members']['memberLogin']['login_token']}",
@@ -118,7 +118,7 @@
 		      		if(!bindId){
 		      			mui.toast('获取数据失败，请重新发送验证码'); return;
 		      		}
-		      		var url = 'http://wallet.dev.com/index.php/api/Huilianjinchuang/treatyConfirm';
+		      		var url = '/api/Huilianjinchuang/treatyConfirm';
 		            var data={
 	          			'uid':"{{$data['MemberCreditcard']['card_member_id']}}",
 				        'token': "{{$data['Members']['memberLogin']['login_token']}}",
