@@ -318,13 +318,54 @@
 		 return view('admin/financial/commiss');
   	 }
 
+     #消费分润
+  public function cash_fenrun(){
+    $where=$this->fenrun_search();
+    #通道
+    $passageway=Passageway::where(['passageway_also'=>1])->select();
+    $this->assign('passageway',$passageway);
+    #数据
+    $list=db('commission')->alias('c')
+      ->join('member m1','c.commission_member_id=m1.member_id')
+      ->join('member m2','c.commission_childen_member=m2.member_id')
+      ->where($where);
+    $list_obj=clone $list;
+    $data=$list_obj->field("count(*) as count,sum(commission_money) as money")->find();
+    $list=$list->field("c.*,m1.member_nick as parent,m2.member_nick as child")
+      ->paginate(Config::get('page_size'), false, ['query'=>Request::instance()->param()]);
+
+    $this->assign('data',$data);
+    $this->assign('list',$list);
+    return view('admin/financial/cash_fenrun');
+  }
+
+  #代还分润
+  public function repay_fenrun(){
+    $r=[];
+  }
+  #分润搜索条件
+  private function fenrun_search(){
+    $r=input();
+    $where=[];
+    if(input('parent'))
+      $where['m1.member_nick|m1.member_mobile']=['like','%'.$r['parent'].'%'];
+    if(input('child'))
+      $where['m2.member_nick|m2.member_mobile']=['like','%'.$r['child'].'%'];
+    if(input('commission_from'))
+      $where['c.commission_from']=$r['commission_from'];
+    if(input('commission_type'))
+      $where['c.commission_type']=$r['commission_type'];
+    $this->assign('r',$r);
+    return $where;
+  }
+
 	 /**
 	 *  @version fenrun method / 财务管理--分润统计列表
 	 *  @author $bill$(755969423@qq.com)
 	 *   @datetime    2018-1-11 14:45
 	 *   @return 
 	 */
-  	 public function fenrun(Request $request)
+  	 public function fenrun(Request $request,$member_id=null)
   	 {
         $r=input();
   	 	 $count['money']=0;

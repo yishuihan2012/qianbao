@@ -286,6 +286,34 @@
 	 	      	 'commission_desc'		=>$desc,
 	 	      	 'commission_from'		=>$order_id,
 	 	      ]);
+	 	      #分润存储受益人当时的费率
+	 	      #快捷分润
+	 	      if($type==1){
+	 	      	$rates=db('passageway_item')->alias('i')
+		 	      	->join('member m','m.member_group_id=i.item_group')
+		 	      	->join('cash_order o','o.order_passway=i.item_passageway')
+		 	      	->where("o.order_id",$order_id)
+		 	      	->where("m.member_id",$fatherId)
+		 	      	->field('i.*')
+		 	      	->find();
+		 	    $commission_cash_rate=$rates['item_rate'];
+		 	    $commission_cash_fix=$rates['item_charges']/100;
+		 	    $commission->commission_cash_rate=$commission_cash_rate;
+		 	    $commission->commission_cash_fix=$commission_cash_fix;
+	 	      }else{
+	 	      	#代还
+	 	      	$rates=db('passageway_item')->alias('i')
+		 	      	->join('member m','m.member_group_id=i.item_group')
+		 	      	->join('generation_order o','o.order_passageway=i.item_passageway')
+		 	      	->where("o.order_id",$order_id)
+		 	      	->where("m.member_id",$fatherId)
+		 	      	->field('i.*')
+		 	      	->find();
+		 	    $commission_cash_rate=$rates['item_also'];
+		 	    $commission_cash_fix=$rates['item_charges']/100;
+		 	    $commission->commission_cash_rate=$commission_cash_rate;
+		 	    $commission->commission_cash_fix=$commission_cash_fix;
+	 	      }
 	 	      if($commission->save())
 	 	      {
 	 	      	 #查找到会员的钱包数据
