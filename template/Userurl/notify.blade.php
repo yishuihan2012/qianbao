@@ -38,7 +38,7 @@
 			    </li>
 			</ul>
 		</div>
-		<script src="js/mui.min.js"></script>
+		<script src="/static/js/mui.min.js"></script>
 		<script type="text/javascript">
 			mui.init({
 				pullRefresh: {
