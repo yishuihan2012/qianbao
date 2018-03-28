@@ -257,7 +257,7 @@
             'signType'=>'RSA',//  M(String)   签名方式，固定RSA
             'orderNo'=>$value['order_platform_no'],// M(String)   订单号
             'notifyUrl'=>System::getName('system_url').'/Api/Huilianjinchuang/payCallback',// M(String)   异步通知地址
-            'treatyId'=>$treatyId,// N(String)   协议号
+            'treatyId'=>$member_pas['member_credit_pas_smsseq'],// N(String)   协议号
             'amount'=>$value['order_money']*100 ,//M(String)   金额(分)
         );
         // echo json_encode($arr);
