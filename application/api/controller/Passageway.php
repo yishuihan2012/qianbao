@@ -43,7 +43,7 @@
               if($rate->item_charges){
                 $passageway[$key]['item_rate'].="+".$rate->item_charges/100;
               }
-               $passageway[$key]['item_rate'].=' 代付'.$rate->item_rate.'%';
+               $passageway[$key]['item_rate'].=' 代付'.$rate->item_qfalso.'%';
               if($rate->item_qffix){
                 $passageway[$key]['item_rate'].="+".$rate->item_qffix/100;
               }
