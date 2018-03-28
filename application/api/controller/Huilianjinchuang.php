@@ -264,6 +264,7 @@
         // var_dump($arr);die;
         $url=$this->url.'/treatyPay';
         $res=$this->request($url,$arr);
+        // var_dump($res);die;
         if($res['code']=='10000'){
             $update['back_tradeNo']=$res['orderNo'];
             $update['back_status']=$res['respCode'];
@@ -271,10 +272,10 @@
             if($res['respCode']=="10000"){
                 $update['order_status']='2';
                 // $generation['generation_state']=3;
-                $update['order_platform']=$order['order_pound']-($order['order_money']*$merch['passageway_rate']/100)-$merch['passageway_income'];
+                $update['order_platform']=$value['order_pound']-($value['order_money']*$merch['passageway_rate']/100)-$merch['passageway_income'];
                 ##记录余额
                 #0在此计划的还款卡余额中增加本次的金额 除去手续费
-                db('reimbur')->where('reimbur_generation',$order['order_no'])->setInc('reimbur_left',$order['order_money']-$order['order_pound']);
+                db('reimbur')->where('reimbur_generation',$value['order_no'])->setInc('reimbur_left',$value['order_money']-$value['order_pound']);
             }else if($res['respCode']=="10002"){
                 //处理中
                 $update['order_status']='4';
@@ -290,7 +291,7 @@
           // $update['order_buckle']=$rate['item_charges']/100;        
         }
         //添加执行记录
-        $res=GenerationOrder::where(['order_id'=>$order['order_id']])->update($update);
+        $res=GenerationOrder::where(['order_id'=>$value['order_id']])->update($update);
         // 更新卡计划
         // if(isset($generation)){
         //     Generation::where(['generation_id'=>$order['order_no']])->update($generation);
