@@ -82,7 +82,7 @@
            <tr>
               <td>{{$v['commission_id']}}</td>
               <td>
-                <a href="/index/{{ $v['commission_type']==1 ? 'Order/cash?order_id' : 'Plan/detail?id' }}={{$v['commission_from']}}
+                <a href="/index/{{ $v['commission_type']==1 ? 'Order/cash' : 'Plan/detail' }}?order_id={{$v['commission_from']}}
                 " target="_blank">
               {{$v['commission_from']}}
                 </a>

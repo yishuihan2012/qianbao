@@ -312,13 +312,7 @@ class Order extends Common{
         }else{
             $r['passageway_id']='';
         }
-        if(input('beginTime') && input('endTime')){
-            $endTime=strtotime(request()->param('endTime'))+24*3600;
-            $where['order_add_time']=["between time",[request()->param('beginTime'),$endTime]];
-        }else{
-            $r['beginTime']='';
-            $r['endTime']='';
-        }
+        wheretime($where,'order_add_time');
         $passageway=db('passageway')->column("*","passageway_id");
         #共用数据
         $order_data=CashOrder::where($where)->order("order_id desc")->field('order_id,order_money,order_charge,order_passway_profit,order_buckle,order_state')->column("*","order_id");
@@ -401,7 +395,7 @@ class Order extends Common{
             foreach ($order_data as $k => $v) {
                 if($v['order_state']==2){
                     $count['order_money_yes']+=$v['order_money'];
-                    $count['order_charge']+=$v['order_charge']+$v['order_charge'];
+                    $count['order_charge']+=$v['order_charge']+$v['order_buckle'];
                     $count['chengben']+=$v['order_passway_profit'];
                     $order_ids[]=$v['order_id'];
                 }
