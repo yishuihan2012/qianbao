@@ -14,44 +14,51 @@
   </header>
       <div class="panel-body">
       <form action="" method="post">
-    <div class="input-group" style="width: 180px;float: left;margin-right: 10px;">
-            <span class="input-group-btn"><button class="btn btn-default" type="button">收益人</button></span>
-        <div class="input-control ">
-             <input id="inputAccountExample1" type="text" class="form-control" name="parent" placeholder="用户名/手机号" value="{{$r['parent'] or ''}}">
-        </div>
-    </div>
-    <div class="input-group" style="width: 180px;float: left;margin-right: 10px;">
-            <span class="input-group-btn"><button class="btn btn-default" type="button">触发人</button></span>
-        <div class="input-control ">
-             <input id="inputAccountExample1" type="text" class="form-control" name="child" placeholder="用户名/手机号" value="{{$r['child'] or ''}}">
-        </div>
-    </div>
+  <div class="input-group" style="width: 180px;float: left;margin-right: 10px;">
+      <span class="input-group-btn"><button class="btn btn-default" type="button">收益人</button></span>
+       <input id="inputAccountExample1" type="text" class="form-control" name="parent"  placeholder="用户名/手机号" value="{{$r['parent'] or ''}}">
+  </div>
+  <div class="input-group" style="width: 180px;float: left;margin-right: 10px;">
+      <span class="input-group-btn"><button class="btn btn-default" type="button">触发人</button></span>
+       <input id="inputAccountExample1" type="text" class="form-control" name="child" placeholder="用户名/手机号" value="{{$r['child'] or ''}}">
+  </div>
+  <div class="input-group" style="width: 100px;float: left;margin-right: 10px;">
+      <span class="input-group-btn"><button class="btn btn-default" type="button">类型</button></span>
+       <select name="type">
+         <option value="9">全部</option>
+         <option value="1">消费</option>
+         <option value="3">代还</option>
+       </select>
+  </div>
+  <div class="input-group" style="width: 100px;float: left;margin-right: 10px;">
+      <span class="input-group-btn"><button class="btn btn-default" type="button">通道</button></span>
+       <select name="type">
+         
+       </select>
+  </div>
 
-         <div class="col-sm-2">
-              <div class="input-group">
-                   <span class="input-group-btn"><button class="btn btn-default" type="button">金额</button></span>
-                   <input type="text" class="form-control" name="min_money" value="{{$r['min_money'] or ''}}">
-                   <span class="input-group-btn fix-border"><button class="btn btn-default" type="button">~</button></span>
-                   <input type="text" class="form-control" name="max_money" value="{{$r['max_money'] or ''}}">
-              </div>
-         </div>
-         <div class="col-sm-2">
-              <div class="input-group">
-                   <input type="text" class="form-control date-picker" id="dateTimeRange" placeholder="收益时间查询" value="" readonly/>
-                   <input type="hidden" name="beginTime" id="beginTime" value="{{$beginTime or ''}}" />
-                   <input type="hidden" name="endTime" id="endTime" value="{{isset($endTime)?$endTime:''}}" />
-                   <z class='clearTime'>X</z>
-              </div>
-         </div>
-           <div class="col-sm-1">
-                <button class="btn btn-primary" type="submit">搜索</button>
-           </div>
-           <input type="hidden" name="is_export" class="is_export" value="0">
-           <div class="input-group" style="width: 180px;float: left; margin-right: 10px;">
-            <span class="input-group-addon">导出页码,10万/页</span>
-            <input type="text" name="start_p" class="form-control start_p" value="">
-          </div>
-  <button class="btn btn-primary export" type="submit">导出</button>
+  <div class="input-group" style="width: 180px;float: left;margin-right: 10px;">
+     <span class="input-group-btn"><button class="btn btn-default" type="button">金额</button></span>
+     <input type="text" class="form-control" name="min_money" value="{{$r['min_money'] or ''}}">
+     <span class="input-group-btn fix-border"><button class="btn btn-default" type="button">~</button></span>
+     <input type="text" class="form-control" name="max_money" value="{{$r['max_money'] or ''}}">
+   </div>
+  <div class="input-group" style="width: 360px;float: left;margin-right: 10px;">
+        <span class="input-group-addon">收益时间</span>
+          <input type="date" name="beginTime" id="beginTime" value="{{$r['beginTime'] or ''}}" />
+          <input type="date" name="endTime" id="endTime" value="{{$r['beginTime'] or ''}}" />
+    </div>
+  <div class="input-group" style="width: 60px;float: left;margin-right: 10px;">
+          <button class="btn btn-primary" type="submit">搜索</button>
+     </div>
+  <div class="input-group" style="width: 60px;float: left;margin-right: 10px;">
+        <button class="btn btn-primary export" type="submit">导出</button>
+     </div>
+  <div class="input-group" style="width: 160px;float: left;margin-right: 10px;">
+       <input type="hidden" name="is_export" class="is_export" value="0">
+        <span class="input-group-addon">导出页码,10万/页</span>
+        <input type="text" name="start_p" class="form-control start_p" value="">
+     </div>
       </form>
     </div>
  </div>
@@ -82,7 +89,7 @@
               <td>{{$key['commission_cash_fix']}}</td>
               <td>{{$key['commission_desc']}}</td>
               <td>{{$key['commission_creat_time']}}</td>
-  
+
            </tr>
         @endforeach
       </tbody>
@@ -95,7 +102,7 @@
  </section>
 
  <script type="text/javascript">
-  $('.export').click(function(){
+$('.export').click(function(){
   $(".is_export").val(1);
   setTimeout(function(){
     $(".is_export").val(0);
@@ -114,53 +121,7 @@
  $(document).ready(function(){
        $('.menu .nav .active').removeClass('active');
        $('.menu .nav li.fenrun_center').addClass('active');
-       $('.menu .nav li.financial-manager').addClass('show'); 
+       $('.menu .nav li.financial-manager').addClass('show');
  });
- //时间日期
- var start="{{$r['beginTime'] or ''}}";
- var end="{{$r['endTime'] or ''}}";
- $('#dateTimeRange').daterangepicker({
-      applyClass : 'btn-sm btn-success',
-      cancelClass : 'btn-sm btn-default',
-      locale: {
-           applyLabel: '确认',
-           cancelLabel: '取消',
-           fromLabel : '起始时间',
-           toLabel : '结束时间',
-           customRangeLabel : '自定义',
-           firstDay : 1
-      },
-      ranges : {
-            //'最近1小时': [moment().subtract('hours',1), moment()],
-           '今日': [moment().startOf('day'), moment()],
-           '昨日': [moment().subtract('days', 1).startOf('day'), moment().subtract('days', 1).endOf('day')],
-           '最近7日': [moment().subtract('days', 6), moment()],
-           '最近30日': [moment().subtract('days', 29), moment()],
-           '本月': [moment().startOf("month"),moment().endOf("month")],
-           '上个月': [moment().subtract(1,"month").startOf("month"),moment().subtract(1,"month").endOf("month")]
-      },
-      opens : 'right',    // 日期选择框的弹出位置
-      separator : ' 至 ',
-      showWeekNumbers : true,     // 是否显示第几周
-      format: 'YYYY-MM-DD'
-    }, function(start, end, label) { // 格式化日期显示框
-      $('#beginTime').val(start.format('YYYY-MM-DD'));
-      $('#endTime').val(end.format('YYYY-MM-DD'));
- });
- setTimeout(function(){
-      $('#beginTime').val(start.format('YYYY-MM-DD'));
-      $('#endTime').val(end.format('YYYY-MM-DD'));
-           if(start){
-               $('#dateTimeRange').val(start+'-'+end);
-           }
-},100);
- begin_end_time_clear();
- $('.clearTime').click(begin_end_time_clear);
- //清除时间
- function begin_end_time_clear() {
-      $('#dateTimeRange').val('');
-      $('#beginTime').val('');
-      $('#endTime').val('');
- }
  </script>
  @endsection

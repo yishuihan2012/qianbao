@@ -301,6 +301,8 @@ class Order extends Common{
         $where = $data['where'];
         $member_ids=Member::where($where)->column('member_id');
         $where=['order_member'=>['in',$member_ids]];
+        if(input('order_id'))
+            $where['order_id']=input('order_id');
         if(input('order_creditcard'))
             $where['order_creditcard']=['like',"%".input('order_creditcard')."%"];
         if(input('order_state'))
@@ -349,7 +351,7 @@ class Order extends Common{
                     $list[$k][]=$v['order_passway_profit']+$v['passageway_fix'];
                     $list[$k][]=$v['order_charge']+$v['order_buckle']-$v['order_passway_profit']-$v['passageway_fix'];
                     $list[$k][]=$order_fen;
-                    $list[$k][]=$v['order_charge']+$v['order_buckle']-$v['order_passway_profit']-$v['passageway_fix']-$order_fen;
+                    $list[$k][]=round($v['order_charge']+$v['order_buckle']-$v['order_passway_profit']-$v['passageway_fix']-$order_fen,2);
                     $list[$k][]=$passageway[$v['order_passway']]['passageway_name'];
                     $list[$k][]=$status[$v['order_state']];
                     $list[$k][]=$v['order_desc'];
@@ -372,7 +374,7 @@ class Order extends Common{
         #分页数据补充
         foreach ($order_lists as $k => $v) {
              $order_lists[$k]['order_fen']=isset($cms[$v['order_id']])?$cms[$v['order_id']]:0;          
-             $order_lists[$k]['yingli']=$v['order_charge']+$v['order_buckle']-$v['order_passway_profit']-$v['passageway_fix']-$order_lists[$k]['order_fen'];
+             $order_lists[$k]['yingli']=round($v['order_charge']+$v['order_buckle']-$v['order_passway_profit']-$v['passageway_fix']-$order_lists[$k]['order_fen'],2);
         }
         #非成功状态 应该为0分润 即分润为0
         $count=[

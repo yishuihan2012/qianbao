@@ -136,7 +136,7 @@
                 </td>
                  <td>
                   @if($list->order_fen!=0)
-                  <a href="/index/Financial/cash_fenrun?commission_from={{$list->order_id}}&commission_type=1" target="_blank" >
+                  <a href="/index/Financial/fenrun?commission_from={{$list->order_id}}&commission_type=1" target="_blank" >
                   {{$list->order_fen}}</a>
                   @else
                   0
