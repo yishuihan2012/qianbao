@@ -239,7 +239,7 @@ class Order extends Common{
             if($param['withdraw_state']==12){
                 //支付宝仅支持小数点后2位，数据库中存储的为小数点后4位，转换
                 
-              $Withdraw->withdraw_amount=round($Withdraw->withdraw_amount, 0,2);
+              $Withdraw->withdraw_amount=round($Withdraw->withdraw_amount,2);
                 //调用支付接口
               $payMethod="\app\index\controller\\".$Withdraw->withdraw_method;
               $payment=new $payMethod();
