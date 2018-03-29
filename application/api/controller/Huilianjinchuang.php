@@ -270,7 +270,7 @@
         $income['code']=-1;
         $income['back_status']='FAIL';
         if($res['code']=='10000'){
-            $update['back_tradeNo']=$res['orderNo'];
+            $update['back_tradeNo']=$res['orderNum'];
             $update['back_status']=$res['respCode'];
             $update['back_statusDesc']=$res['respMessage'];
             if($res['respCode']=="10000"){
