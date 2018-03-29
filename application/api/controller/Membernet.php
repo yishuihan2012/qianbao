@@ -328,7 +328,7 @@ use app\index\model\Member;
                   $arr['order_status']='2';
                   $generation['generation_state']=3;
                   
-                }else if($income['status']=="FAIL"){
+                }else if($resul['status']=="FAIL"){
                     $arr['order_status']='-1';
                 }else{
                     $arr['order_status']='4';
@@ -523,7 +523,7 @@ use app\index\model\Member;
                 $arr['back_statusDesc']=$resul['statusDesc'];
                 if($resul['status']=="SUCCESS"){
                     $arr['order_status']='2';
-                }else if($income['status']=="FAIL"){
+                }else if($resul['status']=="FAIL"){
                     $arr['order_status']='-1';
                     
                 }else{
