@@ -212,7 +212,9 @@ class Plan extends Common{
 		$order_lists=clone $list;
 		$order_data=$list->field('o.order_id,o.order_type,o.order_money,o.order_pound,o.order_status,o.order_passageway_fee,o.order_platform_fee,m.member_nick,p.passageway_name')->select();
 		#分页数据
-		$order_lists=$order_lists->paginate(Config::get('page_size'), false, ['query'=>input()]);
+		$order_lists=$order_lists
+			->field('o.*,m.member_nick,p.passageway_name')
+			->paginate(Config::get('page_size'), false, ['query'=>input()]);
         foreach ($order_lists as $k => $v) {
              $order_lists[$k]['order_fenrun']=isset($cms[$v['order_id']])?$cms[$v['order_id']]:0;          
         }
@@ -240,6 +242,8 @@ class Plan extends Common{
             foreach ($order_data as $k => $v) {
                 if($v['order_status']==2){
                     $count['order_pound']+=$v['order_pound'];
+                    $count['chengben']+=$v['order_passageway_fee'];
+                    $count['order_platform_fee']+=$v['order_platform_fee'];
                     $order_ids[]=$v['order_id'];
                     if($v['order_type']==1){
 	                    $count['order_cash_money']+=$v['order_money'];
@@ -250,20 +254,20 @@ class Plan extends Common{
             }
             $cms=db('commission')->where('commission_from','in',$order_ids)->where('commission_type',3)->group('commission_from')->column("commission_from,sum(commission_money) as sum");
             $count['sanji']=array_sum($cms);
-            $count['chengben']=array_sum(array_column($order_data,'order_passageway_fee'));
-            $count['order_platform_fee']=array_sum(array_column($order_data,'order_passageway_fee'));
             $r['order_status']='';
         }elseif(input('order_status')==2){
             $count['chengben']=array_sum(array_column($order_data,'order_passageway_fee'));
-            $count['order_platform_fee']=array_sum(array_column($order_data,'order_passageway_fee'));
+            $count['order_platform_fee']=array_sum(array_column($order_data,'order_platform_fee'));
             $cms=db('commission')->where('commission_from','in',array_column($order_data, 'order_id'))->where('commission_type',3)->group('commission_from')->column("commission_from,sum(commission_money) as sum");
             #指定成功状态时
             $count['order_pound']=array_sum(array_column($order_data,'order_pound'))+array_sum(array_column($order_data,'user_fix'));
             $count['sanji']=array_sum($cms);
-            if($v['order_type']==1){
-                $count['order_cash_money']+=$v['order_money'];
-            }else{
-                $count['order_repay_money']+=$v['order_money'];
+            foreach ($order_data as $k => $v) {
+	            if($v['order_type']==1){
+	                $count['order_cash_money']+=$v['order_money'];
+	            }else{
+	                $count['order_repay_money']+=$v['order_money'];
+	            }
             }
         }
         $count['fenrunhou']=$count['order_platform_fee']-$count['sanji'];

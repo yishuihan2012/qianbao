@@ -45,7 +45,7 @@
   <div class="input-group" style="width: 360px;float: left;margin-right: 10px;">
         <span class="input-group-addon">收益时间</span>
           <input type="date" name="beginTime" id="beginTime" value="{{$r['beginTime'] or ''}}" />
-          <input type="date" name="endTime" id="endTime" value="{{$r['beginTime'] or ''}}" />
+          <input type="date" name="endTime" id="endTime" value="{{$r['endTime'] or ''}}" />
     </div>
   <div class="input-group" style="width: 60px;float: left;margin-right: 10px;">
           <button class="btn btn-primary" type="submit">搜索</button>

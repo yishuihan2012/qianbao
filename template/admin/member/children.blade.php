@@ -68,7 +68,7 @@
 <div class="input-group" style="width: 380px;float: left; margin-right: 10px;">
   <span class="input-group-addon">注册时间</span>
     <input type="date" name="beginTime" id="beginTime" value="{{$r['beginTime'] or ''}}" />
-    <input type="date" name="endTime" id="endTime" value="{{$r['beginTime'] or ''}}" />
+    <input type="date" name="endTime" id="endTime" value="{{$r['endTime'] or ''}}" />
 </div>
 
   <input type="hidden" name="member_id" value="{{$r['member_id']}}">
