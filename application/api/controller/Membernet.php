@@ -256,7 +256,7 @@ use app\index\model\Member;
         // 更新卡计划
         // Generation::where(['generation_id'=>$pay['order_no']])->update($generation);
         #更改完状态后续操作
-        $action=$this->plan_notice($pay,$income,$member_base,1,$merch);
+        $action=$this->plan_notice($pay,$income,$member_base,$is_commission,$merch);
       }
       //计划执行完之后推送通知，分润
       public function plan_notice($pay,$income,$member_base,$is_commission=0,$merch){
