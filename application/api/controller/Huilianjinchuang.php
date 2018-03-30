@@ -268,7 +268,7 @@
         $url=$this->url.'/treatyPay';
         $res=$this->request($url,$arr);
         $income['code']=-1;
-        $income['back_status']='FAIL';、
+        $income['back_status']=$income['status']='FAIL';
         $is_commission=0;
         if($res['code']=='10000'){
             $update['back_tradeNo']=$res['orderNum'];
@@ -276,7 +276,7 @@
             $update['back_statusDesc']=$res['respMessage'];
             if($res['respCode']=="10000"){
                 $income['code']=200;
-                $income['back_status']='success';
+                $income['back_status']=$income['status']='success';
                 $update['order_status']='2';
                 $is_commission=1;
                 // $generation['generation_state']=3;
