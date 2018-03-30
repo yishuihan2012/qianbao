@@ -92,10 +92,16 @@ namespace app\index\controller;
 	 	    	->join('member_group g','g.group_id=m.member_group_id')
 	 	    	->where($where)
 	 	    	->order("member_id desc")
-	 	    	->field('member_id,member_nick,member_mobile,member_cert,group_name,login_state,member_creat_time')
+	 	    	->field('member_id,member_nick,member_mobile,member_mobile as sum,
+	 	    		case when member_cert=0 then "未实名" 
+	 	    			when member_cert=1 then "已实名"
+	 	    			when member_cert=2 then "未通过" end,
+	 	    		group_name,member_creat_time')
 	 	    	->select();
-
-	 	    $head=['ID','用户名','手机号码','是否实名','会员等级','登录状态','注册时间'];
+	 	    foreach ($member_list as $k => $v) {
+	 	    	$member_list[$k]['sum']=isset($cms[$v['member_id']]) ? $cms[$v['member_id']] : 0 ;
+	 	    }
+	 	    $head=['ID','用户名','手机号码','分润总计','是否实名','会员等级','注册时间'];
 	 	    export_csv($head,$member_list,$fp);
 	 	    return;
 		}

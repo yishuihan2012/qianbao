@@ -154,29 +154,11 @@ class Order extends Common{
         $where = $data['where'];
          //订单下单时间
         $wheres = array();
-        if(request()->param('beginTime') && request()->param('endTime')){
-            $endTime=strtotime(request()->param('endTime'))+24*3600;
-            $wheres['withdraw_add_time']=["between time",[request()->param('beginTime'),$endTime]];
-        }
+        wheretime($wheres,'withdraw_add_time');
+        wheretime($wheres,'withdraw_update_time','beginTime2','endTime2');
         #提现状态
-        if(request()->param('withdraw_state') ){
-            $wheres['withdraw_state'] = request()->param('withdraw_state');
-        }else{
-            $r['withdraw_state'] = request()->param('withdraw_state');
-        }
-        #支付类型
-        if(request()->param('withdraw_method') ){
-            $wheres['withdraw_method'] = request()->param('withdraw_method');
-        }else{
-            $r['withdraw_method'] = request()->param('withdraw_method');
-        }
-        #身份证查询
-        if( request()->param('cert_member_idcard')){
-            $wheres['m.cert_member_idcard'] = ['like',"%".request()->param('cert_member_idcard')."%"];
-        }else{
-            $r['cert_member_idcard'] = '';
-        }
-
+        if(input('withdraw_state'))
+            $wheres['withdraw_state']=input('withdraw_state');
         #是否传id
         if(request()->param('withdraw_id')){
             $wheres['withdraw_id'] = request()->param('withdraw_id');
@@ -185,7 +167,6 @@ class Order extends Common{
         $admins=db('adminster')->column('adminster_id,adminster_login');
          // #查询订单列表分页
         $order_lists = Withdraw::haswhere('member',$where)
-            ->join("wt_member_cert m", "m.cert_member_id=Member.member_id","left")
             ->where($wheres)
             ->order('withdraw_add_time desc')
             ->paginate(Config::get('page_size'), false, ['query'=>Request::instance()->param()]);
@@ -195,17 +176,15 @@ class Order extends Common{
                 $order_lists[$k]['withdraw_option']=$admins[$v['withdraw_option']];
         }
 
-         #统计订单条数
-         $countmoney=Withdraw::where('withdraw_state=12')->sum('withdraw_amount');
-         #提现金额
-         $count['withdraw_total_money'] = Withdraw::where([])->sum('withdraw_total_money');
-         #操作全额
-         $count['withdraw_amount'] = Withdraw::where([])->sum('withdraw_amount');
+         #操作成功金额
+         $count['withdraw_amount'] = Withdraw::haswhere('member',$where)->where(array_merge($wheres,['withdraw_state'=>12]))->sum('withdraw_amount');
+         #待审核金额
+         $count['wait_amount'] = Withdraw::haswhere('member',$where)->where(array_merge($wheres,['withdraw_state'=>11]))->sum('withdraw_amount');
          #操作手续费
-         $count['withdraw_charge'] = Withdraw::where([])->sum('withdraw_charge');
-         $count['count_size']=Withdraw::haswhere('member',$where)->join("wt_member_cert m", "m.cert_member_id=Member.member_id","left")->where($wheres)->count();
+         $count['withdraw_charge'] = Withdraw::haswhere('member',$where)->where(array_merge($wheres,['withdraw_state'=>12]))->sum('withdraw_charge');
+         $count['count_size']=Withdraw::haswhere('member',$where)->where($wheres)->count();
+         $count['success_count']=Withdraw::haswhere('member',$where)->where(array_merge($wheres,['withdraw_state'=>12]))->count();
          $this->assign('order_lists', $order_lists);
-         $this->assign('countmoney', $countmoney);
          $this->assign('count', $count);
          #获取用户分组
         $member_group=MemberGroup::all();
@@ -223,9 +202,9 @@ class Order extends Common{
              $this->redirect($this->history['1']);
          }
          #查询到当前订单的基本信息
-         $order_info=Withdraw::with('member,adminster')->find($request->param('id'));
+         $info=Withdraw::with('member,adminster')->find($request->param('id'));
          // var_dump($order_info);die;
-         $this->assign('order_info', $order_info);
+         $this->assign('info', $info);
          return view('admin/order/showwithdraw');
      }
      #审核提现列表

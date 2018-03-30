@@ -22,7 +22,7 @@
    
 	<form action="" method="get">
   <div class="input-group" style="width: 180px;float: left;margin-right: 10px;">
-    <span class="input-group-addon">用户名/手机号</span>
+    <span class="input-group-addon">会员</span>
     <input type="text" class="form-control" name="member_nick" value="{{$r['member_nick'] or ''}}" placeholder="用户名/手机号">
   </div>
  

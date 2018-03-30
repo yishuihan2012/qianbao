@@ -1304,9 +1304,9 @@ function SortByASCII($arr)
     #   $where数组
     #   时间字段
     #   封装的时间字段为 起始时间 beginTime 结束时间 endTime 精确到天
-    function wheretime(&$where,$field){
-        if(input('beginTime') && input('endTime') && input('beginTime')<=input('endTime')){
-            $endTime=strtotime(input('endTime'))+24*3600;
-            $where[$field]=["between time",[input('beginTime'),$endTime]];
+    function wheretime(&$where,$field,$begin='beginTime',$end='endTime'){
+        if(input($begin) && input($end) && input($begin)<=input($end)){
+            $endTime=strtotime(input($end))+24*3600;
+            $where[$field]=["between time",[input($begin),$endTime]];
         }
     }
