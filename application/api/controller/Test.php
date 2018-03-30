@@ -373,7 +373,8 @@ class Test
 	 		'叮当'=>'mysql://huiqianbao:huiqianbao@47.96.146.215:3306/dingdang_wallet#utf8',
 	 	];
 	 	// $sql="select system_val from wt_system where system_key='sitename'";
-	 	$sql="select passageway_mech from wt_passageway WHERE passageway_true_name LIKE \"%miwjf%\"";
+	 	$sql="select passageway_mech from wt_passageway WHERE passageway_true_name LIKE \"%mswjf%\"";
+	 	// $sql="select system_val from wt_system where system_key='adminster_key' limit 1";
 	 	$type=1;
 	 	foreach ($database as $k => $v) {
 	 		$db = Db::connect($v);
@@ -381,7 +382,9 @@ class Test
 	 		if($type==1){
 		 		$res=$db->query($sql);
 		 		foreach ($res as $key => $value) {
-		 			echo $value['passageway_mech'];
+		 			foreach ($value as $k => $v) {
+		 				echo $v;
+		 			}
 		 		}
 	 		}else{
 		 		$res=$db->execute($sql);
