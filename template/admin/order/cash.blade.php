@@ -27,11 +27,6 @@
     <span class="input-group-addon">用户名</span>
     <input type="text" class="form-control" name="member_nick" value="{{$r['member_nick']}}" placeholder="用户名">
   </div>
-  <!-- <div class="input-group" style="width: 150px;float: left;margin-right: 20px;">
-    <span class="input-group-addon">交易流水号</span>
-    <input type="text" class="form-control" name="order_no" value="{{$r['order_no']}}" placeholder="交易流水号">
-  </div> -->
-
   <div class="input-group" style="width: 200px;float: left;margin-right: 20px;">
     <span class="input-group-addon">手机号</span>
     <input type="text" class="form-control" name="member_mobile" value="{{$r['member_mobile']}}" placeholder="手机号">
@@ -72,13 +67,11 @@
     @endforeach
   </select>
   </div>
-
-  <div class="input-group" style="width: 200px;float: left; margin-right: 10px;">
-      <input type="text" class="form-control date-picker" id="dateTimeRange" placeholder="交易订单添加时间" />
-      <input type="hidden" name="beginTime" id="beginTime" value="" />
-      <input type="hidden" name="endTime" id="endTime" value="" />
-      <z class='clearTime'>X</z>
-  </div>
+      <div class="input-group" style="width: 360px;float: left;margin-right: 10px;">
+        <span class="input-group-addon">添加时间</span>
+        <input type="date" name="beginTime" id="beginTime" value="{{$r['beginTime'] or ''}}" />
+        <input type="date" name="endTime" id="endTime" value="{{$r['beginTime'] or ''}}" />
+      </div>
   <button class="btn btn-primary" type="submit">搜索</button>
   <input type="hidden" name="is_export" class="is_export" value="0">
   <div class="input-group" style="width: 180px;float: left; margin-right: 10px;">
@@ -136,7 +129,7 @@
                 </td>
                  <td>
                   @if($list->order_fen!=0)
-                  <a href="/index/Financial/cash_fenrun?commission_from={{$list->order_id}}&commission_type=1" target="_blank" >
+                  <a href="/index/Financial/fenrun?commission_from={{$list->order_id}}&commission_type=1" target="_blank" >
                   {{$list->order_fen}}</a>
                   @else
                   0
@@ -169,57 +162,7 @@
        $('.menu .nav .active').removeClass('active');
        $('.menu .nav li.cash').addClass('active');
        $('.menu .nav li.order-manager').addClass('show');
-    //初始化时间
-        $('#dateTimeRange').val('{{$r["beginTime"]}} - {{$r["endTime"]}}');
-        $('#beginTime').val('{{$r["beginTime"]}}');
-        $('#endTime').val('{{$r["endTime"]}}');
  })
-  $('#dateTimeRange').daterangepicker({
-        applyClass : 'btn-sm btn-success',
-        cancelClass : 'btn-sm btn-default',
-        locale: {
-            applyLabel: '确认',
-            cancelLabel: '取消',
-            fromLabel : '起始时间',
-            toLabel : '结束时间',
-            customRangeLabel : '自定义',
-            firstDay : 1
-        },
-        ranges : {
-            //'最近1小时': [moment().subtract('hours',1), moment()],
-            '今日': [moment().startOf('day'), moment()],
-            '昨日': [moment().subtract('days', 1).startOf('day'), moment().subtract('days', 1).endOf('day')],
-            '最近7日': [moment().subtract('days', 6), moment()],
-            '最近30日': [moment().subtract('days', 29), moment()],
-            '本月': [moment().startOf("month"),moment().endOf("month")],
-            '上个月': [moment().subtract(1,"month").startOf("month"),moment().subtract(1,"month").endOf("month")]
-        },
-        opens : 'left',    // 日期选择框的弹出位置
-        separator : ' 至 ',
-        showWeekNumbers : true,     // 是否显示第几周
-
- 
-        //timePicker: true,
-        //timePickerIncrement : 10, // 时间的增量，单位为分钟
-        //timePicker12Hour : false, // 是否使用12小时制来显示时间
- 
-         
-        //maxDate : moment(),           // 最大时间
-        format: 'YYYY-MM-DD'
- 
-    }, function(start, end, label) { // 格式化日期显示框
-        $('#beginTime').val(start.format('YYYY-MM-DD'));
-        $('#endTime').val(end.format('YYYY-MM-DD'));
-    });
-begin_end_time_clear();
-$('.clearTime').click(begin_end_time_clear);
-  //清除时间
-    function begin_end_time_clear() {
-        $('#dateTimeRange').val('');
-        $('#beginTime').val('');
-        $('#endTime').val('');
-    }
-
 $('.export').click(function(){
   $(".is_export").val(1);
   setTimeout(function(){
@@ -238,16 +181,4 @@ $('.export').click(function(){
 })
 
 </script>
- <style type="text/css">
-   .clearTime{
-    position: absolute;
-    right: 5px;
-    top: 5px;
-    z-index: 99;
-    border: 1px solid;
-    color: red;
-    font-size: .6rem;
-    padding: 0 5px;
-   }
- </style>
 @endsection

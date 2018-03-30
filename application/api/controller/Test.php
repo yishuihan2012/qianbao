@@ -350,4 +350,44 @@ class Test
 	 	}
 	 	echo 'success';die;
 	 }
+	 #对每个项目执行sql
+	 public function exesql(){
+	 	$database=[
+	 		'喜家'=>'mysql://root:chfuck~>d5@47.104.4.73:3306/wallet#utf8',
+	 		'鑫鑫'=>'mysql://root:chfuck~>d5@47.104.4.73:3306/xxqg_wallet#utf8',
+	 		'李掌柜'=>'mysql://root:chfuck~>d5@47.104.4.73:3306/lizhanggui#utf8',
+	 		'云众'=>'mysql://root:chfuck~>d5@47.104.4.73:3306/yunzhong_wallet#utf8',
+	 		'融易还呗'=>'mysql://root:chfuck~>d5@47.104.4.73:3306/rongyihuanbai#utf8',
+	 		'无忧'=>'mysql://root:chfuck~>d5@47.104.4.73:3306/wuyou#utf8',
+	 		'易享'=>'mysql://root:chfuck~>d5@47.104.4.73:3306/yixiang_wallet#utf8',
+	 		'乐还'=>'mysql://root:chfuck~>d5@47.104.4.73:3306/lehuan#utf8',
+	 		'金源乐享'=>'mysql://root:chfuck~>d5@47.104.4.73:3306/jinyuan_wallet#utf8',
+	 		'益信付'=>'mysql://root:chfuck~>d5@47.104.4.73:3306/yixin_wallet#utf8',
+	 		'众信'=>'mysql://root:chfuck~>d5@47.104.4.73:3306/zhongxin_wallet#utf8',
+	 		'富通'=>'mysql://root:chfuck~>d5@47.104.4.73:3306/futong_wallet#utf8',
+	 		'民麦'=>'mysql://root:chfuck~>d5@47.104.4.73:3306/minmai_wallet#utf8',
+	 		'E还宝'=>'mysql://root:chfuck~>d5@47.104.4.73:3306/ehb_wallet#utf8',
+	 		'如意付'=>'mysql://root:chfuck~>d5@47.104.4.73:3306/ruyifu_wallet#utf8',
+	 		'中京'=>'mysql://root:chfuck~>d5@47.104.4.73:3306/zhongjing_wallet#utf8',
+	 		'惠钱包'=>'mysql://huiqianbao:huiqianbao@47.96.146.215:3306/huiqianbao#utf8',
+	 		'叮当'=>'mysql://huiqianbao:huiqianbao@47.96.146.215:3306/dingdang_wallet#utf8',
+	 	];
+	 	// $sql="select system_val from wt_system where system_key='sitename'";
+	 	$sql="select passageway_mech from wt_passageway WHERE passageway_true_name LIKE \"%miwjf%\"";
+	 	$type=1;
+	 	foreach ($database as $k => $v) {
+	 		$db = Db::connect($v);
+	 		echo $k.':__';
+	 		if($type==1){
+		 		$res=$db->query($sql);
+		 		foreach ($res as $key => $value) {
+		 			echo $value['passageway_mech'];
+		 		}
+	 		}else{
+		 		$res=$db->execute($sql);
+		 		echo "影响行数:".$res;
+	 		}
+	 		echo "</br>";
+	 	}
+	 }
 }

@@ -8,6 +8,9 @@
      @if(isset($current_member))
       <h3>
           <strong class="text-danger">{{$current_member->member_nick}}</strong> 下级会员列表
+          @if(isset($parent))
+            <a href="?member_id={{$parent->relation_parent_id}}" class="btn btn-primary">跳转上级</a>
+          @endif
       </h3>
      @endif
      <h3>
@@ -17,8 +20,8 @@
   </header>
 <blockquote>
    
-	<form action="" method="post">
-  <div class="input-group" style="width: 240px;float: left;margin-right: 10px;">
+	<form action="" method="get">
+  <div class="input-group" style="width: 180px;float: left;margin-right: 10px;">
     <span class="input-group-addon">用户名/手机号</span>
     <input type="text" class="form-control" name="member_nick" value="{{$r['member_nick'] or ''}}" placeholder="用户名/手机号">
   </div>
@@ -32,11 +35,12 @@
     @endforeach
   </select>
   </div>
-  <div class="input-group" style="width: 180px;float: left;margin-right: 10px;">
+  <div class="input-group" style="width: 140px;float: left;margin-right: 10px;">
      <span class="input-group-addon">是否实名</span>
     <select name="member_cert" class="form-control">
         <option value="1" >是</option>
         <option value="0" {{$r['member_cert']==0 ? 'selected' : ''}}>否</option>
+        <option value="all" {{$r['member_cert']=='all' ? 'selected' : ''}}>全部</option>
     </select>
   </div>
 
@@ -51,7 +55,7 @@
   </select>
   </div>
 
-  <div class="input-group" style="width: 180px;float: left;margin-right: 10px;">
+  <div class="input-group" style="width: 150px;float: left;margin-right: 10px;">
      <span class="input-group-addon">推荐关系</span>
   <select name="relation" class="form-control">
       <option value="" @if ($r['relation']=='') selected="" @endif>全部</option>
@@ -67,11 +71,7 @@
     <input type="date" name="endTime" id="endTime" value="{{$r['beginTime'] or ''}}" />
 </div>
 
-<div class="input-group" style="width: 380px;float: left; margin-right: 10px;">
-  <span class="input-group-addon">含零分润</span>
-  <input type="checkbox" name="hasNofenrun"  value="{{$r['hasNofenrun'] or ''}}" />
-</div>
-
+  <input type="hidden" name="member_id" value="{{$r['member_id']}}">
 	<button class="btn btn-primary" type="submit">搜索</button>
   <input type="hidden" name="is_export" class="is_export" value="0">
   <button class="btn btn-primary export" type="submit">导出</button>
@@ -99,7 +99,16 @@
           <td>{{$val->member_id}}</td>
           <td>{{$val->member_nick}}</td>
           <td>{{$val->member_mobile}}</td>
-          <td>{{$val->sum}}</td>
+          <td>
+            @if($val->sum!=0)
+            <!-- 快捷支付 -->
+            <a href="/index/Financial/fenrun?parent={{$current_member->member_mobile}}&child={{$val->member_mobile}}&passageway_id={{$r['passageway_id']}}"  target="_blank" >
+              {{$val->sum}}
+            </a>
+            @else
+              {{$val->sum}}
+            @endif
+          </td>
           <td>{{$member_group[$val->member_group_id]['group_name']}}</td>
           <td>{{$val->member_creat_time}}</td>
           <td>
@@ -111,10 +120,10 @@
                            <button type="button" class="btn btn-sm dropdown-toggle" data-toggle="dropdown"><span class="caret"></span></button>
                            <ul class="dropdown-menu" role="menu">
                  @if($admin['adminster_group_id']!=5)
-                                <li><a data-remote="{{url('/index/financial/fenrun',['memberId'=>$val->member_id])}}" href="{{url('/index/member/commiss',['memberId'=>$val->member_id])}}">分润明细</a></li>
+                                <!-- <li><a data-remote="{{url('/index/financial/fenrun',['memberId'=>$val->member_id])}}" href="{{url('/index/member/commiss',['memberId'=>$val->member_id])}}">分润明细</a></li> -->
                                <!--  <li><a data-size='lg' data-toggle="modal" data-remote="{{url('/index/member/child',['memberId'=>$val->member_id])}}" href="#">下级信息</a></li> -->
                               <!-- <li><a class="son" data-width='1440' data-toggle="modal" data-remote="{{url('/index/member/child',['memberId'=>$val->member_id])}}" href="#">下级信息</a></li> -->
-                              <li><a  href="/index/member?member_id={{$val->member_id}}">下级列表</a></li>
+                              <li><a  href="/index/member/children?member_id={{$val->member_id}}">下级列表</a></li>
                      @endif
                            </ul>
                      </div>
@@ -127,108 +136,23 @@
     <tfoot>
       <tr>
           <td colspan="7">{!! $member_list->render() !!}</td>
-          
       </tr>
     </tfoot>
 </table>
 
  <script type="text/javascript">
  $(document).ready(function(){
-      $('table.datatable').datatable({sortable: true});
-     	 $('.menu .nav .active').removeClass('active');
-    	 $('.menu .nav li.member').addClass('active');
-    	 $('.menu .nav li.member-manager').addClass('show');
-
-$('#dateTimeRange').daterangepicker({
-        applyClass : 'btn-sm btn-success',
-        cancelClass : 'btn-sm btn-default',
-        locale: {
-            applyLabel: '确认',
-            cancelLabel: '取消',
-            fromLabel : '起始时间',
-            toLabel : '结束时间',
-            customRangeLabel : '自定义',
-            firstDay : 1
-        },
-        ranges : {
-            //'最近1小时': [moment().subtract('hours',1), moment()],
-            '今日': [moment().startOf('day'), moment()],
-            '昨日': [moment().subtract('days', 1).startOf('day'), moment().subtract('days', 1).endOf('day')],
-            '最近7日': [moment().subtract('days', 6), moment()],
-            '最近30日': [moment().subtract('days', 29), moment()],
-            '本月': [moment().startOf("month"),moment().endOf("month")],
-            '上个月': [moment().subtract(1,"month").startOf("month"),moment().subtract(1,"month").endOf("month")]
-        },
-        opens : 'left',    // 日期选择框的弹出位置
-        separator : ' 至 ',
-        showWeekNumbers : true,     // 是否显示第几周
-
- 
-        //timePicker: true,
-        //timePickerIncrement : 10, // 时间的增量，单位为分钟
-        //timePicker12Hour : false, // 是否使用12小时制来显示时间
- 
-         
-        //maxDate : moment(),           // 最大时间
-        format: 'YYYY-MM-DD'
- 
-    }, function(start, end, label) { // 格式化日期显示框
-        $('#beginTime').val(start.format('YYYY-MM-DD'));
-        $('#endTime').val(end.format('YYYY-MM-DD'));
-    });
-// begin_end_time_clear();
-$('.clearTime').click(begin_end_time_clear);
-  //清除时间
-    function begin_end_time_clear() {
-        $('#dateTimeRange').val('');
-        $('#beginTime').val('');
-        $('#endTime').val('');
-    }
-    @if(isset($r["beginTime"]))
-    //初始化时间
-        $('#dateTimeRange').val('{{$r["beginTime"]}} - {{$r["endTime"]}}');
-        $('#beginTime').val('{{$r["beginTime"]}}');
-        $('#endTime').val('{{$r["endTime"]}}'); 
-    @else
-      begin_end_time_clear();
-    @endif
-});
- function getNowFormatDate() {
-        var date = new Date();
-        var seperator1 = "-";
-        var year = date.getFullYear();
-        var month = date.getMonth() + 1;
-        var strDate = date.getDate();
-        if (month >= 1 && month <= 9) {
-            month = "0" + month;
-        }
-        if (strDate >= 0 && strDate <= 9) {
-            strDate = "0" + strDate;
-        }
-        var currentdate = year + seperator1 + month + seperator1 + strDate;
-        return currentdate;
-    }
-    // console.log(getNowFormatDate());
-    //  $('#beginTime').val(getNowFormatDate());
-    //  $('#endTime').val(getNowFormatDate());
-$('.export').click(function(){
-  $(".is_export").val(1);
-  setTimeout(function(){
-    $(".is_export").val(0);
-  },100);
+   $('table.datatable').datatable({sortable: true});
+ 	 $('.menu .nav .active').removeClass('active');
+	 $('.menu .nav li.member').addClass('active');
+	 $('.menu .nav li.member-manager').addClass('show');
+   
+  $('.export').click(function(){
+    $(".is_export").val(1);
+    setTimeout(function(){
+      $(".is_export").val(0);
+    },100);
+  })
 })
  </script>
- <style type="text/css">
-   .clearTime{
-    position: absolute;
-    right: 5px;
-    top: 5px;
-    z-index: 99;
-    border: 1px solid;
-    color: red;
-    font-size: .6rem;
-    padding: 0 5px;
-   }
-
- </style>
  @endsection

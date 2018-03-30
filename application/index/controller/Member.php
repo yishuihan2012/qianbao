@@ -21,21 +21,20 @@ namespace app\index\controller;
  	public function children($member_id=null){
 	 	//传入参数
 	 	$r=request()->param();
-	 	 #搜索条件
 	 	#手机号昵称
 	 	$where=[];
 	 	if(input('member_nick'))
 	 		$where['member_nick|member_mobile']=['like',"%".$r['member_nick']."%"];
-
 	 	#实名
 	 	$r['member_cert']=input('member_cert')??'';
-	 	if($r['member_cert']==0 && $r['member_cert']!=''){
-	 		trace($r);
+	 	if($r['member_cert']=='all'){
+	 	}elseif($r['member_cert']==0 && $r['member_cert']!=''){
 	 		$where['member_cert']=0;
 	 	}else{
 	 		$r['member_cert']=1;
 	 		$where['member_cert']=1;
 	 	}
+	 		
 	 	#推荐关系
 	 	$r['relation']=input('relation')??'';
 	 	if($r['relation']){
@@ -76,12 +75,7 @@ namespace app\index\controller;
  		arsort($cms);
  		// halt($cms);
 	 	 //注册时间
-		if(request()->param('beginTime') && request()->param('endTime')){
-			$endTime=strtotime(request()->param('endTime'))+24*3600;
-			$r['beginTime']=input('beginTime');
-			$r['endTime']=input('endTime');
-			$where['member_creat_time']=["between time",[request()->param('beginTime'),$endTime]];
-		}
+	 	wheretime($where,'member_creat_time');
 
 		$this->assign('button',['text'=>'添加新用户', 'link'=>url('/index/member/register'), 'modal'=>'modal']);
 		#总数据计算
@@ -120,7 +114,11 @@ namespace app\index\controller;
 	 		'fenrun'=>array_sum(array_column($member_data, 'sum')),
 	 	];
 	 	//  halt($member_list);
+	 	$parent=MemberRelation::get(['relation_member_id'=>$member_id]);
+	 	if($parent && $parent->relation_parent_id!=0)
+	 		$this->assign("parent",$parent);
 		$current_member=Members::get($member_id);
+		
 		$this->assign("current_member",$current_member);
 	 	 $this->assign('r', $r);
 	 	 $this->assign('member_list', $member_list);
@@ -135,6 +133,8 @@ namespace app\index\controller;
  	 * all 是否获取深度内全部
  	 */
  	private function getchildIds($ids,$deep=1,$all=true){
+ 		if(!$ids)
+ 			return [];
  		if(!$deep)
  			return $ids;
  		$deep--;

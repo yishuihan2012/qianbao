@@ -83,7 +83,7 @@ class WalletLog extends Common
 				}elseif($commission['commission_type']==2){//分佣
 					$list[$key]['hrefurl']=$commission['commission_from']?'/index/Order/index/upgrade_id/'.$commission['commission_from'] : '';
 				}elseif($commission['commission_type']==3){//代还分润
-					$list[$key]['hrefurl']=$commission['commission_from']?'/index/Plan/info/order_id/'.$commission['commission_from'] : '';
+					$list[$key]['hrefurl']=$commission['commission_from']?'/index/Plan/detail/order_id/'.$commission['commission_from'] : '';
 				}else{
 					$list[$key]['hrefurl']='';
 				}
