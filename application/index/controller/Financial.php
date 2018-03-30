@@ -361,6 +361,7 @@
         return;
     }
     $list_obj=clone $list;
+    $list_obj->__construct();
     $data=$list_obj->field("count(*) as count,sum(commission_money) as money")->find();
     $list=$list->field("c.*,m1.member_nick as parent,m2.member_nick as child")
       ->paginate(Config::get('page_size'), false, ['query'=>Request::instance()->param()]);
@@ -386,6 +387,7 @@
     }
     if(input('min_money') && input('max_money'))
       $where['c.commission_money']=['between',[input('min_money'),input('max_money')]];
+    wheretime($where,'commission_creat_time');
     $this->assign('r',$r);
     return $where;
   }

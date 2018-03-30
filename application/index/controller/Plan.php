@@ -209,10 +209,12 @@ class Plan extends Common{
 	 	    export_csv($head,$order_list,$fp);
 	 	    return;
 		}
+
 		$order_lists=clone $list;
-		$order_data=$list->field('o.order_id,o.order_type,o.order_money,o.order_pound,o.order_status,o.order_passageway_fee,o.order_platform_fee,m.member_nick,p.passageway_name')->select();
+		$order_lists->__construct();
+		$order_data=$order_lists->field('o.order_id,o.order_type,o.order_money,o.order_pound,o.order_status,o.order_passageway_fee,o.order_platform_fee,m.member_nick,p.passageway_name')->select();
 		#分页数据
-		$order_lists=$order_lists
+		$order_lists=$list
 			->field('o.*,m.member_nick,p.passageway_name')
 			->paginate(Config::get('page_size'), false, ['query'=>input()]);
         foreach ($order_lists as $k => $v) {
@@ -293,7 +295,7 @@ class Plan extends Common{
 	      $where['o.order_type']=$r['order_type'];
 	    if(input('passageway_id'))
 	      $where['o.order_passageway']=$r['passageway_id'];
-	  	wheretime($where,'order_time');
+	  	wheretime($where,'o.order_time');
 	    $this->assign('r',$r);
 	    return $where;
 	}
