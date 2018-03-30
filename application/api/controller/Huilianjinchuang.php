@@ -268,7 +268,8 @@
         $url=$this->url.'/treatyPay';
         $res=$this->request($url,$arr);
         $income['code']=-1;
-        $income['back_status']='FAIL';
+        $income['back_status']='FAIL';、
+        $is_commission=0;
         if($res['code']=='10000'){
             $update['back_tradeNo']=$res['orderNum'];
             $update['back_status']=$res['respCode'];
@@ -277,6 +278,7 @@
                 $income['code']=200;
                 $income['back_status']='success';
                 $update['order_status']='2';
+                $is_commission=1;
                 // $generation['generation_state']=3;
                 $update['order_platform']=$value['order_pound']-($value['order_money']*$merch['passageway_rate']/100)-$merch['passageway_income'];
                 ##记录余额
@@ -304,7 +306,7 @@
         // }
          #更改完状态后续操作
         $notice=new \app\api\controller\Membernet();
-        $action=$notice->plan_notice($value,$income,$member_base,1,$merch);
+        $action=$notice->plan_notice($value,$income,$member_base,$is_commission,$merch);
 
     }
     /**
