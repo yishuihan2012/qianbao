@@ -25,7 +25,9 @@
         "webonyx/graphql-php": "^0.11.2",
         "jpush/jpush": "^3.5",
         "flc/dysms":"^1.0",
-        "topthink/think-migration": "^2.0"
+        "topthink/think-migration": "^2.0",
+        "nette/mail": "^2.4",
+        "nette/utils": "^2.5"
     },
     "extra": {
         "think-path": "thinkphp"
