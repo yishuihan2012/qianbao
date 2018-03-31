@@ -38,12 +38,12 @@
     <option value="-12">驳回</option>
   </select>
   </div>
-<div class="input-group" style="width: 400px;float: left; margin-right: 10px;">
+<div class="input-group" style="width: 360px;float: left; margin-right: 10px;">
   <span class="input-group-addon">创建时间</span>
     <input type="date" name="beginTime" style="width: 140px" class="form-control" value="{{$r['beginTime'] or ''}}" />
     <input type="date" name="endTime" style="width: 140px" class="form-control" value="{{$r['endTime'] or ''}}" />
 </div>
-<div class="input-group" style="width: 380px;float: left; margin-right: 10px;">
+<div class="input-group" style="width: 360px;float: left; margin-right: 10px;">
   <span class="input-group-addon">审批时间</span>
     <input type="date" name="beginTime2"  style="width: 140px" class="form-control" value="{{$r['beginTime2'] or ''}}" />
     <input type="date" name="endTime2"  style="width: 140px" class="form-control" value="{{$r['endTime2'] or ''}}" />

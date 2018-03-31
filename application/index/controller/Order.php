@@ -232,6 +232,7 @@ class Order extends Common{
                  $this->redirect('order/withdraw');
               }else{
                 $param['withdraw_option']=session('adminster.id');
+                WalletLog::where(['log_relation_type'=>2,'log_relation_id'=>$param['withdraw_id']])->update(['log_status'=>1]);
                 $Withdraw->allowField(['withdraw_state','withdraw_option'])->save($param);
                   $message="您的提现已经通过,请查收~";
                   jpush($Withdraw->withdraw_member,$message,$message,$message,4);
@@ -253,6 +254,7 @@ class Order extends Common{
                     // trace($wallet_log);
                     $wallet_log->log_desc="您的提现已驳回,驳回原因：".$param['withdraw_information'];
                     $wallet_log->log_balance=$Wallet->wallet_amount;
+                    $wallet_log->log_status=3;
                     if($Wallet->save()===false || $Withdraw->save()===false || $wallet_log->save()===false){
                       Db::rollback();
                       $result=false;

@@ -28,7 +28,7 @@ class WalletLog extends Common
 		$where=[];
 		wheretime($where,'log_add_time');
 		$where['log_wallet_amount'] = array("<>",0);
-		$where['log_desc']=['not like','%驳回%'];
+		$where['log_status']=1;
 		if(input('log_wallet_type'))
 			$where['log_wallet_type']=input('log_wallet_type');
 		if(input('member'))

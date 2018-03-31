@@ -19,15 +19,15 @@
         <input type="text" class="form-control" name="member" value="{{$r['member'] or ''}}" placeholder="用户名/手机号"></div>
       <div class="input-group" style="width: 150px;float: left;margin-right: 10px;">
         <span class="input-group-addon">收入支出</span>
-        <select name="log_wallet_type" class="form-control">
+        <select name="log_wallet_type" class="form-control log_wallet_type">
           <option value="">全部</option>
           <option value="1">收入</option>
           <option value="2">支出</option></select>
       </div>
-      <div class="input-group" style="width: 360px;float: left;margin-right: 10px;">
+      <div class="input-group" style="width: 360px;float: left; margin-right: 10px;">
         <span class="input-group-addon">添加时间</span>
-        <input type="date" name="beginTime" id="beginTime" value="{{$r['beginTime'] or ''}}" />
-        <input type="date" name="endTime" id="endTime" value="{{$r['endTime'] or ''}}" /></div>
+        <input type="date" name="beginTime" style="width: 140px" class="form-control" value="{{$r['beginTime'] or ''}}" />
+        <input type="date" name="endTime" style="width: 140px" class="form-control" value="{{$r['endTime'] or ''}}" /></div>
       <div class="input-group" style="width: 50px;float: left;margin-right: 10px;">
         <button class="btn btn-primary" type="submit">搜索</button></div>
       <input type="hidden" name="is_export" class="is_export" value="0">
@@ -72,6 +72,7 @@ $(document).ready(function() {
     $('.menu .nav .active').removeClass('active');
     $('.menu .nav li.walletlog').addClass('active');
     $('.menu .nav li.wallet-manager').addClass('show');
+    $('.log_wallet_type').val({{$r['log_wallet_type'] or ''}});
     $('.export').click(function() {
         $(".is_export").val(1);
         setTimeout(function() {
