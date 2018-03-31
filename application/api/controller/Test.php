@@ -9,6 +9,8 @@ use think\Request;
 use think\Config;
 use app\index\model\CashOrder;
 use app\index\model\PassagewayItem;
+use app\index\model\Wallet;
+use app\index\model\Wallet_log;
 
 class Test 
 {
@@ -349,6 +351,32 @@ class Test
 
 	 	}
 	 	echo 'success';die;
+	 }
+	 #手动调整钱包余额
+	 public function change_wallet(){
+	 	$arr=[
+	 		'张奎同'=>9.65,
+	 		'杨雪'=>5,
+	 		'王玉强'=>7.5,
+	 		'任爱芬'=>9.99,
+	 	];
+	 	foreach ($arr as $k => $v) {
+	 		$member_id=db('member')->where('member_nick','like','%'.$k.'%')->value('member_id');
+	 		$wallet=Wallet::get(['wallet_member'=>$member_id]);
+	 		$wallet->wallet_amount-=$v;
+	 		$wallet->wallet_total_revenue-=$v;
+	 		$wallet_log=new Wallet_log([
+              'log_wallet_id' =>$wallet->wallet_id,
+              'log_wallet_amount'=>$v,
+              'log_balance'=>$wallet->wallet_amount,
+              'log_wallet_type'    =>2,
+              'log_relation_id'     =>0,
+              'log_relation_type' =>7,
+              'log_form'              =>'手动调整',
+              'log_desc'  =>'2018年1月30日之前余额校对',
+	 		]);
+	 		echo $wallet->wallet_amount.'</br>';
+	 	}
 	 }
 	 #对每个项目执行sql
 	 public function exesql(){
