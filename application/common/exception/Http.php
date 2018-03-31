@@ -12,9 +12,7 @@ class Http extends Handle
     public function render(\Exception $e)
     {
         // print_r(self::getErrorHtml($e));die;
-        if($_SERVER['REMOTE_ADDR']=='47.104.4.73'){
-            MailHelper::errorSend('出错了~', self::getErrorHtml($e));
-        }
+        MailHelper::errorSend('出错了~', self::getErrorHtml($e));
         return parent::render($e);
     }
     /**
