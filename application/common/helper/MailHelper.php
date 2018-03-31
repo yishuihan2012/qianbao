@@ -33,7 +33,6 @@ class MailHelper
     public static function errorSend($title = '', $content = '', $email = [])
     {
         $config = config('mail.system-error');
-        var_dump($config);die;
         // $config['showname']=System::getName('sitename');
         $email = $email ? : config('mail.email');
         self::send($title, $content, $email, $config);
