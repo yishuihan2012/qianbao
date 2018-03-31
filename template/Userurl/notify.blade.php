@@ -11,6 +11,7 @@
 		<link href="/static/css/themes.css" rel="stylesheet"/>
 	</head>
 	<body>
+		<div id="pullrefresh" class="mui-content mui-scroll-wrapper">
 		<div class="mui-content notify">
 			<ul class="mui-table-view">
 			    <li class="mui-table-view-cell mui-media bor-bot">
@@ -37,9 +38,24 @@
 			    </li>
 			</ul>
 		</div>
-		<script src="js/mui.min.js"></script>
+		<script src="/static/js/mui.min.js"></script>
 		<script type="text/javascript">
-			mui.init();
+			mui.init(
+			// {
+			// 	pullRefresh: {
+			// 		container: '#pullrefresh',
+			// 		down: {
+			// 			style:'circle',
+			// 			callback: function(){
+			// 				setTimeout(function() {
+			// 				window.location.reload();
+			// 				mui('#pullrefresh').pullRefresh().endPulldownToRefresh();
+			// 			    }, 1500);
+			// 			 }
+			// 		}
+			// 	}
+			// }
+			);
 			mui.ready(function(){
 				//跳转到平台公告列表页
 				document.getElementById('toNotifyList').addEventListener('tap',function(){

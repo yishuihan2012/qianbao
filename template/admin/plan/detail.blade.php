@@ -134,9 +134,9 @@
             | <a class="remove" href="#" data-url="{{url('/api/Membernet/update_bak_money/id/'.$value['order_id'])}}">修改还款金额 </a>
             @endif
           @endif
-          @if($value['order_status'] ==4)
+         
           | <a class="remove1" data-toggle="modal" data-remote="{{url('/index/Plan/edit_status/id/'.$value['order_id'])}}" href="#">更改状态 </a>
-          @endif
+          
 
        </td>
      </tr>

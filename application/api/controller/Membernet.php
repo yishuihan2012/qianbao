@@ -113,7 +113,7 @@ use app\index\model\Member;
                            if($value['order_type']==1){ //消费
                               $huilian->pay($value,$passageway_mech);
                            }else if($value['order_type']==2){//提现
-                               $huilian->qfpay($value,$passageway_mech);
+                               $res=$huilian->qfpay($value,$passageway_mech);
                            }
                      }else{
                           if($value['order_type']==1){ //消费
@@ -141,7 +141,8 @@ use app\index\model\Member;
             if($passageway['passageway_method']=='income'){
                  $huilian=new Huilianjinchuang();//实例化那个类先写死
                  if($value['order_type']==1){ //消费
-                    $huilian->pay($value,$passageway_mech);
+                    $res=$huilian->pay($value,$passageway_mech);
+                    // var_dump($res);die;
                  }else if($value['order_type']==2){//提现
                      $huilian->qfpay($value,$passageway_mech);
                  }

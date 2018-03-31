@@ -215,6 +215,7 @@ class Order extends Common{
             $Withdraw = Withdraw::get($param['withdraw_id']);
             $result=true;
             //审核通过
+
             if($param['withdraw_state']==12){
                 //支付宝仅支持小数点后2位，数据库中存储的为小数点后4位，转换
                 
@@ -223,9 +224,12 @@ class Order extends Common{
               $payMethod="\app\index\controller\\".$Withdraw->withdraw_method;
               $payment=new $payMethod();
               $return=$payment->transfer($Withdraw); //转账
+
               if ($return['code'] != "200") {
                 trace($return);
-                $result=false;
+                 $content =  ['type'=>'warning','msg'=>$return['msg']];
+                 Session::set('jump_msg', $content);
+                 $this->redirect('order/withdraw');
               }else{
                 $param['withdraw_option']=session('adminster.id');
                 WalletLog::where(['log_relation_type'=>2,'log_relation_id'=>$param['withdraw_id']])->update(['log_status'=>1]);
@@ -264,6 +268,8 @@ class Order extends Common{
                      $result=false;
                }
             }
+
+
             $content = $result ? ['type'=>'success','msg'=>'审核成功'] : ['type'=>'warning','msg'=>'审核失败'];
             Session::set('jump_msg', $content);
             $this->redirect('order/withdraw');
