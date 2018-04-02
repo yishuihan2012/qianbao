@@ -78,8 +78,10 @@
            <thead>
             <tr>
               <th>ID</th>
+              <th>计划ID</th>
         <th>姓名</th>
         <th>通道</th>
+        <th>银行</th>
         <th>订单类型</th>
         <th>订单金额</th>
         <th>订单手续费</th>
@@ -89,6 +91,7 @@
         <th>盈利</th>
         <th>订单状态</th>
         <th>订单执行时间</th>
+        <th>查看</th>
         <th>操作</th>
         </tr>
     </thead>
@@ -96,8 +99,10 @@
     @foreach($list as $key => $value)
      <tr style="">
       <td>{{$value['order_id']}}</td>
+      <td><a type="button" href="/index/Plan/index?generation_id={{$value['order_no']}}">{{$value['order_no']}}</a></td>
        <td>{{$value['member_nick']}}</td>
       <td>{{$value['passageway_name']}}</td>
+      <td>{{$value['card_bankname']}}</td>
        <td>@if($value['order_type'] == 1)
         <em style="color:#00FF00;"> 消费</em>
          @else
@@ -121,6 +126,9 @@
        <td>{{$value['order_time']}}</td>
        <td>
         <a type="button" data-toggle="modal" data-remote="/index/Plan/info?order_id={{$value['order_id']}}" href="javascript:;">详细信息</a>
+          | <a type="button" href="/index/Plan/detail?order_no={{$value['order_no']}}">该计划订单</a>
+       </td>
+       <td>
         @if($value['order_status'] == 3)
           <!-- <a class="remove" href="#" data-url="{{url('/index/Plan/order_status/status/1/id/'.$value['order_id'])}}"><i class="icon-pencil"></i> 继续执行 </a> -->
           @endif

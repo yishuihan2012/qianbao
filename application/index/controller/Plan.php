@@ -28,7 +28,7 @@ class Plan extends Common{
 		$where=[];
 	 	 #搜索条件
 	    if(input('member'))
-	      $where['m.member_nick|m.member_mobile']=['like','%'.$r['member'].'%'];
+	      $where['member_nick|member_mobile']=['like','%'.$r['member'].'%'];
 	 	 //注册时间
 		wheretime($where,'generation_add_time');
 		#信用卡号
@@ -182,6 +182,7 @@ class Plan extends Common{
 			->join('member m','o.order_member=m.member_id')
 			->join('generation g','g.generation_id=o.order_no')
 			->join('passageway p','o.order_passageway=p.passageway_id')
+			->join('member_creditcard c','o.order_card=c.card_bankno')
 			->where($where)
 			->where('g.generation_state','<>',1)
 			->order('order_id desc');
@@ -215,7 +216,7 @@ class Plan extends Common{
 		$order_data=$order_lists->field('o.order_id,o.order_type,o.order_money,o.order_pound,o.order_status,o.order_passageway_fee,o.order_platform_fee,m.member_nick,p.passageway_name')->select();
 		#分页数据
 		$order_lists=$list
-			->field('o.*,m.member_nick,p.passageway_name')
+			->field('o.*,m.member_nick,p.passageway_name,c.card_bankname')
 			->paginate(Config::get('page_size'), false, ['query'=>input()]);
         foreach ($order_lists as $k => $v) {
              $order_lists[$k]['order_fenrun']=isset($cms[$v['order_id']])?$cms[$v['order_id']]:0;          
