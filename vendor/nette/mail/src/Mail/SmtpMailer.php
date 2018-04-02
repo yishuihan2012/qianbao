@@ -196,7 +196,6 @@ class SmtpMailer implements IMailer
 		if ($expectedCode) {
 			$response = $this->read();
 			if (!in_array((int) $response, (array) $expectedCode, true)) {
-				echo 'SMTP server did not accept ' . ($message ? $message : $line) . ' with error: ' . trim($response);die;
 				throw new SmtpException('SMTP server did not accept ' . ($message ? $message : $line) . ' with error: ' . trim($response));
 			}
 		}
