@@ -454,6 +454,7 @@
         }
         //获取用户入网信息
         // $member_net=MemberNets::where(['net_member_id'=>$order['order_member']])->find();
+        $pay_info=GenerationOrder::where(['order_type'=>1,'order_no'=>$order['order_no']])->order('order_id desc')->find();
         $arr=array(
             'version'=>$this->version,
             'charset'=>'UTF-8',//编码方式UTF-8
@@ -464,7 +465,7 @@
             'orderNo'=>$order['order_platform_no'],//订单号
             'notifyUrl'=>System::getName('system_url').'/Api/Huilianjinchuang/cashCallback',//异步通知地址
             // 'returnUrl'=>'', //N(String)   返回地址
-            // 'date'='' ,//N(String)   支付日期，格式:yyyyMMdd
+            'date'=>date('Ymd',strtotime($pay_info['order_time'])),//N(String)   支付日期，格式:yyyyMMdd
             'amount'=>$order['order_real_get']*100,//金额(分)
         );
         // echo json_encode($arr);
