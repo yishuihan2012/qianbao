@@ -28,7 +28,6 @@ class WalletLog extends Common
 		$where=[];
 		wheretime($where,'log_add_time');
 		$where['log_wallet_amount'] = array("<>",0);
-		$where['log_status']=1;
 		if(input('log_wallet_type'))
 			$where['log_wallet_type']=input('log_wallet_type');
 		if(input('member'))
@@ -90,6 +89,7 @@ class WalletLog extends Common
 				$list[$key]['hrefurl']='';
 			}
 		}
+		$where['log_status']=1;
 		$count = WalletLogs::with('wallet')->join("wt_member","member_id=wallet_member")->where($where)->count();
 		$this->assign("count",$count);
 		#计算进账总额
