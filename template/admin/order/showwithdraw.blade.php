@@ -64,6 +64,10 @@
              <td>备注信息</td>
              <td>{{$info['withdraw_bak']}}</td>
          </tr>
+         <tr>
+             <td>其他</td>
+             <td>{{$info['withdraw_information']}}</td>
+         </tr>
          
      </table>
      

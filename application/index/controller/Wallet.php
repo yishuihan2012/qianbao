@@ -25,12 +25,8 @@ class Wallet extends Common
 	 	$data = memberwhere($r);
 	 	$r = $data['r'];
 	 	$where = $data['where'];
-	 	 //红包生成时间查询
 	 	$wheres = array();
-		if(request()->param('beginTime') && request()->param('endTime')){
-			$endTime = strtotime(request()->param('endTime'))+24*3600;
-			$wheres['wallet_add_time'] = ["between time",[request()->param('beginTime'),$endTime]];
-		}
+	 	wheretime($wheres,'wallet_add_time');
 		#身份证查询
 		 if( request()->param('wallet_state')){
 			$wheres['wallet_state'] = ['like',"%".request()->param('wallet_state')."%"];
@@ -78,7 +74,7 @@ class Wallet extends Common
 
 
 		#查询出会员列表
-		$list = Wallets::haswhere('member',$where)->join("wt_member_cert m", "m.cert_member_id=Member.member_id","left")->field("member_nick")->where($wheres)->order('wallet_id', 'desc')->paginate(Config::get('page_size'), false, ['query'=>Request::instance()->param()]);
+		$list = Wallets::haswhere('member',$where)->join("wt_member_cert m", "m.cert_member_id=Member.member_id","left")->field("member_nick,member_mobile")->where($wheres)->order('wallet_amount', 'desc')->paginate(Config::get('page_size'), false, ['query'=>Request::instance()->param()]);
 		$this->assign('list', $list);
 		#统计数据总条数
 		$count =  Wallets::haswhere('member',$where)->join("wt_member_cert m", "m.cert_member_id=Member.member_id","left")->where($wheres)->count();
