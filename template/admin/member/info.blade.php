@@ -26,6 +26,10 @@
 			 <td>昵称</td>
 			 <td>{{$member_info->member_nick}}</td>
 		 </tr>
+		  <tr>
+			 <td>会员等级</td>
+			 <td>{{$level->group_name}}</td>
+		 </tr>
 		 <tr>
 			 <td>手机号</td>
 			 <td>{{$member_info->member_mobile}}</td>

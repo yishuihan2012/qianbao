@@ -304,7 +304,7 @@ namespace app\index\controller;
 
 	 	 #查询到当前会员的基本信息
 	 	 $member_info=Members::with('memberLogin,memberWallet,membercert')->find($request->param('id'));
-
+	 	 $level=MemberGroup::where(['group_id'=>$member_info['member_group_id']])->find();
 	 	 #查询上级信息
 	 	 $leadr=db('member_relation')->alias('r')
 	 	 	->where(["r.relation_member_id"=>$member_info->member_id])
@@ -316,7 +316,7 @@ namespace app\index\controller;
 	 	 // var_dump($member_info);die;
 	 	 $this->assign('member_info', $member_info);
 	 	 $this->assign('leadr', $leadr);
-	 	 // $this->assign('team', $team);
+	 	 $this->assign('level', $level);
 	 	 return view('admin/member/info');
 	 }
 	 
