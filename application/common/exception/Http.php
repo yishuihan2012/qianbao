@@ -18,6 +18,15 @@ class Http extends Handle
         $trace=(array)($a);
         foreach ($trace as $k => $v) {
             if($_SERVER['REMOTE_ADDR']!='127.0.0.1'){
+                $arr=[
+                    '模块不存在:favicon.ico',
+                    '模块不存在:uploads',
+                    '模块不存在:static',
+                ];
+                array_walk($arr, function($value,$key,$v){
+                    if(strpos($v, $value)===false)
+                        die;
+                },$v);
                 MailHelper::errorSend('出错了~', $v);
             }
             break;
