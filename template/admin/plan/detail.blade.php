@@ -63,9 +63,8 @@
       </div>
       <div class="input-group" style="width: 360px;float: left;margin-right: 10px;">
         <span class="input-group-addon">执行时间</span>
-        <input type="date" name="beginTime" id="beginTime" value="{{$r['beginTime'] or ''}}" />
-        <input type="date" name="endTime" id="endTime" value="{{$r['endTime'] or ''}}" />
-      </div>
+        <input type="date" name="beginTime" style="width: 140px" class="form-control" value="{{$r['beginTime'] or ''}}" />
+        <input type="date" name="endTime" style="width: 140px" class="form-control" value="{{$r['endTime'] or ''}}" /></div>
       <button class="btn btn-primary" type="submit">搜索</button>
       <input type="hidden" name="is_export" class="is_export" value="0">
       <button class="btn btn-primary export" type="submit">导出</button></form>
@@ -91,6 +90,7 @@
         <th>盈利</th>
         <th>订单状态</th>
         <th>订单执行时间</th>
+        <th>失败原因</th>
         <th>查看</th>
         <th>操作</th>
         </tr>
@@ -124,6 +124,7 @@
        <td>{{$value['order_platform_fee']-$value['order_fenrun']}}</td>
        <td>@if($value['order_status'] == 1)<em style="color:#FF9900;">  待执行 </em>@elseif($value['order_status'] == 2)<em style="color:#33FF33;"> 成功</em> @elseif($value['order_status'] == 3)<em style="color:#FF00FF;"> 取消</em> @elseif($value['order_status'] ==4) <em style="color:#00FFFF;">待查证</em> @else <em style="color:red;">失败 </em>@endif </td>
        <td>{{$value['order_time']}}</td>
+       <td>{{$value['back_statusDesc']}}</td>
        <td>
         <a type="button" data-toggle="modal" data-remote="/index/Plan/info?order_id={{$value['order_id']}}" href="javascript:;">详细信息</a>
           | <a type="button" href="/index/Plan/detail?order_no={{$value['order_no']}}">该计划订单</a>

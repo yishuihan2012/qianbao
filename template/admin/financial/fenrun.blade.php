@@ -24,9 +24,10 @@
   </div>
   <div class="input-group" style="width: 120px;float: left;margin-right: 10px;">
       <span class="input-group-btn"><button class="btn btn-default" type="button">类型</button></span>
-       <select name="passway_type" class="form-control passway_type">
+       <select name="commission_type" class="form-control commission_type">
          <option value="">全部</option>
          <option value="1">消费</option>
+         <!-- <option value="2">分佣</option> -->
          <option value="3">代还</option>
        </select>
   </div>
@@ -42,11 +43,10 @@
      <span class="input-group-btn fix-border"><button class="btn btn-default" type="button">~</button></span>
      <input type="text" class="form-control" name="max_money" value="{{$r['max_money'] or ''}}">
    </div>
-  <div class="input-group" style="width: 360px;float: left;margin-right: 10px;">
-        <span class="input-group-addon">收益时间</span>
-          <input type="date" name="beginTime" id="beginTime" value="{{$r['beginTime'] or ''}}" />
-          <input type="date" name="endTime" id="endTime" value="{{$r['endTime'] or ''}}" />
-    </div>
+    <div class="input-group" style="width: 360px;float: left;margin-right: 10px;">
+      <span class="input-group-addon">收益时间</span>
+      <input type="date" name="beginTime" style="width: 140px" class="form-control" value="{{$r['beginTime'] or ''}}" />
+      <input type="date" name="endTime" style="width: 140px" class="form-control" value="{{$r['endTime'] or ''}}" /></div>
   <div class="input-group" style="width: 60px;float: left;margin-right: 10px;">
           <button class="btn btn-primary" type="submit">搜索</button>
      </div>
@@ -89,7 +89,7 @@
               </td>
               <td>{{$v['parent']}}</td>
               <td>{{$v['child']}}</td>
-              <td>{{$v['commission_type']=='1' ? '消费' : '代还'}}</td>
+              <td>{{$type[$v['commission_type']]['name']}}</td>
               <td>{{$v['commission_money']}}</td>
               <td>{{$v['commission_cash_rate']}}</td>
               <td>{{$v['commission_cash_fix']}}</td>
@@ -118,9 +118,9 @@ $('.export').click(function(){
    $('.menu .nav li.fenrun_center').addClass('active');
    $('.menu .nav li.financial-manager').addClass('show');
    pas_change();
-   $('.passway_type').change(pas_change);
+   $('.commission_type').change(pas_change);
    $('.passageway_id').val({{$r['passageway_id'] or ''}});
-   $('.passway_type').val({{$r['passway_type'] or ''}});
+   $('.commission_type').val({{$r['commission_type'] or ''}});
    //todo select默认选项用jq实现
  });
  //构建动态通道下拉菜单
@@ -136,14 +136,16 @@ $('.export').click(function(){
  @endforeach
   //根据类型 变更通道下拉菜单
  function pas_change(){
-    var type=$('.passway_type').val();
+    var type=$('.commission_type').val();
     var sel='<option value="">全部</option>'
-    if(type!=3){
+    if(!type || type==1){
       for(var i in passway_cash){
         sel+=passway_cash[i];
       }
     }
-    if(type!=1){
+    if(!type || type==2){
+    }
+    if(!type || type==3){
       for(var i in passway_generation){
         sel+=passway_generation[i];
       }

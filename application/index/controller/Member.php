@@ -109,11 +109,11 @@ namespace app\index\controller;
 	 	 $member_group=MemberGroup::column("*","group_id");
 	 	 #获取会员列表 
 	 	 $member_list=Members::where($where)
+	 	 	->join('commission',"member_id=commission_childen_member and commission_member_id={$member_id}",'left')
+	 	 	->field('wt_member.*,sum(commission.commission_money) as sums')
+	 	 	->group('member_id')
+	 	 	->order('sums desc')
 	 	 	->paginate(Config::get('page_size'), false, ['query'=>Request::instance()->param()]);
-	 	 #写入每个会员的分润和
-	 	foreach ($member_list as $k => $v) {
-	 		$member_list[$k]['sum']=isset($cms[$v['member_id']]) ? $cms[$v['member_id']] : 0 ;
-	 	}
 	 	#统计
 	 	$data=[
 	 		'count'=>count($member_data),

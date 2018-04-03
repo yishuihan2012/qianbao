@@ -286,8 +286,6 @@ class Order extends Common{
         $data = memberwhere($r);
         $r = array_merge($r,$data['r']);
         $where = $data['where'];
-        $member_ids=Member::where($where)->column('member_id');
-        $where=['order_member'=>['in',$member_ids]];
         if(input('order_id'))
             $where['order_id']=input('order_id');
         if(input('order_creditcard'))
@@ -302,7 +300,11 @@ class Order extends Common{
         wheretime($where,'order_add_time');
         $passageway=db('passageway')->column("*","passageway_id");
         #共用数据
-        $order_data=CashOrder::where($where)->order("order_id desc")->field('order_id,order_money,order_charge,order_passway_profit,order_buckle,order_state')->column("*","order_id");
+        $order_data=CashOrder::where($where)
+            ->join('member m','wt_cash_order.order_member=m.member_id')
+            ->order("order_id desc")
+            ->field('order_id,order_money,order_charge,order_passway_profit,order_buckle,order_state')
+            ->column("*","order_id");
         $cms=db('commission')->where('commission_from','in',array_column($order_data, 'order_id'))->where('commission_type',1)->group('commission_from')->column("commission_from,sum(commission_money) as sum");
         
         if(input('is_export')==1){

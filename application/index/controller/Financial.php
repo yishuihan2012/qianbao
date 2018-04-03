@@ -72,7 +72,7 @@
  	 	 	 $data['autoPay']+=$value['order_buckle']+$value['order_platform']; //加上代扣费 平台收益
 		 #渲染视图
 		 $this->assign('data',$data);
-		 $this->assign('conditions', $request->param());
+		 $this->assign('r', $request->param());
 		 return view('admin/financial/index');
  	 }
 
@@ -331,19 +331,19 @@
       ->order('commission_id desc')
       ->where($where);
     #通道类型
-    if(input('passway_type') || input('passageway_id')){
+    if(in_array(input('commission_type'),[1,3]) || input('passageway_id')){
       #消费    类型为消费 或 (有传入通道id 且 通道id对应的为消费通道)
-      if(input('passway_type')==1 || (input('passageway_id') && $passway[$r['passageway_id']]['passageway_also']==1)){
-        $list=$list->join('cash_order o','o.order_id=c.commission_from')
-          ->where('c.commission_type',1);
+      if(input('commission_type')==1 || (input('passageway_id') && $passway[$r['passageway_id']]['passageway_also']==1)){
+        $list=$list->join('cash_order o','o.order_id=c.commission_from');
+          // ->where('c.commission_type',1);
           #有传入通道id 且 通道id对应的为消费通道
         if(input('passageway_id') && $passway[input('passageway_id')]['passageway_also']==1){
           $list=$list->where('order_passway',input('passageway_id'));
         }
         #代还
-      }elseif(input('passway_type')==3 || (input('passageway_id') && $passway[$r['passageway_id']]['passageway_also']==2)){
-        $list=$list->join('generation_order o','o.order_id=c.commission_from')
-          ->where('c.commission_type',3);
+      }elseif(input('commission_type')==3 || (input('passageway_id') && $passway[$r['passageway_id']]['passageway_also']==2)){
+        $list=$list->join('generation_order o','o.order_id=c.commission_from');
+          // ->where('c.commission_type',3);
           #有传入通道id 且 通道id对应的为消费通道
         if(input('passageway_id') && $passway[input('passageway_id')]['passageway_also']==1){
           $list=$list->where('order_passageway',input('passageway_id'));
@@ -367,6 +367,12 @@
       ->paginate(Config::get('page_size'), false, ['query'=>Request::instance()->param()]);
 
     $this->assign('data',$data);
+    $type=[
+      '1'=>['name'=>'消费','method'=>'Order/cash'],
+      '2'=>['name'=>'分佣','method'=>'Order/index'],
+      '3'=>['name'=>'代还','method'=>'Plan/detail'],
+    ];
+    $this->assign('type',$type);
     $this->assign('list',$list);
     return view('admin/financial/fenrun');
   }

@@ -105,7 +105,7 @@
  </div>
 
  <!--dialog Button-->
- <div class="modal-footer animated fadeInLeft">
+ <div class="modal-footer">
     
  </div>
  <script>

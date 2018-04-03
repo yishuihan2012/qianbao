@@ -67,11 +67,10 @@
     @endforeach
   </select>
   </div>
-      <div class="input-group" style="width: 360px;float: left;margin-right: 10px;">
-        <span class="input-group-addon">添加时间</span>
-        <input type="date" name="beginTime" id="beginTime" value="{{$r['beginTime'] or ''}}" />
-        <input type="date" name="endTime" id="endTime" value="{{$r['endTime'] or ''}}" />
-      </div>
+    <div class="input-group" style="width: 360px;float: left;margin-right: 10px;">
+      <span class="input-group-addon">添加时间</span>
+      <input type="date" name="beginTime" style="width: 140px" class="form-control" value="{{$r['beginTime'] or ''}}" />
+      <input type="date" name="endTime" style="width: 140px" class="form-control" value="{{$r['endTime'] or ''}}" /></div>
   <button class="btn btn-primary" type="submit">搜索</button>
   <input type="hidden" name="is_export" class="is_export" value="0">
   <div class="input-group" style="width: 180px;float: left; margin-right: 10px;">
