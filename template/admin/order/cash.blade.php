@@ -22,7 +22,7 @@
       <i class="icon-list-ul"></i> 分润后盈利 <small>共 <strong class="text-danger" style="font-size: 16px">{{$count['fenrunhou']}}</strong> 元</small>
     </h3>
   </header>
-   <form action="" method="post">
+   <form action="" method="get">
     <div class="input-group" style="width: 150px;float: left;margin-right: 20px;">
     <span class="input-group-addon">用户名</span>
     <input type="text" class="form-control" name="member_nick" value="{{$r['member_nick']}}" placeholder="用户名">
@@ -44,6 +44,7 @@
       <option value="-1" @if($r['order_state']==-1) selected @endif>失败</option>
       <option value="-2" @if($r['order_state']==-2) selected @endif>超时</option>
       <option value="3" @if($r['order_state']==3) selected @endif>代付未成功</option>
+      <option value="!2" @if($r['order_state']=='!2') selected @endif>非成功订单</option>
   </select>
  
   </div>

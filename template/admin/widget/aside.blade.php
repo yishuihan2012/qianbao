@@ -37,7 +37,8 @@
                 <li class="withdraw"><a href="{{url('/index/order/Withdraw')}}"><i class="icon icon-sliders"></i> 提现订单</a></li>
                 <li class="recomment"><a href="{{url('/index/order/recomment')}}"><i class="icon icon-sliders"></i> 实名红包列表</a></li>
                 <li class="cash"><a href="{{url('/index/order/cash')}}"><i class="icon icon-sliders"></i> 交易订单</a></li>
-                 <li class="successcash"><a href="{{url('/index/order/successCash')}}"><i class="icon icon-sliders"></i> 成功交易订单</a></li>
+                 <li class="successcash"><a href="/index/order/cash?order_state=2"><i class="icon icon-sliders"></i> 成功交易订单</a></li>
+                 <li class="successcash"><a href="/index/order/cash?order_state=!2"><i class="icon icon-sliders"></i> 未成功交易订单</a></li>
             </ul>
         </li>
         @endif

@@ -292,6 +292,9 @@ class Order extends Common{
             $where['order_creditcard']=['like',"%".input('order_creditcard')."%"];
         if(input('order_state'))
             $where['order_state']=input('order_state');
+        #非成功状态的所有订单
+        if(input('order_state')=='!2')
+            $where['order_state']=['<>',2];
         if(input('passageway_id')){
             $where['order_passway']=input('passageway_id');
         }else{
@@ -400,9 +403,11 @@ class Order extends Common{
             $count['chengben']=array_sum(array_column($order_data,'order_passway_profit'))+array_sum(array_column($order_data,'passageway_fix'));
             $count['sanji']=array_sum($cms);
         }
-        
+        $count['chengben']=round($count['chengben'],2);
         $count['order_money_del']=$count['order_money']-$count['order_money_yes'];
         $count['yingli']=$count['order_charge']-$count['chengben'];
+        
+        $count['yingli']=round($count['yingli'],2);
         $count['fenrunhou']=$count['yingli']-$count['sanji'];
         $this->assign('order_lists', $order_lists);
         $this->assign('count', $count);
