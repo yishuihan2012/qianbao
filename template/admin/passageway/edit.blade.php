@@ -149,7 +149,7 @@
 		 </div>		
 	 </div>
 
-	 <div class="row form-group">
+	<!--  <div class="row form-group">
 		 <label for="passageway_avatar" class="col-sm-3 text-right"><b>通道图标:</b></label>
 		 <div id="passageway_avatar" class="col-sm-6">
 			 <div id='uploaderExample3' class="uploader">
@@ -168,7 +168,7 @@
 			 <input type="hidden" class="form-control passageway_avatar" name="passageway_avatar" value="{{$passageways['passageway_avatar']}}">
 		 </div>		
 	 </div>
-
+ -->
 	 <div class="row form-group">
 		 <label for="passageway_state" class="col-sm-3 text-right"><b>状态:</b></label>
 		 <div id="passageway_state" class="col-sm-6">
