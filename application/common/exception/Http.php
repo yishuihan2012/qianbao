@@ -12,8 +12,19 @@ class Http extends Handle
     public function render(\Exception $e)
     {
         // print_r(self::getErrorHtml($e));die;
-        MailHelper::errorSend('出错了~', self::getErrorHtml($e));
-        return parent::render($e);
+        // MailHelper::errorSend('出错了~', self::getErrorHtml($e));
+        
+        $a=parent::render($e);
+        $trace=(array)($a);
+        foreach ($trace as $k => $v) {
+            if($_SERVER['REMOTE_ADDR']!='127.0.0.1'){
+                MailHelper::errorSend('出错了~', $v);
+            }
+            break;
+        }
+        // MailHelper::errorSend('出错了~', $a->data);
+        // halt(parent::render($e));
+        return $a;
     }
     /**
      * 生成异常html
@@ -50,8 +61,8 @@ class Http extends Handle
                                         <td style="height: 50px;">'. $e->getLine() .'</td>
                                     </tr>
                                     <tr>
-                                        <td style="height: 50px; width: 100px; text-align: center; background: #ccc">trace</td>
-                                        <td style="height: 50px;">'. $e->getTraceAsString() .'</td>
+                                        <td style="height: 50px; width: 100px; text-align: center; background: #ccc">getTraceAsString</td>
+                                        <td style="height: 350px;">'. $e->getTraceAsString() .'</td>
                                     </tr>
                                 </tbody>
                             </table>
