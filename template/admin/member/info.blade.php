@@ -104,8 +104,8 @@
 	 	</div>
 	 <table class="table table-bordered table-hover table-striped" style="width:90%; margin:0 auto;">
 		 <tr>
-			 <th>账号</th>
-			 <td>{{$leadr['member_mobile']}}</td>
+			 <th>用户名</th>
+			 <td>{{$leadr['member_nick']}}</td>
 			 <th>手机号</th>
 			 <td><button class="btn btn-sm backdrop" data-toggle="modal" data-remote="{{url('/index/member/info/id/'.$leadr['member_id'])}}"  type="button">{{$leadr['member_mobile']}}</button></td>
 		 </tr>

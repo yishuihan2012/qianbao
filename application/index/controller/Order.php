@@ -356,7 +356,10 @@ class Order extends Common{
         #统计数据
         // $order_data=CashOrder::where($where)->order("order_id desc")->field('order_id,order_money,order_charge,order_passway_profit,order_buckle,order_state')->column("*","order_id");
         #分页数据
-        $order_lists=CashOrder::where($where)->order("order_id desc")->paginate(Config::get('page_size'), false, ['query'=>Request::instance()->param()]);
+        $order_lists=CashOrder::where($where)
+            ->join('member m','wt_cash_order.order_member=m.member_id')
+            ->order("order_id desc")
+            ->paginate(Config::get('page_size'), false, ['query'=>input()]);
         #分页数据补充
         foreach ($order_lists as $k => $v) {
              $order_lists[$k]['order_fen']=isset($cms[$v['order_id']])?$cms[$v['order_id']]:0;          
@@ -406,7 +409,7 @@ class Order extends Common{
         $count['chengben']=round($count['chengben'],2);
         $count['order_money_del']=$count['order_money']-$count['order_money_yes'];
         $count['yingli']=$count['order_charge']-$count['chengben'];
-        
+
         $count['yingli']=round($count['yingli'],2);
         $count['fenrunhou']=$count['yingli']-$count['sanji'];
         $this->assign('order_lists', $order_lists);
