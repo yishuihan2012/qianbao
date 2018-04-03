@@ -101,9 +101,9 @@
            //    return['code'=>486,'msg'=>'当前通道暂不支持该银行'];//开始还款日期必须大于今天
            // }
            $bank=mb_substr($card_info['card_bankname'],-4,2);
-          if($bank=="招商"|| $bank=="交通" || $bank=='农业' ){
-               return['code'=>486,'msg'=>'抱歉，还款功能暂时不支持交通农业和招商银行。'];//开始还款日期必须大于今天
-          }
+          // if($bank=="招商"|| $bank=="交通" || $bank=='农业' ){
+          //      return['code'=>486,'msg'=>'抱歉，还款功能暂时不支持交通农业和招商银行。'];//开始还款日期必须大于今天
+          // }
           // print_r($member_info);die;
          $generation_id=$this->param['uid'].'_'.$this->param['cardId'].'_'.$this->param['billMoney'].'_'.$this->param['payCount'].'_'.$this->param['startDate'].'_'.$this->param['endDate'].'_'.$this->param['passageway'];
          exit(json_encode(['code'=>200, 'msg'=> '正在跳转~','data'=>['repaymentScheduleId'=>$generation_id,'repaymentScheduleUrl'=>$_SERVER['SERVER_NAME'].'/api/Userurl/repayment_plan_create_detail/order_no/'.$generation_id]]));die;
