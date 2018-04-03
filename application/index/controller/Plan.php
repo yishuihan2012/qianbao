@@ -21,40 +21,25 @@ use think\Loader;
 use think\Db;
 
 class Plan extends Common{
+	protected $status=['1'=>'待执行','-1'=>'失败','2'=>'成功','3'=>'取消','4'=>'待查证','5'=>'已处理'];
 	#还款计划列表
 	public function index(){
-		$r=request()->param();
+		$r=input();
+		$where=[];
 	 	 #搜索条件
-	 	$data = memberwhere($r);
-	 	$r = $data['r'];
-	 	$where = $data['where'];
+	    if(input('member'))
+	      $where['member_nick|member_mobile']=['like','%'.$r['member'].'%'];
 	 	 //注册时间
-		if(request()->param('beginTime') && request()->param('endTime')){
-			$endTime=strtotime(request()->param('endTime'))+24*3600;
-			$where['generation_add_time']=["between time",[request()->param('beginTime'),$endTime]];
-		}else{
-			$where['generation_add_time']=["between time",[strtotime("-7 days"),time()]];
-			$r['beginTime']=date('Y-m-d',strtotime("-7 days"));
-			$r['endTime']=date('Y-m-d',time());
-		}
-		#身份证号码
+		wheretime($where,'generation_add_time');
+		#信用卡号
 		if( request()->param('generation_card')){
 			$where['generation_card'] = ['like',"%".request()->param('generation_card')."%"];
 		}else{
 			$r['generation_card'] = '';
 		}
-		#需还信用卡号
-		if( request()->param('card_bankno')){
-			$where['card_bankno'] = ['eq',request()->param('card_bankno')];
-		}else{
-			$r['card_bankno'] = '';
-		}
 		#代还计划号码
-		if( request()->param('generation_no')){
-			$where['generation_no'] = ['eq',request()->param('generation_no')];
-		}else{
-			$r['generation_no'] = '';
-		}
+		if(input('generation_id'))
+			$where['generation_id'] = input('generation_id');
 		#计划状态查询
 		$where['generation_state'] = array("<>",1);
 		#计划订单列表
@@ -75,7 +60,7 @@ class Plan extends Common{
 	 	    	->join('member_creditcard c','c.card_bankno=g.generation_card')
 	 	    	->where($where)
 	 	    	->order("generation_id desc")
-	 	    	->field('generation_id,member_nick,member_mobile,generation_no,card_bankno,generation_total,generation_count,generation_has,generation_left,generation_pound,generation_start,generation_end,generation_state,generation_desc')
+	 	    	->field('generation_id,member_nick,member_mobile,generation_no,generation_card,generation_total,generation_count,generation_has,generation_left,generation_pound,generation_start,generation_end,generation_state,generation_desc')
 	 	    	->select();
 
 	 	    $head=['ID','还款会员','手机号码','计划代号','需还信用卡','需还款总额','还款次数','已还款总额','剩余总额','手续费','开始还款日期','最后还款日期','计划状态','还款失败原因'];
@@ -101,8 +86,27 @@ class Plan extends Common{
 		$this->assign("r",$r);
 		return view("admin/plan/index");
 	}
-	#还款详情
+	/**
+	 * 代还订单详情
+	 */
 	public function info(){
+		if(input('order_id')){
+			$info=db('generation_order')->alias('o')
+				->join('member m','o.order_member=m.member_id')
+				->join('passageway p','o.order_passageway=p.passageway_id')
+				->where('order_id',input('order_id'))
+				->find();
+			$info['fenrun']=db('commission')
+				->where(['commission_from'=>input('order_id'),'commission_type'=>1])
+				->sum('commission_money');
+			$info['yingli']=round($info['order_pound']-$info['order_platform_fee']-$info['fenrun'],2);
+			$info['status']=$this->status[$info['order_status']];
+			$this->assign('info',$info);
+			return view("/admin/plan/info");
+		}
+	}
+	#还款详情
+	public function info2(){
 		#从钱包日志跳转来 单条详情
 		if(input('order_id')){
 			$where['order_id'] = input('order_id');
@@ -162,13 +166,148 @@ class Plan extends Common{
 	}
 
 	/**
+	 * 还款订单列表
+	 */
+
+	public function detail(){
+		$passageway=Passageways::where(['passageway_also'=>2,'passageway_state'=>1])->select();
+		$this->assign('passageway',$passageway);
+		$where=$this->detail_search();
+		#分润数据
+		$cms=db('commission')->where(['commission_type'=>3])
+			->group('commission_from')
+			->column("commission_from,sum(commission_money) as sum");
+
+		$list=model('generation_order')->alias('o')
+			->join('member m','o.order_member=m.member_id')
+			->join('generation g','g.generation_id=o.order_no')
+			->join('passageway p','o.order_passageway=p.passageway_id')
+			->join('member_creditcard c','o.order_card=c.card_bankno')
+			->where($where)
+			->where('g.generation_state','<>',1)
+			->order('order_id desc');
+		if(input('is_export')==1){
+	 	    $fp = fopen('php://output', 'a');
+	 	    $type=['1'=>'消费','2'=>'还款'];
+ 	    	#取数据
+	 	    $order_list=db('generation_order')->alias('o')
+				->join('member m','o.order_member=m.member_id')
+				->join('generation g','g.generation_id=o.order_no')
+				->join('passageway p','o.order_passageway=p.passageway_id')
+				->where($where)
+				->where('g.generation_state','<>',1)
+	 	    	->join('member_creditcard c','c.card_bankno=o.order_card')
+	 	    	->order("order_id desc")
+	 	    	->field('order_id,member_nick,passageway_name,member_mobile,order_type,concat("`",order_card),card_bankname,order_money,order_pound,order_passageway_fee,order_platform_fee,order_platform_fee as order_fenrun,order_platform_fee as order_yingli,order_status,order_retry_count,back_statusDesc,order_desc,order_time,order_add_time')
+	 	    	->select();
+	 	    foreach ($order_list as $k => $v) {
+	 	    	$order_list[$k]['order_type']=$type[$v['order_type']];
+	 	    	$order_list[$k]['order_status']=$this->status[$v['order_status']];
+	            $order_lists[$k]['order_fenrun']=isset($cms[$v['order_id']])?$cms[$v['order_id']]:0;
+	            $order_lists[$k]['order_yingli']=$v['order_platform_fee']-$order_lists[$k]['order_fenrun'];
+	 	    }
+	 	    $head=['ID','姓名','通道','手机号','订单类型','信用卡号','银行名称','订单金额','订单手续费','成本手续费','结算','分润','盈利','订单状态','重新执行次数','执行结果','订单描述','订单执行时间','订单创建时间'];
+	 	    export_csv($head,$order_list,$fp);
+	 	    return;
+		}
+
+		$order_lists=clone $list;
+		$order_lists->__construct();
+		$order_data=$order_lists->field('o.order_id,o.order_type,o.order_money,o.order_pound,o.order_status,o.order_passageway_fee,o.order_platform_fee,m.member_nick,p.passageway_name')->select();
+		#分页数据
+		$order_lists=$list
+			->field('o.*,m.member_nick,p.passageway_name,c.card_bankname')
+			->paginate(Config::get('page_size'), false, ['query'=>input()]);
+        foreach ($order_lists as $k => $v) {
+             $order_lists[$k]['order_fenrun']=isset($cms[$v['order_id']])?$cms[$v['order_id']]:0;          
+        }
+        #统计数据
+        $count=[
+            #消费金额
+            'order_cash_money'=>0,
+            #还款金额
+            'order_repay_money'=>0,
+            #手续费之和
+            'order_pound'=>0,
+            #成本手续费之和
+            'chengben'=>0,
+            #结算费用
+            'order_platform_fee'=>0,
+            #全部三级分润金额
+            'sanji'=>0,
+            #订单数量
+            'count_size'=>count($order_data),
+        ];
+        #默认值
+        #全部订单状态时
+        if(!input('order_status')){
+            $order_ids=[];
+            foreach ($order_data as $k => $v) {
+                if($v['order_status']==2){
+                    $count['order_pound']+=$v['order_pound'];
+                    $count['chengben']+=$v['order_passageway_fee'];
+                    $count['order_platform_fee']+=$v['order_platform_fee'];
+                    $order_ids[]=$v['order_id'];
+                    if($v['order_type']==1){
+	                    $count['order_cash_money']+=$v['order_money'];
+                    }else{
+	                    $count['order_repay_money']+=$v['order_money'];
+                    }
+                }
+            }
+            $cms=db('commission')->where('commission_from','in',$order_ids)->where('commission_type',3)->group('commission_from')->column("commission_from,sum(commission_money) as sum");
+            $count['sanji']=array_sum($cms);
+            $r['order_status']='';
+        }elseif(input('order_status')==2){
+            $count['chengben']=array_sum(array_column($order_data,'order_passageway_fee'));
+            $count['order_platform_fee']=array_sum(array_column($order_data,'order_platform_fee'));
+            $cms=db('commission')->where('commission_from','in',array_column($order_data, 'order_id'))->where('commission_type',3)->group('commission_from')->column("commission_from,sum(commission_money) as sum");
+            #指定成功状态时
+            $count['order_pound']=array_sum(array_column($order_data,'order_pound'))+array_sum(array_column($order_data,'user_fix'));
+            $count['sanji']=array_sum($cms);
+            foreach ($order_data as $k => $v) {
+	            if($v['order_type']==1){
+	                $count['order_cash_money']+=$v['order_money'];
+	            }else{
+	                $count['order_repay_money']+=$v['order_money'];
+	            }
+            }
+        }
+        $count['fenrunhou']=$count['order_platform_fee']-$count['sanji'];
+		$this->assign('count',$count);
+		$this->assign('list',$order_lists);
+		return view("admin/plan/detail");
+	}
+
+	private function detail_search(){
+	    $r=input();
+	    $where=[];
+	    if(input('member'))
+	      $where['m.member_nick|m.member_mobile']=['like','%'.$r['member'].'%'];
+	    if(input('order_money'))
+	      $where['o.order_money']=$r['order_money'];
+	    if(input('order_id'))
+	      $where['o.order_id']=$r['order_id'];
+	    if(input('order_no'))
+	      $where['o.order_no']=$r['order_no'];
+	    if(input('order_status'))
+	      $where['o.order_status']=$r['order_status'];
+	    if(input('order_type'))
+	      $where['o.order_type']=$r['order_type'];
+	    if(input('passageway_id'))
+	      $where['o.order_passageway']=$r['passageway_id'];
+	  	wheretime($where,'o.order_time');
+	    $this->assign('r',$r);
+	    return $where;
+	}
+	/**
 	 *  @version detail controller / 总还款列表详情
 	 *  @author $Mr.gao$(928791694@qq.com)
 	 *   @datetime    2017-02-27 09:34:05
 	 *   @return 
 	 */
 
-	 public function detail(){
+	 public function detail2(){
 
 	 	$r=request()->param();
 	 	 #搜索条件

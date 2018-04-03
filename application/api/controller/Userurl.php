@@ -517,7 +517,8 @@ class Userurl extends Controller
      */
     public function repayment_plan_confirm($id){
         $this->checkToken();
-        $GenerationOrder=GenerationOrder::order('order_money desc')->where('order_no',$id)->find();
+        $GenerationOrder=GenerationOrder::order('order_time')->where(['order_no'=>$id,'order_type' => 2])->find();
+        $GenerationOrder['order_money'] = GenerationOrder::order('order_time')->where(['order_no'=>$id,'order_id'=>["<",$GenerationOrder['order_id']]])->sum('order_money');
         $creaditcard=MemberCreditcard::where('card_bankno',$GenerationOrder->order_card)->find();
         $this->assign('generationorder',$GenerationOrder);
         $this->assign('creaditcard',$creaditcard);

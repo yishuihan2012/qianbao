@@ -43,13 +43,12 @@
     @endforeach
   </select>
   </div>
+  
+    <div class="input-group" style="width: 360px;float: left;margin-right: 10px;">
+      <span class="input-group-addon">创建时间</span>
+      <input type="date" name="beginTime" style="width: 140px" class="form-control" value="{{$r['beginTime'] or ''}}" />
+      <input type="date" name="endTime" style="width: 140px" class="form-control" value="{{$r['endTime'] or ''}}" /></div>
 
-  <div class="input-group" style="width: 200px;float: left; margin-right: 10px;">
-      <input type="text" class="form-control date-picker" id="dateTimeRange" placeholder="红包创建时间" />
-      <input type="hidden" name="beginTime" id="beginTime" value="" />
-      <input type="hidden" name="endTime" id="endTime" value="" />
-      <z class='clearTime'>X</z>
-  </div>
   <button class="btn btn-primary" type="submit">搜索</button>
 </form>
    
@@ -95,70 +94,9 @@
 </section>
 <script>
   $(document).ready(function(){
-       $('.menu .nav .active').removeClass('active');
-       $('.menu .nav li.recomment').addClass('active');
-       $('.menu .nav li.order-manager').addClass('show');
-    //初始化时间
-       $('#dateTimeRange').val('');
-        $('#beginTime').val('');
-        $('#endTime').val('');
+     $('.menu .nav .active').removeClass('active');
+     $('.menu .nav li.recomment').addClass('active');
+     $('.menu .nav li.order-manager').addClass('show');
  })
-   $('#dateTimeRange').daterangepicker({
-        applyClass : 'btn-sm btn-success',
-        cancelClass : 'btn-sm btn-default',
-        locale: {
-            applyLabel: '确认',
-            cancelLabel: '取消',
-            fromLabel : '起始时间',
-            toLabel : '结束时间',
-            customRangeLabel : '自定义',
-            firstDay : 1
-        },
-        ranges : {
-            //'最近1小时': [moment().subtract('hours',1), moment()],
-            '今日': [moment().startOf('day'), moment()],
-            '昨日': [moment().subtract('days', 1).startOf('day'), moment().subtract('days', 1).endOf('day')],
-            '最近7日': [moment().subtract('days', 6), moment()],
-            '最近30日': [moment().subtract('days', 29), moment()],
-            '本月': [moment().startOf("month"),moment().endOf("month")],
-            '上个月': [moment().subtract(1,"month").startOf("month"),moment().subtract(1,"month").endOf("month")]
-        },
-        opens : 'left',    // 日期选择框的弹出位置
-        separator : ' 至 ',
-        showWeekNumbers : true,     // 是否显示第几周
-
- 
-        //timePicker: true,
-        //timePickerIncrement : 10, // 时间的增量，单位为分钟
-        //timePicker12Hour : false, // 是否使用12小时制来显示时间
- 
-         
-        //maxDate : moment(),           // 最大时间
-        format: 'YYYY-MM-DD'
- 
-    }, function(start, end, label) { // 格式化日期显示框
-        $('#beginTime').val(start.format('YYYY-MM-DD'));
-        $('#endTime').val(end.format('YYYY-MM-DD'));
-    });
-begin_end_time_clear();
-$('.clearTime').click(begin_end_time_clear);
-  //清除时间
-    function begin_end_time_clear() {
-        $('#dateTimeRange').val('');
-        $('#beginTime').val('');
-        $('#endTime').val('');
-    }
 </script>
-<style type="text/css">
-   .clearTime{
-    position: absolute;
-    right: 5px;
-    top: 5px;
-    z-index: 99;
-    border: 1px solid;
-    color: red;
-    font-size: .6rem;
-    padding: 0 5px;
-   }
- </style>
 @endsection

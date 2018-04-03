@@ -24,21 +24,14 @@ class WalletLog extends Common
     //-------------------------------------------------------
 	public function index($member_nick='')
 	{
-		$r=[];
-		#查询出会员列表
+		$r=input();
+		$where=[];
+		wheretime($where,'log_add_time');
 		$where['log_wallet_amount'] = array("<>",0);
-		if(request()->param('beginTime') && request()->param('endTime')){
-			$endTime=strtotime(request()->param('endTime'))+24*3600;
-			$where['log_add_time']=["between time",[request()->param('beginTime'),$endTime]];
-			$r['beginTime']=request()->param('beginTime');
-			$r['endTime']=request()->param('endTime');
-		}
-		if(request()->param('log_wallet_type')!=''){
-			$where['log_relation_type'] = array("=",request()->param('log_wallet_type'));
-		}
-		if(request()->param('member_nick')!=''){
-			$where['member_nick'] =  array("like","%".request()->param('member_nick')."%");
-		}
+		if(input('log_wallet_type'))
+			$where['log_wallet_type']=input('log_wallet_type');
+		if(input('member'))
+			$where['member_nick|member_mobile']=['like','%'.input('member').'%'];
 
 		if(input('is_export')==1){
 			set_time_limit(0);
@@ -73,7 +66,10 @@ class WalletLog extends Common
 		}
 
 
-		$list = WalletLogs::with('wallet')->join("wt_member","member_id=wallet_member")->where($where)->order('log_id', 'desc')->paginate(Config::get('page_size'), false, ['query'=>Request::instance()->param()]);	
+		$list = WalletLogs::with('wallet')
+			->join("wt_member","member_id=wallet_member")
+			->where($where)->order('log_id', 'desc')
+			->paginate(Config::get('page_size'), false, ['query'=>Request::instance()->param()]);	
 		foreach ($list as $key => $value) {
 			if($value['log_relation_type']==1){
 				$commission=Commission::where(['commission_id'=>$value['log_relation_id']])->find();
@@ -83,7 +79,7 @@ class WalletLog extends Common
 				}elseif($commission['commission_type']==2){//分佣
 					$list[$key]['hrefurl']=$commission['commission_from']?'/index/Order/index/upgrade_id/'.$commission['commission_from'] : '';
 				}elseif($commission['commission_type']==3){//代还分润
-					$list[$key]['hrefurl']=$commission['commission_from']?'/index/Plan/info/order_id/'.$commission['commission_from'] : '';
+					$list[$key]['hrefurl']=$commission['commission_from']?'/index/Plan/detail/order_id/'.$commission['commission_from'] : '';
 				}else{
 					$list[$key]['hrefurl']='';
 				}
@@ -93,13 +89,24 @@ class WalletLog extends Common
 				$list[$key]['hrefurl']='';
 			}
 		}
+		$where['log_status']=1;
 		$count = WalletLogs::with('wallet')->join("wt_member","member_id=wallet_member")->where($where)->count();
 		$this->assign("count",$count);
 		#计算进账总额
-		$entertottal = WalletLogs::with('wallet')->join("wt_member","member_id=wallet_member")->where($where)->where(['log_relation_type' => 1])->order('log_id', 'desc')->sum("log_wallet_amount");
+		$entertottal = WalletLogs::with('wallet')
+			->join("wt_member","member_id=wallet_member")
+			->where($where)
+			->where(['log_relation_type' => 1])
+			->order('log_id', 'desc')
+			->sum("log_wallet_amount");
 		$this->assign("entertottal",$entertottal);
 		#计算出账总额
-		$leavetotal = WalletLogs::with('wallet')->join("wt_member","member_id=wallet_member")->where($where)->where(['log_relation_type' => 2])->order('log_id', 'desc')->sum("log_wallet_amount");
+		$leavetotal = WalletLogs::with('wallet')
+			->join("wt_member","member_id=wallet_member")
+			->where($where)
+			->where(['log_relation_type' => 2])
+			->order('log_id', 'desc')
+			->sum("log_wallet_amount");
 		$this->assign("leavetotal",$leavetotal);
 		$this->assign('list', $list);
 		$this->assign('r', $r);

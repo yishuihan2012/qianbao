@@ -36,10 +36,10 @@ class Appversion extends Controller
       protected $param;
       public $error=0;
       
-   //  public function __construct($param)
-	  // {
-	  //   	 $this->param=$param;
-	  // }
+    public function __construct($param)
+	  {
+	    	 $this->param=$param;
+	  }
    /**
    *杨成志[3115317085@QQ.com]
    *app版本接口

@@ -96,32 +96,12 @@
  </div>
 
  <!--dialog Button-->
- <div class="modal-footer animated fadeInLeft">
+ <div class="modal-footer">
  	
  </div>
  <script>
-	 $(".save").click(function(){
-		 $("#myform").submit()
-	 })
 	 //移除背景多余遮罩
 	 $('.backdrop').click(function(){
 	 	$('.modal-backdrop').remove();
-	 })
-	 $(function(){
-	 	$('.disables').click(function(){
- 		var url=$(this).attr('data-url');
-		 bootbox.confirm({
-		    title: "封停用户",
-		    message: "确定封停吗？",
-		    buttons: {
-		        cancel: {label: '<i class="fa fa-times"></i> 点错'},
-		        confirm: {label: '<i class="fa fa-check"></i> 确定'}
-		    },
-		    callback: function (result) {
-		    	 if(result)
-		    	 	window.location.href=url;
-		    }
-		 });
-	 	})
 	 })
  </script>

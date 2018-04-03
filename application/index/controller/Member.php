@@ -15,6 +15,139 @@ namespace app\index\controller;
  use app\index\model\System;
   use app\index\model\Wallet;
  class Member extends Common{
+ 	/**
+ 	 *  会员下级列表
+ 	 */
+ 	public function children($member_id=null){
+	 	//传入参数
+	 	$r=request()->param();
+	 	#手机号昵称
+	 	$where=[];
+	 	if(input('member_nick'))
+	 		$where['member_nick|member_mobile']=['like',"%".$r['member_nick']."%"];
+	 	#实名
+	 	$r['member_cert']=input('member_cert')??'';
+	 	if($r['member_cert']=='all'){
+	 	}elseif($r['member_cert']==0 && $r['member_cert']!=''){
+	 		$where['member_cert']=0;
+	 	}else{
+	 		$r['member_cert']=1;
+	 		$where['member_cert']=1;
+	 	}
+	 		
+	 	#推荐关系
+	 	$r['relation']=input('relation')??'';
+	 	if($r['relation']){
+	 		$member_ids=$this->getchildIds($member_id,$r['relation'],false);
+	 	}else{
+	 		$member_ids=$this->getchildIds($member_id,3);
+	 	}
+	 	$where['member_id']=['in',$member_ids];
+	 	#用户组
+	 	$r['member_group_id']=input('member_group_id')??'';
+	 	if($r['member_group_id']){
+	 		$where['member_group_id']=$r['member_group_id'];
+	 	}else{
+	 		$r['member_group_id']='';
+	 	}
+
+	 	#通道 
+	 	$r['passageway_id']=input('passageway_id') ?? '';
+	 	$passway=Passageway::column("*","passageway_id");
+	 	$this->assign('passway',$passway);
+	 	$cms_where=['commission_member_id'=>$member_id];
+	 	if($r['passageway_id']){
+	 		#消费
+	 		if($passway[$r['passageway_id']]['passageway_also']==1){
+	 			$order_ids=CashOrder::where(['order_member'=>['in',$member_ids],'order_state'=>2,'order_passway'=>$r['passageway_id']])->column('order_id');
+		 		$cms_where['commission_from']=['in',$order_ids];
+		 		$cms_where['commission_type']=1;
+	 		}else{
+	 			#代还
+	 			$order_ids=db('generation_order')->where(['order_member'=>['in',$member_ids],'order_status'=>2,'order_passageway'=>$r['passageway_id']])->column('order_id');
+		 		$cms_where['commission_from']=['in',$order_ids];
+		 		$cms_where['commission_type']=3;
+	 		}
+	 	}else{
+	 		$cms_where['commission_type']=['in',"1,3"];
+	 	}
+ 		$cms=Commissions::where($cms_where)->group('commission_childen_member')->column('commission_childen_member,sum(commission_money) as sum');
+ 		arsort($cms);
+ 		// halt($cms);
+	 	 //注册时间
+	 	wheretime($where,'member_creat_time');
+
+		$this->assign('button',['text'=>'添加新用户', 'link'=>url('/index/member/register'), 'modal'=>'modal']);
+		#总数据计算
+		$member_data=db('member')->where($where)->select();
+		foreach ($member_data as $k => $v) {
+	 		$member_data[$k]['sum']=isset($cms[$v['member_id']]) ? $cms[$v['member_id']] : 0 ;
+		}
+		#导出
+		if(input('is_export')==1){
+	 	    $fp = fopen('php://output', 'a');
+ 	    	#取数据
+	 	    $member_list=db("member")->alias('m')
+	 	    	->join('member_login l','l.login_member_id=m.member_id')
+	 	    	->join('member_group g','g.group_id=m.member_group_id')
+	 	    	->where($where)
+	 	    	->order("member_id desc")
+	 	    	->field('member_id,member_nick,member_mobile,member_mobile as sum,
+	 	    		case when member_cert=0 then "未实名" 
+	 	    			when member_cert=1 then "已实名"
+	 	    			when member_cert=2 then "未通过" end,
+	 	    		group_name,member_creat_time')
+	 	    	->select();
+	 	    foreach ($member_list as $k => $v) {
+	 	    	$member_list[$k]['sum']=isset($cms[$v['member_id']]) ? $cms[$v['member_id']] : 0 ;
+	 	    }
+	 	    $head=['ID','用户名','手机号码','分润总计','是否实名','会员等级','注册时间'];
+	 	    export_csv($head,$member_list,$fp);
+	 	    return;
+		}
+	 	 //获取会员等级
+	 	 $member_group=MemberGroup::column("*","group_id");
+	 	 #获取会员列表 
+	 	 $member_list=Members::where($where)
+	 	 	->join('commission',"member_id=commission_childen_member and commission_member_id={$member_id}",'left')
+	 	 	->field('wt_member.*,sum(commission.commission_money) as sums')
+	 	 	->group('member_id')
+	 	 	->order('sums desc')
+	 	 	->paginate(Config::get('page_size'), false, ['query'=>Request::instance()->param()]);
+	 	#统计
+	 	$data=[
+	 		'count'=>count($member_data),
+	 		'fenrun'=>array_sum(array_column($member_data, 'sum')),
+	 	];
+	 	//  halt($member_list);
+	 	$parent=MemberRelation::get(['relation_member_id'=>$member_id]);
+	 	if($parent && $parent->relation_parent_id!=0)
+	 		$this->assign("parent",$parent);
+		$current_member=Members::get($member_id);
+		
+		$this->assign("current_member",$current_member);
+	 	 $this->assign('r', $r);
+	 	 $this->assign('member_list', $member_list);
+	 	 $this->assign('member_group', $member_group);
+	 	 $this->assign('data', $data);
+		 #渲染视图
+		 return view('admin/member/children');
+ 	}
+ 	/**
+ 	 * 获取下级id组
+ 	 * deep 获取深度
+ 	 * all 是否获取深度内全部
+ 	 */
+ 	private function getchildIds($ids,$deep=1,$all=true){
+ 		if(!$ids)
+ 			return [];
+ 		if(!$deep)
+ 			return $ids;
+ 		$deep--;
+ 		$ids=MemberRelation::where("relation_parent_id","in",$ids)->column("relation_member_id");
+ 		return $all ? array_merge($ids,$this->getchildIds($ids,$deep)) : $this->getchildIds($ids,$deep,false);
+ 	}
+
  	 /**
 	 *  @version child method /  会员下级信息      @datetime    2018-1-17 13:27
 	 *  @author $GongKe$ (755969423@qq.com) 会员下级信息列表    @return  返回会员的下级信息 

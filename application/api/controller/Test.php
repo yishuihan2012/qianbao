@@ -9,6 +9,8 @@ use think\Request;
 use think\Config;
 use app\index\model\CashOrder;
 use app\index\model\PassagewayItem;
+use app\index\model\Wallet;
+use app\index\model\Wallet_log;
 
 class Test 
 {
@@ -349,5 +351,74 @@ class Test
 
 	 	}
 	 	echo 'success';die;
+	 }
+	 #手动调整钱包余额
+	 public function change_wallet(){
+	 	$arr=[
+	 		'张奎同'=>9.65,
+	 		'杨雪'=>5,
+	 		'王玉强'=>7.5,
+	 		'任爱芬'=>9.99,
+	 	];
+	 	foreach ($arr as $k => $v) {
+	 		$member_id=db('member')->where('member_nick','like','%'.$k.'%')->value('member_id');
+	 		$wallet=Wallet::get(['wallet_member'=>$member_id]);
+	 		$wallet->wallet_amount-=$v;
+	 		$wallet->wallet_total_revenue-=$v;
+	 		$wallet_log=new Wallet_log([
+              'log_wallet_id' =>$wallet->wallet_id,
+              'log_wallet_amount'=>$v,
+              'log_balance'=>$wallet->wallet_amount,
+              'log_wallet_type'    =>2,
+              'log_relation_id'     =>0,
+              'log_relation_type' =>7,
+              'log_form'              =>'手动调整',
+              'log_desc'  =>'2018年1月30日之前余额校对',
+	 		]);
+	 		echo $wallet->wallet_amount.'</br>';
+	 	}
+	 }
+	 #对每个项目执行sql
+	 public function exesql(){
+	 	$database=[
+	 		'喜家'=>'mysql://root:chfuck~>d5@47.104.4.73:3306/wallet#utf8',
+	 		'鑫鑫'=>'mysql://root:chfuck~>d5@47.104.4.73:3306/xxqg_wallet#utf8',
+	 		'李掌柜'=>'mysql://root:chfuck~>d5@47.104.4.73:3306/lizhanggui#utf8',
+	 		'云众'=>'mysql://root:chfuck~>d5@47.104.4.73:3306/yunzhong_wallet#utf8',
+	 		'融易还呗'=>'mysql://root:chfuck~>d5@47.104.4.73:3306/rongyihuanbai#utf8',
+	 		'无忧'=>'mysql://root:chfuck~>d5@47.104.4.73:3306/wuyou#utf8',
+	 		'易享'=>'mysql://root:chfuck~>d5@47.104.4.73:3306/yixiang_wallet#utf8',
+	 		'乐还'=>'mysql://root:chfuck~>d5@47.104.4.73:3306/lehuan#utf8',
+	 		'金源乐享'=>'mysql://root:chfuck~>d5@47.104.4.73:3306/jinyuan_wallet#utf8',
+	 		'益信付'=>'mysql://root:chfuck~>d5@47.104.4.73:3306/yixin_wallet#utf8',
+	 		'众信'=>'mysql://root:chfuck~>d5@47.104.4.73:3306/zhongxin_wallet#utf8',
+	 		'富通'=>'mysql://root:chfuck~>d5@47.104.4.73:3306/futong_wallet#utf8',
+	 		'民麦'=>'mysql://root:chfuck~>d5@47.104.4.73:3306/minmai_wallet#utf8',
+	 		'E还宝'=>'mysql://root:chfuck~>d5@47.104.4.73:3306/ehb_wallet#utf8',
+	 		'如意付'=>'mysql://root:chfuck~>d5@47.104.4.73:3306/ruyifu_wallet#utf8',
+	 		'中京'=>'mysql://root:chfuck~>d5@47.104.4.73:3306/zhongjing_wallet#utf8',
+	 		'惠钱包'=>'mysql://huiqianbao:huiqianbao@47.96.146.215:3306/huiqianbao#utf8',
+	 		'叮当'=>'mysql://huiqianbao:huiqianbao@47.96.146.215:3306/dingdang_wallet#utf8',
+	 	];
+	 	// $sql="select system_val from wt_system where system_key='sitename'";
+	 	$sql="select passageway_mech from wt_passageway WHERE passageway_true_name LIKE \"%mswjf%\"";
+	 	// $sql="select system_val from wt_system where system_key='adminster_key' limit 1";
+	 	$type=1;
+	 	foreach ($database as $k => $v) {
+	 		$db = Db::connect($v);
+	 		echo $k.':__';
+	 		if($type==1){
+		 		$res=$db->query($sql);
+		 		foreach ($res as $key => $value) {
+		 			foreach ($value as $k => $v) {
+		 				echo $v;
+		 			}
+		 		}
+	 		}else{
+		 		$res=$db->execute($sql);
+		 		echo "影响行数:".$res;
+	 		}
+	 		echo "</br>";
+	 	}
 	 }
 }

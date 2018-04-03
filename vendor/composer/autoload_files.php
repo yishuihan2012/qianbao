@@ -7,6 +7,7 @@ $baseDir = dirname($vendorDir);
 
 return array(
     '036ec262f4bcc331fe80b225c0cd7b46' => $vendorDir . '/terranc/blade/src/helpers.php',
+    'a12da592622097d2b593a430e32e13fd' => $vendorDir . '/nette/utils/src/loader.php',
     'c594688b3441835d5575f3085da4a242' => $vendorDir . '/webonyx/graphql-php/src/deprecated.php',
     'ddc3cd2a04224f9638c5d0de6a69c7e3' => $vendorDir . '/topthink/think-migration/src/config.php',
 );

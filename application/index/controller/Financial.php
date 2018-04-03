@@ -72,7 +72,7 @@
  	 	 	 $data['autoPay']+=$value['order_buckle']+$value['order_platform']; //加上代扣费 平台收益
 		 #渲染视图
 		 $this->assign('data',$data);
-		 $this->assign('conditions', $request->param());
+		 $this->assign('r', $request->param());
 		 return view('admin/financial/index');
  	 }
 
@@ -317,6 +317,86 @@
 		 #渲染视图
 		 return view('admin/financial/commiss');
   	 }
+  #所有分润
+  public function fenrun(){
+    $where=$this->fenrun_search();
+    #通道
+    $passway=Passageway::column("*",'passageway_id');
+    $this->assign('passway',$passway);
+    $r['passageway_id']=input('passageway_id') ?? '';
+    #数据
+    $list=db('commission')->alias('c')
+      ->join('member m1','c.commission_member_id=m1.member_id')
+      ->join('member m2','c.commission_childen_member=m2.member_id')
+      ->order('commission_id desc')
+      ->where($where);
+    #通道类型
+    if(in_array(input('commission_type'),[1,3]) || input('passageway_id')){
+      #消费    类型为消费 或 (有传入通道id 且 通道id对应的为消费通道)
+      if(input('commission_type')==1 || (input('passageway_id') && $passway[$r['passageway_id']]['passageway_also']==1)){
+        $list=$list->join('cash_order o','o.order_id=c.commission_from');
+          // ->where('c.commission_type',1);
+          #有传入通道id 且 通道id对应的为消费通道
+        if(input('passageway_id') && $passway[input('passageway_id')]['passageway_also']==1){
+          $list=$list->where('order_passway',input('passageway_id'));
+        }
+        #代还
+      }elseif(input('commission_type')==3 || (input('passageway_id') && $passway[$r['passageway_id']]['passageway_also']==2)){
+        $list=$list->join('generation_order o','o.order_id=c.commission_from');
+          // ->where('c.commission_type',3);
+          #有传入通道id 且 通道id对应的为消费通道
+        if(input('passageway_id') && $passway[input('passageway_id')]['passageway_also']==1){
+          $list=$list->where('order_passageway',input('passageway_id'));
+        }
+      }
+    }
+    #导出
+    if(input('is_export')==1){
+        $fp = fopen('php://output', 'a');
+        #取数据
+        $list=$list->field("c.commission_id,c.commission_from,m1.member_nick as parent,m2.member_nick as child,case when commission_type=1 then '消费' else '代还' end as type,c.commission_money,c.commission_cash_rate,c.commission_cash_fix,c.commission_desc,c.commission_creat_time")
+          ->select();
+        $head=['分润ID','订单ID','收益人','触发人','类型','分润金额','收益人费率','收益人代扣费','备注','时间'];
+        export_csv($head,$list,$fp);
+        return;
+    }
+    $list_obj=clone $list;
+    $list_obj->__construct();
+    $data=$list_obj->field("count(*) as count,sum(commission_money) as money")->find();
+    $list=$list->field("c.*,m1.member_nick as parent,m2.member_nick as child")
+      ->paginate(Config::get('page_size'), false, ['query'=>Request::instance()->param()]);
+
+    $this->assign('data',$data);
+    $type=[
+      '1'=>['name'=>'消费','method'=>'Order/cash'],
+      '2'=>['name'=>'分佣','method'=>'Order/index'],
+      '3'=>['name'=>'代还','method'=>'Plan/detail'],
+    ];
+    $this->assign('type',$type);
+    $this->assign('list',$list);
+    return view('admin/financial/fenrun');
+  }
+  #分润搜索条件
+  private function fenrun_search(){
+    $r=input();
+    $where=[];
+    if(input('parent'))
+      $where['m1.member_nick|m1.member_mobile']=['like','%'.$r['parent'].'%'];
+    if(input('child'))
+      $where['m2.member_nick|m2.member_mobile']=['like','%'.$r['child'].'%'];
+    if(input('commission_from'))
+      $where['c.commission_from']=$r['commission_from'];
+    if(input('commission_type')){
+      $where['c.commission_type']=$r['commission_type'];
+    }else{
+      $where['c.commission_type']=['in','1,3'];
+    }
+    if(input('min_money') && input('max_money'))
+      $where['c.commission_money']=['between',[input('min_money'),input('max_money')]];
+    wheretime($where,'commission_creat_time');
+    $this->assign('r',$r);
+    return $where;
+  }
 
 	 /**
 	 *  @version fenrun method / 财务管理--分润统计列表
@@ -324,7 +404,7 @@
 	 *   @datetime    2018-1-11 14:45
 	 *   @return 
 	 */
-  	 public function fenrun(Request $request)
+  	 public function fenrun2(Request $request,$member_id=null)
   	 {
         $r=input();
   	 	 $count['money']=0;

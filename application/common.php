@@ -986,6 +986,7 @@ function SortByASCII($arr)
               'notice_registration_id'=>$member_token,
             ]);
                 $jpush->set_message_title($title);
+                $jpush->set_message_type($type);
             // $jpush->set_audience('all');
             $jpush->set_registration_id($member_token);
                 $jpush->set_message_sort_desc($content);
@@ -1297,5 +1298,15 @@ function SortByASCII($arr)
                 $n++;
             }
             fputcsv($fp, $row); 
+        }
+    }
+    #封装时间查询接收
+    #   $where数组
+    #   时间字段
+    #   封装的时间字段为 起始时间 beginTime 结束时间 endTime 精确到天
+    function wheretime(&$where,$field,$begin='beginTime',$end='endTime'){
+        if(input($begin) && input($end) && input($begin)<=input($end)){
+            $endTime=strtotime(input($end))+24*3600;
+            $where[$field]=["between time",[input($begin),$endTime]];
         }
     }

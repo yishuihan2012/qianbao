@@ -154,29 +154,11 @@ class Order extends Common{
         $where = $data['where'];
          //订单下单时间
         $wheres = array();
-        if(request()->param('beginTime') && request()->param('endTime')){
-            $endTime=strtotime(request()->param('endTime'))+24*3600;
-            $wheres['withdraw_add_time']=["between time",[request()->param('beginTime'),$endTime]];
-        }
+        wheretime($wheres,'withdraw_add_time');
+        wheretime($wheres,'withdraw_update_time','beginTime2','endTime2');
         #提现状态
-        if(request()->param('withdraw_state') ){
-            $wheres['withdraw_state'] = request()->param('withdraw_state');
-        }else{
-            $r['withdraw_state'] = request()->param('withdraw_state');
-        }
-        #支付类型
-        if(request()->param('withdraw_method') ){
-            $wheres['withdraw_method'] = request()->param('withdraw_method');
-        }else{
-            $r['withdraw_method'] = request()->param('withdraw_method');
-        }
-        #身份证查询
-        if( request()->param('cert_member_idcard')){
-            $wheres['m.cert_member_idcard'] = ['like',"%".request()->param('cert_member_idcard')."%"];
-        }else{
-            $r['cert_member_idcard'] = '';
-        }
-
+        if(input('withdraw_state'))
+            $wheres['withdraw_state']=input('withdraw_state');
         #是否传id
         if(request()->param('withdraw_id')){
             $wheres['withdraw_id'] = request()->param('withdraw_id');
@@ -185,7 +167,6 @@ class Order extends Common{
         $admins=db('adminster')->column('adminster_id,adminster_login');
          // #查询订单列表分页
         $order_lists = Withdraw::haswhere('member',$where)
-            ->join("wt_member_cert m", "m.cert_member_id=Member.member_id","left")
             ->where($wheres)
             ->order('withdraw_add_time desc')
             ->paginate(Config::get('page_size'), false, ['query'=>Request::instance()->param()]);
@@ -195,17 +176,15 @@ class Order extends Common{
                 $order_lists[$k]['withdraw_option']=$admins[$v['withdraw_option']];
         }
 
-         #统计订单条数
-         $countmoney=Withdraw::where('withdraw_state=12')->sum('withdraw_amount');
-         #提现金额
-         $count['withdraw_total_money'] = Withdraw::where([])->sum('withdraw_total_money');
-         #操作全额
-         $count['withdraw_amount'] = Withdraw::where([])->sum('withdraw_amount');
+         #操作成功金额
+         $count['withdraw_amount'] = Withdraw::haswhere('member',$where)->where(array_merge($wheres,['withdraw_state'=>12]))->sum('withdraw_amount');
+         #待审核金额
+         $count['wait_amount'] = Withdraw::haswhere('member',$where)->where(array_merge($wheres,['withdraw_state'=>11]))->sum('withdraw_amount');
          #操作手续费
-         $count['withdraw_charge'] = Withdraw::where([])->sum('withdraw_charge');
-         $count['count_size']=Withdraw::haswhere('member',$where)->join("wt_member_cert m", "m.cert_member_id=Member.member_id","left")->where($wheres)->count();
+         $count['withdraw_charge'] = Withdraw::haswhere('member',$where)->where(array_merge($wheres,['withdraw_state'=>12]))->sum('withdraw_charge');
+         $count['count_size']=Withdraw::haswhere('member',$where)->where($wheres)->count();
+         $count['success_count']=Withdraw::haswhere('member',$where)->where(array_merge($wheres,['withdraw_state'=>12]))->count();
          $this->assign('order_lists', $order_lists);
-         $this->assign('countmoney', $countmoney);
          $this->assign('count', $count);
          #获取用户分组
         $member_group=MemberGroup::all();
@@ -223,9 +202,9 @@ class Order extends Common{
              $this->redirect($this->history['1']);
          }
          #查询到当前订单的基本信息
-         $order_info=Withdraw::with('member,adminster')->find($request->param('id'));
+         $info=Withdraw::with('member,adminster')->find($request->param('id'));
          // var_dump($order_info);die;
-         $this->assign('order_info', $order_info);
+         $this->assign('info', $info);
          return view('admin/order/showwithdraw');
      }
      #审核提现列表
@@ -236,19 +215,24 @@ class Order extends Common{
             $Withdraw = Withdraw::get($param['withdraw_id']);
             $result=true;
             //审核通过
+
             if($param['withdraw_state']==12){
                 //支付宝仅支持小数点后2位，数据库中存储的为小数点后4位，转换
                 
-              $Withdraw->withdraw_amount=round($Withdraw->withdraw_amount, 0,2);
+              $Withdraw->withdraw_amount=round($Withdraw->withdraw_amount,2);
                 //调用支付接口
               $payMethod="\app\index\controller\\".$Withdraw->withdraw_method;
               $payment=new $payMethod();
               $return=$payment->transfer($Withdraw); //转账
+
               if ($return['code'] != "200") {
                 trace($return);
-                $result=false;
+                 $content =  ['type'=>'warning','msg'=>$return['msg']];
+                 Session::set('jump_msg', $content);
+                 $this->redirect('order/withdraw');
               }else{
                 $param['withdraw_option']=session('adminster.id');
+                WalletLog::where(['log_relation_type'=>2,'log_relation_id'=>$param['withdraw_id']])->update(['log_status'=>1]);
                 $Withdraw->allowField(['withdraw_state','withdraw_option'])->save($param);
                   $message="您的提现已经通过,请查收~";
                   jpush($Withdraw->withdraw_member,$message,$message,$message,4);
@@ -270,6 +254,7 @@ class Order extends Common{
                     // trace($wallet_log);
                     $wallet_log->log_desc="您的提现已驳回,驳回原因：".$param['withdraw_information'];
                     $wallet_log->log_balance=$Wallet->wallet_amount;
+                    $wallet_log->log_status=3;
                     if($Wallet->save()===false || $Withdraw->save()===false || $wallet_log->save()===false){
                       Db::rollback();
                       $result=false;
@@ -283,6 +268,8 @@ class Order extends Common{
                      $result=false;
                }
             }
+
+
             $content = $result ? ['type'=>'success','msg'=>'审核成功'] : ['type'=>'warning','msg'=>'审核失败'];
             Session::set('jump_msg', $content);
             $this->redirect('order/withdraw');
@@ -299,27 +286,28 @@ class Order extends Common{
         $data = memberwhere($r);
         $r = array_merge($r,$data['r']);
         $where = $data['where'];
-        $member_ids=Member::where($where)->column('member_id');
-        $where=['order_member'=>['in',$member_ids]];
+        if(input('order_id'))
+            $where['order_id']=input('order_id');
         if(input('order_creditcard'))
             $where['order_creditcard']=['like',"%".input('order_creditcard')."%"];
         if(input('order_state'))
             $where['order_state']=input('order_state');
+        #非成功状态的所有订单
+        if(input('order_state')=='!2')
+            $where['order_state']=['<>',2];
         if(input('passageway_id')){
             $where['order_passway']=input('passageway_id');
         }else{
             $r['passageway_id']='';
         }
-        if(input('beginTime') && input('endTime')){
-            $endTime=strtotime(request()->param('endTime'))+24*3600;
-            $where['order_add_time']=["between time",[request()->param('beginTime'),$endTime]];
-        }else{
-            $r['beginTime']='';
-            $r['endTime']='';
-        }
+        wheretime($where,'order_add_time');
         $passageway=db('passageway')->column("*","passageway_id");
         #共用数据
-        $order_data=CashOrder::where($where)->order("order_id desc")->field('order_id,order_money,order_charge,order_passway_profit,order_buckle,order_state')->column("*","order_id");
+        $order_data=CashOrder::where($where)
+            ->join('member m','wt_cash_order.order_member=m.member_id')
+            ->order("order_id desc")
+            ->field('order_id,order_money,order_charge,order_passway_profit,order_buckle,order_state')
+            ->column("*","order_id");
         $cms=db('commission')->where('commission_from','in',array_column($order_data, 'order_id'))->where('commission_type',1)->group('commission_from')->column("commission_from,sum(commission_money) as sum");
         
         if(input('is_export')==1){
@@ -337,6 +325,7 @@ class Order extends Common{
                 #重组导出数据
                 $list=[];
                 foreach ($order_data as $k => $v) {
+                    $order_fen=isset($cms[$v['order_id']])?$cms[$v['order_id']]:0;
                     $list[$k]=[];
                     $list[$k][]=$v['order_id'];
                     $list[$k][]="`".$v['order_no'];
@@ -346,8 +335,9 @@ class Order extends Common{
                     $list[$k][]=$v['order_money'];
                     $list[$k][]=$v['order_charge']+$v['order_buckle'];
                     $list[$k][]=$v['order_passway_profit']+$v['passageway_fix'];
-                    $list[$k][]=isset($cms[$v['order_id']])?$cms[$v['order_id']]:0;          
-                    $list[$k][]=$v['order_charge']+$v['order_buckle']-$v['order_passway_profit']-$v['passageway_fix']-(isset($cms[$v['order_id']])?$cms[$v['order_id']]:0);
+                    $list[$k][]=$v['order_charge']+$v['order_buckle']-$v['order_passway_profit']-$v['passageway_fix'];
+                    $list[$k][]=$order_fen;
+                    $list[$k][]=round($v['order_charge']+$v['order_buckle']-$v['order_passway_profit']-$v['passageway_fix']-$order_fen,2);
                     $list[$k][]=$passageway[$v['order_passway']]['passageway_name'];
                     $list[$k][]=$status[$v['order_state']];
                     $list[$k][]=$v['order_desc'];
@@ -355,7 +345,7 @@ class Order extends Common{
                 }
                     $i++;
                 // halt($order_lists);
-                $head=['#','交易流水号','刷卡人','结算卡','信用卡','总金额','刷卡手续费','成本手续费','分润金额','盈利','通道','订单状态','备注','创建时间'];
+                $head=['#','交易流水号','刷卡人','结算卡','信用卡','总金额','刷卡手续费','成本手续费','结算金额','分润金额','盈利','通道','订单状态','备注','创建时间'];
                 export_csv($head,$list,$fp);
                 $count=count($list);
                 unset($order_lists);
@@ -366,11 +356,14 @@ class Order extends Common{
         #统计数据
         // $order_data=CashOrder::where($where)->order("order_id desc")->field('order_id,order_money,order_charge,order_passway_profit,order_buckle,order_state')->column("*","order_id");
         #分页数据
-        $order_lists=CashOrder::where($where)->order("order_id desc")->paginate(Config::get('page_size'), false, ['query'=>Request::instance()->param()]);
+        $order_lists=CashOrder::where($where)
+            ->join('member m','wt_cash_order.order_member=m.member_id')
+            ->order("order_id desc")
+            ->paginate(Config::get('page_size'), false, ['query'=>input()]);
         #分页数据补充
         foreach ($order_lists as $k => $v) {
              $order_lists[$k]['order_fen']=isset($cms[$v['order_id']])?$cms[$v['order_id']]:0;          
-             $order_lists[$k]['yingli']=$v['order_charge']+$v['order_buckle']-$v['order_passway_profit']-$v['passageway_fix']-$order_lists[$k]['order_fen'];
+             $order_lists[$k]['yingli']=round($v['order_charge']+$v['order_buckle']-$v['order_passway_profit']-$v['passageway_fix']-$order_lists[$k]['order_fen'],2);
         }
         #非成功状态 应该为0分润 即分润为0
         $count=[
@@ -397,7 +390,7 @@ class Order extends Common{
             foreach ($order_data as $k => $v) {
                 if($v['order_state']==2){
                     $count['order_money_yes']+=$v['order_money'];
-                    $count['order_charge']+=$v['order_charge']+$v['order_charge'];
+                    $count['order_charge']+=$v['order_charge']+$v['order_buckle'];
                     $count['chengben']+=$v['order_passway_profit'];
                     $order_ids[]=$v['order_id'];
                 }
@@ -413,9 +406,11 @@ class Order extends Common{
             $count['chengben']=array_sum(array_column($order_data,'order_passway_profit'))+array_sum(array_column($order_data,'passageway_fix'));
             $count['sanji']=array_sum($cms);
         }
-        
+        $count['chengben']=round($count['chengben'],2);
         $count['order_money_del']=$count['order_money']-$count['order_money_yes'];
         $count['yingli']=$count['order_charge']-$count['chengben'];
+
+        $count['yingli']=round($count['yingli'],2);
         $count['fenrunhou']=$count['yingli']-$count['sanji'];
         $this->assign('order_lists', $order_lists);
         $this->assign('count', $count);
@@ -585,6 +580,7 @@ class Order extends Common{
      }
       #成功交易订单
      public function successCash(){
+        $this->redirect("order/cash",['order_state'=>2]);
         $r=request()->param();
          #搜索条件
         $data = memberwhere($r);

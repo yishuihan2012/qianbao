@@ -10,26 +10,16 @@
   		<form action="" name="myform" class="form-group" method="get">
 
    <form action="" method="post">
-    <div class="input-group" style="width: 150px;float: left;margin-right: 20px;">
-    <span class="input-group-addon">还款会员</span>
-    <input type="text" class="form-control" name="member_nick" value="{{$r['member_nick']}}" placeholder="还款会员" >
-  </div>
-
-  <div class="input-group" style="width: 200px;float: left;margin-right: 20px;">
-    <span class="input-group-addon">手机号</span>
-    <input type="text" class="form-control" name="member_mobile" value="{{$r['member_mobile']}}" placeholder="手机号">
-  </div>
+      <div class="input-group" style="width: 180px;float: left;margin-right: 10px;">
+        <span class="input-group-addon">会员</span>
+        <input type="text" class="form-control" name="member" value="{{$r['member'] or ''}}" placeholder="用户名/手机号"></div>
   <div class="input-group" style="width: 240px;float: left;margin-right: 10px;">
-    <span class="input-group-addon">身份号</span>
-    <input type="text" class="form-control" name="generation_card" value="{{$r['generation_card']}}" placeholder="身份号">
+    <span class="input-group-addon">信用卡</span>
+    <input type="text" class="form-control" name="generation_card" value="{{$r['generation_card']}}" placeholder="信用卡">
   </div>
-   <div class="input-group" style="width: 240px;float: left;margin-right: 10px;">
-    <span class="input-group-addon">计划代号</span>
-    <input type="text" class="form-control" name="generation_no" value="{{$r['generation_no']}}" placeholder="计划代号">
-  </div>
-  <div class="input-group" style="width: 240px;float: left;margin-right: 10px;">
-    <span class="input-group-addon">需还信用卡</span>
-    <input type="text" class="form-control" name="card_bankno" value="{{$r['card_bankno']}}" placeholder="需还信用卡">
+   <div class="input-group" style="width: 140px;float: left;margin-right: 10px;">
+    <span class="input-group-addon">计划ID</span>
+    <input type="text" class="form-control" name="generation_id" value="{{$r['generation_id'] or ''}}" placeholder="计划ID">
   </div>
   <div class="input-group" style="width: 150px;float: left;margin-right: 10px;">
      <span class="input-group-addon">计划状态</span>
@@ -44,21 +34,17 @@
   </div>
   <div class="input-group" style="width: 180px;float: left;margin-right: 10px;">
      <span class="input-group-addon">会员级别</span>
-  <select name="member_group_id" class="form-control">
-      <option value="" @if ($r['member_group_id']=='') selected="" @endif>全部</option>
+  <select name="member_group_id" class="form-control member_group_id">
+      <option value="" >全部</option>
       @foreach($member_group as $v)
-        <option value="{{$v['group_id']}}" @if ($r['member_group_id']==$v['group_id']) selected @endif>{{$v['group_name']}}</option>
+        <option value="{{$v['group_id']}}">{{$v['group_name']}}</option>
       @endforeach
   </select>
   </div>
-
-<div class="input-group" style="width: 290px;float: left; margin-right: 10px;">
-    <span class="input-group-addon">还款创建时间</span>
-    <input type="text" class="form-control date-picker" id="dateTimeRange" placeholder="还款创建时间" />
-    <input type="hidden" name="beginTime" id="beginTime" value="" />
-    <input type="hidden" name="endTime" id="endTime" value="" />
-    <z class='clearTime'>X</z>
-</div>
+      <div class="input-group" style="width: 360px;float: left;margin-right: 10px;">
+        <span class="input-group-addon">创建时间</span>
+        <input type="date" name="beginTime" style="width: 140px" class="form-control" value="{{$r['beginTime'] or ''}}" />
+        <input type="date" name="endTime" style="width: 140px" class="form-control" value="{{$r['endTime'] or ''}}" /></div>
     <button class="btn btn-primary" type="submit">搜索</button>
   <input type="hidden" name="is_export" class="is_export" value="0">
   <button class="btn btn-primary export" type="submit">导出</button>
@@ -110,7 +96,7 @@
 	      	<td>{{$v['member_nick']}}</td>
 	      	<td>{{$v['member_mobile']}}</td>
 	      	<td>{{$v['generation_no']}}</td>
-	      	<td>{{$v['card_bankno']}}</td>
+	      	<td>{{$v['generation_card']}}</td>
 	      	<td>{{$v['generation_total']}}</td>
 	      	<td>{{$v['generation_count']}}</td>
 	      	<td>{{$v['generation_has']}}</td>
@@ -120,7 +106,7 @@
           <td>{{$v['generation_end']}}</td>
 	      	<td>@if($v['generation_state']==2) 还款中 @elseif($v['generation_state']==3)还款结束 @elseif($v['generation_state']==-1)还款失败 @else 取消 @endif</td>
 	      	<td>{{$v['generation_desc']}}</td>
-	      	<td><a class="btn btn-sm"  href="{{url('/index/Plan/info/id/'.$v['generation_id'])}}" >查看详情</a></td>
+	      	<td><a class="btn btn-sm"  href="/index/Plan/detail?order_no={{$v['generation_id']}}" >查看订单</a></td>
 	    </tr>
 	    	@endforeach
   	</tfoot>
@@ -131,6 +117,7 @@ $(document).ready(function(){
     $('.menu .nav .active').removeClass('active');
     $('.menu .nav li.plan').addClass('active');
     $('.menu .nav li.plan-manager').addClass('show');
+    $('.member_group_id').val({{$r['member_group_id'] or ''}})
     $(".freezing").click(function(){
     	var id = $(this).attr('data-id');
     	var explain = $(this).attr('explain');
@@ -153,72 +140,9 @@ $(document).ready(function(){
 		        	})
 		        }
 		    }
-		});
+  		});
     })
-  @if(isset($r["beginTime"]))
-  //初始化时间
-      $('#dateTimeRange').val('{{$r["beginTime"]}} - {{$r["endTime"]}}');
-      $('#beginTime').val('{{$r["beginTime"]}}');
-      $('#endTime').val('{{$r["endTime"]}}'); 
-  @endif
-});
-$('#dateTimeRange').daterangepicker({
-        applyClass : 'btn-sm btn-success',
-        cancelClass : 'btn-sm btn-default',
-        locale: {
-            applyLabel: '确认',
-            cancelLabel: '取消',
-            fromLabel : '起始时间',
-            toLabel : '结束时间',
-            customRangeLabel : '自定义',
-            firstDay : 1
-        },
-        ranges : {
-            // '选择时间': [moment().subtract('hours',1), moment()],
-            '今日': [moment().startOf('day'), moment()],
-            '昨日': [moment().subtract('days', 1).startOf('day'), moment().subtract('days', 1).endOf('day')],
-            '最近7日': [moment().subtract('days', 6), moment()],
-            '最近30日': [moment().subtract('days', 29), moment()],
-            '本月': [moment().startOf("month"),moment().endOf("month")],
-            '上个月': [moment().subtract(1,"month").startOf("month"),moment().subtract(1,"month").endOf("month")]
-        },
-        opens : 'left',    // 日期选择框的弹出位置
-        separator : ' 至 ',
-        showWeekNumbers : true,     // 是否显示第几周
-        format: 'YYYY-MM-DD'
- 
-    }, function(start, end, label) { // 格式化日期显示框
-      console.log(start);
-        $('#beginTime').val(start.format('YYYY-MM-DD'));
-        $('#endTime').val(end.format('YYYY-MM-DD'));
-    });
-
- function getNowFormatDate() {
-        var date = new Date();
-        var seperator1 = "-";
-        var year = date.getFullYear();
-        var month = date.getMonth() + 1;
-        var strDate = date.getDate();
-        if (month >= 1 && month <= 9) {
-            month = "0" + month;
-        }
-        if (strDate >= 0 && strDate <= 9) {
-            strDate = "0" + strDate;
-        }
-        var currentdate = year + seperator1 + month + seperator1 + strDate;
-        
-        return currentdate;
-    }
-     $('#beginTime').val(getNowFormatDate());
-     $('#endTime').val(getNowFormatDate());
-// begin_end_time_clear();
-$('.clearTime').click(begin_end_time_clear);
-  //清除时间
-    function begin_end_time_clear() {
-        $('#dateTimeRange').val('');
-        $('#beginTime').val('');
-        $('#endTime').val('');
-    }
+  })
 $('.export').click(function(){
   $(".is_export").val(1);
   setTimeout(function(){
@@ -226,17 +150,5 @@ $('.export').click(function(){
   },100);
 })
 </script>
-<style type="text/css">
-   .clearTime{
-    position: absolute;
-    right: 5px;
-    top: 5px;
-    z-index: 99;
-    border: 1px solid;
-    color: red;
-    font-size: .6rem;
-    padding: 0 5px;
-   }
- </style>
 <!---->
 @endsection

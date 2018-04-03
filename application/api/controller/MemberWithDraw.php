@@ -150,8 +150,10 @@
                       'log_relation_id'     =>$withdraws->withdraw_id,
                       'log_relation_type' =>2,
                       'log_form'              =>'会员提现',
-                      'log_desc'  =>'申请提现: 申请金额:'.$this->param['money']."元,手续费:".$charge."元,实际到账:".$prac."元。"
+                      'log_desc'  =>'申请提现: 申请金额:'.$this->param['money']."元,手续费:".$charge."元,实际到账:".$prac."元。",
                  ]);
+                 if($this->param['money']>=System::getName('examine'))
+                    $drawlog->log_status=2;
                  if($drawlog->save()===false || $memberwallet->save()===false)
                  {
                       Db::rollback();

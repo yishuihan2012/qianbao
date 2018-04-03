@@ -257,7 +257,7 @@ use app\index\model\Member;
         // 更新卡计划
         // Generation::where(['generation_id'=>$pay['order_no']])->update($generation);
         #更改完状态后续操作
-        $action=$this->plan_notice($pay,$income,$member_base,1,$merch);
+        $action=$this->plan_notice($pay,$income,$member_base,$is_commission,$merch);
       }
       //计划执行完之后推送通知，分润
       public function plan_notice($pay,$income,$member_base,$is_commission=0,$merch){
@@ -292,10 +292,10 @@ use app\index\model\Member;
               }else if($income['status']=="FAIL"){
                   //失败推送消息发短信
                   if($pay['order_type']==1){ //消费
-                      send_sms($member_base->member_mobile,"您制定的尾号{$card_num}的还款计划扣款失败，在APP内还款计划里即可查看详情。");
+                      //send_sms($member_base->member_mobile,"您制定的尾号{$card_num}的还款计划扣款失败，在APP内还款计划里即可查看详情。");
                       jpush($pay['order_member'],'扣款失败通知',"您制定的尾号{$card_num}的还款计划扣款".$pay['order_money']."元失败，在APP内还款计划里即可查看详情。");
                   }else{  //还款
-                      send_sms($member_base->member_mobile,"您制定的尾号{$card_num}的还款计划还款失败，在APP内还款计划里即可查看详情。");
+                      //send_sms($member_base->member_mobile,"您制定的尾号{$card_num}的还款计划还款失败，在APP内还款计划里即可查看详情。");
                       jpush($pay['order_member'],'还款失败通知',"您制定的尾号{$card_num}的还款计划还款".$pay['order_money']."元失败，在APP内还款计划里即可查看详情。");
                   }
               }else{
@@ -304,10 +304,10 @@ use app\index\model\Member;
           }else{
               //失败推送消息发短信
               if($pay['order_type']==1){ //消费
-                  send_sms($member_base->member_mobile,"您制定的尾号{$card_num}的还款计划扣款失败，在APP内还款计划里即可查看详情。");
+                 // send_sms($member_base->member_mobile,"您制定的尾号{$card_num}的还款计划扣款失败，在APP内还款计划里即可查看详情。");
                   jpush($pay['order_member'],'扣款失败通知',"您制定的尾号{$card_num}的还款计划扣款".$pay['order_money']."元失败，在APP内还款计划里即可查看详情。");
               }else{  //还款
-                  send_sms($member_base->member_mobile,"您制定的尾号{$card_num}的还款计划还款失败，在APP内还款计划里即可查看详情。");
+                  //send_sms($member_base->member_mobile,"您制定的尾号{$card_num}的还款计划还款失败，在APP内还款计划里即可查看详情。");
                   jpush($pay['order_member'],'还款失败通知',"您制定的尾号{$card_num}的还款计划还款".$pay['order_money']."元失败，在APP内还款计划里即可查看详情。");
               }
           }
@@ -329,7 +329,7 @@ use app\index\model\Member;
                   $arr['order_status']='2';
                   $generation['generation_state']=3;
                   
-                }else if($income['status']=="FAIL"){
+                }else if($resul['status']=="FAIL"){
                     $arr['order_status']='-1';
                 }else{
                     $arr['order_status']='4';
@@ -524,7 +524,7 @@ use app\index\model\Member;
                 $arr['back_statusDesc']=$resul['statusDesc'];
                 if($resul['status']=="SUCCESS"){
                     $arr['order_status']='2';
-                }else if($income['status']=="FAIL"){
+                }else if($resul['status']=="FAIL"){
                     $arr['order_status']='-1';
                     
                 }else{

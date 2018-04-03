@@ -2,214 +2,84 @@
 @section('title','钱包日志管理~')
 @section('wrapper')
 <style>
-	.text-ellipsis{cursor: pointer;}
+  .text-ellipsis{cursor: pointer;}
 </style>
 <header>
-  <h3>  
+  <h3>
     <i class="icon-list-ul"></i> 日志条数 <small>共 <strong class="text-danger">{{$count}}</strong> 条</small>
     <i class="icon icon-yen"></i> 钱包收入 <small>共 <strong class="text-danger">{{$entertottal}}</strong> 元</small>
     <i class="icon icon-yen"></i> 钱包支出 <small>共 <strong class="text-danger">{{$leavetotal}}</strong> 元</small>
   </h3>
   </header>
 <div class="panel">
-  	<div class="panel-body">
-  		<form action="" name="myform" class="form-group" method="get">
-        <div class="input-group" style="width: 150px;float: left;margin-right: 10px;">
-          <span class="input-group-addon">用户名</span>
-          <input type="text" class="form-control" name="member_nick" value="" placeholder="用户名">
-        </div>
-  			 <div class="input-group" style="width: 150px;float: left;margin-right: 10px;">
-                <span class="input-group-addon">收入支出</span>
-                     <select name="log_wallet_type" class="form-control">
-                             <option value="">全部</option>
-                             <option value="1">收入</option>
-                             <option value="2">支出</option>            
-                    </select>
-         
-                 </div>
-            <div class="col-sm-2" style="width: 290px;float: left;margin-right: 10px;">
-                <div class="input-group" >
-                  <span class="input-group-addon">时间段搜索</span>
-                     <input type="text" class="form-control date-picker" id="dateTimeRange" placeholder="时间段搜索" />
-                     <input type="hidden" name="beginTime" id="beginTime" value="" />
-                     <input type="hidden" name="endTime" id="endTime" value="" />
-                     <z class='clearTime'>X</z>
-                </div>
-            </div>
-            <div class="col-sm-1" style="width: 150px;float: left;margin-right: 10px;">
-                <button class="btn btn-primary" type="submit">搜索  </button>
-            </div>
-  <input type="hidden" name="is_export" class="is_export" value="0">
-  <div class="input-group" style="width: 180px;float: left; margin-right: 10px;">
-    <span class="input-group-addon">导出页码,10万/页</span>
-    <input type="text" name="start_p" class="form-control start_p" value="">
+  <div class="panel-body">
+    <form action="" name="myform" class="form-group" method="get">
+      <div class="input-group" style="width: 150px;float: left;margin-right: 10px;">
+        <span class="input-group-addon">会员</span>
+        <input type="text" class="form-control" name="member" value="{{$r['member'] or ''}}" placeholder="用户名/手机号"></div>
+      <div class="input-group" style="width: 150px;float: left;margin-right: 10px;">
+        <span class="input-group-addon">收入支出</span>
+        <select name="log_wallet_type" class="form-control log_wallet_type">
+          <option value="">全部</option>
+          <option value="1">收入</option>
+          <option value="2">支出</option></select>
+      </div>
+      <div class="input-group" style="width: 360px;float: left; margin-right: 10px;">
+        <span class="input-group-addon">添加时间</span>
+        <input type="date" name="beginTime" style="width: 140px" class="form-control" value="{{$r['beginTime'] or ''}}" />
+        <input type="date" name="endTime" style="width: 140px" class="form-control" value="{{$r['endTime'] or ''}}" /></div>
+      <div class="input-group" style="width: 50px;float: left;margin-right: 10px;">
+        <button class="btn btn-primary" type="submit">搜索</button></div>
+      <input type="hidden" name="is_export" class="is_export" value="0">
+      <div class="input-group" style="width: 50px;float: left; margin-right: 10px;">
+        <button class="btn btn-primary export" type="submit">导出</button></div>
+    </form>
   </div>
-  <button class="btn btn-primary export" type="submit">导出</button>
-		</form>
-  	</div>
-
 </div>
-
 <table class="table table-striped table-hover">
-  	<thead>
-	    <tr>
-	      	<th>#</th>
-	      	<th>用户名</th>
-	      	<!-- <th>订单号</th> -->
+    <thead>
+      <tr>
+          <th>#</th>
+          <th>用户名</th>
+          <!-- <th>订单号</th> -->
           <th>操作金额</th>
-	      	<th>实时余额</th>
-	      	<th>描述</th>
-	      	<th>添加时间</th>
-	      	<th>状态</th>
-	    </tr>
- 	</thead>
-  	<tbody>
-  	@foreach($list as $log)
-	    <tr>
-	      	<td>{{$log['log_id']}}</td>
-	      	<td>{{$log->wallet->member->member_nick}}</td>
-	      	<!-- <td><code></code></td> -->
+          <th>实时余额</th>
+          <th>描述</th>
+          <th>添加时间</th>
+      </tr>
+  </thead>
+    <tbody>
+    @foreach($list as $log)
+      <tr>
+          <td>{{$log['log_id']}}</td>
+          <td>{{$log->wallet->member->member_nick}}</td>
+          <!-- <td><code></code></td> -->
           <td><i class="icon icon-{{$log->log_wallet_type=='1' ? 'plus' : 'minus' }}">{{$log['log_wallet_amount']}}</td>
-	      	<td><i class="">{{$log['log_balance']}}</td>
-	      	<td class="text-ellipsis" title="{{$log->log_desc}}"><a class="Listen" href="{{$log['hrefurl']}}">{{$log['log_desc']}}</a></td>
-	      	<td>{{$log['log_add_time']}}</td>
-	      	<td><i class="icon icon-check text-success"></i></td>
-	    </tr>
-	@endforeach
-  	</tbody>
-  	<tfoot>
-	    <tr>
-	      	<td colspan="15">{!! $list->render() !!}</td>
-	    </tr>
-  	</tfoot>
+          <td><i class="">{{$log['log_balance']}}</td>
+          <td class="text-ellipsis" title="{{$log->log_desc}}"><a class="Listen" href="{{$log['hrefurl']}}">{{$log['log_desc']}}</a></td>
+          <td>{{$log['log_add_time']}}</td>
+      </tr>
+  @endforeach
+    </tbody>
+    <tfoot>
+      <tr>
+          <td colspan="15">{!! $list->render() !!}</td>
+      </tr>
+    </tfoot>
 </table>
 <script type="text/javascript">
-$(document).ready(function(){
+$(document).ready(function() {
     $('.menu .nav .active').removeClass('active');
     $('.menu .nav li.walletlog').addClass('active');
     $('.menu .nav li.wallet-manager').addClass('show');
-    $(".freezing").click(function(){
-    	var id = $(this).attr('data-id');
-    	var explain = $(this).attr('explain');
-		bootbox.prompt({
-		    title: "请输入要"+explain+"的原因",
-		    inputType: 'text',
-		    callback: function (result) {
-		        if(result!=null){
-		        	$.ajax({
-		        		url : "{{url('/index/wallet/freezing')}}",
-		        		data : {id:id,wallet_desc:result},
-		        		type : 'POST',
-		        		dataType : 'Json',
-		        		success:function(data){
-		    				explain+=data ? '成功' : '失败';
-		    				type= data ? 'success' : 'error';
-							new $.zui.Messager(explain, { type: type, close: true, }).show();
-							window.location.reload();
-		        		}
-		        	})
-		        }
-		    }
-		});
-    })
-    $(".Listen").click(function(){
-      if($(this).attr('href')=="")
-      {
-        
-        new $.zui.Messager('暂无订单信息~', { type: 'error', close: true, }).show();
-        return false;
-      }
-    })
-  @if(isset($r["beginTime"]))
-  //初始化时间
-      $('#dateTimeRange').val('{{$r["beginTime"]}} - {{$r["endTime"]}}');
-      $('#beginTime').val('{{$r["beginTime"]}}');
-      $('#endTime').val('{{$r["endTime"]}}'); 
-  @endif
-});
-$('#dateTimeRange').daterangepicker({
-        applyClass : 'btn-sm btn-success',
-        cancelClass : 'btn-sm btn-default',
-        locale: {
-            applyLabel: '确认',
-            cancelLabel: '取消',
-            fromLabel : '起始时间',
-            toLabel : '结束时间',
-            customRangeLabel : '自定义',
-            firstDay : 1
+    $('.log_wallet_type').val({{$r['log_wallet_type'] or ''}});
+    $('.export').click(function() {
+        $(".is_export").val(1);
+        setTimeout(function() {
+            $(".is_export").val(0);
         },
-        ranges : {
-            //'最近1小时': [moment().subtract('hours',1), moment()],
-            '今日': [moment().startOf('day'), moment()],
-            '昨日': [moment().subtract('days', 1).startOf('day'), moment().subtract('days', 1).endOf('day')],
-            '最近7日': [moment().subtract('days', 6), moment()],
-            '最近30日': [moment().subtract('days', 29), moment()],
-            '本月': [moment().startOf("month"),moment().endOf("month")],
-            '上个月': [moment().subtract(1,"month").startOf("month"),moment().subtract(1,"month").endOf("month")]
-        },
-        opens : 'left',    // 日期选择框的弹出位置
-        separator : ' 至 ',
-        showWeekNumbers : true,     // 是否显示第几周
-        format: 'YYYY-MM-DD'
- 
-    }, function(start, end, label) { // 格式化日期显示框
-        $('#beginTime').val(start.format('YYYY-MM-DD'));
-        $('#endTime').val(end.format('YYYY-MM-DD'));
-    });
-function getNowFormatDate() {
-        var date = new Date();
-        var seperator1 = "-";
-        var year = date.getFullYear();
-        var month = date.getMonth() + 1;
-        var strDate = date.getDate();
-        if (month >= 1 && month <= 9) {
-            month = "0" + month;
-        }
-        if (strDate >= 0 && strDate <= 9) {
-            strDate = "0" + strDate;
-        }
-        var currentdate = year + seperator1 + month + seperator1 + strDate;
-        
-        return currentdate;
-    }
-     $('#beginTime').val(getNowFormatDate());
-     $('#endTime').val(getNowFormatDate());
-$('.clearTime').click(begin_end_time_clear);
-  //清除时间
-    function begin_end_time_clear() {
-        $('#dateTimeRange').val('');
-        $('#beginTime').val('');
-        $('#endTime').val('');
-    }
-$('.export').click(function(){
-  $(".is_export").val(1);
-  setTimeout(function(){
-    $(".is_export").val(0);
-  },100);
-  var start_p=$('.start_p').val();
-  var end_p=$('.end_p').val();
-  if(start_p){
-    var re=/^\d+$/;
-    if(!re.test(start_p)){
-      alert('导出页码请输入数字');
-      return false;
-    }
-  }
-  alert("数据量大的话请耐心等待不要重复点击导出\n单次最大10万条数据\n点击确定开始导出");
+        100);
+    })
 })
  </script>
- <style type="text/css">
-   .clearTime{
-    position: absolute;
-    right: 5px;
-    top: 5px;
-    z-index: 99;
-    border: 1px solid;
-    color: red;
-    font-size: .6rem;
-    padding: 0 5px;
-   }
-
- </style>
-<!---->
 @endsection

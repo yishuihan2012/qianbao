@@ -88,6 +88,7 @@
  	}
  	#查询当天所有快捷支付订单的状态 次日1点定时执行
  	public function mishua_pay_check(){
+ 		set_time_limit(0);
  		$passageway=db('passageway')->where('passageway_true_name','like','%mi%')->where('passageway_also',1)->column('*',"passageway_id");
  		$passageway_id=[];
  		foreach ($passageway as $k => $v) {
