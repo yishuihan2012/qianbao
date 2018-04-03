@@ -224,8 +224,8 @@
                     		complete:function(){
                     			$("body").mLoading("hide");
                     		},
-                    		success:function($res){
-                    			res=JSON.parse(res);
+                    		success:function(res){
+                    			// res=JSON.parse(res);
 								mui.toast(res.msg);
 								setTimeout(function(){ location.reload(); }, 3000);
                     		}

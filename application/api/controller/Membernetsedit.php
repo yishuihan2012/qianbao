@@ -109,10 +109,11 @@
     function mishuadaihuan($rate='',$fix='',$qf_rate='',$qf_fix='')
     {
       $memberAlso=PassagewayItem::where(['item_group'=>$this->member->member_group_id,'item_passageway'=>$this->passway->passageway_id])->find();
+      // $Passageway=Passageway::where(['passageway_id'=>$this->passway->passageway_id])->find();
       $rate=$rate?$rate:$memberAlso['item_also']*10;
       $fix=$fix?$fix:$memberAlso['item_charges'];
-      $qf_rate=$qf_rate?$qf_rate:$memberAlso['passageway_qf_rate']*10;
-      $qf_fix=$qf_fix?$qf_fix:$memberAlso['passageway_qf_fix'];
+      $qf_rate=$qf_rate?$qf_rate:$memberAlso['item_qfalso']*10;
+      $qf_fix=$qf_fix?$qf_fix:$memberAlso['item_qffix'];
       $params=array(
         'versionNo'=>'1',//接口版本号 必填  值固定为1
         'mchNo'=>$this->passway->passageway_mech, //mchNo 商户号 必填  由米刷统一分配
@@ -120,16 +121,15 @@
         'userName'=>$this->membercard->card_name,//姓名
         'userCertId'=>$this->membercard->card_idcard,//身份证号  必填  注册后不可修改
         'userPhone'=>$this->phone,
-        'feeRatio'=>$memberAlso['item_also']*10, //交易费率  必填  单位：千分位。如交易费率为0.005时,需传入5.0
-        'feeAmt'=>$memberAlso['item_charges'],//单笔交易手续费  必填  单位：分。如机构无单笔手续费，可传入0
-        'drawFeeRatio'=>$memberAlso['passageway_qf_rate']*10,//提现费率
-        'drawFeeAmt'=>$memberAlso['passageway_qf_fix'],//单笔提现易手续费
+        'feeRatio'=>$rate, //交易费率  必填  单位：千分位。如交易费率为0.005时,需传入5.0
+        'feeAmt'=>$fix,//单笔交易手续费  必填  单位：分。如机构无单笔手续费，可传入0
+        'drawFeeRatio'=>$qf_rate,//提现费率
+        'drawFeeAmt'=>$qf_fix,//单笔提现易手续费
       );
       $url='http://pay.mishua.cn/zhonlinepay/service/rest/creditTrans/updateMerchant';
       $income=repay_request($params, $this->passway->passageway_mech, $url, $this->passway->iv, $this->passway->secretkey, $this->passway->signkey);
       if($income['code']==200)
         return true;
-
       return $income['message'];
     }
 
@@ -188,15 +188,16 @@
 
       #荣邦 1.4.3.根据邀请码，修改商户费率与D0费率
       public function rongbangnet(){
-        return true;
+        trace("membernetedit_net");
         $memberAlso=PassagewayItem::where(['item_group'=>$this->member->member_group_id,'item_passageway'=>$this->passway->passageway_id])->find();
        
         //传入费率对应的在荣邦的编码
-        $rate_code=PassagewayRate::where(['rate_rate'=>$memberAlso['item_rate'],'rate_charge'=>$memberAlso['item_charges'],'rate_passway_id'=>$this->passway->passageway_id])->find();
 
+        $rate_code=db('passageway_rate')->where(['rate_rate'=>['like',$memberAlso['item_rate']],'rate_charge'=>$memberAlso['item_charges'],'rate_passway_id'=>$this->passway->passageway_id])->find();
         if($rate_code){
           $userinfo=db('member_net')->where('net_member_id',$this->member->member_id)->value($this->passway->passageway_no);
           $userinfo=explode(',', $userinfo);
+          // $rate_code['rate_code']=218822;
           $arr=array(
             #公司ID
             'companyid'   =>$userinfo[0],
@@ -206,13 +207,22 @@
             'ratecode'   =>$rate_code['rate_code'],
             // 'ratecode'   =>902429,
           );
-          // var_dump($arr);die;
+          #封顶 
+          if($this->passway->passageway_mech==402573747){
+            $arr['paymenttypeid']=4;
+            $arr['subpaymenttypeid']=4;
+          }else{
+            #积分 无积分
+            $arr['paymenttypeid']=25;
+            $arr['subpaymenttypeid']=25;
+          }
+
           // $data=rongbang_curl(rongbang_foruser($this->member,$this->passway),$arr,'masget.pay.compay.router.samename.update');
           $data=rongbang_curl($this->passway,$arr,'masget.pay.compay.router.samename.update');
+          trace($data);
           // var_dump($data);die;
           if($data['ret']==0){
-            return true;
-            return $data['data'];
+            return $data;
           }else{
             return $data['message'];
           }

@@ -41,7 +41,8 @@ use app\index\model\ArticleCategory;
 use app\index\model\Article;
 use app\index\model\WalletLog;
 use app\api\controller\Huilianjinchuang;
- use app\index\model\ServiceItemList;
+use app\index\model\ServiceItemList;
+use app\index\model\MemberCreditPas;
 /**
  *  此处放置一些固定的web地址
  */
@@ -270,27 +271,37 @@ class Userurl extends Controller
        }
        $passageway_rate=$passageway->passageway_rate;
        $passageway_income=$passageway->passageway_income;
-       
+       // var_dump($passageway->toArray());die;
        //判断是否签约
        $MemberCreditcard=MemberCreditcard::where(['card_id'=>$param['cardId']])->find();
        //判断哪个通道
        if($passageway['passageway_method']=='income'){  //暂时这么判断是汇联金创还是米刷
-            if(!$MemberCreditcard['huilian_income']){
-                $huilian=new Huilianjinchuang();
-                $res=$huilian->income($this->param['passageway'],$this->param['cardId']);
-                // var_dump($res);die;
-                if($res['code']=="10000" && $res['respCode']==10000){
-                    $merId=$res['merId'];
-                    $update=MemberCreditcard::where(['card_id'=>$param['cardId']])->update(['huilian_income'=>$merId]);
-                    if(!$update){
-                        $this->assign('data',"商户入网失败，{$res['respMessage']}请重试。");
-                        return view("Userurl/show_error");
-                    }
-                }else{
-                      $this->assign('data',"商户入网失败，{$res['respMessage']}请重试。");
-                      return view("Userurl/show_error");
+
+            // $member_net=MemberNet::where(['net_member_id'=>$param['uid']])->find();
+            $has=MemberCreditPas::where(['member_credit_pas_creditid'=>$this->param['cardId'],'member_credit_pas_pasid'=>$this->param['passageway']])->find();
+            // var_dump($has->toArray());die;
+            if(!$has){ //信用卡有没有签约
+                $MemberCreditPas=new MemberCreditPas;
+                $res=$MemberCreditPas->save(['member_credit_pas_creditid'=>$this->param['cardId'],'member_credit_pas_pasid'=>$this->param['passageway']]);
+                if(!$res){
+                    $this->assign('data','商户入网失败，请重试。');
+                    return view("Userurl/show_error");die;
                 }
             }
+            if(!$has['member_credit_pas_info']){//判断有没有入网
+                $huilian=new Huilianjinchuang();
+                $res=$huilian->income($this->param['passageway'],$this->param['cardId']);
+                if(!$res){
+                    $this->assign('data','商户入网失败，请重试。');
+                    return view("Userurl/show_error");die;
+                }
+            }
+            if(!$has['member_credit_pas_smsseq']){ //判断有没有签协议
+                return redirect('Userurl/signed_huilian', ['passageway_id' =>$param['passageway'],'cardId'=>$param['cardId'],'order_no'=>$order_no]);
+            } 
+            // if(!$MemberCreditcard['huilian_income']){
+            //     return redirect('Userurl/signed_huilian', ['passageway_id' =>$param['passageway'],'cardId'=>$param['cardId'],'order_no'=>$order_no]);
+            // }
        }else{
            // 判断是否入网
            $member_net=MemberNet::where(['net_member_id'=>$param['uid']])->find();
@@ -411,7 +422,8 @@ class Userurl extends Controller
                 $day_real_get_money+=$real_each_get['money'];
               }
               //获取代还每次实际到账金额
-              $real_qf_get=$this->get_real_money($item_qfalso,$item_qffix,$day_real_get_money,$passageway->passageway_qf_rate,$passageway->passageway_qf_rate);
+              $real_qf_get=$this->get_real_money($item_qfalso,$item_qffix,$day_real_get_money,$passageway->passageway_qf_rate,$passageway->passageway_qf_fix);
+              // print_r($real_qf_get);die;
               //提现信息
               $plan[$i]['cash']=$Generation_order_insert[]=array(
                   'order_no'         =>$Generation_result->generation_id,
@@ -426,7 +438,7 @@ class Userurl extends Controller
                   'order_passageway_fee'=>$real_qf_get['passageway_fee'],
                   'passageway_rate'=>$passageway->passageway_qf_rate,
                   'passageway_fix'=> $passageway->passageway_qf_fix,
-                  'user_fix'=>$item_qffix/100,
+                  'user_fix'=>$item_qffix,
                   'user_rate'=>$item_qfalso*100,
                   'order_desc'       =>'自动代还还款~',
                   'order_time'       =>$date[$i]." ".get_hours(15,16).":".get_minites(0,59),
@@ -585,12 +597,12 @@ class Userurl extends Controller
         return view("Userurl/repayment_plan_detail");
     }
     //根据开始时间结束时间随机每天刷卡时间---有问题
-      public function get_random_time($day,$count,$begin=6,$end=10){
+      public function get_random_time($day,$count,$begin=8,$end=12){
         //如果日期为今天，刷卡时间大于当前小时
         $now_h=date('Y-m-d',time());
         if($day==$now_h){
-           if($now_h<6){
-               $begin =6;
+           if($now_h<8){
+               $begin =8;
            }else{
                $begin=date('H',time())+1;
            }
@@ -619,7 +631,7 @@ class Userurl extends Controller
       //根据支付的金额获取实际到账金额
        //传入单位元，转成分计算，再返回单位元
       public function get_real_money($rate,$fix,$pay,$passageway_rate,$passageway_income){
-         //费率向上取整
+         //费率向上取整  0,1  0 
           $return['fee']=ceil($pay*100*$rate+$fix*100)/100;
           $return['passageway_fee']=ceil($pay*100*$passageway_rate/100+$passageway_income*100)/100;
           $return['plantform_fee']=$return['fee']-$return['passageway_fee'];
@@ -1220,6 +1232,26 @@ class Userurl extends Controller
         $this->assign('passageway_id',$passageway_id);
         $this->assign('data',$data);
         return view("Userurl/signed");
+  }
+  public function signed_huilian($passageway_id,$cardId,$order_no){
+      #信用卡信息
+      $data['MemberCreditcard']=$MemberCreditcard=MemberCreditcard::where(['card_id'=>$cardId])->find();
+      #通道信息
+      $data['passageway']=$passageway=Passageway::get($passageway_id);
+      #通道入网信息
+      $member_net=MemberNet::where(['net_member_id'=>$MemberCreditcard['card_member_id']])->find();
+      #用户基本信息
+      $data['Members']=$Members=Members::haswhere('memberLogin','')->where(['member_id'=>$MemberCreditcard['card_member_id']])->find();
+      $data['merId']=$data['Members']['memberNet'][$data['passageway']['passageway_no']];
+      // var_dump($data['merId']);die;
+      #登录信息
+      // if(!$MemberCreditcard || !$passageway || $member_net){
+      //  exit('获取信息失败');
+      // }
+      $this->assign('order_no',$order_no);
+      $this->assign('passageway_id',$passageway_id);
+      $this->assign('data',$data);
+      return view("Userurl/signed_huilian");
   }
   #金易付验证码页面
   public function jinyifu($memberId,$passagewayId,$cardId,$price){

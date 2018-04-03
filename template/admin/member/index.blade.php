@@ -14,6 +14,11 @@
       <i class="icon-list-ul"></i> {{$val['group_name']}} <small>共 <strong class="text-danger">{{$val['count']}}</strong> 人</small>
     @endforeach
      </h3>
+     @if(isset($current_member))
+      <h3>
+        当前为  <strong class="text-danger">{{$current_member->member_nick}}</strong> 直接推荐会员列表
+      </h3>
+     @endif
   </header>
 <blockquote>
    
@@ -104,6 +109,8 @@
                  @if($admin['adminster_group_id']!=5)
                                 <li><a data-remote="{{url('/index/member/commiss',['memberId'=>$val->member_id])}}" href="{{url('/index/member/commiss',['memberId'=>$val->member_id])}}">分佣分润</a></li>
                                <!--  <li><a data-size='lg' data-toggle="modal" data-remote="{{url('/index/member/child',['memberId'=>$val->member_id])}}" href="#">下级信息</a></li> -->
+                              <!-- <li><a class="son" data-width='1440' data-toggle="modal" data-remote="{{url('/index/member/child',['memberId'=>$val->member_id])}}" href="#">下级信息</a></li> -->
+                              <li><a  href="/index/member?member_id={{$val->member_id}}">下级列表</a></li>
                      @endif
                            </ul>
                      </div>
@@ -150,15 +157,11 @@
 <!-- {!! $member_list->render() !!}<em>当前共{{$count}}条</em> -->
  <script type="text/javascript">
  $(document).ready(function(){
-  var start="{{(isset($beginTime))?$beginTime : ''}}";
-  var end="{{(isset($endTime))?$endTime : ''}}";
-
       $('table.datatable').datatable({sortable: true});
      	 $('.menu .nav .active').removeClass('active');
     	 $('.menu .nav li.member').addClass('active');
     	 $('.menu .nav li.member-manager').addClass('show');
 
-$('#dateTimeRange span').html();
 $('#dateTimeRange').daterangepicker({
         applyClass : 'btn-sm btn-success',
         cancelClass : 'btn-sm btn-default',
@@ -195,14 +198,7 @@ $('#dateTimeRange').daterangepicker({
     }, function(start, end, label) { // 格式化日期显示框
         $('#beginTime').val(start.format('YYYY-MM-DD'));
         $('#endTime').val(end.format('YYYY-MM-DD'));
-        $('#dateTimeRange').val(start+'-'+end);
     });
-  setTimeout(function(){
-        // $('#beginTime').val(start.format('YYYY-MM-DD'));
-        // $('#endTime').val(end.format('YYYY-MM-DD'));
-        // $('#dateTimeRange').val();
-        console.log(start);
-      },100);
 // begin_end_time_clear();
 $('.clearTime').click(begin_end_time_clear);
   //清除时间
@@ -212,10 +208,12 @@ $('.clearTime').click(begin_end_time_clear);
         $('#endTime').val('');
     }
     @if(isset($r["beginTime"]))
-    // //初始化时间
-    //     $('#dateTimeRange').val('{{$r["beginTime"]}} - {{$r["endTime"]}}');
-    //     $('#beginTime').val('{{$r["beginTime"]}}');
-    //     $('#endTime').val('{{$r["endTime"]}}'); 
+    //初始化时间
+        $('#dateTimeRange').val('{{$r["beginTime"]}} - {{$r["endTime"]}}');
+        $('#beginTime').val('{{$r["beginTime"]}}');
+        $('#endTime').val('{{$r["endTime"]}}'); 
+    @else
+      begin_end_time_clear();
     @endif
 });
  function getNowFormatDate() {
@@ -233,9 +231,9 @@ $('.clearTime').click(begin_end_time_clear);
         var currentdate = year + seperator1 + month + seperator1 + strDate;
         return currentdate;
     }
-    console.log(getNowFormatDate());
-     $('#beginTime').val(getNowFormatDate());
-     $('#endTime').val(getNowFormatDate());
+    // console.log(getNowFormatDate());
+    //  $('#beginTime').val(getNowFormatDate());
+    //  $('#endTime').val(getNowFormatDate());
 $('.export').click(function(){
   $(".is_export").val(1);
   setTimeout(function(){

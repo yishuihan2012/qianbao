@@ -37,11 +37,23 @@ class Plan extends Common{
 			$r['beginTime']=date('Y-m-d',strtotime("-7 days"));
 			$r['endTime']=date('Y-m-d',time());
 		}
-		#需还款信用卡
+		#身份证号码
 		if( request()->param('generation_card')){
 			$where['generation_card'] = ['like',"%".request()->param('generation_card')."%"];
 		}else{
 			$r['generation_card'] = '';
+		}
+		#需还信用卡号
+		if( request()->param('card_bankno')){
+			$where['card_bankno'] = ['eq',request()->param('card_bankno')];
+		}else{
+			$r['card_bankno'] = '';
+		}
+		#代还计划号码
+		if( request()->param('generation_no')){
+			$where['generation_no'] = ['eq',request()->param('generation_no')];
+		}else{
+			$r['generation_no'] = '';
 		}
 		#计划状态查询
 		$where['generation_state'] = array("<>",1);
@@ -227,8 +239,11 @@ class Plan extends Common{
 			$generation_id[]=$value['generation_id'];
 		}
 	 	$generation_id=implode(',', $generation_id);
+
 		if(input('is_export')==1){
 	 	    $fp = fopen('php://output', 'a');
+	 	    $type=['1'=>'消费','2'=>'还款'];
+	 	    $status=['1'=>'待执行','-1'=>'失败','2'=>'成功','3'=>'取消','4'=>'待查证处理中'];
  	    	#取数据
 	 	    $order_list=db("generation_order")->alias('o')
 	 	    	->join('passageway p','p.passageway_id=o.order_passageway')
@@ -237,13 +252,34 @@ class Plan extends Common{
 	 	    	->where($where)
 	 	    	->where('order_no in ('.$generation_id.')')
 	 	    	->order("order_id desc")
-	 	    	->field('order_id,passageway_name,member_nick,member_mobile,order_type,order_card,card_bankname,order_money,order_pound,order_status,order_retry_count,back_statusDesc,order_desc,order_time,order_add_time')
+	 	    	->field('order_id,passageway_name,member_nick,member_mobile,order_type,concat("`",order_card),card_bankname,order_money,order_pound,order_status,order_retry_count,back_statusDesc,order_desc,order_time,order_add_time')
 	 	    	->select();
-
+	 	    foreach ($order_list as $k => $v) {
+	 	    	$order_list[$k]['order_type']=$type[$v['order_type']];
+	 	    	$order_list[$k]['order_status']=$status[$v['order_status']];
+	 	    }
 	 	    $head=['ID','通道','姓名','手机号','订单类型','信用卡号','银行名称','订单金额','订单手续费','订单状态','重新执行次数','执行结果','订单描述','订单执行时间','订单创建时间'];
 	 	    export_csv($head,$order_list,$fp);
 	 	    return;
 		}
+
+		//消费总金额
+		$order['money']=GenerationOrder::with("passageway,member,memberCreditcard")->where('order_status=2 and order_type=1')->where($where)->sum('order_money');
+		//全部手续费
+		$order['change']=GenerationOrder::with("passageway,member,memberCreditcard")->where('order_status=2 and order_type=1')->where($where)->sum('order_pound');
+		//成本手续费
+		$order['chengben']=GenerationOrder::with("passageway,member,memberCreditcard")->where('order_status=2 and order_type=1')->where($where)->sum('order_passageway_fee');
+		//盈利分润
+		$order['yingli']=$order['change']-$order['chengben'];
+		//三级分润消耗
+		$order['fen']=GenerationOrder::with("passageway,member,memberCreditcard")->where('order_status=2 and order_type=1')->where($where)->sum('order_fen');
+		//分润后平台盈利
+		$order['fenrunhou']=$order['yingli']-$order['fen'];
+		//消费笔数
+		$order['consumption']=GenerationOrder::with("passageway,member,memberCreditcard")->where('order_status=2 and order_type=1')->where($where)->count();
+		//还款笔数
+		$order['repayment']=GenerationOrder::with("passageway,member,memberCreditcard")->where('order_status=2 and order_type=2')->where($where)->count();
+
 
 	 	$list=GenerationOrder::with("passageway,member,memberCreditcard")->where($where)->where('order_no in ('.$generation_id.')')->paginate(Config::get('page_size'), false, ['query'=>Request::instance()->param()]);
 	 	$count = GenerationOrder::with("passageway,member,memberCreditcard")->where($where)->where('order_no in ('.$generation_id.')')->count();
@@ -251,6 +287,7 @@ class Plan extends Common{
 	 	$this->assign('r',$r);
 		$this->assign("list",$list);
 		$this->assign("count",$count);
+		$this->assign("order",$order);
 
 	 	return view("admin/plan/detail");
 	 }

@@ -10,7 +10,17 @@
 <hr/>
 <div class="list">
   <header>
-    <h3><i class="icon-list-ul"></i> 计划列表详情 <small>共 <strong class="text-danger">{{count($list)}}</strong> 条</small></h3>
+    <h3>
+    <i class="icon-list-ul"></i> 计划列表详情 <small>共 <strong class="text-danger">{{$count}}</strong> 条</small>
+    <i class="icon-list-ul"></i> 消费笔数 <small>共 <strong class="text-danger" style="font-size: 16px">{{$order['consumption']}}</strong> 条</small>
+    <i class="icon-list-ul"></i> 还款笔数 <small>共 <strong class="text-danger" style="font-size: 16px">{{$order['repayment']}}</strong> 条</small>
+    <i class="icon icon-yen"></i>消费总金额 <small><strong class="text-danger" style="font-size: 16px">{{$order['money']}}</strong>元</small>
+    <i class="icon icon-yen"></i>全部手续费 <small><strong class="text-danger" style="font-size: 16px">{{$order['change']}}</strong>元</small>
+    <i class="icon icon-yen"></i>成本手续费 <small><strong class="text-danger" style="font-size: 16px">{{$order['chengben']}}</strong>元</small>
+    <i class="icon icon-yen"></i>盈利分润 <small><strong class="text-danger" style="font-size: 16px">{{$order['yingli']}}</strong>元</small>
+    <i class="icon icon-yen"></i>三级分润金额 <small><strong class="text-danger" style="font-size: 16px">{{$order['fen']}}</strong>元</small>
+    <i class="icon icon-yen"></i>三级分润后盈利 <small><strong class="text-danger" style="font-size: 16px">{{$order['fenrunhou']}}</strong>元</small>
+  </h3>
   </header>
       <div class="panel">
     <div class="panel-body">
@@ -81,6 +91,7 @@
 		 		<th>信用卡号</th>
 		 		<th>银行名称</th>
 		 		<th>订单金额</th>
+        <th>扣除手续费后金额</th>
 		 		<th>订单手续费</th>
 		 		<th>订单状态</th>
 		 		<th>重新执行次数</th>
@@ -103,6 +114,7 @@
 			 <td>{{$value->order_card}}</td>
 			 <td>{{$value->card_bankname}}</td>
 			 <td>{{$value->order_money}}</td>
+       <td>{{$value->order_real_get}}</td>
 			 <td>{{$value->order_pound}}</td>
 			 <td>@if($value->order_status == 1)<em style="color:#FF9900;">  待执行 </em>@elseif($value->order_status == 2)<em style="color:#33FF33;"> 成功</em> @elseif($value->order_status == 3)<em style="color:#FF00FF;"> 取消</em> @elseif($value->order_status ==4) <em style="color:#00FFFF;">待查证</em> @else <em style="color:red;">失败 </em>@endif </td>
 			 <td>{{$value->order_retry_count}}</td>

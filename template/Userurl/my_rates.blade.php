@@ -40,9 +40,9 @@
 			      		 	 <td>{{$d['item_rate']}}</td>
 			      		 @endif
 			      	@else
-			      		 @if($d['item_charges'])
+			      		 @if($d['item_qffix'])
 			      		 
-			      		  	<td>{{$d['item_also']}}+{{$d['item_charges']/100}}</td>
+			      		  	<td>{{$d['item_also']}}+{{$d['item_qffix']/100}}</td>
 			      		 @else
 			      			<td>{{$d['item_also']}}</td>
 			      		 @endif

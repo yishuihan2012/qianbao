@@ -113,7 +113,7 @@ use app\index\model\Member;
                            if($value['order_type']==1){ //消费
                               $huilian->pay($value,$passageway_mech);
                            }else if($value['order_type']==2){//提现
-                               $huilian->qfpay($value,$passageway_mech);
+                               $res=$huilian->qfpay($value,$passageway_mech);
                            }
                      }else{
                           if($value['order_type']==1){ //消费
@@ -141,7 +141,8 @@ use app\index\model\Member;
             if($passageway['passageway_method']=='income'){
                  $huilian=new Huilianjinchuang();//实例化那个类先写死
                  if($value['order_type']==1){ //消费
-                    $huilian->pay($value,$passageway_mech);
+                    $res=$huilian->pay($value,$passageway_mech);
+                    // var_dump($res);die;
                  }else if($value['order_type']==2){//提现
                      $huilian->qfpay($value,$passageway_mech);
                  }
@@ -168,7 +169,7 @@ use app\index\model\Member;
         #1获取费率
         // print_r($pay);die;
         // 兼容老的数据没有费率的情况，新的订单都直接取订单里的费率
-        if($pay['passageway_rate'] || $pay['passageway_fix'] || $pay['user_rate'] || $pay['user_fix']){ //如果设置了费率
+        if($pay['user_rate']>0 || $pay['user_fix']>0){ //如果设置了费率
             $order_rate=1;
             $also=$pay['user_rate']*10;
             $daikou=$pay['user_fix']*100;
@@ -231,7 +232,7 @@ use app\index\model\Member;
              $arr['back_status']=$income['status'];
             if($income['status']=="SUCCESS"){
                 $arr['order_status']='2';
-                // $generation['generation_state']=3;
+                $generation['generation_state']=3;
                 $arr['order_platform']=$pay['order_pound']-($pay['order_money']*$merch['passageway_rate']/100)-$merch['passageway_income'];
                 $is_commission=1;
                 ##记录余额
@@ -249,12 +250,12 @@ use app\index\model\Member;
           $arr['back_status']='FAIL';
           $arr['order_status']='-1';
           $generation['generation_state']=-1;
-          $arr['order_buckle']=$rate['item_charges']/100;        
+          // $arr['order_buckle']=$rate['item_charges']/100;        
         }
         //添加执行记录
         $res=GenerationOrder::where(['order_id'=>$pay['order_id']])->update($arr);
         // 更新卡计划
-        Generation::where(['generation_id'=>$pay['order_no']])->update($generation);
+        // Generation::where(['generation_id'=>$pay['order_no']])->update($generation);
         #更改完状态后续操作
         $action=$this->plan_notice($pay,$income,$member_base,1,$merch);
       }
@@ -424,15 +425,15 @@ use app\index\model\Member;
           }else{
               // 兼容老的数据没有费率的情况，新的订单都直接取订单里的费率
               $order_rate=0;//0代表系统费率1代表订单上费率
-              if($pay['passageway_rate'] || $pay['passageway_fix'] || $pay['user_rate'] || $pay['user_fix']){ //如果设置了费率
+              if($pay['user_rate']>0 || $pay['user_fix']>0){ //如果设置了费率
                   $order_rate=1;
                   $also=$pay['user_rate']*10;
                   $daikou=$pay['user_fix']*100;
               }else{
                   $member_group_id=Member::where(['member_id'=>$pay['order_member']])->value('member_group_id');
                   $rate=PassagewayItem::where(['item_passageway'=>$pay['order_passageway'],'item_group'=>$member_group_id])->find();
-                  $also=($rate->passageway_qf_rate)*10;
-                  $daikou=($rate->passageway_qf_fix);
+                  $also=($rate->item_qfalso)*10;
+                  $daikou=($rate->item_qffix);
               }
 
               // print_r($merch->passageway_mech);die;
@@ -447,6 +448,7 @@ use app\index\model\Member;
               if(isset($passway_info['drawFeeRatio']) && isset($passway_info['drawFeeAmt'])){
                   if($passway_info['drawFeeRatio']!=$also || $passway_info['drawFeeAmt']!=$daikou){//不一致重新报备,修改商户信息
                         $Membernetsedits=new \app\api\controller\Membernetsedit($pay['order_member'],$pay['order_passageway'],'M03','',$member_base['member_mobile']);
+                        // echo $order_rate;
                         if($order_rate==1){
                           $update=$Membernetsedits->mishuadaihuan('','',$also,$daikou);
                         }else{
@@ -467,7 +469,7 @@ use app\index\model\Member;
                   'notifyUrl'=>System::getName('system_url').'/Api/Membernet/cashCallback',// 异步通知地址  可填  异步通知的目标地址
                   'orderNo'=>$pay['order_platform_no'], //提现流水号 必填  机构订单流水号，需唯一 64
                   'orderTime'=>$orderTime,//  提现时间点 必填  格式：yyyyMMddHHmmss 14
-                  'depositAmt'=>$pay['order_money']*100,  //提现金额  必填  单位：分  整型(9,0)
+                  'depositAmt'=>$pay['order_real_get']*100,  //提现金额  必填  单位：分  整型(9,0)
                   'feeRatio'=>$also,  //提现费率  必填  需与用户入网信息保持一致  数值(5,2)
                   'feeAmt'=>$daikou,//提现单笔手续费   需与用户入网信息保持一致  整型(4,0)
               );
@@ -747,7 +749,7 @@ use app\index\model\Member;
       }
       //处理没有结果的订单
       public function no_result_order(){
-          $time=date('Y-m-d H:i:s',time()-60*30);
+          $time=date('Y-m-d H:i:s',time()-3600);
           //查询半小时前状态为带查证的订单
           $list=GenerationOrder::where(['order_status'=>4])->where('order_time','lt',$time)->select();
           foreach ($list as $key => $order) {
@@ -755,7 +757,7 @@ use app\index\model\Member;
               //如果计划是执行中的
               if($generation['generation_state']==2){
                   //判断哪个通道
-                   $passageway=Passageway::where(['passageway_id'=>$value['order_passageway']])->find();
+                   $passageway=Passageway::where(['passageway_id'=>$order['order_passageway']])->find();
                    $passageway_mech=$passageway['passageway_mech'];
                    if($passageway['passageway_method']=='income'){
                        $huilian=new Huilianjinchuang();//实例化那个类先写死
@@ -802,18 +804,23 @@ use app\index\model\Member;
           $back_money=0;
           foreach ($list as $k => $v) {
               if($v['order_status']==2){
-                  $back_money+=($v['order_money']-$v['order_pound']);
+                if($v['order_real_get']>0){
+                    $back_money=$v['order_real_get'];
+                }else{
+                    $back_money+=($v['order_money']-$v['order_pound']);
+                }
               }  
               if($v['order_status']!=2){
                   $update=GenerationOrder::where(['order_id'=>$v['order_id']])->update(['order_status'=>5]);
               }
           }
-          if($back_money==$order_info['order_money']){
+          $order_real_get=$back_money-($back_money*$order_info['user_rate']/100+$order_info['user_fix']);
+          if($order_real_get==$order_info['order_real_get']){
               return json_encode(['code'=>'101','msg'=>'当前计划还款额不需要变更。']);die;
           }
-          $res=GenerationOrder::where(['order_id'=>$id])->update(['order_money'=>$back_money]);
+          $res=GenerationOrder::where(['order_id'=>$id])->update(['order_real_get'=>$order_real_get,'order_money'=>$back_money]);
           if($res){
-              return json_encode(['code'=>'200','msg'=>'变更成功，当前金额为'.$back_money]);die;
+              return json_encode(['code'=>'200','msg'=>'变更成功，当前金额为'.$order_real_get]);die;
           }else{
               return json_encode(['code'=>'101','msg'=>'变更失败']);die;
           }
