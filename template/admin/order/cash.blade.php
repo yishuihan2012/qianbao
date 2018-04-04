@@ -119,8 +119,8 @@
 
                  <td>{{$list->order_money}}</td>
                  <!-- <td>{{$list->order_fen}}</td> -->
-                 <td>{{$list->order_charge+$list->order_buckle}}
-                    ({{$list->order_money}}*{{$list->user_rate}}%+{{$list->order_buckle}})</td>
+                 <td>{{$list->order_charge+$list->user_fix}}
+                    ({{$list->order_money}}*{{$list->user_rate}}%+{{$list->user_fix}})</td>
                  <!-- <td>{{$list->order_also}}%</td> -->
                  <td>{{$list->order_passway_profit+$list->passageway_fix}}
                   ({{$list->order_money}}*{{$list->passageway_rate}}%+{{$list->passageway_fix}})</td>

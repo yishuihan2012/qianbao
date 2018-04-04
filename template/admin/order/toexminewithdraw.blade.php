@@ -27,6 +27,7 @@
 			 <td><input type="radio" name="withdraw_state" class="not" value="-12"></td>	 	
 		 </tr>	
 	 </table>
+     <input type="hidden" name="search" class="search">
 	 <div class="help-block" style="display:none;"><code>(说明原因)</code>
 		<textarea rows="3" name='withdraw_information'></textarea>
 	 </div>
@@ -45,4 +46,9 @@
 	 $(".save").click(function(){
 		 $("#myform").submit()
 	 })
+     $(function(){
+        var search=location.search;
+        console.log(search);
+        $('.search').val(search);
+     })
  </script>

@@ -19,7 +19,7 @@
   </header>
   <h3></h3>
   <blockquote>
-  <form action="" method="post">
+  <form action="" method="get">
     <div class="input-group" style="width: 150px;float: left;margin-right: 20px;">
     <span class="input-group-addon">用户名</span>
     <input type="text" class="form-control" name="member_nick" value="{{$r['member_nick']}}" placeholder="用户名">

@@ -272,7 +272,7 @@ class Order extends Common{
 
             $content = $result ? ['type'=>'success','msg'=>'审核成功'] : ['type'=>'warning','msg'=>'审核失败'];
             Session::set('jump_msg', $content);
-            $this->redirect('order/withdraw');
+            $this->redirect('http://'.$_SERVER['HTTP_HOST'].'/index/order/withdraw'.input('search'));
         }
         $this->assign("id",input("id"));
         return view("admin/order/toexminewithdraw");
@@ -306,7 +306,7 @@ class Order extends Common{
         $order_data=CashOrder::where($where)
             ->join('member m','wt_cash_order.order_member=m.member_id')
             ->order("order_id desc")
-            ->field('order_id,order_money,order_charge,order_passway_profit,order_buckle,order_state')
+            ->field('order_id,order_money,order_charge,order_passway_profit,user_fix,order_state')
             ->column("*","order_id");
         $cms=db('commission')->where('commission_from','in',array_column($order_data, 'order_id'))->where('commission_type',1)->group('commission_from')->column("commission_from,sum(commission_money) as sum");
         
@@ -333,11 +333,11 @@ class Order extends Common{
                     $list[$k][]="`".$v['order_card'];
                     $list[$k][]="`".$v['order_creditcard'];
                     $list[$k][]=$v['order_money'];
-                    $list[$k][]=$v['order_charge']+$v['order_buckle'];
+                    $list[$k][]=$v['order_charge']+$v['user_fix'];
                     $list[$k][]=$v['order_passway_profit']+$v['passageway_fix'];
-                    $list[$k][]=$v['order_charge']+$v['order_buckle']-$v['order_passway_profit']-$v['passageway_fix'];
+                    $list[$k][]=$v['order_charge']+$v['user_fix']-$v['order_passway_profit']-$v['passageway_fix'];
                     $list[$k][]=$order_fen;
-                    $list[$k][]=round($v['order_charge']+$v['order_buckle']-$v['order_passway_profit']-$v['passageway_fix']-$order_fen,2);
+                    $list[$k][]=round($v['order_charge']+$v['user_fix']-$v['order_passway_profit']-$v['passageway_fix']-$order_fen,2);
                     $list[$k][]=$passageway[$v['order_passway']]['passageway_name'];
                     $list[$k][]=$status[$v['order_state']];
                     $list[$k][]=$v['order_desc'];
@@ -363,12 +363,12 @@ class Order extends Common{
         #分页数据补充
         foreach ($order_lists as $k => $v) {
              $order_lists[$k]['order_fen']=isset($cms[$v['order_id']])?$cms[$v['order_id']]:0;          
-             $order_lists[$k]['yingli']=round($v['order_charge']+$v['order_buckle']-$v['order_passway_profit']-$v['passageway_fix']-$order_lists[$k]['order_fen'],2);
+             $order_lists[$k]['yingli']=round($v['order_charge']+$v['user_fix']-$v['order_passway_profit']-$v['passageway_fix']-$order_lists[$k]['order_fen'],2);
         }
         #非成功状态 应该为0分润 即分润为0
         $count=[
             #代扣费之和
-            'order_buckle'=>array_sum(array_column($order_data,'order_buckle')),
+            'user_fix'=>array_sum(array_column($order_data,'user_fix')),
             #手续费之和
             // 'order_charge'=>array_sum(array_column($order_data,'order_charge')),
             'order_charge'=>0,
@@ -390,7 +390,7 @@ class Order extends Common{
             foreach ($order_data as $k => $v) {
                 if($v['order_state']==2){
                     $count['order_money_yes']+=$v['order_money'];
-                    $count['order_charge']+=$v['order_charge']+$v['order_buckle'];
+                    $count['order_charge']+=$v['order_charge']+$v['user_fix'];
                     $count['chengben']+=$v['order_passway_profit'];
                     $order_ids[]=$v['order_id'];
                 }
@@ -402,7 +402,7 @@ class Order extends Common{
             $cms=db('commission')->where('commission_from','in',array_column($order_data, 'order_id'))->where('commission_type',1)->group('commission_from')->column("commission_from,sum(commission_money) as sum");
             #指定成功状态时
             $count['order_money_yes']=$count['order_money'];
-            $count['order_charge']=array_sum(array_column($order_data,'order_charge'))+array_sum(array_column($order_data,'order_buckle'));
+            $count['order_charge']=array_sum(array_column($order_data,'order_charge'))+array_sum(array_column($order_data,'user_fix'));
             $count['chengben']=array_sum(array_column($order_data,'order_passway_profit'))+array_sum(array_column($order_data,'passageway_fix'));
             $count['sanji']=array_sum($cms);
         }
