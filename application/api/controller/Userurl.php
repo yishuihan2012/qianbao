@@ -763,6 +763,12 @@ class Userurl extends Controller
         $this->assign('notice',$notice);
         return view("Userurl/deal_lists");
     }
+    /**
+    * @Author   Star(794633291@qq.com)
+     * @DateTime 2017-12-25T14:10:55+0800
+     * @version  [交易订单]
+     * @return   [type]
+    */
     public function deal_list(){
         $this->checkToken();
         $this->param['uid']=input("uid");
