@@ -754,10 +754,9 @@ class Userurl extends Controller
      * @version  [动账交易列表]
      * @return   [type]
      */
-    public function deal_list(){
+    public function deal_lists(){
       $this->checkToken();
         $notice=Notice::where(['notice_recieve'=>$this->param['uid']])->where("notice_announcement_id is null")->order('notice_createtime desc')->select();
-        dump(Notice::getLastSql());die;
         if(!$notice){
             return view("Userurl/no_data");
         }
@@ -770,7 +769,7 @@ class Userurl extends Controller
         $page = empty(input("page"))?1:input("page");
         if($_POST){
             $start = ($page-1)*10;
-            $CashOrder=CashOrder::with("passageway")->where(['order_member'=>$this->param['uid'],'order_money' => ['<>' , 0]])->order('order_id desc')->limit($start,10)->select();
+            $CashOrder=CashOrder::with("passageway")->where(['order_member'=>$this->param['uid'],'order_money' => ['<>' , 0],'order_state'=>['<>',1]])->order('order_id desc')->limit($start,10)->select();
 
             foreach ($CashOrder as $key => $value) {
                 $CashOrder[$key]["bank_ons"] = substr($value['order_creditcard'], -4);
@@ -778,7 +777,7 @@ class Userurl extends Controller
             }
             echo json_encode(["data" => $CashOrder, "page" => $page+1]);die;
         }
-        $CashOrder=CashOrder::with("passageway")->where(['order_member'=>$this->param['uid'],'order_money' => ['<>' , 0]])->order('order_id desc')->limit(0,10)->select();
+        $CashOrder=CashOrder::with("passageway")->where(['order_member'=>$this->param['uid'],'order_money' => ['<>' , 0],'order_state'=>['<>',1]])->order('order_id desc')->limit(0,10)->select();
         $count = CashOrder::where(['order_member'=>$this->param['uid'],'order_money' => ['<>' , 0]])->order('order_id desc')->count();
             $pages = ceil($count/10);
             #截取银行卡号
