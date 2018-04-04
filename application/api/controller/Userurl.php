@@ -714,7 +714,7 @@ class Userurl extends Controller
      */
      public function notify(){
          $this->checkToken();
-        $count=Notice::where(['notice_recieve'=>$this->param['uid'],'notice_status'=>0])->count();
+        $count=Notice::where(['notice_recieve'=>$this->param['uid'],'notice_status'=>0,'notice_announcement_id'=>["<>",'']])->count();
         $this->assign('count',$count);
         return view("Userurl/notify");
      }
@@ -725,8 +725,9 @@ class Userurl extends Controller
      * @return   [type]
      */
     public function notify_list(){
+
         $this->checkToken();
-        $notice=Notice::where(['notice_announcement_id'=>["<>",'']])->order('notice_createtime desc')->select();
+        $notice=Notice::where(['notice_announcement_id'=>["<>",''],'notice_recieve'=>$this->param['uid']])->order('notice_createtime desc')->select();
         if(!$notice){
             return view("Userurl/no_data");
         }
@@ -755,7 +756,8 @@ class Userurl extends Controller
      */
     public function deal_list(){
       $this->checkToken();
-        $notice=Notice::where(['notice_recieve'=>$this->param['uid']])->order('notice_createtime desc')->select();
+        $notice=Notice::where(['notice_recieve'=>$this->param['uid']])->where("notice_announcement_id is null")->order('notice_createtime desc')->select();
+        dump(Notice::getLastSql());die;
         if(!$notice){
             return view("Userurl/no_data");
         }
