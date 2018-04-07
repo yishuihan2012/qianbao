@@ -35,7 +35,34 @@
 	#8.	交易查询（单笔）
 	#9.	服务器异步通知接口
 	#10.客户端同步跳转接口
-	public function upload_material(){
+	public function merch_upload_material(){
+		
+	}
+	public function merch_income(){
+
+	}
+	public function merch_Settlement_setting(){
+
+	}
+	public function product_open(){
+
+	}
+	public function product_rate_update(){
+
+	}
+	public function order_create(){
+
+	}
+	public function order_pay(){
+
+	}
+	public function order_query(){
+
+	}
+	public function order_notify(){
+
+	}
+	public function order_turn_url(){
 		
 	}
  }
