@@ -714,7 +714,7 @@ class Userurl extends Controller
      */
      public function notify(){
          $this->checkToken();
-        $count=Notice::where(['notice_recieve'=>$this->param['uid'],'notice_status'=>0])->count();
+        $count=Notice::where(['notice_recieve'=>$this->param['uid'],'notice_status'=>0,'notice_announcement_id'=>["<>",'']])->count();
         $this->assign('count',$count);
         return view("Userurl/notify");
      }
@@ -724,9 +724,10 @@ class Userurl extends Controller
      * @version  [平台公告列表]
      * @return   [type]
      */
-    public function notify_list(){
+    public function notify_lists(){
+
         $this->checkToken();
-        $notice=Notice::where(['notice_announcement_id'=>["<>",'']])->order('notice_createtime desc')->select();
+        $notice=Notice::where(['notice_announcement_id'=>["<>",''],'notice_recieve'=>$this->param['uid']])->order('notice_createtime desc')->select();
         if(!$notice){
             return view("Userurl/no_data");
         }
@@ -753,44 +754,50 @@ class Userurl extends Controller
      * @version  [动账交易列表]
      * @return   [type]
      */
-    public function deal_list(){
+    public function deal_lists(){
       $this->checkToken();
-        $notice=Notice::where(['notice_recieve'=>$this->param['uid']])->order('notice_createtime desc')->select();
+        $notice=Notice::where(['notice_recieve'=>$this->param['uid']])->where("notice_announcement_id is null")->order('notice_createtime desc')->select();
         if(!$notice){
             return view("Userurl/no_data");
         }
         $this->assign('notice',$notice);
         return view("Userurl/deal_lists");
     }
-    // public function deal_list(){
-    //     // $this->checkToken();
-    //     $this->param['uid']=input("uid");
-    //     $page = empty(input("page"))?1:input("page");
-    //     if($_POST){
-    //         $start = ($page-1)*10;
-    //         $CashOrder=CashOrder::with("passageway")->where(['order_member'=>$this->param['uid'],'order_money' => ['<>' , 0]])->order('order_id desc')->limit($start,10)->select();
+    /**
+    * @Author   Star(794633291@qq.com)
+     * @DateTime 2017-12-25T14:10:55+0800
+     * @version  [交易订单]
+     * @return   [type]
+    */
+    public function deal_list(){
+        $this->checkToken();
+        $this->param['uid']=input("uid");
+        $page = empty(input("page"))?1:input("page");
+        if($_POST){
+            $start = ($page-1)*10;
+            $CashOrder=CashOrder::with("passageway")->where(['order_member'=>$this->param['uid'],'order_money' => ['<>' , 0],'order_state'=>['<>',1]])->order('order_id desc')->limit($start,10)->select();
 
-    //         foreach ($CashOrder as $key => $value) {
-    //             $CashOrder[$key]["bank_ons"] = substr($value['order_creditcard'], -4);
-    //             $CashOrder[$key]['add_time'] = date("m-d H:s",strtotime($value['order_add_time']));
-    //         }
-    //         echo json_encode(["data" => $CashOrder, "page" => $page+1]);die;
-    //     }
-    //     $CashOrder=CashOrder::with("passageway")->where(['order_member'=>$this->param['uid'],'order_money' => ['<>' , 0]])->order('order_id desc')->limit(0,10)->select();
-    //     $count = CashOrder::where(['order_member'=>$this->param['uid'],'order_money' => ['<>' , 0]])->order('order_id desc')->count();
-    //         $pages = ceil($count/10);
-    //         #截取银行卡号
-    //     foreach ($CashOrder as $key => $value) {
-    //         $CashOrder[$key]["bank_ons"] = substr($value['order_creditcard'], -4);
-    //         $CashOrder[$key]['add_time'] = date("m-d H:s",strtotime($value['order_add_time']));
-    //     }
-    //     if(!$CashOrder){
-    //         return view("Userurl/no_data");
-    //     }
-    //     $this->assign("pages",$pages);
-    //     $this->assign('data',$CashOrder);
-    //     return view("Userurl/deal_list");
-    // }
+            foreach ($CashOrder as $key => $value) {
+                $CashOrder[$key]["bank_ons"] = substr($value['order_creditcard'], -4);
+                $CashOrder[$key]['add_time'] = date("m-d H:s",strtotime($value['order_add_time']));
+            }
+            echo json_encode(["data" => $CashOrder, "page" => $page+1]);die;
+        }
+        $CashOrder=CashOrder::with("passageway")->where(['order_member'=>$this->param['uid'],'order_money' => ['<>' , 0],'order_state'=>['<>',1]])->order('order_id desc')->limit(0,10)->select();
+        $count = CashOrder::where(['order_member'=>$this->param['uid'],'order_money' => ['<>' , 0]])->order('order_id desc')->count();
+            $pages = ceil($count/10);
+            #截取银行卡号
+        foreach ($CashOrder as $key => $value) {
+            $CashOrder[$key]["bank_ons"] = substr($value['order_creditcard'], -4);
+            $CashOrder[$key]['add_time'] = date("m-d H:s",strtotime($value['order_add_time']));
+        }
+        if(!$CashOrder){
+            return view("Userurl/no_data");
+        }
+        $this->assign("pages",$pages);
+        $this->assign('data',$CashOrder);
+        return view("Userurl/deal_list");
+    }
     /**
      * @Author   Star(794633291@qq.com)
      * @DateTime 2017-12-25T14:10:55+0800
