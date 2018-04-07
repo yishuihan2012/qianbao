@@ -35,5 +35,8 @@
 	#8.	交易查询（单笔）
 	#9.	服务器异步通知接口
 	#10.客户端同步跳转接口
+	public function upload_material(){
+		
+	}
  }
 
