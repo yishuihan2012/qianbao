@@ -25,7 +25,7 @@
 			        </a>
 			    </li>
 			    <li class="mui-table-view-cell mui-media bor-bot">
-			        <a class="mui-navigate-right" id="toDealList"  href="/api/userurl/deal_list/uid/{{$uid}}/token/{{$token}}">
+			        <a class="mui-navigate-right" id="toDealList"  href="/api/userurl/deal_lists/uid/{{$uid}}/token/{{$token}}">
 			        	<img class="mui-media-object mui-pull-left" src="/static/images/message_transaction.png">
 			        	 <div class="mui-media-body">动账交易</div>
 			        </a>
