@@ -1,6 +1,7 @@
 <?php
  namespace app\api\controller;
  use think\Db;
+ use think\Controller;
  use app\index\model\Member;
  use app\index\model\System;
  use app\index\model\Wallet;
@@ -19,12 +20,21 @@
  use app\index\model\BankInfo;
  use app\index\model\MemberCreditPas;
  /**
- *  @version Huilianjinchuang controller / Api 代还入网
+ *  @version Elifepay controller / Api 代还入网
  *  @author 许成成(1015571416@qq.com)
- *   @datetime    2018-02-23 15:13:05
+ *   @datetime    2018-04-08 15:13:05
  *   @return 
  */
- class Easylife{
+ class Elifepay{
+ 	protected $url;
+ 	protected $priKey;
+ 	protected $pubKey;
+ 	public function __construct(){
+ 		$this->url="https://gw.epayxx.net/mapi/gateway.htm";
+ 		$this->partner_id='1818001000003822';
+ 		$this->priKey='MIIEvgIBADANBgkqhkiG9w0BAQEFAASCBKgwggSkAgEAAoIBAQCSGfFw8I+kSnz2hJEiJcVQOpTsOLR2tT+0fvl1YM1duDRsDxppBA88QpM4RH7YYameuBbqxp6Ht2zzJXoZ6EEsVqhskjV4X8/VQYi1dCcqEXI7Tq78L2fy1GcD0fDX1CAKP2bL8KJuu3R5Vd9K6WQLzleQEstMXNxqnwxom1zbY5rKE+ZfbMyPOylsehsk8Lob10w8HvLUSMGIeip23+pQ9GRCeo55Oq6DDmX9NQS0fteb60qW/3zlYVK7fbJTZLbHXBAS2TdoPrKKE3c1tdvxosmu6vfmzTI8AIExvf5s7OSvv9qM49j9XE7nPszIZajRY+jcoCm/8N3XGrMYX67/AgMBAAECggEASu7ta3ymX6AouZNCkN4Idl6ldQacYGoTs3KQZYhxrEjG8klIxWXknoaS1YAkAr0MbzCB6IZYVslYItks5868Zo5Hse/HZubVRM5o3JAnaicqjIqNqyBxUxVnhIkP2tKcYEUmZyETXnHcikLl1JkhzABX3rgU9ySFlFXg2mIc3RRQvWw4SefoF1DH+cGjKh2iHT8eAB0aEot+7vDVt4gaaqyhengP0P3rTQwxS+VKLtldRGCcgvhu586eeZSSMllYrfEoYHI5FINVMFLdoXjNdZhj2QVlXgL7h8Wofs60Z4Q11UPg/+83pt/QGTte9DKOTmR0pCqOVTAA2XMvhG2+YQKBgQDVcPGCHCg+CSF3Wb2aLosRrqcZCNNfea5Mh9j7n5eei/T2fXjTmd/FKxog79K1m7BysIXlOGZcJRJOOSF+yCFbRl326Ar67RqwsmLXt7hWkR2IuvVGQjNTpU8UthKWWqaLcOZVTwxsaN8zLymMzM4RuaxxxLgYBbWY5iCpm5D0kQKBgQCvO6cYx1RaQLnttAKeQYI1fDh/6mSjho0xmrCbsfEpGkw4hFtwFu6MIV+Zz6qR537T8vHOqF49vm5dA7BWjkpJsfsGzsxtXut7lqnKrjRddUCwsXoYzMneoOuIVtgcho2A0K1n760Bb5+MageV0cx4+p4K2zJzsA3JIWozGtbyjwKBgQDAqauGi44TuUA5MItCImMr+eAha+MImpinwjQtpXhCCAl9efLX5lyj6G00b+ZeQgO68vZZ21giMuBcNZuzikj50AG/fuNybxYZi1xHZjICCgmDw2blHZqhFWXVxyfuCjOtSKLRPIJ1VRCsbhTuYGxeeaBcLXsTTAwI0SmIj8D/0QKBgQCPI61FIl4XM1QthaO13lEcm5ITe0YmBd0ELhYhuGMEbkTgzc1bbIAD26caH3Z3pKAHRiab5xDEYvAH7uF2ctjgBhDF6Ns4ZBb7Z4De3RpNVWA4dWEFLROhVdXQExCJjKe+F7fudOvfhmzP6DS1/yCFmkLLH27A7Yj1SORVRpFapQKBgBuSrZhAtqenQd4qG+oTxWdwUSGIVo/WUAJE+T2dLID5pcmw1ER8yUDPNAb4v/bZA6tow+vyrBdslFyXT2+yaCS+KlYoEEdtisGiaUfHKpvQDGlmTRuInV7megvoqeOMD4k8suT0434aU2D3lEPqdQ6jxqiyUZGGFwyoVHWxgPOA';
+ 		$this->pubKey='MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQCOxOjh/1dxibWJumJThn8OkrKgTWMsCpy/5tLQ52oDyahvbLu2e7eNOj4+06clOKJReE7touHsTpNxh7ZCNCUEhRxQbsBF0KELjhaRHs2QGVtI4KDofsFhHG/6zHnNo1RP6jsfBFnZENo3PCbT6O0wdOyS1Yg6vYJJM7LIaiT5gQIDAQAB';
+ 	}
  	#1.	商户材料上传
 	#2.	商户注册
 	#3.	商户结算账户设置
@@ -47,6 +57,8 @@
 		    "index"=>"0",//材料索引，详见2.2.1材料类型表
 		    "content"=>"材料内容转换成base64字符串后内容过多，这里省略"
 		);
+		$res=$this->request('epaypp.merchant.material.upload',$data);
+		echo $res;die;
 	}
 	/**
 	 * 商户进件
@@ -211,5 +223,132 @@
 	public function order_turn_url(){
 
 	}
+	public function request($method,$data){
+		$data['partner_id'] = $this->partner_id;
+        foreach ($data as $key => $value){
+            if(!is_string($value)){
+                $data[$key] = ''.$value;
+            }
+        }
+        $bizContent = json_encode($data, JSON_UNESCAPED_UNICODE);
+		$params = [];
+		$params['partner_id'] =$this->partner_id;
+		$params['format'] = 'json';
+		$params['charset'] = 'utf-8';
+		$params['sign_method'] = 'rsa';
+		$params['v'] = '1.1';
+		$params['notify_url'] = '异步通知地址';
+        $params['method'] = $method;
+        $params['biz_content'] = $bizContent;
+        $params['timestamp'] = date('Y-m-d H:i:s');
+        $params['sign'] = $this->signature($params);
+        $response =curl_post($this->url,'post',http_build_query($params));
+        echo $response;die;
+        // if($method == 'epaypp.merchant.material.upload'){
+        //     $logData['biz_content'] = json_decode($logData['biz_content'], true);
+        //     unset($logData['biz_content']['content']);
+        //     $logData['biz_content'] = json_encode($logData['biz_content'], JSON_UNESCAPED_UNICODE);
+        // }
+	}
+	/**
+     * 签名
+     *
+     * @param $params
+     * @return string
+     */
+    public static function signature($params){
+        uksort($params, function ($a, $b) {
+            return strcasecmp($a, $b);
+        });
+        $paramStr = "";
+        foreach ($params as $key => $value) {
+            $paramStr .= $key . $value;
+        }
+        return $this->merchantPrivateSign($paramStr);
+    }
+     public static function merchantPrivateSign($data){
+        // $priKey = file_get_contents(dirname(__FILE__).'/../../../../key/epay_merchant_private_key.pem');
+        $priKey=$this->priKey;
+        $res = openssl_get_privatekey($priKey);
+        openssl_sign($data, $encryp_data, $res, OPENSSL_ALGO_SHA1);
+        openssl_free_key($res);
+        return strtoupper(bin2hex($encryp_data));
+    }
+
+    /**
+     * 商户公钥校验
+     *
+     * @param $data
+     * @param $sign
+     * @return bool
+     */
+    public static function merchantPublicVerify($data, $sign){
+        // $pubKey = file_get_contents(dirname(__FILE__).'/../../../../key/epay_merchant_public_key.pem');
+        $pubKey=$this->pubKey;
+        $res = openssl_get_publickey($pubKey);
+        $result = (bool)openssl_verify($data, hex2bin($sign), $res, OPENSSL_ALGO_SHA1);
+        openssl_free_key($res);
+        return $result;
+    }
+
+    /**
+     * 商户公钥校验
+     *
+     * @param $data
+     * @param $sign
+     * @return bool
+     */
+    public static function epayPublicVerify($data, $sign){
+        // $pubKey = file_get_contents(dirname(__FILE__).'/../../../../key/epay_public_key.pem');
+        $pubKey=$this->pubKey;
+        $res = openssl_get_publickey($pubKey);
+        $result = (bool)openssl_verify($data, hex2bin($sign), $res);
+        openssl_free_key($res);
+        return $result;
+    }
+
+    /**
+     * 商户私钥加密
+     *
+     * @param $data
+     * @return bool
+     */
+    public static function merchantPrivateEncrypt($data){
+        // $pubKey = file_get_contents(dirname(__FILE__).'/../../../../key/epay_merchant_private_key.pem');
+        $pubKey=$this->pubKey;
+        $res = openssl_get_privatekey($pubKey);
+        openssl_private_encrypt($data, $encryptData, $res);
+        openssl_free_key($res);
+        return strtoupper(bin2hex($encryptData));
+    }
+
+    /**
+     * 商户私钥解密
+     *
+     * @param $data
+     * @return bool
+     */
+    public static function merchantPrivateDecrypt($data){
+        // $pubKey = file_get_contents(dirname(__FILE__).'/../../../../key/epay_merchant_private_key.pem');
+        $pubKey=$this->pubKey;
+        $res = openssl_get_privatekey($pubKey);
+        openssl_private_decrypt(hex2bin($data), $decryptData, $res);
+        openssl_free_key($res);
+        return $decryptData;
+    }
+
+    /**
+     * 平台公钥解密
+     *
+     * @param $data
+     * @return bool
+     */
+    public static function epayPublicDecrypt($data){
+        $pubKey = file_get_contents(dirname(__FILE__).'/../../../../key/epay_public_key.pem');
+        $res = openssl_get_publickey($pubKey);
+        openssl_public_decrypt(hex2bin($data), $decryptData, $res, OPENSSL_PKCS1_PADDING);
+        openssl_free_key($res);
+        return $decryptData;
+    }
  }
 
