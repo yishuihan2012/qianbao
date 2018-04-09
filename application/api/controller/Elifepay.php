@@ -35,6 +35,17 @@
  		$this->priKey='MIIEvgIBADANBgkqhkiG9w0BAQEFAASCBKgwggSkAgEAAoIBAQCSGfFw8I+kSnz2hJEiJcVQOpTsOLR2tT+0fvl1YM1duDRsDxppBA88QpM4RH7YYameuBbqxp6Ht2zzJXoZ6EEsVqhskjV4X8/VQYi1dCcqEXI7Tq78L2fy1GcD0fDX1CAKP2bL8KJuu3R5Vd9K6WQLzleQEstMXNxqnwxom1zbY5rKE+ZfbMyPOylsehsk8Lob10w8HvLUSMGIeip23+pQ9GRCeo55Oq6DDmX9NQS0fteb60qW/3zlYVK7fbJTZLbHXBAS2TdoPrKKE3c1tdvxosmu6vfmzTI8AIExvf5s7OSvv9qM49j9XE7nPszIZajRY+jcoCm/8N3XGrMYX67/AgMBAAECggEASu7ta3ymX6AouZNCkN4Idl6ldQacYGoTs3KQZYhxrEjG8klIxWXknoaS1YAkAr0MbzCB6IZYVslYItks5868Zo5Hse/HZubVRM5o3JAnaicqjIqNqyBxUxVnhIkP2tKcYEUmZyETXnHcikLl1JkhzABX3rgU9ySFlFXg2mIc3RRQvWw4SefoF1DH+cGjKh2iHT8eAB0aEot+7vDVt4gaaqyhengP0P3rTQwxS+VKLtldRGCcgvhu586eeZSSMllYrfEoYHI5FINVMFLdoXjNdZhj2QVlXgL7h8Wofs60Z4Q11UPg/+83pt/QGTte9DKOTmR0pCqOVTAA2XMvhG2+YQKBgQDVcPGCHCg+CSF3Wb2aLosRrqcZCNNfea5Mh9j7n5eei/T2fXjTmd/FKxog79K1m7BysIXlOGZcJRJOOSF+yCFbRl326Ar67RqwsmLXt7hWkR2IuvVGQjNTpU8UthKWWqaLcOZVTwxsaN8zLymMzM4RuaxxxLgYBbWY5iCpm5D0kQKBgQCvO6cYx1RaQLnttAKeQYI1fDh/6mSjho0xmrCbsfEpGkw4hFtwFu6MIV+Zz6qR537T8vHOqF49vm5dA7BWjkpJsfsGzsxtXut7lqnKrjRddUCwsXoYzMneoOuIVtgcho2A0K1n760Bb5+MageV0cx4+p4K2zJzsA3JIWozGtbyjwKBgQDAqauGi44TuUA5MItCImMr+eAha+MImpinwjQtpXhCCAl9efLX5lyj6G00b+ZeQgO68vZZ21giMuBcNZuzikj50AG/fuNybxYZi1xHZjICCgmDw2blHZqhFWXVxyfuCjOtSKLRPIJ1VRCsbhTuYGxeeaBcLXsTTAwI0SmIj8D/0QKBgQCPI61FIl4XM1QthaO13lEcm5ITe0YmBd0ELhYhuGMEbkTgzc1bbIAD26caH3Z3pKAHRiab5xDEYvAH7uF2ctjgBhDF6Ns4ZBb7Z4De3RpNVWA4dWEFLROhVdXQExCJjKe+F7fudOvfhmzP6DS1/yCFmkLLH27A7Yj1SORVRpFapQKBgBuSrZhAtqenQd4qG+oTxWdwUSGIVo/WUAJE+T2dLID5pcmw1ER8yUDPNAb4v/bZA6tow+vyrBdslFyXT2+yaCS+KlYoEEdtisGiaUfHKpvQDGlmTRuInV7megvoqeOMD4k8suT0434aU2D3lEPqdQ6jxqiyUZGGFwyoVHWxgPOA';
  		$this->pubKey='MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQCOxOjh/1dxibWJumJThn8OkrKgTWMsCpy/5tLQ52oDyahvbLu2e7eNOj4+06clOKJReE7touHsTpNxh7ZCNCUEhRxQbsBF0KELjhaRHs2QGVtI4KDofsFhHG/6zHnNo1RP6jsfBFnZENo3PCbT6O0wdOyS1Yg6vYJJM7LIaiT5gQIDAQAB';
  	}
+ 	 public static $materials = [
+        ['name' => '营业执照', 'code' => 'LICENSE', 'hasBack' => false],
+        ['name' => '组织机构代码证', 'code' => 'ORGANIZATION_CODE', 'hasBack' => false],
+        ['name' => '多合一营业执照', 'code' => 'LICENSE_ALL_IN_ONE', 'hasBack' => false],
+        ['name' => '法人身份证', 'code' => 'CORP_IDCARD', 'hasBack' => true],
+        ['name' => '代理人身份证', 'code' => 'AGENT_IDCARD', 'hasBack' => true],
+        ['name' => '委托书', 'code' => 'ATTORNEY', 'hasBack' => false],
+        ['name' => '个人身份证', 'code' => 'IDCARD', 'hasBack' => true],
+        ['name' => '个人手持身份证', 'code' => 'HEAD_IDCARD', 'hasBack' => false],
+        ['name' => '结算银行账户', 'code' => 'SETTLE_BANK_ACCOUNT', 'hasBack' => true],
+    ];
  	#1.	商户材料上传
 	#2.	商户注册
 	#3.	商户结算账户设置
@@ -52,11 +63,13 @@
 	 */
 	public function merch_upload_material(){
 		$data=array(
-			"material_id"=>"1504882816522", //材料编号，需要保证唯一，建议使用out_user_id
+			"material_id"=>make_rand_code(), //材料编号，需要保证唯一，建议使用out_user_id
 		    "type"=>"IDCARD",//材料类型，详见2.2.1材料类型表
 		    "index"=>"0",//材料索引，详见2.2.1材料类型表
-		    "content"=>"材料内容转换成base64字符串后内容过多，这里省略"
+		    "content"=>base64_encode(file_get_contents('1.jpg'))
 		);
+		// echo json_encode($data);
+		// var_dump($data);die;
 		$res=$this->request('epaypp.merchant.material.upload',$data);
 		echo $res;die;
 	}
@@ -67,29 +80,30 @@
 	 */
 	public function merch_income(){
 		$data=array(
-			'out_user_id'=>'',//String	是	商户在合作伙伴系统的唯一编号，必填
-			'material_no'=>"",//String	是	材料单号，和材料上传接口保持一致
+			'out_user_id'=>'DU5TIG18',//String	是	商户在合作伙伴系统的唯一编号，必填
+			'material_no'=>"DU5TIG18",//String	是	材料单号，和材料上传接口保持一致
 			'merchant_type'=>'PRIVATE_ACCOUNT',//String	是	商户类型，必填 个人：PRIVATE_ACCOUNT  企业：CORPORATE_ACCOUNT  暂时只支持个人
-			'merchant_name'=>'',//String	是	商户名称，必填。个人名字由个人自己定义，企业必须为企业名称
+			'merchant_name'=>'水寒科技',//String	是	商户名称，必填。个人名字由个人自己定义，企业必须为企业名称
 			'cert_type'=>'IDCARD',//String	是	证件类型，必填。个人身份证、公司营业执照。个人：IDCARD 企业，营业执照：LICENSE；多合一营业执照：LICENSE_ALL_IN_ONE
-			'cert_no'=>'',//String	是	证件号码，必填。个人身份证号、企业营业执照编号
+			'cert_no'=>'370983199109202832',//String	是	证件号码，必填。个人身份证号、企业营业执照编号
 			// 'cert_expiration_time'=>"",//String	否	证件有效时间
 			// 'corp_name'=>""	,//String	否	法人姓名，企业必填
 			// 'corp_cert_type'=>"",String	否	法人证件类型，企业必填
 			// 'corp_cert_no'=>"",//	String	否	法人身份证号，企业必填
 			// 'corp_cert_expiration_time'=>"",//String	否	法人证件有效时间
-			'contact_name'=>"",//String	是	联系人姓名，必填
-			'contact_mobile'=>"",//String	是	联系人手机，必填
+			'contact_name'=>"许成成",//String	是	联系人姓名，必填
+			'contact_mobile'=>"16605383329",//String	是	联系人手机，必填
 			// 'contact_phone'=>"",//String	否	联系人座机
-			'contact_email'=>"",//String	是	联系人邮箱，必填
-			'province'=>"",//String	是	省份编号，必填，详见地址编码表
-			'city'=>"",//String	是	城市编号，必填，详见地址编码表
-			'district'=>"",//String	是	县/区编号，必填，详见地址编码表
-			'address'=>"",//String	是	地址，必填
+			'contact_email'=>"1374687780@qq.com",//String	是	联系人邮箱，必填
+			'province'=>"370000",//String	是	省份编号，必填，详见地址编码表
+			'city'=>"370900",//String	是	城市编号，必填，详见地址编码表
+			'district'=>"370983",//String	是	县/区编号，必填，详见地址编码表
+			'address'=>"测试地址",//String	是	地址，必填
 			// 'zip'=>"",//String	否	邮政编码
 			// 'memo'=>"",//String	否	备注
 		);
-		$res=curl_post('url','post',$data);
+		echo  json_encode($data);
+		$res=$this->request('epaypp.merchant.register',$data);
 		echo $res;die;
 	}
 	/**
@@ -98,7 +112,7 @@
 	 */
 	public function merch_Settlement_setting(){
 		$data=array(
-			'out_user_id'=>"",//String	是	商户在合作伙伴系统的唯一编号，必填
+			'out_user_id'=>"DU5TIG18",//String	是	商户在合作伙伴系统的唯一编号，必填
 			'bank_account_type'=>'PRIVATE_ACCOUNT',//	String	是	银行账户类型，对公，对私  对公：CORPORATE_ACCOUNT  对私：PRIVATE_ACCOUNT
 			'bank_account_no'=>"",//String	是	银行账户号
 			'cert_type'=>"IDCARD",//String	是	证件类型 身份证：IDCARD
@@ -242,8 +256,8 @@
         $params['biz_content'] = $bizContent;
         $params['timestamp'] = date('Y-m-d H:i:s');
         $params['sign'] = $this->signature($params);
-        $response =curl_post($this->url,'post',http_build_query($params));
-        echo $response;die;
+        $response =curl_post($this->url,'post',http_build_query($params),'application/x-www-form-urlencoded');
+        print_r($response);die;
         // if($method == 'epaypp.merchant.material.upload'){
         //     $logData['biz_content'] = json_decode($logData['biz_content'], true);
         //     unset($logData['biz_content']['content']);
@@ -256,7 +270,7 @@
      * @param $params
      * @return string
      */
-    public static function signature($params){
+    public  function signature($params){
         uksort($params, function ($a, $b) {
             return strcasecmp($a, $b);
         });
@@ -266,9 +280,9 @@
         }
         return $this->merchantPrivateSign($paramStr);
     }
-     public static function merchantPrivateSign($data){
-        // $priKey = file_get_contents(dirname(__FILE__).'/../../../../key/epay_merchant_private_key.pem');
-        $priKey=$this->priKey;
+     public  function merchantPrivateSign($data){
+        $priKey = file_get_contents('./static/rsakey/elife/prv.pem');
+        // $priKey=$this->priKey;
         $res = openssl_get_privatekey($priKey);
         openssl_sign($data, $encryp_data, $res, OPENSSL_ALGO_SHA1);
         openssl_free_key($res);
@@ -282,9 +296,9 @@
      * @param $sign
      * @return bool
      */
-    public static function merchantPublicVerify($data, $sign){
-        // $pubKey = file_get_contents(dirname(__FILE__).'/../../../../key/epay_merchant_public_key.pem');
-        $pubKey=$this->pubKey;
+    public  function merchantPublicVerify($data, $sign){
+        $pubKey = file_get_contents('./static/rsakey/elife/pub.pem');
+        // $pubKey=$this->pubKey;
         $res = openssl_get_publickey($pubKey);
         $result = (bool)openssl_verify($data, hex2bin($sign), $res, OPENSSL_ALGO_SHA1);
         openssl_free_key($res);
@@ -298,9 +312,9 @@
      * @param $sign
      * @return bool
      */
-    public static function epayPublicVerify($data, $sign){
-        // $pubKey = file_get_contents(dirname(__FILE__).'/../../../../key/epay_public_key.pem');
-        $pubKey=$this->pubKey;
+    public  function epayPublicVerify($data, $sign){
+        $pubKey = file_get_contents('./static/rsakey/elife/pub.pem');
+        // $pubKey=$this->pubKey;
         $res = openssl_get_publickey($pubKey);
         $result = (bool)openssl_verify($data, hex2bin($sign), $res);
         openssl_free_key($res);
@@ -313,9 +327,9 @@
      * @param $data
      * @return bool
      */
-    public static function merchantPrivateEncrypt($data){
-        // $pubKey = file_get_contents(dirname(__FILE__).'/../../../../key/epay_merchant_private_key.pem');
-        $pubKey=$this->pubKey;
+    public  function merchantPrivateEncrypt($data){
+        $pubKey = file_get_contents('./static/rsakey/elife/pub.pem');
+        // $pubKey=$this->pubKey;
         $res = openssl_get_privatekey($pubKey);
         openssl_private_encrypt($data, $encryptData, $res);
         openssl_free_key($res);
@@ -328,9 +342,9 @@
      * @param $data
      * @return bool
      */
-    public static function merchantPrivateDecrypt($data){
-        // $pubKey = file_get_contents(dirname(__FILE__).'/../../../../key/epay_merchant_private_key.pem');
-        $pubKey=$this->pubKey;
+    public  function merchantPrivateDecrypt($data){
+        $pubKey = file_get_contents('./static/rsakey/elife/pub.pem');
+        // $pubKey=$this->pubKey;
         $res = openssl_get_privatekey($pubKey);
         openssl_private_decrypt(hex2bin($data), $decryptData, $res);
         openssl_free_key($res);
@@ -343,8 +357,8 @@
      * @param $data
      * @return bool
      */
-    public static function epayPublicDecrypt($data){
-        $pubKey = file_get_contents(dirname(__FILE__).'/../../../../key/epay_public_key.pem');
+    public  function epayPublicDecrypt($data){
+        $pubKey = file_get_contents('./static/rsakey/elife/pub.pem');
         $res = openssl_get_publickey($pubKey);
         openssl_public_decrypt(hex2bin($data), $decryptData, $res, OPENSSL_PKCS1_PADDING);
         openssl_free_key($res);
