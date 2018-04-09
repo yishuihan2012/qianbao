@@ -114,82 +114,133 @@
 		$data=array(
 			'out_user_id'=>"DU5TIG18",//String	是	商户在合作伙伴系统的唯一编号，必填
 			'bank_account_type'=>'PRIVATE_ACCOUNT',//	String	是	银行账户类型，对公，对私  对公：CORPORATE_ACCOUNT  对私：PRIVATE_ACCOUNT
-			'bank_account_no'=>"",//String	是	银行账户号
+			'bank_account_no'=>"6215590200003242971",//String	是	银行账户号
 			'cert_type'=>"IDCARD",//String	是	证件类型 身份证：IDCARD
-			'cert_no'=>"",//String	是	证件号码
-			'name'=>"",//String	是	开户姓名
-			'mobile'=>"",//String	是	银行预留手机号
+			'cert_no'=>"370983199109202832",//String	是	证件号码
+			'name'=>"许成成",//String	是	开户姓名
+			'mobile'=>"17569615504",//String	是	银行预留手机号
 		);
+		echo json_encode($data);
+		$res=$this->request('epaypp.merchant.settle.account.set',$data);
+		echo $res;die;
 	} 
+	/**
+     * 商户结算账户增加（扫码专用）
+     *
+     * @param $outUserID
+     * @param $name
+     * @param $mobile
+     * @param $certType
+     * @param $certNo
+     * @param $bankAccountType
+     * @param $bankAccountNo
+     * @param $bankAccountFront
+     * @param $bankAccountBack
+     * @return array
+     */
+    public static function merchantSettleAccountAdd(){
+        $data = [
+            'out_user_id' => 'DU5TIG18',
+            'name' => $name,
+            'mobile' => $mobile,
+            'cert_type' => $certType,
+            'cert_no' => $certNo,
+            'bank_account_type' => $bankAccountType,
+            'bank_account_no' => $bankAccountNo,
+            'bank_account_front' => $bankAccountFront,
+            'bank_account_back' => $bankAccountBack,
+        ];
+        $return = $this->request('epaypp.merchant.settle.account.add', $data);
+        return $return;
+    }
 	/**
 	 * 产品开通 
 	 * @return [type] [description]
+	 * 无卡带积分航旅-C2	3001	带积分
+	 * 无卡带积分百货-B2	3005	带积分
+	 * 无卡带积分航旅-C4	3006	带积分
+	 * 无卡无积分产品	3002	无积分
+	 * 支付宝扫码产品	3003	支付宝用户扫
+	 * 微信扫码产品	3004	微信用户扫
 	 */
 	public function product_open(){
 		$data=array(
-			'out_user_id'=>'',//String	是	商户在合作伙伴系统的唯一编号，必填
-			'product'=>"",//String	是	产品编号，详见产品表
-			'bottom'=>"",//String	是	保底收费金额，单位：元，目前无效，请设置为0
-			'top'=>"",//String	是	封顶收费金额，单位：元，目前无效，请设置为0
-			'fixed'=>"",//String	是	代付手续费，单位：元
-			'rate'=>"",//String	是	费率：0.005，表示0.5%
+			'out_user_id'=>'DU5TIG18',//String	是	商户在合作伙伴系统的唯一编号，必填
+			'product'=>"3006",//String	是	产品编号，详见产品表
+			'bottom'=>"0",//String	是	保底收费金额，单位：元，目前无效，请设置为0
+			'top'=>"0",//String	是	封顶收费金额，单位：元，目前无效，请设置为0
+			'fixed'=>"1",//String	是	代付手续费，单位：元
+			'rate'=>"0.0042",//String	是	费率：0.005，表示0.5%
 			// 'uniq_no'=>"",//String	否	此参数目前只对扫码产品生效 结算卡唯一编号，增加结算卡后返回
 		);
+		echo json_encode($data);
+		$res=$this->request('epaypp.merchant.product.open',$data);
+		echo $res;die;
 	}
+	
 	/**
 	 * 产品费率修改
 	 * @return [type] [description]
 	 */
 	public function product_rate_update(){
 		$data=array(
-			'out_user_id'=>"",//String	是	商户在合作伙伴系统的唯一编号，必填
-			'product'=>"",//String	是	产品编号，详见产品表
-			'bottom'=>"",//String	是	保底收费金额，单位：元，目前无效，请设置为0
-			'top'=>"",//String	是	封顶收费金额，单位：元，目前无效，请设置为0
-			'fixed'=>"",//String	是	代付手续费，单位：元
-			'rate'=>"",//String	是	费率：0.005，表示0.5%
+			'out_user_id'=>"DU5TIG18",//String	是	商户在合作伙伴系统的唯一编号，必填
+			'product'=>"3006",//String	是	产品编号，详见产品表
+			'bottom'=>"0",//String	是	保底收费金额，单位：元，目前无效，请设置为0
+			'top'=>"0",//String	是	封顶收费金额，单位：元，目前无效，请设置为0
+			'fixed'=>"1",//String	是	代付手续费，单位：元
+			'rate'=>"0.0042",//String	是	费率：0.005，表示0.5%
 		);
+		echo json_encode($data);
+		$res=$this->request('epaypp.merchant.product.rate.set',$data);
+		echo $res;die;
 	}
 	/**
-	 * 产品快捷开通
+	 * 银行卡快捷开通
 	 * @return [type] [description]
 	 */
 	public function product_quick_open(){
 		$data=array(
-			'out_user_id'=>"",//String	是	商户在合作伙伴系统的唯一编号，必填
-			'product'=>'',//String	是	产品编号，详见：3.6.1
+			'out_user_id'=>"DU5TIG18",//String	是	商户在合作伙伴系统的唯一编号，必填
+			'product'=>'3006',//String	是	产品编号，详见：3.6.1
 			'bank_account_type'=>"PRIVATE_ACCOUNT",//String	是	银行账户类型，对公，对私对公：CORPORATE_ACCOUNT 对私：PRIVATE_ACCOUNT
-			'bank_account_no'=>"",//String	是	银行账户号
+			'bank_account_no'=>"6259760291531725",//String	是	银行账户号
 			'cert_type'=>"IDCARD",//String	是	证件类型 身份证：IDCARD
-			'cert_no'=>"",//String	是	证件号码
-			'name'=>"",//String	是	开户姓名
-			'mobile'=>"",//String	是	银行预留手机号
-			'cvn2'=>"",//String	否	cvn2，信用卡必传
-			'expired'=>"",//String	否	过期时间，信用卡必传
+			'cert_no'=>"370983199109202832",//String	是	证件号码
+			'name'=>"许成成",//String	是	开户姓名
+			'mobile'=>"16605383329",//String	是	银行预留手机号
+			'cvn2'=>"914",//String	否	cvn2，信用卡必传
+			'expired'=>"1222",//String	否	过期时间，信用卡必传
 		);
+		echo json_encode($data);
+		$res=$this->request('epaypp.merchant.card.express.pay.open',$data);
+		echo $res;die;
 	}
 	/**
 	 * 创建交易
 	 * @return [type] [description]
 	 */
 	public function order_create(){
-		$dat=array(
-			'product'=>"",//String	是	产品编号，详见：2.5.1
-			'out_user_id'=>"",//String	是	商户在合作伙伴系统的唯一编号，必填
-			'terminal_id'=>"",//String	是	终端编号，固定值：000000
-			'timeout'=>"",//String	否	订单支付超时时间，单位：秒（默认为600s）
-			'currency'=>"",//String	是	货币类型，固定值：156
-			'total_fee'=>"",//String	否	支付总额，单位元（和price有一个必填，都填时取total_fee的值）
-			'summary'=>"",//String	是	交易摘要
-			'category'=>"",//String	否	商品类目
-			'good_id'=>"",//String	否	商品编号
-			'price'=>"",//String	否	商品单价，单位元
-			'quantity'=>"1",//String	否	商品数量（当total_fee不传时，总价为quantity*price，quantity默认为1）
-			'memo'=>'',//String	否	备注
-			'out_trade_no'=>"",//String	是	商户交易号
-			'gmt_out_create'=>"",//String	是	商户交易创建时间格式：yyyy-MM-dd HH:mm:ss
+		$data=array(
+			'product'=>"3006",//String	是	产品编号，详见：2.5.1
+			'out_user_id'=>"DU5TIG18",//String	是	商户在合作伙伴系统的唯一编号，必填
+			'terminal_id'=>"000000",//String	是	终端编号，固定值：000000
+			'timeout'=>"600",//String	否	订单支付超时时间，单位：秒（默认为600s）
+			'currency'=>"156",//String	是	货币类型，固定值：156
+			'total_fee'=>"599",//String	否	支付总额，单位元（和price有一个必填，都填时取total_fee的值）
+			'summary'=>"购买好记星学习机（那里不会点哪里）",//String	是	交易摘要
+			// 'category'=>"",//String	否	商品类目
+			// 'good_id'=>"",//String	否	商品编号
+			// 'price'=>"",//String	否	商品单价，单位元
+			// 'quantity'=>"1",//String	否	商品数量（当total_fee不传时，总价为quantity*price，quantity默认为1）
+			// 'memo'=>'',//String	否	备注
+			'out_trade_no'=>make_rand_code(),//String	是	商户交易号
+			'gmt_out_create'=>date('Y-m-d H:i:s'),//String	是	商户交易创建时间格式：yyyy-MM-dd HH:mm:ss
 			// 'gps'=>"",//String	否	经纬度
 		);
+		echo json_encode($data);
+		$res=$this->request('epaypp.trade.create',$data);
+		echo $res;die;
 	}
 	/**
 	 * 交易支付请求
@@ -197,20 +248,22 @@
 	 */
 	public function order_pay(){
 		$pay_data=array(
-			'realName'=>"持卡人姓名",
-			'certNo'=>"持卡人证件号",
-			'bankAccountNo'=>"银行卡卡号",
-			'mobile'=>"银行卡预留手机号",
+			'realName'=>"许成成",
+			'certNo'=>"370983199109202832",
+			'bankAccountNo'=>"6259760291531725",
+			'mobile'=>"16605383329",
 		);
 		foreach ($pay_data as $k => $v) {
 			$other_params[]=$k.'^'.$v;
 		}
 		$other_params=implode('|', $other_params);
-		echo $other_params;die;
-		$data=array(
-			'out_trade_no'=>"商户交易号",
-			'other_params'=>$other_params,
-		);
+		$data = [
+            'out_trade_no' =>'8QSA4U78',
+            'other_params' => $other_params
+        ];
+        echo json_encode($data);
+        $return = $this->request('epaypp.wc.trade.pay', $data);
+        echo $return;die;
 	}
 	/**
 	 * 快捷支付验证码提交
@@ -218,19 +271,27 @@
 	 */
 	public function order_sms_submit(){
 		$data=array(
-			"out_trade_no"=>"1511838018298", //订单号
-		    "verify_code"=>"154818",	//验证码
-		    "mobile"=>"18666666666"	//手机号
+			"out_trade_no"=>"8QSA4U78", //订单号
+		    "verify_code"=>"882264",	//验证码
+		    "mobile"=>"16605383329"	//手机号
 		);
+		echo json_encode($data);
+		$return = $this->request('epaypp.wc.trade.express.verifycode.submit', $data);
+        echo $return;die;
 	}
 	/**
 	 * 交易查询
 	 * @return [type] [description]
 	 */
 	public function order_query(){
-		$data['out_trade_no']='';//订单号
-		
+		$data['out_trade_no']='8QSA4U78';//订单号
+		$return = $this->request('epaypp.trade.query', $data);
+		echo $return;die;
 	}	
+	/**
+	 * 异步通知
+	 * @return [type] [description]
+	 */
 	public function order_notify(){
 
 	}
@@ -251,7 +312,7 @@
 		$params['charset'] = 'utf-8';
 		$params['sign_method'] = 'rsa';
 		$params['v'] = '1.1';
-		$params['notify_url'] = '异步通知地址';
+		$params['notify_url'] = System::getName('system_url').'/Api/Elifepay/order_notify';
         $params['method'] = $method;
         $params['biz_content'] = $bizContent;
         $params['timestamp'] = date('Y-m-d H:i:s');
@@ -288,7 +349,6 @@
         openssl_free_key($res);
         return strtoupper(bin2hex($encryp_data));
     }
-
     /**
      * 商户公钥校验
      *
@@ -304,7 +364,6 @@
         openssl_free_key($res);
         return $result;
     }
-
     /**
      * 商户公钥校验
      *
@@ -320,7 +379,6 @@
         openssl_free_key($res);
         return $result;
     }
-
     /**
      * 商户私钥加密
      *
@@ -335,7 +393,6 @@
         openssl_free_key($res);
         return strtoupper(bin2hex($encryptData));
     }
-
     /**
      * 商户私钥解密
      *
@@ -350,7 +407,6 @@
         openssl_free_key($res);
         return $decryptData;
     }
-
     /**
      * 平台公钥解密
      *
