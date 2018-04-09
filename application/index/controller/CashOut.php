@@ -682,7 +682,13 @@ class CashOut
 		$res=$helibao->scan_pay();
 		
 	}
-
+	public function elife_pay(){
+		#1判断是否上传资料
+		#2判断是否入网
+		#3判断是否设置结算商户
+		#4判断当前产品是否开通
+		#5判断当前银行卡当前产品是否开通快捷
+	}
 	 /**
 	 * @version  获取订单成功的时候写入订单数据
 	 * @authors bill(755969423@qq.com)
