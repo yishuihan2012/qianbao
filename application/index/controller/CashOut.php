@@ -682,12 +682,53 @@ class CashOut
 		$res=$helibao->scan_pay();
 		
 	}
+	/**
+	 * 易生支付-纯api模式
+	 * @return [type] [description]
+	 */
 	public function elife_pay(){
-		#1判断是否上传资料
+		$elifepay=new \app\api\payment\Elifepay;
+		#1判断是否上传资料,看有没有存取子商户号
+		$MemberNet=MemberNet::where(['net_member_id'=>$this->member_infos->member_id])->find();
+		$explode=explode (',',$MemberNet[$this->passway_info->passageway_no]);
+		if(!$explode || $MemberNet[$this->passway_info->passageway_no]==""){ //商户没有上传资料没生成商户号
+			$material_id=make_rand_code();
+			$img=$this->member_infos->memberCert->IdPositiveImgUrl;//身份证正面
+			$res=$elifepay->merch_upload_material($material_id,$img);
+			if($res['epaypp_merchant_material_upload_response'] && $res['epaypp_merchant_material_upload_response']['result_code']=='00'){
+				$update=MemberNet::where(['net_member_id'=>$this->member_infos->member_id])->update([$this->passway_info->passageway_no=>$material_id]);
+				if(!$update){
+					return ['code'=>'101','msg'=>'上传资料失败'];
+				}
+			}else{
+				return ['code'=>'102','msg'=>'上传资料失败'];
+			}
+		}
 		#2判断是否入网
+		if(!$explode[1] || $explode[1]!=1){
+			$res=$elifepay->merch_income($material_id,$this->member_infos);
+		}else{
+			echo 444;die;
+		}
 		#3判断是否设置结算商户
 		#4判断当前产品是否开通
 		#5判断当前银行卡当前产品是否开通快捷
+		#预下单 下单完成后返给APP一个静态页面地址
+		#
+	}
+	/**
+	 * 易生支付-收银台模式
+	 * @return [type] [description]
+	 */
+	public function elifepay(){
+		#1判断是否上传资料,看有没有存取子商户号
+		$membernetObject=new Membernets($this->member_infos->member_id, $this->passway_info->passageway_id);
+		var_dump($membernetObject);die;
+		#2判断是否入网
+		#3判断是否设置结算商户
+		#4判断当前产品是否开通
+		#预下单 下单完成后返给APP一个链接
+		#
 	}
 	 /**
 	 * @version  获取订单成功的时候写入订单数据

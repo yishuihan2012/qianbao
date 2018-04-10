@@ -1,5 +1,5 @@
 <?php
- namespace app\api\controller;
+ namespace app\api\payment;
  use think\Db;
  use think\Controller;
  use app\index\model\Member;
@@ -60,29 +60,31 @@
 	 * @return [type] [description]
 	 * 个人商户注册，需要上传个人身份证正、反面照片，个人手持身份证照片，结算银行账户正、反面照材料信息。
 	 */
-	public function merch_upload_material(){
+	public function merch_upload_material($material_id,$img){
 		$data=array(
-			"material_id"=>make_rand_code(), //材料编号，需要保证唯一，建议使用out_user_id
+			"material_id"=>$material_id, //材料编号，需要保证唯一，建议使用out_user_id
 		    "type"=>"IDCARD",//材料类型，详见2.2.1材料类型表
 		    "index"=>"0",//材料索引，详见2.2.1材料类型表
-		    "content"=>base64_encode(file_get_contents('1.jpg'))
+		    "content"=>base64_encode(file_get_contents($img))
 		);
 		// echo json_encode($data);
 		// var_dump($data);die;
 		$res=$this->request('epaypp.merchant.material.upload',$data);
-		echo $res;die;
+		// var_dump($res);die;
+		return json_decode($res,true);
+		// echo $res;die;
 	}
 	/**
 	 * 商户进件
 	 * @return [type] [description]
 	 * 注：省份编号、城市编号、县/区编号需要按照要求上传，否则后期开通产品时会失败。
 	 */
-	public function merch_income(){
+	public function merch_income($out_user_id,$member_infos){
 		$data=array(
-			'out_user_id'=>'DU5TIG18',//String	是	商户在合作伙伴系统的唯一编号，必填
-			'material_no'=>"DU5TIG18",//String	是	材料单号，和材料上传接口保持一致
+			'out_user_id'=>$out_user_id,//String	是	商户在合作伙伴系统的唯一编号，必填
+			'material_no'=>$out_user_id,//String	是	材料单号，和材料上传接口保持一致
 			'merchant_type'=>'PRIVATE_ACCOUNT',//String	是	商户类型，必填 个人：PRIVATE_ACCOUNT  企业：CORPORATE_ACCOUNT  暂时只支持个人
-			'merchant_name'=>'水寒科技',//String	是	商户名称，必填。个人名字由个人自己定义，企业必须为企业名称
+			'merchant_name'=>$merchant_name,//String	是	商户名称，必填。个人名字由个人自己定义，企业必须为企业名称
 			'cert_type'=>'IDCARD',//String	是	证件类型，必填。个人身份证、公司营业执照。个人：IDCARD 企业，营业执照：LICENSE；多合一营业执照：LICENSE_ALL_IN_ONE
 			'cert_no'=>'370983199109202832',//String	是	证件号码，必填。个人身份证号、企业营业执照编号
 			// 'cert_expiration_time'=>"",//String	否	证件有效时间
@@ -165,11 +167,11 @@
 	public function product_open(){
 		$data=array(
 			'out_user_id'=>'DU5TIG18',//String	是	商户在合作伙伴系统的唯一编号，必填
-			'product'=>"3006",//String	是	产品编号，详见产品表
+			'product'=>"3007",//String	是	产品编号，详见产品表
 			'bottom'=>"0",//String	是	保底收费金额，单位：元，目前无效，请设置为0
 			'top'=>"0",//String	是	封顶收费金额，单位：元，目前无效，请设置为0
-			'fixed'=>"1",//String	是	代付手续费，单位：元
-			'rate'=>"0.0042",//String	是	费率：0.005，表示0.5%
+			'fixed'=>"1.5",//String	是	代付手续费，单位：元
+			'rate'=>"0.0047",//String	是	费率：0.005，表示0.5%
 			// 'uniq_no'=>"",//String	否	此参数目前只对扫码产品生效 结算卡唯一编号，增加结算卡后返回
 		);
 		echo json_encode($data);
@@ -221,7 +223,7 @@
 	 */
 	public function order_create(){
 		$data=array(
-			'product'=>"3006",//String	是	产品编号，详见：2.5.1
+			'product'=>"3007",//String	是	产品编号，详见：2.5.1
 			'out_user_id'=>"DU5TIG18",//String	是	商户在合作伙伴系统的唯一编号，必填
 			'terminal_id'=>"000000",//String	是	终端编号，固定值：000000
 			'timeout'=>"600",//String	否	订单支付超时时间，单位：秒（默认为600s）
@@ -257,7 +259,7 @@
 		}
 		$other_params=implode('|', $other_params);
 		$data = [
-            'out_trade_no' =>'8QSA4U78',
+            'out_trade_no' =>'1111891M',
             'other_params' => $other_params
         ];
         echo json_encode($data);
@@ -317,7 +319,8 @@
         $params['timestamp'] = date('Y-m-d H:i:s');
         $params['sign'] = $this->signature($params);
         $response =curl_post($this->url,'post',http_build_query($params),'application/x-www-form-urlencoded');
-        print_r($response);die;
+        return  $response;
+        // print_r($response);die;
         // if($method == 'epaypp.merchant.material.upload'){
         //     $logData['biz_content'] = json_decode($logData['biz_content'], true);
         //     unset($logData['biz_content']['content']);
