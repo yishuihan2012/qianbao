@@ -273,7 +273,7 @@ class Plan extends Common{
 	            }
             }
         }
-        $count['fenrunhou']=$count['order_platform_fee']-$count['sanji'];
+        $count['fenrunhou']=round($count['order_platform_fee']-$count['sanji'],2);
 		$this->assign('count',$count);
 		$this->assign('list',$order_lists);
 		return view("admin/plan/detail");

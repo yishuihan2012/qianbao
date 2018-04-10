@@ -24,7 +24,7 @@ class Http extends Handle
                     '模块不存在:static',
                 ];
                 array_walk($arr, function($value,$key,$v){
-                    if(strpos($v, $value)===false)
+                    if(strpos($v, $value)===true)
                         die;
                 },$v);
                 MailHelper::errorSend('出错了~', $v);

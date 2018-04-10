@@ -300,7 +300,7 @@
 		 	    $commission_cash_fix=$rates['item_charges']/100;
 		 	    $commission->commission_cash_rate=$commission_cash_rate;
 		 	    $commission->commission_cash_fix=$commission_cash_fix;
-	 	      }else{
+	 	      }elseif($type==3){
 	 	      	#代还
 	 	      	$rates=db('passageway_item')->alias('i')
 		 	      	->join('member m','m.member_group_id=i.item_group')
