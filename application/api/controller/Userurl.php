@@ -724,7 +724,7 @@ class Userurl extends Controller
      * @version  [平台公告列表]
      * @return   [type]
      */
-    public function notify_lists(){
+    public function notify_list(){
 
         $this->checkToken();
         $notice=Notice::where(['notice_announcement_id'=>["<>",''],'notice_recieve'=>$this->param['uid']])->order('notice_createtime desc')->select();
