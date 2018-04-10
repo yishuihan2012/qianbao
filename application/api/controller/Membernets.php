@@ -237,7 +237,10 @@
            // var_dump($data['data']['html']);die;
           return $data['data'];
           #504为 公司id[66666]未通道入驻 通常是入驻完立即调用开通支付接口所致
+          # 仅允许绑定信用卡
          }elseif($data['ret']==504){
+          if($data['message']=='仅允许绑定信用卡')
+            return "该通道不支持此银行卡";
           return "入驻生效有延迟时间，请稍后1~3分钟再试";
           #506为 已开通协议 调取返回的data中的treatycode
          }elseif($data['ret']==506){
