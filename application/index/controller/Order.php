@@ -306,9 +306,16 @@ class Order extends Common{
         $order_data=CashOrder::where($where)
             ->join('member m','wt_cash_order.order_member=m.member_id')
             ->order("order_id desc")
-            ->field('order_id,order_money,order_charge,order_passway_profit,user_fix,order_state')
-            ->column("*","order_id");
-        $cms=db('commission')->where('commission_from','in',array_column($order_data, 'order_id'))->where('commission_type',1)->group('commission_from')->column("commission_from,sum(commission_money) as sum");
+            ->column("order_id,order_no,order_name,order_card,order_creditcard,order_money,order_charge,order_passway,order_passway_profit,passageway_fix,user_fix,order_state,order_desc,order_add_time","order_id");
+
+        // $cms=db('commission')->where('commission_from','in',array_column($order_data, 'order_id'))->where('commission_type',1)->group('commission_from')->column("commission_from,sum(commission_money) as sum");
+        $cms=db('commission')->where('commission_from','in',function($q) use ($where){
+                $q->table('wt_cash_order')->alias('o')
+                    ->join('member m','wt_cash_order.order_member=m.member_id')
+                    ->where($where)
+                    ->field('order_id');
+            })->where('commission_type',1)->group('commission_from')
+            ->column("commission_from,sum(commission_money) as sum");
         
         if(input('is_export')==1){
             set_time_limit(0);
@@ -391,15 +398,24 @@ class Order extends Common{
                 if($v['order_state']==2){
                     $count['order_money_yes']+=$v['order_money'];
                     $count['order_charge']+=$v['order_charge']+$v['user_fix'];
-                    $count['chengben']+=$v['order_passway_profit'];
+                    $count['chengben']+=$v['order_passway_profit']+$v['passageway_fix'];
                     $order_ids[]=$v['order_id'];
                 }
             }
-            $cms=db('commission')->where('commission_from','in',$order_ids)->where('commission_type',1)->group('commission_from')->column("commission_from,sum(commission_money) as sum");
+            $where['order_state']=2;
+            $cms=db('commission')->where('commission_from','in',function($q) use ($where){
+                    $q->table('wt_cash_order')->alias('o')
+                        ->join('member m','wt_cash_order.order_member=m.member_id')
+                        ->where($where)
+                        ->field('order_id');
+                })->where('commission_type',1)->group('commission_from')
+                ->column("commission_from,sum(commission_money) as sum");
+
+            // $cms=db('commission')->where('commission_from','in',$order_ids)->where('commission_type',1)->group('commission_from')->column("commission_from,sum(commission_money) as sum");
             $count['sanji']=array_sum($cms);
             $r['order_state']='';
         }elseif(input('order_state')==2){
-            $cms=db('commission')->where('commission_from','in',array_column($order_data, 'order_id'))->where('commission_type',1)->group('commission_from')->column("commission_from,sum(commission_money) as sum");
+            // $cms=db('commission')->where('commission_from','in',array_column($order_data, 'order_id'))->where('commission_type',1)->group('commission_from')->column("commission_from,sum(commission_money) as sum");
             #指定成功状态时
             $count['order_money_yes']=$count['order_money'];
             $count['order_charge']=array_sum(array_column($order_data,'order_charge'))+array_sum(array_column($order_data,'user_fix'));

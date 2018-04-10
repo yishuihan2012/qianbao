@@ -15,6 +15,7 @@
 		<div class="mui-content wrap3">
 			<h1 style="text-align: center;">首次需开通快捷支付</h1>
 			<br>
+			<p style="text-align: center;">开通后需重新执行取款操作</p>
 			<h3 style="text-align: center;">请输入验证码</h3>
 			<form class="mui-input-group bg-color" style="margin-top: 100px">
 				<div class="bg-w f-br-top">

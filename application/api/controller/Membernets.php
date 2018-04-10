@@ -119,14 +119,14 @@
           //全平台唯一 加商户id确保全平台唯一 设定固定值 
           //姓名 + 身份证号 + "_xj_" + 通道商户号
            // 'companyname'    =>$this->membercard->card_name . $this->member->member_mobile . '_xijia_'. $this->passway->passageway_mech,
-           'companyname'    =>$this->membercard->card_name . $this->membercard->card_idcard . '_xj_'. $this->passway->passageway_mech,
+           'companyname'    =>$this->membercard->card_name . strtoupper($this->membercard->card_idcard) . '_xj_'. $this->passway->passageway_mech,
            // 'companyname'    =>$this->membercard->card_name . $this->passway->passageway_id . $c_name . rand(100,999),
            // 'companyname'    =>"test".time(),
            // 'companycode'     =>$this->member->member_mobile,
           //全平台唯一 加通道id以区分
           //身份证号 + "_xj"
            // 'companycode'     =>$this->member->member_mobile . '_xijia',
-           'companycode'     =>$this->membercard->card_idcard . '_xj',
+           'companycode'     =>strtoupper($this->membercard->card_idcard) . '_xj',
            // 'companycode'     =>$this->member->member_mobile . $this->passway->passageway_id . $c_name . rand(100,999),
            'accountname'      =>$this->membercard->card_name,
            'bankaccount'       =>$this->membercard->card_bankno,
@@ -173,7 +173,7 @@
         // $userinfo=db('member_net')->where('net_member_id',$this->member->member_id)->value($this->passway->passageway_no);
         // $userinfo=explode(',', $userinfo);
         $arr=[
-          'companycode'     =>$this->membercard->card_idcard . '_xj',
+          'companycode'     =>strtoupper($this->membercard->card_idcard) . '_xj',
           // 'companycode'=>$this->member->member_mobile . '_xijia',
           // 'companycode'=>$userinfo[1],
           // 'mobilephone'=>$this->member->member_mobile ,
@@ -279,7 +279,7 @@
           'treatycode'=>$treatycode,
         ];
           $data=rongbang_curl(rongbang_foruser($this->member,$this->passway),$arr,'masget.pay.collect.router.treaty.query');
-          // var_dump($data);die;
+          trace($data);
          if($data['ret']==0 && $data['data']['status']==2){
           //返回商户信息
           return $data['data'];
@@ -337,7 +337,6 @@
         // echo ($arr);die;
         // echo (json_encode($arr));die;
           $data=rongbang_curl(rongbang_foruser($this->member,$this->passway),$arr,'masget.pay.compay.router.back.pay');
-        // dump($data);die;
           if(isset($data['ret']) && $data['ret']==0){
             return $data['data'];
             #封顶 通道 成功返回html 字符串
