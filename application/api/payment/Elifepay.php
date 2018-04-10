@@ -84,46 +84,45 @@
 			'out_user_id'=>$out_user_id,//String	是	商户在合作伙伴系统的唯一编号，必填
 			'material_no'=>$out_user_id,//String	是	材料单号，和材料上传接口保持一致
 			'merchant_type'=>'PRIVATE_ACCOUNT',//String	是	商户类型，必填 个人：PRIVATE_ACCOUNT  企业：CORPORATE_ACCOUNT  暂时只支持个人
-			'merchant_name'=>$merchant_name,//String	是	商户名称，必填。个人名字由个人自己定义，企业必须为企业名称
+			'merchant_name'=>$member_infos->MemberCert->cert_member_name,//String	是	商户名称，必填。个人名字由个人自己定义，企业必须为企业名称
 			'cert_type'=>'IDCARD',//String	是	证件类型，必填。个人身份证、公司营业执照。个人：IDCARD 企业，营业执照：LICENSE；多合一营业执照：LICENSE_ALL_IN_ONE
-			'cert_no'=>'370983199109202832',//String	是	证件号码，必填。个人身份证号、企业营业执照编号
+			'cert_no'=>$member_infos->MemberCert->cert_member_idcard,//String	是	证件号码，必填。个人身份证号、企业营业执照编号
 			// 'cert_expiration_time'=>"",//String	否	证件有效时间
 			// 'corp_name'=>""	,//String	否	法人姓名，企业必填
 			// 'corp_cert_type'=>"",String	否	法人证件类型，企业必填
 			// 'corp_cert_no'=>"",//	String	否	法人身份证号，企业必填
 			// 'corp_cert_expiration_time'=>"",//String	否	法人证件有效时间
-			'contact_name'=>"许成成",//String	是	联系人姓名，必填
-			'contact_mobile'=>"16605383329",//String	是	联系人手机，必填
+			'contact_name'=>$member_infos->MemberCert->cert_member_name,//String	是	联系人姓名，必填
+			'contact_mobile'=>$member_infos->member_mobile,//String	是	联系人手机，必填
 			// 'contact_phone'=>"",//String	否	联系人座机
-			'contact_email'=>"1374687780@qq.com",//String	是	联系人邮箱，必填
+			'contact_email'=>"101551422@qq.com",//String	是	联系人邮箱，必填
 			'province'=>"370000",//String	是	省份编号，必填，详见地址编码表
 			'city'=>"370900",//String	是	城市编号，必填，详见地址编码表
 			'district'=>"370983",//String	是	县/区编号，必填，详见地址编码表
-			'address'=>"测试地址",//String	是	地址，必填
+			'address'=>"济南市天桥区济洛路北闸子小区",//String	是	地址，必填
 			// 'zip'=>"",//String	否	邮政编码
 			// 'memo'=>"",//String	否	备注
 		);
-		echo  json_encode($data);
 		$res=$this->request('epaypp.merchant.register',$data);
-		echo $res;die;
+		return json_decode($res,true);
 	}
 	/**
 	 *商户结算账户设置
 	 * @return [type] [description]
 	 */
-	public function merch_Settlement_setting(){
+	public function merch_Settlement_setting($out_user_id,$info){
 		$data=array(
-			'out_user_id'=>"DU5TIG18",//String	是	商户在合作伙伴系统的唯一编号，必填
+			'out_user_id'=>$out_user_id,//String	是	商户在合作伙伴系统的唯一编号，必填
 			'bank_account_type'=>'PRIVATE_ACCOUNT',//	String	是	银行账户类型，对公，对私  对公：CORPORATE_ACCOUNT  对私：PRIVATE_ACCOUNT
-			'bank_account_no'=>"6215590200003242971",//String	是	银行账户号
+			'bank_account_no'=>$info->MemberCashcard->card_bankno,//String	是	银行账户号
 			'cert_type'=>"IDCARD",//String	是	证件类型 身份证：IDCARD
-			'cert_no'=>"370983199109202832",//String	是	证件号码
-			'name'=>"许成成",//String	是	开户姓名
-			'mobile'=>"17569615504",//String	是	银行预留手机号
+			'cert_no'=>$info->MemberCashcard->card_idcard,//String	是	证件号码
+			'name'=>$info->MemberCashcard->card_name,//String	是	开户姓名
+			'mobile'=>$info->MemberCashcard->card_phone,//String	是	银行预留手机号
 		);
-		echo json_encode($data);
+		// echo json_encode($data);die;
 		$res=$this->request('epaypp.merchant.settle.account.set',$data);
-		echo $res;die;
+		return json_decode($res,true);
 	} 
 	/**
      * 商户结算账户增加（扫码专用）
@@ -164,19 +163,19 @@
 	 * 支付宝扫码产品	3003	支付宝用户扫
 	 * 微信扫码产品	3004	微信用户扫
 	 */
-	public function product_open(){
+	public function product_open($out_user_id,$product,$rate,$fix){
 		$data=array(
-			'out_user_id'=>'DU5TIG18',//String	是	商户在合作伙伴系统的唯一编号，必填
-			'product'=>"3007",//String	是	产品编号，详见产品表
+			'out_user_id'=>$out_user_id,//String	是	商户在合作伙伴系统的唯一编号，必填
+			'product'=>$product,//String	是	产品编号，详见产品表
 			'bottom'=>"0",//String	是	保底收费金额，单位：元，目前无效，请设置为0
 			'top'=>"0",//String	是	封顶收费金额，单位：元，目前无效，请设置为0
 			'fixed'=>"1.5",//String	是	代付手续费，单位：元
 			'rate'=>"0.0047",//String	是	费率：0.005，表示0.5%
 			// 'uniq_no'=>"",//String	否	此参数目前只对扫码产品生效 结算卡唯一编号，增加结算卡后返回
 		);
-		echo json_encode($data);
+		// echo json_encode($data);
 		$res=$this->request('epaypp.merchant.product.open',$data);
-		echo $res;die;
+		return json_decode($res,true);
 	}
 	
 	/**
@@ -192,56 +191,57 @@
 			'fixed'=>"1",//String	是	代付手续费，单位：元
 			'rate'=>"0.0042",//String	是	费率：0.005，表示0.5%
 		);
-		echo json_encode($data);
+		// echo json_encode($data);
 		$res=$this->request('epaypp.merchant.product.rate.set',$data);
-		echo $res;die;
+		return json_decode($res,true);
 	}
 	/**
 	 * 银行卡快捷开通
 	 * @return [type] [description]
 	 */
-	public function product_quick_open(){
+	public function product_quick_open($out_user_id,$product_id,$card_info,$rate,$fix){
 		$data=array(
-			'out_user_id'=>"DU5TIG18",//String	是	商户在合作伙伴系统的唯一编号，必填
-			'product'=>'3006',//String	是	产品编号，详见：3.6.1
+			'out_user_id'=>$out_user_id,//String	是	商户在合作伙伴系统的唯一编号，必填
+			'product'=>$product_id,//String	是	产品编号，详见：3.6.1
 			'bank_account_type'=>"PRIVATE_ACCOUNT",//String	是	银行账户类型，对公，对私对公：CORPORATE_ACCOUNT 对私：PRIVATE_ACCOUNT
-			'bank_account_no'=>"6259760291531725",//String	是	银行账户号
+			'bank_account_no'=>$card_info->card_bankno,//String	是	银行账户号
 			'cert_type'=>"IDCARD",//String	是	证件类型 身份证：IDCARD
-			'cert_no'=>"370983199109202832",//String	是	证件号码
-			'name'=>"许成成",//String	是	开户姓名
-			'mobile'=>"16605383329",//String	是	银行预留手机号
-			'cvn2'=>"914",//String	否	cvn2，信用卡必传
-			'expired'=>"1222",//String	否	过期时间，信用卡必传
+			'cert_no'=>$card_info->card_idcard,//String	是	证件号码
+			'name'=>$card_info->card_name,//String	是	开户姓名
+			'mobile'=>$card_info->card_phone,//String	是	银行预留手机号
+			'cvn2'=>$card_info->card_Ident,//String	否	cvn2，信用卡必传
+			'expired'=>$card_info->card_expireDate,//String	否	过期时间，信用卡必传
 		);
-		echo json_encode($data);
+		// echo json_encode($data);die;
 		$res=$this->request('epaypp.merchant.card.express.pay.open',$data);
-		echo $res;die;
+		return json_decode($res,true);
+		// echo $res;die;
 	}
 	/**
 	 * 创建交易
 	 * @return [type] [description]
 	 */
-	public function order_create(){
+	public function order_create($product,$out_user_id,$total_fee,$passageway_name,$out_trade_no){
 		$data=array(
-			'product'=>"3007",//String	是	产品编号，详见：2.5.1
-			'out_user_id'=>"DU5TIG18",//String	是	商户在合作伙伴系统的唯一编号，必填
+			'product'=>$product,//String	是	产品编号，详见：2.5.1
+			'out_user_id'=>$out_user_id,//String	是	商户在合作伙伴系统的唯一编号，必填
 			'terminal_id'=>"000000",//String	是	终端编号，固定值：000000
 			'timeout'=>"600",//String	否	订单支付超时时间，单位：秒（默认为600s）
 			'currency'=>"156",//String	是	货币类型，固定值：156
-			'total_fee'=>"599",//String	否	支付总额，单位元（和price有一个必填，都填时取total_fee的值）
-			'summary'=>"购买好记星学习机（那里不会点哪里）",//String	是	交易摘要
+			'total_fee'=>$total_fee,//String	否	支付总额，单位元（和price有一个必填，都填时取total_fee的值）
+			'summary'=>$passageway_name,//String	是	交易摘要
 			// 'category'=>"",//String	否	商品类目
 			// 'good_id'=>"",//String	否	商品编号
 			// 'price'=>"",//String	否	商品单价，单位元
 			// 'quantity'=>"1",//String	否	商品数量（当total_fee不传时，总价为quantity*price，quantity默认为1）
 			// 'memo'=>'',//String	否	备注
-			'out_trade_no'=>make_rand_code(),//String	是	商户交易号
+			'out_trade_no'=>$out_trade_no,//String	是	商户交易号
 			'gmt_out_create'=>date('Y-m-d H:i:s'),//String	是	商户交易创建时间格式：yyyy-MM-dd HH:mm:ss
 			// 'gps'=>"",//String	否	经纬度
 		);
-		echo json_encode($data);
+		// echo json_encode($data);die;
 		$res=$this->request('epaypp.trade.create',$data);
-		echo $res;die;
+		return json_decode($res,true);
 	}
 	/**
 	 * 交易支付请求

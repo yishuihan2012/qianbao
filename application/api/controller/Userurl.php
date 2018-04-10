@@ -1467,4 +1467,15 @@ class Userurl extends Controller
               $data=array_merge($data,$parent);
         return $data;
       }
+      /**
+       * 订单支付
+       * @return [type] [description]
+       */
+    public function order_pay($passageway_id,$card_info,$price,$out_trade_no){
+        $data['price']=$price;
+        $data['out_trade_no']=$out_trade_no;
+        $this->assign('card_info',$card_info);
+        $this->assign('data',$data);
+        return view("Userurl/order_pay");
+    }
 }
