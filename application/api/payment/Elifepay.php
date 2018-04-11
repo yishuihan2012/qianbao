@@ -247,38 +247,38 @@
 	 * 交易支付请求
 	 * @return [type] [description]
 	 */
-	public function order_pay(){
+	public function order_pay($card_info){
 		$pay_data=array(
-			'realName'=>"许成成",
-			'certNo'=>"370983199109202832",
-			'bankAccountNo'=>"6259760291531725",
-			'mobile'=>"16605383329",
+			'realName'=>$card_info['card_name'],
+			'certNo'=>$card_info['card_idcard'],
+			'bankAccountNo'=>$card_info['bankAccountNo'],
+			'mobile'=>$card_info['mobile'],
 		);
 		foreach ($pay_data as $k => $v) {
 			$other_params[]=$k.'^'.$v;
 		}
 		$other_params=implode('|', $other_params);
 		$data = [
-            'out_trade_no' =>'1111891M',
+            'out_trade_no' =>$card_info['out_trade_no'],
             'other_params' => $other_params
         ];
-        echo json_encode($data);
+        // echo json_encode($data);
         $return = $this->request('epaypp.wc.trade.pay', $data);
-        echo $return;die;
+        return json_decode($return,true);
 	}
 	/**
 	 * 快捷支付验证码提交
 	 * @return [type] [description]
 	 */
-	public function order_sms_submit(){
+	public function order_sms_submit($out_trade_no,$sms,$mobile){
 		$data=array(
-			"out_trade_no"=>"8QSA4U78", //订单号
-		    "verify_code"=>"882264",	//验证码
-		    "mobile"=>"16605383329"	//手机号
+			"out_trade_no"=>$out_trade_no, //订单号
+		    "verify_code"=>$sms,	//验证码
+		    "mobile"=>$mobile	//手机号
 		);
-		echo json_encode($data);
+		// echo json_encode($data);
 		$return = $this->request('epaypp.wc.trade.express.verifycode.submit', $data);
-        echo $return;die;
+        return json_decode($res,true);
 	}
 	/**
 	 * 交易查询
@@ -313,7 +313,7 @@
 		$params['charset'] = 'utf-8';
 		$params['sign_method'] = 'rsa';
 		$params['v'] = '1.1';
-		$params['notify_url'] = System::getName('system_url').'/Api/Elifepay/order_notify';
+		$params['notify_url'] = System::getName('system_url').'/index/Cashoutcallback/elife_notify';
         $params['method'] = $method;
         $params['biz_content'] = $bizContent;
         $params['timestamp'] = date('Y-m-d H:i:s');
