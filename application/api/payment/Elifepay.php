@@ -402,7 +402,7 @@
      * @return bool
      */
     public  function merchantPrivateDecrypt($data){
-        $pubKey = file_get_contents('./static/rsakey/elife/pub.pem');
+        $pubKey = file_get_contents('./static/rsakey/elife/prv.pem');
         // $pubKey=$this->pubKey;
         $res = openssl_get_privatekey($pubKey);
         openssl_private_decrypt(hex2bin($data), $decryptData, $res);

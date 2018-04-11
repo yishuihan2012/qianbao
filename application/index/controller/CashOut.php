@@ -695,7 +695,7 @@ class CashOut
 		$product_id='3006';
 		// print_r($explode);die;
 		if(!$explode || $MemberNet[$this->passway_info->passageway_no]==""){ //商户没有上传资料没生成商户号
-			$material_id=make_rand_code();
+			$material_id=generate_password();
 			$img=$this->member_infos->memberCert->IdPositiveImgUrl;//身份证正面
 			$res=$elifepay->merch_upload_material($material_id,$img);
 			if($res['epaypp_merchant_material_upload_response'] && $res['epaypp_merchant_material_upload_response']['result_code']=='00'){
@@ -775,7 +775,7 @@ class CashOut
 			}
 		}
 		#预下单 下单完成后返给APP一个静态页面地址
-		$out_trade_no=make_rand_code();
+		$out_trade_no=generate_password();
 		$res=$elifepay->order_create($product_id,$material_id,$price,$description,$out_trade_no);
 		if($res['epaypp_trade_create_response'] && $res['epaypp_trade_create_response']['result_code']=='00'){
 
