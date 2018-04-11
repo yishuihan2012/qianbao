@@ -300,8 +300,13 @@ class Cashoutcallback
      * @return [type] [description]
      */
     public function elife_notify(){
-        $params = file_get_contents("php://input");
-        file_put_contents('elife.txt', $params);
+        $params=Request::instance()->param();
+        file_put_contents('elife.txt', json_encode($params));
+        // $params=array(
+        //     'biz_content'=>'742B70FB3F58045EDAD678CDA1DEE2EEEA9661E0870291622EA4F24639DE8F0A9FE6DFAE02F5FE0BA9603EF1D51F07308ACAF483403A1FC7E7DBC7E93EAE8578B693F6F6E0C76D86295D24D42960AD0C9078B4EC176D3B1B80EB85C55128A7564B83C922CEB7ED4BFAFF35EA9241DC673DAFD5DA20DA391828030537120449F74FC3A8A1DA97D9609A2B36844D0A957084230EE754668AD73D9311E88F7E0B161EBDF8A0EDB4AAFF624A587CF0B67E9009D62CF25BF6829A074E5384FA9FA070423385855427DABD017ACA91AF9444DB',
+        //     'sign'=>'2668e090a66ee511e3530c1ac57759d080e5595a342ed21dc7028ac5dad5a9c0d231940020dc8ed6bd423aeed1f8476f437a3b70f89c210f1e29355969ee9decda38ec0792a814268df80b33117fe6625577294dfea91ab2b7e9f65255de5a3b65347380185b422d4b83c8e083d23df1a78bd3f6aedf4ae9f77d117a436f56e40',
+        //     'random_key'=>'806b7bf8f348c2272d1598f69f08a09c3c79b3bf01ce26d775cfd3a3d69d77e49abab87275ab6f3840d305c08394f0ba11accd0b8b6ea84fabdcece4cbd4962961f475a3e76b762d548975511fcae6083f0e18deaa9f4cb48c7c19958622123cc6b30f9438e67f54b6098d871698d29be4c3957dec2ff45d1dd7e3cc338eaba11fbbcb2cc876a3e79658157c7df74bb7ae2ce498862eaa6aad57b42a95d5798499527c917f8c35c296e88e565db3847879e4e7c730f722e43c25cfcda9a20dc52fb265f58b735d2d052f9c21391bb0625536e8fb43fe9aeb2308c3e2722d041599bf9d5b53693553566c074e8e79c4e3b5d170c725784c96877cf844331799'
+        // );
         $elifepay=new \app\api\payment\Elifepay;
         // 校验签名
         $sign = $params['sign'];
@@ -320,8 +325,18 @@ class Cashoutcallback
         $bizContent =  preg_replace('/[\x00-\x1F\x80-\x9F]/u', '', trim($bizContent));
         // 处理业务
         $result = json_decode($bizContent, true);
+        file_put_contents('elife_result.txt', json_encode($result));
+
 
         $order=CashOrder::where(['order_no' => $result['out_trade_no']])->find();  #查询到当前订单
+
+        $member=Member::get($order->order_member);
+
+        $passway=Passageway::get(['passageway_id'=>$order->order_passway]);
+
+        #通道费率
+        $passwayitem=PassagewayItem::get(['item_group'=>$member->member_group_id,'item_passageway'=>$passway->passageway_id]);
+
         $order->order_thead_no=$result['trade_no'];
          if($result['trade_status']=="TRADE_FINISHED"){//成功
              $order->order_state=2;
@@ -345,6 +360,8 @@ class Cashoutcallback
              }else{
                 $fenrun_result['code']=-1;
              }
+        }else{
+            $fenrun_result['code']=-1;
         }
 
          if($fenrun_result['code']=="200")
