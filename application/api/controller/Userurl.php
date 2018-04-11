@@ -1415,7 +1415,6 @@ class Userurl extends Controller
    */
   public function easylife_pay(){
     $data=input('');
-    var_dump($data);die;
     $elifepay=new \app\api\payment\Elifepay;
     $res=$elifepay->order_sms_submit($data['out_trade_no'],$data['sms'],$data['mobile']);
     if($res['epaypp_wc_trade_express_verifycode_submit_response'] && $res['epaypp_wc_trade_express_verifycode_submit_response']['result_code']=='00'){
