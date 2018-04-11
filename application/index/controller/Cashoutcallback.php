@@ -344,6 +344,7 @@ class Cashoutcallback
          }
          if($result['trade_status']=="TRADE_CLOSED_BY_SYS"){//超时
              $order->order_state=-2;
+              $returnData = 'FAIL';
          }
          if($result['trade_status']=="TRADE_CLOSED"){//关闭
              $order->order_state=-1;
