@@ -118,15 +118,18 @@
 					// console.log(data);
 					$.post('/api/Userurl/easylife_pay',data,function(res){
 						if(res.code==200){
-							mui.toast("交易成功")
+							mui.toast("交易成功");
+
 						}else{
 							mui.toast("交易失败");
 						}
-						if(!isAndroid){
-				      	 	 window.webkit.messageHandlers.returnIndex.postMessage(1);
-				        }else{
-				       		 android.returnIndex();
-				        }
+						setTimeout(function(){
+							if(!isAndroid){
+					      	 	 window.webkit.messageHandlers.returnIndex.postMessage(1);
+					        }else{
+					       		 android.returnIndex();
+					        }
+						}, 2000 );  
 					})
 				}else{
 					mui.toast('请输入验证码！');
