@@ -278,7 +278,7 @@
 		);
 		// echo json_encode($data);
 		$return = $this->request('epaypp.wc.trade.express.verifycode.submit', $data);
-        return json_decode($res,true);
+        return json_decode($return,true);
 	}
 	/**
 	 * 交易查询
