@@ -122,6 +122,11 @@
 						}else{
 							mui.toast("交易失败");
 						}
+						if(!isAndroid){
+				      	 	 window.webkit.messageHandlers.returnIndex.postMessage(1);
+				        }else{
+				       		 android.returnIndex();
+				        }
 					})
 				}else{
 					mui.toast('请输入验证码！');

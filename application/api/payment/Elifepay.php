@@ -422,5 +422,47 @@
         openssl_free_key($res);
         return $decryptData;
     }
+     /**
+     * 签名
+     *
+     * @param $params
+     * @param $sign
+     * @return string
+     */
+    public  function verifySignature($params, $sign){
+        uksort($params, function ($a, $b) {
+            return strcasecmp($a, $b);
+        });
+        $paramStr = "";
+        foreach ($params as $key => $value) {
+            $paramStr .= $key . $value;
+        }
+        return Rsa::epayPublicVerify($paramStr, $sign);
+    }
+    /**
+     * OPENSSL加密
+     *
+     * @param $plaintext
+     * @param $iv
+     * @param null $key
+     * @return string
+     */
+    public static function opensslEncrypt($plaintext, $iv, $key = null)
+    {
+        return bin2hex(openssl_encrypt($plaintext, "aes-128-cbc", $key, OPENSSL_RAW_DATA, $iv));
+    }
+
+    /**
+     * OPENSSL解密
+     *
+     * @param $encrypted
+     * @param $iv
+     * @param null $key
+     * @return string
+     */
+    public static function opensslDecrypt($encrypted, $iv, $key = null)
+    {
+        return openssl_decrypt($encrypted, "aes-128-cbc", $key, OPENSSL_RAW_DATA | OPENSSL_ZERO_PADDING, $iv);
+    }
  }
 
