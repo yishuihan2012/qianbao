@@ -738,7 +738,6 @@ class CashOut
 			}
 		}
 		#4判断当前产品是否开通
-		$product_id='3006';
 		if(!isset($explode[3]) || !is_numeric(strpos($explode[3],$product_id)) ){
 			$res=$elifepay->product_open($material_id,$product_id,$this->also->item_rate/100,$this->also->item_charges/100);
 			if($res['epaypp_merchant_product_open_response'] && $res['epaypp_merchant_product_open_response']['result_code']=='00'){
@@ -762,16 +761,15 @@ class CashOut
 		$memberCreditPas=MemberCreditPas::where(['member_credit_pas_creditid'=> $this->card_info->card_id,'member_credit_pas_pasid'=>$this->passway_info->passageway_id])->find();
 		if(!$memberCreditPas || $memberCreditPas['member_credit_pas_status']!=1){
 			$res=$elifepay->product_quick_open($material_id,$product_id,$this->card_info,$this->also->item_rate/100,$this->also->item_charges);
-
 			if($res['epaypp_merchant_card_express_pay_open_response'] && $res['epaypp_merchant_card_express_pay_open_response']['result_code']=='00'){
 				$memberCreditPas=new MemberCreditPas(['member_credit_pas_creditid'=> $this->card_info->card_id,'member_credit_pas_pasid'=>$this->passway_info->passageway_id,'member_credit_pas_status'=>1]);
 				$res=$memberCreditPas->save();
 				if(!$res){
-					return ['code'=>'101','msg'=>'产品开通失败'];
+					return ['code'=>'101','msg'=>'开通快捷支付失败'];
 				}
 			}else{
 				// var_dump($res);die;
-				return ['code'=>'102','msg'=>'产品开通失败'];
+				return ['code'=>'102','msg'=>$res['epaypp_merchant_card_express_pay_open_response']['sub_msg']];
 			}
 		}
 		#预下单 下单完成后返给APP一个静态页面地址
