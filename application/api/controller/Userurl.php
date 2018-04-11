@@ -1393,10 +1393,9 @@ class Userurl extends Controller
     // var_dump($data);die;
     $elifepay=new \app\api\payment\Elifepay;
     $res=$elifepay->order_pay($data['data']);
-
     if($res['epaypp_wc_trade_pay_response'] && $res['epaypp_wc_trade_pay_response']['result_code']=='00'){
          $return['code']=200;
-        
+         $return['msg']="验证码发送成功";
     }else{
          $return['code']=101;
          $return['msg']=$res['epaypp_wc_trade_pay_response']["result_code_msg"];
