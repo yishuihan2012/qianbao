@@ -299,13 +299,72 @@ class Cashoutcallback
      * @return [type] [description]
      */
     public function elife_notify(){
-         $data = file_get_contents("php://input");
-         // $str = var_export($data,TRUE);
-         file_put_contents('elife.txt',$data);
-         // $biz_content='1F994AC821F16C8A863626F18C9A4A2174D7B068F312AC62041F9A4881CFF79FB2A563E7B86DF6BE6CEEBCA61C68E501F80BFD1A952611C8C8DBA872CE05D00AFB9FC0F07CCA0E764A4D7E966722408292EE0011F75764B93A5E5EE2DC94BF78A2EA5B714BB717362E0DCEC7DF4316B72988FE39A09A879DC0B4D9DCDAA0F709A123A15287AF45A83B1AF9611C4647A4AA037F3F5FA1059CF73588EE6BB989DEE18FB27FF595FF9B97A10A66D2F3BE623415CEB727AD5D751274E12E1B96761C0CBE367F570E281C0C62C498D8BA547A495455D740E5CB53565A9F418521F7151BCB36A2F1F5BB435152D8809C3E90B28B8DD76B7DAA2712A2F4433153253E2C92AEDFB2D0445F8365128A26D491A78D&sign=7e17447384bce838d380dc3aaf34e9acb762767fd31d91cad76f7e42ef1ff238cf44439082de88f45269387a4cddfc6d59c2848f51ec73e18ac774fb321953818e68357707639de4be5c5a31df24a5f4281c3e78facf2ec1bc5d5c451f3e42b1c54ce975cc373585d633dbd04656489c1c74783a2fa613e93d1bfc60ec268917&random_key=68e68628131bf3307593baa1b750a9ab1ec8361a60b083d771cfc1e1db97060fe14fd408429581b5385d677e7d7299adc50c61d405b59b83d726e87c7f53ad0768da7decb6b0875a6f2aedc0774f862b4dedfc5399f51e187ba5f6d3636ff59c5785f72bc76ccdd41c7db58966faa9b247119c9742fbd10ab51f3f408f153a16dca11a5c7aca6fde17bae3e2a0d729e0a97a3f35c5698a5f8f9a171b32af57bf84862d9965608a71f39dc7ade5580da7e7d813482e3bb2e9ad6a562314db7990d687fc789fa1c8c14e6d1e08752fdf5072799cad5a2c347ae8dcdf065e737d50107bbffe0e841ae3dbe2140972f3e29a6849d18e9be55ee211d666f83e4a3890';
-         // $str=bin2hex($biz_content);
-         // $elifepay=new \app\api\payment\Elifepay;
-         // $data=$elifepay->merchantPrivateDecrypt($str);
-         // var_dump($data);die;
+        $params = file_get_contents("php://input");
+        file_put_contents('elife.txt', $params);
+        $elifepay=new \app\api\payment\Elifepay;
+        // 校验签名
+        $sign = $params['sign'];
+        unset($params['sign']);
+        $verifyResult = $elifepay->verifySignature($params, $sign);
+        if(!$verifyResult){
+            return null;
+        }
+        // 解密数据
+        $randomKey = $elifepay->merchantPrivateDecrypt($params['random_key']);
+        $bizContent =$elifepay->opensslDecrypt(hex2bin(strtolower($params['biz_content'])), '16-Bytes--String', $randomKey);
+        if(!$bizContent){
+            return null;
+        }
+        // 去掉特殊字符
+        $bizContent =  preg_replace('/[\x00-\x1F\x80-\x9F]/u', '', trim($bizContent));
+        // 处理业务
+        $result = json_decode($bizContent, true);
+
+        $order=CashOrder::where(['order_no' => $result['out_trade_no']])->find();  #查询到当前订单
+        $order->order_thead_no=$result['trade_no'];
+         if($result['trade_status']=="TRADE_FINISHED"){//成功
+             $order->order_state=2;
+             $returnData = 'SUCCESS';
+         }
+         if($result['trade_status']=="TRADE_CLOSED_BY_SYS"){//超时
+             $order->order_state=-2;
+         }
+         if($result['trade_status']=="TRADE_CLOSED"){//关闭
+             $order->order_state=-1;
+             $returnData='FAIL';
+         }
+         Db::startTrans();
+         if($result['trade_status']=="TRADE_FINISHED"){//成功
+             //进行分润
+             //判断之前有没有分润过
+             $Commission_info=Commissions::where(['commission_from'=>$order->order_id,'commission_type'=>1])->find();
+             if(!$Commission_info){
+                    $fenrun= new \app\api\controller\Commission();
+                    $fenrun_result=$fenrun->MemberFenRun($order->order_member,$order->order_money,$order->order_passway,1,'快捷支付手续费分润',$order->order_id);
+             }else{
+                $fenrun_result['code']=-1;
+             }
+        }
+
+         if($fenrun_result['code']=="200")
+         {
+             $order->order_fen=$fenrun_result['leftmoney'];
+             $order->order_buckle=$passwayitem->item_charges/100;
+             $order->order_platform=$order->order_charge-($order->order_money*$passway->passageway_rate/100)+$passwayitem->item_charges/100-$passway->passageway_income;
+         }
+        else    
+        {
+             $order->order_fen=-1;
+             $order->order_buckle=$passwayitem->item_charges/100;
+             $order->order_platform=$order->order_charge-($order->order_money*$passway->passageway_rate/100)+$passwayitem->item_charges/100-$passway->passageway_income;
+        }
+        $res = $order->save();
+        if($res){
+            Db::commit();
+        }else{
+            Db::rollback();
+            $returnData='FAIL';
+        }
+        echo  $returnData;die;
     }
 }
