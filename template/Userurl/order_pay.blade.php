@@ -64,8 +64,8 @@
 					'out_trade_no':"{{$data['out_trade_no']}}",
 					'card_idcard':"{{$data['card_idcard']}}",
 				};
-				$.post('http://wallet.dev.com/index.php/api/Userurl/easylife_sms',{'data':data},function(res){
-						if(res['code']==200){
+				$.post('/api/Userurl/easylife_sms',{'data':data},function(res){
+						if(res.code==200){
 							mui.toast('发送验证码成功');
 						}else{
 							mui.toast(res.msg);
@@ -117,7 +117,7 @@
 					};
 					// console.log(data);
 					$.post('/api/Userurl/easylife_pay',data,function(res){
-						if(res['code']==200){
+						if(res.code==200){
 							mui.toast("交易成功")
 						}else{
 							mui.toast("交易失败");
