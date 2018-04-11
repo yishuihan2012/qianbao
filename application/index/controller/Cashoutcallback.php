@@ -294,6 +294,13 @@ class Cashoutcallback
                      return 'SUCCESS';
            }
        }
-
-
+    /**
+     *  易生支付回调
+     * @return [type] [description]
+     */
+    public function elife_notify(){
+         $data = file_get_contents("php://input");
+         $str = var_export($data,TRUE);
+         file_put_contents('elife.txt',$str);
+    }
 }
