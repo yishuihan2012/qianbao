@@ -136,7 +136,7 @@
                   @endif
                 </td>
                  <td>{{$list->yingli}}</td>
-                 <td>{{$passageway[$list->order_passway]['passageway_name']}}</td>
+                 <td>{{$passageway[$list->order_passway]['passageway_name'] or "已删除的通道"}}</td>
 
                  <td>@if($list->order_state==1)待支付 @elseif($list->order_state==2) 成功@elseif($list->order_state==-1)失败@elseif($list->order_state==-2) 超时@else代付未成功@endif</td>
                  <!-- <td>{{$list->order_desc}}</td> -->

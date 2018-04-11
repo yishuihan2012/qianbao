@@ -345,7 +345,7 @@ class Order extends Common{
                     $list[$k][]=$v['order_charge']+$v['user_fix']-$v['order_passway_profit']-$v['passageway_fix'];
                     $list[$k][]=$order_fen;
                     $list[$k][]=round($v['order_charge']+$v['user_fix']-$v['order_passway_profit']-$v['passageway_fix']-$order_fen,2);
-                    $list[$k][]=$passageway[$v['order_passway']]['passageway_name'];
+                    $list[$k][]=isset($passageway[$v['order_passway']]['passageway_name']) ? $passageway[$v['order_passway']]['passageway_name'] : "已删除的通道";
                     $list[$k][]=$status[$v['order_state']];
                     $list[$k][]=$v['order_desc'];
                     $list[$k][]=$v['order_add_time'];
