@@ -6,6 +6,7 @@
  * @version $Bill$
  */
 namespace app\index\controller;
+use think\Db;
 use app\index\model\CashOrder;
 use app\index\model\Passageway;
 use app\index\model\PassagewayItem;
