@@ -437,7 +437,7 @@
         foreach ($params as $key => $value) {
             $paramStr .= $key . $value;
         }
-        return Rsa::epayPublicVerify($paramStr, $sign);
+        return $this->epayPublicVerify($paramStr, $sign);
     }
     /**
      * OPENSSL加密
