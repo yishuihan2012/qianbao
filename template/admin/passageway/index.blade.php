@@ -72,7 +72,7 @@
          var url=$(this).attr('data-url');
         bootbox.confirm({
         title: "删除文章确认",
-        message: "确定删除这篇文章吗? 删除后不可恢复!",
+        message: "确定删除这个通道吗? 删除后不可恢复!",
         buttons: {
             cancel: {label: '<i class="fa fa-times"></i> 点错'},
             confirm: {label: '<i class="fa fa-check"></i> 确定'}
