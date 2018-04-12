@@ -31,7 +31,7 @@
 	      	<td>{{$val->announcement_createtime}}</td>
 	      	<td>
 	      		<div class="btn-group">
-	  				<a type="button" class="btn btn-sm" data-remote="{{url('/index/system/show_announcement/announcement_id/'.$val->announcement_id)}}" data-size='lg' data-toggle="modal" href="#">查看</a>
+	  				<a type="button" class="btn btn-sm" data-remote="{{url('/index/system/show_announcement/announcement_id/'.$val->announcement_id)}}" data-size='lg' data-toggle="modal" href="#">编辑</a>
 
 	  				<a type="button" class="btn btn-sm" href="{{url('/index/system/del_announcement/announcement_id/'.$val->announcement_id)}}">删除</a>
 
