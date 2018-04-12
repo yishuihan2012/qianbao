@@ -1391,7 +1391,40 @@ class Userurl extends Controller
         return view("Userurl/H5youjifen");
      }
   }
-
+  /**
+   * 易生支付发送短信
+   * @return [type] [description]
+   */
+  public function easylife_sms(){
+    $data=input('');
+    // var_dump($data);die;
+    $elifepay=new \app\api\payment\Elifepay;
+    $res=$elifepay->order_pay($data['data']);
+    if($res['epaypp_wc_trade_pay_response'] && $res['epaypp_wc_trade_pay_response']['result_code']=='00'){
+         $return['code']=200;
+         $return['msg']="验证码发送成功";
+    }else{
+         $return['code']=101;
+         $return['msg']=$res['epaypp_wc_trade_pay_response']["result_code_msg"];
+    }
+    return $return;
+  }
+  /**
+   * 易生支付
+   * @return [type] [description]
+   */
+  public function easylife_pay(){
+    $data=input('');
+    $elifepay=new \app\api\payment\Elifepay;
+    $res=$elifepay->order_sms_submit($data['out_trade_no'],$data['sms'],$data['mobile']);
+    if($res['epaypp_wc_trade_express_verifycode_submit_response'] && $res['epaypp_wc_trade_express_verifycode_submit_response']['result_code']=='00'){
+         $return['code']=200;
+        
+    }else{
+         $return['code']=101;
+    }
+    return $return;
+  }
   public function parents($phone){
     if(is_numeric($phone)){
       $member=Members::where(['member_mobile'=>$phone])->find();
@@ -1474,4 +1507,13 @@ class Userurl extends Controller
               $data=array_merge($data,$parent);
         return $data;
       }
+      /**
+       * 订单支付
+       * @return [type] [description]
+       */
+    public function order_pay($passageway_id,$card_name,$card_bankno,$card_phone,$price,$out_trade_no){
+        $data=input('');
+        $this->assign('data',$data);
+        return view("Userurl/order_pay");
+    }
 }

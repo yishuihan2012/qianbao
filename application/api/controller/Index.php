@@ -21,11 +21,12 @@ use think\Loader;
  	 	 	 #获取请求参数
  	 	 	 $data=$Request->only('data');
  	 	 	 $data=$data['data'];
-                $result=$this->decryption_data($data); //解密
-                $data = json_decode($result, true);
-                 if(!is_array($data)){
-                     $data = json_decode($data, true);
-                 }
+       // print_r($data);die;
+       $result=$this->decryption_data($data); //解密
+       $data = json_decode($result, true);
+       if(!is_array($data)){
+           $data = json_decode($data, true);
+       }
  	 	 	 #解密data请求参数 TODO:解密方式 非对称解密
  	 	 	 #if request action and method is not exit
  	 	 	 if(!isset($data['action']) or !isset($data['method']))
