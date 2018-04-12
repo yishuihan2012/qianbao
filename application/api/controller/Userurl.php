@@ -215,7 +215,7 @@ class Userurl extends Controller
             if(!$haventDone){
                 //若全部完成执行 更改主表计划执行状态
                 Generation::where(['generation_member'=>$this->param['uid'],'generation_id'=>$value['generation_id']])->update(['generation_state'=>3]);
-                unset($generation['$key']);
+                unset($generation[$key]);
                 continue;
             }else{
                 $generation[$key]['generation_card']=substr($value['generation_card'], -4);
