@@ -768,7 +768,7 @@ class CashOut
 					return ['code'=>'101','msg'=>'开通快捷支付失败'];
 				}
 			}else{
-				$msg=isset($res['epaypp_merchant_card_express_pay_open_response']['sub_msg'])?$res['epaypp_merchant_card_express_pay_open_response']['sub_msg']:$res['epaypp_merchant_card_express_pay_open_response']['esult_code_msg'];
+				$msg=isset($res['epaypp_merchant_card_express_pay_open_response']['sub_msg'])?$res['epaypp_merchant_card_express_pay_open_response']['sub_msg']:$res['epaypp_merchant_card_express_pay_open_response']['result_code_msg'];
 				return ['code'=>'102','msg'=>$msg];
 			}
 		}
@@ -786,7 +786,7 @@ class CashOut
 			// return redirect('Userurl/order_pay', ['passageway_id' =>$this->passway_info->passageway_id,'card_info'=>$this->card_info,'price'=>$price,'out_trade_no'=>$out_trade_no]);
 		}else{
 			// var_dump($res);die;
-			$msg=isset($res['epaypp_trade_create_response']['sub_msg'])?$res['epaypp_trade_create_response']['sub_msg']:$res['epaypp_trade_create_response']['esult_code_msg'];
+			$msg=isset($res['epaypp_trade_create_response']['sub_msg'])?$res['epaypp_trade_create_response']['sub_msg']:$res['epaypp_trade_create_response']['result_code_msg'];
 			return ['code'=>'102','msg'=>$msg];
 		}
 	}
@@ -884,7 +884,7 @@ class CashOut
 			}
 		}else{
 			// var_dump($res);die;
-			$msg=isset($res['epaypp_trade_create_response']['sub_msg'])?$res['epaypp_trade_create_response']['sub_msg']:$res['epaypp_trade_create_response']['esult_code_msg'];
+			$msg=isset($res['epaypp_trade_create_response']['sub_msg'])?$res['epaypp_trade_create_response']['sub_msg']:$res['epaypp_trade_create_response']['result_code_msg'];
 			return ['code'=>'102','msg'=>$msg];
 		}
 	}
