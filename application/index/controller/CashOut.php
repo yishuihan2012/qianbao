@@ -761,6 +761,9 @@ class CashOut
 		$memberCreditPas=MemberCreditPas::where(['member_credit_pas_creditid'=> $this->card_info->card_id,'member_credit_pas_pasid'=>$this->passway_info->passageway_id])->find();
 		if(!$memberCreditPas || $memberCreditPas['member_credit_pas_status']!=1){
 			$res=$elifepay->product_quick_open($material_id,$product_id,$this->card_info,$this->also->item_rate/100,$this->also->item_charges);
+			if($res['epaypp_merchant_card_express_pay_open_response']['success']=='false'){
+				return ['code'=>'101','msg'=>'开通快捷支付失败'];
+			}
 			if($res['epaypp_merchant_card_express_pay_open_response'] && $res['epaypp_merchant_card_express_pay_open_response']['result_code']=='00'){
 				$memberCreditPas=new MemberCreditPas(['member_credit_pas_creditid'=> $this->card_info->card_id,'member_credit_pas_pasid'=>$this->passway_info->passageway_id,'member_credit_pas_status'=>1]);
 				$res=$memberCreditPas->save();
@@ -768,7 +771,7 @@ class CashOut
 					return ['code'=>'101','msg'=>'开通快捷支付失败'];
 				}
 			}else{
-				$msg=isset($res['epaypp_merchant_card_express_pay_open_response']['sub_msg'])?$res['epaypp_merchant_card_express_pay_open_response']['sub_msg']:$res['epaypp_merchant_card_express_pay_open_response']['esult_code_msg'];
+				$msg=isset($res['epaypp_merchant_card_express_pay_open_response']['sub_msg'])?$res['epaypp_merchant_card_express_pay_open_response']['sub_msg']:$res['epaypp_merchant_card_express_pay_open_response']['result_code_msg'];
 				return ['code'=>'102','msg'=>$msg];
 			}
 		}
@@ -786,7 +789,7 @@ class CashOut
 			// return redirect('Userurl/order_pay', ['passageway_id' =>$this->passway_info->passageway_id,'card_info'=>$this->card_info,'price'=>$price,'out_trade_no'=>$out_trade_no]);
 		}else{
 			// var_dump($res);die;
-			$msg=isset($res['epaypp_trade_create_response']['sub_msg'])?$res['epaypp_trade_create_response']['sub_msg']:$res['epaypp_trade_create_response']['esult_code_msg'];
+			$msg=isset($res['epaypp_trade_create_response']['sub_msg'])?$res['epaypp_trade_create_response']['sub_msg']:$res['epaypp_trade_create_response']['result_code_msg'];
 			return ['code'=>'102','msg'=>$msg];
 		}
 	}
@@ -884,7 +887,7 @@ class CashOut
 			}
 		}else{
 			// var_dump($res);die;
-			$msg=isset($res['epaypp_trade_create_response']['sub_msg'])?$res['epaypp_trade_create_response']['sub_msg']:$res['epaypp_trade_create_response']['esult_code_msg'];
+			$msg=isset($res['epaypp_trade_create_response']['sub_msg'])?$res['epaypp_trade_create_response']['sub_msg']:$res['epaypp_trade_create_response']['result_code_msg'];
 			return ['code'=>'102','msg'=>$msg];
 		}
 	}
