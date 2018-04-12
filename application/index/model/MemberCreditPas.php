@@ -28,14 +28,5 @@ class MemberCreditPas extends Model{
            parent::initialize();
            #TODO:自定义的初始化
       }
-      #关联模型 一对一关联 (ArticleData) 关联文章内容表
-      public function articleData()
-      {
-           return $this->hasOne('ArticleData','data_article','article_id')->withfield('data_article,data_text')->bind('data_article,data_text')->setEagerlyType(0);
-      }
-      #关联模型 一对一关联 (ArticleCategory) 关联文章分类表
-      public function articleCategory()
-      {
-           return $this->hasOne('ArticleCategory','category_id','article_category')->bind('category_name')->setEagerlyType(0);
-      }
+     
 }
