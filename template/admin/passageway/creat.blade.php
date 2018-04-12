@@ -105,7 +105,7 @@
 			 </select>
 		 </div>		
 	 </div>
-	 <div class="row form-group">
+	 <!-- <div class="row form-group">
 		 <label for="passageway_rate" class="col-sm-3 text-right"><b>是否提现通道:</b></label>
 		 <div id="passageway_rate" class="col-sm-6">
 			 <select name="passageway_rate" class="form-control passageway_rate">
@@ -113,7 +113,7 @@
 				 <option value="2">否</option>
 			 </select>
 		 </div>		
-	 </div>
+	 </div> -->
 	 <div class="row form-group">
 		 <label for="iv" class="col-sm-3 text-right"><b>加密偏移量:</b></label>
 		 <div class="col-sm-6" id="iv">
