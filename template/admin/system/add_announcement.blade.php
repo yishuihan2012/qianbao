@@ -41,10 +41,6 @@ hr{margin:0 5px!important;}
                 </div>
 </form>
 <div class="bodys"></div>
-<div class="alert">
-    <span class="hint"></span><br>
-    <button class="determine">确定</button>
-</div>
 
  <script type="text/javascript">
   //验证form表单

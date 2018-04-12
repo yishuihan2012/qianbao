@@ -725,9 +725,11 @@ class Userurl extends Controller
      * @return   [type]
      */
     public function notify_list(){
-
         $this->checkToken();
-        $notice=Notice::where(['notice_announcement_id'=>["<>",''],'notice_recieve'=>$this->param['uid']])->order('notice_createtime desc')->select();
+        $notice=Notice::where(['notice_recieve'=>$this->param['uid']])
+          ->join('announcement a','wt_notice.notice_announcement_id=a.announcement_id')
+          ->order('notice_createtime desc')
+          ->select();
         if(!$notice){
             return view("Userurl/no_data");
         }
@@ -745,6 +747,11 @@ class Userurl extends Controller
         $this->checkToken();
         $notice=Notice::get($id);
         $notice->save(['notice_status'=>1]);
+        if($notice->notice_announcement_id){
+          $announcement=Announcement::get($notice->notice_announcement_id);
+          $notice->notice_title=$announcement->announcement_title;
+          $notice->notice_content=$announcement->announcement_content;
+        }
         $this->assign('notice',$notice);
         return view("Userurl/notify_list_detail");
     }
