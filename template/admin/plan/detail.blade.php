@@ -140,7 +140,7 @@
           @if($value['order_status'] == -1)
           | <a class="remove" href="#" data-url="{{url('/api/Membernet/action_single_plan/id/'.$value['order_id'].'/is_admin/1')}}">重新执行 </a>
             @if($value['order_type =']= 2)
-            | <a class="modify_money" href="#" data-url="{{url('/api/Membernet/update_bak_money/id/'.$value['order_id'])}}">修改还款金额 </a>
+            | <a class="modify_money" href="#" data-url="{{url('/api/Membernet/update_back_money/id/'.$value['order_id'])}}">修改还款金额 </a>
             @endif
           @endif
          

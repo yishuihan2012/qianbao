@@ -271,6 +271,8 @@
         if($data){
           if(strpos($data['alert_img'], 'http')===false)
             $data['alert_img']='http://'.$_SERVER['HTTP_HOST'].$data['alert_img'];
+          if(strpos($data['alert_url'], 'http')===false)
+            $data['alert_url']='http://'.$data['alert_url'];
         }
         // return json_encode(['code'=>$data ? 200 : 404,'msg'=>'获取成功~', 'data'=>$data]);
         return ['code'=>$data ? 200 : 404,'msg'=>'获取成功~', 'data'=>$data];
