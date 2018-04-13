@@ -83,6 +83,7 @@
         <th>银行</th>
         <th>订单类型</th>
         <th>订单金额</th>
+        <th>到账金额</th>
         <th>订单手续费</th>
         <th>成本手续费</th>
         <th>结算</th>
@@ -109,6 +110,7 @@
           <em style="color:#00FFFF;">还款</em>
         @endif </td>
        <td>{{$value['order_money']}}</td>
+       <td>{{$value['order_real_get']}}</td>
        <td>{{$value['order_pound']}}({{$value['order_money']}}*{{$value['user_rate']}}+{{$value['user_fix']}})</td>
        <td>{{$value['order_passageway_fee']}}({{$value['order_money']}}*{{$value['passageway_rate']}}+{{$value['passageway_fix']}})</td>
        <!-- 结算 -->
