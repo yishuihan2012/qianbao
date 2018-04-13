@@ -464,7 +464,7 @@
             'orderNo'=>$order['order_platform_no'],//订单号
             'notifyUrl'=>System::getName('system_url').'/Api/Huilianjinchuang/cashCallback',//异步通知地址
             // 'returnUrl'=>'', //N(String)   返回地址
-            'date'=>date('Ymd',strtotime($order['order_time'])),//N(String)   支付日期，格式:yyyyMMdd
+            // 'date'=>date('Ymd',strtotime($order['order_time'])),//N(String)   支付日期，格式:yyyyMMdd
             'amount'=>$order['order_real_get']*100,//金额(分)
         );
         // echo json_encode($arr);
