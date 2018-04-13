@@ -77,12 +77,18 @@
             'CVN2'=>$card_info['card_Ident'] ,//N(String)   信用卡时必填
             // 'address'=>'',//N(String)    地址
  		);
+ 		// echo json_encode($data);
  		// print_r($data);die;
  		$url=$this->url.'/report';
+ 		// echo $url;die;
  		$res=$this->request($url,$data);
+ 		var_export($res);die;
  		echo $res;die;
  	}
-
+ 	/**
+ 	 *  信用卡签约
+ 	 * @return [type] [description]
+ 	 */
  	public function card_sign(){
  		$data=array(
  			'version'=>'1.0',//	版本号 tr (8)	是	目前版本号：1.0
@@ -102,12 +108,24 @@
  		$url=$this->url.'/report';
  		$res=$this->request($url,$data);
  	}
+ 	/**
+ 	 * 上传资料文件
+ 	 * @return [type] [description]
+ 	 */
  	public function upload_material(){
 
  	}
+ 	/**
+ 	 * 订单支付
+ 	 * @return [type] [description]
+ 	 */
  	public function order_pay(){
 
  	}
+ 	/**
+ 	 * 订单查询
+ 	 * @return [type] [description]
+ 	 */
  	public function order_query(){
 
  	}
@@ -117,11 +135,13 @@
      * @return [type]      [description]
      */
     public function get_sign($arr){
-        $private_key="./static/rsakey/huilian/hldh.pem";
+        // $private_key="./static/rsakey/huilian/hldh.pem";
         // $pub_key="./static/rsakey/1001034_pub.pem";
         $arr=$this->SortByASCII($arr);
         $string=http_build_query($arr);
+        // echo $string;die;
         $string=urldecode($string);
+        // echo $string;die;
         $res=$this->pri_encode($string);
         // echo $res;die;
         // $rsa=new \app\api\controller\Rsa($pub_key,$private_key);
@@ -137,7 +157,6 @@
         $encrypted='';
         $private_key=file_get_contents("./static/rsakey/huilian/hldh.pem"); //秘钥
         $pi_key =  openssl_pkey_get_private($private_key);  //这个函数可用来判断私钥是否是可用的，可用返回资源id Resource id  
-        var_export($pi_key);die;
         $str='';
         foreach (str_split($data, 117) as $chunk) {
             openssl_private_encrypt($chunk,$encryptedTemp,$pi_key);  //私钥加密  
@@ -177,9 +196,11 @@
     public function request($url,$arr){
         $sign=$this->get_sign($arr);
         $arr['sign']=$sign;//签名数据
+        echo json_encode($arr);die;
         $arr=http_build_query($arr);
+        // $arr=urldecode($arr);
         $return=curl_post($url,'post',$arr,0);
-        // echo $return;die;
+        echo $return;die;
         $result=json_decode($return,true);
         return $result;
     }
