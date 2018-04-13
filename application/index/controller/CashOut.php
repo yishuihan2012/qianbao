@@ -870,6 +870,7 @@ class CashOut
 		#5判断是否需要变更费率 (查询该用户上次刷卡成功的费率，如果和系统不一致，变更)
 		
 		#预下单 下单完成后返给APP一个链接
+		$out_trade_no=generate_password();
 		$res=$elifepay->order_create($product_id,$material_id,$price,$description,$out_trade_no);
 		if($res['epaypp_trade_create_response'] && $res['epaypp_trade_create_response']['result_code']=='00'){
 			$order_result=$this->writeorder($out_trade_no, $price, $price*($this->also->item_rate/100) ,$description);
