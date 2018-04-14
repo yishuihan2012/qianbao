@@ -159,19 +159,10 @@
  		if(!$cert || !$cert->IdPositiveImgUrl || !$cert->IdNegativeImgUrl || !$cert->IdPortraitImgUrl){
  			return ['code'=>'101','msg'=>'实名认证信息不全，请补全实名信息。'];
  		}
- 		// echo $cert->IdPositiveImgUrl;die;
- 		// $res=file_get_contents($cert->IdPositiveImgUrl);
- 		// $url='http://192.168.1.64:8080/test/admin/user/zlib?str='.$res;
- 		// echo $url;die;
- 		// $res=curl_post($url);
- 		// var_dump($res);die;
- 		// ob_start();
- 		$res=$this->getThumb($cert->IdPositiveImgUrl,'200','200');
- 		// file_put_contents('aa.jpg', $res);
- 		var_dump($res);die;
- 		$image1=base64_encode(file_get_contents($cert->IdPositiveImgUrl));
- 		$image2=base64_encode(file_get_contents($cert->IdNegativeImgUrl));
- 		$image3=base64_encode(file_get_contents($cert->IdPortraitImgUrl));
+ 		$image1=base64_encode(file_get_contents($this->getThumb($cert->IdPositiveImgUrl,'600','600')));
+ 		$image2=base64_encode(file_get_contents($this->getThumb($cert->IdNegativeImgUrl,'600','600')));
+ 		$image3=base64_encode(file_get_contents($this->getThumb($cert->IdPortraitImgUrl,'600','600')));
+ 		@unlink('./thumb.jpg');
  		$data=array(
  			'version'=>'1.0',//版本号		str (8)	是	目前版本号：1.0
 			'serviceUri'=>'YX0003',//交易代码		str (8)	是	YX0003
@@ -190,10 +181,10 @@
  		var_dump($res);die;
  	}
  	function getThumb($file,$iWidth,$iHeight){
- 		var_dump($file);die;
-    	$image = \think\Image::open($file);
+ 		file_put_contents('./thumb.jpg', file_get_contents($file));
+    	$image = \think\Image::open('./thumb.jpg');
 		// 按照原图的比例生成一个缩略图并保存为thumb.png
-		$image->thumb($iWidth, $iHeight)->save('./thumb.png');
+		$image->thumb($iWidth, $iHeight)->save('./thumb.jpg');
 		return System::getName('system_url').'/thumb.jpg';
 	}
  	/**
