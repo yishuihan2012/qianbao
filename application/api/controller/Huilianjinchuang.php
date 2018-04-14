@@ -270,7 +270,7 @@
         $income['code']=-1;
         $income['back_status']=$income['status']='FAIL';
         $is_commission=0;
-        if($res['code']=='10000'){
+        if($res['code']=='10000' && $res['respCode']=='10000'){
             $update['back_tradeNo']=$res['orderNum'];
             $update['back_status']=$res['respCode'];
             $update['back_statusDesc']=$res['respMessage'];
@@ -292,7 +292,7 @@
                 //失败
             }
         }else{
-          $update['back_statusDesc']=$res['message'];
+          $update['back_statusDesc']=isset($res['respMessage'])?$res['respMessage']:$res['message'];
           $update['back_status']='FAIL';
           $update['order_status']='-1';
           // $generation['generation_state']=-1;
@@ -375,7 +375,7 @@
                 $update['order_status']='-1';
             }
         }else{
-          $update['back_statusDesc']=$res['message'];
+          $update['back_statusDesc']=isset($res['respMessage'])?$res['respMessage']:$res['message'];
           $update['back_status']='FAIL';
           $update['order_status']='-1';
           $generation['generation_state']=-1;
@@ -473,7 +473,7 @@
         // print_r($res);
         $income['code']=-1;
         $income['status']="FAIL";
-        if($res['code']=='10000'){
+        if($res['code']=='10000' && $res['respCode']=='10000'){
              $update['back_tradeNo']=$res['orderNum'];
              $update['back_status']=$res['respCode'];
              $update['back_statusDesc']=$res['respMessage'];
@@ -494,7 +494,7 @@
                 //失败
             }
         }else{
-          $update['back_statusDesc']=$res['message'];
+          $update['back_statusDesc']=isset($res['respMessage'])?$res['respMessage']:$res['message'];
           $update['back_status']='FAIL';
           $update['order_status']='-1';
           $generation['generation_state']=-1;
