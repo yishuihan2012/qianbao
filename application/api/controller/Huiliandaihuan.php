@@ -29,7 +29,7 @@
  	 * 进件
  	 * @return [type] [description]
  	 */
- 	public function huilian_income($Passageway,$card_id){
+ 	public function huilian_income($Passageway=29,$card_id=63){
  		 //获取行用卡信息
         $card_info=MemberCreditcard::where(['card_id'=>$card_id])->find();
         if(!$card_info){
@@ -159,6 +159,10 @@
  		if(!$cert || !$cert->IdPositiveImgUrl || !$cert->IdNegativeImgUrl || !$cert->IdPortraitImgUrl){
  			return ['code'=>'101','msg'=>'实名认证信息不全，请补全实名信息。'];
  		}
+ 		ob_start('ob_gzip');
+ 		$image1=base64_encode($this->ob_gzip(file_get_contents($cert->IdPositiveImgUrl)));
+ 		$image2=base64_encode($this->ob_gzip(file_get_contents($cert->IdNegativeImgUrl)));
+ 		$image3=base64_encode($this->ob_gzip(file_get_contents($cert->IdPortraitImgUrl)));
  		$data=array(
  			'version'=>'1.0',//版本号		str (8)	是	目前版本号：1.0
 			'serviceUri'=>'YX0003',//交易代码		str (8)	是	YX0003
@@ -167,11 +171,11 @@
 			'nonceStr'=>generate_password(16),//随机字符串		str (32)	是	随机字符串
 			'agentId'=>$agentId,//代理商号		str (8)	是	受理方预分配的渠道代理商标识
 			'merId'=>$merId,//商户号	merId	str (10)	是	进件返回的merId
-			'image1'=>base64_encode(file_get_contents($cert->IdPositiveImgUrl)),//图片字符串		str (256)	是	身份证正面
-			'image2'=>base64_encode(file_get_contents($cert->IdNegativeImgUrl)),//图片字符串		str (256)	是	身份证反面
-			'image3'=>base64_encode(file_get_contents($cert->IdPortraitImgUrl)),//图片字符串		str (256)	是	手持身份证
+			'image1'=>$image1,//图片字符串		str (256)	是	身份证正面
+			'image2'=>$image2,//图片字符串		str (256)	是	身份证反面
+			'image3'=>$image3,//图片字符串		str (256)	是	手持身份证
  		);
- 		echo json_encode($data);
+ 		echo json_encode($data);die;
  		$url=$this->url.'/repay';
  		$res=$this->request($url,$data);
  		var_dump($res);die;
@@ -205,10 +209,29 @@
  	 */
  	public function payCallback(){
  		$data = file_get_contents("php://input");
- 		file_put_contents('hulian_luodi2.txt', $data);
- 		file_put_contents('hulian_luodi.txt', json_encode($data));
- 		$data=array(
- 		);
+        parse_str($data,$res);
+        if($res && is_array($res)){
+        	if($res['respCode']==10000){ //是否处理成功
+                if($data['respCode']==10000){
+                    $arr['order_status']='2';
+                }else if($data['respCode']=="10002"){
+                    //处理中
+                    $update['order_status']='4';
+                }else{
+                    $update['order_status']='-1';
+                    //失败
+                }
+                $arr['back_statusDesc']=$data['respMessage'];
+                $arr['back_status']=$data['respCode'];
+	        }else{
+	            $arr['order_status']='-1';
+	            $arr['back_statusDesc']=$data['message'];
+	        }
+            $update=GenerationOrder::where(['order_platform_no'=>$res['orderNo']])->find();
+
+        }
+ 		file_put_contents('hulian_luodi2.txt', $res['respMessage']);
+
  	}
  	/**
  	 * 订单查询
@@ -305,4 +328,17 @@
         $result=json_decode($return,true);
         return $result;
     }
+    //调用一个函数名为ob_gzip的内容进行压缩
+	function ob_gzip($content)
+	{
+		if(!headers_sent()&&extension_loaded("zlib")
+		&&strstr($_SERVER["HTTP_ACCEPT_ENCODING"],"gzip"))
+		{
+		$content = gzencode($content." n//此页已压缩",9);
+		header("Content-Encoding: gzip");
+		header("Vary: Accept-Encoding");
+		header("Content-Length: ".strlen($content));
+		}
+		return $content;
+	}
  }
