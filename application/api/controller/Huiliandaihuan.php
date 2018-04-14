@@ -80,14 +80,24 @@
  		$url=$this->url.'/report';
  		// echo $url;die;
  		$res=$this->request($url,$data);
- 		var_export($res);die;
- 		echo $res;die;
+ 		if($res['code']=='10000' && $res['merId']){ //成功存储商户号
+ 			$update['member_credit_pas_info']=$res['merId'];
+            $has=MemberCreditPas::where(['member_credit_pas_creditid'=>$card_info['card_id'],'member_credit_pas_pasid'=>$Passageway])->update($update);
+             if($has){
+                return true;
+            }else{
+                return false;
+            }
+
+ 		}else{
+ 			return false;
+ 		}
  	}
  	/**
  	 *  信用卡签约
  	 * @return [type] [description]
  	 */
- 	public function card_sign($card_id=63,$merId='9000105494',$Passageway=29){
+ 	public function card_sign($card_id=70,$merId='9000105494',$Passageway=29){
  		 //获取行用卡信息
         $card_info=MemberCreditcard::where(['card_id'=>$card_id])->find();
         if(!$card_info){
@@ -195,6 +205,7 @@
  	 */
  	public function payCallback(){
  		$data = file_get_contents("php://input");
+ 		file_put_contents('hulian_luodi2.txt', $data);
  		file_put_contents('hulian_luodi.txt', json_encode($data));
  		$data=array(
  		);
@@ -203,8 +214,20 @@
  	 * 订单查询
  	 * @return [type] [description]
  	 */
- 	public function order_query(){
-
+ 	public function order_query($agentId='1001057',$orderNo='ltO5vxQGIFx8ZjCv'){
+ 		$data=array(
+ 			'version'=>'1.0',//版本号		str (8)	是	目前版本号：1.0
+			'serviceUri'=>'YX0005',//交易代码		str (8)	是	YX0005
+			'charset'=>'UTF-8',//编码格式		str (8)	是	UTF-8
+			'signType'=>'RSA',//签名方式		str (8) 	是	RSA
+			'nonceStr'=>generate_password(16),//随机字符串		str (32)	是	随机字符串
+			'agentId'=>$agentId,//代理商号		str (8)	是	受理方预分配的渠道代理商标识
+			'orderNo'=>$orderNo,//订单号		str (32)	是	原交易订单号
+ 		);
+ 		// echo json_encode($data);
+ 		$url=$this->url.'/repay';
+ 		$res=$this->request($url,$data);
+ 		var_dump($res);die;
  	}
  	   /**
      * 获取请求字符串

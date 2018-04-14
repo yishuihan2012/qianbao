@@ -41,6 +41,7 @@ use app\index\model\ArticleCategory;
 use app\index\model\Article;
 use app\index\model\WalletLog;
 use app\api\controller\Huilianjinchuang;
+use app\api\controller\Huiliandaihuan;
 use app\index\model\ServiceItemList;
 use app\index\model\MemberCreditPas;
 /**
@@ -275,6 +276,31 @@ class Userurl extends Controller
        //判断是否签约
        $MemberCreditcard=MemberCreditcard::where(['card_id'=>$param['cardId']])->find();
        //判断哪个通道
+       if($passageway['passageway_method']=='huilian_income'){ //汇联落地商户
+           $has=MemberCreditPas::where(['member_credit_pas_creditid'=>$this->param['cardId'],'member_credit_pas_pasid'=>$this->param['passageway']])->find();
+            // var_dump($has->toArray());die;
+            if(!$has){ //信用卡有没有签约
+                $MemberCreditPas=new MemberCreditPas;
+                $res=$MemberCreditPas->save(['member_credit_pas_creditid'=>$this->param['cardId'],'member_credit_pas_pasid'=>$this->param['passageway']]);
+                if(!$res){
+                    $this->assign('data','商户入网失败，请重试。');
+                    return view("Userurl/show_error");die;
+                }
+            }
+            if(!$has['member_credit_pas_info']){//判断有没有入网
+                $huilian=new Huiliandaihuan();
+                $res=$huilian->huilian_income($this->param['passageway'],$this->param['cardId']);
+                if(!$res){
+                    $this->assign('data','商户入网失败，请重试。');
+                    return view("Userurl/show_error");die;
+                }
+            }
+
+            if(!$has['member_credit_pas_status']){ //判断有没有签约
+                return redirect('Userurl/signed_huilian_background', ['passageway_id' =>$param['passageway'],'cardId'=>$param['cardId'],'order_no'=>$order_no]);
+            } 
+
+       }
        if($passageway['passageway_method']=='income'){  //暂时这么判断是汇联金创还是米刷
 
             // $member_net=MemberNet::where(['net_member_id'=>$param['uid']])->find();
@@ -1276,6 +1302,30 @@ class Userurl extends Controller
       $this->assign('passageway_id',$passageway_id);
       $this->assign('data',$data);
       return view("Userurl/signed_huilian");
+  }
+  /**
+   * 汇联落地
+   * @return [type] [description]
+   */
+  public function signed_huilian_background(){
+       #信用卡信息
+      $data['MemberCreditcard']=$MemberCreditcard=MemberCreditcard::where(['card_id'=>$cardId])->find();
+      #通道信息
+      $data['passageway']=$passageway=Passageway::get($passageway_id);
+      #通道入网信息
+      $member_net=MemberNet::where(['net_member_id'=>$MemberCreditcard['card_member_id']])->find();
+      #用户基本信息
+      $data['Members']=$Members=Members::haswhere('memberLogin','')->where(['member_id'=>$MemberCreditcard['card_member_id']])->find();
+      $data['merId']=$data['Members']['memberNet'][$data['passageway']['passageway_no']];
+      // var_dump($data['merId']);die;
+      #登录信息
+      // if(!$MemberCreditcard || !$passageway || $member_net){
+      //  exit('获取信息失败');
+      // }
+      $this->assign('order_no',$order_no);
+      $this->assign('passageway_id',$passageway_id);
+      $this->assign('data',$data);
+      return view("Userurl/signed_huilian_background");
   }
   #金易付验证码页面
   public function jinyifu($memberId,$passagewayId,$cardId,$price){
