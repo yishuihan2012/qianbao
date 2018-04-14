@@ -7,10 +7,10 @@ namespace Composer\Autoload;
 class ComposerStaticInit478f2749b4766991aa1921b2939f8c6b
 {
     public static $files = array (
-        '036ec262f4bcc331fe80b225c0cd7b46' => __DIR__ . '/..' . '/terranc/blade/src/helpers.php',
         'a12da592622097d2b593a430e32e13fd' => __DIR__ . '/..' . '/nette/utils/src/loader.php',
-        'c594688b3441835d5575f3085da4a242' => __DIR__ . '/..' . '/webonyx/graphql-php/src/deprecated.php',
+        '036ec262f4bcc331fe80b225c0cd7b46' => __DIR__ . '/..' . '/terranc/blade/src/helpers.php',
         'ddc3cd2a04224f9638c5d0de6a69c7e3' => __DIR__ . '/..' . '/topthink/think-migration/src/config.php',
+        'c594688b3441835d5575f3085da4a242' => __DIR__ . '/..' . '/webonyx/graphql-php/src/deprecated.php',
     );
 
     public static $prefixLengthsPsr4 = array (
@@ -63,6 +63,7 @@ class ComposerStaticInit478f2749b4766991aa1921b2939f8c6b
         'think\\' => 
         array (
             0 => __DIR__ . '/../..' . '/thinkphp/library/think',
+            1 => __DIR__ . '/..' . '/topthink/think-image/src',
         ),
         'terranc\\Blade\\' => 
         array (

@@ -277,29 +277,30 @@ class Userurl extends Controller
        $MemberCreditcard=MemberCreditcard::where(['card_id'=>$param['cardId']])->find();
        //判断哪个通道
        if($passageway['passageway_method']=='huilian_income'){ //汇联落地商户
+            #1判断有没有进件
+            $member_net=MemberNet::where(['net_member_id'=>$param['uid']])->find();
+            if(!$member_net[$passageway->passageway_no]){ //没有入网
+                $huilian=new Huiliandaihuan();
+                $res=$huilian->huilian_income($this->param['passageway'],$this->param['cardId']);
+            }
+            #2判断有没有签约
            $has=MemberCreditPas::where(['member_credit_pas_creditid'=>$this->param['cardId'],'member_credit_pas_pasid'=>$this->param['passageway']])->find();
             // var_dump($has->toArray());die;
             if(!$has){ //信用卡有没有签约
-                $MemberCreditPas=new MemberCreditPas;
-                $res=$MemberCreditPas->save(['member_credit_pas_creditid'=>$this->param['cardId'],'member_credit_pas_pasid'=>$this->param['passageway']]);
+               
                 if(!$res){
                     $this->assign('data','商户入网失败，请重试。');
                     return view("Userurl/show_error");die;
                 }
             }
             if(!$has['member_credit_pas_info']){//判断有没有入网
-                $huilian=new Huiliandaihuan();
-                $res=$huilian->huilian_income($this->param['passageway'],$this->param['cardId']);
-                if(!$res){
-                    $this->assign('data','商户入网失败，请重试。');
-                    return view("Userurl/show_error");die;
-                }
+               
+               if(!$has['member_credit_pas_status']){ //判断有没有签约
+                    return redirect('Userurl/signed_huilian_background', ['passageway_id' =>$param['passageway'],'cardId'=>$param['cardId'],'order_no'=>$order_no]);
+                } 
             }
-
-            if(!$has['member_credit_pas_status']){ //判断有没有签约
-                return redirect('Userurl/signed_huilian_background', ['passageway_id' =>$param['passageway'],'cardId'=>$param['cardId'],'order_no'=>$order_no]);
-            } 
-
+            #3判断有没有上传资料
+            
        }
        if($passageway['passageway_method']=='income'){  //暂时这么判断是汇联金创还是米刷
 

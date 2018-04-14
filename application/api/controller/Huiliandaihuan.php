@@ -81,8 +81,8 @@
  		// echo $url;die;
  		$res=$this->request($url,$data);
  		if($res['code']=='10000' && $res['merId']){ //成功存储商户号
- 			$update['member_credit_pas_info']=$res['merId'];
-            $has=MemberCreditPas::where(['member_credit_pas_creditid'=>$card_info['card_id'],'member_credit_pas_pasid'=>$Passageway])->update($update);
+ 			$update[$Passageways->passageway_no]=$res['merId'];
+            $has=MemberNets::where(['net_member_id'=>$card_info['card_member_id']])->update($update);
              if($has){
                 return true;
             }else{
@@ -159,10 +159,19 @@
  		if(!$cert || !$cert->IdPositiveImgUrl || !$cert->IdNegativeImgUrl || !$cert->IdPortraitImgUrl){
  			return ['code'=>'101','msg'=>'实名认证信息不全，请补全实名信息。'];
  		}
- 		ob_start('ob_gzip');
- 		$image1=base64_encode($this->ob_gzip(file_get_contents($cert->IdPositiveImgUrl)));
- 		$image2=base64_encode($this->ob_gzip(file_get_contents($cert->IdNegativeImgUrl)));
- 		$image3=base64_encode($this->ob_gzip(file_get_contents($cert->IdPortraitImgUrl)));
+ 		// echo $cert->IdPositiveImgUrl;die;
+ 		// $res=file_get_contents($cert->IdPositiveImgUrl);
+ 		// $url='http://192.168.1.64:8080/test/admin/user/zlib?str='.$res;
+ 		// echo $url;die;
+ 		// $res=curl_post($url);
+ 		// var_dump($res);die;
+ 		// ob_start();
+ 		$res=$this->getThumb($cert->IdPositiveImgUrl,'200','200');
+ 		// file_put_contents('aa.jpg', $res);
+ 		var_dump($res);die;
+ 		$image1=base64_encode(file_get_contents($cert->IdPositiveImgUrl));
+ 		$image2=base64_encode(file_get_contents($cert->IdNegativeImgUrl));
+ 		$image3=base64_encode(file_get_contents($cert->IdPortraitImgUrl));
  		$data=array(
  			'version'=>'1.0',//版本号		str (8)	是	目前版本号：1.0
 			'serviceUri'=>'YX0003',//交易代码		str (8)	是	YX0003
@@ -175,11 +184,18 @@
 			'image2'=>$image2,//图片字符串		str (256)	是	身份证反面
 			'image3'=>$image3,//图片字符串		str (256)	是	手持身份证
  		);
- 		echo json_encode($data);die;
+ 		// echo json_encode($data);die;
  		$url=$this->url.'/repay';
  		$res=$this->request($url,$data);
  		var_dump($res);die;
  	}
+ 	function getThumb($file,$iWidth,$iHeight){
+ 		var_dump($file);die;
+    	$image = \think\Image::open($file);
+		// 按照原图的比例生成一个缩略图并保存为thumb.png
+		$image->thumb($iWidth, $iHeight)->save('./thumb.png');
+		return System::getName('system_url').'/thumb.jpg';
+	}
  	/**
  	 * 订单支付
  	 * @return [type] [description]
