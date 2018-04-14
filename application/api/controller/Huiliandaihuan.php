@@ -159,10 +159,10 @@
  		if(!$cert || !$cert->IdPositiveImgUrl || !$cert->IdNegativeImgUrl || !$cert->IdPortraitImgUrl){
  			return ['code'=>'101','msg'=>'实名认证信息不全，请补全实名信息。'];
  		}
- 		$image1=base64_encode(file_get_contents($this->getThumb($cert->IdPositiveImgUrl,'600','600')));
- 		$image2=base64_encode(file_get_contents($this->getThumb($cert->IdNegativeImgUrl,'600','600')));
- 		$image3=base64_encode(file_get_contents($this->getThumb($cert->IdPortraitImgUrl,'600','600')));
- 		@unlink('./thumb.jpg');
+ 		$image1=base64_encode(gzcompress($cert->IdPositiveImgUrl));
+ 		$image2=base64_encode(gzcompress($cert->IdNegativeImgUrl)); 
+ 		$image3=base64_encode(gzcompress($cert->IdPortraitImgUrl));
+ 		// @unlink('./thumb.jpg');
  		$data=array(
  			'version'=>'1.0',//版本号		str (8)	是	目前版本号：1.0
 			'serviceUri'=>'YX0003',//交易代码		str (8)	是	YX0003
