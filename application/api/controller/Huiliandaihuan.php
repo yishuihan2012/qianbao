@@ -294,8 +294,8 @@
 
             if($pay['order_status'] !=$arr['order_status']){
                  $notice=new \app\api\controller\Membernet();
-                 $Passageway=Passageway::where(['passageway_id'=>$order['order_passageway']])->find();
-                 $member_base=Member::where(['member_id'=>$order['order_member']])->find(); 
+                 $Passageway=Passageway::where(['passageway_id'=>$pay['order_passageway']])->find();
+                 $member_base=Member::where(['member_id'=>$pay['order_member']])->find(); 
                  $action=$notice->plan_notice($pay,$income,$member_base,1,$Passageway);
             }
         }
