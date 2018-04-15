@@ -826,4 +826,23 @@ use app\index\model\Member;
           }
 
       }
+      public function update_back_money($id){
+          $params=input('');
+          $order_info=GenerationOrder::where(['order_id'=>$id])->find();
+          $arr['order_real_get']=$params['money'];
+          if($order_info['user_rate']==0){
+              $arr['order_pound']=$order_info['user_fix'];
+          }else{
+              $arr['order_pound']=round(($order_info['user_fix']+$params['money'])/(1-$order_info['user_rate']/100),2);
+          }
+          $arr['order_money']=$arr['order_real_get']+$arr['order_pound'];
+          $arr['order_passageway_fee']=$arr['order_money']*$order_info['passageway_rate']/100+$order_info['passageway_fix'];
+          $arr['order_platform_fee']=$arr['order_pound']-$arr['order_passageway_fee'];
+          $update=GenerationOrder::where(['order_id'=>$order_info['order_id']])->update($arr);
+          if($update){
+              return json_encode(['code'=>'200','msg'=>'变更成功，当前金额为'.$arr['order_real_get']]);die;
+          }else{
+              return json_encode(['code'=>'101','msg'=>'变更失败']);die;
+          }
+      }
  }

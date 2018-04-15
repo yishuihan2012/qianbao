@@ -126,7 +126,7 @@ class CashOut
 	      $res = curl_exec($ch);
 	      $result = json_decode($res, true);
 	      // var_dump($result);die;
-	      if ($result['code'] == 0) {
+	      if ($result['code'] == 0 && $result['payload']) {
 	      	 $datas=AESdecrypt($result['payload'],$this->passway_info->passageway_pwd_key);
 	            $datas = trim($datas);
 	            $datas = substr($datas, 0, strpos($datas, '}') + 1);

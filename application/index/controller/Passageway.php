@@ -30,9 +30,9 @@ class Passageway extends Common{
 		 if($this->admin['adminster_group_id']==5){
 	 	 #查询通道列表分页
 		 	#代理商不显示禁用的通道
-		 	$passageway=Passageways::order('passageway_id','desc')->where('passageway_state',1)->paginate(Config::get('page_size'), false, ['query'=>Request::instance()->param()]);
+		 	$passageway=Passageways::order('passageway_state desc,passageway_id desc')->where('passageway_state',1)->paginate(Config::get('page_size'), false, ['query'=>Request::instance()->param()]);
 		 }else{
-		 	 $passageway=Passageways::order('passageway_id','desc')->paginate(Config::get('page_size'), false, ['query'=>Request::instance()->param()]);
+		 	 $passageway=Passageways::order('passageway_state desc,passageway_id desc')->paginate(Config::get('page_size'), false, ['query'=>Request::instance()->param()]);
 		 }
  		 $this->assign('button', ['text'=>'新增通道', 'link'=>url('/index/passageway/creat'), 'modal'=>'modal']);
  		 $this->assign('passageway_list', $passageway);

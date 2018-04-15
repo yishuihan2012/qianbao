@@ -198,7 +198,7 @@ class Plan extends Common{
 				->where('g.generation_state','<>',1)
 	 	    	->join('member_creditcard c','c.card_bankno=o.order_card')
 	 	    	->order("order_id desc")
-	 	    	->field('order_id,member_nick,passageway_name,member_mobile,order_type,concat("`",order_card),card_bankname,order_money,order_pound,order_passageway_fee,order_platform_fee,order_platform_fee as order_fenrun,order_platform_fee as order_yingli,order_status,order_retry_count,back_statusDesc,order_desc,order_time,order_add_time')
+	 	    	->field('order_id,member_nick,passageway_name,member_mobile,order_type,concat("`",order_card),card_bankname,order_money,order_real_get,order_pound,order_passageway_fee,order_platform_fee,order_platform_fee as order_fenrun,order_platform_fee as order_yingli,order_status,order_retry_count,back_statusDesc,order_desc,order_time,order_add_time')
 	 	    	->select();
 	 	    foreach ($order_list as $k => $v) {
 	 	    	$order_list[$k]['order_type']=$type[$v['order_type']];
@@ -206,7 +206,7 @@ class Plan extends Common{
 	            $order_lists[$k]['order_fenrun']=isset($cms[$v['order_id']])?$cms[$v['order_id']]:0;
 	            $order_lists[$k]['order_yingli']=$v['order_platform_fee']-$order_lists[$k]['order_fenrun'];
 	 	    }
-	 	    $head=['ID','姓名','通道','手机号','订单类型','信用卡号','银行名称','订单金额','订单手续费','成本手续费','结算','分润','盈利','订单状态','重新执行次数','执行结果','订单描述','订单执行时间','订单创建时间'];
+	 	    $head=['ID','姓名','通道','手机号','订单类型','信用卡号','银行名称','订单金额','到账金额','订单手续费','成本手续费','结算','分润','盈利','订单状态','重新执行次数','执行结果','订单描述','订单执行时间','订单创建时间'];
 	 	    export_csv($head,$order_list,$fp);
 	 	    return;
 		}
