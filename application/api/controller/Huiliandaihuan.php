@@ -213,9 +213,9 @@
         $member_net=MemberNets::where(['net_member_id'=>$order['order_member']])->find();
         $member_base=Member::where(['member_id'=>$order['order_member']])->find(); 
         //订单号
-        if(!$value['order_platform_no'] || $value['order_status']!=1){
-            $update_order['order_platform_no']=$value['order_platform_no']=uniqid();
-            $update_res=GenerationOrder::where(['order_id'=>$value['order_id']])->update($update_order);
+        if(!$order['order_platform_no'] || $order['order_status']!=1){
+            $update_order['order_platform_no']=$order['order_platform_no']=uniqid();
+            $update_res=GenerationOrder::where(['order_id'=>$order['order_id']])->update($update_order);
         }
  		$data=array(
  			'version'=>'1.0',//版本号		str (8)	是	目前版本号：
