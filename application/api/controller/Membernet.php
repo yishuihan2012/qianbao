@@ -16,7 +16,7 @@ use app\index\model\Member;
  use app\index\model\Reimbur;
  use app\index\model\MemberNet as MemberNets;
  use app\index\model\MemberCreditcard;
- // use app\api\controller\Huilianjinchuang;
+use app\api\controller\{Huilianjinchuang, Huiliandaihuan};
  /**
  *  @version MemberNet controller / Api 代还入网
  *  @author $bill$(755969423@qq.com)
