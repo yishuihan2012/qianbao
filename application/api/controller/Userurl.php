@@ -641,13 +641,18 @@ class Userurl extends Controller
         foreach($data as $k=>$v){
                 $data[$k]['pay']=0;
                 $data[$k]['get']=0;
+                $data[$k]['get1']=0;
             foreach ($v as $key => $vv) {
                 if($vv['order_type']==1){
                   $data[$k]['pay']+=$vv['order_money'];
+                  $data[$k]['get1']+=$vv['order_real_get'];
                 }else if($vv['order_type']==2){
                   $data[$k]['get']+=$vv['order_real_get'];
                 }
                 $order_pound+=$vv['order_pound'];
+            }
+            if($data[$k]['get']==0){
+                $data[$k]['get']=$data[$k]['get1'];
             }
         }
         // print_r($data);die;
