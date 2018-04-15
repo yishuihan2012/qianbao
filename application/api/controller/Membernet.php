@@ -16,7 +16,6 @@ use app\index\model\Member;
  use app\index\model\Reimbur;
  use app\index\model\MemberNet as MemberNets;
  use app\index\model\MemberCreditcard;
-use app\api\controller\{Huilianjinchuang, Huiliandaihuan};
  /**
  *  @version MemberNet controller / Api 代还入网
  *  @author $bill$(755969423@qq.com)
@@ -109,6 +108,7 @@ use app\api\controller\{Huilianjinchuang, Huiliandaihuan};
                      $passageway=Passageway::where(['passageway_id'=>$value['order_passageway']])->find();
                      $passageway_mech=$passageway['passageway_mech'];
                      $action=$passageway->Cashout->cashout_action;
+                     $action="app\api\controller\\".$action;
                      if(!$action || $action=='Membernet'){
                           if($value['order_type']==1){ //消费
                               $this->payBindCard($value);
@@ -116,9 +116,9 @@ use app\api\controller\{Huilianjinchuang, Huiliandaihuan};
                               $this->transferApply($value);
                           }
                      }else{
-                          $action=new $action;//实例化类
+                          $action=new $action();//实例化类
                            if($value['order_type']==1){ //消费
-                              $action->pay($value,$passageway_mech);
+                             $res=$action->pay($value,$passageway_mech);
                            }else if($value['order_type']==2){//提现
                                $res=$action->qfpay($value,$passageway_mech);
                            }
@@ -139,6 +139,7 @@ use app\api\controller\{Huilianjinchuang, Huiliandaihuan};
             $passageway=Passageway::where(['passageway_id'=>$value['order_passageway']])->find();
             $passageway_mech=$passageway['passageway_mech'];
             $action=$passageway->Cashout->cashout_action;
+            $action="app\api\controller\\".$action;
             if(!$action || $action=='Membernet'){
                   if($value['order_type']==1){ //消费
                       $res=$this->payBindCard($value);
@@ -150,7 +151,7 @@ use app\api\controller\{Huilianjinchuang, Huiliandaihuan};
                       }
                   }
              }else{
-                  $action=new  $action;//实例化类
+                   $action=new $action();//实例化类
                    if($value['order_type']==1){ //消费
                       $action->pay($value,$passageway_mech);
                    }else if($value['order_type']==2){//提现
@@ -778,8 +779,9 @@ use app\api\controller\{Huilianjinchuang, Huiliandaihuan};
                             $update=GenerationOrder::where(['order_id'=>$order['order_id']])->update($arr);
                         }
                    }else{
-                         $huilian=new $action();//实例化那个类先写死
-                         $res=$huilian->order_status($order['order_id']);
+                         $action=new $action();//实例化类
+                         $action="app\api\controller\\".$action;
+                         $res=$action->order_status($order['order_id']);
                           if(isset($res['respCode']) && $res['respCode']=='10000'){
                                $arr['order_status']=2;
                           }else if(isset($res['respCode']) && $res['respCode']=='10001'){

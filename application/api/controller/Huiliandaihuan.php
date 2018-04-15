@@ -230,7 +230,7 @@
 			'notifyUrl'=>System::getName('system_url').'/Api/Huiliandaihuan/payCallback',//通知地址		str (256)	是	异步通知地址(暂无)
 			'amount'=>$order['order_money']*100,//交易金额		str (8)	是	以分为单位
  		);
- 		echo json_encode($data);
+ 		// echo json_encode($data);die;
  		$url=$this->url.'/repay';
  		$res=$this->request($url,$data);
  		$income['code']=-1;
@@ -405,17 +405,4 @@
         $result=json_decode($return,true);
         return $result;
     }
-    //调用一个函数名为ob_gzip的内容进行压缩
-	function ob_gzip($content)
-	{
-		if(!headers_sent()&&extension_loaded("zlib")
-		&&strstr($_SERVER["HTTP_ACCEPT_ENCODING"],"gzip"))
-		{
-		$content = gzencode($content." n//此页已压缩",9);
-		header("Content-Encoding: gzip");
-		header("Vary: Accept-Encoding");
-		header("Content-Length: ".strlen($content));
-		}
-		return $content;
-	}
  }
