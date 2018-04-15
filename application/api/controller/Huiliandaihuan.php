@@ -44,6 +44,9 @@
         $bank_name=mb_substr($card_info['card_bankname'],-4,2);
         // echo $bank_name;die;
         $BankInfo=BankInfo::where('info_sortname','like','%'.$bank_name.'%')->find();
+        if(!$BankInfo){
+            return false;
+        }
         // print_r($BankInfo);die;
         $idcard=$member_info->membercert->cert_member_idcard;
         //获取通道费率
@@ -80,7 +83,7 @@
  		$url=$this->url.'/report';
  		// echo $url;die;
  		$res=$this->request($url,$data);
- 		if($res['code']=='10000' &&  isset($res['respCode']) && $res['respCode']=='10000' && $res['merId']){ //成功存储商户号
+ 		if( isset($res['code']) && $res['code']=='10000' &&  isset($res['respCode']) && $res['respCode']=='10000' && $res['merId']){ //成功存储商户号
  			$update[$Passageways->passageway_no]=$res['merId'];
             $has=MemberNets::where(['net_member_id'=>$card_info['card_member_id']])->update($update);
              if($has){
@@ -117,7 +120,7 @@
  		$url=$this->url.'/repay';
  		$res=$this->request($url,$data);
         // print_r($res);die;
-        if($res['code']=='10000' &&  isset($res['respCode']) && $res['respCode']=='10000'){ 
+        if(isset($res['code']) && $res['code']=='10000' &&  isset($res['respCode']) && $res['respCode']=='10000'){ 
             $return['code']='200';
             $return['msg']='验证码发送成功';
             $return['orderNo']=$data['orderNo'];
@@ -152,7 +155,7 @@
  		// print_r($data);die;
  		$url=$this->url.'/repay';
  		$res=$this->request($url,$data);
- 		if($res['code']=='10000' &&  isset($res['respCode']) && $res['respCode']=='10000'){ 
+ 		if(isset($res['code']) && $res['code']=='10000' &&  isset($res['respCode']) && $res['respCode']=='10000'){ 
             $res=MemberCreditPas::where(['member_credit_pas_creditid'=>$params['cardid'],'member_credit_pas_pasid'=>$params['passageway_id']])->update(['member_credit_pas_status'=>1]);
             if($res){
                 $return['code']='200';
@@ -195,7 +198,7 @@
  		// echo json_encode($data);die;
  		$url=$this->url.'/repay';
  		$res=$this->request($url,$data);
-        if($res['code']=='10000' &&  isset($res['respCode']) && $res['respCode']=='10000'){ 
+        if(isset($res['code']) && $res['code']=='10000' &&  isset($res['respCode']) && $res['respCode']=='10000'){ 
              $return['code']='200';
              $return['msg']='上传成功';
         }else{
