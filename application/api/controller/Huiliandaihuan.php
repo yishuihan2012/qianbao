@@ -225,7 +225,7 @@
 			'nonceStr'=>generate_password(16),//随机字符串		str (32)	是	随机字符串
 			'agentId'=>$agentId,//代理商号		str (8)	是	受理方预分配的渠道代理商标识
 			'merId'=>$member_net[$Passageway->passageway_no],//商户号		str (10)	是	进件返回的merId
-			'orderNo'=>generate_password(16),//订单号		str (32)	是	交易订单号
+			'orderNo'=>$order['order_platform_no'],//订单号     str (32)    是   交易订单号
 			'bankCard'=>$order['order_card'],//银行卡号		str (16)	是	用于交易的银行卡号
 			'notifyUrl'=>System::getName('system_url').'/Api/Huiliandaihuan/payCallback',//通知地址		str (256)	是	异步通知地址(暂无)
 			'amount'=>$order['order_money']*100,//交易金额		str (8)	是	以分为单位
@@ -268,6 +268,7 @@
  	public function payCallback(){
  		$data = file_get_contents("php://input");
         parse_str($data,$res);
+        file_put_contents('huiliandahuan.txt',json_encode($res));
         $pay=GenerationOrder::where(['order_platform_no'=>$res['orderNo']])->find();
         $income['code']=-1;
         $income['back_status']='FAIL';
