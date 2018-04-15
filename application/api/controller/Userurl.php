@@ -577,7 +577,7 @@ class Userurl extends Controller
         $GenerationOrder=GenerationOrder::order('order_time')->where(['order_no'=>$id])->find();
         $time=date('Y-m-d',strtotime($GenerationOrder['order_time']));
         //计算第一天总的消费
-        $GenerationOrder['order_money'] = GenerationOrder::where(['order_no'=>$id])->where('order_time','like',$time.'%')->sum('order_money');
+        $GenerationOrder['order_money'] = GenerationOrder::where(['order_no'=>$id,'order_type'=>1])->where('order_time','like',$time.'%')->sum('order_money');
         $creaditcard=MemberCreditcard::where('card_bankno',$GenerationOrder->order_card)->find();
         $this->assign('generationorder',$GenerationOrder);
         $this->assign('creaditcard',$creaditcard);
