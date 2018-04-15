@@ -272,35 +272,56 @@ class Userurl extends Controller
        }
        $passageway_rate=$passageway->passageway_rate;
        $passageway_income=$passageway->passageway_income;
+       $is_auto_qf=0;//是否自动代付
        // var_dump($passageway->toArray());die;
        //判断是否签约
        $MemberCreditcard=MemberCreditcard::where(['card_id'=>$param['cardId']])->find();
        //判断哪个通道
        if($passageway['passageway_method']=='huilian_income'){ //汇联落地商户
+            $is_auto_qf=1; //自动代付
             #1判断有没有进件
+            $huilian=new Huiliandaihuan();
             $member_net=MemberNet::where(['net_member_id'=>$param['uid']])->find();
             if(!$member_net[$passageway->passageway_no]){ //没有入网
-                $huilian=new Huiliandaihuan();
                 $res=$huilian->huilian_income($this->param['passageway'],$this->param['cardId']);
+                if($res){
+                    $merId=$res;
+                }else{
+                     $this->assign('data','商户入网失败，请重试。');
+                      return view("Userurl/show_error");die;
+                }
+            }else{
+                $merId=$member_net[$passageway->passageway_no];
             }
             #2判断有没有签约
            $has=MemberCreditPas::where(['member_credit_pas_creditid'=>$this->param['cardId'],'member_credit_pas_pasid'=>$this->param['passageway']])->find();
-            // var_dump($has->toArray());die;
-            if(!$has){ //信用卡有没有签约
-               
+           // var_dump($has);die;
+           if(!$has){ //信用卡有没有签约
+                $MemberCreditPas=new MemberCreditPas;
+                $res=$MemberCreditPas->save(['member_credit_pas_creditid'=>$this->param['cardId'],'member_credit_pas_pasid'=>$this->param['passageway']]);
                 if(!$res){
-                    $this->assign('data','商户入网失败，请重试。');
+                    $this->assign('data','商户签约失败，请重试。');
                     return view("Userurl/show_error");die;
                 }
             }
-            if(!$has['member_credit_pas_info']){//判断有没有入网
-               
-               if(!$has['member_credit_pas_status']){ //判断有没有签约
-                    return redirect('Userurl/signed_huilian_background', ['passageway_id' =>$param['passageway'],'cardId'=>$param['cardId'],'order_no'=>$order_no]);
-                } 
+            if(!$has['member_credit_pas_status']){ //信用卡有没有签约
+                 return redirect('Userurl/signed_huilian_background', ['passageway_id' =>$param['passageway'],'cardId'=>$param['cardId'],'order_no'=>$order_no]);
             }
-            #3判断有没有上传资料
-            
+            #3判断有没有上传资料 
+            $upres=MemberCreditPas::where(['member_credit_pas_info'=>1,'member_credit_pas_pasid'=>$this->param['passageway']])->find();
+           if(!$upres){ 
+                 $res=$huilian->upload_material($passageway->passageway_mech,$merId,$param['uid']);
+                 if($res['code']==200){
+                        $update=MemberCreditPas::where(['member_credit_pas_creditid'=>$this->param['cardId'],'member_credit_pas_pasid'=>$this->param['passageway']])->update(['member_credit_pas_info'=>1]);
+                        if(!$update){
+                            $this->assign('data','上传资料失败。');
+                            return view("Userurl/show_error");die;
+                        }
+                 }else{
+                    $this->assign('data','上传资料失败。');
+                    return view("Userurl/show_error");die;
+                 }
+            }   
        }
        if($passageway['passageway_method']=='income'){  //暂时这么判断是汇联金创还是米刷
 
@@ -448,32 +469,34 @@ class Userurl extends Controller
                   $generation_pound += $real_each_get['fee'];
                 $day_real_get_money+=$real_each_get['money'];
               }
-              //获取代还每次实际到账金额
-              $real_qf_get=$this->get_real_money($item_qfalso,$item_qffix,$day_real_get_money,$passageway->passageway_qf_rate,$passageway->passageway_qf_fix);
-              // print_r($real_qf_get);die;
-              //提现信息
-              $plan[$i]['cash']=$Generation_order_insert[]=array(
-                  'order_no'         =>$Generation_result->generation_id,
-                  'order_member'     =>$this->param['uid'],
-                  'order_type'       =>2,
-                  'order_card'       =>$card_info->card_bankno,
-                  'order_money'      =>$day_real_get_money,//每天实际打回的金额
-                  'order_pound'      =>$real_qf_get['fee'],
+              if($is_auto_qf==0){//如果不是自动代付，需要手动还款
+                  //获取代还每次实际到账金额
+                  $real_qf_get=$this->get_real_money($item_qfalso,$item_qffix,$day_real_get_money,$passageway->passageway_qf_rate,$passageway->passageway_qf_fix);
+                  // print_r($real_qf_get);die;
+                  //提现信息
+                  $plan[$i]['cash']=$Generation_order_insert[]=array(
+                      'order_no'         =>$Generation_result->generation_id,
+                      'order_member'     =>$this->param['uid'],
+                      'order_type'       =>2,
+                      'order_card'       =>$card_info->card_bankno,
+                      'order_money'      =>$day_real_get_money,//每天实际打回的金额
+                      'order_pound'      =>$real_qf_get['fee'],
 
-                  'order_real_get' =>$real_qf_get['money'],
-                  'order_platform_fee'=>$real_qf_get['plantform_fee'],
-                  'order_passageway_fee'=>$real_qf_get['passageway_fee'],
-                  'passageway_rate'=>$passageway->passageway_qf_rate,
-                  'passageway_fix'=> $passageway->passageway_qf_fix,
-                  'user_fix'=>$item_qffix,
-                  'user_rate'=>$item_qfalso*100,
-                  'order_desc'       =>'自动代还还款~',
-                  'order_time'       =>$date[$i]." ".get_hours(15,16).":".get_minites(0,59),
-                  'order_passageway'=>$this->param['passageway'],
-                  'order_passway_id'=>$this->param['passageway'],
-                  'order_platform_no'     =>uniqid(),
-                  // 'order_root'=>$root_id,
-              );
+                      'order_real_get' =>$real_qf_get['money'],
+                      'order_platform_fee'=>$real_qf_get['plantform_fee'],
+                      'order_passageway_fee'=>$real_qf_get['passageway_fee'],
+                      'passageway_rate'=>$passageway->passageway_qf_rate,
+                      'passageway_fix'=> $passageway->passageway_qf_fix,
+                      'user_fix'=>$item_qffix,
+                      'user_rate'=>$item_qfalso*100,
+                      'order_desc'       =>'自动代还还款~',
+                      'order_time'       =>$date[$i]." ".get_hours(15,16).":".get_minites(0,59),
+                      'order_passageway'=>$this->param['passageway'],
+                      'order_passway_id'=>$this->param['passageway'],
+                      'order_platform_no'     =>uniqid(),
+                      // 'order_root'=>$root_id,
+                  );
+                }
 
           }
           $Generation = new Generation();
@@ -511,6 +534,7 @@ class Userurl extends Controller
         foreach ($list as $key => $value) {
             $data[$value['day_time']][]=$value;
         }
+        // print_r($data);die;
         //手续费
         $order_pound=0;
         // print_r($data);die;
@@ -518,13 +542,18 @@ class Userurl extends Controller
         foreach($data as $k=>$v){
                 $data[$k]['pay']=0;
                 $data[$k]['get']=0;
+                $data[$k]['get1']=0;
             foreach ($v as $key => $vv) {
                 if($vv['order_type']==1){
                   $data[$k]['pay']+=$vv['order_money'];
+                  $data[$k]['get1']+=$vv['order_real_get'];
                 }else if($vv['order_type']==2){
                   $data[$k]['get']+=$vv['order_real_get'];
                 }
                 $order_pound+=$vv['order_pound'];
+            }
+            if($data[$k]['get']==0){
+                $data[$k]['get']=$data[$k]['get1'];
             }
         }
         $this->assign('uid',$param['uid']);
@@ -1308,7 +1337,7 @@ class Userurl extends Controller
    * 汇联落地
    * @return [type] [description]
    */
-  public function signed_huilian_background(){
+  public function signed_huilian_background($passageway_id,$cardId,$order_no){
        #信用卡信息
       $data['MemberCreditcard']=$MemberCreditcard=MemberCreditcard::where(['card_id'=>$cardId])->find();
       #通道信息
