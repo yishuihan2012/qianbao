@@ -86,7 +86,7 @@
         // var_dump($res);
         // return $res;
         if($res['code']=="10000" && $res['respCode']=10000){
-            echo $res['merId'];
+            // echo $res['merId'];
             //setField([$Passageway->passageway_no->$merId])
             $update['member_credit_pas_info']=$res['merId'];
             $has=MemberCreditPas::where(['member_credit_pas_creditid'=>$card_info['card_id'],'member_credit_pas_pasid'=>$Passageway])->update($update);
@@ -270,7 +270,7 @@
         $income['code']=-1;
         $income['back_status']=$income['status']='FAIL';
         $is_commission=0;
-        if($res['code']=='10000' && $res['respCode']=='10000'){
+        if(isset($res['code']) && $res['code']=='10000' && $res['respCode']=='10000'){
             $update['back_tradeNo']=$res['orderNum'];
             $update['back_status']=$res['respCode'];
             $update['back_statusDesc']=$res['respMessage'];
@@ -474,7 +474,7 @@
         $income['code']=-1;
         $income['status']="FAIL";
         if($res['code']=='10000' && $res['respCode']=='10000'){
-             $update['back_tradeNo']=$res['orderNum'];
+             $update['back_tradeNo']=isset($res['orderNum'])?$res['orderNum']:'';
              $update['back_status']=$res['respCode'];
              $update['back_statusDesc']=$res['respMessage'];
             if($res['respCode']=="10000"){
