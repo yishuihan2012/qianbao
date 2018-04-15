@@ -273,7 +273,7 @@
         $income['code']=-1;
         $income['back_status']='FAIL';
         if($res && is_array($res)){
-        	if(isset($res['code']) && $res['code']==10000){ //是否处理成功
+        	// if(isset($res['code']) && $res['code']==10000){ //是否处理成功
                 if(isset($res['respCode']) && $res['respCode']==10000){
                     $income['code']=200;
                     $income['back_status']='success';
@@ -287,10 +287,10 @@
                 }
                 $arr['back_statusDesc']=isset($res['respMessage'])?$res['respMessage']:$res['message'];
                 $arr['back_status']=$res['respCode'];
-	        }else{
-	            $arr['order_status']='-1';
-	            $arr['back_statusDesc']=isset($res['respMessage'])?$res['respMessage']:$res['message'];
-	        }
+	        // }else{
+	        //     $arr['order_status']='-1';
+	        //     $arr['back_statusDesc']=isset($res['respMessage'])?$res['respMessage']:$res['message'];
+	        // }
             $update=GenerationOrder::where(['order_platform_no'=>$res['orderNo']])->update($arr);
 
             if($pay['order_status'] !=$arr['order_status']){
