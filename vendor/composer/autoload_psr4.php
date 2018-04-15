@@ -8,7 +8,7 @@ $baseDir = dirname($vendorDir);
 return array(
     'think\\migration\\' => array($vendorDir . '/topthink/think-migration/src'),
     'think\\composer\\' => array($vendorDir . '/topthink/think-installer/src'),
-    'think\\' => array($baseDir . '/thinkphp/library/think'),
+    'think\\' => array($baseDir . '/thinkphp/library/think', $vendorDir . '/topthink/think-image/src'),
     'terranc\\Blade\\' => array($vendorDir . '/terranc/blade/src'),
     'luoyt\\auth\\' => array($vendorDir . '/luoyt/auth/src'),
     'WXPay\\' => array($vendorDir . '/wxpay/wxpay/src'),
