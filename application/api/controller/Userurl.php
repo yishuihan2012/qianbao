@@ -573,8 +573,11 @@ class Userurl extends Controller
      */
     public function repayment_plan_confirm($id){
         $this->checkToken();
-        $GenerationOrder=GenerationOrder::order('order_time')->where(['order_no'=>$id,'order_type' => 2])->find();
-        $GenerationOrder['order_money'] = GenerationOrder::order('order_time')->where(['order_no'=>$id,'order_id'=>["<",$GenerationOrder['order_id']]])->sum('order_money');
+        //查出计划第一条
+        $GenerationOrder=GenerationOrder::order('order_time')->where(['order_no'=>$id])->find();
+        $time=date('Y-m-d',strtotime($GenerationOrder['order_time']));
+        //计算第一天总的消费
+        $GenerationOrder['order_money'] = GenerationOrder::where(['order_no'=>$id])->where('order_time','like',$time.'%')->sum('order_money');
         $creaditcard=MemberCreditcard::where('card_bankno',$GenerationOrder->order_card)->find();
         $this->assign('generationorder',$GenerationOrder);
         $this->assign('creaditcard',$creaditcard);
