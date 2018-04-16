@@ -31,7 +31,7 @@
  	protected $pubKey;
  	public function __construct(){
  		$this->url="https://gw.epayxx.net/mapi/gateway.htm";
- 		$this->partner_id='1818001000003822';
+ 		$this->partner_id='1818001000025664';
  	}
  	public static $materials = [
 

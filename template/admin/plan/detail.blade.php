@@ -83,6 +83,7 @@
         <th>银行</th>
         <th>订单类型</th>
         <th>订单金额</th>
+        <th>到账金额</th>
         <th>订单手续费</th>
         <th>成本手续费</th>
         <th>结算</th>
@@ -109,6 +110,7 @@
           <em style="color:#00FFFF;">还款</em>
         @endif </td>
        <td>{{$value['order_money']}}</td>
+       <td>{{$value['order_real_get']}}</td>
        <td>{{$value['order_pound']}}({{$value['order_money']}}*{{$value['user_rate']}}+{{$value['user_fix']}})</td>
        <td>{{$value['order_passageway_fee']}}({{$value['order_money']}}*{{$value['passageway_rate']}}+{{$value['passageway_fix']}})</td>
        <!-- 结算 -->
@@ -140,7 +142,7 @@
           @if($value['order_status'] == -1)
           | <a class="remove" href="#" data-url="{{url('/api/Membernet/action_single_plan/id/'.$value['order_id'].'/is_admin/1')}}">重新执行 </a>
             @if($value['order_type =']= 2)
-            | <a class="remove" href="#" data-url="{{url('/api/Membernet/update_bak_money/id/'.$value['order_id'])}}">修改还款金额 </a>
+            | <a class="modify_money" href="#" data-url="{{url('/api/Membernet/update_back_money/id/'.$value['order_id'])}}">修改还款金额 </a>
             @endif
           @endif
          
@@ -213,6 +215,35 @@ $(".remove").click(function() {
             })
         }
     });
+})
+$('.modify_money').click(function() {
+    var ths = $(this);
+    money = prompt("请输入修改的金额");
+    if (!money || money < 0) {
+        alert('金额必须大于0');
+        return;
+    }
+    var url = $(this).attr('data-url');
+    $.ajax({
+        url: url,
+        type: 'POST',
+        dataType: 'json',
+        'data': {
+            'money': money
+        },
+        beforeSend: function() {
+            ths.parent().html('<i class="icon icon-spin icon-spinner-indicator" style="z-index: 999;"></i>');
+        },
+        success: function(data) {
+            data = JSON.parse(data);
+            if (data.code == 200) {
+                alert(data.msg);
+                window.location.reload(true);
+            } else {
+                alert(data.msg);
+            }
+        }
+    })
 })
 </script>
 @endsection

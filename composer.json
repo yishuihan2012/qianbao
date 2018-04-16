@@ -27,7 +27,8 @@
         "flc/dysms":"^1.0",
         "topthink/think-migration": "^2.0",
         "nette/mail": "^2.4",
-        "nette/utils": "^2.5"
+        "nette/utils": "^2.5",
+        "topthink/think-image": "^1.0"
     },
     "extra": {
         "think-path": "thinkphp"

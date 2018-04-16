@@ -67,10 +67,17 @@
 		 </div>		
 	 </div>
 
-	 <div class="row form-group">
+<!-- 	 <div class="row form-group">
 		 <label for="passageway_no" class="col-sm-3 text-right"><b>通道代号:</b></label>
 		 <div class="col-sm-6" id="passageway_no">
 			 <input type="text" class="form-control passageway_no" name="passageway_no" placeholder="请填写通道的代号" value="{{$passageways['passageway_no']}}" disabled="">
+		 </div>		
+	 </div>
+ -->
+	 <div class="row form-group">
+		 <label for="passageway_method" class="col-sm-3 text-right"><b>排序:越大越靠前</b></label>
+		 <div class="col-sm-6" id="passageway_sort">
+			 <input type="number" class="form-control passageway_sort" name="passageway_sort" placeholder="越大越靠前" value="{{$passageways['passageway_sort']}}">
 		 </div>		
 	 </div>
 

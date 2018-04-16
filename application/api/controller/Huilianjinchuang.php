@@ -86,7 +86,7 @@
         // var_dump($res);
         // return $res;
         if($res['code']=="10000" && $res['respCode']=10000){
-            echo $res['merId'];
+            // echo $res['merId'];
             //setField([$Passageway->passageway_no->$merId])
             $update['member_credit_pas_info']=$res['merId'];
             $has=MemberCreditPas::where(['member_credit_pas_creditid'=>$card_info['card_id'],'member_credit_pas_pasid'=>$Passageway])->update($update);
@@ -268,15 +268,17 @@
         $url=$this->url.'/treatyPay';
         $res=$this->request($url,$arr);
         $income['code']=-1;
-        $income['back_status']='FAIL';
-        if($res['code']=='10000'){
-            $update['back_tradeNo']=$res['orderNo'];
+        $income['back_status']=$income['status']='FAIL';
+        $is_commission=0;
+        if(isset($res['code']) && $res['code']=='10000' && $res['respCode']=='10000'){
+            $update['back_tradeNo']=$res['orderNum'];
             $update['back_status']=$res['respCode'];
             $update['back_statusDesc']=$res['respMessage'];
             if($res['respCode']=="10000"){
                 $income['code']=200;
-                $income['back_status']='success';
+                $income['back_status']=$income['status']='success';
                 $update['order_status']='2';
+                $is_commission=1;
                 // $generation['generation_state']=3;
                 $update['order_platform']=$value['order_pound']-($value['order_money']*$merch['passageway_rate']/100)-$merch['passageway_income'];
                 ##记录余额
@@ -290,7 +292,7 @@
                 //失败
             }
         }else{
-          $update['back_statusDesc']=$res['message'];
+          $update['back_statusDesc']=isset($res['respMessage'])?$res['respMessage']:$res['message'];
           $update['back_status']='FAIL';
           $update['order_status']='-1';
           // $generation['generation_state']=-1;
@@ -304,7 +306,7 @@
         // }
          #更改完状态后续操作
         $notice=new \app\api\controller\Membernet();
-        $action=$notice->plan_notice($value,$income,$member_base,1,$merch);
+        $action=$notice->plan_notice($value,$income,$member_base,$is_commission,$merch);
 
     }
     /**
@@ -373,7 +375,7 @@
                 $update['order_status']='-1';
             }
         }else{
-          $update['back_statusDesc']=$res['message'];
+          $update['back_statusDesc']=isset($res['respMessage'])?$res['respMessage']:$res['message'];
           $update['back_status']='FAIL';
           $update['order_status']='-1';
           $generation['generation_state']=-1;
@@ -462,7 +464,7 @@
             'orderNo'=>$order['order_platform_no'],//订单号
             'notifyUrl'=>System::getName('system_url').'/Api/Huilianjinchuang/cashCallback',//异步通知地址
             // 'returnUrl'=>'', //N(String)   返回地址
-            // 'date'='' ,//N(String)   支付日期，格式:yyyyMMdd
+            // 'date'=>date('Ymd',strtotime($order['order_time'])),//N(String)   支付日期，格式:yyyyMMdd
             'amount'=>$order['order_real_get']*100,//金额(分)
         );
         // echo json_encode($arr);
@@ -471,8 +473,8 @@
         // print_r($res);
         $income['code']=-1;
         $income['status']="FAIL";
-        if($res['code']=='10000'){
-             $update['back_tradeNo']=$res['orderNum'];
+        if($res['code']=='10000' && $res['respCode']=='10000'){
+             $update['back_tradeNo']=isset($res['orderNum'])?$res['orderNum']:'';
              $update['back_status']=$res['respCode'];
              $update['back_statusDesc']=$res['respMessage'];
             if($res['respCode']=="10000"){
@@ -492,7 +494,7 @@
                 //失败
             }
         }else{
-          $update['back_statusDesc']=$res['message'];
+          $update['back_statusDesc']=isset($res['respMessage'])?$res['respMessage']:$res['message'];
           $update['back_status']='FAIL';
           $update['order_status']='-1';
           $generation['generation_state']=-1;

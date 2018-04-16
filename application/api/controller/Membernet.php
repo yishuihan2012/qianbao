@@ -16,7 +16,6 @@ use app\index\model\Member;
  use app\index\model\Reimbur;
  use app\index\model\MemberNet as MemberNets;
  use app\index\model\MemberCreditcard;
- use app\api\controller\Huilianjinchuang;
  /**
  *  @version MemberNet controller / Api 代还入网
  *  @author $bill$(755969423@qq.com)
@@ -108,21 +107,22 @@ use app\index\model\Member;
                     //判断是哪个通道
                      $passageway=Passageway::where(['passageway_id'=>$value['order_passageway']])->find();
                      $passageway_mech=$passageway['passageway_mech'];
-                     if($passageway['passageway_method']=='income'){
-                           $huilian=new Huilianjinchuang();//实例化那个类先写死
-                           if($value['order_type']==1){ //消费
-                              $huilian->pay($value,$passageway_mech);
-                           }else if($value['order_type']==2){//提现
-                               $res=$huilian->qfpay($value,$passageway_mech);
-                           }
-                     }else{
+                     $action=$passageway->Cashout->cashout_action;
+                     $controller="app\api\controller\\".$action;
+                     if(!$action || $action=='Membernet'){
                           if($value['order_type']==1){ //消费
                               $this->payBindCard($value);
                           }else if($value['order_type']==2){//提现
                               $this->transferApply($value);
                           }
+                     }else{
+                          $action=new $controller();//实例化类
+                           if($value['order_type']==1){ //消费
+                             $res=$action->pay($value,$passageway_mech);
+                           }else if($value['order_type']==2){//提现
+                               $res=$action->qfpay($value,$passageway_mech);
+                           }
                      }
-                     
                 }
              }
         }
@@ -138,25 +138,26 @@ use app\index\model\Member;
             // print_r($value);die;
             $passageway=Passageway::where(['passageway_id'=>$value['order_passageway']])->find();
             $passageway_mech=$passageway['passageway_mech'];
-            if($passageway['passageway_method']=='income'){
-                 $huilian=new Huilianjinchuang();//实例化那个类先写死
-                 if($value['order_type']==1){ //消费
-                    $res=$huilian->pay($value,$passageway_mech);
-                    // var_dump($res);die;
-                 }else if($value['order_type']==2){//提现
-                     $huilian->qfpay($value,$passageway_mech);
-                 }
-            }else{
-              if($value['order_type']==1){ //消费
-                  $res=$this->payBindCard($value);
-              }else if($value['order_type']==2){//提现
-                  if(!empty(input("is_admin"))){
-                    $res=$this->transferApply($value,null,1);
-                  }else{
-                    $res=$this->transferApply($value);
+            $action=$passageway->Cashout->cashout_action;
+            $controller="app\api\controller\\".$action;
+            if(!$action || $action=='Membernet'){
+                  if($value['order_type']==1){ //消费
+                      $res=$this->payBindCard($value);
+                  }else if($value['order_type']==2){//提现
+                      if(!empty(input("is_admin"))){
+                        $res=$this->transferApply($value,null,1);
+                      }else{
+                        $res=$this->transferApply($value);
+                      }
                   }
-              }
-            }
+             }else{
+                   $action=new $controller();//实例化类
+                   if($value['order_type']==1){ //消费
+                      $action->pay($value,$passageway_mech);
+                   }else if($value['order_type']==2){//提现
+                       $res=$action->qfpay($value,$passageway_mech);
+                   }
+             }
              return json_encode(['code'=>200,'msg'=>'执行成功。']);
         } catch (Exception $e) {
             return json_encode(['code'=>101,'msg'=>'执行失败。']);
@@ -759,35 +760,36 @@ use app\index\model\Member;
                   //判断哪个通道
                    $passageway=Passageway::where(['passageway_id'=>$order['order_passageway']])->find();
                    $passageway_mech=$passageway['passageway_mech'];
-                   if($passageway['passageway_method']=='income'){
-                       $huilian=new Huilianjinchuang();//实例化那个类先写死
-                       $res=$huilian->order_status($order['order_id']);
-                       if(isset($res['']) ){
-                        if($res['respCode']=='10000'){
-                             $arr['order_status']=2;
-                        }else if($res['respCode']=='10001'){
-                              $arr['order_status']=-1;
+                   $action=$passageway->Cashout->cashout_action;
+
+                   if(!$action || $action=='Membernet'){
+                        //米刷通道
+                        $result=$this->payResultQuery($order['order_id']);
+                        if($result && $result['code']==200 && $result['status']){
+                            $arr['back_statusDesc']=$result['statusDesc'];
+                            if($result['status']=="SUCCESS"){
+                                $arr['order_status']='2';
+                            }else if($result['status']=="FAIL"){
+                                $arr['order_status']='-1';
+                                
+                            }else{
+                                $arr['order_status']='4';
+                                //带查证或者支付中。。。mchNo
+                            }
+                            $update=GenerationOrder::where(['order_id'=>$order['order_id']])->update($arr);
                         }
-                        $arr['back_statusDesc']=$res['respCode'];
-                        $update=GenerationOrder::where(['order_id'=>$order['order_id']])->update($arr);
-                       }
                    }else{
-                      //米刷通道
-                      $result=$this->payResultQuery($order['order_id']);
-                      if($result && $result['code']==200 && $result['status']){
-                          $arr['back_statusDesc']=$result['statusDesc'];
-                          if($result['status']=="SUCCESS"){
-                              $arr['order_status']='2';
-                          }else if($result['status']=="FAIL"){
-                              $arr['order_status']='-1';
-                              
-                          }else{
-                              $arr['order_status']='4';
-                              //带查证或者支付中。。。mchNo
+                         $controller="app\api\controller\\".$action;
+                         $action=new $controller();//实例化类
+                         $res=$action->order_status($order['order_id']);
+                          if(isset($res['respCode']) && $res['respCode']=='10000'){
+                               $arr['order_status']=2;
+                          }else if(isset($res['respCode']) && $res['respCode']=='10001'){
+                                $arr['order_status']=-1;
                           }
+                          $arr['back_statusDesc']=isset($res['respMessage'])?$res['respMessage']:$res['message'];
                           $update=GenerationOrder::where(['order_id'=>$order['order_id']])->update($arr);
-                      }
-                    }
+                   }
               }
           }
          
@@ -825,5 +827,24 @@ use app\index\model\Member;
               return json_encode(['code'=>'101','msg'=>'变更失败']);die;
           }
 
+      }
+      public function update_back_money($id){
+          $params=input('');
+          $order_info=GenerationOrder::where(['order_id'=>$id])->find();
+          $arr['order_real_get']=$params['money'];
+          if($order_info['user_rate']==0){
+              $arr['order_pound']=$order_info['user_fix'];
+          }else{
+              $arr['order_pound']=round(($order_info['user_fix']+$params['money'])/(1-$order_info['user_rate']/100),2);
+          }
+          $arr['order_money']=$arr['order_real_get']+$arr['order_pound'];
+          $arr['order_passageway_fee']=$arr['order_money']*$order_info['passageway_rate']/100+$order_info['passageway_fix'];
+          $arr['order_platform_fee']=$arr['order_pound']-$arr['order_passageway_fee'];
+          $update=GenerationOrder::where(['order_id'=>$order_info['order_id']])->update($arr);
+          if($update){
+              return json_encode(['code'=>'200','msg'=>'变更成功，当前金额为'.$arr['order_real_get']]);die;
+          }else{
+              return json_encode(['code'=>'101','msg'=>'变更失败']);die;
+          }
       }
  }

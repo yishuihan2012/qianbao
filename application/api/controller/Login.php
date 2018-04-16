@@ -13,6 +13,7 @@
  use think\Loader;
  use app\index\model\MemberLogin;
  use app\index\model\System;
+ use app\index\model\Alert;
  use app\index\model\Member;
  use app\index\model\SmsCode as SmsCodes;
  use app\index\model\MemberCreditcard;
@@ -261,5 +262,19 @@
            $data['token']=$memberLogin['login_token'];
            $data['uid']=$memberLogin['member']['member_id'];
            return ['code'=>200,'msg'=>'获取成功~', 'data'=>$data];
+      }
+      /**
+       * 弹窗广告
+       */
+      public function alert(){
+        $data=Alert::where('alert_status',1)->order('alert_id desc')->find();
+        if($data){
+          if(strpos($data['alert_img'], 'http')===false)
+            $data['alert_img']='http://'.$_SERVER['HTTP_HOST'].$data['alert_img'];
+          if(strpos($data['alert_url'], 'http')===false)
+            $data['alert_url']='http://'.$data['alert_url'];
+        }
+        // return json_encode(['code'=>$data ? 200 : 404,'msg'=>'获取成功~', 'data'=>$data]);
+        return ['code'=>$data ? 200 : 404,'msg'=>'获取成功~', 'data'=>$data];
       }
  }
