@@ -237,14 +237,14 @@
  		$url=$this->url.'/repay';
  		$res=$this->request($url,$data);
  		$income['code']=-1;
-        $income['back_status']='FAIL';
+        $income['back_status']=$income['status']='FAIL';
         if(isset($res['code']) && $res['code']=='10000'){
             $update['back_tradeNo']=$res['orderNum'];
             $update['back_status']=$res['respCode'];
             $update['back_statusDesc']=isset($res['respMessage'])?$res['respMessage']:$res['message'];
             if($res['respCode']=="10000"){
                 $income['code']=200;
-                $income['back_status']='success';
+                $income['back_status']=$income['status']='success';
                 $update['order_status']='2';
             }else if($res['respCode']=="10002"){
                 //处理中
@@ -274,12 +274,12 @@
         file_put_contents('huiliandahuan.txt',json_encode($res));
         $pay=GenerationOrder::where(['order_platform_no'=>$res['orderNo']])->find();
         $income['code']=-1;
-        $income['back_status']='FAIL';
+        $income['back_status']=$income['status']='FAIL';
         if($res && is_array($res)){
         	// if(isset($res['code']) && $res['code']==10000){ //是否处理成功
                 if(isset($res['respCode']) && $res['respCode']==10000){
                     $income['code']=200;
-                    $income['back_status']='success';
+                    $income['back_status']=$income['status']='success';
                     $arr['order_status']='2';
                 }else if($res['respCode']=="10002"){
                     //处理中
