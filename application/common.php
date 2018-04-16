@@ -155,8 +155,13 @@ function encryption($str, $salt, $method='md5')
  function curl_post($url, $method = 'post', $data='', $type="Content-Type: application/json; charset=utf-8")
  {
      //echo '<meta http-equiv="Content-Type" content="text/html; charset=GBK">';
+     if(is_array($type)){
+        $headers=$type;
+     }else{
+        $headers=array($type);
+     }
       $ch = curl_init();
-     curl_setopt($ch, CURLOPT_HTTPHEADER, array($type));
+     curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
      curl_setopt($ch, CURLOPT_URL, $url);
      curl_setopt($ch, CURLOPT_CUSTOMREQUEST, strtoupper($method));
      curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
@@ -171,6 +176,7 @@ function encryption($str, $salt, $method='md5')
      $information = curl_getinfo($ch);
      return $temp;
  }
+
 
  //-----------------------------------------------------------
  // @version  BankCert  银行卡实名认证
@@ -231,7 +237,38 @@ function encryption($str, $salt, $method='md5')
      //return System::getName('certhost');
      return json_decode(curl_exec($curl), true);
  }
-
+   /**
+    * 内部JAVA端银行卡实名认证接口
+    * @param  string $bankCard    [银行卡号]
+    * @param  string $personCard  [身份证号]
+    * @param  string $personName  [姓名]
+    * @param  string $personPhone [预留手机号]
+    * @return [type]              [description]
+    */
+function BankCert_Java($bankCard='',$personCard='',$personName='',$personPhone=''){
+    $url='http://api.xijiakei.com/bankElements/detailApi';
+    // $apiAppId='20180329164226439';
+    $apiAppId=System::getName('appcode');
+    // $apiAppKey='581abf9c07dc45d1af9bb52d1c472ba8';
+    $apiAppKey=System::getName('appkey');
+    // $apiAppType='2';
+    $header=array(
+    "Content-Type: application/json",
+    "apiAppId: {$apiAppId}",
+    "apiAppKey: {$apiAppKey}",
+       // "apiAppType:{$apiAppType}"
+    );
+    $data=array(
+        'bankCard'=>$bankCard,// 银行卡号  是  [string]    
+        'personCard'=>$personCard,//  身份证号  是  [string]    
+        'personName'=>$personName,//  姓名 是  [string]    
+        'personPhone'=>$personPhone,// 预留手机号 是  [string] 
+    );
+    halt($data);
+    $res=curl_post($url,'post',json_encode($data),$header); 
+    halt($res);
+    echo $res;die;
+}
 
  //-----------------------------------------------------------
  // @version  Xml 转数组

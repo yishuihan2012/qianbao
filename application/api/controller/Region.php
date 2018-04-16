@@ -121,12 +121,29 @@
                  return ['code'=>431];
            $fixcard=substr($this->param['cardNo'], 0, 6); 
            #获取识别的银行卡信息
-           $result=BankIdent::field('ident_id,ident_name,ident_type,ident_desc,ident_code')->where(['ident_code'=>$fixcard])->find();
-           if(empty($result))
-                 return ['code'=>445];
-           #将银行卡识别次数加1
-           $memberSetInc=BankIdent::where(['ident_code'=>$fixcard])->setInc('ident_count');
-           return ['code'=>200, 'msg'=>'银行卡识别成功', 'data'=>$result];
+           // $result=BankIdent::field('ident_id,ident_name,ident_type,ident_desc,ident_code')->where(['ident_code'=>$fixcard])->find();
+           // if(empty($result))
+           //       return ['code'=>445];
+          $url='http://api.xijiakei.com/bankIdent/detailBankIdentApi';
+          $data=array(
+             'identCode'=>$fixcard,//银行卡前六位
+          );
+          $res=curl_post($url,'post',json_encode($data));
+          $result=json_decode($res,true);
+          if($result['code']==200 && $result['data']){
+            $result=[
+              'ident_id'=>1,
+              'ident_name'=>$result['identBankName'],
+              'ident_type'=>$result['identType'],
+              'ident_desc'=>$result['identDesc'],
+              'ident_code'=>$result['identCode'],
+            ];
+             #将银行卡识别次数加1
+             $memberSetInc=BankIdent::where(['ident_code'=>$fixcard])->setInc('ident_count');
+             return ['code'=>200, 'msg'=>'银行卡识别成功', 'data'=>$result];
+          }else{
+             return ['code'=>445];
+          }
       }
 
 

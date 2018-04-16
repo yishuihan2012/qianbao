@@ -95,15 +95,22 @@
            if(!$bankInfo)
                  return ['code'=>430];
            #银行卡实名验证
-           $card_validate=BankCert($this->param['card_bankno'],$this->param['card_phone'],$this->param['card_idcard'],$this->param['card_name']);
-           // dump($card_validate);exit;
+           // $card_validate=BankCert($this->param['card_bankno'],$this->param['card_phone'],$this->param['card_idcard'],$this->param['card_name']);
            // return ['code'=>200,'msg'=>'实名认证成功~', 'data'=>$card_validate];
-           if($card_validate['error_code']!=0){
-             return ['code'=>351,'msg'=>$card_validate['reason']];
-           }
-           $state=$card_validate['result']['result']=='T' ? '1' : '0';
+           // 老接口
+           // if($card_validate['error_code']!=0){
+           //   return ['code'=>351,'msg'=>$card_validate['reason']];
+           // }
+           // $state=$card_validate['result']['result']=='T' ? '1' : '0';
            //如果实名认证返回状态不等于T 则进行加1次验证
            //TODOif($card_validate['result']['result']=='T' && $card_validate['result']['result']!='P')
+           // 新接口
+           $card_validate=BankCert_Java($this->param['card_bankno'],$this->param['card_idcard'],$this->param['card_name'],$this->param['card_phone']);
+           if($card_validate['code']!=200)
+              return ['code'=>351,'msg'=>$card_validate['info']];
+          if($card_validate['data']['cardTy']!='D')
+            return ['code'=>351,'msg'=>'认证失败:只能验证储蓄卡'];
+          $state=1;
           Db::startTrans();
            #写入认证表
            $member_cashcard=new MemberCashcard([
@@ -124,13 +131,13 @@
            if($member_cashcard->save()===false)
                 return ['code'=>350];
            try {
-                 if($card_validate['result']['result']=='F')
-                      return ['code'=>352,'msg'=>$card_validate['result']['message']];
-                 if($card_validate['result']['result']=='N')
-                      return ['code'=>353,'msg'=>$card_validate['result']['message']];
-                 #写入到实名认证表
-                 if($card_validate['result']['result']=='T' && $card_validate['result']['result']!='P')
-                 {
+                 // if($card_validate['result']['result']=='F')
+                 //      return ['code'=>352,'msg'=>$card_validate['result']['message']];
+                 // if($card_validate['result']['result']=='N')
+                 //      return ['code'=>353,'msg'=>$card_validate['result']['message']];
+                 // #写入到实名认证表
+                 // if($card_validate['result']['result']=='T' && $card_validate['result']['result']!='P')
+                 // {
                       $member_certs_array=[
                            'cert_member_id' =>$this->param['uid'],
                            'cert_card_id'       =>$member_cashcard->card_id,
@@ -202,7 +209,7 @@
                       // }
                       Db::commit();
                       return ['code'=>200,'msg'=>'实名认证成功~', 'data'=>''];
-                 }
+                 // }
            } catch (\Exception $e) {
                  Db::rollback();
                  return ['code'=>350,'msg'=>$e->getMessage()];
@@ -234,14 +241,21 @@
            $cert_card_bankno=MemberCashcard::get(['card_bankno'=>$this->param['card_bankno']]);
            if($cert_card_bankno) return ['code'=>602];
 
-           $card_validate=BankCertNew(['bankCardNo'=>$this->param['card_bankno'], 'identityNo'=>$this->param['card_idcard'], 'mobileNo'=>$this->param['card_phone'], 'name'=>$this->param['card_name']]);
-           if($card_validate['code']!=0000) return ['code'=>351, 'msg'=>'实名认证失败。'];
-           if($card_validate['data']['resultCode']!='R001')  return ['code'=>351, 'msg'=>'认证信息不匹配或您的储蓄卡尚未开通无卡支付功能，请联系发卡行。'];
-           if(!isset($card_validate['data']['bankCardBin'])){
-                 return ['code'=>351, 'msg'=>'识别银行失败，请换卡重试。'];
-           }
-           if(isset($card_validate['data']['bankCardBin']) && $card_validate['data']['bankCardBin']['cardTy']!='D')
-              return ['code'=>351, 'msg'=>'认证失败:请更换一个储蓄卡完成实名认证~'];
+           // $card_validate=BankCertNew(['bankCardNo'=>$this->param['card_bankno'], 'identityNo'=>$this->param['card_idcard'], 'mobileNo'=>$this->param['card_phone'], 'name'=>$this->param['card_name']]);
+
+           $card_validate=BankCert_Java($this->param['card_bankno'],$this->param['card_idcard'],$this->param['card_name'],$this->param['card_phone']);
+
+           if($card_validate['code']!=200)
+              return ['code'=>351,'msg'=>$card_validate['info']];
+          if($card_validate['data']['cardTy']!='D')
+            return ['code'=>351,'msg'=>'认证失败:只能验证储蓄卡'];
+           // if($card_validate['code']!=0000) return ['code'=>351, 'msg'=>'实名认证失败。'];
+           // if($card_validate['data']['resultCode']!='R001')  return ['code'=>351, 'msg'=>'认证信息不匹配或您的储蓄卡尚未开通无卡支付功能，请联系发卡行。'];
+           // if(!isset($card_validate['data']['bankCardBin'])){
+           //       return ['code'=>351, 'msg'=>'识别银行失败，请换卡重试。'];
+           // }
+           // if(isset($card_validate['data']['bankCardBin']) && $card_validate['data']['bankCardBin']['cardTy']!='D')
+           //    return ['code'=>351, 'msg'=>'认证失败:请更换一个储蓄卡完成实名认证~'];
            Db::startTrans();
            try{
                 #写入认证表
@@ -427,17 +441,22 @@
                #如果银行卡号与手机号有变动执行认证操作
           if($cashcard['card_bankno']!=$this->param['card_bankno'] || $cashcard['card_phone']!=$this->param['card_phone']){
 
-             $card_validate=BankCert($this->param['card_bankno'],$this->param['card_phone'],$cashcard['card_idcard'],$cashcard['card_name']);
-             if($card_validate['error_code']!=0){
-                return ['code'=>351,'msg'=>$card_validate['reason']];
-             }
-             $state=$card_validate['result']['result']=='T' ? '1' : '0';
-             if($card_validate['result']['result']=='F')
-                   return ['code'=>352, 'msg'=>$card_validate['result']['message']];
-             if($card_validate['result']['result']=='N')
-                   return ['code'=>353, 'msg'=>$card_validate['result']['message']];
-
-              $card=array(
+             // $card_validate=BankCert($this->param['card_bankno'],$this->param['card_phone'],$cashcard['card_idcard'],$cashcard['card_name']);
+             // if($card_validate['error_code']!=0){
+             //    return ['code'=>351,'msg'=>$card_validate['reason']];
+             // }
+             // $state=$card_validate['result']['result']=='T' ? '1' : '0';
+             // if($card_validate['result']['result']=='F')
+             //       return ['code'=>352, 'msg'=>$card_validate['result']['message']];
+             // if($card_validate['result']['result']=='N')
+             //       return ['code'=>353, 'msg'=>$card_validate['result']['message']];
+           $card_validate=BankCert_Java($this->param['card_bankno'],$this->param['card_idcard'],$this->param['card_name'],$this->param['card_phone']);
+           if($card_validate['code']!=200)
+              return ['code'=>351,'msg'=>$card_validate['info']];
+          if($card_validate['data']['cardTy']!='D')
+            return ['code'=>351,'msg'=>'认证失败:只能验证储蓄卡'];
+            $state=1;
+            $card=array(
              'card_bankno'=>$this->param['card_bankno'],
              'card_phone'=>$this->param['card_phone'],
              'card_bank_province'=>$this->param['card_bank_province'],
@@ -495,14 +514,20 @@
            #验证用户是否绑定储蓄卡
            $cashcard=MemberCashcard::where('card_member_id='.$this->param['uid'])->find();
            if(!$cashcard) return ['code'=>435];
-           $card_validate=BankCertNew(['bankCardNo'=>$this->param['card_bankno'], 'identityNo'=>$this->param['card_idcard'], 'mobileNo'=>$this->param['card_phone'], 'name'=>$this->param['card_name']]);
-           if($card_validate['code']!=0000) return ['code'=>351, 'msg'=>'实名认证失败。'];
-           if($card_validate['data']['resultCode']!='R001')  return ['code'=>351, 'msg'=>'认证信息不匹配或您的储蓄卡尚未开通无卡支付功能，请联系发卡行。'];
-           if($card_validate['data']['bankCardBin']['cardTy']!='D')  return ['code'=>351, 'msg'=>'认证失败:请更换一个储蓄卡完成实名认证~'];
-            $card_bankname=$card_validate['data']['bankCardBin']['bankName'];
-            if($num=strpos($card_bankname,'(')){
-                $card_bankname=substr($card_bankname,0,$num);
-            }
+           // $card_validate=BankCertNew(['bankCardNo'=>$this->param['card_bankno'], 'identityNo'=>$this->param['card_idcard'], 'mobileNo'=>$this->param['card_phone'], 'name'=>$this->param['card_name']]);
+           // if($card_validate['code']!=0000) return ['code'=>351, 'msg'=>'实名认证失败。'];
+           // if($card_validate['data']['resultCode']!='R001')  return ['code'=>351, 'msg'=>'认证信息不匹配或您的储蓄卡尚未开通无卡支付功能，请联系发卡行。'];
+           // if($card_validate['data']['bankCardBin']['cardTy']!='D')  return ['code'=>351, 'msg'=>'认证失败:请更换一个储蓄卡完成实名认证~'];
+           //  $card_bankname=$card_validate['data']['bankCardBin']['bankName'];
+           //  if($num=strpos($card_bankname,'(')){
+           //      $card_bankname=substr($card_bankname,0,$num);
+           //  }
+           $card_validate=BankCert_Java($this->param['card_bankno'],$this->param['card_idcard'],$this->param['card_name'],$this->param['card_phone']);
+           if($card_validate['code']!=200)
+              return ['code'=>351,'msg'=>$card_validate['info']];
+          if($card_validate['data']['cardTy']!='D')
+            return ['code'=>351,'msg'=>'认证失败:只能验证储蓄卡'];
+          $card_bankname=isset($card_validate['data']['identBankName']) ? $card_validate['data']['identBankName'] : '';
            $card=array(
                 'card_bankno'=>$this->param['card_bankno'],
                 'card_phone'=>$this->param['card_phone'],
