@@ -108,7 +108,7 @@ use app\index\model\Member;
                      $passageway=Passageway::where(['passageway_id'=>$value['order_passageway']])->find();
                      $passageway_mech=$passageway['passageway_mech'];
                      $action=$passageway->Cashout->cashout_action;
-                     $action="app\api\controller\\".$action;
+                     $controller="app\api\controller\\".$action;
                      if(!$action || $action=='Membernet'){
                           if($value['order_type']==1){ //消费
                               $this->payBindCard($value);
@@ -116,7 +116,7 @@ use app\index\model\Member;
                               $this->transferApply($value);
                           }
                      }else{
-                          $action=new $action();//实例化类
+                          $action=new $controller();//实例化类
                            if($value['order_type']==1){ //消费
                              $res=$action->pay($value,$passageway_mech);
                            }else if($value['order_type']==2){//提现
@@ -139,7 +139,7 @@ use app\index\model\Member;
             $passageway=Passageway::where(['passageway_id'=>$value['order_passageway']])->find();
             $passageway_mech=$passageway['passageway_mech'];
             $action=$passageway->Cashout->cashout_action;
-            $action="app\api\controller\\".$action;
+            $controller="app\api\controller\\".$action;
             if(!$action || $action=='Membernet'){
                   if($value['order_type']==1){ //消费
                       $res=$this->payBindCard($value);
@@ -151,7 +151,7 @@ use app\index\model\Member;
                       }
                   }
              }else{
-                   $action=new $action();//实例化类
+                   $action=new $controller();//实例化类
                    if($value['order_type']==1){ //消费
                       $action->pay($value,$passageway_mech);
                    }else if($value['order_type']==2){//提现
@@ -779,8 +779,8 @@ use app\index\model\Member;
                             $update=GenerationOrder::where(['order_id'=>$order['order_id']])->update($arr);
                         }
                    }else{
-                         $action=new $action();//实例化类
-                         $action="app\api\controller\\".$action;
+                         $controller="app\api\controller\\".$action;
+                         $action=new $controller();//实例化类
                          $res=$action->order_status($order['order_id']);
                           if(isset($res['respCode']) && $res['respCode']=='10000'){
                                $arr['order_status']=2;
