@@ -2,6 +2,7 @@
  namespace app\api\controller;
  use think\Db;
  use think\Session;
+ use think\Config;
  use app\index\model\Member;
  use app\index\model\System;
  use app\index\model\Wallet;
@@ -232,10 +233,11 @@
         }
 
         //商品类别
-        $goods=db('goods')->select();
-        $rand_good=array_rand($goods,1);
-        $rand_good=$goods[$rand_good];
-        $update_res=GenerationOrder::where(['order_id'=>$value['order_id']])->update(['order_product_type'=>$rand_good['type_id'],'order_product_name'=>$rand_good['name']]);
+        $config=Config::get('passway.huilian_luodi');
+
+        $rand_good=array_rand($config,1);
+        $rand_good=$config[$rand_good];
+        $update_res=GenerationOrder::where(['order_id'=>$value['order_id']])->update(['order_product_type'=>$rand_good['id'],'order_product_name'=>$rand_good['name']]);
         $data=array(
             'version'=>$this->version,// M(String)   1.0
             'serviceUri'=>'YQ0002',
@@ -248,15 +250,16 @@
             'notifyUrl'=>System::getName('system_url').'/Api/Huilianluodi/payCallback',// M(String)   异步通知地址
             'amount'=>$value['order_money']*100 ,//M(String)   金额(分)
             'bankCard'=>$value['order_card'],//银行卡号        str (32)    是   用于支付的银行卡号(信用卡)
-            'product'=>$rand_good['type_id'],// 商品类别str (8) 是   
+            'product'=>$rand_good['id'],// 商品类别str (8) 是   
             'goods'=>$rand_good['name'],//商品描述   str (32)    是   
             // 'chnSeriaNo'=>''.//交易使用商户号   str (8) 否   
             // 'cityCode'=>'',//城市编码        str (8) 否   
             // 'caregoryUnion'=>'',//银联行业类型     str (8) 否   
         );
-        // echo json_encode($data);die;
+        echo json_encode($data);
         $url=$this->url.'/repay';
         $res=$this->request($url,$data);
+        echo json_encode($res);die;
         $income['code']=-1;
         $income['back_status']=$income['status']='FAIL';
         $is_commission=0;
@@ -294,7 +297,7 @@
      */
     public function payCallback(){
         $data = file_get_contents("php://input");
-        file_put_contents('huilianpay_new_callback.txt', $data);
+        file_put_contents('huilianpay_new_callback.txt',json_encode($data));
         $pay=GenerationOrder::where(['order_platform_no'=>$data['orderNo']])->find();
         if($data['code']==10000){ //是否处理成功
                 if($data['respCode']==10000){

@@ -154,7 +154,7 @@ use app\index\model\Member;
                    $action=new $controller();//实例化类
                    if($value['order_type']==1){ //消费
                       $res=$action->pay($value,$passageway_mech);
-                      // var_dump($res);die;
+                      var_dump($res);die;
                    }else if($value['order_type']==2){//提现
                        $res=$action->qfpay($value,$passageway_mech);
                    }
