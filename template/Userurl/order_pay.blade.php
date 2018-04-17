@@ -121,7 +121,7 @@
 							mui.toast("交易成功");
 
 						}else{
-							mui.toast("交易失败");
+							mui.toast("交易失败"+res.sub_msg);
 						}
 						setTimeout(function(){
 							if(!isAndroid){
