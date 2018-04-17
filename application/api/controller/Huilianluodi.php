@@ -254,7 +254,7 @@
             // 'cityCode'=>'',//城市编码        str (8) 否   
             // 'caregoryUnion'=>'',//银联行业类型     str (8) 否   
         );
-        echo json_encode($data);die;
+        // echo json_encode($data);die;
         $url=$this->url.'/repay';
         $res=$this->request($url,$data);
         $income['code']=-1;
