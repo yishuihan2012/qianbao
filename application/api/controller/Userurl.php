@@ -222,6 +222,8 @@ class Userurl extends Controller
                 $generation[$key]['generation_card']=substr($value['generation_card'], -4);
                 $generation[$key]['count']=GenerationOrder::where(['order_no'=>$value['generation_id']])->count();
             }
+            if(isset($generation[$key]['count']))
+                $generation[$key]['count']=0;
         }
 
         #待确认 不需要了
