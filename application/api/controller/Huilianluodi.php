@@ -234,6 +234,7 @@
         //商品类别
         $goods=db('goods')->select();
         $rand_good=array_rand($goods,1);
+        $rand_good=$goods[$rand_good];
         $update_res=GenerationOrder::where(['order_id'=>$value['order_id']])->update(['order_product_type'=>$rand_good['type_id'],'order_product_name'=>$rand_good['name']]);
         $data=array(
             'version'=>$this->version,// M(String)   1.0
@@ -253,7 +254,7 @@
             // 'cityCode'=>'',//城市编码        str (8) 否   
             // 'caregoryUnion'=>'',//银联行业类型     str (8) 否   
         );
-        // echo json_encode($data);die;
+        echo json_encode($data);die;
         $url=$this->url.'/repay';
         $res=$this->request($url,$data);
         $income['code']=-1;
