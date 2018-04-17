@@ -225,22 +225,32 @@
             $update_order['order_platform_no']=$value['order_platform_no']=uniqid();
             $update_res=GenerationOrder::where(['order_id'=>$value['order_id']])->update($update_order);
         }
-        $arr=array(
+
+        //商品类别
+        $goods=db('goods')->select();
+        $rand_good=array_rand($goods,1);
+        $update_res=GenerationOrder::where(['order_id'=>$value['order_id']])->update(['order_product_type'=>$rand_good['type_id'],'order_product_name'=>$rand_good['name']]);
+        $data=array(
             'version'=>$this->version,// M(String)   1.0
+            'serviceUri'=>'YQ0002',
             'charset'=>'UTF-8',// M(String)   编码方式UTF-8
             'agentId'=>$passageway_mech ,//M(String)   受理方预分配的渠道代理商标识
             'merId'=>$member_pas['member_credit_pas_info'],// M(String)   子商户号
             'nonceStr'=>make_rand_code(),// M(String)   随机字符串，字符范围a-zA-Z0-9
             'signType'=>'RSA',//  M(String)   签名方式，固定RSA
             'orderNo'=>$value['order_platform_no'],// M(String)   订单号
-            'notifyUrl'=>System::getName('system_url').'/Api/Huilianjinchuang/payCallback',// M(String)   异步通知地址
-            'treatyId'=>$member_pas['member_credit_pas_smsseq'],// N(String)   协议号
+            'notifyUrl'=>System::getName('system_url').'/Api/Huilianluodi/payCallback',// M(String)   异步通知地址
             'amount'=>$value['order_money']*100 ,//M(String)   金额(分)
+            'bankCard'=>$value['order_card'],//银行卡号        str (32)    是   用于支付的银行卡号(信用卡)
+            'product'=>$rand_good['type_id'],// 商品类别str (8) 是   
+            'goods'=>$rand_good['name'],//商品描述   str (32)    是   
+            // 'chnSeriaNo'=>''.//交易使用商户号   str (8) 否   
+            // 'cityCode'=>'',//城市编码        str (8) 否   
+            // 'caregoryUnion'=>'',//银联行业类型     str (8) 否   
         );
-        // echo json_encode($arr);
-        // var_dump($arr);die;
-        $url=$this->url.'/treatyPay';
-        $res=$this->request($url,$arr);
+        // echo json_encode($data);die;
+        $url=$this->url.'/repay';
+        $res=$this->request($url,$data);
         $income['code']=-1;
         $income['back_status']=$income['status']='FAIL';
         $is_commission=0;
@@ -253,11 +263,6 @@
                 $income['back_status']=$income['status']='success';
                 $update['order_status']='2';
                 $is_commission=1;
-                // $generation['generation_state']=3;
-                $update['order_platform']=$value['order_pound']-($value['order_money']*$merch['passageway_rate']/100)-$merch['passageway_income'];
-                ##记录余额
-                #0在此计划的还款卡余额中增加本次的金额 除去手续费
-                db('reimbur')->where('reimbur_generation',$value['order_no'])->setInc('reimbur_left',$value['order_money']-$value['order_pound']);
             }else if($res['respCode']=="10002"){
                 //处理中
                 $update['order_status']='4';
@@ -268,99 +273,14 @@
         }else{
           $update['back_statusDesc']=isset($res['respMessage'])?$res['respMessage']:$res['message'];
           $update['back_status']='FAIL';
-          $update['order_status']='-1';
-          // $generation['generation_state']=-1;
-          // $update['order_buckle']=$rate['item_charges']/100;        
+          $update['order_status']='-1';   
         }
         //添加执行记录
         $res=GenerationOrder::where(['order_id'=>$value['order_id']])->update($update);
-        // 更新卡计划
-        // if(isset($generation)){
-        //     Generation::where(['generation_id'=>$order['order_no']])->update($generation);
-        // }
          #更改完状态后续操作
         $notice=new \app\api\controller\Membernet();
         $action=$notice->plan_notice($value,$income,$member_base,$is_commission,$merch);
 
-    }
-    /**
-     * 下单支付
-     * @return [type] [description]
-     */
-    public function pay_old($order,$passageway_mech){
-        $card_info=MemberCreditcard::where(['card_bankno'=>$order['order_card']])->find();
-        $member_info=Member::where(['member_id'=>$order['order_member']])->find();
-
-        $bank_name=mb_substr($card_info['card_bankname'],-4,2);
-        // echo $bank_name;die;
-        $BankInfo=BankInfo::where('info_sortname','like','%'.$bank_name.'%')->find();
-        $expDate=$card_info['card_expireDate'];
-        $merch=Passageway::where(['passageway_id'=>$order['order_passageway']])->find();
-        $rate=PassagewayItem::where(['item_passageway'=>$order['order_passageway'],'item_group'=>$member_info['member_group_id']])->find();
-        if(!$order['order_platform_no'] || $order['order_status']!=1){
-            $update_order['order_platform_no']=$order['order_platform_no']=uniqid();
-            $update_res=GenerationOrder::where(['order_id'=>$order['order_id']])->update($update_order);
-        }
-        $arr=array(
-            'version'=>$this->version,
-            'charset'=>'UTF-8',//编码方式UTF-8
-            'agentId'=>$passageway_mech,//受理方预分配的渠道代理商标识
-            'merId'=>$card_info['huilian_income'],//子商户号
-            'nonceStr'=>make_rand_code(),//随机字符串，字符范围a-zA-Z0-9
-            'signType'=>'RSA',//签名方式，固定RSA
-            'isCompay'=>'0',//对公对私标识0为对私，1为对公
-            'idcardType'=>'01',//证件类型 暂只支持 01 身份证
-            'orderNo'=>$order['order_platform_no'],//订单号
-            'idcard' =>$member_info->membercert->cert_member_idcard,//证件号码
-            'name'=>$member_info->membercert->cert_member_name, //姓名
-            'phone'=>$member_info['member_mobile'],//手机号
-            'bankId'=>$BankInfo['info_pab'],//联行号
-            'bankCard'=>$order['order_card'],//银行卡号
-            'notifyUrl'=>System::getName('system_url').'/Api/Huilianjinchuang/payCallback',//异步通知地址
-            // 'returnUrl'=>'', //N(String)   返回地址
-            'CVN2'=>$card_info['card_Ident'],//CVN2
-            'expDate'=>substr($expDate, 0,2).'-'.substr($expDate, 2,2),//信用卡有效期，格式 MM-yy
-            'amount'=>$order['order_money']*100,//金额(分)
-        );
-        // echo json_encode($arr);
-        // $update=GenerationOrder::where(['order_id'=>$order['order_id']])->update([''=>$arr['orderNo']]);
-        $url=$this->url.'/pay';
-        $res=$this->request($url,$arr);
-        // return $res;
-        // var_dump($res);die;
-        $is_commission=0;
-        // $arr['income_tradeNo']=$params['orderNo'];
-        if($res['code']=='10000'){
-             $update['back_tradeNo']=$res['orderNum'];
-             $update['back_status']=$res['respCode'];
-            if($res['respCode']=="10000"){
-                $update['back_statusDesc']=$res['respMessage'];
-                $update['order_status']='2';
-                // $generation['generation_state']=3;
-                $update['order_platform']=$order['order_pound']-($order['order_money']*$merch['passageway_rate']/100)-$merch['passageway_income'];
-                $is_commission=1;//++++++++++++++++++++++
-                ##记录余额
-                #0在此计划的还款卡余额中增加本次的金额 除去手续费
-                db('reimbur')->where('reimbur_generation',$order['order_no'])->setInc('reimbur_left',$order['order_money']-$order['order_pound']);
-            }else if($res['respCode']=="10002"){
-                //失败推送消息
-                $update['order_status']='4';
-            }else{
-                $update['order_status']='-1';
-            }
-        }else{
-          $update['back_statusDesc']=isset($res['respMessage'])?$res['respMessage']:$res['message'];
-          $update['back_status']='FAIL';
-          $update['order_status']='-1';
-          $generation['generation_state']=-1;
-          // $update['order_buckle']=$rate['item_charges']/100;        
-        }
-        //添加执行记录
-        $res=GenerationOrder::where(['order_id'=>$order['order_id']])->update($update);
-        // 更新卡计划
-        Generation::where(['generation_id'=>$order['order_no']])->update($generation);
-        #更改完状态后续操作
-        // $action=$this->plan_notice($order,$res,$member_info,1,$merch);
     }
     /**
      * 支付回调
@@ -368,7 +288,7 @@
      */
     public function payCallback(){
         $data = file_get_contents("php://input");
-        file_put_contents('huilianpay_callback.txt', $data);
+        file_put_contents('huilianpay_new_callback.txt', $data);
         $pay=GenerationOrder::where(['order_platform_no'=>$data['orderNo']])->find();
         if($data['code']==10000){ //是否处理成功
                 if($data['respCode']==10000){
@@ -430,6 +350,7 @@
         // $member_net=MemberNets::where(['net_member_id'=>$order['order_member']])->find();
         $arr=array(
             'version'=>$this->version,
+            'serviceUri'=>'YQ0003',
             'charset'=>'UTF-8',//编码方式UTF-8
             'agentId'=>$passageway_mech,//受理方预分配的渠道代理商标识
             'merId'=>$member_pas['member_credit_pas_info'],//子商户号
@@ -437,12 +358,13 @@
             'signType'=>"RSA",//签名方式，固定RSA
             'orderNo'=>$order['order_platform_no'],//订单号
             'notifyUrl'=>System::getName('system_url').'/Api/Huilianjinchuang/cashCallback',//异步通知地址
-            // 'returnUrl'=>'', //N(String)   返回地址
-            // 'date'=>date('Ymd',strtotime($order['order_time'])),//N(String)   支付日期，格式:yyyyMMdd
+            'bankCard'=>$card_info['card_bankno'],//银行卡号        str (32)    是   用于代付的银行卡号(信用卡)
+            'bankName'=>$card_info['card_bankname'],//银行名称        str (32)    是   开户银行的行名
+            'Phone'=>$card_info['card_phone'],//手机号    str (11)    是   银行预留手机号
             'amount'=>$order['order_real_get']*100,//金额(分)
         );
         // echo json_encode($arr);
-        $url=$this->url.'/mercPay';
+        $url=$this->url.'/repay';
         $res=$this->request($url,$arr);
         // print_r($res);
         $income['code']=-1;
@@ -455,11 +377,6 @@
                 $income['code']='200';
                 $income['status']="success";
                 $update['order_status']='2';
-                // $generation['generation_state']=3;
-                $update['order_platform']=$order['order_pound']-($order['order_money']*$merch['passageway_rate']/100)-$merch['passageway_income'];
-                ##记录余额
-                #0在此计划的还款卡余额中增加本次的金额 除去手续费
-                db('reimbur')->where('reimbur_generation',$order['order_no'])->setInc('reimbur_left',$order['order_money']-$order['order_pound']);
             }else if($res['respCode']=="10002"){
                 //处理中
                 $update['order_status']='4';
@@ -490,7 +407,7 @@
      */
     public function cashCallback(){
         $data = file_get_contents("php://input");
-        file_put_contents('huiliancash_callback.txt', $data);
+        file_put_contents('huiliancash_new_callback.txt', $data);
         $pay=GenerationOrder::where(['order_platform_no'=>$data['orderNo']])->find();
         if($data['code']==10000){ //是否处理成功
                 if($data['respCode']==10000){
