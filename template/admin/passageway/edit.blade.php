@@ -198,18 +198,6 @@
 
  <script>
  $(".save").click(function(){	
-	if(!$(".passageway_name").val()){
-		 $(".passageway_name").parent().addClass("has-error");
-		 return;
-	 }
-
-	 if($(".passageway_status").val()==1){
-	 	if(!$(".passageway_no").val()){
-		 	$(".passageway_status").parent().addClass("has-error");
-		 	$(".passageway_no").parent().addClass("has-error");
-			 return;
-		 }
-	 }
 	 $("#myform").submit()
  })
  //上传文件设置
