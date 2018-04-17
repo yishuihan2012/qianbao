@@ -362,15 +362,16 @@
             'nonceStr'=>$order['order_platform_no'],//随机字符串，字符范围a-zA-Z0-9
             'signType'=>"RSA",//签名方式，固定RSA
             'orderNo'=>$order['order_platform_no'],//订单号
-            'notifyUrl'=>System::getName('system_url').'/Api/Huilianjinchuang/cashCallback',//异步通知地址
+            'notifyUrl'=>System::getName('system_url').'/Api/Huilianluodi/cashCallback',//异步通知地址
             'bankCard'=>$card_info['card_bankno'],//银行卡号        str (32)    是   用于代付的银行卡号(信用卡)
             'bankName'=>$card_info['card_bankname'],//银行名称        str (32)    是   开户银行的行名
-            'Phone'=>$card_info['card_phone'],//手机号    str (11)    是   银行预留手机号
+            'phone'=>$card_info['card_phone'],//手机号    str (11)    是   银行预留手机号
             'amount'=>$order['order_real_get']*100,//金额(分)
         );
         // echo json_encode($arr);
         $url=$this->url.'/repay';
         $res=$this->request($url,$arr);
+        // echo json_encode($res);die;
         // print_r($res);
         $income['code']=-1;
         $income['status']="FAIL";
@@ -412,7 +413,8 @@
      */
     public function cashCallback(){
         $data = file_get_contents("php://input");
-        file_put_contents('huiliancash_new_ callback.txt', $data);
+        @file_put_contents('huiliancash_new_ callback.txt', json_encode($data));
+        @file_put_contents('huiliancash_new_ callback1.txt', json_encode(parse_str($$data)));
         $pay=GenerationOrder::where(['order_platform_no'=>$data['orderNo']])->find();
         if($data['code']==10000){ //是否处理成功
                 if($data['respCode']==10000){
