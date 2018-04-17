@@ -59,7 +59,6 @@
         //获取通道信息
         $Passageways=Passageway::where(['passageway_id'=>$Passageway])->find();
         $agentId=$Passageways->passageway_mech;
-        var_dump($rate);die;
         $arr=array(
             'version'=>$this->version,
             'serviceUri'=>'SJ0001',
@@ -82,10 +81,10 @@
             'CVN2'=>$card_info['card_Ident'] ,//N(String)   信用卡时必填
             // 'address'=>'',//N(String)    地址
         );
-        // var_dump($arr);die;
+        // echo json_encode($arr);die;
         $url=$this->url.'/repay';
         $res=$this->request($url,$arr);
-        var_dump($res);die;
+        // echo json_encode($res);die;
         // return $res;
         if( isset($res['code']) && $res['code']=='10000' &&  isset($res['respCode']) && $res['respCode']=='10000' && $res['merId']){ //成功存储商户号
             $update[$Passageways->passageway_no]=$res['merId'];
@@ -154,80 +153,57 @@
         return $res;
         // print_r($res);die;
     }
-    /**
-     * 协议申请
-     * @return [type] [description]
-     */
-    public function treatyApply(){
-        // echo 1;die;
-        $params=input('');
-        $arr=array(
-            'version'=>$this->version,// M(String)   1.0
-            'charset'=>'UTF-8',// M(String)   编码方式UTF-8
-            'agentId'=>$params['agentid'],// M(String)   受理方预分配的渠道代理商标识
-            'nonceStr'=>make_rand_code(),// M(String)   随机字符串，字符范围a-zA-Z0-9
-            'signType'=>'RSA',//    M(String)   签名方式，固定RSA
-            'orderNo'=>make_rand_code(),// M(String)   本次请求订单号
-            'idcard'=>$params['card_idcard'], //M(String)   证件号码（暂只支持身份证）
-            'name'=>$params['card_name'],// M(String)   姓名
-            'phone'=>$params['phone'],// M(String)   手机号
-            'bankCard'=>$params['creditCardNo'],// M(String)   银行卡号
-            'bankName'=>$params['bank_name'],//M(String)   开户行名称
-            'expDate'=>substr($params['expireDate'], 0,2).'-'.substr($params['expireDate'], 2,2),
-            'CVN2'=>$params['cvv'],
+    
+    public function card_bind($agentId,$merId,$phone,$bankCard,$order_no){
+        $data=array(
+            'serviceUri'=>'YQ0001',//交易代码      str (8) 是   YQ0001
+            'charset'=>'UTF-8',//编码格式     str (8) 是   UTF-8
+            'signType'=>'RSA',//签名方式        str (8)     是   RSA
+            'nonceStr'=>make_rand_code(),//随机字符串   nonceStr    str (32)    是   随机字符串
+            'agentId'=>$agentId,//代理商号     str (8) 是   受理方预分配的渠道代理商标识
+            'merId'=>$merId,//商户号    str (10)    是   进件返回的merId
+            'orderNo'=>make_rand_code(),//订单号 orderNo str (32)    是   商户交易订单号
+            'phone'=>$phone,//手机号码       str (11)    是   银行预留手机号
+            'bankCard'=>$bankCard,//银行卡号        str (32)    是   用于支付的银行卡号(信用卡)
+            'notifyUrl'=>System::getName('system_url').'/Api/Huilianluodi/card_bind_notify',//通知地址       str (256)   是   异步通知地址
         );
-        // var_dump($arr);die;
-        $url=$this->url.'/treatyApply';
+        echo json_encode($data);
+        $url=$this->url.'/repay';
         $res=$this->request($url,$arr);
-        // var_dump($res);die;
-        //错误 $res['message']
-        if(isset($res['respCode']) && $res['respCode']==10000){
-            $return['code']=200;
-            $return['orderNo']=$res['orderNo'];
-            $return['msg']='短信发送成功';
-        }else{
-            $return['code']=-1;
-            $return['orderNo']='';
-            $return['msg']=isset($res['respMessage'])?$res['respMessage']:$res['message'];
-        }
-        return $return;
-    }
-    /**
-     * 协议确定
-     * @return [type] [description]
-     */
-    public function treatyConfirm(){
-        $params=input('');
-        $arr=array(
-            'version'=>$this->version,// M(String)   1.0
-            'charset'=>'UTF-8',//编码方式UTF-8
-            'agentId'=>$params['agentid'],// M(String)   受理方预分配的渠道代理商标识
-            'nonceStr'=>make_rand_code(),//M(String)   随机字符串，字符范围a-zA-Z0-9
-            'signType'=>'RSA',// M(String)   签名方式，固定RSA
-            'orderNo'=>$params['orderNo'],//N(String)   申请协议的订单号
-            'authCode'=>$params['smsCode'],//    N(String)   手机发送的验证码
-        );
-        // var_dump($arr);
-        $url=$this->url.'/treatyConfirm';
-        $res=$this->request($url,$arr);
-        if(isset($res['respCode']) && $res['respCode']==10000){
-            $res=MemberCreditPas::where(['member_credit_pas_creditid'=>$params['cardid'],'member_credit_pas_pasid'=>$params['passageway_id']])->update(['member_credit_pas_smsseq'=>$res['treatyId']]);
+        echo json_encode($res);die;
+        if(isset($res['code']) && $res['code']=='10000' &&  isset($res['respCode']) && $res['respCode']=='10000'){ 
+            $res=MemberCreditPas::where(['member_credit_pas_creditid'=>$params['cardid'],'member_credit_pas_pasid'=>$params['passageway_id']])->update(['member_credit_pas_status'=>1]);
             if($res){
-                $return['code']=200;
-                // $return['orderNo']='';
+                $return['code']='200';
                 $return['msg']='签约成功';
             }else{
                 $return['code']='-1';
-                // $return['orderNo']='';
-                $return['msg']='签约失败，请重新签约';
-            }   
-            
+                $return['msg']='签约失败，请重试。';
+            }
         }else{
-            $return['code']=-1;
-            // $return['orderNo']='';
-            $return['msg']=isset($res['respMessage'])?$res['respMessage']:$res['message'];
+            $return['code']='-1';
+            $return['msg']=isset($res['respMessage'])? $res['respMessage']:$res['message'];
         }
         return $return;
+
+    }
+    public function card_bind_notify(){
+        $params=input('');
+        file_put_contents('huilian_new.txt',json_encode($params));
+
+        if(isset($params['code']) && $params['code']=='10000' &&  isset($params['respCode']) && $params['respCode']=='10000'){ 
+            $res=MemberCreditPas::where(['member_credit_pas_creditid'=>$params['cardid'],'member_credit_pas_pasid'=>$params['passageway_id']])->update(['member_credit_pas_status'=>1]);
+            if($res){
+                $return['code']='200';
+                $return['msg']='签约成功';
+            }else{
+                $return['code']='-1';
+                $return['msg']='签约失败，请重试。';
+            }
+        }else{
+            $return['code']='-1';
+            $return['msg']=isset($params['respMessage'])? $params['respMessage']:$params['message'];
+        }
     }
     /**
      * 支付请求
