@@ -298,6 +298,7 @@
     public function payCallback(){
         $data = file_get_contents("php://input");
         file_put_contents('huilianpay_new_callback.txt',json_encode($data));
+        @file_put_contents('huiliancash_new_callback1.txt', json_encode(parse_str($data)));
         $pay=GenerationOrder::where(['order_platform_no'=>$data['orderNo']])->find();
         if($data['code']==10000){ //是否处理成功
                 if($data['respCode']==10000){
@@ -413,8 +414,9 @@
      */
     public function cashCallback(){
         $data = file_get_contents("php://input");
-        @file_put_contents('huiliancash_new_ callback.txt', json_encode($data));
-        @file_put_contents('huiliancash_new_ callback1.txt', json_encode(parse_str($$data)));
+         @file_put_contents('huiliancash_new_callbac.txt', $data);
+        @file_put_contents('huiliancash_new_callback.txt', json_encode($data));
+        @file_put_contents('huiliancash_new_callback1.txt', json_encode(parse_str($data)));
         $pay=GenerationOrder::where(['order_platform_no'=>$data['orderNo']])->find();
         if($data['code']==10000){ //是否处理成功
                 if($data['respCode']==10000){
