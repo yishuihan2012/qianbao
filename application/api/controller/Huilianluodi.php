@@ -90,15 +90,20 @@
             $update[$Passageways->passageway_no]=$res['merId'];
             $has=MemberNets::where(['net_member_id'=>$card_info['card_member_id']])->update($update);
              if($has){
-                return $res['merId'];
+                $return['code']='200';
+                $return['msg']='入网成功';
+                $return['merId']=$res['merId'];
             }else{
-                return false;
+                $return['code']='-1';
+                $return['msg']=isset($res['respMessage'])? $res['respMessage']:$res['message'];
             }
 
         }else{
-            return false;
+            $return['code']='-1';
+            $return['msg']="商户入网失败";
+            
         }
-       // echo json_encode($res);die;
+        return $return;
     }
     /**
      * 重新进件
@@ -155,7 +160,8 @@
     }
     
     public function card_bind($agentId,$merId,$phone,$bankCard,$order_no){
-        $data=array(
+       $data=array(
+            'version'=>$this->version,
             'serviceUri'=>'YQ0001',//交易代码      str (8) 是   YQ0001
             'charset'=>'UTF-8',//编码格式     str (8) 是   UTF-8
             'signType'=>'RSA',//签名方式        str (8)     是   RSA
@@ -167,19 +173,14 @@
             'bankCard'=>$bankCard,//银行卡号        str (32)    是   用于支付的银行卡号(信用卡)
             'notifyUrl'=>System::getName('system_url').'/Api/Huilianluodi/card_bind_notify',//通知地址       str (256)   是   异步通知地址
         );
-        echo json_encode($data);
+        // echo json_encode($data);
         $url=$this->url.'/repay';
-        $res=$this->request($url,$arr);
-        echo json_encode($res);die;
-        if(isset($res['code']) && $res['code']=='10000' &&  isset($res['respCode']) && $res['respCode']=='10000'){ 
-            $res=MemberCreditPas::where(['member_credit_pas_creditid'=>$params['cardid'],'member_credit_pas_pasid'=>$params['passageway_id']])->update(['member_credit_pas_status'=>1]);
-            if($res){
-                $return['code']='200';
-                $return['msg']='签约成功';
-            }else{
-                $return['code']='-1';
-                $return['msg']='签约失败，请重试。';
-            }
+        $res=$this->request($url,$data);
+        // echo json_encode($res);die;
+        if(isset($res['code']) && $res['code']=='10000' &&  isset($res['respCode']) && $res['respCode']=='10000' && $res['url']){ 
+            $return['code']='200';
+            $return['msg']='第一次使用请先签约快捷支付';
+            $return['url']=$res['url'];
         }else{
             $return['code']='-1';
             $return['msg']=isset($res['respMessage'])? $res['respMessage']:$res['message'];

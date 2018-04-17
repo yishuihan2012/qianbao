@@ -284,10 +284,10 @@ class Userurl extends Controller
             if(!$member_net[$passageway->passageway_no]){ //没有入网
                 $res=$huilian_new->income($this->param['passageway'],$this->param['cardId']);
                 // var_dump($res);die;
-                if($res){
-                    $merId=$res;
+                if($res['code']=='200'){
+                    $merId=$res['merId'];
                 }else{
-                     $this->assign('data','商户入网失败，请重试。');
+                     $this->assign('data',$res['msg']);
                       return view("Userurl/show_error");die;
                 }
             }else{
@@ -306,6 +306,12 @@ class Userurl extends Controller
             }
             if(!$has['member_credit_pas_status']){ //信用卡有没有签约
                 $res=$huilian_new->card_bind($passageway->passageway_mech,$merId,$MemberCreditcard->card_phone,$MemberCreditcard->card_bankno,$order_no);
+                if($res['code']=='200'){
+                    return redirect($res['url']);
+                }else{
+                    $this->assign('data',$res['msg']);
+                    return view("Userurl/show_error");die;
+                }
                 //return redirect('Userurl/signed_huilian_background', ['passageway_id' =>$param['passageway'],'cardId'=>$param['cardId'],'order_no'=>$order_no]);
             }
 
