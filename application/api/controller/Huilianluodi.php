@@ -208,18 +208,23 @@
      * @return [type] [description]
      */
     public function pay($value,$passageway_mech){
-        //$agentId='1001034',$merId='9000103058',$treatyId='30000005270640',$orderNo='60M94JPS'
+        #1获取卡信息
         $card_info=MemberCreditcard::where(['card_bankno'=>$value['order_card']])->find();
+
+        #2获取通道信息
+        $merch=Passageway::where(['passageway_id'=>$value['order_passageway']])->find();
+        //查询子商户号
+        $Membernet=Membernet::where(['net_member_id'=>$value['order_member']])->find();
+        $merId=$Membernet[$merch->passageway_no];
         $member_pas=MemberCreditPas::where(['member_credit_pas_pasid'=>$value['order_passageway'],'member_credit_pas_creditid'=>$card_info['card_id']])->find();
         //查询上次刷卡费率是否和这次一样，不一样需要变更费率。
         $order=GenerationOrder::where(['order_type'=>1])->where('order_no','lt',$value['order_no'])->order('order_id desc')->find();
         if($order['user_rate'] !=$value['user_rate']){//重新报备
             $arr['rate']=$value['user_rate']*100;
-            $res=$this->reincome($passageway_mech,$member_pas['member_credit_pas_info'],$arr);
+            // $res=$this->reincome($passageway_mech,$member_pas['member_credit_pas_info'],$arr);
         }
         $member_base=Member::where(['member_id'=>$value['order_member']])->find(); 
-        #2获取通道信息
-        $merch=Passageway::where(['passageway_id'=>$value['order_passageway']])->find();
+        
         //订单号
         if(!$value['order_platform_no'] || $value['order_status']!=1){
             $update_order['order_platform_no']=$value['order_platform_no']=uniqid();
@@ -235,7 +240,7 @@
             'serviceUri'=>'YQ0002',
             'charset'=>'UTF-8',// M(String)   编码方式UTF-8
             'agentId'=>$passageway_mech ,//M(String)   受理方预分配的渠道代理商标识
-            'merId'=>$member_pas['member_credit_pas_info'],// M(String)   子商户号
+            'merId'=>$merId,// M(String)   子商户号
             'nonceStr'=>make_rand_code(),// M(String)   随机字符串，字符范围a-zA-Z0-9
             'signType'=>'RSA',//  M(String)   签名方式，固定RSA
             'orderNo'=>$value['order_platform_no'],// M(String)   订单号
@@ -325,15 +330,11 @@
     public function qfpay($order,$passageway_mech){
         $card_info=MemberCreditcard::where(['card_bankno'=>$order['order_card']])->find();
 
-        // $member_info=Member::where(['member_id'=>$order['order_member']])->find();
-
-        // $bank_name=mb_substr($card_info['card_bankname'],-4,2);
-
-        $member_pas=MemberCreditPas::where(['member_credit_pas_pasid'=>$order['order_passageway'],'member_credit_pas_creditid'=>$card_info['card_id']])->find();
-        // echo $bank_name;die;
-        // $BankInfo=BankInfo::where('info_sortname','like','%'.$bank_name.'%')->find();
-        // $expDate=$card_info['card_expireDate'];
         $merch=Passageway::where(['passageway_id'=>$order['order_passageway']])->find();
+         //查询子商户号
+        $Membernet=Membernet::where(['net_member_id'=>$value['order_member']])->find();
+        $merId=$Membernet[$merch->passageway_no];
+
         $member_base=Member::where(['member_id'=>$order['order_member']])->find();
         // $rate=PassagewayItem::where(['item_passageway'=>$order['order_passageway'],'item_group'=>$member_info['member_group_id']])->find();
         if(!$order['order_platform_no'] || $order['order_status']!=1){
@@ -344,7 +345,7 @@
         $order_last=GenerationOrder::where(['order_type'=>1])->where('order_no','lt',$order['order_no'])->order('order_id desc')->find();
         if($order_last['user_fix'] !=$order['user_fix']){//重新报备
             $arr['extraFee']=$order['user_fix']*100;
-            $res=$this->reincome($passageway_mech,$member_pas['member_credit_pas_info'],$arr);
+            // $res=$this->reincome($passageway_mech,$member_pas['member_credit_pas_info'],$arr);
         }
         //获取用户入网信息
         // $member_net=MemberNets::where(['net_member_id'=>$order['order_member']])->find();
@@ -353,7 +354,7 @@
             'serviceUri'=>'YQ0003',
             'charset'=>'UTF-8',//编码方式UTF-8
             'agentId'=>$passageway_mech,//受理方预分配的渠道代理商标识
-            'merId'=>$member_pas['member_credit_pas_info'],//子商户号
+            'merId'=>$merId,//子商户号
             'nonceStr'=>$order['order_platform_no'],//随机字符串，字符范围a-zA-Z0-9
             'signType'=>"RSA",//签名方式，固定RSA
             'orderNo'=>$order['order_platform_no'],//订单号
@@ -407,7 +408,7 @@
      */
     public function cashCallback(){
         $data = file_get_contents("php://input");
-        file_put_contents('huiliancash_new_callback.txt', $data);
+        file_put_contents('huiliancash_new_ callback.txt', $data);
         $pay=GenerationOrder::where(['order_platform_no'=>$data['orderNo']])->find();
         if($data['code']==10000){ //是否处理成功
                 if($data['respCode']==10000){
