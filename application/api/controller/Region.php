@@ -134,13 +134,14 @@
             $result=[
               'ident_id'=>1,
               'ident_name'=>$result['data']['identBankName'],
-              'ident_type'=>$result['data']['identType'],
+              'ident_type'=>2,
               'ident_desc'=>$result['data']['identDesc'],
-              'ident_code'=>$result['data']['identCode'],
+              'ident_code'=>intval($result['data']['identCode']),
             ];
              #将银行卡识别次数加1
-             $memberSetInc=BankIdent::where(['ident_code'=>$fixcard])->setInc('ident_count');
+             // $memberSetInc=BankIdent::where(['ident_code'=>$fixcard])->setInc('ident_count');
              return ['code'=>200, 'msg'=>'银行卡识别成功', 'data'=>$result];
+             // return json_encode(['code'=>200, 'msg'=>'银行卡识别成功', 'data'=>$result]);
           }else{
              return ['code'=>445];
           }
