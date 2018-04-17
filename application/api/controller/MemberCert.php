@@ -289,7 +289,7 @@
                      'card_type'          =>$card_validate['data']['bankCardBin']['cardTy'] ?? 0,
                      'card_bankid'        => $card_validate['data']['bankCardBin']['bankId'] ?? 0,
                      'card_binstart'       => $card_validate['data']['bankCardBin']['binStat'] ?? 0,
-                     'card_channel'       => $card_validate['data']['channel'],
+                     'card_channel'       => $card_validate['data']['channel'] ?? '',
                      'card_state'          => '1',
                      'card_return'        =>json_encode($card_validate),
                 ]);
