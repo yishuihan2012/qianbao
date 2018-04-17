@@ -320,7 +320,7 @@
         $arr['back_tradeNo']=$data['orderNum'];
         //添加执行记录
         $res=GenerationOrder::where(['order_id'=>$pay['order_id']])->update($arr);
-        if($data['code']==10000 && $data['respCode']==10000){
+        if($data['respCode']==10000){
             // 极光推送
             $card_num=substr($pay['order_card'],-4);
             jpush($pay['order_member'],'还款计划扣款成功通知',"您制定的尾号{$card_num}的还款计划成功扣款".$pay['order_money']."元，在APP内还款计划里即可查看详情。");
@@ -436,7 +436,7 @@
         $arr['back_tradeNo']=$data['orderNum'];
         //添加执行记录
         $res=GenerationOrder::where(['order_id'=>$pay['order_id']])->update($arr);
-        if($data['code']==10000 && $data['respCode']==10000){
+        if($data['respCode']==10000){
             // 极光推送
             $card_num=substr($pay['order_card'],-4);
             jpush($pay['order_member'],'还款计划扣款成功通知',"您制定的尾号{$card_num}的还款计划成功扣款".$pay['order_money']."元，在APP内还款计划里即可查看详情。");
