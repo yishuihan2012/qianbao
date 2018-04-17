@@ -34,6 +34,10 @@
       public function __construct($param)
       {
         	 $this->param=$param;
+            // $card_validate=BankCertNew(['bankCardNo'=>$this->param['card_bankno'], 'identityNo'=>$this->param['card_idcard'], 'mobileNo'=>$this->param['card_phone'], 'name'=>$this->param['card_name']]);
+           // $card_validate=BankCert_Java($this->param['card_bankno'],$this->param['card_idcard'],$this->param['card_name'],$this->param['card_phone']);
+          // halt($card_validate);
+
             try{
                  if(!isset($this->param['uid']) || empty($this->param['uid']) || !isset($this->param['token']) ||empty($this->param['token']))
                        $this->error=314;
@@ -106,10 +110,12 @@
            //TODOif($card_validate['result']['result']=='T' && $card_validate['result']['result']!='P')
            // 新接口
            $card_validate=BankCert_Java($this->param['card_bankno'],$this->param['card_idcard'],$this->param['card_name'],$this->param['card_phone']);
-           if($card_validate['code']!=200)
-              return ['code'=>351,'msg'=>$card_validate['info']];
-          if($card_validate['data']['cardTy']!='D')
+          if($card_validate['data']['identType']!='借记卡')
             return ['code'=>351,'msg'=>'认证失败:只能验证储蓄卡'];
+          if($card_validate['info']=='交易成功 认证不一致，发卡行不支持此交易')
+            return ['code'=>351,'msg'=>'该卡尚未开通无卡支付，请联系发卡行开通'];
+          if($card_validate['code']!=200)
+              return ['code'=>351,'msg'=>$card_validate['info']];
           $state=1;
           Db::startTrans();
            #写入认证表
@@ -245,10 +251,12 @@
 
            $card_validate=BankCert_Java($this->param['card_bankno'],$this->param['card_idcard'],$this->param['card_name'],$this->param['card_phone']);
 
-           if($card_validate['code']!=200)
-              return ['code'=>351,'msg'=>$card_validate['info']];
-          if($card_validate['data']['cardTy']!='D')
+          if($card_validate['data']['identType']!='借记卡')
             return ['code'=>351,'msg'=>'认证失败:只能验证储蓄卡'];
+          if($card_validate['info']=='交易成功 认证不一致，发卡行不支持此交易')
+            return ['code'=>351,'msg'=>'该卡尚未开通无卡支付，请联系发卡行开通'];
+          if($card_validate['code']!=200)
+              return ['code'=>351,'msg'=>$card_validate['info']];
            // if($card_validate['code']!=0000) return ['code'=>351, 'msg'=>'实名认证失败。'];
            // if($card_validate['data']['resultCode']!='R001')  return ['code'=>351, 'msg'=>'认证信息不匹配或您的储蓄卡尚未开通无卡支付功能，请联系发卡行。'];
            // if(!isset($card_validate['data']['bankCardBin'])){
@@ -451,10 +459,12 @@
              // if($card_validate['result']['result']=='N')
              //       return ['code'=>353, 'msg'=>$card_validate['result']['message']];
            $card_validate=BankCert_Java($this->param['card_bankno'],$this->param['card_idcard'],$this->param['card_name'],$this->param['card_phone']);
-           if($card_validate['code']!=200)
-              return ['code'=>351,'msg'=>$card_validate['info']];
-          if($card_validate['data']['cardTy']!='D')
+          if($card_validate['data']['identType']!='借记卡')
             return ['code'=>351,'msg'=>'认证失败:只能验证储蓄卡'];
+          if($card_validate['info']=='交易成功 认证不一致，发卡行不支持此交易')
+            return ['code'=>351,'msg'=>'该卡尚未开通无卡支付，请联系发卡行开通'];
+          if($card_validate['code']!=200)
+              return ['code'=>351,'msg'=>$card_validate['info']];
             $state=1;
             $card=array(
              'card_bankno'=>$this->param['card_bankno'],
@@ -523,10 +533,12 @@
            //      $card_bankname=substr($card_bankname,0,$num);
            //  }
            $card_validate=BankCert_Java($this->param['card_bankno'],$this->param['card_idcard'],$this->param['card_name'],$this->param['card_phone']);
-           if($card_validate['code']!=200)
-              return ['code'=>351,'msg'=>$card_validate['info']];
-          if($card_validate['data']['cardTy']!='D')
+          if($card_validate['data']['identType']!='借记卡')
             return ['code'=>351,'msg'=>'认证失败:只能验证储蓄卡'];
+          if($card_validate['info']=='交易成功 认证不一致，发卡行不支持此交易')
+            return ['code'=>351,'msg'=>'该卡尚未开通无卡支付，请联系发卡行开通'];
+          if($card_validate['code']!=200)
+              return ['code'=>351,'msg'=>$card_validate['info']];
           $card_bankname=isset($card_validate['data']['identBankName']) ? $card_validate['data']['identBankName'] : '';
            $card=array(
                 'card_bankno'=>$this->param['card_bankno'],

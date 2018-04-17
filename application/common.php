@@ -220,7 +220,8 @@ function encryption($str, $salt, $method='md5')
  function BankCertNew($data=array(), $method='GET')
  {
      $headers = array();
-     array_push($headers, "Authorization:APPCODE " . System::getName('appcode'));
+     // array_push($headers, "Authorization:APPCODE " . System::getName('appcode'));
+     array_push($headers, "Authorization:APPCODE " .'d04d00f17ddd430abc630269b4c30324');
      $url = System::getName('certhost') . System::getName('path') . "?" . http_build_query($data);
      $curl = curl_init();
      curl_setopt($curl, CURLOPT_CUSTOMREQUEST, $method);
@@ -264,10 +265,9 @@ function BankCert_Java($bankCard='',$personCard='',$personName='',$personPhone='
         'personName'=>$personName,//  姓名 是  [string]    
         'personPhone'=>$personPhone,// 预留手机号 是  [string] 
     );
-    halt($data);
-    $res=curl_post($url,'post',json_encode($data),$header); 
-    halt($res);
-    echo $res;die;
+    $res=curl_post($url,'post',json_encode($data),$header);
+    // echo $res;die;
+    return json_decode($res,1);
 }
 
  //-----------------------------------------------------------

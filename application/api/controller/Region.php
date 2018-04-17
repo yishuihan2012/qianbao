@@ -133,10 +133,10 @@
           if($result['code']==200 && $result['data']){
             $result=[
               'ident_id'=>1,
-              'ident_name'=>$result['identBankName'],
-              'ident_type'=>$result['identType'],
-              'ident_desc'=>$result['identDesc'],
-              'ident_code'=>$result['identCode'],
+              'ident_name'=>$result['data']['identBankName'],
+              'ident_type'=>$result['data']['identType'],
+              'ident_desc'=>$result['data']['identDesc'],
+              'ident_code'=>$result['data']['identCode'],
             ];
              #将银行卡识别次数加1
              $memberSetInc=BankIdent::where(['ident_code'=>$fixcard])->setInc('ident_count');
