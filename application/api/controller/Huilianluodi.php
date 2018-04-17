@@ -214,7 +214,7 @@
         #2获取通道信息
         $merch=Passageway::where(['passageway_id'=>$value['order_passageway']])->find();
         //查询子商户号
-        $Membernet=Membernet::where(['net_member_id'=>$value['order_member']])->find();
+        $Membernet=MemberNets::where(['net_member_id'=>$value['order_member']])->find();
         $merId=$Membernet[$merch->passageway_no];
         $member_pas=MemberCreditPas::where(['member_credit_pas_pasid'=>$value['order_passageway'],'member_credit_pas_creditid'=>$card_info['card_id']])->find();
         //查询上次刷卡费率是否和这次一样，不一样需要变更费率。
@@ -332,7 +332,7 @@
 
         $merch=Passageway::where(['passageway_id'=>$order['order_passageway']])->find();
          //查询子商户号
-        $Membernet=Membernet::where(['net_member_id'=>$value['order_member']])->find();
+        $Membernet=MemberNets::where(['net_member_id'=>$value['order_member']])->find();
         $merId=$Membernet[$merch->passageway_no];
 
         $member_base=Member::where(['member_id'=>$order['order_member']])->find();
