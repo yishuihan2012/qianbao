@@ -1517,6 +1517,7 @@ class Userurl extends Controller
         
     }else{
          $return['code']=101;
+         $return['msg']=isset($res['epaypp_wc_trade_express_verifycode_submit_response']['sub_msg'])?$res['epaypp_wc_trade_express_verifycode_submit_response']['sub_msg']:$res['epaypp_wc_trade_express_verifycode_submit_response']['result_code_msg'];
     }
     return $return;
   }
