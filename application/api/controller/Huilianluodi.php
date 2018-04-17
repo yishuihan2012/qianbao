@@ -333,7 +333,7 @@
 
         $merch=Passageway::where(['passageway_id'=>$order['order_passageway']])->find();
          //查询子商户号
-        $Membernet=MemberNets::where(['net_member_id'=>$value['order_member']])->find();
+        $Membernet=MemberNets::where(['net_member_id'=>$order['order_member']])->find();
         $merId=$Membernet[$merch->passageway_no];
 
         $member_base=Member::where(['member_id'=>$order['order_member']])->find();
