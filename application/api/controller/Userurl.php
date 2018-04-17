@@ -277,6 +277,25 @@ class Userurl extends Controller
        //判断是否签约
        $MemberCreditcard=MemberCreditcard::where(['card_id'=>$param['cardId']])->find();
        //判断哪个通道
+       if($passageway['passageway_method']=='huilian_new'){//汇联新的落地商户
+            $huilian_new= new \app\api\controller\Huilianluodi();
+            #1判断是否签约
+            $member_net=MemberNet::where(['net_member_id'=>$param['uid']])->find();
+            if(!$member_net[$passageway->passageway_no]){ //没有入网
+                $res=$huilian_new->income($this->param['passageway'],$this->param['cardId']);
+                var_dump($res);die;
+                if($res){
+                    $merId=$res;
+                }else{
+                     $this->assign('data','商户入网失败，请重试。');
+                      return view("Userurl/show_error");die;
+                }
+            }else{
+                $merId=$member_net[$passageway->passageway_no];
+            }
+            #2判断是否入网
+            #3判断是否需要修改费率
+       }
        if($passageway['passageway_method']=='huilian_income'){ //汇联落地商户
             $is_auto_qf=1; //自动代付
             #1判断有没有进件
