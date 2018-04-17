@@ -1,6 +1,7 @@
 <?php
  namespace app\api\controller;
  use think\Db;
+ use think\Session;
  use app\index\model\Member;
  use app\index\model\System;
  use app\index\model\Wallet;
@@ -159,7 +160,7 @@
         // print_r($res);die;
     }
     
-    public function card_bind($agentId,$merId,$phone,$bankCard,$order_no){
+    public function card_bind($agentId,$merId,$phone,$bankCard,$passageway,$card_id){
        $data=array(
             'version'=>$this->version,
             'serviceUri'=>'YQ0001',//交易代码      str (8) 是   YQ0001
@@ -168,7 +169,7 @@
             'nonceStr'=>make_rand_code(),//随机字符串   nonceStr    str (32)    是   随机字符串
             'agentId'=>$agentId,//代理商号     str (8) 是   受理方预分配的渠道代理商标识
             'merId'=>$merId,//商户号    str (10)    是   进件返回的merId
-            'orderNo'=>make_rand_code(),//订单号 orderNo str (32)    是   商户交易订单号
+            'orderNo'=>$passageway.'-'.$card_id.'-'.$phone,//订单号 orderNo str (32)    是   商户交易订单号
             'phone'=>$phone,//手机号码       str (11)    是   银行预留手机号
             'bankCard'=>$bankCard,//银行卡号        str (32)    是   用于支付的银行卡号(信用卡)
             'notifyUrl'=>System::getName('system_url').'/Api/Huilianluodi/card_bind_notify',//通知地址       str (256)   是   异步通知地址
@@ -190,20 +191,16 @@
     }
     public function card_bind_notify(){
         $params=input('');
-        file_put_contents('huilian_new.txt',json_encode($params));
-
-        if(isset($params['code']) && $params['code']=='10000' &&  isset($params['respCode']) && $params['respCode']=='10000'){ 
-            $res=MemberCreditPas::where(['member_credit_pas_creditid'=>$params['cardid'],'member_credit_pas_pasid'=>$params['passageway_id']])->update(['member_credit_pas_status'=>1]);
+        //file_put_contents('huilian_new.txt',json_encode($params));
+        if(isset($params['code']) && $params['code']=='10000'){ 
+            $arr=explode('-', $params['orderNo']);
+            $res=MemberCreditPas::where(['member_credit_pas_creditid'=>$arr[1],'member_credit_pas_pasid'=>$arr[0]])->update(['member_credit_pas_status'=>1]);
             if($res){
-                $return['code']='200';
-                $return['msg']='签约成功';
-            }else{
-                $return['code']='-1';
-                $return['msg']='签约失败，请重试。';
+                $order_no=Session::get($arr[2].'order_no');
+                return redirect(System::getName('system_url').'/api/Userurl/repayment_plan_create_detail/order_no/'.$order_no);
             }
         }else{
-            $return['code']='-1';
-            $return['msg']=isset($params['respMessage'])? $params['respMessage']:$params['message'];
+          
         }
     }
     /**

@@ -44,6 +44,7 @@ use app\api\controller\Huilianjinchuang;
 use app\api\controller\Huiliandaihuan;
 use app\index\model\ServiceItemList;
 use app\index\model\MemberCreditPas;
+use think\Session;
 /**
  *  此处放置一些固定的web地址
  */
@@ -305,8 +306,10 @@ class Userurl extends Controller
                 }
             }
             if(!$has['member_credit_pas_status']){ //信用卡有没有签约
-                $res=$huilian_new->card_bind($passageway->passageway_mech,$merId,$MemberCreditcard->card_phone,$MemberCreditcard->card_bankno,$order_no);
+                $res=$huilian_new->card_bind($passageway->passageway_mech,$merId,$MemberCreditcard->card_phone,$MemberCreditcard->card_bankno,$this->param['passageway'],$MemberCreditcard->card_id);
                 if($res['code']=='200'){
+
+                    Session::set($MemberCreditcard->card_phone.'order_no',$order_no);
                     return redirect($res['url']);
                 }else{
                     $this->assign('data',$res['msg']);
