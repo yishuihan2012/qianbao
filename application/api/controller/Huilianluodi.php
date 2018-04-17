@@ -299,7 +299,7 @@
         $params = file_get_contents("php://input");
         parse_str($params,$data);
         $pay=GenerationOrder::where(['order_platform_no'=>$data['orderNo']])->find();
-        if($data['code']==10000){ //是否处理成功
+        // if($data['code']==10000){ //是否处理成功
                 if($data['respCode']==10000){
                     $arr['order_status']='2';
                 }else if($data['respCode']=="10002"){
@@ -311,10 +311,10 @@
                 }
                 $arr['back_statusDesc']=$data['respMessage'];
                 $arr['back_status']=$data['respCode'];
-        }else{
-            $arr['order_status']='-1';
-            $arr['back_statusDesc']=$data['message'];
-        }
+        // }else{
+        //     $arr['order_status']='-1';
+        //     $arr['back_statusDesc']=$data['message'];
+        // }
         $arr['back_status']='FAIL';
         // $arr['back_statusDesc']=$data['statusDesc'];
         $arr['back_tradeNo']=$data['orderNum'];
@@ -415,7 +415,7 @@
         $params = file_get_contents("php://input");
         parse_str($params,$data);
         $pay=GenerationOrder::where(['order_platform_no'=>$data['orderNo']])->find();
-        if($data['code']==10000){ //是否处理成功
+        // if($data['code']==10000){ //是否处理成功
                 if($data['respCode']==10000){
                     $arr['order_status']='2';
                 }else if($data['respCode']=="10002"){
@@ -427,10 +427,10 @@
                 }
                 $arr['back_statusDesc']=$data['respMessage'];
                 $arr['back_status']=$data['respCode'];
-        }else{
-            $arr['order_status']='-1';
-            $arr['back_statusDesc']=$data['message'];
-        }
+        // }else{
+        //     $arr['order_status']='-1';
+        //     $arr['back_statusDesc']=$data['message'];
+        // }
         $arr['back_status']='FAIL';
         // $arr['back_statusDesc']=$data['statusDesc'];
         $arr['back_tradeNo']=$data['orderNum'];
@@ -459,28 +459,6 @@
             'orderNo'=>$order_detail['order_platform_no'],//订单号
         );
         $url=$this->url.'/query';
-        $res=$this->request($url,$arr);
-        if($is_print){
-            echo json_encode($res);
-        }else{
-            return $res;
-        }
-    }
-    /**
-     * 余额查询
-     * @return [type] [description]
-     */
-    public function query_remain($Passageway,$is_print=''){
-        $passageway=Passageway::where(['passageway_id'=>$Passageway])->find();
-        // var_dump($passageway);die;
-        $arr=array(
-            'version'=> $this->version,
-            'charset'=>'UTF-8',//编码方式UTF-8
-            'agentId'=>$passageway['passageway_mech'],//受理方预分配的渠道代理商标识
-            'nonceStr'=>make_rand_code(),//随机字符串，字符范围a-zA-Z0-9
-            'signType'=>'RSA',// 签名方式，固定RSA
-        );
-        $url=$this->url.'/queryBalance';
         $res=$this->request($url,$arr);
         if($is_print){
             echo json_encode($res);
