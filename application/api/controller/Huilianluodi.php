@@ -256,10 +256,10 @@
             // 'cityCode'=>'',//城市编码        str (8) 否   
             // 'caregoryUnion'=>'',//银联行业类型     str (8) 否   
         );
-        echo json_encode($data);
+        // echo json_encode($data);
         $url=$this->url.'/repay';
         $res=$this->request($url,$data);
-        echo json_encode($res);die;
+        // echo json_encode($res);die;
         $income['code']=-1;
         $income['back_status']=$income['status']='FAIL';
         $is_commission=0;
