@@ -326,6 +326,7 @@ use app\index\model\Member;
                 $datas = substr($datas, 0, strpos($datas, '}') + 1);
                 // file_put_contents("payCallback.txt", $datas);
                 $resul = json_decode($datas, true);
+                $arr['back_tradeNo']=$resul['tradeNo'];
                 $arr['back_status']=$resul['status'];
                 $arr['back_statusDesc']=$resul['statusDesc'];
                 if($resul['status']=="SUCCESS"){
@@ -523,6 +524,7 @@ use app\index\model\Member;
                 $datas = substr($datas, 0, strpos($datas, '}') + 1);
                 // file_put_contents("cashCallback.txt", $datas);
                 $resul = json_decode($datas,true);
+                $arr['back_tradeNo']=$resul['tradeNo'];
                 $arr['back_status']=$resul['status'];
                 $arr['back_statusDesc']=$resul['statusDesc'];
                 if($resul['status']=="SUCCESS"){
