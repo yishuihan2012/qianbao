@@ -220,8 +220,8 @@ function encryption($str, $salt, $method='md5')
  function BankCertNew($data=array(), $method='GET')
  {
      $headers = array();
-     // array_push($headers, "Authorization:APPCODE " . System::getName('appcode'));
-     array_push($headers, "Authorization:APPCODE " .'d04d00f17ddd430abc630269b4c30324');
+     array_push($headers, "Authorization:APPCODE " . System::getName('appcode'));
+     // array_push($headers, "Authorization:APPCODE " .'d04d00f17ddd430abc630269b4c30324');
      $url = System::getName('certhost') . System::getName('path') . "?" . http_build_query($data);
      $curl = curl_init();
      curl_setopt($curl, CURLOPT_CUSTOMREQUEST, $method);
