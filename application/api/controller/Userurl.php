@@ -321,8 +321,7 @@ class Userurl extends Controller
             }
 
             #3判断是否需要修改费率
-       }
-       if($passageway['passageway_method']=='huilian_income'){ //汇联落地商户
+       }else if($passageway['passageway_method']=='huilian_income'){ //汇联落地商户
             $is_auto_qf=1; //自动代付
             #1判断有没有进件
             $huilian=new Huiliandaihuan();
@@ -367,8 +366,7 @@ class Userurl extends Controller
                     return view("Userurl/show_error");die;
                  }
             }   
-       }
-       if($passageway['passageway_method']=='income'){  //暂时这么判断是汇联金创还是米刷
+       }else if($passageway['passageway_method']=='income'){  //暂时这么判断是汇联金创还是米刷
 
             // $member_net=MemberNet::where(['net_member_id'=>$param['uid']])->find();
             $has=MemberCreditPas::where(['member_credit_pas_creditid'=>$this->param['cardId'],'member_credit_pas_pasid'=>$this->param['passageway']])->find();
