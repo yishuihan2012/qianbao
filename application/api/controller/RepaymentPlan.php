@@ -86,8 +86,7 @@
                return['code'=>485];//开始还款日期必须大于今天
           }
            //判断当前通道是否支持该银行
-           //判断当前通道是否支持该银行
-           // $support=0;
+           $support=0;
            $card_info=MemberCreditcard::where('card_id='.$this->param['cardId'])->find();
            $support_list=CreditCard::where(['bank_passageway_id'=>$this->param['passageway']])->select();
            $card_bankname=mb_substr($card_info['card_bankname'],-4,2);
