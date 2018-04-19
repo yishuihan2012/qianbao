@@ -94,7 +94,13 @@
                  $bankname=mb_substr($bank['card_name'],-4,2);
                  if($bankname==$card_bankname){
                     $support=1;
-                    $single_max=$bank['bank_single']*10000;
+                    if($bank['bank_attrbute']=='万'){
+                      $single_max=$bank['bank_single']*10000;
+                    }else if($bank['bank_attrbute']=='千'){
+                      $single_max=$bank['bank_single']*1000;
+                    }else if($bank['bank_attrbute']=='百'){
+                      $single_max=$bank['bank_single']*100;
+                    }
                     if($single_max<$avage*1.2){
                         return['code'=>'101','msg'=>'该行单次消费限额'.$single_max.'元，请增加刷卡次数。'];
                     }
