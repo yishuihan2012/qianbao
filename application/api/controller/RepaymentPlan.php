@@ -94,7 +94,7 @@
                  $bankname=mb_substr($bank['card_name'],-4,2);
                  if($bankname==$card_bankname){
                     $support=1;
-                    if($bank['bank_single']<$avage*1.2){
+                    if($bank['bank_single']*10000<$avage*1.2){
                         return['code'=>'101','msg'=>'该行单次消费限额'.$bank['bank_single'].'元，请增加刷卡次数。'];
                     }
                  }
