@@ -52,6 +52,7 @@
 		 <div class="col-sm-6" id="passageway_mech">
 			 <input type="text" class="form-control passageway_mech" name="bank_attrbute" placeholder="请填金额属性" value="万">
 			  <input type="hidden" class="form-control passageway_mech" name="bank_passageway_id" value="{{$passageway_id}}">
+			  <input type="hidden" class="form-control passageway_mech" name="passageway_true_name" value="{{$Passageways['passageway_true_name']}}">
 		 </div>		
 	 </div>
 

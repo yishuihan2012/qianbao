@@ -314,6 +314,8 @@ class Passageway extends Common{
 			 #重定向控制器 跳转到列表页
 			 $this->redirect('/index/passageway/index');die;
 		}
+		$Passageways=Passageways::where(['passageway_id'=>Request::instance()->param('id')])->find();
+		$this->assign("Passageways",$Passageways);
 	 	$this->assign("passageway_id",Request::instance()->param('id'));
 	 	return view("admin/passageway/add_credit_card");
 	 }

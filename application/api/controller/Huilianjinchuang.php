@@ -497,14 +497,15 @@
           $update['back_statusDesc']=isset($res['respMessage'])?$res['respMessage']:$res['message'];
           $update['back_status']='FAIL';
           $update['order_status']='-1';
-          $generation['generation_state']=-1;
+          // $generation['generation_state']=-1;
           // $update['order_buckle']=$rate['item_charges']/100;         
         }
         //添加执行记录
         $res=GenerationOrder::where(['order_id'=>$order['order_id']])->update($update);
-        // 更新卡计划
-        if(isset($generation)){
-            Generation::where(['generation_id'=>$order['order_no']])->update($generation);
+        // 更新卡计划,最后一条计划完成
+        $GenerationOrder=GenerationOrder::where(['order_no'=>$order['order_no']])->order('order_id desc')->find();
+        if($GenerationOrder['order_id']==$order['order_id']){
+            Generation::where(['generation_id'=>$order['order_no']])->update(['generation_state'=>3]);
         }
          #更改完状态后续操作
         $notice=new \app\api\controller\Membernet();

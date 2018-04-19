@@ -59,10 +59,11 @@
            if(!$this->param['uid'] || !$this->param['token']=16 || !$this->param['cardId'] || !$this->param['billMoney'] || !$this->param['payCount'] || !$this->param['startDate'] || !$this->param['endDate'] || !$this->param['passageway']){
                return['code'=>'313','msg'=>'获取数据失败'];
            }
-           if($this->param['billMoney']/ $this->param['payCount']<200)
+           $avage=$this->param['billMoney']/$this->param['payCount'];
+           if($avage<200)
                 return['code'=>477];//单笔还款金额太小，请减小还款次数
            #总账单除以消费次数得到每次消费AVG平均值  如果平均值小于某个值 则不进行还款  也是浪费资源
-           if($this->param['billMoney']/$this->param['payCount'] >20000)
+           if( $avage>20000)
                   return['code'=>478];//单笔还款金额过大，请增加还款次数
 
            // $root_id=find_root($this->param['uid']);
@@ -85,21 +86,29 @@
                return['code'=>485];//开始还款日期必须大于今天
           }
            //判断当前通道是否支持该银行
-           //判断当前通道是否支持该银行
-           // $support=0;
+           $support=0;
            $card_info=MemberCreditcard::where('card_id='.$this->param['cardId'])->find();
-           // $support_list=CreditCard::where(['bank_passageway_id'=>$this->param['passageway']])->select();
-           // $bank_list=array_column($support_list, 'card_name');
-           // $card_bankname=mb_substr($card_info['card_bankname'],-4,2);
-           // foreach ($bank_list as $key => $bank) {
-           //       $bankname=mb_substr($bank,-4,2);
-           //       if($bankname==$card_bankname){
-           //          $support=1;
-           //       }
-           // }
-           // if(!$support){
-           //    return['code'=>486,'msg'=>'当前通道暂不支持该银行'];//开始还款日期必须大于今天
-           // }
+           $support_list=CreditCard::where(['bank_passageway_id'=>$this->param['passageway']])->select();
+           $card_bankname=mb_substr($card_info['card_bankname'],-4,2);
+           foreach ($support_list as $key => $bank) {
+                 $bankname=mb_substr($bank['card_name'],-4,2);
+                 if($bankname==$card_bankname){
+                    $support=1;
+                    if($bank['bank_attrbute']=='万'){
+                      $single_max=$bank['bank_single']*10000;
+                    }else if($bank['bank_attrbute']=='千'){
+                      $single_max=$bank['bank_single']*1000;
+                    }else if($bank['bank_attrbute']=='百'){
+                      $single_max=$bank['bank_single']*100;
+                    }
+                    if($single_max<$avage*1.2){
+                        return['code'=>'101','msg'=>'该行单次消费限额'.$single_max.'元，请增加刷卡次数。'];
+                    }
+                 }
+           }
+           if(!$support){
+              return['code'=>486,'msg'=>'当前通道暂不支持该银行'];//开始还款日期必须大于今天
+           }
            $bank=mb_substr($card_info['card_bankname'],-4,2);
           // if($bank=="招商"|| $bank=="交通" || $bank=='农业' ){
           //      return['code'=>486,'msg'=>'抱歉，还款功能暂时不支持交通农业和招商银行。'];//开始还款日期必须大于今天
