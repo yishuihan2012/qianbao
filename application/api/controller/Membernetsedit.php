@@ -193,7 +193,7 @@
        
         //传入费率对应的在荣邦的编码
 
-        $rate_code=db('passageway_rate')->where(['rate_rate'=>['like',$memberAlso['item_rate']],'rate_charge'=>$memberAlso['item_charges'],'rate_passway_id'=>$this->passway->passageway_id])->find();
+        $rate_code=db('passageway_rate')->where(['rate_rate'=>$memberAlso['item_rate'],'rate_charge'=>$memberAlso['item_charges'],'rate_passway_id'=>$this->passway->passageway_id])->find();
         if($rate_code){
           $userinfo=db('member_net')->where('net_member_id',$this->member->member_id)->value($this->passway->passageway_no);
           $userinfo=explode(',', $userinfo);
@@ -227,6 +227,7 @@
             return $data['message'];
           }
         }else{
+          trace('该费率'.$memberAlso['item_rate'].'无对应的套餐编码');
           return '该费率'.$memberAlso['item_rate'].'无对应的套餐编码';
         }
       }
