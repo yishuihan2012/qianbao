@@ -282,31 +282,36 @@ class Userurl extends Controller
        //判断哪个通道
        if($passageway['passageway_method']=='huilian_new'){//汇联新的落地商户
             $huilian_new= new \app\api\controller\Huilianluodi();
+            $has=MemberCreditPas::where(['member_credit_pas_creditid'=>$this->param['cardId'],'member_credit_pas_pasid'=>$this->param['passageway']])->find();
+            // var_dump($has);die;
+            if(!$has){ //信用卡有没有签约
+                $MemberCreditPas=new MemberCreditPas;
+                $res=$MemberCreditPas->save(['member_credit_pas_creditid'=>$this->param['cardId'],'member_credit_pas_pasid'=>$this->param['passageway']]);
+                if(!$res){
+                    $this->assign('data','商户入网失败，请重试。');
+                    return view("Userurl/show_error");die;
+                }
+            }
+
             #1判断是否入网
-            $member_net=MemberNet::where(['net_member_id'=>$param['uid']])->find();
-            if(!$member_net[$passageway->passageway_no]){ //没有入网
+            if(!$has['member_credit_pas_info']){ //信用卡有没有签约
                 $res=$huilian_new->income($this->param['passageway'],$this->param['cardId']);
-                // var_dump($res);die;
                 if($res['code']=='200'){
+                    $merch_data['member_credit_pas_info']=$res['merId'];
+                    $res=MemberCreditPas::where(['member_credit_pas_creditid'=>$this->param['cardId'],'member_credit_pas_pasid'=>$this->param['passageway']])->update($merch_data);
+                    if(!$res){
+                        MemberCreditPas::where(['member_credit_pas_creditid'=>$this->param['cardId'],'member_credit_pas_pasid'=>$this->param['passageway']])->update($merch_data);
+                    }
                     $merId=$res['merId'];
                 }else{
                      $this->assign('data',$res['msg']);
                       return view("Userurl/show_error");die;
                 }
             }else{
-                $merId=$member_net[$passageway->passageway_no];
+                $merId=$has['member_credit_pas_info'];
             }
             #2判断是否签约
-            $has=MemberCreditPas::where(['member_credit_pas_creditid'=>$this->param['cardId'],'member_credit_pas_pasid'=>$this->param['passageway']])->find();
-           // var_dump($has);die;
-           if(!$has){ //信用卡有没有签约
-                $MemberCreditPas=new MemberCreditPas;
-                $res=$MemberCreditPas->save(['member_credit_pas_creditid'=>$this->param['cardId'],'member_credit_pas_pasid'=>$this->param['passageway']]);
-                if(!$res){
-                    $this->assign('data','商户签约失败，请重试。');
-                    return view("Userurl/show_error");die;
-                }
-            }
+          
             if(!$has['member_credit_pas_status']){ //信用卡有没有签约
                 $res=$huilian_new->card_bind($passageway->passageway_mech,$merId,$MemberCreditcard->card_phone,$MemberCreditcard->card_bankno,$this->param['passageway'],$MemberCreditcard->card_id);
                 if($res['code']=='200'){
@@ -319,8 +324,8 @@ class Userurl extends Controller
                 }
                 //return redirect('Userurl/signed_huilian_background', ['passageway_id' =>$param['passageway'],'cardId'=>$param['cardId'],'order_no'=>$order_no]);
             }
-
-            #3判断是否需要修改费率
+            #3判断是否需要修改费率[接口暂不支持]
+            
        }else if($passageway['passageway_method']=='huilian_income'){ //汇联落地商户
             $is_auto_qf=1; //自动代付
             #1判断有没有进件
