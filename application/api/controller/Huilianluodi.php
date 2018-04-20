@@ -89,20 +89,20 @@
         // echo json_encode($res);die;
         // return $res;
         if( isset($res['code']) && $res['code']=='10000' &&  isset($res['respCode']) && $res['respCode']=='10000' && $res['merId']){ //成功存储商户号
-            $update[$Passageways->passageway_no]=$res['merId'];
-            $has=MemberNets::where(['net_member_id'=>$card_info['card_member_id']])->update($update);
-             if($has){
+            // $update[$Passageways->passageway_no]=$res['merId'];
+            // $has=MemberNets::where(['net_member_id'=>$card_info['card_member_id']])->update($update);
+             // if($has){
                 $return['code']='200';
                 $return['msg']='入网成功';
                 $return['merId']=$res['merId'];
-            }else{
-                $return['code']='-1';
-                $return['msg']=isset($res['respMessage'])? $res['respMessage']:$res['message'];
-            }
+            // }else{
+            //     $return['code']='-1';
+            //     $return['msg']=isset($res['respMessage'])? $res['respMessage']:$res['message'];
+            // }
 
         }else{
             $return['code']='-1';
-            $return['msg']="商户入网失败";
+            $return['msg']=isset($res['respMessage'])? $res['respMessage']:$res['message'];
             
         }
         return $return;
@@ -233,11 +233,15 @@
         }
 
         //商品类别
-        $config=Config::get('passway.huilian_luodi');
-
-        $rand_good=array_rand($config,1);
-        $rand_good=$config[$rand_good];
-        $update_res=GenerationOrder::where(['order_id'=>$value['order_id']])->update(['order_product_type'=>$rand_good['id'],'order_product_name'=>$rand_good['name']]);
+        if(!$value['order_product_type']){
+            $config=Config::get('passway.huilian_luodi');
+            $rand_good=array_rand($config,1);
+            $rand_good=$config[2];
+            $value['order_product_type']=$rand_good['id'];
+            $value['order_product_name']=$rand_good['name'];
+            $update_res=GenerationOrder::where(['order_id'=>$value['order_id']])->update(['order_product_type'=>$value['order_product_type'],'order_product_name'=>$rand_good['name']]);
+        }
+        
         $data=array(
             'version'=>$this->version,// M(String)   1.0
             'serviceUri'=>'YQ0002',
@@ -250,12 +254,14 @@
             'notifyUrl'=>System::getName('system_url').'/Api/Huilianluodi/payCallback',// M(String)   异步通知地址
             'amount'=>$value['order_money']*100 ,//M(String)   金额(分)
             'bankCard'=>$value['order_card'],//银行卡号        str (32)    是   用于支付的银行卡号(信用卡)
-            'product'=>$rand_good['id'],// 商品类别str (8) 是   
-            'goods'=>$rand_good['name'],//商品描述   str (32)    是   
+            'product'=>$value['order_product_type'],// 商品类别str (8) 是   
+            'goods'=>$value['order_product_name'],//商品描述   str (32)    是   
             // 'chnSeriaNo'=>''.//交易使用商户号   str (8) 否   
-            // 'cityCode'=>'',//城市编码        str (8) 否   
             // 'caregoryUnion'=>'',//银联行业类型     str (8) 否   
         );
+        if(isset($value['order_city_code']) && $value['order_city_code']){
+            $data['cityCode']=$value['order_city_code'];//城市编码        str (8) 否   
+        }
         // echo json_encode($data);
         $url=$this->url.'/repay';
         $res=$this->request($url,$data);
