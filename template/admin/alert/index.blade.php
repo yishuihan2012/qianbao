@@ -47,7 +47,7 @@
 <script type="text/javascript">
 $(document).ready(function(){
     $('.menu .nav .active').removeClass('active');
-    $('.menu .nav li.setting-Appversion').addClass('active');
+    $('.menu .nav li.setting-alert').addClass('active');
     $('.menu .nav li.system-setting').addClass('show');
 });
 </script>

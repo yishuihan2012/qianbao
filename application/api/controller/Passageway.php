@@ -35,7 +35,13 @@
          #可用支付通道
          #获取会员等级
          $member_group=Member::where(['member_id'=>$this->param['uid']])->value('member_group_id');
-         $passageway_lists=Passageways::with('cashout')->where(['passageway_state'=>1,'passageway_also'=>$this->param['passageway_also']])->order('passageway_sort asc')->select();
+         // $passageway_lists=Passageways::with('cashout')->where(['passageway_state'=>1,'passageway_also'=>$this->param['passageway_also']])->order('passageway_sort desc')->select();
+         $passageway_lists=db('passageway')->alias('p')
+            ->join('cashout c','p.passageway_id=c.cashout_passageway_id')
+            ->where('passageway_state',1)
+            ->where('passageway_also',$this->param['passageway_also'])
+            ->order('passageway_sort desc')
+            ->select();
          if($this->param['passageway_also']==2){ 
             foreach ($passageway_lists as $key => $value) {
               $rate=PassagewayItem::where(['item_passageway'=>$value['passageway_id'],'item_group'=>$member_group])->find();
@@ -72,7 +78,6 @@
               $passageway[$key]['cashout_min']=$value['cashout_min'];
            }
          }
-         // var_dump($passageway);die;
          return ['code'=>200, 'msg'=>'获取成功~', 'data'=>$passageway];
 
 
