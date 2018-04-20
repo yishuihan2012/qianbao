@@ -704,7 +704,8 @@ class CashOut
 					return ['code'=>'101','msg'=>'上传资料失败'];
 				}
 			}else{
-				return ['code'=>'102','msg'=>'上传资料失败'];
+				$msg=isset($res['epaypp_merchant_material_upload_response']['sub_msg'])?$res['epaypp_merchant_material_upload_response']['sub_msg']:$res['epaypp_merchant_material_upload_response']['result_code_msg'];
+				return ['code'=>'102','msg'=>$msg];
 			}
 		}else{
 			$material_id=$explode[0];
@@ -719,8 +720,8 @@ class CashOut
 					return ['code'=>'101','msg'=>'商户入网失败'];
 				}
 			}else{
-				// var_dump($res);die;
-				return ['code'=>'102','msg'=>'商户入网失败'];
+				$msg=isset($res['epaypp_merchant_register_response']['sub_msg'])?$res['epaypp_merchant_register_response']['sub_msg']:$res['epaypp_merchant_register_response']['result_code_msg'];
+				return ['code'=>'102','msg'=>$msg];
 			}
 		}
 		#3判断是否设置结算商户
