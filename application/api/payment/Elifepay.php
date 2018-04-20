@@ -61,11 +61,17 @@
 	 * 个人商户注册，需要上传个人身份证正、反面照片，个人手持身份证照片，结算银行账户正、反面照材料信息。
 	 */
 	public function merch_upload_material($material_id,$img){
+		$img_content=file_get_contents($img);
+		if(!$img_content){
+			$return['epaypp_merchant_material_upload_response']['result_code']='-1';
+			$return['epaypp_merchant_material_upload_response']['sub_msg']='实名照片信息未找到，请联系管理员';
+			return $return;
+		}
 		$data=array(
 			"material_id"=>$material_id, //材料编号，需要保证唯一，建议使用out_user_id
 		    "type"=>"IDCARD",//材料类型，详见2.2.1材料类型表
 		    "index"=>"0",//材料索引，详见2.2.1材料类型表
-		    "content"=>base64_encode(file_get_contents($img))
+		    "content"=>base64_encode($img_content)
 		);
 		// echo json_encode($data);
 		// var_dump($data);die;
