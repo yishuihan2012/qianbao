@@ -31,14 +31,22 @@
 		  <input type="checkbox" name="cashout_open" value="1" @if ($data['cashout_open']==1 ) checked @endif>
 		  <label>是否开启</label>
 		</div>
-		<div class="input-group switch-inline" style="margin-top:10px;">
-		  <span class="input-group-addon">最小提现额度</span>
-		  <input type="text" class="form-control" style="width: 200px;" name="cashout_min" value="{{$data['cashout_min']}}">
-		</div>
-		<div class="input-group" style="margin-top:10px;">
-		  <span class="input-group-addon">最大提现额度</span>
-		  <input type="text" class="form-control" style="width: 200px;" name="cashout_max" value="{{$data['cashout_max']}}">
-		</div>
+        <div class="input-group switch-inline" style="margin-top:10px;">
+          <span class="input-group-addon">最小提现额度</span>
+          <input type="text" class="form-control" style="width: 200px;" name="cashout_min" value="{{$data['cashout_min']}}">
+        </div>
+        <div class="input-group" style="margin-top:10px;">
+          <span class="input-group-addon">最大提现额度</span>
+          <input type="text" class="form-control" style="width: 200px;" name="cashout_max" value="{{$data['cashout_max']}}">
+        </div>
+        <div class="input-group switch-inline" style="margin-top:10px;">
+          <span class="input-group-addon">通道开启时间</span>
+          <input type="time" class="form-control" style="width: 200px;" name="cashout_begintime" value="{{$data['cashout_begintime']}}">
+        </div>
+        <div class="input-group" style="margin-top:10px;">
+          <span class="input-group-addon">通道关闭时间</span>
+          <input type="time" class="form-control" style="width: 200px;" name="cashout_endtime" value="{{$data['cashout_endtime']}}">
+        </div>
 
 		<div class="input-group" style="margin-top:10px;">
 		  <span class="input-group-addon">提现调用类</span>

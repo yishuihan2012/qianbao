@@ -71,6 +71,10 @@
            #判断该笔订单是否大于最大体现额
            if($this->param['money']>$passway->cashout->cashout_max)
                  return ['code'=>457];
+           #判断当前时间是否在交易时间范围内
+           if(date('H:i:s')<$passway->cashout->cashout_begintime || date('H:i:s')>$passway->cashout->cashout_endtime)
+                 return ['code'=>457,'msg'=>'该通道交易时间段为'.$passway->cashout->cashout_begintime.' - '.$passway->cashout->cashout_endtime];
+
            #获取用户信用卡信息
           $member_card=MemberCreditcard::get(['card_id'=>$this->param['cardid'],'card_member_id'=>$this->param['uid']]);
            if(empty($member_card))
