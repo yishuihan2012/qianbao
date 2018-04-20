@@ -762,8 +762,9 @@ class CashOut
 		$memberCreditPas=MemberCreditPas::where(['member_credit_pas_creditid'=> $this->card_info->card_id,'member_credit_pas_pasid'=>$this->passway_info->passageway_id])->find();
 		if(!$memberCreditPas || $memberCreditPas['member_credit_pas_status']!=1){
 			$res=$elifepay->product_quick_open($material_id,$product_id,$this->card_info,$this->also->item_rate/100,$this->also->item_charges);
+			$msg=isset($res['epaypp_merchant_card_express_pay_open_response']['sub_msg'])?$res['epaypp_merchant_card_express_pay_open_response']['sub_msg']:$res['epaypp_merchant_card_express_pay_open_response']['result_code_msg'];
 			if($res['epaypp_merchant_card_express_pay_open_response']['success']=='false'){
-				return ['code'=>'101','msg'=>'开通快捷支付失败'];
+				return ['code'=>'101','msg'=>$msg];
 			}
 			if($res['epaypp_merchant_card_express_pay_open_response'] && $res['epaypp_merchant_card_express_pay_open_response']['result_code']=='00'){
 				$memberCreditPas=new MemberCreditPas(['member_credit_pas_creditid'=> $this->card_info->card_id,'member_credit_pas_pasid'=>$this->passway_info->passageway_id,'member_credit_pas_status'=>1]);
