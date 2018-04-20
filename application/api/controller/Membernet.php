@@ -127,7 +127,28 @@ use app\index\model\Member;
              }
         }
     }
-    public function action_single_plan($id){
+    /**
+     * 重新执行 当天半小时以前失败次数小于3次的和未执行的 代还 订单 
+     */
+    public function generation_order_check(){
+      set_time_limit(600);
+      $begin=strtotime(date('Y-m-d'));
+      $end=time()-30*60;
+      $orders=db('generation_order')
+        ->where([
+          'order_time'=>['between time',[$begin,$end]],
+          'order_status'=>['in','1,-1'],
+          'order_retry_count'=>['<',3],
+        ])
+        ->limit(100)
+        ->column('order_id');
+      trace('自动执行当日失败代还订单,数量'.count($orders));
+      foreach ($orders as $value) {
+        $this->action_single_plan($value,1);
+      }
+      trace('执行完毕');
+    }
+    public function action_single_plan($id,$is_admin=null){
         $value=GenerationOrder::where(['order_id'=>$id])->find();
         if($value['order_retry_count']>3){
              return json_encode(['code'=>102,'msg'=>'最多有三次重试机会。']);
@@ -144,7 +165,7 @@ use app\index\model\Member;
                   if($value['order_type']==1){ //消费
                       $res=$this->payBindCard($value);
                   }else if($value['order_type']==2){//提现
-                      if(!empty(input("is_admin"))){
+                      if(!empty($is_admin)){
                         $res=$this->transferApply($value,null,1);
                       }else{
                         $res=$this->transferApply($value);
