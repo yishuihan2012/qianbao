@@ -779,7 +779,8 @@ class CashOut
 		}
 		#预下单 下单完成后返给APP一个静态页面地址
 		$out_trade_no=generate_password();
-		$res=$elifepay->order_create($product_id,$material_id,$price,$description,$out_trade_no);
+		$des=System::getName('sitename').'-'.$this->member_infos->member_mobile;
+		$res=$elifepay->order_create($product_id,$material_id,$price,$des,$out_trade_no);
 		if($res['epaypp_trade_create_response'] && $res['epaypp_trade_create_response']['result_code']=='00'){
 
 			$order_result=$this->writeorder($out_trade_no, $price, $price*($this->also->item_rate/100) ,$description);
@@ -874,7 +875,8 @@ class CashOut
 		
 		#预下单 下单完成后返给APP一个链接
 		$out_trade_no=generate_password();
-		$res=$elifepay->order_create($product_id,$material_id,$price,$description,$out_trade_no);
+		$des=System::getName('sitename').'-'.$this->member_infos->member_mobile;
+		$res=$elifepay->order_create($product_id,$material_id,$price,$des,$out_trade_no);
 		if($res['epaypp_trade_create_response'] && $res['epaypp_trade_create_response']['result_code']=='00'){
 			$order_result=$this->writeorder($out_trade_no, $price, $price*($this->also->item_rate/100) ,$description);
 			$data=array(
