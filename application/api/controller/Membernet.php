@@ -134,11 +134,13 @@ use app\index\model\Member;
       set_time_limit(600);
       $begin=strtotime(date('Y-m-d'));
       $end=time()-30*60;
-      $orders=db('generation_order')
+      $orders=db('generation_order')->alias('o')
+        ->join('generation g','o.order_no=g.generation_id')
         ->where([
-          'order_time'=>['between time',[$begin,$end]],
-          'order_status'=>['in','1,-1'],
-          'order_retry_count'=>['<',3],
+          'o.order_time'=>['between time',[$begin,$end]],
+          'o.order_status'=>['in','1,-1'],
+          'o.order_retry_count'=>['<',3],
+          'g.generation_state'=>2
         ])
         ->limit(100)
         ->column('order_id');
