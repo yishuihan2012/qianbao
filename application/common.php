@@ -916,7 +916,7 @@ function SortByASCII($arr)
             );
       $res =curl_post($url, 'post', json_encode($request));
       $result = json_decode($res, true);
-      if ($result['code'] == 0) {
+      if ($result['code'] == 0 && isset($result['payload'])) {
           $datas = AESdecrypt($result['payload'], $secretkey, $iv);
           $datas = trim($datas);
           $datas = substr($datas, 0, strpos($datas, '}') + 1);
