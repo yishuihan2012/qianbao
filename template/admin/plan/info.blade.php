@@ -96,6 +96,10 @@
              <td>执行时间</td>
              <td>{{$info['order_time']}}</td>
          </tr>
+         <tr>
+             <td>更新时间</td>
+             <td>{{$info['order_edit_time']}}</td>
+         </tr>
           <tr>
              <td>创建时间</td>
              <td>{{$info['order_add_time']}}</td>
