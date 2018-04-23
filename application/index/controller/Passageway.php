@@ -322,7 +322,7 @@ class Passageway extends Common{
 	 #查看信用卡列表
 	 public function  list_credit_card(){
 	 	$CreditCard = new CreditCard();
-	 	$passageway=Passageway::where(['passageway_id'=>Request::instance()->param('id')])->find();
+	 	$passageway=Passageways::where(['passageway_id'=>Request::instance()->param('id')])->find();
 	 	$where['passageway_true_name'] = $passageway['passageway_name'];
 	 	
 	 	$list = $CreditCard->where($where)->select();
