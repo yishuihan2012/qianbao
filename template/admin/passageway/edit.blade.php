@@ -56,14 +56,20 @@
 	  <div class="row form-group">
 		 <label for="passageway_no" class="col-sm-3 text-right"><b>平台约定代付费率:</b></label>
 		 <div class="col-sm-6" id="passageway_no">
-			 <input type="text" class="form-control passageway_rate" name="passageway_qf_rate" placeholder="请填写通道与平台约定的费率" value="{{$passageways['passageway_qf_rate']}}">
+			 <input type="text" class="form-control passageway_qf_rate" name="passageway_qf_rate" placeholder="请填写通道与平台约定的费率" value="{{$passageways['passageway_qf_rate']}}">
 		 </div>		
 	 </div>
 
 	  <div class="row form-group">
 		 <label for="passageway_no" class="col-sm-3 text-right"><b>平台约定代付定额:</b></label>
 		 <div class="col-sm-6" id="passageway_no">
-			 <input type="text" class="form-control passageway_rate" name="passageway_qf_fix" placeholder="请填写通道与平台约定的费率" value="{{$passageways['passageway_qf_fix']}}">
+			 <input type="text" class="form-control passageway_qf_fix" name="passageway_qf_fix" placeholder="请填写通道与平台约定的费率" value="{{$passageways['passageway_qf_fix']}}">
+		 </div>		
+	 </div>
+	  <div class="row form-group">
+		 <label for="passageway_no" class="col-sm-3 text-right"><b>平台约定信用卡签约费用:</b></label>
+		 <div class="col-sm-6" id="passageway_no">
+			 <input type="text" class="form-control passageway_bind_money" name="passageway_bind_money" placeholder="请填写通道与平台约定信用卡签约费用" value="{{$passageways['passageway_bind_money']}}">
 		 </div>		
 	 </div>
 

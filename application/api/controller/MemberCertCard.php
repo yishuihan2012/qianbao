@@ -44,6 +44,7 @@
  use app\index\model\MemberCashcard;
  use app\index\model\Passageway;
  use app\index\model\PassagewayItem;
+ use app\index\model\PassagewayBind;
  use app\index\model\BankIdent;
  use app\index\model\SmsCode as SmsCodes;
  use app\index\model\GenerationOrder;
@@ -220,8 +221,8 @@
            if(empty($creditcard))
               return ['code'=>353,'msg'=>'获取信用卡信息失败'];
              #查询当前卡有没有绑定过
-            $passageway=Passageway::where('passageway_status=1 and passageway_also=2')->find();
-
+            // $passageway=Passageway::where('passageway_status=1 and passageway_also=2')->find();
+            $passageway=Passageway::get(input('passageway_id'));
 
             $member_net=MemberNet::where('net_member_id='.$this->param['uid'])->find();
             $params=array(
@@ -234,6 +235,14 @@
             $income=repay_request($params,$passageway['passageway_mech'],$url,$passageway['iv'],$passageway['secretkey'],$passageway['signkey']);
             // print_r($income);die;
             if($income['code']=='200'){
+              #记录签约日志
+              PassagewayBind::create([
+                'bind_passway_id'=>$passageway->passageway_id,
+                'bind_member_id'=>$this->param['uid'],
+                'bind_card'=>$creditcard->card_bankno,
+                'bind_money'=>$passageway->passageway_bind_money
+              ]);
+
               //修改签约状态
               $bindStatus=array(
                 'bindStatus'=>$income['bindStatus'],

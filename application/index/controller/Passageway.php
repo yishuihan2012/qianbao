@@ -8,6 +8,7 @@
 namespace app\index\controller;
 use app\index\model\Passageway as Passageways;
 use app\index\model\PassagewayItem;
+use app\index\model\PassagewayBind;
 use app\index\model\MemberGroup;
 use app\index\model\GenerationOrder;
 use app\index\model\Generation;
@@ -554,5 +555,36 @@ class Passageway extends Common{
 		$this->assign('num',$num);
 		$this->assign('lirun',$lirun);
 	    return view('admin/passageway/passageway_statistics');
+	}
+	/**
+	 * 信用卡鉴权(签约绑卡) 收费统计
+	 */
+	public function passageway_bind(){
+		$where=[];
+		$r=input();
+		wheretime($where,'bind_createtime');
+		if(input('member'))
+			$where['m.member_nick']=['like',"%{$r['member']}%"];
+		if(input('bind_passway_id'))
+			$where['bind_passway_id']=input('bind_passway_id');
+		$list=PassagewayBind::where($where)
+			->join('member m','wt_passageway_bind.bind_member_id=m.member_id')
+			->field('wt_passageway_bind.*,m.member_nick')
+			->order('bind_id desc')
+	 	 	->paginate(Config::get('page_size'), false, ['query'=>input()]);
+	 	$data=[
+	 		'count'=>PassagewayBind::where($where)
+				->join('member m','wt_passageway_bind.bind_member_id=m.member_id')
+				->count(),
+			'money'=>PassagewayBind::where($where)
+				->join('member m','wt_passageway_bind.bind_member_id=m.member_id')
+				->sum('bind_money'),
+	 	];
+	 	$passageway=db('passageway')->column("*","passageway_id");
+	 	$this->assign('passageway',$passageway);
+	 	$this->assign('list',$list);
+	 	$this->assign('data',$data);
+	 	$this->assign('r',$r);
+	 	return view('admin/passageway/passageway_bind');
 	}
 }

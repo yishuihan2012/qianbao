@@ -124,6 +124,7 @@
 		          			'uid':"{{$data['MemberCreditcard']['card_member_id']}}",
 					        'token': "{{$data['Members']['memberLogin']['login_token']}}",
 					        'bindId':$('input[name="bindId"]').val(),
+					        'passageway_id':'{{$passageway_id}}',
 					        'smsCode':vcode
 		          		}
 		          	};
