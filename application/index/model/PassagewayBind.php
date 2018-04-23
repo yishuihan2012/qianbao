@@ -13,5 +13,5 @@ class PassagewayBind extends Model{
       #定义时间戳字段名 信息添加时间
       protected $autoWriteTimestamp = 'datetime';
       protected $createTime = 'bind_createtime';
-     
+      protected $updateTime = false;
 }
