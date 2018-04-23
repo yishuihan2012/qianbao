@@ -89,7 +89,7 @@
            $support=0;
            $card_info=MemberCreditcard::where('card_id='.$this->param['cardId'])->find();
            $passageway=Passageway::where(['passageway_id'=>$this->param['passageway']])->find();
-           $support_list=CreditCard::where(['passageway_true_name'=>$passageway['passageway_name']])->select();
+           $support_list=CreditCard::where(['passageway_true_name'=>$passageway['passageway_true_name']])->select();
            $card_bankname=mb_substr($card_info['card_bankname'],-4,2);
            foreach ($support_list as $key => $bank) {
                  $bankname=mb_substr($bank['card_name'],-4,2);
