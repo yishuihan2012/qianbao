@@ -323,10 +323,8 @@ class Passageway extends Common{
 	 public function  list_credit_card(){
 	 	$CreditCard = new CreditCard();
 	 	$passageway=Passageways::where(['passageway_id'=>Request::instance()->param('id')])->find();
-	 	$where['passageway_true_name'] = $passageway['passageway_name'];
-	 	
+	 	$where['passageway_true_name'] = $passageway['passageway_true_name'];
 	 	$list = $CreditCard->where($where)->select();
-
 	 	$this->assign("list",$list);
 	 	return view("admin/passageway/list_credit_card");
 	 }
