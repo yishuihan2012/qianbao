@@ -88,7 +88,8 @@
            //判断当前通道是否支持该银行
            $support=0;
            $card_info=MemberCreditcard::where('card_id='.$this->param['cardId'])->find();
-           $support_list=CreditCard::where(['bank_passageway_id'=>$this->param['passageway']])->select();
+           $passageway=Passageway::where(['passageway_id'=>$this->param['passageway']])->find();
+           $support_list=CreditCard::where(['passageway_true_name'=>$passageway['passageway_name']])->select();
            $card_bankname=mb_substr($card_info['card_bankname'],-4,2);
            foreach ($support_list as $key => $bank) {
                  $bankname=mb_substr($bank['card_name'],-4,2);
