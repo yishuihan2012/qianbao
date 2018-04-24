@@ -308,12 +308,14 @@ class Cashoutcallback
         unset($params['sign']);
         $verifyResult = $elifepay->verifySignature($params, $sign);
         if(!$verifyResult){
+            file_put_contents('elife_error.txt', 'check sign fail!');
             return null;
         }
         // 解密数据
         $randomKey = $elifepay->merchantPrivateDecrypt($params['random_key']);
         $bizContent =$elifepay->opensslDecrypt(hex2bin(strtolower($params['biz_content'])), '16-Bytes--String', $randomKey);
         if(!$bizContent){
+            file_put_contents('elife_error.txt', 'Decrypt fail！');
             return null;
         }
         // 去掉特殊字符
@@ -325,6 +327,7 @@ class Cashoutcallback
 
         $order=CashOrder::where(['order_no' => $result['out_trade_no']])->find();  #查询到当前订单
         if(!$order){
+            file_put_contents('elife_error.txt', 'get order fail！');
             echo 'FAIL';die;
         }
         $member=Member::get($order->order_member);
