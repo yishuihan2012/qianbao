@@ -221,10 +221,9 @@
            if(empty($creditcard))
               return ['code'=>353,'msg'=>'获取信用卡信息失败'];
              #查询当前卡有没有绑定过
-            $passageway=Passageway::where('passageway_status=1 and passageway_also=2')->find();
-            $passageway_id=input('passageway_id');
-            // $passageway=Passageway::where('passageway_id',$passageway_id)->find();
-
+            // $passageway=Passageway::where('passageway_status=1 and passageway_also=2')->find();
+            $passageway_id=$this->param['passageway_id'];
+            $passageway=Passageway::where('passageway_id',$passageway_id)->find();
             $member_net=MemberNet::where('net_member_id='.$this->param['uid'])->find();
             $params=array(
               'mchNo'=>$creditcard['mchno'], //机构号 必填  由平台统一分配 16
