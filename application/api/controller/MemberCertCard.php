@@ -237,10 +237,10 @@
             if($income['code']=='200'){
               #记录签约日志
               PassagewayBind::create([
-                'bind_passway_id'=>$passageway->passageway_id,
+                'bind_passway_id'=>$passageway['passageway_id'],
                 'bind_member_id'=>$this->param['uid'],
-                'bind_card'=>$creditcard->card_bankno,
-                'bind_money'=>$passageway->passageway_bind_money
+                'bind_card'=>$creditcard['card_bankno'],
+                'bind_money'=>$passageway['passageway_bind_money']
               ]);
 
               //修改签约状态
