@@ -234,7 +234,7 @@
         if(!$value['order_product_type']){
             $config=Config::get('passway.huilian_luodi');
             $rand_good=array_rand($config,1);
-            $rand_good=$config[2];
+            $rand_good=$config[$rand_good];
             $value['order_product_type']=$rand_good['id'];
             $value['order_product_name']=$rand_good['name'];
             $update_res=GenerationOrder::where(['order_id'=>$value['order_id']])->update(['order_product_type'=>$value['order_product_type'],'order_product_name'=>$rand_good['name']]);
@@ -268,7 +268,7 @@
         $income['code']=-1;
         $income['back_status']=$income['status']='FAIL';
         $is_commission=0;
-        if(isset($res['code']) && $res['code']=='10000' && $res['respCode']=='10000'){
+        if(isset($res['code']) && $res['code']=='10000'){
             $update['back_tradeNo']=$res['orderNum'];
             $update['back_status']=$res['respCode'];
             $update['back_statusDesc']=$res['respMessage'];
