@@ -215,8 +215,6 @@
         #2获取通道信息
         $merch=Passageway::where(['passageway_id'=>$value['order_passageway']])->find();
         //查询子商户号
-        $Membernet=MemberNets::where(['net_member_id'=>$value['order_member']])->find();
-        $merId=$Membernet[$merch->passageway_no];
         $member_pas=MemberCreditPas::where(['member_credit_pas_pasid'=>$value['order_passageway'],'member_credit_pas_creditid'=>$card_info['card_id']])->find();
         //查询上次刷卡费率是否和这次一样，不一样需要变更费率。
         $order=GenerationOrder::where(['order_type'=>1])->where('order_no','lt',$value['order_no'])->order('order_id desc')->find();
@@ -247,7 +245,7 @@
             'serviceUri'=>'YQ0002',
             'charset'=>'UTF-8',// M(String)   编码方式UTF-8
             'agentId'=>$passageway_mech ,//M(String)   受理方预分配的渠道代理商标识
-            'merId'=>$merId,// M(String)   子商户号
+            'merId'=>$member_pas->member_credit_pas_info,// M(String)   子商户号
             'nonceStr'=>make_rand_code(),// M(String)   随机字符串，字符范围a-zA-Z0-9
             'signType'=>'RSA',//  M(String)   签名方式，固定RSA
             'orderNo'=>$value['order_platform_no'],// M(String)   订单号
@@ -259,6 +257,7 @@
             // 'chnSeriaNo'=>''.//交易使用商户号   str (8) 否   
             // 'caregoryUnion'=>'',//银联行业类型     str (8) 否   
         );
+        echo json_encode($data);die;
         if(isset($value['order_city_code']) && $value['order_city_code']){
             $data['cityCode']=$value['order_city_code'];//城市编码        str (8) 否   
         }
