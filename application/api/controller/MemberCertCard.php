@@ -122,7 +122,7 @@
            if($card_validate['data']['resultCode']!='R001')  return ['code'=>351, 'msg'=>'认证失败:'.$card_validate['data']['remark']];
            if(isset($card_validate['data']['bankCardBin']) && $card_validate['data']['bankCardBin']['cardTy']!='C')  return ['code'=>351, 'msg'=>'认证失败:只能绑定信用卡'];
         }else{
-           $card_validate=BankCert_Java($this->param['card_bankno'],$this->param['card_idcard'],$this->param['card_name'],$this->param['card_phone']);
+           $card_validate=BankCert_Java($this->param['creditCardNo'],$this->idcard,$this->name,$this->param['phone']);
           if(isset($card_validate['data']['identType']) && $card_validate['data']['identType']!='信用卡')
             return ['code'=>351,'msg'=>'认证失败:只能验证信用卡'];
           if($card_validate['code']!=200)
@@ -237,10 +237,10 @@
             if($income['code']=='200'){
               #记录签约日志
               PassagewayBind::create([
-                'bind_passway_id'=>$passageway->passageway_id,
+                'bind_passway_id'=>$passageway['passageway_id'],
                 'bind_member_id'=>$this->param['uid'],
-                'bind_card'=>$creditcard->card_bankno,
-                'bind_money'=>$passageway->passageway_bind_money
+                'bind_card'=>$creditcard['card_bankno'],
+                'bind_money'=>$passageway['passageway_bind_money']
               ]);
 
               //修改签约状态
