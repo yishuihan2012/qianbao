@@ -257,7 +257,7 @@
             // 'chnSeriaNo'=>''.//交易使用商户号   str (8) 否   
             // 'caregoryUnion'=>'',//银联行业类型     str (8) 否   
         );
-        echo json_encode($data);die;
+        // echo json_encode($data);die;
         if(isset($value['order_city_code']) && $value['order_city_code']){
             $data['cityCode']=$value['order_city_code'];//城市编码        str (8) 否   
         }
