@@ -284,6 +284,8 @@ class Plan extends Common{
 	    $where=[];
 	    if(input('member'))
 	      $where['m.member_nick|m.member_mobile']=['like','%'.$r['member'].'%'];
+	    if(input('back_statusDesc'))
+	      $where['o.back_statusDesc']=['like','%'.$r['back_statusDesc'].'%'];
 	    if(input('order_money'))
 	      $where['o.order_money']=$r['order_money'];
 	    if(input('order_id'))
