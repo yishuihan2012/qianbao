@@ -448,21 +448,26 @@ namespace app\index\controller;
 	 	 return view('admin/member/walletInfo');
 	 	 //dump($memberWalletInfo->memberWallet->wallet_amount);
 	 }
-	 #审核用户信息
-	 public function toexamine(){
-	 	$where['member_id'] = request()->param("id");
-	 	$data['member_cert'] = request()->param("member_cert"); #3是用户没有通过
-	 	$result = Members::where($where)->update($data);
-	 	#删除银行信息
-	 	$wheres['card_member_id'] = request()->param("id");
-	 	$cardresult = MemberCashcard::where($wheres)->delete();
-	 	#删除身份证信息
-	 	$certwhere['cert_member_id'] = request()->param("id");
-	 	$certresult = MemberCert::where($certwhere)->delete();
-	 	$content = ($result===false && $certresult ==false && $cardresult==false) ? ['type'=>'error','msg'=>'修改信息失败'] : ['type'=>'success','msg'=>'修改信息成功'];
-	 	Session::set('jump_msg', $content);
-	 	$this->redirect("member/index");
-	 }
+     #审核用户信息
+     public function toexamine(){
+        $where['member_id'] = request()->param("id");
+        $data['member_cert'] = request()->param("member_cert"); 
+        $result = Members::where($where)->update($data);
+        # 1为通过 0为不通过(未实名状态)
+        if($data['member_cert']!=1){
+            #删除银行信息
+            $wheres['card_member_id'] = request()->param("id");
+            $cardresult = MemberCashcard::where($wheres)->delete();
+            #删除身份证信息
+            $certwhere['cert_member_id'] = request()->param("id");
+            $certresult = MemberCert::where($certwhere)->delete();
+            $content = ($result===false && $certresult ==false && $cardresult==false) ? ['type'=>'error','msg'=>'修改信息失败'] : ['type'=>'success','msg'=>'修改信息成功'];
+         }else{
+            $content = ($result===false) ? ['type'=>'error','msg'=>'修改信息失败'] : ['type'=>'success','msg'=>'修改信息成功'];
+         }
+        Session::set('jump_msg', $content);
+        $this->redirect("member/index");
+     }
 	 //会员分佣分润
 	public function commiss(){
 	 	$commiss = new Commission();
