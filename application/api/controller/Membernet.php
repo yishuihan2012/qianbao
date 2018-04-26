@@ -327,7 +327,7 @@ use app\index\model\Member;
               }else{
                 //带查证状态
               }
-          }else{
+          }else if($income['code']=='-1'){
               //失败推送消息发短信
               if($pay['order_type']==1){ //消费
                  // send_sms($member_base->member_mobile,"您制定的尾号{$card_num}的还款计划扣款失败，在APP内还款计划里即可查看详情。");

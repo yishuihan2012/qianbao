@@ -216,12 +216,11 @@
         $merch=Passageway::where(['passageway_id'=>$value['order_passageway']])->find();
         //查询子商户号
         $member_pas=MemberCreditPas::where(['member_credit_pas_pasid'=>$value['order_passageway'],'member_credit_pas_creditid'=>$card_info['card_id']])->find();
-        //查询上次刷卡费率是否和这次一样，不一样需要变更费率。
-        $order=GenerationOrder::where(['order_type'=>1])->where('order_no','lt',$value['order_no'])->order('order_id desc')->find();
-        if($order['user_rate'] !=$value['user_rate']){//重新报备
-            $arr['rate']=$value['user_rate']*100;
-            // $res=$this->reincome($passageway_mech,$member_pas['member_credit_pas_info'],$arr);
-        }
+        // $order=GenerationOrder::where(['order_type'=>1])->where('order_no','lt',$value['order_no'])->order('order_id desc')->find();
+        // if($order['user_rate'] !=$value['user_rate']){//重新报备
+        //     $arr['rate']=$value['user_rate']*100;
+        //     // $res=$this->reincome($passageway_mech,$member_pas['member_credit_pas_info'],$arr);
+        // }
         $member_base=Member::where(['member_id'=>$value['order_member']])->find(); 
         
         //订单号
@@ -278,6 +277,7 @@
                 $update['order_status']='2';
                 $is_commission=1;
             }else if($res['respCode']=="10002"){
+                 $income['code']=100;
                 //处理中
                 $update['order_status']='4';
             }else{
@@ -343,7 +343,9 @@
          //查询子商户号
         $Membernet=MemberNets::where(['net_member_id'=>$order['order_member']])->find();
         $merId=$Membernet[$merch->passageway_no];
-
+        //查询子商户号
+        $member_pas=MemberCreditPas::where(['member_credit_pas_pasid'=>$order['order_passageway'],'member_credit_pas_creditid'=>$card_info['card_id']])->find();
+        
         $member_base=Member::where(['member_id'=>$order['order_member']])->find();
         // $rate=PassagewayItem::where(['item_passageway'=>$order['order_passageway'],'item_group'=>$member_info['member_group_id']])->find();
         if(!$order['order_platform_no'] || $order['order_status']!=1){
@@ -351,11 +353,11 @@
             $update_res=GenerationOrder::where(['order_id'=>$order['order_id']])->update($update_order);
         }
         //查询上次刷卡费率是否和这次一样，不一样需要变更费率。
-        $order_last=GenerationOrder::where(['order_type'=>1])->where('order_no','lt',$order['order_no'])->order('order_id desc')->find();
-        if($order_last['user_fix'] !=$order['user_fix']){//重新报备
-            $arr['extraFee']=$order['user_fix']*100;
-            // $res=$this->reincome($passageway_mech,$member_pas['member_credit_pas_info'],$arr);
-        }
+        // $order_last=GenerationOrder::where(['order_type'=>1])->where('order_no','lt',$order['order_no'])->order('order_id desc')->find();
+        // if($order_last['user_fix'] !=$order['user_fix']){//重新报备
+        //     $arr['extraFee']=$order['user_fix']*100;
+        //     // $res=$this->reincome($passageway_mech,$member_pas['member_credit_pas_info'],$arr);
+        // }
         //获取用户入网信息
         // $member_net=MemberNets::where(['net_member_id'=>$order['order_member']])->find();
         $arr=array(
@@ -363,7 +365,7 @@
             'serviceUri'=>'YQ0003',
             'charset'=>'UTF-8',//编码方式UTF-8
             'agentId'=>$passageway_mech,//受理方预分配的渠道代理商标识
-            'merId'=>$merId,//子商户号
+            'merId'=>$member_pas->member_credit_pas_info,// M(String)   子商户号
             'nonceStr'=>$order['order_platform_no'],//随机字符串，字符范围a-zA-Z0-9
             'signType'=>"RSA",//签名方式，固定RSA
             'orderNo'=>$order['order_platform_no'],//订单号
@@ -389,6 +391,7 @@
                 $income['status']="success";
                 $update['order_status']='2';
             }else if($res['respCode']=="10002"){
+                $income['code']=100;
                 //处理中
                 $update['order_status']='4';
             }else{

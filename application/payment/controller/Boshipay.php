@@ -1,5 +1,5 @@
 <?php
- namespace app\api\controller;
+ namespace app\payment\controller;
  use think\Db;
  use app\index\model\Member;
  use app\index\model\System;
@@ -18,7 +18,7 @@
  use app\index\model\MemberCreditcard;
  use app\index\model\BankInfo;
  use app\index\model\MemberCreditPas;
- class Huiliandaihuan{
+ class Boshipay{
  	protected $url;
  	protected $version;
  	public function __construct(){
@@ -248,7 +248,6 @@
                 $update['order_status']='2';
             }else if($res['respCode']=="10002"){
                 //处理中
-                $income['code']=100;
                 $update['order_status']='4';
             }else{
                 $update['order_status']='-1';

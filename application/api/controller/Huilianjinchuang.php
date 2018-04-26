@@ -285,6 +285,7 @@
                 #0在此计划的还款卡余额中增加本次的金额 除去手续费
                 db('reimbur')->where('reimbur_generation',$value['order_no'])->setInc('reimbur_left',$value['order_money']-$value['order_pound']);
             }else if($res['respCode']=="10002"){
+                $income['code']=100;
                 //处理中
                 $update['order_status']='4';
             }else{
@@ -487,6 +488,7 @@
                 #0在此计划的还款卡余额中增加本次的金额 除去手续费
                 db('reimbur')->where('reimbur_generation',$order['order_no'])->setInc('reimbur_left',$order['order_money']-$order['order_pound']);
             }else if($res['respCode']=="10002"){
+                $income['code']=100;
                 //处理中
                 $update['order_status']='4';
             }else{
