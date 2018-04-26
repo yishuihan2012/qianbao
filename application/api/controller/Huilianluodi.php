@@ -278,6 +278,7 @@
                 $update['order_status']='2';
                 $is_commission=1;
             }else if($res['respCode']=="10002"){
+                 $income['code']=100;
                 //处理中
                 $update['order_status']='4';
             }else{
@@ -389,6 +390,7 @@
                 $income['status']="success";
                 $update['order_status']='2';
             }else if($res['respCode']=="10002"){
+                $income['code']=100;
                 //处理中
                 $update['order_status']='4';
             }else{
