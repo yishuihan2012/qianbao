@@ -224,7 +224,7 @@ class CashOut
 	 public function rongbangcash($tradeNo,$price,$description='快捷支付')
 	 {
 	 	#判断是否支持银行
-	 	if(in_array($creditcard->card_bankname, ['招商银行','建设银行']))
+	 	if(in_array($this->card_info->card_bankname, ['招商银行','建设银行']))
 	 		return ['code'=>500,'msg'=>'当前通道暂不支持该银行'];
 	 	// 初始化类
  	 	 $membernetObject=new Membernets($this->member_infos->member_id, $this->passway_info->passageway_id);
