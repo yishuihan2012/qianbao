@@ -102,7 +102,7 @@
                     }else if($bank['bank_attrbute']=='百'){
                       $single_max=$bank['bank_single']*100;
                     }
-                    if($single_max<$avage*1.2){
+                    if($single_max<$avage*1.2*1.2){
                         return['code'=>'101','msg'=>'该行单次消费限额'.$single_max.'元，请增加刷卡次数。'];
                     }
                  }
