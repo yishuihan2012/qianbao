@@ -251,7 +251,7 @@ class Plan extends Common{
                     if($v['order_type']==1){
 	                    $count['order_cash_money']+=$v['order_money'];
                     }else{
-	                    $count['order_repay_money']+=$v['order_money'];
+		                $count['order_repay_money']+=$v['order_money']-$v['order_pound'];
                     }
                 }
             }
@@ -263,13 +263,13 @@ class Plan extends Common{
             $count['order_platform_fee']=array_sum(array_column($order_data,'order_platform_fee'));
             $cms=db('commission')->where('commission_from','in',array_column($order_data, 'order_id'))->where('commission_type',3)->group('commission_from')->column("commission_from,sum(commission_money) as sum");
             #指定成功状态时
-            $count['order_pound']=array_sum(array_column($order_data,'order_pound'))+array_sum(array_column($order_data,'user_fix'));
+            $count['order_pound']=array_sum(array_column($order_data,'order_pound'));
             $count['sanji']=array_sum($cms);
             foreach ($order_data as $k => $v) {
 	            if($v['order_type']==1){
 	                $count['order_cash_money']+=$v['order_money'];
 	            }else{
-	                $count['order_repay_money']+=$v['order_money'];
+	                $count['order_repay_money']+=$v['order_money']-$v['order_pound'];
 	            }
             }
         }
@@ -284,6 +284,8 @@ class Plan extends Common{
 	    $where=[];
 	    if(input('member'))
 	      $where['m.member_nick|m.member_mobile']=['like','%'.$r['member'].'%'];
+	    if(input('back_statusDesc'))
+	      $where['o.back_statusDesc']=['like','%'.$r['back_statusDesc'].'%'];
 	    if(input('order_money'))
 	      $where['o.order_money']=$r['order_money'];
 	    if(input('order_id'))

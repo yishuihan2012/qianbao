@@ -65,6 +65,9 @@
         <span class="input-group-addon">执行时间</span>
         <input type="date" name="beginTime" style="width: 140px" class="form-control" value="{{$r['beginTime'] or ''}}" />
         <input type="date" name="endTime" style="width: 140px" class="form-control" value="{{$r['endTime'] or ''}}" /></div>
+      <div class="input-group" style="width: 180px;float: left;margin-right: 10px;">
+        <span class="input-group-addon">失败原因</span>
+        <input type="text" class="form-control" name="back_statusDesc" value="{{$r['back_statusDesc'] or ''}}" placeholder="失败原因"></div>
       <button class="btn btn-primary" type="submit">搜索</button>
       <input type="hidden" name="is_export" class="is_export" value="0">
       <button class="btn btn-primary export" type="submit">导出</button></form>
