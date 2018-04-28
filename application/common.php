@@ -239,7 +239,7 @@ function encryption($str, $salt, $method='md5')
     $post['personName']=$data['personName'];
     $post['personPhone']=$data['mobileNo'];
     $CertDatas[]=$post;
-    Cache::set('CertDatas',$CertDatas,3600*24);
+    Cache::set('CertDatas',$CertDatas,3600);
     $headers = array();
     array_push($headers, "Authorization:APPCODE " . System::getName('appcode'));
     // array_push($headers, "Authorization:APPCODE " .'d04d00f17ddd430abc630269b4c30324');
@@ -282,7 +282,7 @@ function BankCert_Java($bankCard='',$personCard='',$personName='',$personPhone='
     $data['personName']=$personName;
     $data['personPhone']=$personPhone;
     $CertDatas[]=$data;
-    Cache::set('CertDatas',$CertDatas,3600*24);
+    Cache::set('CertDatas',$CertDatas,3600);
 
     $url='http://api.xijiakei.com/bankElements/detailApi';
     // $apiAppId='20180329164226439';
