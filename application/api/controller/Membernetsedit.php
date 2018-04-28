@@ -231,4 +231,7 @@
           return '该费率'.$memberAlso['item_rate'].'无对应的套餐编码';
         }
       }
+      public function elife_pay(){
+         return true;
+      }
  }
