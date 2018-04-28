@@ -228,7 +228,7 @@ function encryption($str, $salt, $method='md5')
                                 'msg'=>'相同数据不能重复实名！',
                                 'data'=>[
                                     'resultCode'=>'R002',
-                                    'remark'=>json_encode($data)
+                                    'remark'=>'相同数据不能重复实名！'
                                 ],
                            ];
             }
