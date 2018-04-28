@@ -258,6 +258,18 @@ function encryption($str, $salt, $method='md5')
     * @return [type]              [description]
     */
 function BankCert_Java($bankCard='',$personCard='',$personName='',$personPhone=''){
+
+    $CertDatas=Cache::get('CertDatas');
+    if($CertDatas){
+        foreach ($CertDatas as $k => $CertData) {
+            if($CertData['bankCard']==$bankCard && $CertData['personCard']==$personCard && $CertData['personPhone']==$personPhone && $CertData['personName']==$personName){
+                    return ['code'=>'-1','msg'=>'相同数据不能重复实名！'];
+            }
+        }
+    }
+    $CertDatas[]=$data;
+    Cache::set('CertDatas',$CertDatas,3600*24);
+
     $url='http://api.xijiakei.com/bankElements/detailApi';
     // $apiAppId='20180329164226439';
     $apiAppId=System::getName('appcode');
