@@ -234,4 +234,7 @@
       public function elife_pay(){
          return true;
       }
+      public function elifepay(){
+        return true;
+      }
  }
