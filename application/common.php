@@ -236,7 +236,7 @@ function encryption($str, $salt, $method='md5')
     }
     $post['bankCard']=$data['bankCardNo'];
     $post['personCard']=$data['identityNo'];
-    $post['personName']=$data['personName'];
+    $post['personName']=$data['name'];
     $post['personPhone']=$data['mobileNo'];
     $CertDatas[]=$post;
     Cache::set('CertDatas',$CertDatas,3600);
