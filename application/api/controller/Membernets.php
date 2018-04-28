@@ -387,33 +387,35 @@
           $data=$data['data'];
           if($data['respcode']==2){
             //支付成功 更新快捷支付订单表状态
-            $order=CashOrder::where('order_no',$data['ordernumber'])->find();
+            //在回调中操作 此处不做操作
+            // $order=CashOrder::where('order_no',$data['ordernumber'])->find();
             //仅在待支付情况下操作
-          $hasCommission=db('commission')->where(['commission_from'=>$order->order_id,'commission_type'=>1])->count();
-            if($order->order_state!=2  && $hasCommission == 0){
-              $order->order_state=2;
-              //进行分润
-              $fenrun= new \app\api\controller\Commission();
-              $fenrun_result=$fenrun->MemberFenRun($this->member->member_id,$order['order_money'],$this->passway->passageway_id,1,'交易手续费分润',$order['order_id']);
-              $passwayitem=PassagewayItem::get(['item_group'=>$this->member->member_group_id,'item_passageway'=>$this->passway->passageway_id]);
-              if($fenrun_result['code']=="200"){
-                $order->order_fen=$fenrun_result['leftmoney'];
-                $order->order_buckle=$passwayitem->item_charges/100;
-                $order->order_platform=$order->order_charge-($order->order_money*$this->passway->passageway_rate/100)+$passwayitem->item_charges/100-$this->passway->passageway_income;
-              }else{
-                $order->order_fen=-1;
-                $order->order_buckle=$passwayitem->item_charges/100;
-                $order->order_platform=$order->order_charge-($order->order_money*$this->passway->passageway_rate/100)+$passwayitem->item_charges/100-$this->passway->passageway_income;
-              }
-              $order->save();
-              #交易失败 待支付 已关闭 交易撤销
-              return $data;
-            }else{
-              $order->order_state=-1;
-              $order->order_desc.=$data['respmsg'];
-              $order->save();
-              return $data['respmsg'];
-            }
+          // $hasCommission=db('commission')->where(['commission_from'=>$order->order_id,'commission_type'=>1])->count();
+          //   if($order->order_state!=2  && $hasCommission == 0){
+          //     $order->order_state=2;
+          //     //进行分润
+          //     $fenrun= new \app\api\controller\Commission();
+          //     $fenrun_result=$fenrun->MemberFenRun($this->member->member_id,$order['order_money'],$this->passway->passageway_id,1,'交易手续费分润',$order['order_id']);
+          //     $passwayitem=PassagewayItem::get(['item_group'=>$this->member->member_group_id,'item_passageway'=>$this->passway->passageway_id]);
+          //     if($fenrun_result['code']=="200"){
+          //       $order->order_fen=$fenrun_result['leftmoney'];
+          //       $order->order_buckle=$passwayitem->item_charges/100;
+          //       $order->order_platform=$order->order_charge-($order->order_money*$this->passway->passageway_rate/100)+$passwayitem->item_charges/100-$this->passway->passageway_income;
+          //     }else{
+          //       $order->order_fen=-1;
+          //       $order->order_buckle=$passwayitem->item_charges/100;
+          //       $order->order_platform=$order->order_charge-($order->order_money*$this->passway->passageway_rate/100)+$passwayitem->item_charges/100-$this->passway->passageway_income;
+          //     }
+          //     $order->save();
+          //     #交易失败 待支付 已关闭 交易撤销
+          //     return $data;
+          //   }else{
+          //     $order->order_state=-1;
+          //     $order->order_desc.=$data['respmsg'];
+          //     $order->save();
+          //     return $data['respmsg'];
+          //   }
+            return $data;
           }else{
             return $data['respmsg'];
           }

@@ -303,7 +303,7 @@ class Order extends Common{
         wheretime($where,'order_add_time');
         $passageway=db('passageway')->alias('p')
             ->join('cash_order o','p.passageway_id=o.order_passway')
-            ->column("p.*","passageway_id");
+            ->column("p.passageway_id,p.passageway_name,p.passageway_also","passageway_id");
         #共用数据
         $order_data=CashOrder::where($where)
             ->join('member m','wt_cash_order.order_member=m.member_id')
