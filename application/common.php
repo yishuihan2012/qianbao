@@ -223,7 +223,7 @@ function encryption($str, $salt, $method='md5')
     $CertDatas=Cache::get('CertDatas');
     if($CertDatas){
         foreach ($CertDatas as $k => $CertData) {
-            if($CertData['bankCard']==$data['bankCardNo'] && $CertData['personCard']==$data[''] && $CertData['personPhone']==$data['mobileNo'] && $CertData['personName']==$data['name']){
+            if($CertData['bankCard']==$data['bankCardNo'] && $CertData['personCard']==$data['identityNo'] && $CertData['personPhone']==$data['mobileNo'] && $CertData['personName']==$data['name']){
                      return [    'code'=>'0000',
                                 'msg'=>'相同数据不能重复实名！',
                                 'data'=>[
