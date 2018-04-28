@@ -228,7 +228,7 @@ function encryption($str, $salt, $method='md5')
                                 'msg'=>'当前数据认证有误，请核实信息后或过30分钟后再试',
                                 'data'=>[
                                     'resultCode'=>'R002',
-                                    'remark'=>'当前数据认证有误，请核实信息后或过30分钟后再试'
+                                    'remark'=>'因你填写的资料未作修改，请修改后再次提交'
                                 ],
                            ];
             }
@@ -273,7 +273,7 @@ function BankCert_Java($bankCard='',$personCard='',$personName='',$personPhone='
     if($CertDatas){
         foreach ($CertDatas as $k => $CertData) {
             if($CertData['bankCard']==$bankCard && $CertData['personCard']==$personCard && $CertData['personPhone']==$personPhone && $CertData['personName']==$personName){
-                    return ['code'=>'-1','info'=>'当前数据认证有误，请核实信息后或过30分钟后再试'];
+                    return ['code'=>'-1','info'=>'因你填写的资料未作修改，请修改后再次提交'];
             }
         }
     }
