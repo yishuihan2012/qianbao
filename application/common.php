@@ -224,7 +224,13 @@ function encryption($str, $salt, $method='md5')
     if($CertDatas){
         foreach ($CertDatas as $k => $CertData) {
             if($CertData['bankCardNo']==$data['bankCardNo'] && $CertData['identityNo']==$data['identityNo'] && $CertData['mobileNo']==$data['mobileNo'] && $CertData['name']==$data['name']){
-                    return ['code'=>'-1','msg'=>'相同数据不能重复实名！'];
+                    return [    'code'=>'0000',
+                                'msg'=>'相同数据不能重复实名！',
+                                'data'=>[
+                                    'resultCode'=>'R002',
+                                    'remark'=>'相同数据不能重复实名！'
+                                ],
+                           ];
             }
         }
     }
