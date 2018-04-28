@@ -223,18 +223,22 @@ function encryption($str, $salt, $method='md5')
     $CertDatas=Cache::get('CertDatas');
     if($CertDatas){
         foreach ($CertDatas as $k => $CertData) {
-            if($CertData['bankCardNo']==$data['bankCardNo'] && $CertData['identityNo']==$data['identityNo'] && $CertData['mobileNo']==$data['mobileNo'] && $CertData['name']==$data['name']){
-                    return [    'code'=>'0000',
+            if($CertData['bankCard']==$data['bankCardNo'] && $CertData['personCard']==$data[''] && $CertData['personPhone']==$data['mobileNo'] && $CertData['personName']==$data['name']){
+                     return [    'code'=>'0000',
                                 'msg'=>'相同数据不能重复实名！',
                                 'data'=>[
                                     'resultCode'=>'R002',
-                                    'remark'=>'相同数据不能重复实名！'
+                                    'remark'=>json_encode($data)
                                 ],
                            ];
             }
         }
     }
-    $CertDatas[]=$data;
+    $post['bankCard']=$data['bankCardNo'];
+    $post['personCard']=$data['identityNo'];
+    $post['personName']=$data['personName'];
+    $post['personPhone']=$data['mobileNo'];
+    $CertDatas[]=$post;
     Cache::set('CertDatas',$CertDatas,3600*24);
     $headers = array();
     array_push($headers, "Authorization:APPCODE " . System::getName('appcode'));
