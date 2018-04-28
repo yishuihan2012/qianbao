@@ -267,6 +267,10 @@ function BankCert_Java($bankCard='',$personCard='',$personName='',$personPhone='
             }
         }
     }
+    $data['bankCard']=$bankCard;
+    $data['personCard']=$personCard;
+    $data['personName']=$personName;
+    $data['personPhone']=$personPhone;
     $CertDatas[]=$data;
     Cache::set('CertDatas',$CertDatas,3600*24);
 
