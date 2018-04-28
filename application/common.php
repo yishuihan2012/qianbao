@@ -263,7 +263,7 @@ function BankCert_Java($bankCard='',$personCard='',$personName='',$personPhone='
     if($CertDatas){
         foreach ($CertDatas as $k => $CertData) {
             if($CertData['bankCard']==$bankCard && $CertData['personCard']==$personCard && $CertData['personPhone']==$personPhone && $CertData['personName']==$personName){
-                    return ['code'=>'-1','msg'=>'相同数据不能重复实名！'];
+                    return ['code'=>'-1','info'=>'相同数据不能重复实名！'];
             }
         }
     }
