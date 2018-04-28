@@ -10,6 +10,7 @@
  // +----------------------------------------------------------------------
  // 应用公共文件
  use think\Config;
+ use  think\Cache;
  use app\index\model\SmsLog as SmsLogs;
  use app\index\model\Member as Members;
  use app\index\model\MemberGroup;
@@ -219,24 +220,34 @@ function encryption($str, $salt, $method='md5')
  // @return  $data 返回认证结果
  function BankCertNew($data=array(), $method='GET')
  {
-     $headers = array();
-     array_push($headers, "Authorization:APPCODE " . System::getName('appcode'));
-     // array_push($headers, "Authorization:APPCODE " .'d04d00f17ddd430abc630269b4c30324');
-     $url = System::getName('certhost') . System::getName('path') . "?" . http_build_query($data);
-     $curl = curl_init();
-     curl_setopt($curl, CURLOPT_CUSTOMREQUEST, $method);
-     curl_setopt($curl, CURLOPT_URL, $url);
-     curl_setopt($curl, CURLOPT_HTTPHEADER, $headers);
-     curl_setopt($curl, CURLOPT_FAILONERROR, false);
-     curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
-     curl_setopt($curl, CURLOPT_HEADER, false);
-     if (1 == strpos("$".System::getName('certhost'), "https://"))
-     {
+    $CertDatas=Cache::get('CertDatas');
+    if($CertDatas){
+        foreach ($CertDatas as $k => $CertData) {
+            if($CertData['bankCardNo']==$data['bankCardNo'] && $CertData['identityNo']==$data['identityNo'] && $CertData['mobileNo']==$data['mobileNo'] && $CertData['name']==$data['name']){
+                    return ['code'=>'-1','msg'=>'相同数据不能重复实名！'];
+            }
+        }
+    }
+    $CertDatas[]=$data;
+    Cache::set('CertDatas',$CertDatas,3600*24);
+    $headers = array();
+    array_push($headers, "Authorization:APPCODE " . System::getName('appcode'));
+    // array_push($headers, "Authorization:APPCODE " .'d04d00f17ddd430abc630269b4c30324');
+    $url = System::getName('certhost') . System::getName('path') . "?" . http_build_query($data);
+    $curl = curl_init();
+    curl_setopt($curl, CURLOPT_CUSTOMREQUEST, $method);
+    curl_setopt($curl, CURLOPT_URL, $url);
+    curl_setopt($curl, CURLOPT_HTTPHEADER, $headers);
+    curl_setopt($curl, CURLOPT_FAILONERROR, false);
+    curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
+    curl_setopt($curl, CURLOPT_HEADER, false);
+    if (1 == strpos("$".System::getName('certhost'), "https://"))
+    {
          curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, false);
          curl_setopt($curl, CURLOPT_SSL_VERIFYHOST, false);
-     }
+    }
      //return System::getName('certhost');
-     return json_decode(curl_exec($curl), true);
+    return json_decode(curl_exec($curl), true);
  }
    /**
     * 内部JAVA端银行卡实名认证接口
