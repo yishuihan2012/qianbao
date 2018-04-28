@@ -118,6 +118,7 @@
             #信用卡有效状态校验
         if (System::getName('certhost') == 'http://yhsys.market.alicloudapi.com') {
            $card_validate=BankCertNew(['bankCardNo'=>$this->param['creditCardNo'], 'identityNo'=>$this->idcard, 'mobileNo'=>$this->param['phone'], 'name'=>$this->name]);
+           if(!$card_validate) return ['code'=>351,'msg'=>'认证失败，请联系客服'];
            if($card_validate['code']!=0000) return ['code'=>351, 'msg'=>'实名认证失败'];
            if($card_validate['data']['resultCode']!='R001')  return ['code'=>351, 'msg'=>'认证失败:'.$card_validate['data']['remark']];
            if(isset($card_validate['data']['bankCardBin']) && $card_validate['data']['bankCardBin']['cardTy']!='C')  return ['code'=>351, 'msg'=>'认证失败:只能绑定信用卡'];
