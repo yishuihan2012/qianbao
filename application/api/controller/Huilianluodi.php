@@ -327,6 +327,14 @@
         $res=GenerationOrder::where(['order_id'=>$pay['order_id']])->update($arr);
         if($data['respCode']==10000){
             // 极光推送
+            if($pay['is_commission']=='0'){
+                $has_fenrun=db('commission')->where('commission_from',$pay['order_id'])->find();
+                if(!$has_fenrun){
+                        $update_res=GenerationOrder::where(['order_id'=>$pay['order_id']])->update(['is_commission'=>1]);
+                        $fenrun= new \app\api\controller\Commission();
+                        $fenrun_result=$fenrun->MemberFenRun($pay['order_member'],$pay['order_money'],$pay['order_passageway'],3,'代还分润',$pay['order_id']);
+                }
+            }
             $card_num=substr($pay['order_card'],-4);
             jpush($pay['order_member'],'还款计划扣款成功通知',"您制定的尾号{$card_num}的还款计划成功扣款".$pay['order_money']."元，在APP内还款计划里即可查看详情。");
             echo "success";die;

@@ -225,10 +225,10 @@ function encryption($str, $salt, $method='md5')
         foreach ($CertDatas as $k => $CertData) {
             if($CertData['bankCard']==$data['bankCardNo'] && $CertData['personCard']==$data['identityNo'] && $CertData['personPhone']==$data['mobileNo'] && $CertData['personName']==$data['name']){
                      return [    'code'=>'0000',
-                                'msg'=>'相同数据不能重复实名！',
+                                'msg'=>'当前数据认证有误，请核实信息后或过30分钟后再试',
                                 'data'=>[
                                     'resultCode'=>'R002',
-                                    'remark'=>'相同数据不能重复实名！'
+                                    'remark'=>'因你填写的资料未作修改，请修改后再次提交,或稍后再试。'
                                 ],
                            ];
             }
@@ -236,10 +236,10 @@ function encryption($str, $salt, $method='md5')
     }
     $post['bankCard']=$data['bankCardNo'];
     $post['personCard']=$data['identityNo'];
-    $post['personName']=$data['personName'];
+    $post['personName']=$data['name'];
     $post['personPhone']=$data['mobileNo'];
     $CertDatas[]=$post;
-    Cache::set('CertDatas',$CertDatas,3600);
+    Cache::set('CertDatas',$CertDatas,60);
     $headers = array();
     array_push($headers, "Authorization:APPCODE " . System::getName('appcode'));
     // array_push($headers, "Authorization:APPCODE " .'d04d00f17ddd430abc630269b4c30324');
@@ -273,7 +273,7 @@ function BankCert_Java($bankCard='',$personCard='',$personName='',$personPhone='
     if($CertDatas){
         foreach ($CertDatas as $k => $CertData) {
             if($CertData['bankCard']==$bankCard && $CertData['personCard']==$personCard && $CertData['personPhone']==$personPhone && $CertData['personName']==$personName){
-                    return ['code'=>'-1','info'=>'相同数据不能重复实名！'];
+                    return ['code'=>'-1','info'=>'因你填写的资料未作修改，请修改后再次提交,或稍后再试'];
             }
         }
     }
@@ -282,7 +282,7 @@ function BankCert_Java($bankCard='',$personCard='',$personName='',$personPhone='
     $data['personName']=$personName;
     $data['personPhone']=$personPhone;
     $CertDatas[]=$data;
-    Cache::set('CertDatas',$CertDatas,3600);
+    Cache::set('CertDatas',$CertDatas,60);
 
     $url='http://api.xijiakei.com/bankElements/detailApi';
     // $apiAppId='20180329164226439';

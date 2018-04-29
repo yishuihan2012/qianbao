@@ -175,8 +175,8 @@
 			'product'=>$product,//String	是	产品编号，详见产品表
 			'bottom'=>"0",//String	是	保底收费金额，单位：元，目前无效，请设置为0
 			'top'=>"0",//String	是	封顶收费金额，单位：元，目前无效，请设置为0
-			'fixed'=>"1.5",//String	是	代付手续费，单位：元
-			'rate'=>"0.0047",//String	是	费率：0.005，表示0.5%
+			'fixed'=>$fix,//String	是	代付手续费，单位：元
+			'rate'=>$rate,//String	是	费率：0.005，表示0.5%
 			// 'uniq_no'=>"",//String	否	此参数目前只对扫码产品生效 结算卡唯一编号，增加结算卡后返回
 		);
 		// echo json_encode($data);
@@ -188,14 +188,14 @@
 	 * 产品费率修改
 	 * @return [type] [description]
 	 */
-	public function product_rate_update(){
+	public function product_rate_update($out_user_id,$product,$fixed,$rate){
 		$data=array(
-			'out_user_id'=>"DU5TIG18",//String	是	商户在合作伙伴系统的唯一编号，必填
-			'product'=>"3006",//String	是	产品编号，详见产品表
+			'out_user_id'=>$out_user_id,//String	是	商户在合作伙伴系统的唯一编号，必填
+			'product'=>$product,//String	是	产品编号，详见产品表
 			'bottom'=>"0",//String	是	保底收费金额，单位：元，目前无效，请设置为0
 			'top'=>"0",//String	是	封顶收费金额，单位：元，目前无效，请设置为0
-			'fixed'=>"1",//String	是	代付手续费，单位：元
-			'rate'=>"0.0042",//String	是	费率：0.005，表示0.5%
+			'fixed'=>$fixed,//String	是	代付手续费，单位：元
+			'rate'=>$rate,//String	是	费率：0.005，表示0.5%
 		);
 		// echo json_encode($data);
 		$res=$this->request('epaypp.merchant.product.rate.set',$data);

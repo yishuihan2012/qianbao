@@ -759,7 +759,17 @@ class CashOut
 				return ['code'=>'102','msg'=>'产品开通失败'];
 			}
 		}
+		
 		#5判断是否需要变更费率 (查询该用户上次刷卡成功的费率，如果和系统不一致，变更)
+		$last_order=CashOrder::where(['order_member'=>$this->member_infos->member_id,'order_passway'=>$this->passway_info->passageway_id])->order('order_id desc')->find();
+		if($last_order['user_rate']!=$this->also->item_rate || $last_order['user_fix']!=$this->also->item_charges/100){
+			$update_rate=$elifepay->product_rate_update($material_id,$product_id,$this->also->item_charges/100,$this->also->item_rate/100);
+			if($res['epaypp_merchant_product_rate_set_response'] && $res['epaypp_merchant_product_rate_set_response']['result_code']=='00'){
+				
+			}else{
+				return ['code'=>'102','msg'=>'修改费率失败'];
+			}
+		}	
 		
 		#6判断当前银行卡当前产品是否开通快捷
 		$memberCreditPas=MemberCreditPas::where(['member_credit_pas_creditid'=> $this->card_info->card_id,'member_credit_pas_pasid'=>$this->passway_info->passageway_id])->find();
@@ -875,6 +885,15 @@ class CashOut
 			}
 		}
 		#5判断是否需要变更费率 (查询该用户上次刷卡成功的费率，如果和系统不一致，变更)
+		$last_order=CashOrder::where(['order_member'=>$this->member_infos->member_id,'order_passway'=>$this->passway_info->passageway_id])->order('order_id desc')->find();
+		if($last_order['user_rate']!=$this->also->item_rate || $last_order['user_fix']!=$this->also->item_charges/100){
+			$update_rate=$elifepay->product_rate_update($material_id,$product_id,$this->also->item_charges/100,$this->also->item_rate/100);
+			if($res['epaypp_merchant_product_rate_set_response'] && $res['epaypp_merchant_product_rate_set_response']['result_code']=='00'){
+				
+			}else{
+				return ['code'=>'102','msg'=>'修改费率失败'];
+			}
+		}	
 		
 		#预下单 下单完成后返给APP一个链接
 		$out_trade_no=generate_password();
