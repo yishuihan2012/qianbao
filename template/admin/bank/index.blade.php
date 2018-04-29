@@ -16,6 +16,8 @@
                  <!-- 以下三列中间可滚动 -->
                  <th class="flex-col">logo</th> 
                  <th class="flex-col">状态</th>
+                 <th class="flex-col">兑换比例</th>
+                 <th class="flex-col">最少所需积分</th>
                  <th class="flex-col">添加时间</th>
                  <!-- 以下列右侧固定 -->
                  <th>操作</th>
@@ -32,6 +34,8 @@
                  <td>
                  {{$list['bank_state'] ? '启用' : '禁用'}}
                  </td>
+                 <td>{{$list->bank_integral_rate}}</td>
+                 <td>{{$list->bank_integral_min}}</td>
                  <td>{{$list->bank_add_time}}</td>
                  <td>
                    <button type="button" data-toggle="modal" data-remote="/index/bank/creat/bank_id/{{$list['bank_id']}}" class="btn btn-default btn-sm">编辑</button>
