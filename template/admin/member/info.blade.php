@@ -61,6 +61,10 @@
 	 <table class="table table-bordered table-hover table-striped" style="width:60%;float: left;margin-bottom: 0;margin-left: 30px">
 	 	@if($member_info->cert_member_idcard != '')
 		 <tr>
+			 <td>储蓄卡号</td>
+			 <td>{{$member_info->card_bankno}}</td>
+		 </tr>
+		 <tr>
 			 <td>身份证号码</td>
 			 <td>{{$member_info->cert_member_idcard}}</td>
 		 </tr>
