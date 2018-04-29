@@ -51,7 +51,7 @@
                                       <li><a  data-remote="{{url('/index/passageway/cashout','id='.$list['passageway_id'])}}" data-toggle="modal" data-size="lg" href="#">通道设置</a></li>
                                       <!-- <li><a  data-remote="{{url('/index/passageway/also','id='.$list['passageway_id'])}}" data-toggle="modal" data-size="lg" href="#">代还设置</a> </li> -->
                                       <li><a href="/index/{{$list['passageway_also']==1 ? 'order/cash' : 'plan/detail'}}?passageway_id={{$list['passageway_id']}}">交易详情</a> </li>
-                                      <li><a href="{{url('/index/passageway/passageway_statistics','passageway_id='.$list['passageway_id'])}}">通道利润统计</a> </li>
+                                      <!-- <li><a href="{{url('/index/passageway/passageway_statistics','passageway_id='.$list['passageway_id'])}}">通道利润统计</a> </li> -->
                                  </ul>
                            </div>
                       </div>

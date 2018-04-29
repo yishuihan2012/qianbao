@@ -98,7 +98,7 @@
         <li class="nav-parent bank-manager">
             <a href="javascript:;"><i class="icon icon-user"></i> 银行管理</a>
             <ul class="nav">
-                <li class="bank_list"><a href="{{url('/index/bank/index')}}"><i class="icon icon-sliders"></i> 银行列表</a></li>
+                <li class="bank_list"><a href="{{url('/index/bank/index')}}"><i class="icon icon-sliders"></i> 银行积分兑换</a></li>
                 <li class="bank_ident"><a href="{{url('/index/bank/ident')}}"><i class="icon icon-sliders"></i> 银行识别</a></li>
             </ul>
         </li>
