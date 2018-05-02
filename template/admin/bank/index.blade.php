@@ -7,20 +7,47 @@
  <blockquote> 银行列表管理</blockquote>
  <section>
  <hr/>
-  <div class="row">
-      @foreach($bank_list as $list)
-      <div class="col-sm-2">
-           <a class="card" href="###">
-                 <img src="{{$list['bank_avatar']}}" alt="{{$list['bank_name']}}"  class="img-responsive" data-toggle="lightbox">
-                 <div class="caption">{{$list['bank_name']}}  {{$list['bank_state'] ? '启用' : '禁用'}} </strong></div>
-                 <div class="card-heading"><strong>{{$list['bank_name']}}<code>{{$list['bank_state'] ? '启用' : '禁用'}}</code></strong></div>
-                 <a href="{{url('/index/Bank/bankSave/bank_id/'.$list['bank_id'])}}"><i class="icon-pencil"></i> 编辑</a>
-                 <a class="remove" href="#" data-url="{{url('/index/Bank/bankRemove/id/'.$list['bank_id'])}}"><i class="icon-remove"></i> 删除</a>
-                 <div class="card-content text-muted"><div class="help-block">添加时间:<code>{{$list['bank_add_time']}}</code></div> </div>
-           </a>
-      </div>
-      @endforeach
-  </div>
+ <table class="table datatable">
+      <thead>
+           <tr>
+                 <!-- 以下两列左侧固定 -->
+                 <th>ID</th>
+                 <th>银行名称</th>
+                 <!-- 以下三列中间可滚动 -->
+                 <th class="flex-col">logo</th> 
+                 <th class="flex-col">状态</th>
+                 <th class="flex-col">兑换比例</th>
+                 <th class="flex-col">最少所需积分</th>
+                 <th class="flex-col">添加时间</th>
+                 <!-- 以下列右侧固定 -->
+                 <th>操作</th>
+           </tr>
+      </thead>
+      <tbody>
+           @foreach($bank_list as $list)
+           <tr>
+                 <td>{{$list->bank_id}}</td>
+                 <td>{{$list->bank_name}}</td>
+                 <td>
+                 <img style="width: 120px" src="{{$list['bank_avatar']}}" alt="{{$list['bank_name']}}"  class="img-responsive" data-toggle="lightbox">
+                </td>
+                 <td>
+                 {{$list['bank_state'] ? '启用' : '禁用'}}
+                 </td>
+                 <td>{{$list->bank_integral_rate}}</td>
+                 <td>{{$list->bank_integral_min}}</td>
+                 <td>{{$list->bank_add_time}}</td>
+                 <td>
+                   <button type="button" data-toggle="modal" data-remote="/index/bank/creat/bank_id/{{$list['bank_id']}}" class="btn btn-default btn-sm">编辑</button>
+                   <a class="remove" href="#" data-url="{{url('/index/Bank/bankRemove/id/'.$list['bank_id'])}}"><i class="icon-remove"></i> 删除</a>
+                </td>
+           </tr>
+           @endforeach
+      </tbody>
+ </table>
+
+
+
  {!! $bank_list->render() !!}
  </section>
  <script type="text/javascript">

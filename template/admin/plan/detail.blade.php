@@ -57,7 +57,7 @@
         <select name="passageway_id" class="form-control passageway_id">
           <option value="">全部</option>
           @foreach($passageway as $v)
-            <option class="" value="{{$v->passageway_id}}">{{$v->passageway_name}}</option>
+            <option class="" value="{{$v['passageway_id']}}">{{$v['passageway_name']}}</option>
           @endforeach
         </select>
       </div>

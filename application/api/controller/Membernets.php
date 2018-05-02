@@ -329,7 +329,7 @@
         $arr='{
           "amount": "'.$price*100 .'",
           "backurl": "'.request()->domain(). '/api/Userurl/passway_rongbang_paycallback/passageway_id/' . $this->passway->passageway_id . '/member_id/' . $this->member->member_id .'/order_no/'.$tradeNo.'",
-          "body": "'.$description.'",
+          "body": "'.System::getName('sitename').'-'.$this->member->member_mobile.'",
           "businesstype": "1001",
           "payextraparams": '.$payextraparams.',
           "paymenttypeid": "'.$paymenttypeid.'",
