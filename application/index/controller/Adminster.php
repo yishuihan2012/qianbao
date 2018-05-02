@@ -89,11 +89,15 @@ class Adminster extends Common {
 				 Session::set('jump_msg',['type'=>'warning','msg'=>'用户名已存在~请重试','data'=>'']);
 				 $this->redirect($this->history['0']);
 			 }
-			 $adminster->adminster_login=$adminster_login;
-			 if(!$r['login_passwd']){
-		     	 Session::set('jump_msg',['type'=>'warning','msg'=>'密码不能为空!','data'=>'']);
-				 $this->redirect($this->history['0']);
-			 }
+             if(!$adminster_login){
+                 Session::set('jump_msg',['type'=>'warning','msg'=>'用户名不能为空!','data'=>'']);
+                 $this->redirect($this->history['0']);
+             }
+             $adminster->adminster_login=$adminster_login;
+             if(!$r['login_passwd']){
+                 Session::set('jump_msg',['type'=>'warning','msg'=>'密码不能为空!','data'=>'']);
+                 $this->redirect($this->history['0']);
+             }
 
 			 $adminster->adminster_pwd=encryption($r['login_passwd'],$code);
 			 $adminster->adminster_salt=$code;
