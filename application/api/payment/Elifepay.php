@@ -307,12 +307,15 @@
 			//TRADE_CLOSED_BY_SYS 超时交易关闭
 			if($res['epaypp_trade_query_response']['order']['status']=='TRADE_FINISHED'){
 				$result['pay_status']=2;
+				$result['resp_message']='交易成功';
 			}
 			if($res['epaypp_trade_query_response']['order']['status']=='TRADE_CLOSED_BY_SYS'){
 				$result['pay_status']=-2;
+				$result['resp_message']='超时交易关闭';
 			}
 			if($res['epaypp_trade_query_response']['order']['status']=='TRADE_CLOSED'){
 				$result['pay_status']=-2;
+				$result['resp_message']='交易关闭';
 			}
 		}
 		return $result;

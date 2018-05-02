@@ -270,7 +270,7 @@
         if(isset($res['code']) && $res['code']=='10000'){
             $update['back_tradeNo']=$res['orderNum'];
             $update['back_status']=$res['respCode'];
-            $update['back_statusDesc']=$res['respMessage'];
+            $update['back_statusDesc']=isset($res['respMessage'])?$res['respMessage']:'';
             if($res['respCode']=="10000"){
                 $income['code']=200;
                 $income['back_status']=$income['status']='success';
@@ -285,7 +285,7 @@
                 //失败
             }
         }else{
-          $update['back_statusDesc']=isset($res['respMessage'])?$res['respMessage']:$res['message'];
+          $update['back_statusDesc']=isset($res['respMessage'])?$res['respMessage']:'';
           $update['back_status']='FAIL';
           $update['order_status']='-1';   
         }
@@ -314,7 +314,7 @@
                     $update['order_status']='-1';
                     //失败
                 }
-                $arr['back_statusDesc']=$data['respMessage'];
+                $arr['back_statusDesc']=isset($data['respMessage'])?$data['respMessage']:'';
                 $arr['back_status']=$data['respCode'];
         // }else{
         //     $arr['order_status']='-1';
@@ -393,7 +393,7 @@
         if($res['code']=='10000' && $res['respCode']=='10000'){
              $update['back_tradeNo']=isset($res['orderNum'])?$res['orderNum']:'';
              $update['back_status']=$res['respCode'];
-             $update['back_statusDesc']=$res['respMessage'];
+             $update['back_statusDesc']=isset($res['respMessage'])?$res['respMessage']:'';
             if($res['respCode']=="10000"){
                 $income['code']='200';
                 $income['status']="success";
@@ -407,7 +407,7 @@
                 //失败
             }
         }else{
-          $update['back_statusDesc']=isset($res['respMessage'])?$res['respMessage']:$res['message'];
+          $update['back_statusDesc']=isset($res['respMessage'])?$res['respMessage']:'';
           $update['back_status']='FAIL';
           $update['order_status']='-1';
           // $generation['generation_state']=-1;
