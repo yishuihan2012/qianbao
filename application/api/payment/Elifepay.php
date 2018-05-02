@@ -289,11 +289,33 @@
 	/**
 	 * 交易查询
 	 * @return [type] [description]
-	 */
-	public function order_query(){
-		$data['out_trade_no']='8QSA4U78';//订单号
+	 * pay_status 1待支付 2成功 -1 失败 -2超时 
+	 * qf_status -1代付失败  1代付中 2代付成功
+	 * resp_message 交易成功
+	 */ 
+	public function order_query($order_info){
+		$data['out_trade_no']=$order_info->order_no;//订单号
 		$return = $this->request('epaypp.trade.query', $data);
-		echo $return;die;
+		$res=json_decode($return,true);
+		// print_r($res);die;
+		$result['pay_status']=1;
+		$result['qf_status']=2;
+		$result['resp_message']='查询失败';
+		if($res['epaypp_trade_query_response'] && $res['epaypp_trade_query_response']['result_code']=='00'){
+			//TRADE_FINISHED 交易成功
+			//TRADE_CLOSED   交易关闭
+			//TRADE_CLOSED_BY_SYS 超时交易关闭
+			if($res['epaypp_trade_query_response']['order']['status']=='TRADE_FINISHED'){
+				$result['pay_status']=2;
+			}
+			if($res['epaypp_trade_query_response']['order']['status']=='TRADE_CLOSED_BY_SYS'){
+				$result['pay_status']=-2;
+			}
+			if($res['epaypp_trade_query_response']['order']['status']=='TRADE_CLOSED'){
+				$result['pay_status']=-2;
+			}
+		}
+		return $result;
 	}	
 	/**
 	 * 异步通知

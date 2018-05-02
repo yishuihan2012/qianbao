@@ -23,21 +23,6 @@
 				"bank" => "招商银行股份有限公司广州丰兴支行"
  	  	 	);
  	  	 $method="masget.pay.collect.router.treaty.apply";
- 	  	 $postArray=array(
- 	  	 	'appid'	=>
-
-method
-format
-data
-v
-timestamp
-session
-sign
-target_appid
-
- 	  	 );
-
-
  	  }
  }
 
