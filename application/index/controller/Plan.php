@@ -170,7 +170,10 @@ class Plan extends Common{
      */
 
     public function detail(){
-        $passageway=Passageways::where(['passageway_also'=>2,'passageway_state'=>1])->select();
+        // $passageway=Passageways::where(['passageway_also'=>2,'passageway_state'=>1])->select();
+        $passageway=db('passageway')->alias('p')
+            ->join('generation_order o','p.passageway_id=o.order_passageway')
+            ->column("p.passageway_id,p.passageway_name,p.passageway_also","passageway_id");
         $this->assign('passageway',$passageway);
         $where=$this->detail_search();
         #分润数据
@@ -307,7 +310,7 @@ class Plan extends Common{
         wheretime($where,'o.order_time');
         #默认当前月份
         if(!$where){
-            $where['o.order_time']=["between time",[mktime(0,0,0,date('m'),1,date('Y')),strtotime(date('Y-m-d'))+3600]];
+            $where['o.order_time']=["between time",[mktime(0,0,0,date('m'),1,date('Y')),strtotime(date('Y-m-d'))+3600*24]];
             $r['beginTime']=date('Y-m-d',mktime(0,0,0,date('m'),1,date('Y')));
             $r['endTime']=date('Y-m-d');
         }
