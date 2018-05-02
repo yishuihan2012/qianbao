@@ -65,9 +65,48 @@
             return $result;
         }
     }
-    //查询
-    public function query(){
-        
+    /**
+     * 订单查询
+     * pay_status 1待支付 2成功 -1 失败 -2超时 
+     * qf_status -1代付失败  1代付中 2代付成功
+     * resp_message 交易成功
+     */
+    public function order_query($order){
+        $url='http://pay.mishua.cn/zhonlinepay/service/down/trans/checkDzero';
+        $p=Passageway::get($order->order_passway)->toarray();
+        $data=[
+          'versionNo'=>1,
+          'mchNo'=>$p['passageway_mech'],
+          'transNo'=>$v['order_thead_no']
+        ];
+        $res=repay_request($data,$p['passageway_mech'],$url,'0102030405060708',$p['passageway_pwd_key'],$p['passageway_key']);
+        $result=[];
+        if(isset($res['status']) && isset($res['qfStatus']) && isset($res['statusDesc'])){
+          #支付状态
+          if($res['status']=='00'){
+            $result['pay_status']=2;
+          }elseif($res['status']=='01' || $res['status']=='09'){
+            $result['pay_status']=1;
+          }else{
+            $result['pay_status']=-1;
+          }
+          #代付状态
+          if($res['qfStatus']=='SUCCESS'){
+            $result['qf_status']=2;
+          }elseif($res['qfStatus']=='IN_PROCESS'){
+            $result['qf_status']=1;
+          }else{
+            $result['qf_status']=-1;
+          }
+          $result['resp_message']=$res['statusDesc'];
+        }else{
+          $result=[
+            'pay_status'=>-1,
+            'qf_status'=>-1,
+            'resp_message'=>'xj:接口查询失败或返回参数不全',
+          ];
+        }
+        return $result;
     }
     //回调
     public function callback(){
