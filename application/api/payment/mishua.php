@@ -77,7 +77,7 @@
         $data=[
           'versionNo'=>1,
           'mchNo'=>$p['passageway_mech'],
-          'transNo'=>$v['order_thead_no']
+          'transNo'=>$order['order_thead_no']
         ];
         $res=repay_request($data,$p['passageway_mech'],$url,'0102030405060708',$p['passageway_pwd_key'],$p['passageway_key']);
         $result=[];

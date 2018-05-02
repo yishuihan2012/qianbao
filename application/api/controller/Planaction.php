@@ -96,28 +96,31 @@
  			'order_state'=>['<>',2]
  		])->whereTime('order_add_time','yesterday')
  			->select();
-		foreach ($orders as $k => $v) {
-			$p=$passageway[$v['order_passway']];
-			if(!$p['cashout_action'])
-				continue;
+		foreach ($orders as $k => $order) {
+			$p=$passageway[$order['order_passway']];
 			$class="app\api\payment\\".$p['cashout_action'];
-			halt($class);
+            if(!class_exists($class))
+                continue;
+			// halt($class);
 			$PayClass=new $class();
-			$res=$PayClass->order_query($v);
-			halt(1);
- 			if($res['qfStatus']=='SUCCESS'){
-		        $member=Member::get($v['order_member']);
+			$res=$PayClass->order_query($order);
+ 			if($res['pay_status']==2 && $res['qf_status']==2){
+		        $member=Member::get($order['order_member']);
 		        #通道费率
-		        $passwayitem=PassagewayItem::get(['item_group'=>$member->member_group_id,'item_passageway'=>$v['order_passway']]);
- 				// $order=$this->commission($order,$passwayitem,$p);
+		        $passwayitem=PassagewayItem::get(['item_group'=>$member->member_group_id,'item_passageway'=>$order['order_passway']]);
+ 				$order=$this->commission($order,$passwayitem,$p);
  				$order->order_state=2;
- 			}elseif($res['status']==00){
- 				$order->order_state=3;
+            }elseif($res['pay_status']==2 && $res['qf_status']!=2){
+                $order->order_state=3;
+            }elseif($res['pay_status']==1){
+                $order->order_state=1;
  			}else{
  				$order->order_state=-1;
  			}
-            $order->order_desc=$res['statusDesc'];
+            $order->order_desc=$res['resp_message'];
 			$order->save();
+            trace($p['passageway_true_name'].$res['resp_message']);
+            echo $p['passageway_true_name'].$res['resp_message']."</br>";
 		}
  	}
  	#订单查询子函数 分润
