@@ -15,12 +15,15 @@
             </ul>
         </li>
         @if($admin['adminster_group_id']!=5)
-       <!--  <li class="nav-parent member-activation-code">
+        @if(0)
+        终极注释
+        <li class="nav-parent member-activation-code">
             <a href="javascript:;"><i class="icon icon-barcode"></i> 激活码管理</a>
             <ul class="nav">
                 <li class="activation_code"><a href="{{url('/index/activation_code/index')}}"> 激活码列表 </a></li>
             </ul>
-        -->
+        </li>
+        @endif
         @endif
         @if($admin['adminster_group_id']!=5)
         <li class="nav-parent wallet-manager">

@@ -14,7 +14,7 @@ use app\index\model\Adminster;
 use app\index\model\MemberGroup;
 use app\index\controller\MakeCode;
 
-class  ActivationCode extends Common{
+class  ActivationCode_no_this_controller extends Common{
 	 # 激活码列表
 	 public function index()
 	 {  
