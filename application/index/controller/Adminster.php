@@ -125,6 +125,12 @@ class Adminster extends Common {
 				 Session::set('jump_msg',['type'=>'warning','msg'=>'登录名已经存在，请重试~','data'=>'']);
 				 $this->redirect($this->history['0']);
 			 }
+             if(input('login_group')==5){
+                if(!input('adminster_user_id')){
+                 Session::set('jump_msg',['type'=>'warning','msg'=>'请选择该渠道商对应的用户','data'=>'']);
+                 $this->redirect($this->history['0']);
+                }
+             }
 			 $check_exit=Adminsters::get(['adminster_id'=>['neq',Request::instance()->post('login_id')],'adminster_email'=>Request::instance()->post('login_email')]);
 			 if($check_exit){
 			      Session::set('jump_msg',['type'=>'warning','msg'=>'该邮箱已经绑定其他账号，请重新填写~','data'=>'']);
