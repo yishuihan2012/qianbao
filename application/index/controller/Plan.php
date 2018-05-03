@@ -173,6 +173,7 @@ class Plan extends Common{
         // $passageway=Passageways::where(['passageway_also'=>2,'passageway_state'=>1])->select();
         $passageway=db('passageway')->alias('p')
             ->join('generation_order o','p.passageway_id=o.order_passageway')
+            ->group('p.passageway_id')
             ->column("p.passageway_id,p.passageway_name,p.passageway_also","passageway_id");
         $this->assign('passageway',$passageway);
         $where=$this->detail_search();
