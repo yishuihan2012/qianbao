@@ -117,7 +117,13 @@
        <td>{{$value['order_pound']}}({{$value['order_money']}}*{{$value['user_rate']}}+{{$value['user_fix']}})</td>
        <td>{{$value['order_passageway_fee']}}({{$value['order_money']}}*{{$value['passageway_rate']}}+{{$value['passageway_fix']}})</td>
        <!-- 结算 -->
-       <td>{{$value['order_platform_fee']}}</td>
+       <td>
+        @if($value->order_status==2)
+       {{$value['order_platform_fee']}}
+        @else
+        0
+        @endif
+        </td>
        <td>
         @if($value['order_fenrun']!=0)
         <a href="/index/Financial/fenrun?commission_from={{$value['order_id']}}&commission_type=3" target="_blank" >
@@ -126,7 +132,13 @@
         0
         @endif
        </td>
-       <td>{{$value['order_platform_fee']-$value['order_fenrun']}}</td>
+       <td>
+        @if($value->order_status==2)
+       {{$value['order_platform_fee']-$value['order_fenrun']}}
+        @else
+        0
+        @endif
+        </td>
        <td>@if($value['order_status'] == 1)<em style="color:#FF9900;">  待执行 </em>@elseif($value['order_status'] == 2)<em style="color:#33FF33;"> 成功</em> @elseif($value['order_status'] == 3)<em style="color:#FF00FF;"> 取消</em> @elseif($value['order_status'] ==4) <em style="color:#00FFFF;">待查证</em> @else <em style="color:red;">失败 </em>@endif </td>
        <td>{{$value['order_time']}}</td>
        <td>{{$value['back_statusDesc']}}</td>

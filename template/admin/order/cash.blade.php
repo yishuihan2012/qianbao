@@ -125,7 +125,11 @@
                  <td>{{$list->order_passway_profit+$list->passageway_fix}}
                   ({{$list->order_money}}*{{$list->passageway_rate}}%+{{$list->passageway_fix}})</td>
                  <td>
+                  @if($list->order_state==2)
                   {{$list->order_fen+$list->yingli}}
+                  @else
+                  0
+                  @endif
                 </td>
                  <td>
                   @if($list->order_fen!=0)
@@ -135,7 +139,13 @@
                   0
                   @endif
                 </td>
-                 <td>{{$list->yingli}}</td>
+                 <td>
+                  @if($list->order_state==2)
+                  {{$list->yingli}}
+                  @else
+                  0
+                  @endif
+                </td>
                  <td>{{$passageway[$list->order_passway]['passageway_name'] or "已删除的通道"}}</td>
 
                  <td>@if($list->order_state==1)待支付 @elseif($list->order_state==2) 成功@elseif($list->order_state==-1)失败@elseif($list->order_state==-2) 超时@else代付未成功@endif</td>
