@@ -378,6 +378,23 @@ class Test
 	 		echo $wallet->wallet_amount.'</br>';
 	 	}
 	 }
+	 /**
+	  * 修正易生交易订单手续费
+	  */
+	 public function yisheng(){
+        $passageway=db('passageway')->where('passageway_true_name','EspayBhjf')->find();
+	 	$orders=db('cash_order')
+            ->where('order_add_time','between time',['2018-04-01','2018-05-01'])
+            ->where('order_passway',$passageway['passageway_id'])
+            ->where('order_state',2)
+            ->select();
+        foreach ($orders as $k => $v) {
+        	$order=CashOrder::get($v['order_id']);
+        	$order->order_charge=$order->order_money*$order->user_rate/100;
+        	$order->save();
+        }
+        halt($orders);
+	 }
 	 #对每个项目执行sql
 	 public function exesql(){
 	 	$database=[
