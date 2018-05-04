@@ -478,6 +478,15 @@
         );
         $url=$this->url.'/query';
         $res=$this->request($url,$arr);
+        if($res['code']==10000){
+            // 状态码 payStatus   Str(2)  否   0未支付，1成功，2处理中，3失败
+            if($res['payStatus']==1){
+                $res['respCode']=10000;
+            }else if($res['payStatus']==3){
+                $res['respCode']=10001;
+            }
+            $res['respMessage']=$res['payComment'];
+        }
         if($is_print){
             echo json_encode($res);
         }else{

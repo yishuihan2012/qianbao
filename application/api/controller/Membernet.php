@@ -790,7 +790,7 @@ use app\index\model\Member;
                    $action=$passageway->Cashout->cashout_action;
 
                    if(!$action || $action=='Membernet'){
-                        //米刷通道
+                        // 米刷通道
                         $result=$this->payResultQuery($order['order_id']);
                         if($result && $result['code']==200 && $result['status']){
                             $arr['back_statusDesc']=$result['statusDesc'];
