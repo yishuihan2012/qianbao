@@ -133,8 +133,40 @@
  				$order->order_fen=$fenrun_result['leftmoney'];
                 $order->order_buckle=$passwayitem->item_charges/100;
                 $order->order_platform=$order->order_charge-($order->order_money*$passway['passageway_rate']/100)+$passwayitem->item_charges/100-$passway['passageway_income'];
+                echo '分润成功 ';
+            }else{
+                echo '分润返回code异常 ';
             }
+            echo 'id:'. $order->order_id . ' 订单号 '.$order->order_no.' ok</br>';
         }
         return $order;
  	}
+        #调取特定条件的订单
+        // $res=db('cash_order')->alias('o')
+        //     ->join('commission c','o.order_id=c.commission_from and c.commission_type = 1','left')
+        //     ->where('c.commission_id','null')
+        //     ->where('o.order_state',2)
+        //     ->where('o.order_add_time','between time',['2018-05-1','2018-06-01'])
+        //     ->select();
+    /**
+     * 手动分润
+     */
+    public function fenrun(){
+        return 1;
+        #特定需要分润的订单
+        $res=db('cash_order')
+            ->where('order_no','in',$yisheng)
+            ->where('order_state','<>',2)
+            ->where('order_add_time','between time',['2018-04-01','2018-05-01'])
+            ->select();
+        foreach ($res as $k => $v) {
+            $order=CashOrder::get($v['order_id']);
+            $member=Member::get($v['order_member']);
+            $passwayitem=PassagewayItem::get(['item_group'=>$member->member_group_id,'item_passageway'=>$v['order_passway']]);
+            $passway=db('passageway')->where('passageway_id',$v['order_passway'])->find();
+            $order=$this->commission($order,$passwayitem,$passway);
+            $order->order_state=2;
+            $order->save();
+        }
+    }
  }
