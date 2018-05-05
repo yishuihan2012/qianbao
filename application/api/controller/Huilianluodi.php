@@ -408,7 +408,7 @@
             }
         }else{
           $update['back_statusDesc']=isset($res['respMessage'])?$res['respMessage']:'';
-          $update['back_status']='FAIL';
+          $update['back_status']=isset($res['message'])?$res['message']:'FAIL';
           $update['order_status']='-1';
           // $generation['generation_state']=-1;
           // $update['order_buckle']=$rate['item_charges']/100;         
