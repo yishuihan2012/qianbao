@@ -10,7 +10,7 @@ use think\Config;
 use app\index\model\CashOrder;
 use app\index\model\PassagewayItem;
 use app\index\model\Wallet;
-use app\index\model\Wallet_log;
+use app\index\model\WalletLog as Wallet_log;
 
 class Test 
 {
@@ -394,6 +394,55 @@ class Test
         	$order->save();
         }
         halt($orders);
+	 }
+	 /**
+	  * 修正易生支付分润
+	  * @return [type] [description]
+	  */
+	 public function update_wallet(){
+	 	$passageway=db('passageway')->where('passageway_true_name','EspayBhjf')->find();
+	 	$orders=db('cash_order')
+            ->where('order_add_time','between time',['2018-04-01','2018-05-01'])
+            ->where('order_passway',$passageway['passageway_id'])
+            ->where('order_state',2)
+            ->select();
+        $count=0;
+        foreach ($orders as $k => $order) {
+        	$commissions=db('commission')->where(['commission_from'=>$order['order_id'],'commission_type'=>1,'commission_childen_member'=>$order['order_member']])->select();
+        	foreach ($commissions	 as $kk => $commission) {
+        		 $true_commission=($order['user_rate']-$commission['commission_cash_rate'])/100*$order['order_money'];
+        		 //如果金额大于0
+        		 if($true_commission<0){
+        		 	$true_commission=0;
+        		 }
+        		 if($true_commission!=$commission['commission_money'] && $commission['commission_money']>0){
+        		 	    $cha_money=$true_commission-$commission['commission_money'];
+        		 		//修改分润记录
+        		 		 Db::startTrans();
+        		 		$update=db('commission')->where(['commission_id'=>$commission['commission_id']])->update(['commission_money'=>$true_commission]);//
+
+        		 		//修改钱包记录
+        		 		$wallet_log=Wallet_log::where('log_relation_id',$commission['commission_id'])->find();
+        		 		
+        		 		$wallet_log->log_balance+=$cha_money;
+        		 		$wallet_log->log_wallet_amount=$true_commission;
+        		 		$wallet_log->log_desc=preg_replace('/收益(.+?)元/', '收益'.$true_commission.'元', $wallet_log->log_desc);
+        		 		//修改钱包
+        		 		$wallet=wallet::get(['wallet_member'=>$commission['commission_member_id']]);
+        		 		$wallet->wallet_amount+=$cha_money;
+        		 		$wallet->wallet_total_revenue+=$cha_money;
+        		 		$wallet->wallet_fenrun+=$cha_money;
+        		 		;
+        		 		if($wallet_log->save() !==false && $wallet->save() !== false && $update ){
+        		 			Db::commit();
+        		 			echo "修改订单号：".$order['order_id']."分润id：".$commission['commission_id'].'成功'.$count++;
+        		 			echo"<br/>";
+        		 		}else{
+        		 			Db::rollback();
+        		 		}
+        		 }
+        	}
+        }
 	 }
 	 #对每个项目执行sql
 	 public function exesql(){
