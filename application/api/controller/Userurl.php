@@ -1149,8 +1149,9 @@ class Userurl extends Controller
   }
   #信用卡说明
   public function card_description(){
+    $Passageway=passway::where(['passageway_id'=>Request::instance()->param('id')])->find();
     $CreditCard = new CreditCard();
-    $list = $CreditCard->where(['bank_passageway_id'=>Request::instance()->param('id')])->select();
+    $list = $CreditCard->where(['passageway_true_name'=>$Passageway['passageway_true_name']])->select();
     $this->assign('list',$list);
     return view("api/logic/card_description");
   }
