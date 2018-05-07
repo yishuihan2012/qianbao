@@ -120,6 +120,50 @@ class Plan extends Common{
     }
     #失败还款计划
     public function fail(){
+        $r=input();
+        if(!input('beginTime')){
+            $r['beginTime']=date('Y-m-d');
+            $endTime=time();
+        }else{
+            $endTime=strtotime($r['beginTime'])+3600*24;
+        }
+
+        #消费成功的订单
+        $pay_orders=db('generation_order')->alias('o')
+            ->join('member m','o.order_member=m.member_id')
+            ->join('passageway p','o.order_passageway=p.passageway_id')
+            ->where('order_status',2)
+            ->where('order_type',1)
+            ->whereTime('order_time','between',[$r['beginTime'],$endTime])
+            ->group('order_no')
+            ->field('o.*,m.member_nick,p.passageway_name,sum(order_money) as sums')
+            ->select();
+        #目前为止还款的订单
+        $back_orders=db('generation_order')
+            ->where('order_type',2)
+            ->whereTime('order_time','between',[$r['beginTime'],$endTime])
+            ->column('*','order_no');
+        $list=[];
+        foreach ($pay_orders as $k => $v) {
+            #确定有此还款(已执行过)
+            if(isset($back_orders[$v['order_no']])){
+                #还款状态非成功
+                if($back_orders[$v['order_no']]['order_status']!=2){
+                    $v['order_id']=$back_orders[$v['order_no']]['order_id'];
+                    $list[]=$v;
+                }
+            }
+        }
+        usort($list,function($a,$b){
+            if($a['sums']==$b['sums'])
+                return 0;
+            return $a['sums']>$b['sums'] ? -1 : 1;
+        });
+        // halt($list);
+        $this->assign('list',$list);
+        $this->assign('r',$r);
+        return view("admin/plan/fail");
+
         $r=request()->param();
          #搜索条件
         $data = memberwhere($r);

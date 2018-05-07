@@ -62,6 +62,7 @@
                     <li class="plan"><a href="{{url('/index/plan/index')}}"><i class="icon icon-sliders"></i> 计划列表</a></li>
                     <li class="plan_detail"><a href="{{url('/index/plan/detail')}}"><i class="icon icon-sliders"></i> 计划列表详情</a></li>
                     <li class="plan_fail"><a href="/index/plan/detail?order_status=-1"><i class="icon icon-sliders"></i> 失败计划列表</a></li>
+                    <li class="plan_fails"><a href="/index/plan/fail"><i class="icon icon-sliders"></i> 挂账列表</a></li>
             </ul>
         </li>
         <li class="nav-parent financial-manager">
