@@ -777,9 +777,10 @@ use app\index\model\Member;
       }
       //处理没有结果的订单
       public function no_result_order(){
-          $time=date('Y-m-d H:i:s',time()-3600);
+          $time_start=date('Y-m-d H:i:s',time()-3600);
+          $time_end=date('Y-m-d H:i:s',time()-1800);
           //查询半小时前状态为带查证的订单
-          $list=GenerationOrder::where(['order_status'=>4])->where('order_time','lt',$time)->select();
+          $list=GenerationOrder::where(['order_status'=>4])->whereTime('order_time','between',[$time_start,$time_end])->select();
           foreach ($list as $key => $order) {
               $generation=Generation::where(['generation_id'=>$order['order_no']])->find();
               //如果计划是执行中的
