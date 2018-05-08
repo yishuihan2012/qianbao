@@ -704,7 +704,7 @@
         // var_dump("expression");die;
             #获取用户组等级信息
         //$passagewayItem=PassagewayItem::haswhere('passageway',['passageway_state'=>1])->where(['item_group'=>$value['group_id']])->order('item_rate','asc')->find();
-            $membergroup=MemberGroup::where(['group_visible'=>1])->select();
+            $membergroup=MemberGroup::where(['group_visible'=>1])->order('group_salt','asc')->select();
             foreach ($membergroup as $key => $value) {
                 $price=sprintf("%.2f",substr(sprintf("%.3f", $value['group_level_money']), 0, -1));
                 $data['group'][$key]['name']=$value['group_name'];
