@@ -1095,7 +1095,7 @@ class Userurl extends Controller
     foreach ($also as $k => $v) {
         $also[$k]['details']=db('passageway_item')->alias('i')
             ->join('member_group g','i.item_group=g.group_id')
-            ->where('i.item_passageway',$v['passageway_id'])->select();
+            ->where('i.item_passageway',$v['passageway_id'])->order('g.group_salt','asc')->select();
     }
     $this->assign('also',$also);
     return view("Userurl/my_rates");
