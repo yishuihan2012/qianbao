@@ -262,10 +262,10 @@ class Plan extends Common{
         $order_lists=clone $list;
         $order_lists->__construct();
         #对搜索结果数据进行缓存
-        $order_data=cache('order_data_cache'.md5(json_encode($where)));
+        $order_data=cache($_SERVER['HTTP_HOST'].'order_data_cache'.md5(json_encode($where)));
         if(!$order_data){
             $order_data=$order_lists->field('o.order_id,o.order_type,o.order_money,o.order_pound,o.order_status,o.order_passageway_fee,o.order_platform_fee')->select();
-            cache('order_data_cache'.md5(json_encode($where)),$order_data,300);
+            cache($_SERVER['HTTP_HOST'].'order_data_cache'.md5(json_encode($where)),$order_data,300);
         }
         #分页数据
         $order_lists=$list
