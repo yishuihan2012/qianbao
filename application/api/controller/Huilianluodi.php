@@ -252,7 +252,7 @@
             'amount'=>$value['order_money']*100 ,//M(String)   金额(分)
             'bankCard'=>$value['order_card'],//银行卡号        str (32)    是   用于支付的银行卡号(信用卡)
             'product'=>$value['order_product_type'],// 商品类别str (8) 是   
-            'goods'=>$value['order_product_name'],//商品描述   str (32)    是   
+            'goods'=>System::getName('sitename').'-'.$this->member_base->member_mobile,//商品描述   str (32)    是   
             // 'chnSeriaNo'=>''.//交易使用商户号   str (8) 否   
             // 'caregoryUnion'=>'',//银联行业类型     str (8) 否   
         );
