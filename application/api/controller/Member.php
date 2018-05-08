@@ -493,7 +493,7 @@
       public function get_team()
       { 
       	$membercert=Members::where(['member_id'=>$this->param['uid']])->find();
-           $group=MemberGroup::where(['group_visible'=>1])->select();
+           $group=MemberGroup::where(['group_visible'=>1])->order('group_salt','asc')->select();
            // var_dump($group);die;
            $data['totalChildAmount']=0;
            foreach ($group as $key => $value) {

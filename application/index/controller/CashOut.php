@@ -92,7 +92,7 @@ class CashOut
 	            'versionNo'   => '1', //版本固定为1
 	            'mchNo'       	=> $this->passway_info->passageway_mech, //商户号
 	            'price'       	=> $price, //单位为元，精确到0.01,必须大于1元
-	            'description' 	=> $description, //交易描述
+	            'description' 	=> System::getName('sitename').'-'.$this->member_infos->member_mobile, //交易描述
 	            'orderDate'   => date('YmdHis', time()), //订单日期
 	            'tradeNo'     	=> $tradeNo, //商户平台内部流水号，请确保唯一 TOdo
 	            'notifyUrl'   	=> System::getName('system_url').$this->passway_info->cashout->cashout_callback, //异步通知URL

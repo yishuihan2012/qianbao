@@ -277,6 +277,7 @@ class MemberCert
         if (System::getName('certhost') == 'http://yhsys.market.alicloudapi.com') {
             $card_validate = BankCertNew(['bankCardNo' => $this->param['card_bankno'], 'identityNo' => $this->param['card_idcard'], 'mobileNo' => $this->param['card_phone'], 'name' => $this->param['card_name']]);
            if(!$card_validate) return ['code'=>351,'msg'=>'认证失败，请联系客服'];
+           if(!$card_validate['data']['bankCardBin']) return ['code'=>351,'msg'=>'认证失败，请联系客服'];
             $card_bankname = $card_validate['data']['bankCardBin']['bankName'];
             if ($num = strpos($card_bankname, '(')) {
                 $card_bankname = substr($card_bankname, 0, $num);
