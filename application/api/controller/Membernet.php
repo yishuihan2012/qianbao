@@ -229,7 +229,7 @@ use app\index\model\Member;
             }
         }
         if(!$pay['order_platform_no'] || $pay['order_status']!=1){
-            $update_order['order_platform_no']=$pay['order_platform_no']=uniqid();
+            $update_order['order_platform_no']=$pay['order_platform_no']=get_plantform_pinyin().$member_base->member_mobile.make_rand_code();
             $update_res=GenerationOrder::where(['order_id'=>$pay['order_id']])->update($update_order);
         }
         $params=array(
@@ -486,7 +486,7 @@ use app\index\model\Member;
 
               $orderTime=date('YmdHis',time()+60);
               if(!$pay['order_platform_no'] || $pay['order_status']!=1){
-                  $update_order['order_platform_no']=$pay['order_platform_no']=uniqid();
+                  $update_order['order_platform_no']=$pay['order_platform_no']=get_plantform_pinyin().$member_base->member_mobile.make_rand_code();
                   $update_res=GenerationOrder::where(['order_id'=>$pay['order_id']])->update($update_order);
               }
               $params=array(

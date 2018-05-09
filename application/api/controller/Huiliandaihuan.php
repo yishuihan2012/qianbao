@@ -217,7 +217,7 @@
         $member_base=Member::where(['member_id'=>$order['order_member']])->find(); 
         //订单号
         if(!$order['order_platform_no'] || $order['order_status']!=1){
-            $update_order['order_platform_no']=$order['order_platform_no']=uniqid();
+            $update_order['order_platform_no']=$order['order_platform_no']=get_plantform_pinyin().$member_base->member_mobile.make_rand_code();
             $update_res=GenerationOrder::where(['order_id'=>$order['order_id']])->update($update_order);
         }
  		$data=array(

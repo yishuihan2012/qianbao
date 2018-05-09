@@ -511,7 +511,7 @@ class Userurl extends Controller
                       'order_time'     =>$each_pay_time[$k],
                       'order_passageway'=>$this->param['passageway'],
                       'order_passway_id'=>$this->param['passageway'],
-                      'order_platform_no'     =>uniqid(),
+                      'order_platform_no'     =>get_plantform_pinyin().$members->member_mobile.make_rand_code(),
                       // 'order_root'=>$root_id,
                   );
                   $generation_pound += $real_each_get['fee'];
@@ -541,7 +541,7 @@ class Userurl extends Controller
                       'order_time'       =>$date[$i]." ".get_hours(15,16).":".get_minites(0,59),
                       'order_passageway'=>$this->param['passageway'],
                       'order_passway_id'=>$this->param['passageway'],
-                      'order_platform_no'     =>uniqid(),
+                      'order_platform_no'     =>get_plantform_pinyin().$members->member_mobile.make_rand_code(),
                       // 'order_root'=>$root_id,
                   );
                 }
