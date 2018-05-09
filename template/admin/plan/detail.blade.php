@@ -62,7 +62,7 @@
         </select>
       </div>
       <div class="input-group" style="width: 360px;float: left;margin-right: 10px;">
-        <span class="input-group-addon">执行时间</span>
+        <span class="input-group-addon">更新时间</span>
         <input type="date" name="beginTime" style="width: 140px" class="form-control" value="{{$r['beginTime'] or ''}}" />
         <input type="date" name="endTime" style="width: 140px" class="form-control" value="{{$r['endTime'] or ''}}" /></div>
       <div class="input-group" style="width: 180px;float: left;margin-right: 10px;">
@@ -93,7 +93,7 @@
         <th>分润</th>
         <th>盈利</th>
         <th>订单状态</th>
-        <th>订单执行时间</th>
+        <th>订单更新时间</th>
         <th>订单描述</th>
         <th>查看</th>
         <th>操作</th>
@@ -140,7 +140,7 @@
         @endif
         </td>
        <td>@if($value['order_status'] == 1)<em style="color:#FF9900;">  待执行 </em>@elseif($value['order_status'] == 2)<em style="color:#33FF33;"> 成功</em> @elseif($value['order_status'] == 3)<em style="color:#FF00FF;"> 取消</em> @elseif($value['order_status'] ==4) <em style="color:#00FFFF;">待查证</em> @else <em style="color:red;">失败 </em>@endif </td>
-       <td>{{$value['order_time']}}</td>
+       <td>{{$value['order_edit_time']}}</td>
        @if($value['order_status'] == -1)
        <td>{{$value['back_statusDesc']}}</td>
        @else
