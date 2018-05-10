@@ -875,4 +875,21 @@ use app\index\model\Member;
               return json_encode(['code'=>'101','msg'=>'变更失败']);die;
           }
       }
+    /**
+     * 修改重试次数
+     * @param  string $id [description]
+     * @return [type]     [description]
+     */
+    public function edit_pay_count($id=''){
+         $order = GenerationOrder::where(['order_id'=>request()->param('id')])->find();
+         if(!$order){
+            return json_encode(['code'=>'-1','msg'=>'找不到该订单']);
+         }
+         $update=GenerationOrder::where(['order_id'=>request()->param('id')])->update(['order_retry_count'=>0]);
+         if($update){
+             return json_encode(['code'=>'200','msg'=>'修改成功']);
+         }else{
+             return json_encode(['code'=>'-1','msg'=>'未做修改']);
+         }
+    }
  }

@@ -168,9 +168,10 @@
             | <a class="modify_money" href="#" data-url="{{url('/api/Membernet/update_back_money/id/'.$value['order_id'])}}">修改还款金额 </a>
             @endif
           @endif
-         
           | <a class="remove1" data-toggle="modal" data-remote="{{url('/index/Plan/edit_status/id/'.$value['order_id'])}}" href="#">更改状态 </a>
-          
+          @if($value['order_retry_count'] > 2)
+          | <a class="remove"  data-url="{{url('/api/Membernet/edit_pay_count/id/'.$value['order_id'])}}" href="#">重置执行次数</a>
+          @endif
 
        </td>
      </tr>
