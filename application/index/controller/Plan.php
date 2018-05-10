@@ -352,10 +352,14 @@ class Plan extends Common{
           $where['o.order_type']=$r['order_type'];
         if(input('passageway_id'))
           $where['o.order_passageway']=$r['passageway_id'];
-        wheretime($where,'o.order_edit_time');
+        wheretime($where,'o.order_time');
+        if(input('updatebeginTime') && input('updateendTime') && input('updatebeginTime')<=input('updateendTime')){
+            $endTime=strtotime(input('updateendTime'))+24*3600;
+            $where['o.order_edit_time']=["between time",[input('updatebeginTime'),$endTime]];
+        }
         #默认当前月份
         if(!$where){
-            $where['o.order_edit_time']=["between time",[mktime(0,0,0,date('m'),1,date('Y')),strtotime(date('Y-m-d'))+3600*24]];
+            $where['o.order_time']=["between time",[mktime(0,0,0,date('m'),1,date('Y')),strtotime(date('Y-m-d'))+3600*24]];
             $r['beginTime']=date('Y-m-d',mktime(0,0,0,date('m'),1,date('Y')));
             $r['endTime']=date('Y-m-d');
         }
