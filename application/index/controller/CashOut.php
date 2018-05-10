@@ -755,8 +755,8 @@ class CashOut
 					return ['code'=>'101','msg'=>'产品开通失败'];
 				}
 			}else{
-				// var_dump($res);die;
-				return ['code'=>'102','msg'=>'产品开通失败'];
+				$msg=isset($res['epaypp_merchant_product_open_response']['sub_msg'])?$res['epaypp_merchant_product_open_response']['sub_msg']:$res['epaypp_merchant_product_open_response']['result_code_msg'];
+				return ['code'=>'102','msg'=>$msg];
 			}
 		}
 		
