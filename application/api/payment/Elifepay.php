@@ -29,9 +29,9 @@
  	protected $url;
  	protected $priKey;
  	protected $pubKey;
- 	public function __construct(){
+ 	public function __construct($merch=''){
  		$this->url="https://gw.epayxx.net/mapi/gateway.htm";
- 		$this->partner_id='1818001000025664';
+ 		$this->partner_id=$merch;
  	}
  	public static $materials = [
 

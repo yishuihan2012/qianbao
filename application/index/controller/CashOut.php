@@ -690,7 +690,7 @@ class CashOut
 	 * @return [type] [description]
 	 */
 	public function elife_pay($tradeNo,$price,$description='银联快捷支付1'){
-		$elifepay=new \app\api\payment\Elifepay;
+		$elifepay=new \app\api\payment\Elifepay($this->passway_info->passageway_mech);
 		#1判断是否上传资料,看有没有存取子商户号
 		$MemberNet=MemberNet::where(['net_member_id'=>$this->member_infos->member_id])->find();
 		$MemberNet_value=$MemberNet[$this->passway_info->passageway_no];
@@ -815,7 +815,7 @@ class CashOut
 	 */
 	public function elifepay($tradeNo,$price,$description='银联快捷支付2'){
 
-		$elifepay=new \app\api\payment\Elifepay;
+		$elifepay=new \app\api\payment\Elifepay($this->passway_info->passageway_mech);
 		#1判断是否上传资料,看有没有存取子商户号
 		$MemberNet=MemberNet::where(['net_member_id'=>$this->member_infos->member_id])->find();
 		$MemberNet_value=$MemberNet[$this->passway_info->passageway_no];
@@ -913,7 +913,8 @@ class CashOut
 				if($pay['epaypp_wc_trade_pay_response']['return_type']=='url'){
 					return ['code'=>'200','msg'=>'请求成功','data'=>['type'=>1,'url'=>$pay['epaypp_wc_trade_pay_response']['action_url']]];
 				}else{
-					return ['code'=>'200','msg'=>'请求成功','data'=>['type'=>1,'url'=>$pay['epaypp_wc_trade_pay_response']['html']]];
+					$url=System::getName('system_url').'/api/Userurl/nohtml/data/'.base64_encode($pay['epaypp_wc_trade_pay_response']['html']);
+					return ['code'=>'200','msg'=>$pay['epaypp_wc_trade_pay_response']['html'],'data'=>['type'=>1,'url'=>$url]];
 				}
 				
 			}

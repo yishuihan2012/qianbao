@@ -1661,4 +1661,10 @@ class Userurl extends Controller
         $this->assign('data',$data);
         return view("Userurl/order_pay");
     }
+    public function nohtml($data){
+        $data=base64_decode($data);
+        echo $data;die;
+        $this->assign('data',$data);
+        return view("Userurl/nohtml");
+    }
 }
