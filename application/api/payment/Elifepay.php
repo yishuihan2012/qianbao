@@ -253,13 +253,7 @@
 	 * 交易支付请求
 	 * @return [type] [description]
 	 */
-	public function order_pay($card_info){
-		$pay_data=array(
-			'realName'=>$card_info['card_name'],
-			'certNo'=>$card_info['card_idcard'],
-			'bankAccountNo'=>$card_info['bankAccountNo'],
-			'mobile'=>$card_info['mobile'],
-		);
+	public function order_pay($card_info,$pay_data){
 		foreach ($pay_data as $k => $v) {
 			$other_params[]=$k.'^'.$v;
 		}

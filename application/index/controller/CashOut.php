@@ -908,7 +908,13 @@ class CashOut
 				'mobile'=>$this->card_info->card_phone,
 	            'out_trade_no' =>$out_trade_no
         	);
-			$pay=$elifepay->order_pay($data);
+			$pay_data=array(
+				'realName'=>$card_info['card_name'],
+				'certNo'=>$card_info['card_idcard'],
+				'bankAccountNo'=>$card_info['bankAccountNo'],
+				'mobile'=>$card_info['mobile'],
+			);
+			$pay=$elifepay->order_pay($data,$pay_data);
 			if($pay['epaypp_wc_trade_pay_response'] && $pay['epaypp_wc_trade_pay_response']['result_code']=='00'){
 				if($pay['epaypp_wc_trade_pay_response']['return_type']=='URL'){
 					return ['code'=>'200','msg'=>'请求成功','data'=>['type'=>1,'url'=>$pay['epaypp_wc_trade_pay_response']['action_url']]];
@@ -924,6 +930,130 @@ class CashOut
 			return ['code'=>'102','msg'=>$msg];
 		}
 	}
+	/**
+	 * 易生支付-3008航旅模式
+	 * @return [type] [description]
+	 */
+	public function elife_hanglv($tradeNo,$price,$description='银联快捷支付2'){
+
+		$elifepay=new \app\api\payment\Elifepay($this->passway_info->passageway_mech);
+		#1判断是否上传资料,看有没有存取子商户号
+		$MemberNet=MemberNet::where(['net_member_id'=>$this->member_infos->member_id])->find();
+		$MemberNet_value=$MemberNet[$this->passway_info->passageway_no];
+		$explode=explode (',',$MemberNet_value);
+		// print_r($explode);die;
+		if(!$explode || $MemberNet[$this->passway_info->passageway_no]=="" || !$explode[0]){ //商户没有上传资料没生成商户号
+			$MemberNet_value=$material_id=generate_password(16);
+			$img=$this->member_infos->memberCert->IdPositiveImgUrl;//身份证正面
+			$res=$elifepay->merch_upload_material($material_id,$img);
+			if($res['epaypp_merchant_material_upload_response'] && $res['epaypp_merchant_material_upload_response']['result_code']=='00'){
+				$update=MemberNet::where(['net_member_id'=>$this->member_infos->member_id])->update([$this->passway_info->passageway_no=>$material_id]);
+				if(!$update){
+					return ['code'=>'101','msg'=>'上传资料失败'];
+				}
+			}else{
+				$msg=isset($res['epaypp_merchant_material_upload_response']['sub_msg'])?$res['epaypp_merchant_material_upload_response']['sub_msg']:$res['epaypp_merchant_material_upload_response']['result_code_msg'];
+				return ['code'=>'102','msg'=>$msg];
+			}
+		}else{
+			$material_id=$explode[0];
+		}
+		#2判断是否入网
+		if(!isset($explode[1]) || $explode[1]!=1){
+			$res=$elifepay->merch_income($material_id,$this->member_infos);
+			if($res['epaypp_merchant_register_response'] && $res['epaypp_merchant_register_response']['result_code']=='00'){
+				$MemberNet_value=$MemberNet_value.',1';
+				$update=MemberNet::where(['net_member_id'=>$this->member_infos->member_id])->update([$this->passway_info->passageway_no=>$MemberNet_value]);
+				if(!$update){
+					return ['code'=>'101','msg'=>'商户入网失败'];
+				}
+			}else{
+				$msg=isset($res['epaypp_merchant_register_response']['sub_msg'])?$res['epaypp_merchant_register_response']['sub_msg']:$res['epaypp_merchant_register_response']['result_code_msg'];
+				return ['code'=>'102','msg'=>$msg];
+			}
+		}
+		#3判断是否设置结算商户
+		if(!isset($explode[2]) || $explode[2]!=1){
+			$res=$elifepay->merch_Settlement_setting($material_id,$this->member_infos);
+			if($res['epaypp_merchant_settle_account_set_response'] && $res['epaypp_merchant_settle_account_set_response']['result_code']=='00'){
+				$MemberNet_value=$MemberNet_value.',1';
+				$update=MemberNet::where(['net_member_id'=>$this->member_infos->member_id])->update([$this->passway_info->passageway_no=>$MemberNet_value]);
+				if(!$update){
+					return ['code'=>'101','msg'=>'商户设置结算卡失败'];
+				}
+			}else{
+				$msg=isset($res['epaypp_merchant_settle_account_set_response']['sub_msg'])?$res['epaypp_merchant_settle_account_set_response']['sub_msg']:$res['epaypp_merchant_settle_account_set_response']['result_code_msg'];
+				return ['code'=>'102','msg'=>$msg];
+			}
+		}
+		#4判断当前产品是否开通
+		$product_id='3008';
+		if(!isset($explode[3]) || !is_numeric(strpos($explode[3],$product_id))  ){
+			$res=$elifepay->product_open($material_id,$product_id,$this->also->item_rate/100,$this->also->item_charges/100);
+			if($res['epaypp_merchant_product_open_response'] && $res['epaypp_merchant_product_open_response']['result_code']=='00'){
+				if(!isset($explode[3])){
+					$MemberNet_value=$MemberNet_value.','.$product_id;
+				}else{
+					$MemberNet_value=$MemberNet_value.$product_id;
+				}
+				$update=MemberNet::where(['net_member_id'=>$this->member_infos->member_id])->update([$this->passway_info->passageway_no=>$MemberNet_value]);
+				if(!$update){
+					return ['code'=>'101','msg'=>'产品开通失败'];
+				}
+			}else{
+				// var_dump($res);die;
+				return ['code'=>'102','msg'=>'产品开通失败'];
+			}
+		}
+		#5判断是否需要变更费率 (查询该用户上次刷卡成功的费率，如果和系统不一致，变更)
+		$last_order=CashOrder::where(['order_member'=>$this->member_infos->member_id,'order_passway'=>$this->passway_info->passageway_id])->order('order_id desc')->find();
+		if($last_order['user_rate']!=$this->also->item_rate || $last_order['user_fix']!=$this->also->item_charges/100){
+			$update_rate=$elifepay->product_rate_update($material_id,$product_id,$this->also->item_charges/100,$this->also->item_rate/100);
+			if($update_rate['epaypp_merchant_product_rate_set_response'] && $update_rate['epaypp_merchant_product_rate_set_response']['result_code']=='00'){
+				
+			}else{
+				return ['code'=>'102','msg'=>'修改费率失败'];
+			}
+		}	
+		
+		#预下单 下单完成后返给APP一个链接
+		$out_trade_no=generate_password();
+		$des=System::getName('sitename').'-'.$this->member_infos->member_mobile;
+		$res=$elifepay->order_create($product_id,$material_id,$price,$des,$out_trade_no);
+		if($res['epaypp_trade_create_response'] && $res['epaypp_trade_create_response']['result_code']=='00'){
+			$order_result=$this->writeorder($out_trade_no, $price, $price*($this->also->item_rate/100) ,$description);
+			$data=array(
+				'card_name'=>$this->card_info->card_name,
+				'card_idcard'=>$this->card_info->card_idcard,
+				'bankAccountNo'=>$this->card_info->card_bankno,
+				'mobile'=>$this->card_info->card_phone,
+	            'out_trade_no' =>$out_trade_no
+        	);
+        	$pay_data=array(
+				'realName'=>$card_info['card_name'],
+				'certNo'=>$card_info['card_idcard'],
+				'bankAccountNo'=>$card_info['bankAccountNo'],
+				'mobile'=>$card_info['mobile'],
+				'cvn2'=>$card_info['card_Ident'],
+				'expired'=>$card_info['card_expireDate'],
+			);
+			$pay=$elifepay->order_pay($data,$pay_data);
+			if($pay['epaypp_wc_trade_pay_response'] && $pay['epaypp_wc_trade_pay_response']['result_code']=='00'){
+				if($pay['epaypp_wc_trade_pay_response']['return_type']=='URL'){
+					return ['code'=>'200','msg'=>'请求成功','data'=>['type'=>1,'url'=>$pay['epaypp_wc_trade_pay_response']['action_url']]];
+				}else{
+					$url=System::getName('system_url').'/api/Userurl/nohtml/data/'.base64_encode($pay['epaypp_wc_trade_pay_response']['html']);
+					return ['code'=>'200','msg'=>$pay['epaypp_wc_trade_pay_response']['html'],'data'=>['type'=>1,'url'=>$url]];
+				}
+				
+			}
+		}else{
+			// var_dump($res);die;
+			$msg=isset($res['epaypp_trade_create_response']['sub_msg'])?$res['epaypp_trade_create_response']['sub_msg']:$res['epaypp_trade_create_response']['result_code_msg'];
+			return ['code'=>'102','msg'=>$msg];
+		}
+	}
+
 	 /**
 	 * @version  获取订单成功的时候写入订单数据
 	 * @authors bill(755969423@qq.com)
