@@ -910,7 +910,7 @@ class CashOut
         	);
 			$pay=$elifepay->order_pay($data);
 			if($pay['epaypp_wc_trade_pay_response'] && $pay['epaypp_wc_trade_pay_response']['result_code']=='00'){
-				if($pay['epaypp_wc_trade_pay_response']['return_type']=='url'){
+				if($pay['epaypp_wc_trade_pay_response']['return_type']=='URL'){
 					return ['code'=>'200','msg'=>'请求成功','data'=>['type'=>1,'url'=>$pay['epaypp_wc_trade_pay_response']['action_url']]];
 				}else{
 					$url=System::getName('system_url').'/api/Userurl/nohtml/data/'.base64_encode($pay['epaypp_wc_trade_pay_response']['html']);
