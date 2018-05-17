@@ -1541,7 +1541,6 @@ class Userurl extends Controller
    */
   public function easylife_sms(){
     $data=input('');
-    // var_dump($data);die;
     $elifepay=new \app\api\payment\Elifepay;
     $res=$elifepay->order_pay($data['data']);
     if($res['epaypp_wc_trade_pay_response'] && $res['epaypp_wc_trade_pay_response']['result_code']=='00'){
@@ -1656,7 +1655,7 @@ class Userurl extends Controller
        * 订单支付
        * @return [type] [description]
        */
-    public function order_pay($passageway_id,$card_name,$card_bankno,$card_phone,$price,$out_trade_no){
+    public function order_pay($passageway_id,$card_name,$card_bankno,$card_phone,$price,$out_trade_no,$cvn2='',$expired=''){
         $data=input('');
         $this->assign('data',$data);
         return view("Userurl/order_pay");
