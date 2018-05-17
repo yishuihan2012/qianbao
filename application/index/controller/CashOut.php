@@ -912,10 +912,10 @@ class CashOut
 	            'out_trade_no' =>$out_trade_no
         	);
 			$pay_data=array(
-				'realName'=>$card_info['card_name'],
-				'certNo'=>$card_info['card_idcard'],
-				'bankAccountNo'=>$card_info['bankAccountNo'],
-				'mobile'=>$card_info['mobile'],
+				'realName'=>$this->card_info->card_name,
+				'certNo'=>$this->card_info->card_idcard,
+				'bankAccountNo'=>$this->card_info->card_bankno,
+				'mobile'=>$this->card_info->card_phone,
 			);
 			$pay=$elifepay->order_pay($data,$pay_data);
 			if($pay['epaypp_wc_trade_pay_response'] && $pay['epaypp_wc_trade_pay_response']['result_code']=='00'){
@@ -923,7 +923,7 @@ class CashOut
 					return ['code'=>'200','msg'=>'请求成功','data'=>['type'=>1,'url'=>$pay['epaypp_wc_trade_pay_response']['action_url']]];
 				}else{
 					$url=System::getName('system_url').'/api/Userurl/nohtml/data/'.base64_encode($pay['epaypp_wc_trade_pay_response']['html']);
-					return ['code'=>'200','msg'=>$pay['epaypp_wc_trade_pay_response']['html'],'data'=>['type'=>1,'url'=>$url]];
+					return ['code'=>'200','msg'=>$pay['epaypp_wc_trade_pay_response']['html'],'data'=>['type'=>2,'url'=>$pay['epaypp_wc_trade_pay_response']['html']]];
 				}
 				
 			}
@@ -938,7 +938,6 @@ class CashOut
 	 * @return [type] [description]
 	 */
 	public function elife_hanglv($tradeNo,$price,$description='银联快捷支付2'){
-
 		$elifepay=new \app\api\payment\Elifepay($this->passway_info->passageway_mech);
 		#1判断是否上传资料,看有没有存取子商户号
 		$MemberNet=MemberNet::where(['net_member_id'=>$this->member_infos->member_id])->find();
@@ -1023,33 +1022,16 @@ class CashOut
 		$out_trade_no=generate_password();
 		$des=System::getName('sitename').'-'.$this->member_infos->member_mobile;
 		$res=$elifepay->order_create($product_id,$material_id,$price,$des,$out_trade_no);
-		if($res['epaypp_trade_create_response'] && $res['epaypp_trade_create_response']['result_code']=='00'){
+	    
+	    if($res['epaypp_trade_create_response'] && $res['epaypp_trade_create_response']['result_code']=='00'){
+
 			$order_result=$this->writeorder($out_trade_no, $price, $price*($this->also->item_rate/100) ,$description);
-			$data=array(
-				'card_name'=>$this->card_info->card_name,
-				'card_idcard'=>$this->card_info->card_idcard,
-				'bankAccountNo'=>$this->card_info->card_bankno,
-				'mobile'=>$this->card_info->card_phone,
-	            'out_trade_no' =>$out_trade_no
-        	);
-        	$pay_data=array(
-				'realName'=>$card_info['card_name'],
-				'certNo'=>$card_info['card_idcard'],
-				'bankAccountNo'=>$card_info['bankAccountNo'],
-				'mobile'=>$card_info['mobile'],
-				'cvn2'=>$card_info['card_Ident'],
-				'expired'=>$card_info['card_expireDate'],
-			);
-			$pay=$elifepay->order_pay($data,$pay_data);
-			if($pay['epaypp_wc_trade_pay_response'] && $pay['epaypp_wc_trade_pay_response']['result_code']=='00'){
-				if($pay['epaypp_wc_trade_pay_response']['return_type']=='URL'){
-					return ['code'=>'200','msg'=>'请求成功','data'=>['type'=>1,'url'=>$pay['epaypp_wc_trade_pay_response']['action_url']]];
-				}else{
-					$url=System::getName('system_url').'/api/Userurl/nohtml/data/'.base64_encode($pay['epaypp_wc_trade_pay_response']['html']);
-					return ['code'=>'200','msg'=>$pay['epaypp_wc_trade_pay_response']['html'],'data'=>['type'=>1,'url'=>$url]];
-				}
-				
-			}
+			$card_bankno=$this->card_info->card_bankno;
+			$card_phone=$this->card_info->card_phone;
+			$card_idcard=$this->card_info->card_idcard;
+			$url=System::getName('system_url').'/api/Userurl/order_pay/passageway_id/'.$this->passway_info->passageway_id.'/card_idcard/'.$card_idcard.'/card_name/'.$this->card_info->card_name.'/card_bankno/'.$card_bankno.'/card_phone/'.$card_phone.'/price/'.$price.'/out_trade_no/'.$out_trade_no.'/cvn2/'.$this->card_info['card_Ident'].'/expired/'.$this->card_info['card_expireDate'];
+			return ['code'=>'200','msg'=>'请求成功','data'=>['type'=>1,'url'=>$url]];
+			// return redirect('Userurl/order_pay', ['passageway_id' =>$this->passway_info->passageway_id,'card_info'=>$this->card_info,'price'=>$price,'out_trade_no'=>$out_trade_no]);
 		}else{
 			// var_dump($res);die;
 			$msg=isset($res['epaypp_trade_create_response']['sub_msg'])?$res['epaypp_trade_create_response']['sub_msg']:$res['epaypp_trade_create_response']['result_code_msg'];
