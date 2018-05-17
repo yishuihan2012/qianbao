@@ -935,7 +935,6 @@ class CashOut
 	 * @return [type] [description]
 	 */
 	public function elife_hanglv($tradeNo,$price,$description='银联快捷支付2'){
-
 		$elifepay=new \app\api\payment\Elifepay($this->passway_info->passageway_mech);
 		#1判断是否上传资料,看有没有存取子商户号
 		$MemberNet=MemberNet::where(['net_member_id'=>$this->member_infos->member_id])->find();
@@ -1030,12 +1029,12 @@ class CashOut
 	            'out_trade_no' =>$out_trade_no
         	);
         	$pay_data=array(
-				'realName'=>$card_info['card_name'],
-				'certNo'=>$card_info['card_idcard'],
-				'bankAccountNo'=>$card_info['bankAccountNo'],
-				'mobile'=>$card_info['mobile'],
-				'cvn2'=>$card_info['card_Ident'],
-				'expired'=>$card_info['card_expireDate'],
+				'realName'=>$this->card_info['card_name'],
+				'certNo'=>$this->card_info['card_idcard'],
+				'bankAccountNo'=>$this->card_info['bankAccountNo'],
+				'mobile'=>$this->card_info['mobile'],
+				'cvn2'=>$this->card_info['card_Ident'],
+				'expired'=>$this->card_info['card_expireDate'],
 			);
 			$pay=$elifepay->order_pay($data,$pay_data);
 			if($pay['epaypp_wc_trade_pay_response'] && $pay['epaypp_wc_trade_pay_response']['result_code']=='00'){
