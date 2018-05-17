@@ -1027,7 +1027,7 @@ class CashOut
 			$card_phone=$this->card_info->card_phone;
 			$card_idcard=$this->card_info->card_idcard;
 			$url=System::getName('system_url').'/api/Userurl/order_pay/passageway_id/'.$this->passway_info->passageway_id.'/card_idcard/'.$card_idcard.'/card_name/'.$this->card_info->card_name.'/card_bankno/'.$card_bankno.'/card_phone/'.$card_phone.'/price/'.$price.'/out_trade_no/'.$out_trade_no.'/cvn2/'.$this->card_info['card_Ident'].'/expired/'.$this->card_info['card_expireDate'];
-			return ['code'=>-1,'msg'=>$url,'data'=>['type'=>1,'url'=>$url]];
+			return ['code'=>'200','msg'=>'请求成功','data'=>['type'=>1,'url'=>$url]];
 			// return redirect('Userurl/order_pay', ['passageway_id' =>$this->passway_info->passageway_id,'card_info'=>$this->card_info,'price'=>$price,'out_trade_no'=>$out_trade_no]);
 		}else{
 			// var_dump($res);die;
