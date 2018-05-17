@@ -318,7 +318,10 @@ class CashOut
 		 	 }
 		 	 #修改费率接口 封顶的限制1天1次 并且还没有套餐 先不启用
 		 	 $Membernetsedit = new \app\api\controller\Membernetsedit($this->member_infos->member_id, $this->passway_info->passageway_id);
-		 	 $Membernetsedit->rongbangnet();
+		 	 $res=$Membernetsedit->rongbangnet();
+		 	 if(!$res)
+		 	 	return ['code'=>500,'data'=>'该费率无对应套餐编码，请联系客服'];
+
 		 	 #封顶 调用银行签约接口
 	 	 }elseif($this->passway_info->passageway_mech==402573747){
 	 	 	$isSign=$membernetObject->rongbang_signquery_card($this->card_info->card_id);
