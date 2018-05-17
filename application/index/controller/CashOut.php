@@ -909,10 +909,10 @@ class CashOut
 	            'out_trade_no' =>$out_trade_no
         	);
 			$pay_data=array(
-				'realName'=>$card_info['card_name'],
-				'certNo'=>$card_info['card_idcard'],
-				'bankAccountNo'=>$card_info['bankAccountNo'],
-				'mobile'=>$card_info['mobile'],
+				'realName'=>$this->card_info->card_name,
+				'certNo'=>$this->card_info->card_idcard,
+				'bankAccountNo'=>$this->card_info->card_bankno,
+				'mobile'=>$this->card_info->card_phone,
 			);
 			$pay=$elifepay->order_pay($data,$pay_data);
 			if($pay['epaypp_wc_trade_pay_response'] && $pay['epaypp_wc_trade_pay_response']['result_code']=='00'){
