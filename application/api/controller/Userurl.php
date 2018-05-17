@@ -954,8 +954,10 @@ class Userurl extends Controller
             return 'miss telephone number';
         $recomment=$this->param['recomment'];
         //手机号格式
-        if(!preg_match('/1\d{10}/', $recomment))
+        if($recomment!='400009896'){
+            if(!preg_match('/1\d{10}/', $recomment))
             return 'incorrect telephone number';
+        }
         $recommentid=Members::get(['member_mobile'=>$recomment]);
         //该手机号是否存在
         if(!$recommentid)
