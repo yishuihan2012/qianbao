@@ -920,7 +920,7 @@ class CashOut
 					return ['code'=>'200','msg'=>'请求成功','data'=>['type'=>1,'url'=>$pay['epaypp_wc_trade_pay_response']['action_url']]];
 				}else{
 					$url=System::getName('system_url').'/api/Userurl/nohtml/data/'.base64_encode($pay['epaypp_wc_trade_pay_response']['html']);
-					return ['code'=>'200','msg'=>$pay['epaypp_wc_trade_pay_response']['html'],'data'=>['type'=>1,'url'=>$url]];
+					return ['code'=>'200','msg'=>$pay['epaypp_wc_trade_pay_response']['html'],'data'=>['type'=>2,'url'=>$pay['epaypp_wc_trade_pay_response']['html']]];
 				}
 				
 			}
