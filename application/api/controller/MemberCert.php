@@ -314,7 +314,8 @@ class MemberCert
 
             $card_bankname = isset($card_validate['data']['bankName']) ? $card_validate['data']['bankName'] : '';
         }
-
+        if(!$card_bankname)
+            return ['code' => 351, 'msg' => '识别银行失败，请换卡重试。'];
         Db::startTrans();
         try {
             #写入认证表
