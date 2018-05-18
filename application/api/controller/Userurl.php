@@ -84,7 +84,7 @@ class Userurl extends Controller
       #专属二维码列表
     public function exclusive_code(){
         $this->assign("name",System::getName("sitename"));
-        $list = Exclusive::all();
+        $list = Exclusive::order("exclusive_id desc")->select();
         $this->assign("list",$list);
         return view("api/logic/share_code_list");
     }
@@ -1051,7 +1051,7 @@ class Userurl extends Controller
     $phone=$phone->member_mobile;
     $url='http://'.$_SERVER['HTTP_HOST'].'/api/userurl/gotoregister/recomment/'.$phone;
     $this->assign('url',$url);
-    $list = Share::all();
+    $list = Share::order("share_id desc")->select();
     $this->assign("name",System::getName("sitename"));
     $this->assign("list",$list);
     return view("api/logic/share_link_list");
