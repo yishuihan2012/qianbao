@@ -1660,7 +1660,7 @@ class Userurl extends Controller
        */
     public function order_pay($url_data=''){
         $url_data=input('');
-        $data=urldecode(base64_decode($url_data['url_data']));
+        $data=json_decode((base64_decode($url_data['url_data'])),true);
         $this->assign('data',$data);
         return view("Userurl/order_pay");
     }
