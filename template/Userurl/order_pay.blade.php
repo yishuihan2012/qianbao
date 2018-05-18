@@ -63,6 +63,8 @@
 					'mobile':"{{$data['card_phone']}}",
 					'out_trade_no':"{{$data['out_trade_no']}}",
 					'card_idcard':"{{$data['card_idcard']}}",
+					'cvn2'=>"{{$data['cvn2']}}",
+					'expired'=>"{{$data['expired']}}"
 				};
 				$.post('/api/Userurl/easylife_sms',{'data':data},function(res){
 						if(res.code==200){
