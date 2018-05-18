@@ -837,8 +837,15 @@
            }
           
           $this->param['type']=$this->param['type'] ? $this->param['type'] : 1;
-           
-          $Commission=Commission::with('member')->where('commission_member_id='.$this->param['uid'].' and commission_type='.$this->param['type'].' and commission_from > 0')->order('commission_id desc')->limit($limit)->select();
+          
+          $where['commission_member_id']=$this->param['uid'];
+          $where['commission_from']=['>',0];
+          if($this->param['type']==1){
+            $where['commission_type']=['in',[1,3]];
+          }else{
+            $where['commission_type']=$this->param['type']=1;
+          }
+          $Commission=Commission::with('member')->where($where)->order('commission_id desc')->limit($limit)->select();
       
           $comm = array();
           foreach ($Commission as $key => $value) {
