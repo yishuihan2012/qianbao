@@ -65,7 +65,7 @@ class Generalize extends Model{
        * @return [type] [description]
        */
       public static function generalizelist(){
-        $list = Db::table("wt_generalize")->select();
+        $list = Db::table("wt_generalize")->order("generalize_id desc")->select();
         if($list){
           foreach ($list as $key => $value) {
             $list[$key]['thumbarr'] = explode("#",$value['generalize_thumb']);

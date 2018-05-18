@@ -84,7 +84,7 @@ class Userurl extends Controller
       #专属二维码列表
     public function exclusive_code(){
         $this->assign("name",System::getName("sitename"));
-        $list = Exclusive::all();
+        $list = Exclusive::order("exclusive_id desc")->select();
         $this->assign("list",$list);
         return view("api/logic/share_code_list");
     }
@@ -1051,7 +1051,7 @@ class Userurl extends Controller
     $phone=$phone->member_mobile;
     $url='http://'.$_SERVER['HTTP_HOST'].'/api/userurl/gotoregister/recomment/'.$phone;
     $this->assign('url',$url);
-    $list = Share::all();
+    $list = Share::order("share_id desc")->select();
     $this->assign("name",System::getName("sitename"));
     $this->assign("list",$list);
     return view("api/logic/share_link_list");
@@ -1544,7 +1544,8 @@ class Userurl extends Controller
   public function easylife_sms(){
     $data=input('');
     $elifepay=new \app\api\payment\Elifepay;
-    $res=$elifepay->order_pay($data['data']);
+    $url_data=base64_encode(json_encode($data['data']));
+    $res=$elifepay->order_pay($url_data);
     if($res['epaypp_wc_trade_pay_response'] && $res['epaypp_wc_trade_pay_response']['result_code']=='00'){
          $return['code']=200;
          $return['msg']="验证码发送成功";
@@ -1657,8 +1658,9 @@ class Userurl extends Controller
        * 订单支付
        * @return [type] [description]
        */
-    public function order_pay($passageway_id,$card_name,$card_bankno,$card_phone,$price,$out_trade_no,$cvn2='',$expired=''){
-        $data=input('');
+    public function order_pay($url_data=''){
+        $url_data=input('');
+        $data=json_decode((base64_decode($url_data['url_data'])),true);
         $this->assign('data',$data);
         return view("Userurl/order_pay");
     }
