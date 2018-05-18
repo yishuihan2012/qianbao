@@ -229,7 +229,7 @@ use app\index\model\Member;
             }
         }
         if(!$pay['order_platform_no'] || $pay['order_status']!=1){
-            $update_order['order_platform_no']=$pay['order_platform_no']=uniqid();
+            $update_order['order_platform_no']=$pay['order_platform_no']=get_plantform_pinyin().$member_base->member_mobile.make_rand_code();
             $update_res=GenerationOrder::where(['order_id'=>$pay['order_id']])->update($update_order);
         }
         $params=array(
@@ -486,7 +486,7 @@ use app\index\model\Member;
 
               $orderTime=date('YmdHis',time()+60);
               if(!$pay['order_platform_no'] || $pay['order_status']!=1){
-                  $update_order['order_platform_no']=$pay['order_platform_no']=uniqid();
+                  $update_order['order_platform_no']=$pay['order_platform_no']=get_plantform_pinyin().$member_base->member_mobile.make_rand_code();
                   $update_res=GenerationOrder::where(['order_id'=>$pay['order_id']])->update($update_order);
               }
               $params=array(
@@ -875,4 +875,21 @@ use app\index\model\Member;
               return json_encode(['code'=>'101','msg'=>'变更失败']);die;
           }
       }
+    /**
+     * 修改重试次数
+     * @param  string $id [description]
+     * @return [type]     [description]
+     */
+    public function edit_pay_count($id=''){
+         $order = GenerationOrder::where(['order_id'=>request()->param('id')])->find();
+         if(!$order){
+            return json_encode(['code'=>'-1','msg'=>'找不到该订单']);
+         }
+         $update=GenerationOrder::where(['order_id'=>request()->param('id')])->update(['order_retry_count'=>0]);
+         if($update){
+             return json_encode(['code'=>'200','msg'=>'修改成功']);
+         }else{
+             return json_encode(['code'=>'-1','msg'=>'未做修改']);
+         }
+    }
  }

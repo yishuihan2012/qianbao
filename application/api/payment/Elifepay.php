@@ -29,9 +29,9 @@
  	protected $url;
  	protected $priKey;
  	protected $pubKey;
- 	public function __construct(){
+ 	public function __construct($merch='1818001000025664'){
  		$this->url="https://gw.epayxx.net/mapi/gateway.htm";
- 		$this->partner_id='1818001000025664';
+ 		$this->partner_id=$merch;
  	}
  	public static $materials = [
 
@@ -253,13 +253,19 @@
 	 * 交易支付请求
 	 * @return [type] [description]
 	 */
-	public function order_pay($card_info){
-		$pay_data=array(
-			'realName'=>$card_info['card_name'],
-			'certNo'=>$card_info['card_idcard'],
-			'bankAccountNo'=>$card_info['bankAccountNo'],
-			'mobile'=>$card_info['mobile'],
-		);
+	public function order_pay($card_info,$pay_data=''){
+		if(!$pay_data){
+			$pay_data=array(
+				'realName'=>$card_info['card_name'],
+				'certNo'=>$card_info['card_idcard'],
+				'bankAccountNo'=>$card_info['bankAccountNo'],
+				'mobile'=>$card_info['mobile'],
+			);
+		}
+		if(isset($card_info['cvn2'])){
+			$pay_data['cvn2']=$card_info['cvn2'];
+			$pay_data['expired']=$card_info['expired'];
+		}
 		foreach ($pay_data as $k => $v) {
 			$other_params[]=$k.'^'.$v;
 		}

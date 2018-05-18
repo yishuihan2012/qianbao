@@ -1398,3 +1398,21 @@ function SortByASCII($arr)
             $where[$field]=["between time",[input($begin),$endTime]];
         }
     }
+    /**
+     * 获取平台第一个字全拼和后面的首字母
+     * @param  string $name [description]
+     * @return [type]       [description]
+     */
+    function get_plantform_pinyin($name=''){
+        $name=$name?$name:System::getName('sitename');
+        //转成带有声调的汉语拼音 TransformWithTone
+        //转成带无声调的汉语拼音 TransformWithoutTone
+        //转成汉语拼音首字母 TransformUcwords
+        $name1=mb_substr($name,0,1,'utf-8');
+        $name2=mb_substr($name, 1);
+        $Chinatowords=new \app\api\controller\ChinesePinyin();
+        $first=$Chinatowords->TransformWithoutTone($name1);
+        $second=$Chinatowords->TransformUcwords($name2);
+        $pinyin=$first.mb_strtolower($second);
+        return $pinyin;
+    }

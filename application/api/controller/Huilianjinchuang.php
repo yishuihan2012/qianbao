@@ -248,7 +248,7 @@
         $merch=Passageway::where(['passageway_id'=>$value['order_passageway']])->find();
         //订单号
         if(!$value['order_platform_no'] || $value['order_status']!=1){
-            $update_order['order_platform_no']=$value['order_platform_no']=uniqid();
+            $update_order['order_platform_no']=get_plantform_pinyin().$member_base->member_mobile.make_rand_code();
             $update_res=GenerationOrder::where(['order_id'=>$value['order_id']])->update($update_order);
         }
         $arr=array(
@@ -444,7 +444,7 @@
         $member_base=Member::where(['member_id'=>$order['order_member']])->find();
         // $rate=PassagewayItem::where(['item_passageway'=>$order['order_passageway'],'item_group'=>$member_info['member_group_id']])->find();
         if(!$order['order_platform_no'] || $order['order_status']!=1){
-            $update_order['order_platform_no']=$order['order_platform_no']=uniqid();
+            $update_order['order_platform_no']=$order['order_platform_no']=get_plantform_pinyin().$member_base->member_mobile.make_rand_code();
             $update_res=GenerationOrder::where(['order_id'=>$order['order_id']])->update($update_order);
         }
         //查询上次刷卡费率是否和这次一样，不一样需要变更费率。

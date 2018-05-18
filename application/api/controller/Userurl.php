@@ -511,7 +511,7 @@ class Userurl extends Controller
                       'order_time'     =>$each_pay_time[$k],
                       'order_passageway'=>$this->param['passageway'],
                       'order_passway_id'=>$this->param['passageway'],
-                      'order_platform_no'     =>uniqid(),
+                      'order_platform_no'     =>get_plantform_pinyin().$members->member_mobile.make_rand_code(),
                       // 'order_root'=>$root_id,
                   );
                   $generation_pound += $real_each_get['fee'];
@@ -541,7 +541,7 @@ class Userurl extends Controller
                       'order_time'       =>$date[$i]." ".get_hours(15,16).":".get_minites(0,59),
                       'order_passageway'=>$this->param['passageway'],
                       'order_passway_id'=>$this->param['passageway'],
-                      'order_platform_no'     =>uniqid(),
+                      'order_platform_no'     =>get_plantform_pinyin().$members->member_mobile.make_rand_code(),
                       // 'order_root'=>$root_id,
                   );
                 }
@@ -954,8 +954,10 @@ class Userurl extends Controller
             return 'miss telephone number';
         $recomment=$this->param['recomment'];
         //手机号格式
-        if(!preg_match('/1\d{10}/', $recomment))
+        if($recomment!='400009896'){
+            if(!preg_match('/1\d{10}/', $recomment))
             return 'incorrect telephone number';
+        }
         $recommentid=Members::get(['member_mobile'=>$recomment]);
         //该手机号是否存在
         if(!$recommentid)
@@ -1541,7 +1543,6 @@ class Userurl extends Controller
    */
   public function easylife_sms(){
     $data=input('');
-    // var_dump($data);die;
     $elifepay=new \app\api\payment\Elifepay;
     $res=$elifepay->order_pay($data['data']);
     if($res['epaypp_wc_trade_pay_response'] && $res['epaypp_wc_trade_pay_response']['result_code']=='00'){
@@ -1656,9 +1657,15 @@ class Userurl extends Controller
        * 订单支付
        * @return [type] [description]
        */
-    public function order_pay($passageway_id,$card_name,$card_bankno,$card_phone,$price,$out_trade_no){
+    public function order_pay($passageway_id,$card_name,$card_bankno,$card_phone,$price,$out_trade_no,$cvn2='',$expired=''){
         $data=input('');
         $this->assign('data',$data);
         return view("Userurl/order_pay");
+    }
+    public function nohtml($data){
+        $data=base64_decode($data);
+        echo $data;die;
+        $this->assign('data',$data);
+        return view("Userurl/nohtml");
     }
 }
