@@ -297,12 +297,11 @@ class Userurl extends Controller
             if(!$has['member_credit_pas_info']){ //信用卡有没有签约
                 $res=$huilian_new->income($this->param['passageway'],$this->param['cardId']);
                 if($res['code']=='200'){
-                    $merch_data['member_credit_pas_info']=$res['merId'];
+                    $merId=$merch_data['member_credit_pas_info']=$res['merId'];
                     $res=MemberCreditPas::where(['member_credit_pas_creditid'=>$this->param['cardId'],'member_credit_pas_pasid'=>$this->param['passageway']])->update($merch_data);
                     if(!$res){
                         MemberCreditPas::where(['member_credit_pas_creditid'=>$this->param['cardId'],'member_credit_pas_pasid'=>$this->param['passageway']])->update($merch_data);
                     }
-                    $merId=$res['merId'];
                 }else{
                      $this->assign('data',$res['msg']);
                       return view("Userurl/show_error");die;
