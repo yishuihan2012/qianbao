@@ -102,13 +102,13 @@
       public function rongbangnet(){
         trace("rongbangnet");
         #取出荣邦对应的费率代码
-        // $rate_code=db('passageway_rate')->alias('r')
-        //   ->join('passageway_item i','r.rate_rate=i.item_rate and r.rate_charge=i.item_charges')
-        //   // ->join('passageway_item i','r.rate_charge*100=i.item_charges')
-        //   ->where(['r.rate_passway_id'=>$this->passway->passageway_id,'i.item_group'=>$this->member->member_group_id,'i.item_passageway'=>$this->passway->passageway_id])
-        //   ->value('r.rate_code');
+        $rate_code=db('passageway_rate')->alias('r')
+          ->join('passageway_item i','r.rate_rate=i.item_rate and r.rate_charge=i.item_charges')
+          // ->join('passageway_item i','r.rate_charge*100=i.item_charges')
+          ->where(['r.rate_passway_id'=>$this->passway->passageway_id,'i.item_group'=>$this->member->member_group_id,'i.item_passageway'=>$this->passway->passageway_id])
+          ->value('r.rate_code');
         #设一个初始费率 积分 ？ 无积分
-        $rate_code=$this->passway->passageway_mech=='402512936' ? '669174' : '003867'; 
+        // $rate_code=$this->passway->passageway_mech=='402512936' ? '669174' : '003867'; 
         if(!$rate_code)
           return '该用户对应的费率无套餐编码，请管理员核对！';
 
