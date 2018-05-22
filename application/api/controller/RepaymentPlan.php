@@ -92,6 +92,12 @@
            $support_list=CreditCard::where(['passageway_true_name'=>$passageway['passageway_true_name']])->select();
            $card_bankname=mb_substr($card_info['card_bankname'],-4,2);
 
+           $days=days_between_dates($this->param['startDate'],$this->param['endDate'])+1;
+           if($this->param['payCount']<$days){
+                #消费几次就取几个随机日期
+               $days=$this->param['payCount'];
+           }
+
            $day_avage_max=($this->param['billMoney']/$days)*1.2;
            $day_min_count=floor($this->param['payCount']/$days);
            $max_avage=$day_avage_max/$day_min_count;
