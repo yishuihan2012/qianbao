@@ -36,7 +36,7 @@
 	    	支付卡：<span class="normal-color">{{substrs($creditcard['card_bankno'],4)}}</span>
 	    </li>
 	    <li class="mui-table-view-cell bg-w bor-bot">
-	    	手机号：<span class="normal-color">{{substrs($member_info['member_mobile'],3)}}</span>
+	    	手机号：<span class="normal-color">{{substrs($creditcard['card_phone'],3)}}</span>
 	    </li>
 	    <li class="mui-table-view-cell bg-w">
 	    	验证码：
