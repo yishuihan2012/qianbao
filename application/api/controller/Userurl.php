@@ -537,7 +537,7 @@ class Userurl extends Controller
                       'user_fix'=>$item_qffix,
                       'user_rate'=>$item_qfalso*100,
                       'order_desc'       =>'自动代还还款~',
-                      'order_time'       =>$date[$i]." ".get_hours(15,16).":".get_minites(0,59),
+                      'order_time'       =>$date[$i]." ".get_hours(16,17).":".get_minites(0,59),
                       'order_passageway'=>$this->param['passageway'],
                       'order_passway_id'=>$this->param['passageway'],
                       'order_platform_no'     =>get_plantform_pinyin().$members->member_mobile.make_rand_code(),
@@ -709,7 +709,7 @@ class Userurl extends Controller
         return view("Userurl/repayment_plan_detail");
     }
     //根据开始时间结束时间随机每天刷卡时间---有问题
-    public function get_random_time($day,$count,$begin='09',$end=16){
+    public function get_random_time($day,$count,$begin='09',$end='15'){
         //如果日期为今天，刷卡时间大于当前小时
         $now_d=date('Y-m-d',time());
         $now_h=date('H',time());
