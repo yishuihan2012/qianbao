@@ -241,16 +241,18 @@ class CashOut
 		 	 	 if($res!==true)
 		 	 	 	 return  ['code'=>462,'msg'=>$res]; //入网失败
 	 	 	 	#入驻
-		 	 	$result=$membernetObject->rongbang_in();
-		 	 	if(is_string($result)){
-		 	 		return ['code'=>500,'msg'=>$result];
-		 	 	}
+	 	 	 	if($this->passway_info->passageway_mech != '403451869'){
+			 	 	$result=$membernetObject->rongbang_in();
+			 	 	if(is_string($result)){
+			 	 		return ['code'=>500,'msg'=>$result];
+			 	 	}
+	 	 	 	}
 		 	 }else{
 		 	 	// $userinfo=$member_net[$this->passway_info->passageway_no];
 		 	 }
 	 	 }
 	 	 //快捷支付 调用开通快捷支付接口
-	 	 if(in_array($this->passway_info->passageway_mech, [402512992,402512936])){
+	 	 if(in_array($this->passway_info->passageway_mech, [402512992,402512936,403451869])){
 	 	 // if($this->passway_info->passageway_mech==402512992){
 		 	 //复用查询条件
 		 	 $pas_where=['member_credit_pas_pasid'=>$this->passway_info->passageway_id,'member_credit_pas_creditid'=>$this->card_info->card_id];
