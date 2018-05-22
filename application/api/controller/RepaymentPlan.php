@@ -91,6 +91,17 @@
            $passageway=Passageway::where(['passageway_id'=>$this->param['passageway']])->find();
            $support_list=CreditCard::where(['passageway_true_name'=>$passageway['passageway_true_name']])->select();
            $card_bankname=mb_substr($card_info['card_bankname'],-4,2);
+
+           $days=days_between_dates($this->param['startDate'],$this->param['endDate'])+1;
+           if($this->param['payCount']<$days){
+                #消费几次就取几个随机日期
+               $days=$this->param['payCount'];
+           }
+
+           $day_avage_max=($this->param['billMoney']/$days)*1.2;
+           $day_min_count=floor($this->param['payCount']/$days);
+           $max_avage=$day_avage_max/$day_min_count;
+           
            foreach ($support_list as $key => $bank) {
                  $bankname=mb_substr($bank['card_name'],-4,2);
                  if($bankname==$card_bankname){
@@ -102,7 +113,7 @@
                     }else if($bank['bank_attrbute']=='百'){
                       $single_max=$bank['bank_single']*100;
                     }
-                    if($single_max<$avage*1.2*1.2){
+                    if($single_max<$max_avage){
                         $count=ceil($this->param['billMoney']*1.44/$single_max);
                         return['code'=>'101','msg'=>'该行单次消费限额'.$single_max."元，请确保还款次数不低于{$count}次。"];
                     }
