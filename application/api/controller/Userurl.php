@@ -709,28 +709,28 @@ class Userurl extends Controller
         return view("Userurl/repayment_plan_detail");
     }
     //根据开始时间结束时间随机每天刷卡时间---有问题
-      public function get_random_time($day,$count,$begin=8,$end=12){
+    public function get_random_time($day,$count,$begin='09',$end=16){
         //如果日期为今天，刷卡时间大于当前小时
-        $now_h=date('Y-m-d',time());
-        if($day==$now_h){
-           if($now_h<8){
-               $begin =8;
-           }else{
-               $begin=date('H',time())+1;
+        $now_d=date('Y-m-d',time());
+        $now_h=date('H',time());
+        if($day==$now_d){//如果是今天
+           if($now_h>$begin){ //如果当前
+               $begin=$now_h+1;
            }
         }
         $last=$begin;
-         $step=floor(($end-$begin)/$count)-1;
+        $begin_time=strtotime($day.' '.$begin.":00");
+        $end_time=strtotime($day.' '.$end.":00");
+
+         $step=floor(($end_time-$begin_time)/$count);
          for ($i=0; $i <$count ; $i++) { 
-            // $time[$i]=$day.' '.get_hours($last,$last+$step).':'.get_minites();
-               $time[$i]=$day.' '.get_hours($begin,$end).':'.get_minites();
-            // $time[$i]['time']=$day.' '.get_hours($last,$last+$step).':'.get_minites();
-            // $time[$i]['begin']=$last;
-            // $time[$i]['end']=$last+$step;
-            $last=$last+$step+1;
+            $max=$begin_time+$step*($i+1);
+            $min=$begin_time+$step*$i;
+            $step1=floor(($max-$min)/3);
+            $min1=$min+$step1;
+            $max1=$min+$step1*2;
+            $time[$i]=date('Y-m-d H:i:s',rand($min1,$max1));
          }
-         sort($time);
-         // print_r($time);die;
          return $time;
       }
       //根据还款金额获取需要支付的金额
