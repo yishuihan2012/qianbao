@@ -499,4 +499,11 @@ class Test
 	 	$pinyin=$first.mb_strtolower($second);
 	 	return $pinyin;
 	 }
+	 public function notify(){
+	 	$data = file_get_contents("php://input");
+        parse_str($data,$res);
+        file_put_contents('yilian2.txt',$data);
+        file_put_contents('yilian1.txt',json_encode($data));
+        file_put_contents('yilian.txt',json_encode($res));
+	 }
 }
