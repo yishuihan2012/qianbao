@@ -59,6 +59,12 @@
            if(!$this->param['uid'] || !$this->param['token']=16 || !$this->param['cardId'] || !$this->param['billMoney'] || !$this->param['payCount'] || !$this->param['startDate'] || !$this->param['endDate'] || !$this->param['passageway']){
                return['code'=>'313','msg'=>'获取数据失败'];
            }
+           //判断是否已经制定过计划
+          $card_info=MemberCreditcard::where('card_id='.$this->param['cardId'])->find();
+          $plan=Generation::where(['generation_card'=>$card_info->card_bankno,'generation_state'=>2])->find();
+          if($plan){
+                 return['code'=>479];//此卡已经在还款计划内，请先删除原计划再重新制定计划。
+           }
            $avage=$this->param['billMoney']/$this->param['payCount'];
            if($avage<200)
                 return['code'=>477];//单笔还款金额太小，请减小还款次数
