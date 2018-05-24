@@ -85,7 +85,7 @@ class Yilian{
 		);
 		// echo json_encode($data);die;
 		$result=$this->request('uspay',$data);
-		return $result;
+		return json_decode($result,true);
 		var_dump($result);die;
 	}
 	public function sign($data){
