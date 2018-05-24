@@ -595,6 +595,7 @@ class MemberCert
      **/
     public function change_validationNew()
     {
+        return ['code' => 322, 'msg' => '暂不支持更换储蓄卡，如需更换，请联系客服。'];
         #验证器验证 验证参数合法性
         $validate = Loader::validate('Membervalidation');
         #如果验证不通过 返回错误代码 及提示信息

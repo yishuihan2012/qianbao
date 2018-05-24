@@ -324,6 +324,20 @@ class Userurl extends Controller
                 //return redirect('Userurl/signed_huilian_background', ['passageway_id' =>$param['passageway'],'cardId'=>$param['cardId'],'order_no'=>$order_no]);
             }
             #3判断是否需要修改费率[接口暂不支持]
+            $order=GenerationOrder::where(['passageway_id'=>$param['passageway'],'order_member'=>$param['uid'],'order_status'=>'2','order_type'=>1])->order('order_edit_time','desc')->find();
+            $member_group_id=Members::where(['member_id'=>$this->param['uid']])->value('member_group_id');
+            $rate=PassagewayItem::where(['item_passageway'=>$this->param['passageway'],'item_group'=>$member_group_id])->find();
+            #定义税率  
+            $also=($rate->item_also)/100;
+            if($order && $order['user_rate']!=$rate->item_also){
+                $data['rate']=$rate->item_also;
+                $data['extraFee']=$rate->item_charges;
+                $res=$huilian_new->reincome($passageway->passageway_mech,$merId,$data);
+                if($res['code']!=200){
+                    $this->assign('data',$res['msg']);
+                    return view("Userurl/show_error");die;
+                }
+            }
             
        }else if($passageway['passageway_method']=='huilian_income'){ //汇联落地商户
             $is_auto_qf=1; //自动代付
