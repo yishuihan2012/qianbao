@@ -331,7 +331,7 @@ class Userurl extends Controller
             $also=($rate->item_also)/100;
             if($order && $order['user_rate']!=$rate->item_also){
                 $data['rate']=$rate->item_also;
-                $data['extraFee']=$rate->item_charges;
+                $data['extraFee']=$rate->item_qffix;
                 $res=$huilian_new->reincome($passageway->passageway_mech,$merId,$data);
                 if($res['code']!=10000){
                     $this->assign('data',isset($res['respMessage'])?$res['respMessage']:$res['message']);
