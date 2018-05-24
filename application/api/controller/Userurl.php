@@ -324,7 +324,7 @@ class Userurl extends Controller
                 //return redirect('Userurl/signed_huilian_background', ['passageway_id' =>$param['passageway'],'cardId'=>$param['cardId'],'order_no'=>$order_no]);
             }
             #3判断是否需要修改费率[接口暂不支持]
-            $order=GenerationOrder::where(['passageway_id'=>$param['passageway'],'order_member'=>$param['uid'],'order_status'=>'2','order_type'=>1])->order('order_edit_time','desc')->find();
+            $order=GenerationOrder::where(['order_passageway'=>$param['passageway'],'order_member'=>$param['uid'],'order_status'=>'2','order_type'=>1])->order('order_edit_time','desc')->find();
             $member_group_id=Members::where(['member_id'=>$this->param['uid']])->value('member_group_id');
             $rate=PassagewayItem::where(['item_passageway'=>$this->param['passageway'],'item_group'=>$member_group_id])->find();
             #定义税率  
