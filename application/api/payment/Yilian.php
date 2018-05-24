@@ -32,7 +32,7 @@ class Yilian{
 		$this->url='http://47.98.52.127/scpay/shortcut/';
 	}
 	public function pay($member_infos,$member_cert,$member_card,$card_info,$also,$ord_amount,$ord_no){
-		$ord_amount=$ord_amount;
+		$ord_amount=$ord_amount*100;
 		$pay_family_name=$member_cert['cert_member_name'];
 		$payee_id_card=$pay_id_card=$member_cert['cert_member_idcard'];
 		$pay_bank_no=$card_info['card_bankno'];
@@ -62,7 +62,7 @@ class Yilian{
 			'is_encypt'=>"N",//是否加密	String	Y		重要字段是否RSA加密。Y：RSA加密需要加密的字段;N：不加密
 			'req_time'=>date('YmdHis',time()),//订单时间	string 14	Y		商户订单时间格式：YYYYMMDD24HHMMSS
 			'req_date'=>date('Ymd',time()),//订单日期	string 8	Y		YYYYMMDD
-			'ord_amount'=>$ord_amount,//订单金额	string <=8	Y		单位(分)
+			'ord_amount'=>(string)$ord_amount,//订单金额	string <=8	Y		单位(分)
 			'pay_family_name'=>$pay_family_name,//支付者姓名	string <=32	Y	Y	如果需同名校验，录入姓名必须和入网时真实姓名一致
 			'pay_id_card'=>$pay_id_card,//支付者身份证号	string <=32	Y	Y	15位或18位身份证号；如果需同名校验，录入身份证号必须和入网时身份证号一致
 			'pay_bank_no'=>$pay_bank_no,//	支付者卡号	string<=32	Y	Y	支付银行卡号
@@ -77,7 +77,7 @@ class Yilian{
 			'payee_family_name'=>$payee_family_name,//结算者姓名	String	Y	Y	
 			'pay_amount'=>(string)$pay_amount,//到账金额	string <=8	Y		单位分，向下取整 pay_amount=trans_amount-operation_fee-counter_fee_t0
 			'operation_fee'=>(string)$operation_fee,//手续费	string <=8	Y		单位分，向上取整，手续费=费率*交易金额 operation_fee=trans_amount*(rate_t0/100)
-			'counter_fee_t0'=>$counter_fee_t0,//单笔消费交易手续费	string <=8	Y		单位分，每笔固定交易手续费，比如200（2元）
+			'counter_fee_t0'=>(string)$counter_fee_t0,//单笔消费交易手续费	string <=8	Y		单位分，每笔固定交易手续费，比如200（2元）
 			'rate_t0'=>$rate_t0,//	费率	string <=8	Y		如0.6%笔则填0.60，小数点后最多不超过2位终端用户费率不能低于0.30
 			'memo'=>'备注',//备注	string <=32	N		
 			'front_notify_url'=>System::getName('system_url').'/api/Userurl/calllback_success',//前台通知地址URL	string <=128	N		支付完成（结果未知）之后由第三方支付页面重定向到支付完成页面地址,注意该页面请求不能有session
@@ -85,6 +85,7 @@ class Yilian{
 		);
 		// echo json_encode($data);die;
 		$result=$this->request('uspay',$data);
+		return $result;
 		var_dump($result);die;
 	}
 	public function sign($data){
