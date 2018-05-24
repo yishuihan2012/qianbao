@@ -333,7 +333,7 @@ class Userurl extends Controller
                 $data['rate']=$rate->item_also;
                 $data['extraFee']=$rate->item_charges;
                 $res=$huilian_new->reincome($passageway->passageway_mech,$merId,$data);
-                if($res['code']!=200){
+                if($res['code']!=10000){
                     $this->assign('data',isset($res['respMessage'])?$res['respMessage']:$res['message']);
                     return view("Userurl/show_error");die;
                 }
