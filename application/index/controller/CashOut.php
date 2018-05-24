@@ -1068,7 +1068,20 @@ class CashOut
 			return ['code'=>'102','msg'=>$msg];
 		}
 	}
-
+	/**
+	 * [yilianpay 易联快捷支付]
+	 * @param  [type] $tradeNo     [description]
+	 * @param  [type] $price       [description]
+	 * @param  string $description [description]
+	 * @return [type]              [description]
+	 */
+	public function yilianpay($tradeNo,$price,$description='快捷落地支付'){
+		$Yilian=new \app\api\payment\Yilian();
+		$res=$Yilian->pay($this->member_infos,$this->member_cert,$this->member_card,$this->card_info, $this->also,$price);
+		if($res){
+			$order_result=$this->writeorder($tradeNo, $price, $price*($this->also->item_rate/100) ,$description,$tradeNo);
+		}
+	}
 	 /**
 	 * @version  获取订单成功的时候写入订单数据
 	 * @authors bill(755969423@qq.com)
