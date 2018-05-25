@@ -29,7 +29,7 @@ class Yilian{
 		$this->version='1.0.0';
 		$this->mech='M20180525160932';
 		$this->secret='95C0D31051658BF3F05B2F02BA8D45D6';
-		$this->url='http://47.98.52.127/scpay/shortcut/';
+		$this->url='http://120.79.215.84/scpay';
 	}
 	public function pay($member_infos,$member_cert,$member_card,$card_info,$also,$ord_amount,$ord_no){
 		$ord_amount=$ord_amount*100;
