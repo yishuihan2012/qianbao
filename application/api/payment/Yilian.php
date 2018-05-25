@@ -27,8 +27,8 @@ class Yilian{
 	protected $url;
 	public function __construct(){
 		$this->version='1.0.0';
-		$this->mech='M20180523092105';
-		$this->secret='56BEC1E0F22405044240D6D523661349';
+		$this->mech='M20180525160932';
+		$this->secret='95C0D31051658BF3F05B2F02BA8D45D6';
 		$this->url='http://47.98.52.127/scpay/shortcut/';
 	}
 	public function pay($member_infos,$member_cert,$member_card,$card_info,$also,$ord_amount,$ord_no){
