@@ -102,6 +102,7 @@ class Yilian{
 		$data['sign']=$this->sign($data);
 		// echo json_encode($data);die;
 		$result=curl_post($this->url.$method,'post',json_encode($data));
-		echo $result;die;
+		// echo $result;die;
+		return $result;
 	}
 }
