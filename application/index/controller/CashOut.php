@@ -1078,9 +1078,9 @@ class CashOut
 	public function yilianpay($tradeNo,$price,$description='快捷落地支付'){
 		$Yilian=new \app\api\payment\Yilian();
 		$res=$Yilian->pay($this->member_infos,$this->member_cert,$this->member_card,$this->card_info, $this->also,$price,$tradeNo);
-		$order_result=$this->writeorder($tradeNo, $price, $price*($this->also->item_rate/100),$description,$tradeNo);
+		// $order_result=$this->writeorder($tradeNo, $price, $price*($this->also->item_rate/100),$description,$tradeNo);
 		if($res &&$res['respCode']=='0000'){
-			// $order_result=$this->writeorder($tradeNo, $price, $price*($this->also->item_rate/100),$description,$tradeNo);
+			$order_result=$this->writeorder($tradeNo, $price, $price*($this->also->item_rate/100),$description,$tradeNo);
 			$url=System::getName('system_url').'/api/Userurl/nohtml/data/'.base64_encode($res['pay_info']);
 			return ['code'=>'200','msg'=>'下单成功','data'=>['type'=>1,'url'=>$url]];
 		}else{
