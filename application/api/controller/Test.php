@@ -499,10 +499,9 @@ class Test
 	 	$pinyin=$first.mb_strtolower($second);
 	 	return $pinyin;
 	 }
-	 public function notify(){
-	 	$Yilian=new \app\api\payment\Yilian();
-	 	$info=CashOrder::where(['order_no'=>'cesqb17569615504IEAI54MU'])->find();
-		$res=$Yilian->order_query($info);
+	 public function pay(){
+	 	$YiJiFu=new \app\api\payment\YiJiFu();
+		$res=$YiJiFu->passway_search();
 		var_dump($res);die;
 	 }
 }
