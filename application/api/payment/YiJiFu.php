@@ -79,18 +79,21 @@ class YiJiFu{
 		return $sign;
 	}
 	public function request($url,$data){
-		$sign=$this->getSign($data);
 		$reqdata=array(
 			'partnerCode'=>$this->partnerCode,
-			'sign'=>$sign,
-			'timestamp'=>time(),
-			'returnUrl'=>"",
-			'notifyUrl'=>'',
+			'timestamp'=>(string)time()*1000,
+			'returnUrl'=>"http://wallet.test.xijiakei.com/api/Test/notify",
+			'notifyUrl'=>'http://wallet.test.xijiakei.com/api/Test/notify',
 		);
-		$array=array_merge($data,$reqdata);
-		$request_url=$this->url.'?'.$url.http_build_query($array);
-		$res=curl_post($request_url,'post',$array);
-		echo($res);die;
+		$array=array_merge($reqdata,$data);
+		$array['sign']=$this->getSign($array);
+		// print_r($array);
+		$request_url=$this->url.$url.'?'.http_build_query($array);
+		$res=file_get_contents($request_url);
 		echo $res;die;
+		
+	}
+	public function test(){
+
 	}
 }
