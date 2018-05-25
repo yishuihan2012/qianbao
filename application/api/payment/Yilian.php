@@ -88,6 +88,31 @@ class Yilian{
 		return json_decode($result,true);
 		var_dump($result);die;
 	}
+	public function order_query($order_info){
+		$data=array(
+			'merc_no'=>$this->mech,//商户号	string 32	Y	
+			'version'=>$this->version,//版本号	String 20	Y		默认1.0.0
+			'ord_no'=>$order_info['order_no'],//商户订单号	String 32	Y	
+		);
+		$result=$this->request('query',$data);
+		$res=json_decode($result,true);
+		$return['resp_message']=$res['respMsg'];
+		if($res['respCode']=='0000'){
+			if($res['paysts']=='Y'){
+				$return['pay_status']=2;
+			}else{
+				$return['pay_status']=-1;
+			}
+			if($res['txsts']=='Y'){
+				$return['qf_status']=2;
+			}else{
+				$return['qf_status']=-1;
+			}
+		}else{
+			$return['pay_status']=$return['qf_status']=1;
+		}
+		return $return;
+	}
 	public function sign($data){
 		$data=SortByASCII($data);
 		$string=http_build_query($data).$this->secret;

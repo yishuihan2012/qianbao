@@ -407,20 +407,16 @@ class Cashoutcallback
         $passwayitem=PassagewayItem::get(['item_group'=>$member->member_group_id,'item_passageway'=>$passway->passageway_id]);
 
         $order->order_thead_no=$params['ord_no'];
-         if($params['paysts']=="TRADE_FINISHED"){//成功
+         if($params['paysts']=="Y" &&$params['txsts']=="Y" ){//成功
              $order->order_state=2;
-             $returnData = 'SUCCESS';
+             $returnData = 'SUCCESS'; 
          }
-         if($params['paysts']=="TRADE_CLOSED_BY_SYS"){//超时
-             $order->order_state=-2;
-              $returnData = 'FAIL';
-         }
-         if($params['paysts']=="TRADE_CLOSED"){//关闭
+         if($params['paysts']=="N"){//关闭
              $order->order_state=-1;
              $returnData='FAIL';
          }
          Db::startTrans();
-         if($params['paysts']=="TRADE_FINISHED"){//成功
+         if($params['paysts']=="Y" &&$params['txsts']=="Y"){//成功
              //进行分润
              //判断之前有没有分润过
              $Commission_info=Commissions::where(['commission_from'=>$order->order_id,'commission_type'=>1])->find();

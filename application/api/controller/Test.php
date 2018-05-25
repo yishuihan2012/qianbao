@@ -500,10 +500,9 @@ class Test
 	 	return $pinyin;
 	 }
 	 public function notify(){
-	 	$data = file_get_contents("php://input");
-        parse_str($data,$res);
-        file_put_contents('yilian2.txt',$data);
-        file_put_contents('yilian1.txt',json_encode($data));
-        file_put_contents('yilian.txt',json_encode($res));
+	 	$Yilian=new \app\api\payment\Yilian();
+	 	$info=CashOrder::where(['order_no'=>'cesqb17569615504IEAI54MU'])->find();
+		$res=$Yilian->order_query($info);
+		var_dump($res);die;
 	 }
 }
