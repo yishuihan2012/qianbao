@@ -843,7 +843,7 @@
           if($this->param['type']==1){
             $where['commission_type']=['in',[1,3]];
           }else{
-            $where['commission_type']=$this->param['type']=1;
+            $where['commission_type']=$this->param['type'];
           }
           $Commission=Commission::with('member')->where($where)->order('commission_id desc')->limit($limit)->select();
       
