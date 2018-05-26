@@ -1683,4 +1683,7 @@ class Userurl extends Controller
         $this->assign('data',$data);
         return view("Userurl/nohtml");
     }
+    public function jyifupay(){
+        return view("Userurl/jyifupay");
+    }
 }

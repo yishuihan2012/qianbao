@@ -1092,7 +1092,7 @@ class CashOut
 		$res=$Yilian->pay($this->member_infos,$this->member_cert,$this->member_card,$this->card_info, $this->also,$price,$tradeNo);
 		if($res &&$res['code']=='200'){
 			$order_result=$this->writeorder($tradeNo, $price, $price*($this->also->item_rate/100),$description,$tradeNo);
-			$url=System::getName('system_url').'/api/Userurl/nohtml/data/'.base64_encode($res['html']);
+			$url=System::getName('system_url').'/api/Userurl/jyifupay/';
 			return ['code'=>'200','msg'=>'下单成功','data'=>['type'=>1,'url'=>$url]];
 		}else{
 			return ['code'=>'102','msg'=>$res['respMsg']];
