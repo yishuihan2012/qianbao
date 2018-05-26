@@ -56,7 +56,7 @@
 	</head>
 
 <body>
-	<form method='post' action='dopost.php' target='_blank'>
+	<form method='post' action='http://scdeercnet.yijifu.net/agency/api/merge/withdraw.html'>
 公共请求:
 <br>请求网关地址：<input Type='text' Name='requestUrl' value='http://scdeercnet.yijifu.net/agency/api/merge/withdraw.html'/>
 <br>代理商ID:partnerCode<input Type='text' Name='partnerCode' value='18042418580300200000'/>

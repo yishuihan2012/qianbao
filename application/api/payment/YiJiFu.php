@@ -54,6 +54,8 @@ class YiJiFu{
 			'bankPhone'=>'16605383329',//预留手机号 字符串(11) 是 用户对应的银行卡的预留手机号； 18962105588 
 			'channelId'=>"61",//通道ID 字符串(20) 是 本次验证的通道 ID，需要使用【3.4 查询可用通 道】进行获取 0121212121 
 		);
+		$this->assign('data',$data);
+		return view("Userurl/passway_validate");
 		$this->request('/agency/api/channelInfoCheck.html',$data);
 	}
 	/**
