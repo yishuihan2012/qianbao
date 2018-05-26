@@ -500,8 +500,11 @@ class Test
 	 	return $pinyin;
 	 }
 	 public function pay(){
+
 	 	$YiJiFu=new \app\api\payment\YiJiFu();
-		$res=$YiJiFu->passway_search();
+
+		$res=$YiJiFu->passway_validate();
+		echo 1223;die;
 		var_dump($res);die;
 	 }
 }
