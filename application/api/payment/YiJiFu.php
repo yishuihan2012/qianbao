@@ -61,8 +61,8 @@ class YiJiFu{
 	 */
 	public function passway_mech(){
 		$data=array(
-			'partnerOrderNo'=>"",//外部订单号 字符串(1-32) 是 商户订单唯一标识 888777666 
-			'openId'=>"",//外部会员唯一 字符串(20) 是  20160122000220157014 5 标识 
+			'partnerOrderNo'=>"8887776661",//外部订单号 字符串(1-32) 是 商户订单唯一标识 888777666 
+			'openId'=>"qwertyuiop123",//外部会员唯一 字符串(20) 是  20160122000220157014 5 标识 
 			'identityFrontUrl'=>"",//身份证正面照 片 字符串(1-128)  否 正面照片的URL链接 http://xxx.xxx.xxx/1.jpg 
 			'identityBackUrl'=>"",// 身份证反面照 片 字符串(1-128)  否 反面照片的URL链接 http://xxx.xxx.xxx/1.jpg 
 		);
@@ -77,16 +77,23 @@ class YiJiFu{
 		$data=array(
 			'partnerOrderNo'=>"888777666",//外部订单号 字符串(1-40) 是 商户订单唯一标识 888777666 
 			'openId'=>"16605383329",//外部会员唯一 标识 字符串(1-40) 是 商户用户的唯一标识 888777666000 
+			'signType'=>"MD5",
+			'phone'=>'16605383329',
 			'creditCardNo'=>"6258101661675746",//提现银行卡号 字符串(1-40) 是 用户用于提现的信用卡卡号，该银行卡提现所用通 35860120111000918 道必须进行了信息验证。 
 			'debitCardNo'=>"6215590200003242971",//到账银行卡号 字符串(1-40) 是 用户用于到账的储蓄卡卡号，必须为该用户实名的 身份信息名下的储蓄卡。 
+			'realName'=>"许成成",
+			'identityNo'=>"370983199109202832",
+			'bankPhone'=>"16605383329",
 			'amount'=>"299",//提现金额 Money类型 是 用户提现金额，单位元，非用户到账金额 300.00 
 			'amountType'=>"PAYMENT",//提现金额类型 字符串 否 默认为实付金额。 PAYMENT：实付金额 RECEIVE：到账金额 PAYMENT 
 			'channelId'=>"61",//通道ID 字符串(1-40) 是 提现所用的通道对应的 ID，提现银行卡号必须在此 通道进行了信息验证。 99990000 
 			'channelRate'=>"0.3",//通道费率 数字(百分比) 是 通道费率，不可低于合同费率 0.6 
 			'isPromptly'=>true,//是否实时到账 Bool 是 是：T+0到账 否：T+1到账 是 
 			'serviceFee'=>"0",//实时到账费 Money 否 实时到账所需要的服务费，单位元，不可低于合同 实时到账费 2.00 
+			'identityFrontUrl'=>'https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1527075722279&di=9ae97afbda540e44e8729a9a0b5a8b19&imgtype=0&src=http%3A%2F%2Fimg.mp.itc.cn%2Fupload%2F20160428%2F06a46a30902244fbb6eccb80a61902dd_th.jpg',
+			'identityBackUrl'=>"https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1527075722279&di=9ae97afbda540e44e8729a9a0b5a8b19&imgtype=0&src=http%3A%2F%2Fimg.mp.itc.cn%2Fupload%2F20160428%2F06a46a30902244fbb6eccb80a61902dd_th.jpg",
 		);
-		$res=$this->request('agency/api/withdraw.html',$data);
+		$res=$this->request('agency/api/merge/withdraw.html',$data);
 		echo $res;die;
 	}
 	public function getSign($data){
@@ -99,8 +106,8 @@ class YiJiFu{
 		$reqdata=array(
 			'partnerCode'=>$this->partnerCode,
 			'timestamp'=>(string)time()*1000,
-			'returnUrl'=>"http://wallet.test.xijiakei.com/api/Test/notify",
-			'notifyUrl'=>'http://wallet.test.xijiakei.com/api/Test/notify',
+			'returnUrl'=>"http://wallet.test.xijiakeji.com/api/Test/notify",
+			'notifyUrl'=>'http://wallet.test.xijiakeji.com/api/Test/notify',
 		);
 		$array=array_merge($reqdata,$data);
 		$array['sign']=$this->getSign($array);
