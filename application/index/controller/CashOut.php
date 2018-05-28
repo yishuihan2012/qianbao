@@ -1114,15 +1114,9 @@ class CashOut
         $rand=rand(0,count($passageway_list)-1);
         $channelId=$passageway_list[$rand]['channelId'];
         #4支付
-		$res=$YiJiFu->pay($this->member_infos,$this->member_cert,$this->member_card,$this->card_info, $this->also,$price,$tradeNo,$channelId);
-		if($res &&$res['code']=='200'){
-			$order_result=$this->writeorder($tradeNo, $price, $price*($this->also->item_rate/100),$description,$tradeNo);
-			$url=System::getName('system_url').'/api/Userurl/jyifupay/';
-			return ['code'=>'200','msg'=>'下单成功','data'=>['type'=>1,'url'=>$url]];
-		}else{
-			return ['code'=>'102','msg'=>$res['respMsg']];
-		}
-
+		$url=$YiJiFu->pay($this->member_infos,$this->member_cert,$this->member_card,$this->card_info, $this->also,$price,$tradeNo,$channelId);
+		$order_result=$this->writeorder($tradeNo, $price, $price*($this->also->item_rate/100),$description,$tradeNo);
+		return ['code'=>'200','msg'=>'下单成功','data'=>['type'=>1,'url'=>$url]];
 
 		// -------------------
 		// $member_id=$this->member_info->member_id;
