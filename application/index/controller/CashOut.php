@@ -1105,7 +1105,7 @@ class CashOut
 		#2获取通道列表
 		$passageway_list=$YiJiFu->passway_search($this->card_info->card_bankno,$material_id);
 
-		if($passageway_list['success']==1){
+		if(isset($passageway_list['success']) && $passageway_list['success']==1){
             $passageway_list=$passageway_list['data'];
         }else{
             return ['code'=>'101','msg'=>$passageway_list['message']];
