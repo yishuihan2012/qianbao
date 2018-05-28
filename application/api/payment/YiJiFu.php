@@ -85,7 +85,7 @@ class YiJiFu{
 			'creditCardNo'=>$card_info['card_bankno'],//提现银行卡号 字符串(1-40) 是 用户用于提现的信用卡卡号，该银行卡提现所用通 35860120111000918 道必须进行了信息验证。 
 			'debitCardNo'=>$member_card['card_bankno'],//到账银行卡号 字符串(1-40) 是 用户用于到账的储蓄卡卡号，必须为该用户实名的 身份信息名下的储蓄卡。 
 			'realName'=>$member_card['card_name'],
-			'identityNo'=>$member_card['card_name'],
+			'identityNo'=>$member_card['card_idcard'],
 			'bankPhone'=>$card_info['card_phone'],
 			'amount'=>$price,//提现金额 Money类型 是 用户提现金额，单位元，非用户到账金额 300.00 
 			'amountType'=>"PAYMENT",//提现金额类型 字符串 否 默认为实付金额。 PAYMENT：实付金额 RECEIVE：到账金额 PAYMENT 
