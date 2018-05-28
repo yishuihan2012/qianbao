@@ -35,7 +35,7 @@ class YiJiFu{
 			'creditCardNo'=>$creditCardNo,//银行卡号 字符串(1-40) 是 用户用于提现的信用卡卡号 500050505050505 
  			'openId'=>$mech_id,//外部会员唯一 标识 字符串(1-40) 否 商户用户的唯一标识 2222222222 
 		);
-		$res=$this->request('/agency/api/queryChannelList.json',$data,1);
+		$res=$this->request('/agency/api/queryChannelList.json',$data,'','',1);
 		return $res;
 	}
 	/**
