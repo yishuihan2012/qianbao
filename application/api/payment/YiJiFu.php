@@ -99,7 +99,7 @@ class YiJiFu{
 		$returnUrl=System::getName('system_url').'/Api/Userurl/jiyifuturnback';
 		$notifyUrl=System::getName('system_url').'/Api/Userurl/jiyifucallback';
 		$res=$this->request('agency/api/merge/withdraw.html',$data,$returnUrl,$notifyUrl,0);
-		echo $res;die;
+		return $res;
 	}
 	public function getSign($data){
 		$data=SortByASCII($data);
