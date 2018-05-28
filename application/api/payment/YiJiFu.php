@@ -44,9 +44,9 @@ class YiJiFu{
 	 */
 	public function passway_validate(){
 		$data=array(
-			'partnerOrderNo'=>"888777666",//外部订单号 字符串(1-40) 是 商户订单唯一标识 888777666 
+			'partnerOrderNo'=>"41452174214",//外部订单号 字符串(1-40) 是 商户订单唯一标识 888777666 
 			'partnerOrderNo'=>$this->partnerCode,//外部订单号 字符串(1-40) 是 商户订单唯一标识 888777666 
-			'openId'=>'888777666000',//外部会员唯 一标识 字符串(1-40) 是 商户用户的唯一标识 888777666000 
+			'openId'=>'2222222222',//外部会员唯 一标识 字符串(1-40) 是 商户用户的唯一标识 888777666000 
 			'phone'=>'16605383329',//外部会员手 机号，该手机号用于注册易极付会员 
 			'creditCardNo'=>"6259760291531725",//银行卡号 字符串(1-40) 是 用户用于提现的信用卡卡号 35860120111000918 
 			'realName'=>"许成成",//姓名 字符串(1-16) 是 用户的真实姓名 张三/北京xxx 有限公司 
@@ -54,9 +54,10 @@ class YiJiFu{
 			'bankPhone'=>'16605383329',//预留手机号 字符串(11) 是 用户对应的银行卡的预留手机号； 18962105588 
 			'channelId'=>"61",//通道ID 字符串(20) 是 本次验证的通道 ID，需要使用【3.4 查询可用通 道】进行获取 0121212121 
 		);
-		$this->assign('data',$data);
-		return view("Userurl/passway_validate");
-		$this->request('/agency/api/channelInfoCheck.html',$data);
+		// $this->assign('data',$data);
+		// return view("Userurl/passway_validate");
+		$res=$this->request('/agency/api/channelInfoCheck.html',$data);
+		echo $res;die;
 	}
 	/**
 	 * 通道开通商户
@@ -65,7 +66,7 @@ class YiJiFu{
 	public function passway_mech(){
 		$data=array(
 			'partnerOrderNo'=>"8887776661",//外部订单号 字符串(1-32) 是 商户订单唯一标识 888777666 
-			'openId'=>"qwertyuiop123",//外部会员唯一 字符串(20) 是  20160122000220157014 5 标识 
+			'openId'=>"2222222222",//外部会员唯一 字符串(20) 是  20160122000220157014 5 标识 
 			'identityFrontUrl'=>"",//身份证正面照 片 字符串(1-128)  否 正面照片的URL链接 http://xxx.xxx.xxx/1.jpg 
 			'identityBackUrl'=>"",// 身份证反面照 片 字符串(1-128)  否 反面照片的URL链接 http://xxx.xxx.xxx/1.jpg 
 		);
@@ -77,11 +78,10 @@ class YiJiFu{
 	 * @return [type] [description]
 	 */
 	public function pay(){
-		return ['code'=>'200'];
 		$data=array(
 			'partnerOrderNo'=>"888777666",//外部订单号 字符串(1-40) 是 商户订单唯一标识 888777666 
 			'openId'=>"16605383329",//外部会员唯一 标识 字符串(1-40) 是 商户用户的唯一标识 888777666000 
-			'signType'=>"MD5",
+			// 'signType'=>"MD5",
 			'phone'=>'16605383329',
 			'creditCardNo'=>"6258101661675746",//提现银行卡号 字符串(1-40) 是 用户用于提现的信用卡卡号，该银行卡提现所用通 35860120111000918 道必须进行了信息验证。 
 			'debitCardNo'=>"6215590200003242971",//到账银行卡号 字符串(1-40) 是 用户用于到账的储蓄卡卡号，必须为该用户实名的 身份信息名下的储蓄卡。 
@@ -94,8 +94,8 @@ class YiJiFu{
 			'channelRate'=>"0.3",//通道费率 数字(百分比) 是 通道费率，不可低于合同费率 0.6 
 			'isPromptly'=>true,//是否实时到账 Bool 是 是：T+0到账 否：T+1到账 是 
 			'serviceFee'=>"0",//实时到账费 Money 否 实时到账所需要的服务费，单位元，不可低于合同 实时到账费 2.00 
-			'identityFrontUrl'=>'https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1527075722279&di=9ae97afbda540e44e8729a9a0b5a8b19&imgtype=0&src=http%3A%2F%2Fimg.mp.itc.cn%2Fupload%2F20160428%2F06a46a30902244fbb6eccb80a61902dd_th.jpg',
-			'identityBackUrl'=>"https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1527075722279&di=9ae97afbda540e44e8729a9a0b5a8b19&imgtype=0&src=http%3A%2F%2Fimg.mp.itc.cn%2Fupload%2F20160428%2F06a46a30902244fbb6eccb80a61902dd_th.jpg",
+			// 'identityFrontUrl'=>'1',
+			// 'identityBackUrl'=>"2",
 		);
 		$res=$this->request('agency/api/merge/withdraw.html',$data);
 		echo $res;die;
@@ -118,9 +118,17 @@ class YiJiFu{
 		$string=http_build_query($array);
 		// echo $string;die;
 		$request_url=$this->url.$url.'?'.$string;
-		// echo htmlspecialchars($request_url);die;
+		echo htmlspecialchars($request_url);die;
 		$res=curl_post($request_url);
 		// $res=file_get_contents($request_url);
 		echo $res;die;
+	}
+	public function pay_control(){
+		$list=[
+			0=>'获取可用通道列表',
+			1=>'进行通道验证',
+			2=>"开通支付账户",
+		];
+		
 	}
 }
