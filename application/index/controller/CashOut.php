@@ -1088,8 +1088,48 @@ class CashOut
 		}
 	}
 	public function yijifupay($tradeNo,$price,$description='易极付测试'){
-		$url=System::getName('system_url').'/api/Userurl/yijifupay/';
-		return ['code'=>'200','msg'=>'调取成功','data'=>['type'=>1,'url'=>$url]];
+
+		$YiJiFu=new \app\api\payment\YiJiFu();
+		$MemberNet=MemberNet::where(['net_member_id'=>$this->member_infos->member_id])->find();
+
+		#1判断有没有生成商户号
+		if(!$MemberNet[$this->passway_info->passageway_no]){ //商户没有上传资料没生成商户号
+			$material_id=generate_password(16);
+			$update=MemberNet::where(['net_member_id'=>$this->member_infos->member_id])->update([$this->passway_info->passageway_no=>$material_id]);
+			if(!$update){
+				return ['code'=>'101','msg'=>'上传资料失败'];
+			}
+		}else{
+			$material_id=$MemberNet[$this->passway_info->passageway_no];
+		}
+		#2获取通道列表
+		$passageway_list=$YiJiFu->passway_search($this->card_info->card_bankno,$material_id);
+
+		if($passageway_list['success']==1){
+            $passageway_list=$passageway_list['data'];
+        }else{
+            return ['code'=>'101','msg'=>$passageway_list['message']];
+        }
+        #3随机一个通道
+        $rand=rand(0,count($passageway_list)-1);
+        $channelId=$passageway_list[$rand]['channelId'];
+        #4支付
+		$res=$YiJiFu->pay($this->member_infos,$this->member_cert,$this->member_card,$this->card_info, $this->also,$price,$tradeNo,$channelId);
+		if($res &&$res['code']=='200'){
+			$order_result=$this->writeorder($tradeNo, $price, $price*($this->also->item_rate/100),$description,$tradeNo);
+			$url=System::getName('system_url').'/api/Userurl/jyifupay/';
+			return ['code'=>'200','msg'=>'下单成功','data'=>['type'=>1,'url'=>$url]];
+		}else{
+			return ['code'=>'102','msg'=>$res['respMsg']];
+		}
+
+
+		// -------------------
+		// $member_id=$this->member_info->member_id;
+		// $passageway_id=$this->passway_info->passageway_id;
+		// $creditcard_id=$this->card_info->card_id;
+		// $url=System::getName('system_url')."/api/Userurl/yijifupay/member_id/$member_id/passageway_id/$passageway_id/creditcard_id/$creditcard_id/price/$price";
+		// return ['code'=>'200','msg'=>'调取成功','data'=>['type'=>1,'url'=>$url]];
 	}
 	 /**
 	 * @version  获取订单成功的时候写入订单数据

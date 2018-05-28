@@ -1686,20 +1686,93 @@ class Userurl extends Controller
     public function jyifupay(){
         return view("Userurl/jyifupay");
     }
-    public function yijifupay(){
-        $list=[
-            0=>'获取可用通道列表',
-            1=>'进行通道验证',
-            2=>"开通支付账户",
-        ];
-        $Yilian=new \app\api\payment\YiJiFu();
-        $res=$Yilian->pay($this->member_infos,$this->member_cert,$this->member_card,$this->card_info, $this->also,$price,$tradeNo);
-        if($res &&$res['code']=='200'){
-            $order_result=$this->writeorder($tradeNo, $price, $price*($this->also->item_rate/100),$description,$tradeNo);
-            $url=System::getName('system_url').'/api/Userurl/jyifupay/';
-            return ['code'=>'200','msg'=>'下单成功','data'=>['type'=>1,'url'=>$url]];
-        }else{
-            return ['code'=>'102','msg'=>$res['respMsg']];
+    public function yijifupay($memberId,$passwayId,$cardid,$price){
+         // $channelId=input('channelId')??0;
+         $member_info=Members::get($memberId);
+         if(!$member_info)
+             $this->error=314;
+         if($member_info->member_cert!='1')
+             $this->error=356;
+         #验证账号状态是否异常
+         if($member_info->memberLogin->login_state!='1')
+             $this->error=305;
+         $member_cert=MemberCert::get(['cert_member_id'=>$memberId]);
+         if(!$member_cert)
+             $this->error=367;
+         #获取用户结算卡信息
+         $member_cashcard=MemberCashcard::get(['card_member_id'=>$memberId]);
+         if(!$member_cashcard)
+             $this->error=459;
+         #获取通道信息
+         $passageway=Passageway::get($passwayId);
+         if(!$passageway)
+             $this->error=454;
+           if($passageway->cashout->cashout_open!='1')
+                 $this->error=455;
+           #获取信息卡信息
+          $creditcard=MemberCreditcard::get($cardid);
+          if(!$creditcard)  
+             $this->error=442;
+           if($creditcard->card_member_id!=$memberId || $creditcard->card_name!=$member_cert->cert_member_name)
+             $this->error=461;
+           #取得当前会员组在该通道的取现费率
+           $member_also=PassagewayItem::get(['item_passageway'=>$passwayId,'item_group'=>$member_info->member_group_id]);
+           if(!$member_also)
+                 $this->error=458;
+        $YiJiFu=new \app\api\payment\YiJiFu();
+        #1获取用户入网信息
+        $member_net=MemberNet::where(['net_member_id'=>$memberId])->find();
+        $mech_json=$member_net[$passageway->passageway_no];
+        $mech_array=json_decode($mech_json,true);
+        $mech_id=generate_password(16);
+        if(!$member_net || !$ech_json){ //没有入网
+            $merch_array['mech_id']=$mech_id;
+            $mech_json=json_encode($merch_array);
+            $net=MemberNet::insert(['net_member_id'=>$memberId,$member_net[$passageway->passageway_no]=>$mech_json]);
+            if(!$res){
+                $this->assign('data','生成商户号失败，请重试');
+                return view("Userurl/show_error");die;
+            }
         }
+        $passageway_list=$YiJiFu->passway_search($creditcard->card_bankno,$mech_id);
+        if($success['success']==1){
+            $passageway_list=$passageway_list['data'];
+        }else{
+            $this->assign('data','获取通道失败');
+             return view("Userurl/show_error");die;
+        }
+        $mech_param=explode(',',$member_net[$passageway->passageway_no]);
+        #1判断是否进行了商户入网
+        if(!isset($merch_array['is_mech']) || !$mech_param['is_mech']){
+            $is_mech=0;
+        }else{
+            $is_mech=1;
+        }
+        #2判断是否进行了通道验证
+        if(!isset($merch_array['is_validate']) || !$mech_param['is_validate']){
+            $is_validate=0;
+        }else{
+            $is_validate=1;
+        }
+        $list=[
+            0=>[
+                'name'=>'选择通道',
+                'status'=>$channelId,
+            ],
+            1=>[
+                'name'=>'进行通道验证',
+                'status'=>$is_validate,
+            ],
+            2=>[
+                'name'=>"开通支付账户",
+                'status'=>$is_mech,
+            ],
+        ];
+        $this->assign('passageway_list',$passageway_list);
+        $this->assign('list',$list);
+        return view("Userurl/yijifupay");
+        
+        $res=$Yilian->pay($member_id,$passageway_id,$creditcard_id,$price);
+
     }
 }

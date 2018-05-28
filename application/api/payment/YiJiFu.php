@@ -30,13 +30,13 @@ class YiJiFu{
 	 * 根据银行卡搜索可用通道
 	 * @return [type] [description]
 	 */
-	public function passway_search(){
+	public function passway_search($creditCardNo,$mech_id){
 		$data=array(
-			'creditCardNo'=>'6259760291531725',//银行卡号 字符串(1-40) 是 用户用于提现的信用卡卡号 500050505050505 
- 			'openId'=>'2222222222',//外部会员唯一 标识 字符串(1-40) 否 商户用户的唯一标识 2222222222 
+			'creditCardNo'=>$creditCardNo,//银行卡号 字符串(1-40) 是 用户用于提现的信用卡卡号 500050505050505 
+ 			'openId'=>$mech_id,//外部会员唯一 标识 字符串(1-40) 否 商户用户的唯一标识 2222222222 
 		);
-		$res=$this->request('/agency/api/queryChannelList.json',$data);
-		echo $res;die;
+		$res=$this->request('/agency/api/queryChannelList.json',$data,1);
+		return $res;
 	}
 	/**
 	 *  通道信息验证
@@ -65,7 +65,7 @@ class YiJiFu{
 	 */
 	public function passway_mech(){
 		$data=array(
-			'partnerOrderNo'=>"8887776661",//外部订单号 字符串(1-32) 是 商户订单唯一标识 888777666 
+			'partnerOrderNo'=>generate_password(16),//外部订单号 字符串(1-32) 是 商户订单唯一标识 888777666 
 			'openId'=>"2222222222",//外部会员唯一 字符串(20) 是  20160122000220157014 5 标识 
 			'identityFrontUrl'=>"",//身份证正面照 片 字符串(1-128)  否 正面照片的URL链接 http://xxx.xxx.xxx/1.jpg 
 			'identityBackUrl'=>"",// 身份证反面照 片 字符串(1-128)  否 反面照片的URL链接 http://xxx.xxx.xxx/1.jpg 
@@ -77,23 +77,22 @@ class YiJiFu{
 	 * 支付
 	 * @return [type] [description]
 	 */
-	public function pay(){
+	public function pay($member_infos,$member_cert,$member_card,$card_info, $also,$price,$tradeNo,$channelId){
 		$data=array(
-			'partnerOrderNo'=>"888777666",//外部订单号 字符串(1-40) 是 商户订单唯一标识 888777666 
-			'openId'=>"16605383329",//外部会员唯一 标识 字符串(1-40) 是 商户用户的唯一标识 888777666000 
-			// 'signType'=>"MD5",
-			'phone'=>'16605383329',
-			'creditCardNo'=>"6258101661675746",//提现银行卡号 字符串(1-40) 是 用户用于提现的信用卡卡号，该银行卡提现所用通 35860120111000918 道必须进行了信息验证。 
-			'debitCardNo'=>"6215590200003242971",//到账银行卡号 字符串(1-40) 是 用户用于到账的储蓄卡卡号，必须为该用户实名的 身份信息名下的储蓄卡。 
-			'realName'=>"许成成",
-			'identityNo'=>"370983199109202832",
-			'bankPhone'=>"16605383329",
-			'amount'=>"299",//提现金额 Money类型 是 用户提现金额，单位元，非用户到账金额 300.00 
+			'partnerOrderNo'=>$tradeNo,//外部订单号 字符串(1-40) 是 商户订单唯一标识 888777666 
+			'openId'=>$channelId,//外部会员唯一 标识 字符串(1-40) 是 商户用户的唯一标识 888777666000 
+			'phone'=>$member_infos['member_mobile'],
+			'creditCardNo'=>$card_info['card_bankno'],//提现银行卡号 字符串(1-40) 是 用户用于提现的信用卡卡号，该银行卡提现所用通 35860120111000918 道必须进行了信息验证。 
+			'debitCardNo'=>$member_card['card_bankno'],//到账银行卡号 字符串(1-40) 是 用户用于到账的储蓄卡卡号，必须为该用户实名的 身份信息名下的储蓄卡。 
+			'realName'=>$member_card['card_name'],
+			'identityNo'=>$member_card['card_name'],
+			'bankPhone'=>$card_info['card_phone'],
+			'amount'=>$price,//提现金额 Money类型 是 用户提现金额，单位元，非用户到账金额 300.00 
 			'amountType'=>"PAYMENT",//提现金额类型 字符串 否 默认为实付金额。 PAYMENT：实付金额 RECEIVE：到账金额 PAYMENT 
-			'channelId'=>"61",//通道ID 字符串(1-40) 是 提现所用的通道对应的 ID，提现银行卡号必须在此 通道进行了信息验证。 99990000 
-			'channelRate'=>"0.3",//通道费率 数字(百分比) 是 通道费率，不可低于合同费率 0.6 
+			'channelId'=>$channelId,//通道ID 字符串(1-40) 是 提现所用的通道对应的 ID，提现银行卡号必须在此 通道进行了信息验证。 99990000 
+			'channelRate'=>$this->also->item_rate,//通道费率 数字(百分比) 是 通道费率，不可低于合同费率 0.6 
 			'isPromptly'=>true,//是否实时到账 Bool 是 是：T+0到账 否：T+1到账 是 
-			'serviceFee'=>"0",//实时到账费 Money 否 实时到账所需要的服务费，单位元，不可低于合同 实时到账费 2.00 
+			'serviceFee'=>$this->also->item_charges/100,//实时到账费 Money 否 实时到账所需要的服务费，单位元，不可低于合同 实时到账费 2.00 
 			// 'identityFrontUrl'=>'1',
 			// 'identityBackUrl'=>"2",
 		);
@@ -106,21 +105,22 @@ class YiJiFu{
 		$sign=md5($string);
 		return $sign;
 	}
-	public function request($url,$data){
+	public function request($url,$data,$returnUrl,$notifyUrl,$is_api=0){
 		$reqdata=array(
 			'partnerCode'=>$this->partnerCode,
 			'timestamp'=>(string)time()*1000,
-			'returnUrl'=>"http://wallet.test.xijiakeji.com/api/Test/notify",
-			'notifyUrl'=>'http://wallet.test.xijiakeji.com/api/Test/notify',
+			'returnUrl'=>$returnUrl,
+			'notifyUrl'=>$notifyUrl,
 		);
 		$array=array_merge($reqdata,$data);
 		$array['sign']=$this->getSign($array);
 		$string=http_build_query($array);
-		// echo $string;die;
 		$request_url=$this->url.$url.'?'.$string;
-		echo htmlspecialchars($request_url);die;
-		$res=curl_post($request_url);
-		// $res=file_get_contents($request_url);
-		echo $res;die;
+		if($is_api){
+			$res=curl_post($request_url);
+			return json_decode($res,true);
+		}else{
+			echo htmlspecialchars($request_url);die;
+		}
 	}
 }
