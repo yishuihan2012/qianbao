@@ -967,7 +967,7 @@ class Userurl extends Controller
             return 'miss telephone number';
         $recomment=$this->param['recomment'];
         //手机号格式
-        if($recomment!='400009896'){
+        if($recomment!='4000098969'){
             if(!preg_match('/1\d{10}/', $recomment))
             return 'incorrect telephone number';
         }
@@ -1685,5 +1685,21 @@ class Userurl extends Controller
     }
     public function jyifupay(){
         return view("Userurl/jyifupay");
+    }
+    public function yijifupay(){
+        $list=[
+            0=>'获取可用通道列表',
+            1=>'进行通道验证',
+            2=>"开通支付账户",
+        ];
+        $Yilian=new \app\api\payment\YiJiFu();
+        $res=$Yilian->pay($this->member_infos,$this->member_cert,$this->member_card,$this->card_info, $this->also,$price,$tradeNo);
+        if($res &&$res['code']=='200'){
+            $order_result=$this->writeorder($tradeNo, $price, $price*($this->also->item_rate/100),$description,$tradeNo);
+            $url=System::getName('system_url').'/api/Userurl/jyifupay/';
+            return ['code'=>'200','msg'=>'下单成功','data'=>['type'=>1,'url'=>$url]];
+        }else{
+            return ['code'=>'102','msg'=>$res['respMsg']];
+        }
     }
 }

@@ -123,12 +123,4 @@ class YiJiFu{
 		// $res=file_get_contents($request_url);
 		echo $res;die;
 	}
-	public function pay_control(){
-		$list=[
-			0=>'获取可用通道列表',
-			1=>'进行通道验证',
-			2=>"开通支付账户",
-		];
-		
-	}
 }

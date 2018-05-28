@@ -1088,15 +1088,8 @@ class CashOut
 		}
 	}
 	public function yijifupay($tradeNo,$price,$description='易极付测试'){
-		$Yilian=new \app\api\payment\YiJiFu();
-		$res=$Yilian->pay($this->member_infos,$this->member_cert,$this->member_card,$this->card_info, $this->also,$price,$tradeNo);
-		if($res &&$res['code']=='200'){
-			$order_result=$this->writeorder($tradeNo, $price, $price*($this->also->item_rate/100),$description,$tradeNo);
-			$url=System::getName('system_url').'/api/Userurl/jyifupay/';
-			return ['code'=>'200','msg'=>'下单成功','data'=>['type'=>1,'url'=>$url]];
-		}else{
-			return ['code'=>'102','msg'=>$res['respMsg']];
-		}
+		$url=System::getName('system_url').'/api/Userurl/yijifupay/';
+		return ['code'=>'200','msg'=>'调取成功','data'=>['type'=>1,'url'=>$url]];
 	}
 	 /**
 	 * @version  获取订单成功的时候写入订单数据
