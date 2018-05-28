@@ -96,7 +96,9 @@ class YiJiFu{
 			// 'identityFrontUrl'=>'1',
 			// 'identityBackUrl'=>"2",
 		);
-		$res=$this->request('agency/api/merge/withdraw.html',$data);
+		$returnUrl=System::getName('system_url').'/Api/Userurl/jiyifuturnback';
+		$notifyUrl=System::getName('system_url').'/Api/Userurl/jiyifucallback';
+		$res=$this->request('agency/api/merge/withdraw.html',$returnUrl,$notifyUrl,$data);
 		echo $res;die;
 	}
 	public function getSign($data){
@@ -105,7 +107,7 @@ class YiJiFu{
 		$sign=md5($string);
 		return $sign;
 	}
-	public function request($url,$data,$returnUrl,$notifyUrl,$is_api=0){
+	public function request($url,$data,$returnUrl='',$notifyUrl='',$is_api=0){
 		$reqdata=array(
 			'partnerCode'=>$this->partnerCode,
 			'timestamp'=>(string)time()*1000,
