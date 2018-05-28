@@ -77,7 +77,7 @@ class YiJiFu{
 	 * 支付
 	 * @return [type] [description]
 	 */
-	public function pay($member_infos,$member_cert,$member_card,$card_info, $also,$price,$tradeNo,$channelId){
+	public function pay($member_infos,$member_cert,$member_card,$card_info,$also,$price,$tradeNo,$channelId){
 		$data=array(
 			'partnerOrderNo'=>$tradeNo,//外部订单号 字符串(1-40) 是 商户订单唯一标识 888777666 
 			'openId'=>$channelId,//外部会员唯一 标识 字符串(1-40) 是 商户用户的唯一标识 888777666000 
@@ -90,9 +90,9 @@ class YiJiFu{
 			'amount'=>$price,//提现金额 Money类型 是 用户提现金额，单位元，非用户到账金额 300.00 
 			'amountType'=>"PAYMENT",//提现金额类型 字符串 否 默认为实付金额。 PAYMENT：实付金额 RECEIVE：到账金额 PAYMENT 
 			'channelId'=>$channelId,//通道ID 字符串(1-40) 是 提现所用的通道对应的 ID，提现银行卡号必须在此 通道进行了信息验证。 99990000 
-			'channelRate'=>$this->also->item_rate,//通道费率 数字(百分比) 是 通道费率，不可低于合同费率 0.6 
+			'channelRate'=>$also->item_rate,//通道费率 数字(百分比) 是 通道费率，不可低于合同费率 0.6 
 			'isPromptly'=>true,//是否实时到账 Bool 是 是：T+0到账 否：T+1到账 是 
-			'serviceFee'=>$this->also->item_charges/100,//实时到账费 Money 否 实时到账所需要的服务费，单位元，不可低于合同 实时到账费 2.00 
+			'serviceFee'=>$also->item_charges/100,//实时到账费 Money 否 实时到账所需要的服务费，单位元，不可低于合同 实时到账费 2.00 
 			// 'identityFrontUrl'=>'1',
 			// 'identityBackUrl'=>"2",
 		);
