@@ -122,7 +122,7 @@ class YiJiFu{
 			$res=curl_post($request_url);
 			return json_decode($res,true);
 		}else{
-			echo htmlspecialchars($request_url);die;
+			return htmlspecialchars($request_url);
 		}
 	}
 }
