@@ -97,7 +97,7 @@ class YiJiFu{
 			// 'identityBackUrl'=>"2",
 		);
 		$returnUrl=System::getName('system_url').'/Api/Userurl/jiyifuturnback';
-		$notifyUrl=System::getName('system_url').'/Api/Cashoutcallback/jiyifucallback';
+		$notifyUrl=System::getName('system_url').'/index/Cashoutcallback/jiyifucallback';
 		$res=$this->request('agency/api/merge/withdraw.html',$data,$returnUrl,$notifyUrl,0);
 		return $res;
 	}
