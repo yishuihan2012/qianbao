@@ -128,7 +128,7 @@ class YiJiFu{
 						}
 				$html.='</form></body><script type="text/javascript">window.onload= function(){ document.getElementById("myForm").submit(); }</script></html>';
 				$data['url']=htmlspecialchars($request_url);
-				$data['html']=htmlspecialchars($html);
+				$data['html']=htmlentities($html);
 			return $data;
 		}
 	}
