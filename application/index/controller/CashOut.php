@@ -1119,7 +1119,6 @@ class CashOut
 		$order_result=$this->writeorder($tradeNo, $price, $price*($this->also->item_rate/100),$description,$tradeNo);
 		$url=System::getName('system_url').'/api/Userurl/headerurl/data/'.$url_data;
 		return ['code'=>'200','msg'=>'下单成功','data'=>['type'=>2,'url'=>$res['url']]];
-
 		// -------------------
 		// $member_id=$this->member_info->member_id;
 		// $passageway_id=$this->passway_info->passageway_id;
