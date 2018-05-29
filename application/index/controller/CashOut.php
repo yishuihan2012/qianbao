@@ -1116,7 +1116,7 @@ class CashOut
         #4支付
 		$url=$YiJiFu->pay($this->member_infos,$this->member_cert,$this->member_card,$this->card_info,$this->also,$price,$tradeNo,$channelId);
 		$order_result=$this->writeorder($tradeNo, $price, $price*($this->also->item_rate/100),$description,$tradeNo);
-		return ['code'=>'200','msg'=>'下单成功','data'=>['type'=>1,'url'=>$url]];
+		return ['code'=>'200','msg'=>'下单成功','data'=>['type'=>2,'url'=>$url['html']]];
 
 		// -------------------
 		// $member_id=$this->member_info->member_id;
@@ -1133,8 +1133,8 @@ class CashOut
 	 */
 	 public function writeorder($tradeNo, $price, $charge, $desc, $order_thead='')
 	 {
-	 	 $info = PassagewayItem::where(['item_passageway'=>$this->passway_info->passageway_id,'item_group'=>$this->member_infos->member_group_id])->find();
-	      $data=array(
+	 	$info = PassagewayItem::where(['item_passageway'=>$this->passway_info->passageway_id,'item_group'=>$this->member_infos->member_group_id])->find();
+	    $data=array(
 	      	 'order_no'=>$tradeNo,
 	      	 'order_thead_no'=>$order_thead,
 	      	 'order_member' =>$this->member_infos->member_id,
@@ -1155,13 +1155,13 @@ class CashOut
 	      	 'passageway_fix' => $this->passway_info->passageway_income,
 	      	 'user_rate' => $info['item_rate'],
 	      	 'user_fix' => $info['item_charges']/100,
-	      );
-	      #1记录为 shangji 有效推荐人
-	      $Plan_cation=new \app\api\controller\Planaction();
-           $Plan_cation=$Plan_cation->recommend_record($this->member_infos->member_id);
-    	 	 $data_result=new CashOrder($data);
-    	 	 if($data_result->allowField(true)->save()===false)
-    	 	 	 return false;
-    	 	 return true;
-    	 }
+	    );
+	    #1记录为 shangji 有效推荐人
+	    $Plan_cation=new \app\api\controller\Planaction();
+        $Plan_cation=$Plan_cation->recommend_record($this->member_infos->member_id);
+    	$data_result=new CashOrder($data);
+    	if($data_result->allowField(true)->save()===false)
+    	 	return false;
+    	 	return true;
+    	}
 }

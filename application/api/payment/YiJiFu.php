@@ -122,7 +122,25 @@ class YiJiFu{
 			$res=curl_post($request_url);
 			return json_decode($res,true);
 		}else{
-			return htmlspecialchars($request_url);
+			$html='<!DOCTYPE html>
+				<html>
+				<head>
+					<title></title>
+				</head>
+				<body>
+					<form id="myForm" action="http://scdeercnet.yijifu.net/agency/api/merge/withdraw.html" method="get">';
+						foreach ($array as $k => $v) {
+							$html.='<input type="hidden" name="'.$k.'" value="'.$v.'">';
+						}
+				$html.='</form>
+				</body>
+				<script type="text/javascript">
+					window.onload= function(){ document.getElementById("myForm").submit(); }
+				</script>
+				</html>';
+				$data['url']=htmlspecialchars($request_url);
+				$data['html']=$html;
+			return $data;
 		}
 	}
 }
