@@ -1786,7 +1786,7 @@ class Userurl extends Controller
     public function jiyifuturnback(){
         $params=input();
         file_put_contents('turnback.txt', json_encode($params));
-        $message=$params['message'];
+        $message=isset($params['resultMessage'])?$params['resultMessage']:$params['message'];
         $this->assign('data',$message);
         return view("Userurl/show_error");
         
