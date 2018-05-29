@@ -1683,6 +1683,10 @@ class Userurl extends Controller
         $this->assign('data',$data);
         return view("Userurl/nohtml");
     }
+    public function headerurl($data){
+        $data=urldecode(base64_decode($data));
+       redirect($data);
+    }
     public function jyifupay(){
         return view("Userurl/jyifupay");
     }

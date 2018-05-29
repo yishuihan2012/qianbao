@@ -1117,7 +1117,7 @@ class CashOut
 		$res=$YiJiFu->pay($this->member_infos,$this->member_cert,$this->member_card,$this->card_info,$this->also,$price,$tradeNo,$channelId);
 		$url_data=base64_encode($res['url']);
 		// $order_result=$this->writeorder($tradeNo, $price, $price*($this->also->item_rate/100),$description,$tradeNo);
-		$url=System::getName('system_url').'/api/Userurl/nohtml/data/'.$url_data;
+		$url=System::getName('system_url').'/api/Userurl/headerurl/data/'.$url_data;
 		return ['code'=>'200','msg'=>'下单成功','data'=>['type'=>1,'url'=>$url]];
 
 		// -------------------
