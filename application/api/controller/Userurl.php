@@ -1679,7 +1679,7 @@ class Userurl extends Controller
     }
     public function nohtml($data){
         $data=base64_decode($data);
-        echo html_entity_decode($data);die;
+        echo $data;die;
         $this->assign('data',$data);
         return view("Userurl/nohtml");
     }
