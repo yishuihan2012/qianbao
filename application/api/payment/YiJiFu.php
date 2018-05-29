@@ -97,8 +97,24 @@ class YiJiFu{
 			// 'identityBackUrl'=>"2",
 		);
 		$returnUrl=System::getName('system_url').'/Api/Userurl/jiyifuturnback';
-		$notifyUrl=System::getName('system_url').'/Api/Userurl/jiyifucallback';
+		$notifyUrl=System::getName('system_url').'/Api/Cashoutcallback/jiyifucallback';
 		$res=$this->request('agency/api/merge/withdraw.html',$data,$returnUrl,$notifyUrl,0);
+		return $res;
+	}
+	public function order_query($order){
+		$data=array(
+			'partnerOrderNo'=>$order['order_no'],///外部订单号 字符串(1-32) 否 商户订单唯一标识，同内部订单号必须保证传入其一 888777666 
+			// 'orderNo'=>"",//内部订单号  字符串(1-32) 否 我方订单唯一标识，同外部订单号必须保证传入其一 20160122000220157014 
+		);
+		$res=$this->request('/agency/api/queryOrder.json',$data,$returnUrl,$notifyUrl,1);
+		if($res['status']=='SUCCESS'){
+			$res['pay_status']=2;
+			$res['qf_status']=2;
+		}
+		if($res['status']=='FAIL'){
+			$res['pay_status']=-1;
+			$res['qf_status']=-1;
+		}
 		return $res;
 	}
 	public function getSign($data){

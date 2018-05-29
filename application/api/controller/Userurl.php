@@ -1780,14 +1780,6 @@ class Userurl extends Controller
 
     }
     /**
-     * 极易付支付回调
-     * @return [type] [description]
-     */
-    public function jiyifucallback(){
-        file_get_contents("php://input");
-        file_put_contents('jiyifucallback.txt', json_encode($params));
-    }
-    /**
      * 极易付支付跳转
      * @return [type] [description]
      */
