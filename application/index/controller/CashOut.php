@@ -1094,7 +1094,7 @@ class CashOut
 
 		#1判断有没有生成商户号
 		if(!$MemberNet[$this->passway_info->passageway_no]){ //商户没有上传资料没生成商户号
-			$material_id=generate_password(16);
+			$material_id=$this->member_infos->member_mobile;
 			$update=MemberNet::where(['net_member_id'=>$this->member_infos->member_id])->update([$this->passway_info->passageway_no=>$material_id]);
 			if(!$update){
 				return ['code'=>'101','msg'=>'上传资料失败'];
@@ -1118,7 +1118,7 @@ class CashOut
 		$url_data=base64_encode($res['url']);
 		$order_result=$this->writeorder($tradeNo, $price, $price*($this->also->item_rate/100),$description,$tradeNo);
 		$url=System::getName('system_url').'/api/Userurl/headerurl/data/'.$url_data;
-		return ['code'=>'200','msg'=>'下单成功','data'=>['type'=>2,'url'=>stripslashes($res['html'])]];
+		return ['code'=>'200','msg'=>'下单成功','data'=>['type'=>2,'url'=>$res['html']]];
 
 		// -------------------
 		// $member_id=$this->member_info->member_id;
