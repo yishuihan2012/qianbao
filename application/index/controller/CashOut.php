@@ -1116,7 +1116,7 @@ class CashOut
         #4支付
 		$url=$YiJiFu->pay($this->member_infos,$this->member_cert,$this->member_card,$this->card_info,$this->also,$price,$tradeNo,$channelId);
 		$order_result=$this->writeorder($tradeNo, $price, $price*($this->also->item_rate/100),$description,$tradeNo);
-		return ['code'=>'200','msg'=>'下单成功','data'=>['type'=>2,'url'=>$url['html']]];
+		return ['code'=>'200','msg'=>'下单成功','data'=>['type'=>1,'url'=>urldecode($url['url'])]];
 
 		// -------------------
 		// $member_id=$this->member_info->member_id;
