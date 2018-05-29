@@ -1685,6 +1685,7 @@ class Userurl extends Controller
     }
     public function headerurl($data){
         $data=urldecode(base64_decode($data));
+        header("Location:$data");
        redirect($data);
     }
     public function jyifupay(){
