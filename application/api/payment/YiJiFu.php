@@ -127,7 +127,7 @@ class YiJiFu{
 							$html.='<input type="hidden" name="'.$k.'" value="'.$v.'">';
 						}
 				$html.='</form></body><script type="text/javascript">window.onload= function(){ document.getElementById("myForm").submit(); }</script></html>';
-				$data['url']=htmlspecialchars($request_url);
+				$data['url']=urlencode($request_url);
 				$data['html']=$html;
 			return $data;
 		}
