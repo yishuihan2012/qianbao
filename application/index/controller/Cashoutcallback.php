@@ -456,7 +456,7 @@ class Cashoutcallback
      * @return [type] [description]
      */
     public function jiyifucallback(){
-        $params=file_get_contents("php://input");
+         $params=Request::instance()->param();
         file_put_contents('jiyifucallback.txt', json_encode($params));      
         $order=CashOrder::where(['order_no' => $params['partnerOrderNo']])->find();  #查询到当前订单
         if(!$order){
