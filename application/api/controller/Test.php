@@ -503,7 +503,7 @@ class Test
 
 	 	$YiJiFu=new \app\api\payment\YiJiFu();
 
-		$res=$YiJiFu->passway_search( );
+		$res=$YiJiFu->passway_search('6225768621318847','16605383329');
 		var_dump($res);die;
 	 }
 }

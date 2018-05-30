@@ -464,6 +464,9 @@ class Cashoutcallback
             file_put_contents('yilian_error.txt', 'get order fail！');
             echo 'FAIL';die;
         }
+        #验签
+        $sign=$params['sign'];
+        
         $member=Member::get($order->order_member);
 
         $passway=Passageway::get(['passageway_id'=>$order->order_passway]);

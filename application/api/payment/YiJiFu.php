@@ -22,9 +22,9 @@ namespace app\api\payment;
  use app\index\model\MemberCreditPas;
 class YiJiFu{
 	public function __construct(){
-		$this->url='http://scdeercnet.yijifu.net/';
-		$this->partnerCode='18042418580300200000';
-		$this->secretKey='ca3fae56ae9ac12042cf6b5b1b9d8202';
+		$this->url='http://www.shoucaideer.com/';
+		$this->partnerCode='18052918111614900000';
+		$this->secretKey='32fcbbc9da0433106933329fe93a4c70';
 	}
 	/**
 	 * 根据银行卡搜索可用通道
