@@ -1110,6 +1110,15 @@ class CashOut
         }else{
             return ['code'=>'101','msg'=>$passageway_list['message']];
         }
+        foreach ($passageway_list as $k => $v) {
+        	if($v['chargeRate']>$this->passway_info->passageway_rate || $price>$v['daySurplusAmount']){
+        		unset($passageway_list[$k]);
+        	}
+        }
+        if(!$passageway_list){
+        	 return ['code'=>'101','msg'=>'当前暂无能支持的通道，请减少刷卡金额重试'];
+        }
+        $passageway_list = array_values($passageway_list);
         #3随机一个通道
         $rand=rand(0,count($passageway_list)-1);
         $channelId=$passageway_list[$rand]['channelId'];
