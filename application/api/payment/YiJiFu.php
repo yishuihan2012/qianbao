@@ -22,9 +22,9 @@ namespace app\api\payment;
  use app\index\model\MemberCreditPas;
 class YiJiFu{
 	public function __construct(){
-		$this->url='http://scdeercnet.yijifu.net/';
-		$this->partnerCode='18042418580300200000';
-		$this->secretKey='ca3fae56ae9ac12042cf6b5b1b9d8202';
+		$this->url='http://www.shoucaideer.com/';
+		$this->partnerCode='18052918111614900000';
+		$this->secretKey='32fcbbc9da0433106933329fe93a4c70';
 	}
 	/**
 	 * 根据银行卡搜索可用通道
@@ -66,7 +66,7 @@ class YiJiFu{
 	public function passway_mech(){
 		$data=array(
 			'partnerOrderNo'=>generate_password(16),//外部订单号 字符串(1-32) 是 商户订单唯一标识 888777666 
-			'openId'=>"2222222222",//外部会员唯一 字符串(20) 是  20160122000220157014 5 标识 
+			'openId'=>"",//外部会员唯一 字符串(20) 是  20160122000220157014 5 标识 
 			'identityFrontUrl'=>"",//身份证正面照 片 字符串(1-128)  否 正面照片的URL链接 http://xxx.xxx.xxx/1.jpg 
 			'identityBackUrl'=>"",// 身份证反面照 片 字符串(1-128)  否 反面照片的URL链接 http://xxx.xxx.xxx/1.jpg 
 		);
@@ -77,10 +77,10 @@ class YiJiFu{
 	 * 支付
 	 * @return [type] [description]
 	 */
-	public function pay($member_infos,$member_cert,$member_card,$card_info,$also,$price,$tradeNo,$channelId){
+	public function pay($member_infos,$member_cert,$member_card,$card_info,$also,$price,$tradeNo,$channelId,$material_id){
 		$data=array(
 			'partnerOrderNo'=>$tradeNo,//外部订单号 字符串(1-40) 是 商户订单唯一标识 888777666 
-			'openId'=>$channelId,//外部会员唯一 标识 字符串(1-40) 是 商户用户的唯一标识 888777666000 
+			'openId'=>$material_id,//外部会员唯一 标识 字符串(1-40) 是 商户用户的唯一标识 888777666000 
 			'phone'=>$member_infos['member_mobile'],
 			'creditCardNo'=>$card_info['card_bankno'],//提现银行卡号 字符串(1-40) 是 用户用于提现的信用卡卡号，该银行卡提现所用通 35860120111000918 道必须进行了信息验证。 
 			'debitCardNo'=>$member_card['card_bankno'],//到账银行卡号 字符串(1-40) 是 用户用于到账的储蓄卡卡号，必须为该用户实名的 身份信息名下的储蓄卡。 
@@ -97,8 +97,24 @@ class YiJiFu{
 			// 'identityBackUrl'=>"2",
 		);
 		$returnUrl=System::getName('system_url').'/Api/Userurl/jiyifuturnback';
-		$notifyUrl=System::getName('system_url').'/Api/Userurl/jiyifucallback';
+		$notifyUrl=System::getName('system_url').'/index/Cashoutcallback/jiyifucallback';
 		$res=$this->request('agency/api/merge/withdraw.html',$data,$returnUrl,$notifyUrl,0);
+		return $res;
+	}
+	public function order_query($order){
+		$data=array(
+			'partnerOrderNo'=>$order['order_no'],///外部订单号 字符串(1-32) 否 商户订单唯一标识，同内部订单号必须保证传入其一 888777666 
+			// 'orderNo'=>"",//内部订单号  字符串(1-32) 否 我方订单唯一标识，同外部订单号必须保证传入其一 20160122000220157014 
+		);
+		$res=$this->request('/agency/api/queryOrder.json',$data,$returnUrl,$notifyUrl,1);
+		if($res['status']=='SUCCESS'){
+			$res['pay_status']=2;
+			$res['qf_status']=2;
+		}
+		if($res['status']=='FAIL'){
+			$res['pay_status']=-1;
+			$res['qf_status']=-1;
+		}
 		return $res;
 	}
 	public function getSign($data){
@@ -122,7 +138,14 @@ class YiJiFu{
 			$res=curl_post($request_url);
 			return json_decode($res,true);
 		}else{
-			return htmlspecialchars($request_url);
+			$html='<!DOCTYPE html><html><head><title></title></head><body><form id="myForm" action="http://scdeercnet.yijifu.net/agency/api/merge/withdraw.html" method="get">';
+						foreach ($array as $k => $v) {
+							$html.='<input type="hidden" name="'.$k.'" value="'.$v.'">';
+						}
+				$html.='</form></body><script type="text/javascript">window.onload= function(){ document.getElementById("myForm").submit(); }</script></html>';
+				$data['url']=urlencode($request_url);
+				$data['html']=$html;
+			return $data;
 		}
 	}
 }

@@ -1678,10 +1678,15 @@ class Userurl extends Controller
         return view("Userurl/order_pay");
     }
     public function nohtml($data){
-        $data=base64_decode($data);
+        $data=urldecode(base64_decode($data));
         echo $data;die;
         $this->assign('data',$data);
         return view("Userurl/nohtml");
+    }
+    public function headerurl($data){
+        $data=urldecode(base64_decode($data));
+        header("Location:$data");
+       redirect($data);
     }
     public function jyifupay(){
         return view("Userurl/jyifupay");
@@ -1776,19 +1781,15 @@ class Userurl extends Controller
 
     }
     /**
-     * 极易付支付回调
-     * @return [type] [description]
-     */
-    public function jiyifucallback(){
-        file_get_contents("php://input");
-        file_put_contents('jiyifucallback.txt', json_encode($params));
-    }
-    /**
      * 极易付支付跳转
      * @return [type] [description]
      */
     public function jiyifuturnback(){
         $params=input();
         file_put_contents('turnback.txt', json_encode($params));
+        $message=isset($params['message'])?$params['message']:$params['resultMessage'];
+        $this->assign('data',$message);
+        return view("Userurl/show_error");
+        
     }
 }
