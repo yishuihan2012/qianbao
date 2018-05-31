@@ -504,4 +504,119 @@ class Test
 		$res=$YiJiFu->passway_search('625976029153','16605383329');
 		var_dump($res);die;
 	 }
+	 /**
+	  * 导入喜家数据
+	  * @return [type] [description]
+	  */
+	public function trans_data_xj(){
+		#1查询喜家数据
+		$connnect_xj=Db::connect('mysql://root:chfuck~>d5@47.104.4.73:3306/wallet#utf8');
+		$new_connect=Db::connect('mysql://root:chFUCK->D5@120.27.116.16:3306/wallet_demo1#utf8');
+		$xj_sql="select * from wt_member join wt_member_cashcard on wt_member_cashcard.card_member_id=wt_member.member_id join wt_member_cert on wt_member_cert.cert_member_id=wt_member.member_id";
+		$xj_members=$connnect_xj->query($xj_sql);
+		// var_dump($xj_members);die;
+		#2循环导入新项目
+		foreach ($xj_members as $k => $xj_member) {
+			#1查询目标项目有没有当前用户
+			$find_user=$new_connect->query('select * from wt_member where member_mobile='.$xj_member['member_mobile']);
+				if(!$find_user){
+					Db::startTrans();
+					try{
+						// 对应会员id
+						$member_group_id=1;
+		            	 #新增会员基本信息
+		            	 $member_info= new Member([
+		            	 	 'member_nick'=>$xj_member['member_nick'],
+		            	 	 'member_mobile'=>$xj_member['member_mobile'],
+		            	 	 'member_group_id'=>$member_group_id,
+			                 'member_image'=>$xj_member['member_image'],
+			                 'member_root'=>0,
+		            	 ]);
+		            	 if(!$member_info->save())
+		            	 {
+		            	 	 Db::rollback();
+		            	 }
+		                 $token = get_token();
+		            	 $member_login= new MemberLogin([
+		            	 	 'login_member_id'  => $member_info->member_id,
+		            	 	 'login_account'	  => $xj_member['member_mobile'],
+		            	 	 'login_pass'		    => $xj_member['login_pass'],
+		            	 	 'login_pass_salt'  => '',
+		                 	 'login_token'      => $token,
+		            	 	 'login_attempts'	  => 0,
+		            	 ]);
+		            	 #初始化会员钱包信息
+		            	 $member_wallet= new Wallet([
+		            	 	 'wallet_member'=>$member_info->member_id,
+		            	 	 'wallet_amount'=>0
+		            	 ]);
+		               #初始化会员团队信息
+		               $member_team=new MemberTeam([
+		                'team_name'=>$member_info->member_nick,
+		                'team_member_id'=>$member_info->member_id,
+		               ]);
+
+		               #初始化会员入网信息
+		               $MemberNet=new MemberNet([
+		                'net_member_id'=>$member_info->member_id,
+		               ]);
+		               
+		            	if( !$member_login->save()  || !$member_wallet->save() || !$member_team->save() || !$MemberNet->save()){
+		            	 	 Db::rollback();
+		            	}
+		            	#绑定储蓄卡
+		            	if($xj_member['member_cert']==1){
+		            		$MemberCashcard= new MemberCashcard([
+			            	 	 'card_member_id'   => $member_info->member_id,
+			            	 	 'card_bankno'	    => $xj_member['card_bankno'],
+			            	 	 'card_name'		=> $xj_member['card_name'],
+			            	 	 'card_idcard'      => $xj_member['card_idcard'],
+			                 	 'card_phone'       => $xj_member['card_phone'],
+			            	 	 'card_bankname'	=> $xj_member['card_bankname'],
+			            	 	'card_bank_province'=> $xj_member['card_bank_province'],
+			            	 	 'card_bank_city'	=> $xj_member['card_bank_city'],
+			            	 	 'card_bank_area'	=> $xj_member['card_bank_area'],
+			            	 	 'card_bank_address'=> $xj_member['card_bank_address'],
+			            	 	 'card_bank_lang'	=> $xj_member['card_bank_lang'],
+			            	 	 'card_ident'	    => $xj_member['card_ident'],
+			            	 	 'card_rname'		=> $xj_member['card_rname'],
+			            	 	 'card_type'		=> $xj_member['card_type'],
+			            	 	 'card_channel'		=> $xj_member['card_channel'],
+			            	 	 'card_state'		=> $xj_member['card_state'],
+			            	 	 'card_return'		=> $xj_member['card_return'],
+			            	]);
+			            	$MemberCashcard->save(); 
+		            	}
+		            	#绑定信用卡
+		            	$member_creditcards=$connnect_xj->query('select * from wt_member_creditcard where wt_member_creditcard.card_member_id='.$xj_member['card_bankno']);
+		            	if($member_creditcards){
+		            		foreach ($member_creditcards as $key => $member_creditcard) {
+		            			$MemberCreditcard= new MemberCreditcard([
+				            	 	 'card_member_id'   => $member_info->member_id,
+				            	 	 'card_bankno'	    => $member_creditcard['card_bankno'],
+				            	 	 'card_name'		=> $member_creditcard['card_name'],
+				            	 	 'card_idcard'      => $member_creditcard['card_idcard'],
+				                 	 'card_phone'       => $member_creditcard['card_phone'],
+				            	 	 'card_bankname'	=> $member_creditcard['card_bankname'],
+				            	 	 'card_Ident'		=> $member_creditcard['card_Ident'],
+				            	 	 'card_expireDate'	=> $member_creditcard['card_expireDate'],
+				            	 	 'card_billDate'	=> $member_creditcard['card_billDate'],
+				            	 	 'card_deadline'    => $member_creditcard['card_deadline'],
+				            	 	 'card_isRemind'	=> $member_creditcard['card_isRemind'],
+				            	 	 'card_remindDate'  => $member_creditcard['card_remindDate'],
+				            	 	 'card_state'		=> $member_creditcard['card_state'],
+				            	 	 'card_return'		=> $member_creditcard['card_return'],
+				            	 	 'card_bankicon'    => $member_creditcard['card_bankicon'],
+			            		]);
+			            		$MemberCreditcard->save(); 
+		            		}
+		            	}
+		            	Db::commit();
+		            } catch (\Exception $e) {
+		                Db::rollback();
+		                return ['code'=>308,'msg'=>$e->getMessage()];
+		            }
+				}
+		}
+	}
 }

@@ -121,13 +121,16 @@
                     }
                     if($single_max<$max_avage){
                         // $count=ceil($this->param['billMoney']*1.44/$single_max);
-                        return['code'=>'101','msg'=>'该行单次消费限额'.$single_max."元，请尝试增加还款次数"];
+                        $zheng=intval(floor($this->param['billMoney']*1.44/$single_max/$days));
+                        $yu=($this->param['billMoney']*1.44/$single_max%$days);
+                        $count_min=($zheng+$yu)*$days;
+                        return['code'=>'101','msg'=>'该行单次消费限额'.$single_max."元，请设置刷卡次数最少为{$count_min}次。"];
                         // return['code'=>'101','msg'=>'该行单次消费限额'.$single_max."元，请确保还款次数不低于{$count}次。"];
                     }
                  }
            }
            if(!$support){
-              return['code'=>486,'msg'=>'当前通道暂不支持该银行'];//开始还款日期必须大于今天
+              return['code'=>486,'msg'=>'当前通道暂不支持该银行，请选择其他还款通道。'];//开始还款日期必须大于今天
            }
            $bank=mb_substr($card_info['card_bankname'],-4,2);
           // if($bank=="招商"|| $bank=="交通" || $bank=='农业' ){

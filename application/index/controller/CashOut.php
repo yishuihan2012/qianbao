@@ -1091,7 +1091,6 @@ class CashOut
 
 		$YiJiFu=new \app\api\payment\YiJiFu();
 		$MemberNet=MemberNet::where(['net_member_id'=>$this->member_infos->member_id])->find();
-
 		#1判断有没有生成商户号
 		if(!$MemberNet[$this->passway_info->passageway_no]){ //商户没有上传资料没生成商户号
 			$material_id=$this->member_infos->member_mobile;
