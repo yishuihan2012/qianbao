@@ -230,7 +230,7 @@ class Plan extends Common{
             ->join('member m','o.order_member=m.member_id')
             ->join('generation g','g.generation_id=o.order_no')
             ->join('passageway p','o.order_passageway=p.passageway_id')
-            ->join('member_creditcard c','o.order_card=c.card_bankno')
+            ->join('member_creditcard c','o.order_card=c.card_bankno','left')
             ->where($where)
             ->where('g.generation_state','<>',1)
             ->order('order_id desc');
