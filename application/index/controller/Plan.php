@@ -230,7 +230,7 @@ class Plan extends Common{
             ->join('member m','o.order_member=m.member_id')
             ->join('generation g','g.generation_id=o.order_no')
             ->join('passageway p','o.order_passageway=p.passageway_id')
-            ->join('member_creditcard c','o.order_card=c.card_bankno')
+            ->join('member_creditcard c','o.order_card=c.card_bankno','left')
             ->where($where)
             ->where('g.generation_state','<>',1)
             ->order('order_id desc');
@@ -244,7 +244,7 @@ class Plan extends Common{
                 ->join('passageway p','o.order_passageway=p.passageway_id')
                 ->where($where)
                 ->where('g.generation_state','<>',1)
-                ->join('member_creditcard c','c.card_bankno=o.order_card')
+                ->join('member_creditcard c','c.card_bankno=o.order_card','left')
                 ->order("order_id desc")
                 ->field('order_id,member_nick,passageway_name,member_mobile,order_type,concat("`",order_card),card_bankname,order_money,order_real_get,order_pound,order_passageway_fee,order_platform_fee,order_platform_fee as order_fenrun,order_platform_fee as order_yingli,order_status,order_retry_count,back_statusDesc,order_desc,order_edit_time,order_add_time')
                 ->select();
