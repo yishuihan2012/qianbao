@@ -121,7 +121,7 @@
                     }
                     if($single_max<$max_avage){
                         // $count=ceil($this->param['billMoney']*1.44/$single_max);
-                        return['code'=>'101','msg'=>'该行单次消费限额'.$single_max."元，请设置刷卡次数最少为".$this->param['billMoney']/$single_max."次。"];
+                        return['code'=>'101','msg'=>'该行单次消费限额'.$single_max."元，请设置刷卡次数最少为".intval($this->param['billMoney']/$single_max)."次。"];
                         // return['code'=>'101','msg'=>'该行单次消费限额'.$single_max."元，请确保还款次数不低于{$count}次。"];
                     }
                  }
