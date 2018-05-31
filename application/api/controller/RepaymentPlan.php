@@ -121,8 +121,9 @@
                     }
                     if($single_max<$max_avage){
                         // $count=ceil($this->param['billMoney']*1.44/$single_max);
-                        $zheng=intval(floor($this->param['billMoney']*1.44/$single_max/$days));
-                        $yu=($this->param['billMoney']*1.44/$single_max%$days);
+                        $gongshi=$this->param['billMoney']*1.44/$single_max/$days;
+                        $zheng=intval(floor($gongshi));
+                        $yu=ceil($gongshi-$zheng);
                         $count_min=($zheng+$yu)*$days;
                         return['code'=>'101','msg'=>'该行单次消费限额'.$single_max."元，请设置刷卡次数最少为{$count_min}次。"];
                         // return['code'=>'101','msg'=>'该行单次消费限额'.$single_max."元，请确保还款次数不低于{$count}次。"];
