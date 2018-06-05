@@ -1,0 +1,90 @@
+body{
+	max-width:640px;
+	margin:0 auto;
+	font-family: 17px/1.4 "苹方","微软雅黑","\5b8b\4f53",Arial,sans-serif;
+}
+p{
+	margin-bottom:0;
+	line-height:1.4;
+}
+table{
+	border:1px solid #333;
+}
+table td,th{
+	border:1px solid #666;
+	font-weight:normal;
+}
+a:link,a:active,a:hover,a:visited{color:#fff;}
+.line{display:inline-block;width:70px;height:1px;background-color:#333;-webkit-transform:rotate(45deg);transform:rotate(45deg);}
+.wrap{
+	width:100%;
+	padding:5% 2%;
+	min-height:50px;
+	overflow: hidden;
+}
+.space-top{
+	margin-top:30px;
+}
+.space-bot{
+	margin-bottom:20px;
+}
+.code-pic{
+	width:30%;
+	margin:20px auto 20px;
+}
+.media-pic{
+	display:block;
+	width:100%;
+	height:auto;
+}
+.f12{
+	font-size:12px;
+}
+.f18{
+	font-size:18px;
+}
+.f-bold{
+	font-weight:bold;
+}
+.ftr{
+	text-align:left;
+}
+.fc{
+	text-align:center;
+}
+.my-content{
+  background-color:#f9b30a;
+}
+.message{
+	width:100%;
+	background-color:#feed8d;
+	color:#666;
+	text-align:center;
+	padding:2% 1%;
+	font-size:12px;
+}
+.my-content-container{
+	width:90%;
+    margin:30px auto 0;
+	text-align: center;
+	border-radius: 25px 25px 0 0;
+	position:relative;
+}
+.input-file{
+	width:90% !important;
+	margin:0 auto;
+	border-radius: 20px !important;
+	border:none !important;
+}
+.my-content-container .fl{
+	width:70%;
+	z-index:100;
+}
+.my-content-container .fr{
+	width:30%;
+	position:absolute;
+	right:0;
+	top:60%;
+	-webkit-transform: translateY(-50%);
+    transform: translateY(-50%);}
+}

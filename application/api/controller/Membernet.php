@@ -132,8 +132,8 @@ use app\index\model\Member;
      */
     public function generation_order_check(){
       set_time_limit(600);
-      $begin=strtotime(date('Y-m-d'));
-      $end=time()-30*60;
+      $begin=strtotime(date('Y-m-d'),time()-(90*60));
+      $end=time()-60*60;
       $orders=db('generation_order')->alias('o')
         ->join('generation g','o.order_no=g.generation_id')
         ->where([
@@ -780,7 +780,7 @@ use app\index\model\Member;
           $time_start=date('Y-m-d H:i:s',time()-3600);
           $time_end=date('Y-m-d H:i:s',time()-1800);
           //查询半小时前状态为带查证的订单
-          $list=GenerationOrder::where(['order_status'=>4])->whereTime('order_time','between',[$time_start,$time_end])->select();
+          $list=GenerationOrder::where('order_status=4 or order_status=-1')->whereTime('order_time','between',[$time_start,$time_end])->select();
           foreach ($list as $key => $order) {
               $generation=Generation::where(['generation_id'=>$order['order_no']])->find();
               //如果计划是执行中的

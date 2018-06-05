@@ -77,6 +77,17 @@
 
            #获取用户信用卡信息
           $member_card=MemberCreditcard::get(['card_id'=>$this->param['cardid'],'card_member_id'=>$this->param['uid']]);
+          if($passway['passageway_true_name'] == 'YilPayjf'){
+              $where['passageway_true_name'] = 'YilPayjf';
+              $where['card_name'] = array("like","%".mb_substr($member_card['card_bankname'],0,2)."%");
+              $money = $this->bank_limit($where);
+              if(!$money)
+                 return ['code' => 450 , 'msg' => "此通道不支持该银行取现"];
+              if($this->param['money'] < $money['bank_single'])
+                 return ['code' => 458 , 'msg' => "取现金额不能小于该银行的最小金额".$money['bank_single']."元"];
+              if($this->param['money'] > 500)
+                 return ['code' => 459 , 'msg' => "取现金额不能大于该银行的最大金额".$money['bank_one_day']."元"];
+          }
            if(empty($member_card))
                 return ['code'=>442];
            $method=$passway->cashout->cashout_method;
@@ -90,6 +101,25 @@
                 return ["code" => 200, "msg" =>"请求成功" , "data" =>$DaoLong['data'] ];
            }
            return $DaoLong;
+      }
+      #获取银行的限额
+      public function bank_limit($where){
+              $credit_card = db("CreditCard")->where($where)->find();
+              if(empty($credit_card)){
+                return false;
+              }
+              $arr = array();
+              if($credit_card['bank_attrbute'] == '百'){
+                $arr['bank_single'] = $credit_card['bank_single']*100;
+                $arr['bank_one_day'] = $credit_card['bank_one_day']*100;
+              }elseif($credit_card['bank_attrbute'] == "千"){
+                $arr['bank_single'] = $credit_card['bank_single'] * 1000;
+                $arr['bank_one_day'] = $credit_card['bank_one_day'] *1000;
+              }else{
+                $arr['bank_single'] = $credit_card['bank_single'] * 10000;
+                $arr['bank_one_day'] = $credit_card['bank_one_day'] *10000;
+              }
+              return $arr;
       }
 
  }
