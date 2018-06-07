@@ -6,7 +6,7 @@ use think\Loader;
 class Test{
 	public function find_repeat_peopel(){
 		$local=Db::connect('mysql://root:root@127.0.0.1/test#utf8');
-		$lists=Member::where('member_nick ="王敏"')->select();
+		$lists=Member::where('member_nick ="任爱芬"')->select();
 		$lists=$lists->toArray();
 		// dump($lists);die;
 		foreach ($lists as $key => $value) {
