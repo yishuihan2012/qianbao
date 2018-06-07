@@ -778,6 +778,39 @@ class Test
 		}
 		echo "]";
 	}
+	public function reset_groups(){
+		set_time_limit(0);
+		$project="喜家钱包";
+		$connnect_xj=Db::connect('mysql://root:chfuck~>d5@47.104.4.73:3306/wallet#utf8');
+		$members=Member::where(['member_from'=>$project])->select();
+		foreach ($members as $k => $member) {
+			$member_group_id=1;
+		// if($member['member_id']==438){
+			#查询用户老平台id
+			$xj_member=$connnect_xj->query('select * from wt_member where member_mobile='.$member['member_mobile']);
+			if($xj_member){
+				$xj_member=$xj_member[0];
+			}
+			#查询老平台父级的mobile
+			if($xj_member['member_group_id']==2 || $xj_member['member_group_id']==3){
+				$member_group_id=6;
+			}
+			if($xj_member['member_group_id']==4 && $xj_member['member_cert']==1){
+				$member_group_id=7;
+			}
+			if($xj_member['member_group_id']==4 && $xj_member['member_cert']==0){
+				$member_group_id=1;
+			}
+			// echo $member['member_group_id'];
+			// echo $member_group_id;die;
+			if($member['member_group_id']!=$member_group_id){
+				$res=Member::where(['member_mobile'=>$member['member_mobile']])->update(['member_group_id'=>$member_group_id]);
+				echo "手机号：".$member['member_mobile'].'变更成功';
+				echo "<br/>";
+			}
+		// }
+		}
+	}
 	public function  find_parent_people(){
 		$yunyingshang_id=0;
 		$project="喜家钱包";
@@ -786,12 +819,10 @@ class Test
 		#1查找新表里来源是喜家的所有用户
 		$members=Member::where(['member_from'=>$project])->select();
 		foreach ($members as $k => $member) {
-		if($member['member_id']==535){
 			#查询用户老平台id
 			$xj_member=$connnect_xj->query('select * from wt_member where member_mobile='.$member['member_mobile']);
 			#查询老平台父级的mobile
 			 $parent=$connnect_xj->query('select * from wt_member_relation left join wt_member on wt_member_relation.relation_parent_id= wt_member.member_id where wt_member_relation.relation_member_id='.$xj_member[0]['member_id']);
-			 print_r($parent);die;
 			 if($parent && $parent[0]['member_mobile']){
 			 	     #如果存在父级，就获取新钱里父级id
 				 	$parent_info=Member::where(['member_mobile'=>$parent[0]['member_mobile']])->find();
@@ -821,7 +852,6 @@ class Test
 					echo $k.'-';
 				}
 			}
-		}
 		}
 	}
 	public function find_repeat_peopel(){
