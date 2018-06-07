@@ -86,9 +86,10 @@
                  return ['code' => 450 , 'msg' => "此通道不支持该银行取现"];
               if($this->param['money'] < $money['bank_single'])
                  return ['code' => 458 , 'msg' => "取现金额不能小于该银行的最小金额".$money['bank_single']."元"];
-              if($this->param['money'] > 500)
+              if($this->param['money'] > $money['bank_one_day'])
                  return ['code' => 459 , 'msg' => "取现金额不能大于该银行的最大金额".$money['bank_one_day']."元"];
           // }
+               // die;
            if(empty($member_card))
                 return ['code'=>442];
            $method=$passway->cashout->cashout_method;
