@@ -569,10 +569,10 @@
                   $member_1rd=Members::where(['member_id'=>$value['relation_member_id']])->field('member_id,member_image, member_mobile, member_creat_time, member_cert,member_group_id')->find();
                   if($member_1rd['member_group_id'] == $this->param['group_id']){
                     if($member_1rd['member_cert']==0){
-                      $member_1rd['member_cert']='未认证 [直接]';
+                      $member_1rd['member_cert']='未认证 [直推]';
 
                     }else{
-                      $member_1rd['member_cert']='已认证 [直接]';
+                      $member_1rd['member_cert']='已认证 [直推]';
                     }
                     
                     $member_info[]=$member_1rd;
@@ -589,9 +589,9 @@
                            if($member_2rd['member_group_id'] == $this->param['group_id']){
 
                              if($member_2rd['member_cert']==0){
-                                $member_2rd['member_cert']='未认证 [间接]';
+                                $member_2rd['member_cert']='未认证 [间推]';
                               }else{
-                                $member_2rd['member_cert']='已认证 [间接]';
+                                $member_2rd['member_cert']='已认证 [间推]';
                               }
                                $member_info[]=$member_2rd;
                             }
@@ -600,9 +600,9 @@
                            foreach ($MemberRelation_3rd as $k2 => $v2) {
                                $member_3rd=Members::where(['member_id'=>$v2['relation_member_id']])->field('member_id,member_image, member_mobile, member_creat_time, member_cert,member_group_id')->find();
                                if($member_3rd['member_cert']==0){
-                                  $member_3rd['member_cert']='未认证 [间接]';
+                                  $member_3rd['member_cert']='未认证 [间推]';
                                 }else{
-                                  $member_3rd['member_cert']='已认证 [间接]';
+                                  $member_3rd['member_cert']='已认证 [间推]';
                                 }
                                $member_info[]=$member_3rd;
                            }
