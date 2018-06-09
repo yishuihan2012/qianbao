@@ -570,9 +570,11 @@
                   if($member_1rd['member_group_id'] == $this->param['group_id']){
                     if($member_1rd['member_cert']==0){
                       $member_1rd['member_cert']='未认证';
+
                     }else{
                       $member_1rd['member_cert']='已认证';
                     }
+                     $member_1rd['relationship'] = "直接";
                     $member_info[]=$member_1rd;
                   }
 
@@ -591,6 +593,7 @@
                               }else{
                                 $member_2rd['member_cert']='已认证';
                               }
+                              $member_2rd['relationship']='间接';
                                $member_info[]=$member_2rd;
                             }
                           
@@ -602,6 +605,7 @@
                                 }else{
                                   $member_3rd['member_cert']='已认证';
                                 }
+                                 $member_3rd['relationship']='间接';
                                $member_info[]=$member_3rd;
                            }
                        }
