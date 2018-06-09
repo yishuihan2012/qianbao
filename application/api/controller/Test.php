@@ -884,5 +884,42 @@ class Test
 		#删除信用卡
 		#
 	}
+	public function edit_pat_time(){
+		set_time_limit(0);
+		$connnect_local=Db::connect('mysql://root:123456@127.0.0.1:3306/test#utf8');
+
+		$connnect_xj=Db::connect('mysql://root:chfuck~>d5@47.104.4.73:3306/wallet#utf8');
+
+		$connnect_wuyou=Db::connect('mysql://root:chfuck~>d5@47.104.4.73:3306/wuyou#utf8');
+
+		$connnect_ryf=Db::connect('mysql://root:chfuck~>d5@47.104.4.73:3306/ruyifu_wallet#utf8');
+
+		$lists=$connnect_local->query('select * from new ');
+		foreach ($lists as $key => $list) {
+			
+			$no=trim($list['order_no']);
+			if($order=$connnect_xj->query("select * from wt_generation_order where back_tradeNo like '{$no}'")){
+				$connect=$connnect_xj;
+			}else if($order=$connnect_ryf->query("select * from wt_generation_order where back_tradeNo like '{$no}'")){
+				$connect=$connnect_ryf;
+			}else if($order=$connnect_wuyou->query("select * from wt_generation_order where back_tradeNo like '{$no}'")){
+				$connect=$connnect_wuyou;
+			}
+			// var_dump($order);die;
+			if(isset($order[0])){
+				$edit_time=date('Y-m-d',strtotime($order[0]['order_edit_time']));
+				$time=date('Y-m-d',strtotime($list['time']));
+				$true_time=date('Y-m-d H:i:s',strtotime($list['time']));
+				if($edit_time!=$time){
+					// echo "update wt_generation_order set order_edit_time='{$true_time}' where back_tradeNo like '{$no}'";die;
+					$update=$connect->query("update wt_generation_order set order_edit_time='{$true_time}' where back_tradeNo like '{$no}'");
+					if($update){
+						echo "success".$key;
+						echo "<br/>";
+					}
+				}
+			}
+		}
+	}
 
 }
