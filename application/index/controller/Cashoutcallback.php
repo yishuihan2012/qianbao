@@ -458,65 +458,67 @@ class Cashoutcallback
     public function jiyifucallback(){
          $params=Request::instance()->param();
          // print_r($params);die;
-        file_put_contents('jiyifucallback.txt', json_encode($params));      
-        $order=CashOrder::where(['order_no' => $params['partnerOrderNo']])->find();  #查询到当前订单
-        if(!$order){
-            file_put_contents('yilian_error.txt', 'get order fail！');
-            echo 'FAIL';die;
-        }
-        #验签
-        $sign=$params['sign'];
-        
-        $member=Member::get($order->order_member);
+        file_put_contents('jiyifucallback.txt', json_encode($params));     
+        if($params['action']=='WITHDRAW'){
+            $order=CashOrder::where(['order_no' => $params['partnerOrderNo']])->find();  #查询到当前订单
+            if(!$order){
+                file_put_contents('yilian_error.txt', 'get order fail！');
+                echo 'FAIL';die;
+            }
+            #验签
+            $sign=$params['sign'];
+            
+            $member=Member::get($order->order_member);
 
-        $passway=Passageway::get(['passageway_id'=>$order->order_passway]);
+            $passway=Passageway::get(['passageway_id'=>$order->order_passway]);
 
-        #通道费率
-        $passwayitem=PassagewayItem::get(['item_group'=>$member->member_group_id,'item_passageway'=>$passway->passageway_id]);
+            #通道费率
+            $passwayitem=PassagewayItem::get(['item_group'=>$member->member_group_id,'item_passageway'=>$passway->passageway_id]);
 
-        $order->order_thead_no=$params['orderNo'];
-         if($params['status']=="SUCCESS"){//成功
-             $order->order_state=2;
-             $returnData = 'success'; 
-         }
-         if($params['status']=="FAIL"){//关闭
-             $order->order_state=-1;
-             $returnData='FAIL';
-         }
-         Db::startTrans();
-         if($params['status']=="SUCCESS"){//成功
-             //进行分润
-             //判断之前有没有分润过
-             $Commission_info=Commissions::where(['commission_from'=>$order->order_id,'commission_type'=>1])->find();
-             if(!$Commission_info){
-                    $fenrun= new \app\api\controller\Commission();
-                    $fenrun_result=$fenrun->MemberFenRun($order->order_member,$order->order_money,$order->order_passway,1,'快捷支付手续费分润',$order->order_id);
-             }else{
-                $fenrun_result['code']=-1;
+            $order->order_thead_no=$params['orderNo'];
+             if($params['status']=="SUCCESS"){//成功
+                 $order->order_state=2;
+                 $returnData = 'success'; 
              }
-        }else{
-            $fenrun_result['code']=-1;
-        }
+             if($params['status']=="FAIL"){//关闭
+                 $order->order_state=-1;
+                 $returnData='FAIL';
+             }
+             Db::startTrans();
+             if($params['status']=="SUCCESS"){//成功
+                 //进行分润
+                 //判断之前有没有分润过
+                 $Commission_info=Commissions::where(['commission_from'=>$order->order_id,'commission_type'=>1])->find();
+                 if(!$Commission_info){
+                        $fenrun= new \app\api\controller\Commission();
+                        $fenrun_result=$fenrun->MemberFenRun($order->order_member,$order->order_money,$order->order_passway,1,'快捷支付手续费分润',$order->order_id);
+                 }else{
+                    $fenrun_result['code']=-1;
+                 }
+            }else{
+                $fenrun_result['code']=-1;
+            }
 
-         if($fenrun_result['code']=="200")
-         {
-             $order->order_fen=$fenrun_result['leftmoney'];
-             $order->order_buckle=$passwayitem->item_charges/100;
-             $order->order_platform=$order->order_charge-($order->order_money*$passway->passageway_rate/100)+$passwayitem->item_charges/100-$passway->passageway_income;
-         }
-        else    
-        {
-             $order->order_fen=-1;
-             $order->order_buckle=$passwayitem->item_charges/100;
-             $order->order_platform=$order->order_charge-($order->order_money*$passway->passageway_rate/100)+$passwayitem->item_charges/100-$passway->passageway_income;
-        }
-        $res = $order->save();
-        if($res){
-            Db::commit();
-        }else{
-            Db::rollback();
-            $returnData='FAIL';
-        }
-        echo  $returnData;die;
+             if($fenrun_result['code']=="200")
+             {
+                 $order->order_fen=$fenrun_result['leftmoney'];
+                 $order->order_buckle=$passwayitem->item_charges/100;
+                 $order->order_platform=$order->order_charge-($order->order_money*$passway->passageway_rate/100)+$passwayitem->item_charges/100-$passway->passageway_income;
+             }
+            else    
+            {
+                 $order->order_fen=-1;
+                 $order->order_buckle=$passwayitem->item_charges/100;
+                 $order->order_platform=$order->order_charge-($order->order_money*$passway->passageway_rate/100)+$passwayitem->item_charges/100-$passway->passageway_income;
+            }
+            $res = $order->save();
+            if($res){
+                Db::commit();
+            }else{
+                Db::rollback();
+                $returnData='FAIL';
+            }
+            echo  $returnData;die;
+        } 
     }
 }
