@@ -885,68 +885,77 @@ class Test
 		#
 	}
 	public function edit_pat_time(){
-		set_time_limit(0);
+ 		set_time_limit(0);
 		$connnect_local=Db::connect('mysql://root:123456@127.0.0.1:3306/test#utf8');
-
-		$connnect_xj=Db::connect('mysql://root:chfuck~>d5@47.104.4.73:3306/wallet#utf8');
-
-		$connnect_wuyou=Db::connect('mysql://root:chfuck~>d5@47.104.4.73:3306/wuyou#utf8');
-
-		$connnect_ryf=Db::connect('mysql://root:chfuck~>d5@47.104.4.73:3306/ruyifu_wallet#utf8');
-
-		$lists=$connnect_local->query('select * from data ');
-		// print_r($lists);die;
+		$dingdang_wallet=Db::connect('mysql://huiqianbao:huiqianbao@47.96.146.215:3306/dingdang_wallet#utf8');
+		$xxqg_wallet=Db::connect('mysql://root:chfuck~>d5@47.104.4.73:3306/xxqg_wallet#utf8');
+		$minmai_wallet=Db::connect('mysql://root:chfuck~>d5@47.104.4.73:3306/minmai_wallet#utf8');
+		$zhongjing_wallet=Db::connect('mysql://root:chfuck~>d5@47.104.4.73:3306/zhongjing_wallet#utf8');
+		$wallet=Db::connect('mysql://root:chfuck~>d5@47.104.4.73:3306/wallet#utf8');
+		$wuyou=Db::connect('mysql://root:chfuck~>d5@47.104.4.73:3306/wuyou#utf8');
+		$ruyifu_wallet=Db::connect('mysql://root:chfuck~>d5@47.104.4.73:3306/ruyifu_wallet#utf8');
+		$huiqianbao=Db::connect('mysql://huiqianbao:huiqianbao@47.96.146.215:3306/huiqianbao#utf8');
+		$futong_wallet=Db::connect('mysql://root:chfuck~>d5@47.104.4.73:3306/futong_wallet#utf8');
+		$lists=$connnect_local->query("select * from data where plant ='喜家' or plant ='如意付' or plant ='民麦' ");
 		foreach ($lists as $key => $list) {
-			$no=trim($list['order_no']);
-			if($no){
-				$substr4=substr($no, 0,4);
-				switch ($substr4) {
-					case 'ding':
-						$connnect=Db::connect('mysql://huiqianbao:huiqianbao@47.96.146.215:3306/dingdang_wallet#utf8');
+				switch ($list['plant']) {
+					case '叮当':
+						$connnect=$dingdang_wallet;
 						break;
-					case 'xinx':
-						$connnect=Db::connect('mysql://root:chfuck~>d5@47.104.4.73:3306/xxqg_wallet#utf8');
+					case '鑫鑫':
+						$connnect=$xxqg_wallet;
 						break;
-					case 'minm':
-						$connnect=Db::connect('mysql://root:chfuck~>d5@47.104.4.73:3306/minmai_wallet#utf8');
+					case '民麦':
+						$connnect=$minmai_wallet;
 						break;
-					case 'zhon':
-						$connnect=Db::connect('mysql://root:chfuck~>d5@47.104.4.73:3306/zhongjing_wallet#utf8');
+					case '中京':
+						$connnect=$zhongjing_wallet;
 						break;
-					case 'xijq':
-						$connnect=Db::connect('mysql://root:chfuck~>d5@47.104.4.73:3306/wallet#utf8');
+					case '喜家':
+						$connnect=$wallet;
 						break;
-					case 'wuyq':
-						$connnect=Db::connect('mysql://root:chfuck~>d5@47.104.4.73:3306/wuyou#utf8');
+					case '无忧':
+						$connnect=$wuyou;
 						break;
 					case 'ruyf':
-						$connnect=Db::connect('mysql://root:chfuck~>d5@47.104.4.73:3306/ruyifu_wallet#utf8');
+						$connnect=$ruyifu_wallet;
 						break;
-					case 'huiq':
-						$connnect=Db::connect('mysql://huiqianbao:huiqianbao@47.96.146.215:3306/huiqianbao#utf8');
+					case '惠钱包':
+						$connnect=$huiqianbao;
 						break;
-					case 'futq':
-						$connnect=Db::connect('mysql://root:chfuck~>d5@47.104.4.73:3306/futong_wallet#utf8');
+					case '富通':
+						$connnect=$futong_wallet;
 						break;
 					default:
 						# code...
 						break;
 				}
-				$detail=$connnect->query("select * from wt_generation_order where order_platform_no like '{$no}' ");
+				$no =trim($list['order_no']);
+				$detail=$connnect->query("select * from wt_generation_order where order_platform_no = '{$no}' ");
 				if(isset($detail[0])){
 					$rate=$list['rate']*100;
-					if($detail[0]['user_rate']!=0 && $detail[0]['user_rate']>$rate){
-						// echo $detail[0]['user_rate'];
-						// echo "<br/>";
-						// echo  $rate;die;
-						$update=$connnect->query("update wt_generation_order set user_rate='{$rate}' where order_platform_no like '{$no}'");
+					$passway_time=date('Y-m-d',strtotime($list['pay_time']));
+					$plantform_time=date('Y-m-d',strtotime($detail[0]['order_edit_time']));
+					$edit_time=date('Y-m-d H:i:s',strtotime($list['pay_time']));
+					if($detail[0]['user_rate']!=0 && (round((float)$detail[0]['user_rate'],2)>round($rate,2))){
+						ECHO ((float)$detail[0]['user_rate']>$rate);
+						var_dump((float)$detail[0]['user_rate']) ;
+						echo "<br/>";
+						var_dump($rate);die;
+						$update=$connnect->query("update wt_generation_order set user_rate='{$rate}', order_edit_time='{$edit_time}' where order_platform_no = '{$no}'");
 						if($update){
 							echo "success".$key;
 							echo "<br/>";
 						}
 					}
+					// echo $plantform_time.'----'.$passway_time;
+					// echo "<br/>";
+					if($passway_time!=$plantform_time){						
+						$update=$connnect->query("update wt_generation_order set order_edit_time='{$edit_time}' where order_platform_no = '{$no}'");
+						echo "success".$key;
+						echo "<br/>";
+					}
 				}
-			}
 		}
 	}
 
