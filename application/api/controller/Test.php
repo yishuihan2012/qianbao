@@ -894,28 +894,56 @@ class Test
 
 		$connnect_ryf=Db::connect('mysql://root:chfuck~>d5@47.104.4.73:3306/ruyifu_wallet#utf8');
 
-		$lists=$connnect_local->query('select * from new ');
+		$lists=$connnect_local->query('select * from data ');
+		// print_r($lists);die;
 		foreach ($lists as $key => $list) {
-			
 			$no=trim($list['order_no']);
-			if($order=$connnect_xj->query("select * from wt_generation_order where back_tradeNo like '{$no}'")){
-				$connect=$connnect_xj;
-			}else if($order=$connnect_ryf->query("select * from wt_generation_order where back_tradeNo like '{$no}'")){
-				$connect=$connnect_ryf;
-			}else if($order=$connnect_wuyou->query("select * from wt_generation_order where back_tradeNo like '{$no}'")){
-				$connect=$connnect_wuyou;
-			}
-			// var_dump($order);die;
-			if(isset($order[0])){
-				$edit_time=date('Y-m-d',strtotime($order[0]['order_edit_time']));
-				$time=date('Y-m-d',strtotime($list['time']));
-				$true_time=date('Y-m-d H:i:s',strtotime($list['time']));
-				if($edit_time!=$time){
-					// echo "update wt_generation_order set order_edit_time='{$true_time}' where back_tradeNo like '{$no}'";die;
-					$update=$connect->query("update wt_generation_order set order_edit_time='{$true_time}' where back_tradeNo like '{$no}'");
-					if($update){
-						echo "success".$key;
-						echo "<br/>";
+			if($no){
+				$substr4=substr($no, 0,4);
+				switch ($substr4) {
+					case 'ding':
+						$connnect=Db::connect('mysql://huiqianbao:huiqianbao@47.96.146.215:3306/dingdang_wallet#utf8');
+						break;
+					case 'xinx':
+						$connnect=Db::connect('mysql://root:chfuck~>d5@47.104.4.73:3306/xxqg_wallet#utf8');
+						break;
+					case 'minm':
+						$connnect=Db::connect('mysql://root:chfuck~>d5@47.104.4.73:3306/minmai_wallet#utf8');
+						break;
+					case 'zhon':
+						$connnect=Db::connect('mysql://root:chfuck~>d5@47.104.4.73:3306/zhongjing_wallet#utf8');
+						break;
+					case 'xijq':
+						$connnect=Db::connect('mysql://root:chfuck~>d5@47.104.4.73:3306/wallet#utf8');
+						break;
+					case 'wuyq':
+						$connnect=Db::connect('mysql://root:chfuck~>d5@47.104.4.73:3306/wuyou#utf8');
+						break;
+					case 'ruyf':
+						$connnect=Db::connect('mysql://root:chfuck~>d5@47.104.4.73:3306/ruyifu_wallet#utf8');
+						break;
+					case 'huiq':
+						$connnect=Db::connect('mysql://huiqianbao:huiqianbao@47.96.146.215:3306/huiqianbao#utf8');
+						break;
+					case 'futq':
+						$connnect=Db::connect('mysql://root:chfuck~>d5@47.104.4.73:3306/futong_wallet#utf8');
+						break;
+					default:
+						# code...
+						break;
+				}
+				$detail=$connnect->query("select * from wt_generation_order where order_platform_no like '{$no}' ");
+				if(isset($detail[0])){
+					$rate=$list['rate']*100;
+					if($detail[0]['user_rate']!=0 && $detail[0]['user_rate']>$rate){
+						// echo $detail[0]['user_rate'];
+						// echo "<br/>";
+						// echo  $rate;die;
+						$update=$connnect->query("update wt_generation_order set user_rate='{$rate}' where order_platform_no like '{$no}'");
+						if($update){
+							echo "success".$key;
+							echo "<br/>";
+						}
 					}
 				}
 			}
