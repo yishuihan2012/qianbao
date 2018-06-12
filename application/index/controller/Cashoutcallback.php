@@ -458,7 +458,12 @@ class Cashoutcallback
     public function jiyifucallback(){
          $params=Request::instance()->param();
          // print_r($params);die;
-        file_put_contents('jiyifucallback.txt', json_encode($params));     
+        file_put_contents('jiyifucallback.txt', json_encode($params));   
+
+        \think\Log::init(['type'=>'File','path'=>'../runtime/api_log/']);
+        $log['data']=$params;
+        \think\Log::write(json_encode($log),'接口请求日志');  
+
         if($params['action']=='WITHDRAW'){
             $order=CashOrder::where(['order_no' => $params['partnerOrderNo']])->find();  #查询到当前订单
             if(!$order){
