@@ -175,6 +175,15 @@ function encryption($str, $salt, $method='md5')
      curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
      $temp = curl_exec($ch);
      $information = curl_getinfo($ch);
+     
+    \think\Log::init(['type'=>'File','path'=>'../runtime/api_log/']);
+    if(!is_array($data)){
+        $log['input']=json_decode($data,true);
+    }else{
+        $log['input']=$data;
+    }
+    $log['output']=json_decode($temp,true);
+    \think\Log::write(json_encode($log),'接口请求日志');
      return $temp;
  }
 
