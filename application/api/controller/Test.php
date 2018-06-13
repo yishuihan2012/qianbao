@@ -896,7 +896,9 @@ class Test
 		$ruyifu_wallet=Db::connect('mysql://root:chfuck~>d5@47.104.4.73:3306/ruyifu_wallet#utf8');
 		$huiqianbao=Db::connect('mysql://huiqianbao:huiqianbao@47.96.146.215:3306/huiqianbao#utf8');
 		$futong_wallet=Db::connect('mysql://root:chfuck~>d5@47.104.4.73:3306/futong_wallet#utf8');
-		$lists=$connnect_local->query("select * from data where plant ='喜家' or plant ='如意付' or plant ='民麦' ");
+		$lists=$connnect_local->query("select * from data1 where plant ='喜家' or plant ='如意付' ");
+		// print_r(count($lists));die;
+		$total=0;
 		foreach ($lists as $key => $list) {
 				switch ($list['plant']) {
 					case '叮当':
@@ -917,7 +919,7 @@ class Test
 					case '无忧':
 						$connnect=$wuyou;
 						break;
-					case 'ruyf':
+					case '如意付':
 						$connnect=$ruyifu_wallet;
 						break;
 					case '惠钱包':
@@ -937,26 +939,46 @@ class Test
 					$passway_time=date('Y-m-d',strtotime($list['pay_time']));
 					$plantform_time=date('Y-m-d',strtotime($detail[0]['order_edit_time']));
 					$edit_time=date('Y-m-d H:i:s',strtotime($list['pay_time']));
-					if($detail[0]['user_rate']!=0 && (round((float)$detail[0]['user_rate'],2)>round($rate,2))){
-						ECHO ((float)$detail[0]['user_rate']>$rate);
-						var_dump((float)$detail[0]['user_rate']) ;
-						echo "<br/>";
-						var_dump($rate);die;
-						$update=$connnect->query("update wt_generation_order set user_rate='{$rate}', order_edit_time='{$edit_time}' where order_platform_no = '{$no}'");
-						if($update){
-							echo "success".$key;
-							echo "<br/>";
-						}
-					}
-					// echo $plantform_time.'----'.$passway_time;
+					// echo $detail[0]['user_rate'].'--'.$rate;
 					// echo "<br/>";
-					if($passway_time!=$plantform_time){						
-						$update=$connnect->query("update wt_generation_order set order_edit_time='{$edit_time}' where order_platform_no = '{$no}'");
-						echo "success".$key;
-						echo "<br/>";
+					// if($detail[0]['user_rate']!=0 && (round((float)$detail[0]['user_rate'],2)>round($rate,2))){
+					// 	$where=" set user_rate='{$rate}' ";
+					// 	$where.=" ,order_edit_time='{$edit_time}' ";				
+					// 	$update=$connnect->query("update wt_generation_order {$where}  where order_platform_no = '{$no}'");
+					// }
+					// ******************************更改通手续费********************************
+					if($detail[0]['order_type']==1){
+
+						// $chengben=round($detail[0]['order_money']*$detail[0]['passageway_rate']/100,2);
+
+						// if($chengben!=$detail[0]['order_passageway_fee']){
+						// 	$where=" set order_passageway_fee='{$chengben}' ";
+						// 	$where.=" ,order_edit_time='{$edit_time}' ";				
+						// 	$update=$connnect->query("update wt_generation_order {$where}  where order_platform_no = '{$no}'");
+						// }
+						// // 更改总手续费
+						// $total_fee=ceil($detail[0]['order_money']*$detail[0]['user_rate'])/100; 
+						// // echo $total_fee.'--'.$detail[0]['order_pound'];
+						// // echo "<br/>";
+						// // $total=$total+$total_fee;
+						// if($total_fee!=$detail[0]['order_pound']){
+						// 	$where=" set order_pound='{$total_fee}' ";
+						// 	$where.=" ,order_edit_time='{$edit_time}' ";				
+						// 	$update=$connnect->query("update wt_generation_order {$where}  where order_platform_no = '{$no}'");
+						// }
+						// if($detail[0]['user_fix']>0){
+
+						// 	$where=" set user_fix= 0 ";
+						// 	$where.=" ,order_edit_time='{$edit_time}' ";
+						// 	$update=$connnect->query("update wt_generation_order {$where}  where order_platform_no = '{$no}'");
+						// }
 					}
+					
+					//  更改时间
+					
 				}
 		}
+		// echo $total;die;
 	}
 
 }
