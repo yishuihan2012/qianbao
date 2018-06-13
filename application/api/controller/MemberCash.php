@@ -83,7 +83,7 @@
             $startTime = date("Y-m-d");
             $endTime = date("Y-m-d H:i:s",strtotime($startTime)+(24*60*60));
             $count = CashOrder::where(['order_member' => $this->param['uid'],"order_state" => 2,"order_creditcard" => $member_card['card_bankno'] ])->whereTime("order_add_time","between",[$startTime,$endTime])->count();
-            if($count>$passway['passageway_day_frequency'])
+            if($count>=$passway['passageway_day_frequency'])
                 return ["code" => 460 ,"msg" => "您的卡已超出通道限制".$passway['passageway_day_frequency']."次支付，请您切换其它通道！"];
           }
           $where['passageway_true_name'] = $passway['passageway_true_name'];
