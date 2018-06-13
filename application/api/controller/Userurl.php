@@ -483,12 +483,20 @@ class Userurl extends Controller
           ####################################
           #3确定每天实际还款金额
           $day_pay_real_money=$this->get_random_money($days,$this->param['billMoney'],$is_int=1);
-          // print_r($day_pay_real_money);
           #4确定每天还款次数
           $day_pay_count=$this->get_day_count($this->param['payCount'],$days);
+          ####################################
+          #判断当天还款消费次数是否大于限制次数
+          if($passageway['passageway_day_frequency'] != 0){
+                if($passageway['passageway_day_frequency'] <$day_pay_count[0]){
+                    $this->assign("data","一天消费次数不能超出通道限制次数。".$passageway['passageway_day_frequency']."次，请把结束时间调大再试");
+                    return view("Userurl/show_error");
+                }
+          }
           #5计算出每天实际刷卡金额，和实际到账金额
           $Generation_order_insert=[];
            $generation_pound = 0;
+
           for ($i=0; $i <count($date) ; $i++) { 
               $day_real_get_money=0;
               //刷卡信息
@@ -499,7 +507,7 @@ class Userurl extends Controller
               $each_pay_money=$this->get_random_money($day_pay_count[$i],$day_pay_money[$i],$is_int=1);
               #计算每次刷卡的时间
               $each_pay_time=$this->get_random_time($date[$i],$day_pay_count[$i]);
-
+              // dump($day_pay_money);die;
               foreach ($each_pay_money as $k => $each_money) {
                   //获取每次实际需要支付金额
                   $real_each_pay_money=$this->get_need_pay($also,$daikou,$each_money);
@@ -560,10 +568,11 @@ class Userurl extends Controller
                 }
 
           }
+
           $Generation = new Generation();
           #修改手续费
           $ss = $Generation->where(['generation_id' => $Generation_result->generation_id])->update(['generation_pound' =>  $generation_pound]);
-        
+          
           #写入计划表数据
           $Generation_order=new GenerationOrder();
           $order_result=$Generation_order->saveAll($Generation_order_insert);

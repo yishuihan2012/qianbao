@@ -17,6 +17,7 @@
  use app\index\model\MemberCashout;
  use app\index\model\MemberCreditcard;
  use app\index\model\PassagewayItem;
+ use app\index\model\CashOrder;
 
  use  app\index\controller\CashOut;
  class MemberCash 
@@ -74,9 +75,17 @@
            #判断当前时间是否在交易时间范围内
            if(date('H:i:s')<$passway->cashout->cashout_begintime || date('H:i:s')>$passway->cashout->cashout_endtime)
                  return ['code'=>457,'msg'=>'该通道交易时间段为'.$passway->cashout->cashout_begintime.' - '.$passway->cashout->cashout_endtime];
-
+            //判断通道一天支持的次数
+         
            #获取用户信用卡信息
           $member_card=MemberCreditcard::get(['card_id'=>$this->param['cardid'],'card_member_id'=>$this->param['uid']]);
+          if($passway['passageway_day_frequency']!=0){
+            $startTime = date("Y-m-d");
+            $endTime = date("Y-m-d H:i:s",strtotime($startTime)+(24*60*60));
+            $count = CashOrder::where(['order_member' => $this->param['uid'],"order_state" => 2,"order_creditcard" => $member_card['card_bankno'] ])->whereTime("order_add_time","between",[$startTime,$endTime])->count();
+            if($count>$passway['passageway_day_frequency'])
+                return ["code" => 460 ,"msg" => "您的卡已超出通道限制".$passway['passageway_day_frequency']."次支付，请您切换其它通道！"];
+          }
           $where['passageway_true_name'] = $passway['passageway_true_name'];
           $where['card_name'] = array("like","%".mb_substr($member_card['card_bankname'],0,2)."%");
           $money = $this->bank_limit($where);

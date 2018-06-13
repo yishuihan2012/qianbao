@@ -48,7 +48,12 @@
 			 <input type="text" class="form-control passageway_no" name="passageway_rate" placeholder="请填写通道与平台约定的费率" value="">
 		 </div>		
 	 </div>
-
+	 <div class="row form-group">
+		 <label for="passageway_no" class="col-sm-3 text-right"><b>通道限制消费次数:</b></label>
+		 <div class="col-sm-6" id="passageway_no">
+			 <input type="text" class="form-control passageway_day_frequen" name="passageway_day_frequen" placeholder="请填写通道限制消费次数，0是不限制" value="">
+		 </div>		
+	 </div>
 	 <div class="row form-group">
 		 <label for="passageway_no" class="col-sm-3 text-right"><b>平台约定刷卡固定收益:</b></label>
 		 <div class="col-sm-6" id="passageway_no">
