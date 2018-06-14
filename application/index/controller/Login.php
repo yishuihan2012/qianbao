@@ -16,7 +16,7 @@ class Login extends Controller
             $data=['jump_msg'=>['type'=>Session::get('jump_msg.type'),'msg'=>Session::get('jump_msg.msg')]];
             Session::delete('jump_msg');
         }
-        $site_name=System::GetName('sitename');
+        $site_name=System::getName('sitename');
         $this->assign('site_name',$site_name);
         return view('admin/login/index',$data);
     }
