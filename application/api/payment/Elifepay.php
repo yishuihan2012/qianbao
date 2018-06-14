@@ -266,7 +266,7 @@
 				'mobile'=>$card_info['mobile'],
 			);
 		}
-		if(isset($card_info['cvn2'])){
+		if(isset($card_info['cvn2']) && $card_info['cvn2']){
 			$pay_data['cvn2']=$card_info['cvn2'];
 			$pay_data['expired']=$card_info['expired'];
 		}

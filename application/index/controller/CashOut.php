@@ -1147,7 +1147,7 @@ class CashOut
 		$last_order=CashOrder::where(['order_member'=>$this->member_infos->member_id,'order_passway'=>$this->passway_info->passageway_id])->order('order_id desc')->find();
 		if($last_order['user_rate']!=$this->also->item_rate || $last_order['user_fix']!=$this->also->item_charges/100){
 			$update_rate=$elifepay->product_rate_update($material_id,$product_id,$this->also->item_charges/100,$this->also->item_rate/100);
-			if($res['epaypp_merchant_product_rate_set_response'] && $res['epaypp_merchant_product_rate_set_response']['result_code']=='00'){
+			if($update_rate['epaypp_merchant_product_rate_set_response'] && $update_rate['epaypp_merchant_product_rate_set_response']['result_code']=='00'){
 				
 			}else{
 				return ['code'=>'102','msg'=>'修改费率失败'];
@@ -1174,7 +1174,7 @@ class CashOut
 			}
 		}
 		#预下单 下单完成后返给APP一个静态页面地址
-		$out_trade_no=$radeNo;
+		$out_trade_no=$tradeNo;
 		$des=System::getName('sitename').'-'.$this->member_infos->member_mobile;
 		$res=$elifepay->order_create($product_id,$material_id,$price,$des,$out_trade_no);
 		if($res['epaypp_trade_create_response'] && $res['epaypp_trade_create_response']['result_code']=='00'){
