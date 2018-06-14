@@ -485,14 +485,7 @@ class Userurl extends Controller
           $day_pay_real_money=$this->get_random_money($days,$this->param['billMoney'],$is_int=1);
           #4确定每天还款次数
           $day_pay_count=$this->get_day_count($this->param['payCount'],$days);
-          ####################################
-          #判断当天还款消费次数是否大于限制次数
-          if($passageway['passageway_day_frequency'] != 0){
-                if($passageway['passageway_day_frequency'] <$day_pay_count[0]){
-                    $this->assign("data","一天消费次数不能超出通道限制次数。".$passageway['passageway_day_frequency']."次，请把结束时间调大再试");
-                    return view("Userurl/show_error");
-                }
-          }
+          
           #5计算出每天实际刷卡金额，和实际到账金额
           $Generation_order_insert=[];
            $generation_pound = 0;
