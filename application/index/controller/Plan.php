@@ -533,7 +533,7 @@ class Plan extends Common{
             $info = db("GenerationOrder")->where(['order_id'=>request()->param('order_id')])->find();
             // dump($info['order_type']);die;
             if($info['order_type'] != 2){
-                $content =  ['type'=>'warning','msg'=>'该计划不是代还计划只能增加代还计划'] ;
+                $content =  ['type'=>'warning','msg'=>'不能增加消费计划！'] ;
             }else{
                 unset($info['order_id']);
                 $info['order_real_get'] = request()->param("money")-($info['order_money']-$info['order_real_get']);
