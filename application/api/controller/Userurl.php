@@ -1676,6 +1676,12 @@ class Userurl extends Controller
     public function order_pay($url_data=''){
         $url_data=input('');
         $data=json_decode((base64_decode($url_data['url_data'])),true);
+        if(!isset($data['cvn2'])){
+            $data['cvn2']='';
+        }
+        if(!isset($data['expired'])){
+            $data['expired']='';
+        }
         $this->assign('data',$data);
         return view("Userurl/order_pay");
     }

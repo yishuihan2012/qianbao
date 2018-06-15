@@ -139,14 +139,14 @@
           $day_pay_count=$this->get_day_count($this->param['payCount'],$days);
           ############################################################################
           #判断当天还款消费次数是否大于限制次数
-          dump($passageway['passageway_day_frequency']);
+          // dump($passageway['passageway_day_frequency']);
           if($passageway['passageway_day_frequency'] != 0){
                 if($passageway['passageway_day_frequency'] <$day_pay_count[0]){
                    return ["code" => 490, "msg" => "一天消费次数不能超出通道限制次数。".$passageway['passageway_day_frequency']."次，请把结束时间调大再试"];
                    
                 }
           }
-          print_r($days);die;
+          // print_r($days);die;
          $generation_id=$this->param['uid'].'_'.$this->param['cardId'].'_'.$this->param['billMoney'].'_'.$this->param['payCount'].'_'.$this->param['startDate'].'_'.$this->param['endDate'].'_'.$this->param['passageway'];
          exit(json_encode(['code'=>200, 'msg'=> '正在跳转~','data'=>['repaymentScheduleId'=>$generation_id,'repaymentScheduleUrl'=>$_SERVER['SERVER_NAME'].'/api/Userurl/repayment_plan_create_detail/order_no/'.$generation_id]]));die;
            

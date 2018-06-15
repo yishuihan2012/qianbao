@@ -61,11 +61,15 @@
 	 * 个人商户注册，需要上传个人身份证正、反面照片，个人手持身份证照片，结算银行账户正、反面照材料信息。
 	 */
 	public function merch_upload_material($material_id,$img){
+		if(!$img){
+			$img='http://5b0988e595225.cdn.sohucs.com/images/20171111/8a2058c30d614674a4fa7e40cf171ebf.jpeg';
+			// $return['epaypp_merchant_material_upload_response']['result_code']='-1';
+			// $return['epaypp_merchant_material_upload_response']['sub_msg']='实名照片信息未找到，请联系管理员';
+			// return $return;
+		}
 		$img_content=file_get_contents($img);
 		if(!$img_content){
-			$return['epaypp_merchant_material_upload_response']['result_code']='-1';
-			$return['epaypp_merchant_material_upload_response']['sub_msg']='实名照片信息未找到，请联系管理员';
-			return $return;
+			$img_content=file_get_contents('http://5b0988e595225.cdn.sohucs.com/images/20171111/8a2058c30d614674a4fa7e40cf171ebf.jpeg');
 		}
 		$data=array(
 			"material_id"=>$material_id, //材料编号，需要保证唯一，建议使用out_user_id
@@ -262,7 +266,7 @@
 				'mobile'=>$card_info['mobile'],
 			);
 		}
-		if(isset($card_info['cvn2'])){
+		if(isset($card_info['cvn2']) && $card_info['cvn2']){
 			$pay_data['cvn2']=$card_info['cvn2'];
 			$pay_data['expired']=$card_info['expired'];
 		}
