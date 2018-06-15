@@ -291,6 +291,7 @@ class Plan extends Common{
             #订单数量
             'count_size'=>count($order_data),
         ];
+        $this->assign('button', ['text'=>'新增还款', 'link'=>url('/index/plan/creat'), 'modal'=>'modal']);
         #默认值
         #全部订单状态时
         if(!input('order_status')){
@@ -523,5 +524,37 @@ class Plan extends Common{
 
         return view("admin/plan/edit_status");
       }
-    
+      /**
+      *增加一条还款记录
+      *
+      */
+      public function creat(){
+        if(!empty(request()->param('order_id'))){
+            $info = db("GenerationOrder")->where(['order_id'=>request()->param('order_id')])->find();
+            // dump($info['order_type']);die;
+            if($info['order_type'] != 2){
+                $content =  ['type'=>'warning','msg'=>'该计划不是代还计划只能增加代还计划'] ;
+            }else{
+                unset($info['order_id']);
+                $info['order_real_get'] = request()->param("money")-($info['order_money']-$info['order_real_get']);
+                $info['order_money']  = request()->param("money");
+                $info['order_platform_no'] = get_plantform_pinyin().time().make_rand_code();
+                $info['order_time'] = date("Y-m-d H:i:s");
+                $info['order_edit_time'] = date("Y-m-d H:i:s");
+                $info['order_add_time'] = date("Y-m-d H:i:s");
+                $info['order_status'] = 1;
+                if($status = db("GenerationOrder")->insert($info)){
+                     $content =  ['type'=>'success','msg'=>'新增成功'] ;
+                }else{
+                    $content =  ['type'=>'warning','msg'=>'新增失败'] ;
+                }
+                
+            }
+            Session::set('jump_msg', $content);
+             $this->redirect('plan/detail');
+        }
+        
+        return view("admin/plan/creat");
+      }
+   
 }
