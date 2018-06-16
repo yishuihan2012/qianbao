@@ -43,7 +43,7 @@
  <script>
 
  $(".save").click(function(){	
- 	alert();
+ 	// alert();
 		if(!$(".order_id").val()){
 			 $(".order_id").parent().addClass("has-error");
 			 return;
