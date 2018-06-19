@@ -9,11 +9,14 @@ class RemoveRuntime extends Controller{
 	 public function removeRuntime()
 	{
 		
-	 	 if($request = Request::instance()->post()){
-	 	 	$re = $this->delfiles("../runtime/log",$request);
-	 	 	echo "<script>alert('共删除".$re."个文件')</script>";
-	 	 }
-	 	 return view("admin/removeRuntime/removeRuntime");
+	 	 // if($request = Request::instance()->post()){
+	 	 // 	
+	 	 // 	echo "<script>alert('共删除".$re."个文件')</script>";
+	 	 // }
+	 	 // return view("admin/removeRuntime/removeRuntime");
+	
+		$datetime = date("Y-m",strtotime(date("Y-m"))-(30*24*60*60));
+		$re = $this->delfiles("../runtime/log",$datetime);
 	}
 	 public function delfiles($dir,$n="") //删除DIR路径下N天前创建的所有文件;  
 	{  
@@ -31,7 +34,7 @@ class RemoveRuntime extends Controller{
 				       {              
 				        $filedate=date("Y-m-d", filemtime($fullpath));  
 				      	
-				        $d1=strtotime($n['endTime']);  
+				        $d1=strtotime($n);  
 				        $d2=strtotime($filedate);  
 	
 					        if($d2<=$d1) { 
@@ -51,7 +54,7 @@ class RemoveRuntime extends Controller{
 				    }        
 			    }  
 			}  
-	 		return $num;
+	 		return true;
 	 	}  
 	}
 }
