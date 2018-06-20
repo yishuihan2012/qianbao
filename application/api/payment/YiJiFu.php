@@ -93,8 +93,8 @@ class YiJiFu{
 			'channelRate'=>$also->item_rate,//通道费率 数字(百分比) 是 通道费率，不可低于合同费率 0.6 
 			'isPromptly'=>true,//是否实时到账 Bool 是 是：T+0到账 否：T+1到账 是 
 			'serviceFee'=>$also->item_charges/100,//实时到账费 Money 否 实时到账所需要的服务费，单位元，不可低于合同 实时到账费 2.00 
-			// 'identityFrontUrl'=>'1',
-			// 'identityBackUrl'=>"2",
+			'identityFrontUrl'=>$member_cert['IdPositiveImgUrl'],
+			'identityBackUrl'=>$member_cert['IdNegativeImgUrl'],
 		);
 		$returnUrl=System::getName('system_url').'/Api/Userurl/jiyifuturnback';
 		$notifyUrl=System::getName('system_url').'/index/Cashoutcallback/jiyifucallback';

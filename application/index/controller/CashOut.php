@@ -1225,7 +1225,7 @@ class CashOut
 			return ['code'=>'102','msg'=>$res['respMsg']];
 		}
 	}
-	public function yijifupay($tradeNo,$price,$description='易极付测试'){
+	public function yijifupay($tradeNo,$price,$description='银联快捷无积分低费率通道'){
 
 		$YiJiFu=new \app\api\payment\YiJiFu();
 		$MemberNet=MemberNet::where(['net_member_id'=>$this->member_infos->member_id])->find();
