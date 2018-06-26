@@ -75,7 +75,7 @@
 				            'upgrade_group_id'=>$group['group_id'],
 				            'upgrade_type'=>'auto',
 				            'upgrade_bak'=>'有效推荐自动升级为'.$group->group_name,
-				            'upgrade_commission'=>999,
+				            'upgrade_commission'=>0,
 			            );
 			            // print_r($params);die;
 			            $Upgrade=new \app\api\controller\Upgrade();
