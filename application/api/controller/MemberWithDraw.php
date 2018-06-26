@@ -84,7 +84,7 @@
            $prac=0;//实际扣款
            #判断用户是否需要交纳提现费
            if($this->param['money']>System::getName('min_poundage'))
-                 $charge=$this->param['money']*System::getName('poundage');
+                 $charge=$this->param['money']*System::getName('poundage')/100;
            #查看余额是否够支付手续费
            $yue=$memberwallet['wallet_amount']-$this->param['money'];
            if($yue>=$charge)
