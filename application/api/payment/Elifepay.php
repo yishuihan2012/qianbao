@@ -19,7 +19,7 @@
  use app\index\model\MemberCreditcard;
  use app\index\model\BankInfo;
  use app\index\model\MemberCreditPas;
- /**
+ /**`
  *  @version Elifepay controller / Api 代还入网
  *  @author 许成成(1015571416@qq.com)
  *   @datetime    2018-04-08 15:13:05
@@ -121,17 +121,24 @@
 	 * @return [type] [description]
 	 */
 	public function merch_Settlement_setting($out_user_id,$info){
+		// dump($info);die;
 		$data=array(
-			'out_user_id'=>$out_user_id,//String	是	商户在合作伙伴系统的唯一编号，必填
+			// 'out_user_id'=>$out_user_id,//String	是	商户在合作伙伴系统的唯一编号，必填
+			"out_user_id" => $info['out_user_id'],
 			'bank_account_type'=>'PRIVATE_ACCOUNT',//	String	是	银行账户类型，对公，对私  对公：CORPORATE_ACCOUNT  对私：PRIVATE_ACCOUNT
-			'bank_account_no'=>$info->MemberCashcard->card_bankno,//String	是	银行账户号
+			// 'bank_account_no'=>$info->MemberCashcard->card_bankno,//String	是	银行账户号
+			"bank_account_no" => $info['card_bankno'],
 			'cert_type'=>"IDCARD",//String	是	证件类型 身份证：IDCARD
-			'cert_no'=>$info->MemberCashcard->card_idcard,//String	是	证件号码
-			'name'=>$info->MemberCashcard->card_name,//String	是	开户姓名
-			'mobile'=>$info->MemberCashcard->card_phone,//String	是	银行预留手机号
+			// 'cert_no'=>$info->MemberCashcard->card_idcard,//String	是	证件号码
+			"cert_no" => $info['card_idcard'],
+			// 'name'=>$info->MemberCashcard->card_name,//String	是	开户姓名
+			"name" => $info['name'],
+			// 'mobile'=>$info->MemberCashcard->card_phone,//String	是	银行预留手机号
+			"mobile" => $info['mobile']
 		);
 		// echo json_encode($data);die;
 		$res=$this->request('epaypp.merchant.settle.account.set',$data);
+		dump($res);
 		return json_decode($res,true);
 	} 
 	/**

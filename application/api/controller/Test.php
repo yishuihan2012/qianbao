@@ -18,6 +18,7 @@ use app\index\model\MemberCashcard;
 use app\index\model\MemberCreditcard;
 use app\index\model\CashOrder;
 use app\index\model\PassagewayItem;
+use app\api\payment\Elifepay;
 class Test 
 {
 
@@ -63,6 +64,11 @@ class Test
 			 	$sms=new \app\index\controller\sms();
             	$a=$sms->check('17569615504','7041');
 				print_r($a);
+		}
+		public function merch_Settlement_setting(){
+			$eli = new Elifepay();
+			// dump(input());die;
+			$res = $eli->merch_Settlement_setting('1',input());
 		}
 		//curl请求
 		public function curlPost($url, $method = 'post', $data = ''){
