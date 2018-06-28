@@ -124,7 +124,7 @@
 		// dump($info);die;
 		$data=array(
 			// 'out_user_id'=>$out_user_id,//String	是	商户在合作伙伴系统的唯一编号，必填
-			"out_user_id" => $info['out_user_id'],
+			"out_user_id" => $out_user_id,
 			'bank_account_type'=>'PRIVATE_ACCOUNT',//	String	是	银行账户类型，对公，对私  对公：CORPORATE_ACCOUNT  对私：PRIVATE_ACCOUNT
 			// 'bank_account_no'=>$info->MemberCashcard->card_bankno,//String	是	银行账户号
 			"bank_account_no" => $info['card_bankno'],
