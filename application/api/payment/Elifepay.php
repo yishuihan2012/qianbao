@@ -121,24 +121,17 @@
 	 * @return [type] [description]
 	 */
 	public function merch_Settlement_setting($out_user_id,$info){
-		// dump($info);die;
 		$data=array(
-			// 'out_user_id'=>$out_user_id,//String	是	商户在合作伙伴系统的唯一编号，必填
-			"out_user_id" => $out_user_id,
+			'out_user_id'=>$out_user_id,//String	是	商户在合作伙伴系统的唯一编号，必填
 			'bank_account_type'=>'PRIVATE_ACCOUNT',//	String	是	银行账户类型，对公，对私  对公：CORPORATE_ACCOUNT  对私：PRIVATE_ACCOUNT
-			// 'bank_account_no'=>$info->MemberCashcard->card_bankno,//String	是	银行账户号
-			"bank_account_no" => $info['card_bankno'],
+			'bank_account_no'=>$info->MemberCashcard->card_bankno,//String	是	银行账户号
 			'cert_type'=>"IDCARD",//String	是	证件类型 身份证：IDCARD
-			// 'cert_no'=>$info->MemberCashcard->card_idcard,//String	是	证件号码
-			"cert_no" => $info['card_idcard'],
-			// 'name'=>$info->MemberCashcard->card_name,//String	是	开户姓名
-			"name" => $info['name'],
-			// 'mobile'=>$info->MemberCashcard->card_phone,//String	是	银行预留手机号
-			"mobile" => $info['mobile']
+			'cert_no'=>$info->MemberCashcard->card_idcard,//String	是	证件号码
+			'name'=>$info->MemberCashcard->card_name,//String	是	开户姓名
+			'mobile'=>$info->MemberCashcard->card_phone,//String	是	银行预留手机号
 		);
 		// echo json_encode($data);die;
 		$res=$this->request('epaypp.merchant.settle.account.set',$data);
-		dump($res);
 		return json_decode($res,true);
 	} 
 	/**
