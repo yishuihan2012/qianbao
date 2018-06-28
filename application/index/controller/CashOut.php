@@ -1272,6 +1272,17 @@ class CashOut
 		// $url=System::getName('system_url')."/api/Userurl/yijifupay/member_id/$member_id/passageway_id/$passageway_id/creditcard_id/$creditcard_id/price/$price";
 		// return ['code'=>'200','msg'=>'调取成功','data'=>['type'=>1,'url'=>$url]];
 	}
+	/**
+	 * [快捷-金成信达]
+	 * @param  [type] $tradeNo     [description]
+	 * @param  [type] $price       [description]
+	 * @param  string $description [description]
+	 * @return [type]              [description]
+	 */
+	public function jinchengxinda($tradeNo,$price,$description='银联快捷无积分低费率通道'){
+		$jinchengxinda=new \app\api\payment\Jinchengxinda();
+		$res=$jinchengxinda->pay($this->member_infos,$this->card_info,$price,$this->also,$tradeNo);
+	}
 	 /**
 	 * @version  获取订单成功的时候写入订单数据
 	 * @authors bill(755969423@qq.com)
