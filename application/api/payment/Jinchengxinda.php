@@ -26,30 +26,30 @@
  */
  class Jinchengxinda{
  	public function __construct(){
- 		$this->url='http://120.77.62.216:9099';
- 		$this->mch_no='2018062816010211716905';
- 		$this->secret_key='1e191a4e34a84f9d87bd93ced7f5f669';
+ 		$this->url='https://tx.szjcxd.cn';
+ 		$this->mch_no='2018062818133731120747';
+ 		$this->secret_key='60c65b4d5b5c4c23a71780732ae683c5';
  	}
  	public function pay($member_info,$card_info,$money,$rate,$tradeNo){
  		$data=array(
- 			'version'=>'1.0.0',//：版本号（默认值1.0.0）
-			'mchno'=>$this->mch_no,//：商户号
-			'mchOrderNo'=>$tradeNo,//：商户订单号
-			'orderAmount'=>$money,//：商户订单金额（单位元）
-			'orderChannelRate'=>$rate->rate/100,//：订单汇率（eg：0.0059）
-			'orderCounterFee'=>$rate->fix/100,//：订单单笔固定费用（单位元）
-			'tradeDateTime'=>date('YmdHis',time()),//：交易时间（YYYYMMDDHHMMSS）
+ 			'creditCard'=>$card_info->card_bankno,//：信用卡卡号
+ 			'creditCardCvn2'=>$card_info->card_Ident,//： 信用卡cvv2
+ 			'creditCardExpire'=>$card_info->card_expireDate,//：信用卡有效日期（YYMM）
+ 			'creditPhone'=>$card_info->card_phone,//：信用卡绑定手机号（必须与银行留存的一致）
+ 			'debitBank'=>$member_info->MemberCashcard->card_bankname,//：入账卡开户行
+ 			'debitCard'=>$member_info->MemberCashcard->card_bankno,//入帐卡卡号
+ 			'debitPhone'=>$member_info->MemberCashcard->card_phone,//：入账卡绑定手机号（必须与银行留存的一致）
+ 			'identityNo'=>$member_info->MemberCert->cert_member_idcard,//：身份证号码（必须与银行留存的一致）
+ 			'mchno'=>$this->mch_no,//：商户号
+ 			'mchOrderNo'=>$tradeNo,//：商户订单号
+ 			'orderAmount'=>$money,//：商户订单金额（单位元）
+			'orderChannelRate'=>$rate->item_rate/100,//：订单汇率（eg：0.0059）
+			'orderCounterFee'=>(string)$rate->item_charges /100,//：订单单笔固定费用（单位元）
 			'realName'=>$member_info->MemberCert->cert_member_name,//：开户名（必须与银行留存的一致）
-			'identityNo'=>$member_info->MemberCert->cert_member_idcard,//：身份证号码（必须与银行留存的一致）
-			'debitCard'=>$member_info->MemberCashcard->card_bankno,//入帐卡卡号
-			'debitPhone'=>$member_info->MemberCashcard->card_bankno,//：入账卡绑定手机号（必须与银行留存的一致）
-			'debitBank'=>$member_info->MemberCashcard->card_bankno,//：入账卡开户行
-			'creditPhone'=>$card_info->card_phone,//：信用卡绑定手机号（必须与银行留存的一致）
-			'creditCard'=>$card_info->card_bankno,//：信用卡卡号
-			'creditCardCvn2'=>$card_info->card_Ident,//： 信用卡cvv2
-			'creditCardExpire'=>$card_info->card_expireDate,//：信用卡有效日期（YYMM）
+			'tradeDateTime'=>date('YmdHis',time()),//：交易时间（YYYYMMDDHHMMSS）
+			'version'=>'1.0.0',//：版本号（默认值1.0.0）	
  		);
- 		echo json_encode($data);die;
+ 		// echo json_encode($data);die;
  		$url='/yt/synonymNamePay';
  		$res=$this->request($url,$data);
  	}
@@ -59,19 +59,18 @@
  	 * @return [type]       [description]
  	 */
  	public function sign($data){
- 		$data=SortByASCII($data);
  		$str=$this->secret_key;
  		foreach ($data as $k => $v) {
  			$str.=$k.$v;
  		}
- 		$str=mb_strtoupper(md5($str));
+ 		$str=strtoupper(md5($str));
  		return $str;
  	}
  	public function request($url,$data){
  		$data['signValue']=$this->sign($data);
  		$url=$this->url.$url;
- 		$res=curl_post($url,'post',$data);
- 		print_r($res);die;
+ 		$res=curl_post($url,'post',json_encode($data));
+ 		echo $res;die;
  		return $res;
  	}
 }

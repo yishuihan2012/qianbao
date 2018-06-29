@@ -355,7 +355,7 @@ use app\index\model\Member;
                 if($resul['status']=="SUCCESS"){
                   $arr['order_status']='2';
                   $generation['generation_state']=3;
-                  
+
                 }else if($resul['status']=="FAIL"){
                     $arr['order_status']='-1';
                 }else{

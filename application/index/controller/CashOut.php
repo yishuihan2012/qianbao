@@ -1282,6 +1282,8 @@ class CashOut
 	public function jinchengxinda($tradeNo,$price,$description='银联快捷无积分低费率通道'){
 		$jinchengxinda=new \app\api\payment\Jinchengxinda();
 		$res=$jinchengxinda->pay($this->member_infos,$this->card_info,$price,$this->also,$tradeNo);
+		// $writeorder=$this->writeorder($tradeNo, $price, $price*($this->also->item_rate/100),$description,$tradeNo);
+		// 
 	}
 	 /**
 	 * @version  获取订单成功的时候写入订单数据

@@ -294,7 +294,7 @@ class Userurl extends Controller
             }
 
             #1判断是否入网
-            if(!$has['member_credit_pas_info']){ //信用卡有没有签约
+            if(!$has['member_credit_pas_info']){ //信用卡有没有入网
                 $res=$huilian_new->income($this->param['passageway'],$this->param['cardId']);
                 if($res['code']=='200'){
                     $merId=$merch_data['member_credit_pas_info']=$res['merId'];
@@ -312,18 +312,16 @@ class Userurl extends Controller
             #2判断是否签约
           
             if(!$has['member_credit_pas_status']){ //信用卡有没有签约
-                $res=$huilian_new->card_bind($passageway->passageway_mech,$merId,$MemberCreditcard->card_phone,$MemberCreditcard->card_bankno,$this->param['passageway'],$MemberCreditcard->card_id);
-                if($res['code']=='200'){
-
-                    Session::set($MemberCreditcard->card_phone.'order_no',$order_no);
-                    return redirect($res['url']);
+                $res=$huilian_new->card_bind_new($passageway->passageway_mech,$merId,$MemberCreditcard,$this->param['passageway']);
+                if(isset($res['code']) && $res['code']=='10000' &&  isset($res['respCode']) && $res['respCode']=='10000'){ 
+                    $res=MemberCreditPas::where(['member_credit_pas_creditid'=>$this->param['cardId'],'member_credit_pas_pasid'=>$this->param['passageway']])->update(['member_credit_pas_status'=>1]);
                 }else{
-                    $this->assign('data',$res['msg']);
+                    $msg=isset($res['respMessage'])? $res['respMessage']:$res['message'];
+                    $this->assign('data',$msg);
                     return view("Userurl/show_error");die;
                 }
-                //return redirect('Userurl/signed_huilian_background', ['passageway_id' =>$param['passageway'],'cardId'=>$param['cardId'],'order_no'=>$order_no]);
             }
-            #3判断是否需要修改费率[接口暂不支持]
+            #3判断是否需要修改费率
             $order=GenerationOrder::where(['order_passageway'=>$param['passageway'],'order_member'=>$param['uid'],'order_status'=>'2','order_type'=>1])->order('order_edit_time','desc')->find();
             $member_group_id=Members::where(['member_id'=>$this->param['uid']])->value('member_group_id');
             $rate=PassagewayItem::where(['item_passageway'=>$this->param['passageway'],'item_group'=>$member_group_id])->find();

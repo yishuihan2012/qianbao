@@ -101,7 +101,6 @@
            $cashObject=new CashOut($this->param['uid'],$this->param['passwayid'],$this->param['cardid']);
            if ($cashObject->error)
                 return ['code'=>$cashObject->error];
-              // var_dump($method);die;
            $DaoLong=$cashObject->$method(get_plantform_pinyin().$member->member_mobile.make_rand_code(),$this->param['money']);
            if($DaoLong['code']==200){
                 return ["code" => 200, "msg" =>"请求成功" , "data" =>$DaoLong['data'] ];

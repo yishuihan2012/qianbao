@@ -161,7 +161,7 @@
         // print_r($res);die;
     }
     
-    public function card_bind($agentId,$merId,$phone,$bankCard,$passageway,$card_id){
+    public function card_bind($agentId,$merId,$MemberCreditcard,$passageway){
        $data=array(
             'version'=>$this->version,
             'serviceUri'=>'YQ0001',//交易代码      str (8) 是   YQ0001
@@ -170,9 +170,9 @@
             'nonceStr'=>make_rand_code(),//随机字符串   nonceStr    str (32)    是   随机字符串
             'agentId'=>$agentId,//代理商号     str (8) 是   受理方预分配的渠道代理商标识
             'merId'=>$merId,//商户号    str (10)    是   进件返回的merId
-            'orderNo'=>$passageway.'-'.$card_id.'-'.$phone.make_rand_code(),//订单号 orderNo str (32)    是   商户交易订单号
-            'phone'=>$phone,//手机号码       str (11)    是   银行预留手机号
-            'bankCard'=>$bankCard,//银行卡号        str (32)    是   用于支付的银行卡号(信用卡)
+            'orderNo'=>$passageway.'-'.$MemberCreditcard->card_id.'-'.$phone.make_rand_code(),//订单号 orderNo str (32)    是   商户交易订单号
+            'phone'=>$MemberCreditcard->card_phone,//手机号码       str (11)    是   银行预留手机号
+            'bankCard'=>$MemberCreditcard->card_bankno,//银行卡号        str (32)    是   用于支付的银行卡号(信用卡)
             'notifyUrl'=>System::getName('system_url').'/Api/Huilianluodi/card_bind_notify',//通知地址       str (256)   是   异步通知地址
         );
         // echo json_encode($data);
@@ -189,6 +189,34 @@
         }
         return $return;
 
+    }
+    public function card_bind_new($agentId,$merId,$MemberCreditcard,$passageway){
+        $data=array(
+            'version'=>$this->version,
+            'serviceUri'=>'YQ0001',//交易代码      str (8) 是   YQ0001
+            'charset'=>'UTF-8',//编码格式     str (8) 是   UTF-8
+            'signType'=>'RSA',//签名方式        str (8)     是   RSA
+            'nonceStr'=>make_rand_code(),//随机字符串   nonceStr    str (32)    是   随机字符串
+            'agentId'=>$agentId,//代理商号     str (8) 是   受理方预分配的渠道代理商标识
+            'merId'=>$merId,//商户号    str (10)    是   进件返回的merId
+            'orderNo'=>$passageway.'-'.$MemberCreditcard->card_id.'-'.$phone.make_rand_code(),//订单号 orderNo str (32)    是   商户交易订单号
+            'phone'=>$MemberCreditcard->card_phone,//手机号码       str (11)    是   银行预留手机号
+            'bankCard'=>$MemberCreditcard->card_bankno,//银行卡号        str (32)    是   用于支付的银行卡号(信用卡)
+            'cvv'=>$MemberCreditcard->card_Ident,//cvv
+            'expDate'=>$MemberCreditcard->card_expireDate,//信用卡有效期   str (4) 是   格式MMYY
+        );
+        $url=$this->url.'/repay';
+        $res=$this->request($url,$data);
+        // echo json_encode($res);die;
+        return $res;
+        if(isset($res['code']) && $res['code']=='10000' &&  isset($res['respCode']) && $res['respCode']=='10000' && $res['url']){ 
+            $return['code']='200';
+            $return['msg']='第一次使用请先签约快捷支付';
+            $return['url']=$res['url'];
+        }else{
+            $return['code']='-1';
+            $return['msg']=isset($res['respMessage'])? $res['respMessage']:$res['message'];
+        }
     }
     public function card_bind_notify(){
         $params=input('');
