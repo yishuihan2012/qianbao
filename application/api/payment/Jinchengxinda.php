@@ -53,7 +53,7 @@
  		$url='/yt/synonymNamePay';
  		// $res=$this->request($url,$data);
  		$res=array(
- 			'code'=>200,
+ 			'status'=>'000',
  			'msg'=>"成功",
  			'data'=>array(
  				'mchOrderNo'=>$tradeNo,
