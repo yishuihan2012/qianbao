@@ -1285,7 +1285,8 @@ class CashOut
 		$writeorder=$this->writeorder($tradeNo, $price, $price*($this->also->item_rate/100),$description,$tradeNo);
 		$callback=new \app\index\controller\Cashoutcallback();
 		$result=$callback->Jinchengxinda_callback($res);
-		return redirect('Userurl/show_error', ['data' =>$res['msg']]);
+		$url=System::getName('system_url').'/api/Userurl/show_error/data/'.$res['msg'];
+		return ['code'=>'200','msg'=>'下单成功','data'=>['type'=>1,'url'=>$url]]; 
 	}
 	 /**
 	 * @version  获取订单成功的时候写入订单数据

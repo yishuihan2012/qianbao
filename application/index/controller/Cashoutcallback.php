@@ -531,12 +531,6 @@ class Cashoutcallback
      * @return [type] [description]
      */
     public function Jinchengxinda_callback($params){
-        file_put_contents('jinchengxindaa.txt', json_encode($params));   
-
-        \think\Log::init(['type'=>'File','path'=>'../runtime/api_log/']);
-        $log['data']=$params;
-        \think\Log::write(json_encode($log),'接口请求日志');  
-
         $order=CashOrder::where(['order_no' => $params['orderNo']])->find();  #查询到当前订单
         if(!$order){
             file_put_contents('yilian_error.txt', 'get order fail！');
@@ -591,6 +585,6 @@ class Cashoutcallback
             Db::rollback();
             $returnData='FAIL';
         }
-        echo  $returnData;die;
+        return $returnData;
     }
 }
