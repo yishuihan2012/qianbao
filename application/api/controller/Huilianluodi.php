@@ -285,6 +285,7 @@
             // 'caregoryUnion'=>'',//银联行业类型     str (8) 否   
         );
         // echo json_encode($data);die;
+        file_put_contents('ceshi.txt', json_encode($data));
         if(isset($value['order_city_code']) && $value['order_city_code']){
             $data['cityCode']=$value['order_city_code'];//城市编码        str (8) 否   
         }
