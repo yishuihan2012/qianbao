@@ -531,8 +531,7 @@ class Cashoutcallback
      * @return [type] [description]
      */
     public function Jinchengxinda_callback($params){
-        print_r($params);die;
-        file_put_contents('jiyifucallback.txt', json_encode($params));   
+        file_put_contents('jinchengxindaa.txt', json_encode($params));   
 
         \think\Log::init(['type'=>'File','path'=>'../runtime/api_log/']);
         $log['data']=$params;
