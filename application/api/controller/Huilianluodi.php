@@ -164,7 +164,7 @@
     public function card_bind($agentId,$merId,$MemberCreditcard,$passageway){
        $data=array(
             'version'=>$this->version,
-            'serviceUri'=>'YQ0002',//交易代码      str (8) 是   YQ0001
+            'serviceUri'=>'YQ0001',//交易代码      str (8) 是   YQ0001
             'charset'=>'UTF-8',//编码格式     str (8) 是   UTF-8
             'signType'=>'RSA',//签名方式        str (8)     是   RSA
             'nonceStr'=>make_rand_code(),//随机字符串   nonceStr    str (32)    是   随机字符串
