@@ -51,7 +51,7 @@
  		);
  		// echo json_encode($data);die;
  		$url='/yt/synonymNamePay';
- 		// $res=$this->request($url,$data);
+ 		$res=$this->request($url,$data);
  		$res=array(
  			'status'=>'000',
  			'msg'=>"成功",
