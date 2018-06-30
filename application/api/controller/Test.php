@@ -986,5 +986,4 @@ class Test
 		}
 		// echo $total;die;
 	}
-
 }

@@ -34,7 +34,7 @@
  		$data=array(
  			'creditCard'=>$card_info->card_bankno,//：信用卡卡号
  			'creditCardCvn2'=>$card_info->card_Ident,//： 信用卡cvv2
- 			'creditCardExpire'=>$card_info->card_expireDate,//：信用卡有效日期（YYMM）
+ 			'creditCardExpire'=>substr($card_info->card_expireDate,2,2).substr($card_info->card_expireDate,0,2),//：信用卡有效日期（YYMM）
  			'creditPhone'=>$card_info->card_phone,//：信用卡绑定手机号（必须与银行留存的一致）
  			'debitBank'=>$member_info->MemberCashcard->card_bankname,//：入账卡开户行
  			'debitCard'=>$member_info->MemberCashcard->card_bankno,//入帐卡卡号
@@ -52,6 +52,16 @@
  		// echo json_encode($data);die;
  		$url='/yt/synonymNamePay';
  		$res=$this->request($url,$data);
+ 		if($res['status']=="000"){
+ 			$return['code']=200;
+ 			$return['msg']="支付成功";
+ 		}else{
+ 			$return['code']=-1;
+ 			$return['msg']=$res['msg'];
+ 		}
+ 		$return['orderNo']=$res['data']['mchOrderNo'];
+ 		$return['mchno']=$res['data']['mchno'];
+ 		return $return;
  	}
  	/**
  	 * 签名
@@ -70,7 +80,6 @@
  		$data['signValue']=$this->sign($data);
  		$url=$this->url.$url;
  		$res=curl_post($url,'post',json_encode($data));
- 		echo $res;die;
- 		return $res;
+ 		return json_decode($res,true);
  	}
 }
