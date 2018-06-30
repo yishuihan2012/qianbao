@@ -170,7 +170,7 @@
             'nonceStr'=>make_rand_code(),//随机字符串   nonceStr    str (32)    是   随机字符串
             'agentId'=>$agentId,//代理商号     str (8) 是   受理方预分配的渠道代理商标识
             'merId'=>$merId,//商户号    str (10)    是   进件返回的merId
-            'orderNo'=>$passageway.'-'.$MemberCreditcard->card_id.'-'.$phone.make_rand_code(),//订单号 orderNo str (32)    是   商户交易订单号
+            'orderNo'=>$passageway.'-'.$MemberCreditcard->card_id.'-'.$MemberCreditcard->card_phone.make_rand_code(),//订单号 orderNo str (32)    是   商户交易订单号
             'phone'=>$MemberCreditcard->card_phone,//手机号码       str (11)    是   银行预留手机号
             'bankCard'=>$MemberCreditcard->card_bankno,//银行卡号        str (32)    是   用于支付的银行卡号(信用卡)
             'notifyUrl'=>System::getName('system_url').'/Api/Huilianluodi/card_bind_notify',//通知地址       str (256)   是   异步通知地址
