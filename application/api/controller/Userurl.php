@@ -1798,4 +1798,8 @@ class Userurl extends Controller
         return view("Userurl/show_error");
         
     }
+    public function show_error($data){
+         $this->assign('data',$data);
+        return view("Userurl/show_error");
+    }
 }

@@ -1285,6 +1285,7 @@ class CashOut
 		$writeorder=$this->writeorder($tradeNo, $price, $price*($this->also->item_rate/100),$description,$tradeNo);
 		$callback=new \app\index\controller\Cashoutcallback();
 		$result=$callback->Jinchengxinda_callback($res);
+		return redirect('Userurl/show_error', ['data' =>$res['msg']]);
 	}
 	 /**
 	 * @version  获取订单成功的时候写入订单数据
