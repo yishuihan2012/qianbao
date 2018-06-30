@@ -533,8 +533,7 @@ class Cashoutcallback
     public function Jinchengxinda_callback($params){
         $order=CashOrder::where(['order_no' => $params['orderNo']])->find();  #查询到当前订单
         if(!$order){
-            file_put_contents('yilian_error.txt', 'get order fail！');
-            echo 'FAIL';die;
+           return fail;
         }
         $member=Member::get($order->order_member);
 
@@ -585,6 +584,5 @@ class Cashoutcallback
             Db::rollback();
             $returnData='FAIL';
         }
-        return $returnData;
     }
 }
