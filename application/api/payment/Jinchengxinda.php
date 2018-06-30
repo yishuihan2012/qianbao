@@ -52,14 +52,6 @@
  		// echo json_encode($data);die;
  		$url='/yt/synonymNamePay';
  		$res=$this->request($url,$data);
- 		$res=array(
- 			'status'=>'000',
- 			'msg'=>"成功",
- 			'data'=>array(
- 				'mchOrderNo'=>$tradeNo,
- 				'mchno'=>'233',
- 			),
- 		);
  		if($res['status']=="000"){
  			$return['code']=200;
  			$return['msg']="支付成功";
