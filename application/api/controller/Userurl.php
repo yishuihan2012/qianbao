@@ -312,21 +312,21 @@ class Userurl extends Controller
             #2判断是否签约
           
             if(!$has['member_credit_pas_status']){ //信用卡有没有签约
-                $res=$huilian_new->card_bind($passageway->passageway_mech,$merId,$MemberCreditcard,$this->param['passageway']);
-                if($res['code']=='200'){
-                    return redirect($res['url']);
-                }else{
-                    $this->assign('data',$res['msg']);
-                    return view("Userurl/show_error");die;
-                }
-
-                // if(isset($res['code']) && $res['code']=='10000' &&  isset($res['respCode']) && $res['respCode']=='10000'){ 
-                //     $res=MemberCreditPas::where(['member_credit_pas_creditid'=>$this->param['cardId'],'member_credit_pas_pasid'=>$this->param['passageway']])->update(['member_credit_pas_status'=>1]);
+                $res=$huilian_new->card_bind_new($passageway->passageway_mech,$merId,$MemberCreditcard,$this->param['passageway']);
+                // if($res['code']=='200'){
+                //     return redirect($res['url']);
                 // }else{
-                //     $msg=isset($res['respMessage'])? $res['respMessage']:$res['message'];
-                //     $this->assign('data',$msg);
+                //     $this->assign('data',$res['msg']);
                 //     return view("Userurl/show_error");die;
                 // }
+
+                if(isset($res['code']) && $res['code']=='10000' &&  isset($res['respCode']) && $res['respCode']=='10000'){ 
+                    $res=MemberCreditPas::where(['member_credit_pas_creditid'=>$this->param['cardId'],'member_credit_pas_pasid'=>$this->param['passageway']])->update(['member_credit_pas_status'=>1]);
+                }else{
+                    $msg=isset($res['respMessage'])? $res['respMessage']:$res['message'];
+                    $this->assign('data',$msg);
+                    return view("Userurl/show_error");die;
+                }
             }
             #3判断是否需要修改费率
             $order=GenerationOrder::where(['order_passageway'=>$param['passageway'],'order_member'=>$param['uid'],'order_status'=>'2','order_type'=>1])->order('order_edit_time','desc')->find();
