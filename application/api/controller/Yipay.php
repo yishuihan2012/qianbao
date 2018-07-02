@@ -99,7 +99,8 @@
      */
     public function card_bind(){
         $data=array(
-            'linkId'=>generate_password(16),// 订单流水号    三方平台唯一                                                                  
+            'linkId'=>generate_password(16),// 订单流水号    三方平台唯一 
+            'payType'=>1,                                                                
             'bankNo'=>"6259760291531725",//银行卡号                                                                           
             'bankPhone'=>"16605383329",// 绑定手机号码  String(11)                                                                                              
             'frontUrl'=>"http://Wallet.test.xijiakeji.com/api/Yipay/card_bind_fronturl",//页面通知地址                                                                            
@@ -239,19 +240,20 @@
      * @param  [type] $arr [description]
      * @return [type]      [description]
      */
-    public function request($action,$data){
+    public function request($action,$data,$merno='ST0001000470755',$secretkey='d00515e65a3be38af5bfe38dbe5999f2'){
         $rand_string=generate_password(16);
         // var_dump(base64_decode(AESencode(json_encode($data),$rand_string)));die;
         $params=array(
             'version'=>"2.0",
             'orgNo'=>$this->orgno,
-            'merNo'=>$this->merno,
+            'merNo'=>$merno?$merno:$this->merno,
             'action'=>$action,
             'data'=>$this->AESencode(json_encode($data),$rand_string),
             'encryptkey'=>$this->pri_encode($rand_string),
         );
         // echo json_encode($params);die;
         // version+orgNo+merNo+action+data+商户蜜钥KEY
+        $secretkey=$secretkey?$secretkey:$this->secretkey;
         $params['sign']=md5($params['version'].$this->orgno.$this->merno.$action.$params['data'].$this->secretkey);
 
         $res=curl_post($this->url,'post',$params,0);
