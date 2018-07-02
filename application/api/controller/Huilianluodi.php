@@ -269,7 +269,7 @@
         
         $data=array(
             'version'=>$this->version,// M(String)   1.0
-            'serviceUri'=>'YQ0002',
+            'serviceUri'=>'YQ0006',
             'charset'=>'UTF-8',// M(String)   编码方式UTF-8
             'agentId'=>$passageway_mech ,//M(String)   受理方预分配的渠道代理商标识
             'merId'=>$member_pas->member_credit_pas_info,// M(String)   子商户号
