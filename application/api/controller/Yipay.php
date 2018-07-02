@@ -67,7 +67,7 @@
      */
     public function mech_update(){
         $data=array(
-            'userCode'=>'d00515e65a3be38af5bfe38dbe5999f2 ',// 商户编号               
+            'userCode'=>'ST0001000470755',// 商户编号               
             'settleBankNo'=>"",// 绑定结算卡号                 
             'settleBankPhone'=>"",//绑定结算卡手机           
             'settleBankCnaps'=>"",// 绑定结算卡联行号
@@ -75,15 +75,73 @@
         $res=$this->request('SdkUserStoreModify',$data);
         return $res;
     }
-    public function mech_rate_update(){
+    public function mech_rate_set(){
         $data=array(
-            'userCode'=>"",// 商户编号 系统返回商户编号                                                                    
-            'payType ' =>"",// 交易类型                                                                            
-            'orderRateT0'=>'',//交易费率  0.36（费率0.36/100）                                                                    
-            'settleChargeT0'=>"",//提现附加费用 单位：分（200）                                                                   
+            'userCode'=>"ST0001000470755",// 商户编号 系统返回商户编号                                                                    
+            'payType' =>"1",// 交易类型                                                                            
+            'orderRateT0'=>'0.42',//交易费率  0.36（费率0.36/100）                                                                    
+            'settleChargeT0'=>"100",//提现附加费用 单位：分（200）                                                                   
         );
         $res=$this->request('SdkUserStoreRate',$data);
+        print_r($res);die;
         return $res;
+    }
+    /**
+     *  商户查询
+     * @return [type] [description]
+     */
+    public function mech_query(){
+
+    }
+    /**
+     *  签约绑卡
+     * @return [type] [description]
+     */
+    public function card_bind(){
+        $data=array(
+            'linkId'=>generate_password(16),// 订单流水号    三方平台唯一                                                                  
+            'bankNo'=>"6259760291531725",//银行卡号                                                                           
+            'bankPhone'=>"16605383329",// 绑定手机号码  String(11)                                                                                              
+            'frontUrl'=>"http://Wallet.test.xijiakeji.com/api/Yipay/card_bind_fronturl",//页面通知地址                                                                            
+            'notifyUrl'=>"http://Wallet.test.xijiakeji.com/api/Yipay/card_bind_notifyUrl",//异步通知地址  String                    
+        );
+        $res=$this->request('SdkBindCardH5',$data);
+        print_r($res);die;
+    }
+    /**
+     * 绑卡页面回跳地址
+     * @return [type] [description]
+     */
+    public function card_bind_fronturl(){
+        $params=input();
+        file_put_contents('card_bind_fronturl', json_encode($params));
+        print_r($params);die;
+    }
+    public function card_bind_notifyUrl(){
+        $params=input();
+        file_put_contents('card_bind_notifyUrl', json_encode($params));
+    }
+    /**
+     * 快捷支付
+     * @return [type] [description]
+     */
+    public function pay(){
+
+    }
+    public function order_query(){
+
+    }
+    public function merch_remain(){
+
+    }
+    public function qfpay(){
+
+    }
+    public function pay_notify(){
+
+    }
+    public function getUnion(){
+
     }
     /**
      * 获取请求字符串
