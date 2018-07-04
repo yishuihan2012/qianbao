@@ -47,7 +47,7 @@
             'userName'=>'易水寒',//商户名称
             'userNick'=>"易水寒",//商户昵称
             'userPhone'=>"16605383329",//法人电话
-            'userAccount'=>"许伟",//法人姓名
+            'userAccount'=>"许成成",//法人姓名
             'userCert'=>'370983199109202832',//法人身份证号
             'userEmail'=>"1015571416@qq.com",//商户邮箱
             'userAddress'=>"山东省济南市",//商户地址
@@ -59,6 +59,7 @@
         );
         // echo json_encode($data);die;
         $res=$this->request('SdkUserStoreBind',$data);
+        var_dump($res);die;
         return $res;
     }
     /**
@@ -77,7 +78,7 @@
     }
     public function mech_rate_set(){
         $data=array(
-            'userCode'=>"ST0001000470755",// 商户编号 系统返回商户编号                                                                    
+            'userCode'=>"ST0001000492258",// 商户编号 系统返回商户编号                                                                    
             'payType' =>"1",// 交易类型                                                                            
             'orderRateT0'=>'0.42',//交易费率  0.36（费率0.36/100）                                                                    
             'settleChargeT0'=>"100",//提现附加费用 单位：分（200）                                                                   
@@ -101,11 +102,12 @@
         $data=array(
             'linkId'=>generate_password(16),// 订单流水号    三方平台唯一 
             'payType'=>1,                                                                
-            'bankNo'=>"6259760291531725",//银行卡号                                                                           
+            'bankNo'=>"6225768621318847",//银行卡号                                                                           
             'bankPhone'=>"16605383329",// 绑定手机号码  String(11)                                                                                              
             'frontUrl'=>"http://Wallet.test.xijiakeji.com/api/Yipay/card_bind_fronturl",//页面通知地址                                                                            
             'notifyUrl'=>"http://Wallet.test.xijiakeji.com/api/Yipay/card_bind_notifyUrl",//异步通知地址  String                    
         );
+        Cache::set($data['linkId'],$data,600);
         $res=$this->request('SdkBindCardH5',$data);
         print_r($res);die;
     }
@@ -116,18 +118,48 @@
     public function card_bind_fronturl(){
         $params=input();
         file_put_contents('card_bind_fronturl', json_encode($params));
+        if($params['respCode']=='00'){
+            $this->success('绑卡成功');
+        }
         print_r($params);die;
     }
     public function card_bind_notifyUrl(){
         $params=input();
         file_put_contents('card_bind_notifyUrl', json_encode($params));
+        if($params['orderStatus']=='0000'){//快捷绑卡成功
+            $cache=Cache::pull($params['linkId']);
+            $MemberCreditPas=new MemberCreditPas;
+            $res=$MemberCreditPas->save(['member_credit_pas_creditid'=>$this->param['cardId'],'member_credit_pas_pasid'=>$this->param['passageway']]);
+            if(!$res){
+                $this->assign('data','商户入网失败，请重试。');
+                return view("Userurl/show_error");die;
+            }
+        }
     }
     /**
-     * 快捷支付
+     * 支付
      * @return [type] [description]
      */
     public function pay(){
-
+        $data=array(
+            'linkId'  =>"456624852",//订单流水号  M  String 三方平台唯一                                                                  
+            'orderType'=>"10",//订单类型M  String 10:实时到账                                                                 
+            'amount'=>"10" ,// 消费金额M String 单位:分                                                                    
+            'bankNo'=>"6225768621318847",//银行卡号M     String                                                                                              
+            'bankAccount'=>"招商银行",// 银行账户 M  String                                                                                              
+            'bankPhone'=>"16605383329",//绑定手机号码  M String(11)                                                                                              
+            'bankCert' =>"370983199109202832",//绑定身份证号                                                                                  
+            'bankCvv'=>"717",//信用卡后三位 tring(3) 信用卡消费为必选项                                                                   
+            'bankYxq'=>"0722",//  信用卡有效期  信用卡消费为必选项-MMYY(月年格式)                                                                    
+            'notifyUrl'=>"http://Wallet.test.xijiakeji.com/api/Yipay/card_pay_notifyUrl",//异步通知地址,不传系统将不做异步通知                                                                 
+            'goodsName' =>"超意兴快餐",//商品名称 String                                                                                              
+        );
+        $res=$this->request('SdkNocardOrderPayNoSms',$data);
+        var_dump($res);die;
+    }
+    public function card_pay_notifyUrl(){
+        $params=input();
+        file_put_contents('card_pay_notifyUrl.txt', json_encode($params));
     }
     public function order_query(){
 
@@ -225,10 +257,8 @@
         $priKey=file_get_contents('./static/rsakey/yipay/JN000001_private_key.pem');  //秘钥
         $privateKey = openssl_pkey_get_private($priKey);
         openssl_private_decrypt($encryptKey,$aesKey, $privateKey);
-
         //BCD解码
         $data = pack("H*", $data);
-
         //aes解码
         $encryptStr = openssl_decrypt($data, 'AES-128-ECB', $aesKey, OPENSSL_RAW_DATA);
 
@@ -240,24 +270,27 @@
      * @param  [type] $arr [description]
      * @return [type]      [description]
      */
-    public function request($action,$data,$merno='ST0001000470755',$secretkey='d00515e65a3be38af5bfe38dbe5999f2'){
+    public function request($action,$data,$merno='ST0001000492258',$secretkey='5bdc5f663cb9a2251bc12dccd6f58d84'){
         $rand_string=generate_password(16);
         // var_dump(base64_decode(AESencode(json_encode($data),$rand_string)));die;
+        $merno=$merno?$merno:$this->merno;
         $params=array(
             'version'=>"2.0",
             'orgNo'=>$this->orgno,
-            'merNo'=>$merno?$merno:$this->merno,
+            'merNo'=>$merno,
             'action'=>$action,
             'data'=>$this->AESencode(json_encode($data),$rand_string),
             'encryptkey'=>$this->pri_encode($rand_string),
         );
-        // echo json_encode($params);die;
+        // echo json_encode($params);
         // version+orgNo+merNo+action+data+商户蜜钥KEY
         $secretkey=$secretkey?$secretkey:$this->secretkey;
-        $params['sign']=md5($params['version'].$this->orgno.$this->merno.$action.$params['data'].$this->secretkey);
-
+        $params['sign']=md5($params['version'].$this->orgno.$merno.$action.$params['data'].$secretkey);
+        // echo $this->url."?".http_build_query($params);die;
         $res=curl_post($this->url,'post',$params,0);
+        // echo $res;die;
         $result=json_decode($res,true);
+        // var_dump($result);die;
         if($result && $result['data']){
             //解密
             $return=$this->dataDecrypt($result);
@@ -265,9 +298,10 @@
                 $return['code']=200;
             }
         }else{
-            $back=json_decode($result['data']);
+            $back=json_decode($result['data'],true);
+            // var_dump($back);die;
             $return['code']=-1;
-            $return['msg']=$back['respCode'];
+            $return['msg']=$back['respMsg'];
         }
         return $return;
     }
