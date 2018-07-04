@@ -144,7 +144,7 @@
         $data=array(
             'linkId'  =>"456624852",//订单流水号  M  String 三方平台唯一                                                                  
             'orderType'=>"10",//订单类型M  String 10:实时到账                                                                 
-            'amount'=>"10" ,// 消费金额M String 单位:分                                                                    
+            'amount'=>"1000" ,// 消费金额M String 单位:分                                                                    
             'bankNo'=>"6225768621318847",//银行卡号M     String                                                                                              
             'bankAccount'=>"招商银行",// 银行账户 M  String                                                                                              
             'bankPhone'=>"16605383329",//绑定手机号码  M String(11)                                                                                              
@@ -152,29 +152,79 @@
             'bankCvv'=>"717",//信用卡后三位 tring(3) 信用卡消费为必选项                                                                   
             'bankYxq'=>"0722",//  信用卡有效期  信用卡消费为必选项-MMYY(月年格式)                                                                    
             'notifyUrl'=>"http://Wallet.test.xijiakeji.com/api/Yipay/card_pay_notifyUrl",//异步通知地址,不传系统将不做异步通知                                                                 
-            'goodsName' =>"超意兴快餐",//商品名称 String                                                                                              
+            // 'goodsName' =>"超意兴快餐",//商品名称 String                                                                                              
         );
         $res=$this->request('SdkNocardOrderPayNoSms',$data);
         var_dump($res);die;
     }
+    /**
+     * 支付回调
+     * @return [type] [description]
+     */
     public function card_pay_notifyUrl(){
         $params=input();
         file_put_contents('card_pay_notifyUrl.txt', json_encode($params));
+        if($params['orderStatus']=='0000'){
+            echo 'success';die;
+        }
     }
+    /**
+     * 订单查询
+     * @return [type] [description]
+     */
     public function order_query(){
-
+        $data['linkId']='456624852';
+        $res=$this->request('SdkOrderQuery',$data);
+        var_dump($res);die;
     }
+    /**
+     * 查询商户余额
+     * @return [type] [description]
+     */
     public function merch_remain(){
-
+        $data['payType']=1;
+        $data['linkId']='1234543421';
+        $res=$this->request('SdkSettleBalance',$data);
+        var_dump($res);die;
     }
+    /**
+     * 代付
+     * @return [type] [description]
+     */
     public function qfpay(){
-
+        $data=array(
+            'linkId'=>"1245344134",// 三方订单流水号                                                                                                      
+            'amount'=>"10",// 结算到账金额                                           
+            'bankNo'=>"6225768621318847",//结算银行卡号                                                               
+            'bankAccount'=>"许成成",//结算银行账户                                                                                                           
+            'bankPhone'=>"16605383329",// 绑定手机号码                                           
+            'bankCert' =>"370983199109202832",//身份证号                            
+            'bankName'=>"招商银行",//银行名称String                                                                                              
+            'bankCode'=>"03080000",//银行支行联行号支行联行号-大额(超5W)代付需要精确到支行信息                                                                    
+            'notifyUrl'=>"http://Wallet.test.xijiakeji.com/api/Yipay/card_qfpay_notifyUrl",//支付结果回调地址 不传，系统不做后台异步通知推送                                                                 
+        );
+        $res=$this->request('SdkSettleMcg',$data);
+        var_dump($res);die;
     }
-    public function pay_notify(){
-
+    /**
+     *  代付回调
+     * @return [type] [description]
+     */
+    public function card_qfpay_notifyUrl(){
+        $params=input();
+        file_put_contents('card_qfpay_notifyUrl.txt', json_encode($params));
+        if($params['orderStatus']=='0000'){
+            echo 'success';die;
+        }
     }
-    public function getUnion(){
-
+    /**
+     * 获取联行号
+     * @return [type] [description]
+     */
+    public function get_card_union(){
+        $data['bankNo']='6225768621318847';
+        $res=$this->request('SdkSettleBankCnaps',$data);
+        var_dump($res);die;
     }
     /**
      * 获取请求字符串
