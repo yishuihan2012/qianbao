@@ -166,13 +166,13 @@
         #2获取通道信息
         $merch=Passageway::where(['passageway_id'=>$order['order_passageway']])->find();
         //查询子商户号
-        $member_pas=MemberCreditPas::where(['member_credit_pas_pasid'=>$value['order_passageway'],'member_credit_pas_creditid'=>$card_info['card_id']])->find();
+        $member_pas=MemberCreditPas::where(['member_credit_pas_pasid'=>$order['order_passageway'],'member_credit_pas_creditid'=>$card_info['card_id']])->find();
         // $order=GenerationOrder::where(['order_type'=>1])->where('order_no','lt',$value['order_no'])->order('order_id desc')->find();
         // if($order['user_rate'] !=$value['user_rate']){//重新报备
         //     $arr['rate']=$value['user_rate']*100;
         //     // $res=$this->reincome($passageway_mech,$member_pas['member_credit_pas_info'],$arr);
         // }
-        $member_base=Member::where(['member_id'=>$value['order_member']])->find(); 
+        $member_base=Member::where(['member_id'=>$order['order_member']])->find(); 
 
         if(!$order['order_platform_no'] || $order['order_status']!=1){
             $update_order['order_platform_no']=$order['order_platform_no']=get_plantform_pinyin().$member_base->member_mobile.make_rand_code();
@@ -182,7 +182,7 @@
         $data=array(
             'linkId'  =>$order['order_platform_no'],//订单流水号  M  String 三方平台唯一                                                                  
             'orderType'=>"10",//订单类型M  String 10:实时到账                                                                 
-            'amount'=>$order['order_money']*100 ,// 消费金额M String 单位:分                                                                    
+            'amount'=>(string)($order['order_money']*100),// 消费金额M String 单位:分                                                                    
             'bankNo'=>$order['order_card'],//银行卡号M     String                                                                                              
             'bankAccount'=>$card_info['card_bankname'],// 银行账户 M  String                                                                                              
             'bankPhone'=>$card_info['card_phone'],//绑定手机号码  M String(11)                                                                                              
@@ -192,13 +192,16 @@
             'notifyUrl'=>System::getName('system_url')."/api/Yipay/card_pay_notifyUrl",//异步通知地址,不传系统将不做异步通知                                                                 
             // 'goodsName' =>"超意兴快餐",//商品名称 String                                                                                              
         );
-        $res=$this->request('SdkNocardOrderPayNoSms',$data);
+        $passageway_mech=explode(',', $passageway_mech);
+        $res=$this->request('SdkNocardOrderPayNoSms',$data,$passageway_mech[0],$passageway_mech[1]);
+        // print_r($res);die;
         $income['code']=-1;
         $income['msg']=$income['msg']='FAIL';
-        $update['back_tradeNo']=$data['orderNo'];
+        
         $update['back_statusDesc']=$res['msg'];
         $is_commission=0;
         if($res['code']=='0000'){//成功
+            $update['back_tradeNo']=$res['orderNo'];
             $income['code']=200;
             $income['back_status']=$income['msg']='success';
             $update['order_status']='2';
@@ -305,8 +308,29 @@
             'bankCode'=>"03080000",//银行支行联行号支行联行号-大额(超5W)代付需要精确到支行信息                                                                    
             'notifyUrl'=>System::getName('system_url')."/api/Yipay/card_qfpay_notifyUrl",//支付结果回调地址 不传，系统不做后台异步通知推送                                                                 
         );
-        $res=$this->request('SdkSettleMcg',$data);
-        var_dump($res);die;
+        $passageway_mech=explode(',', $passageway_mech);
+        $res=$this->request('SdkSettleMcg',$data,$passageway_mech[0],$passageway_mech[1]);
+        $income['code']=-1;
+        $income['msg']=$income['msg']='FAIL';
+        
+        $update['back_statusDesc']=$res['msg'];
+        $is_commission=0;
+        if($res['code']=='0000'){//成功
+            $update['back_tradeNo']=$res['orderNo'];
+            $income['code']=200;
+            $income['back_status']=$income['msg']='success';
+            $update['order_status']='2';
+            $is_commission=1;
+        }else if($res['code']=='0100'){//处理中
+            $update['order_status']='4';
+        }else{//失败
+            $update['order_status']='-1';
+        }
+        //添加执行记录
+        $res=GenerationOrder::where(['order_id'=>$order['order_id']])->update($update);
+         #更改完状态后续操作
+        // $notice=new \app\api\controller\Membernet();
+        // $action=$notice->plan_notice($order,$income,$member_base,$is_commission,$merch);
     }
     /**
      *  代付回调
@@ -315,9 +339,23 @@
     public function card_qfpay_notifyUrl(){
         $params=input();
         file_put_contents('card_qfpay_notifyUrl.txt', json_encode($params));
-        if($params['orderStatus']=='0000'){
-            echo 'success';die;
+        $pay=GenerationOrder::where(['order_platform_no'=>$params['linkId']])->find();
+        if($params['code']=='0000'){//成功
+            $income['code']=200;
+            $income['back_status']=$arr['back_status']='success';
+            $arr['order_status']='2';
+            $is_commission=1;
+        }else if($res['code']=='0100'){//处理中
+            $arr['order_status']='4';
+        }else{//失败
+            $arr['order_status']='-1';
+            $arr['back_status']='FAIL';
         }
+        $arr['back_statusDesc']=$params['orderMemo'];
+        $arr['back_status']=$params['code'];
+        $arr['back_tradeNo']=$data['orderNo'];
+        //添加执行记录
+        $res=GenerationOrder::where(['order_id'=>$pay['order_id']])->update($arr);
     }
     /**
      * 获取联行号
