@@ -363,22 +363,26 @@
             $params=json_decode($params,true);
         }
         $pay=GenerationOrder::where(['order_platform_no'=>$params['linkId']])->find();
-        if($params['orderStatus']=='0000'){//成功
+        if($params['settleStatus']=='0000'){//成功
             $income['code']=200;
             $income['back_status']=$arr['back_status']='success';
             $arr['order_status']='2';
             $is_commission=1;
-        }else if($res['orderStatus']=='0100'){//处理中
+        }else if($res['settleStatus']=='0100'){//处理中
             $arr['order_status']='4';
         }else{//失败
             $arr['order_status']='-1';
             $arr['back_status']='FAIL';
         }
-        $arr['back_statusDesc']=$params['orderMemo'];
-        $arr['back_status']=$params['orderMemo'];
-        $arr['back_tradeNo']=$params['orderNo'];
+        $arr['back_statusDesc']=$params['settleMemo'];
+        $arr['back_status']=$params['settleMemo'];
+        $arr['back_tradeNo']=$params['settleNo'];
         //添加执行记录
         $res=GenerationOrder::where(['order_id'=>$pay['order_id']])->update($arr);
+        if($params['settleStatus']=='0000'){//成功
+            echo 'success';die;
+        }
+
     }
     /**
      * 获取联行号
