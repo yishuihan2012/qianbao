@@ -89,11 +89,12 @@
     }
     public function mech_rate_set($mech_id,$mech_secret,$passageway,$members){
         $rate=PassagewayItem::where(['item_passageway'=>$passageway->passageway_id,'item_group'=>$members->member_group_id])->find();
+        // print_r($rate);die;
         $data=array(
             'userCode'=>$mech_id,// 商户编号 系统返回商户编号                                                                    
             'payType' =>"1",// 交易类型                                                                            
             'orderRateT0'=>$rate->item_also,//交易费率  0.36（费率0.36/100）                                                                    
-            'settleChargeT0'=>$rate->item_qffix,//提现附加费用 单位：分（200）                                                                   
+            'settleChargeT0'=>(string)($rate->item_qffix),//提现附加费用 单位：分（200）                                                                   
         );
         $res=$this->request('SdkUserStoreRate',$data,$mech_id,$mech_secret);
         if($res['code']=='0000'){
