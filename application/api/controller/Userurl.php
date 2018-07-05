@@ -319,6 +319,13 @@ class Userurl extends Controller
             }
             if(!$has['member_credit_pas_status']){ //信用卡有没有签约
                 $res=$Yipay->card_bind($mech_id,$mech_secret,$MemberCreditcard,$passageway);
+                if($res['code']==200){
+                    return redirect($res['url']);
+                }else{
+                     $this->assign('data',$res['msg']);
+                    return view("Userurl/show_error");die;
+                }
+                
             }  
        }else if($passageway['passageway_method']=='huilian_new'){//汇联新的落地商户
             $huilian_new= new \app\api\controller\Huilianluodi();

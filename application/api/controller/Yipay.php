@@ -264,10 +264,15 @@
      * 订单查询
      * @return [type] [description]
      */
-    public function order_query(){
-        $data['linkId']='8560125330';
+    public function order_status($order_id){
+        $order_detail=GenerationOrder::where(['order_id'=>$order_id])->find();
+        $data['linkId']=$order_detail['order_platform_no'];
         $res=$this->request('SdkOrderQuery',$data);
-        var_dump($res);die;
+        if($res['code']=="0000"){
+            $res['respCode']=10000;
+        }
+        $res['respMessage']=$res['msg'];
+        return $res;
     }
     /**
      * 查询商户余额
@@ -312,6 +317,14 @@
             'bankCode'=>"03080000",//银行支行联行号支行联行号-大额(超5W)代付需要精确到支行信息                                                                    
             'notifyUrl'=>System::getName('system_url')."/api/Yipay/card_qfpay_notifyUrl",//支付结果回调地址 不传，系统不做后台异步通知推送                                                                 
         );
+        $card_union=$this->get_card_union($member_base->memberCashcard->card_bankno);
+        // print_r($card_union);die;
+        if($card_union['code']==200){
+            $data['bankCode']=$card_union['bankCode'];
+        }else{
+            return['code'=>-1,'msg'=>"获取联行号失败"];
+        }
+
         $passageway_mech=explode(',', $passageway_mech);
         $res=$this->request('SdkSettleMcg',$data,$passageway_mech[0],$passageway_mech[1]);
         $income['code']=-1;
@@ -485,7 +498,6 @@
         $res=curl_post($this->url,'post',$params,0);
         // echo $res;die;
         $result=json_decode($res,true);
-        // var_dump($result);die;
         if($result && $result['data']){
             //解密
             $return=$this->dataDecrypt($result);
@@ -494,7 +506,6 @@
             }
         }else{
             $back=json_decode($result['data'],true);
-            // var_dump($back);die;
             $return['code']=-1;
             $return['msg']=$back['respMsg'];
         }
