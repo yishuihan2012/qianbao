@@ -118,7 +118,7 @@
             'linkId'=>$passageway->passageway_id.','.$MemberCreditcard->card_id.','.$MemberCreditcard->card_bankno,// 订单流水号    三方平台唯一 
             'payType'=>1,                                                                
             'bankNo'=>$MemberCreditcard->card_bankno,//银行卡号                                                                           
-            'bankPhone'=>$MemberCreditcard->card_bankno,//绑定手机号码String(11)                                                                                        
+            'bankPhone'=>$MemberCreditcard->card_phone,//绑定手机号码String(11)                                                                                        
             'frontUrl'=>System::getName('system_url')."/api/Yipay/card_bind_fronturl",//页面通知地址                                                                            
             'notifyUrl'=>System::getName('system_url')."/api/Yipay/card_bind_notifyUrl",//异步通知地址  String                    
         );
