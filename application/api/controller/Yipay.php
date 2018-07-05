@@ -136,7 +136,10 @@
     public function card_bind_fronturl(){
         $params=input();
         $str = var_export($params,TRUE);
-        file_put_contents('card_bind_fronturl', $str);
+        file_put_contents('card_bind_fronturl.txt', $str);
+        if(!is_array($params)){
+            $params=json_decode($params,true);
+        }
         if($params['respCode']=='00'){
             $return['msg']="绑卡成功，请关闭当前页面重新提交";
 
