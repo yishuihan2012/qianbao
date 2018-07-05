@@ -360,6 +360,9 @@
     public function card_qfpay_notifyUrl(){
         $params=input();
         file_put_contents('card_qfpay_notifyUrl.txt', json_encode($params));
+        if(!is_array($params)){
+            $params=json_decode($params,true);
+        }
         $pay=GenerationOrder::where(['order_platform_no'=>$params['linkId']])->find();
         if($params['orderStatus']=='0000'){//成功
             $income['code']=200;
