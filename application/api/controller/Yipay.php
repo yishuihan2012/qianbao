@@ -329,8 +329,6 @@
         }else{
             return['code'=>-1,'msg'=>"获取联行号失败"];
         }
-
-        $passageway_mech=explode(',', $passageway_mech);
         $res=$this->request('SdkSettleMcg',$data,$passageway_mech[0],$passageway_mech[1]);
         $income['code']=-1;
         $income['msg']=$income['msg']='FAIL';
