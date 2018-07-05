@@ -41,25 +41,36 @@
      * 商户入网
      * @return [type] [description]
      */
-    public function mech_income(){
+    public function mech_income($members){
         $data=array(
-            'userId'=>'10086',//商户编号
-            'userName'=>'易水寒',//商户名称
-            'userNick'=>"易水寒",//商户昵称
-            'userPhone'=>"16605383329",//法人电话
-            'userAccount'=>"许成成",//法人姓名
-            'userCert'=>'370983199109202832',//法人身份证号
-            'userEmail'=>"1015571416@qq.com",//商户邮箱
+            'userId'=>generate_password(16),//商户编号
+            'userName'=>$members->memberCert->cert_member_name,//商户名称
+            'userNick'=>$members->memberCert->cert_member_name,//商户昵称
+            'userPhone'=>$members->member_mobile,//法人电话
+            'userAccount'=>$members->memberCert->cert_member_name,//法人姓名
+            'userCert'=>$members->memberCert->cert_member_idcard,//法人身份证号
+            'userEmail'=>"855422537@qq.com",//商户邮箱
             'userAddress'=>"山东省济南市",//商户地址
-            'userMemo'=>"测试商户",//商户备注
-            'settleBankNo'=>"6215590200003242971",//结算卡号
-            'settleBankPhone'=>"17569615504",//结算卡预留手机号
+            'userMemo'=>System::getName("sitename").$members->member_mobile,//商户备注
+            'settleBankNo'=>$members->memberCashcard->card_bankno,//结算卡号
+            'settleBankPhone'=>$members->memberCashcard->card_phone,//结算卡预留手机号
             'settleBankCnaps'=>"102100099996",//结算卡联行号
             'branchId'=>$this->branchId,
         );
         // echo json_encode($data);die;
+        $card_union=$this->get_card_union($members->memberCashcard->card_bankno);
+        // print_r($card_union);die;
+        if($card_union['code']==200){
+            $data['settleBankCnaps']=$card_union['bankCode'];
+        }else{
+            return['code'=>-1,'msg'=>"获取联行号失败"];
+        }
+        // echo json_encode($data);die;
         $res=$this->request('SdkUserStoreBind',$data);
-        var_dump($res);die;
+        if($res['code']=='0000'){
+            $res['code']=200;
+        }
+        // var_dump($res);die;
         return $res;
     }
     /**
@@ -76,15 +87,17 @@
         $res=$this->request('SdkUserStoreModify',$data);
         return $res;
     }
-    public function mech_rate_set(){
+    public function mech_rate_set($mech_id,$mech_secret,$passageway){
         $data=array(
-            'userCode'=>"ST0001000492258",// 商户编号 系统返回商户编号                                                                    
+            'userCode'=>$mech_id,// 商户编号 系统返回商户编号                                                                    
             'payType' =>"1",// 交易类型                                                                            
-            'orderRateT0'=>'0.42',//交易费率  0.36（费率0.36/100）                                                                    
-            'settleChargeT0'=>"100",//提现附加费用 单位：分（200）                                                                   
+            'orderRateT0'=>$passageway->passageway_rate,//交易费率  0.36（费率0.36/100）                                                                    
+            'settleChargeT0'=>$passageway->passageway_income,//提现附加费用 单位：分（200）                                                                   
         );
-        $res=$this->request('SdkUserStoreRate',$data);
-        print_r($res);die;
+        $res=$this->request('SdkUserStoreRate',$data,$mech_id,$mech_secret);
+        if($res['code']=='0000'){
+            $res['code']=200;
+        }
         return $res;
     }
     /**
@@ -98,18 +111,21 @@
      *  签约绑卡
      * @return [type] [description]
      */
-    public function card_bind(){
+    public function card_bind($mech_id,$mech_secret,$MemberCreditcard,$passageway){
         $data=array(
-            'linkId'=>generate_password(16),// 订单流水号    三方平台唯一 
+            'linkId'=>$passageway->passageway_id.','.$MemberCreditcard->card_id.','.$MemberCreditcard->card_bankno,// 订单流水号    三方平台唯一 
             'payType'=>1,                                                                
-            'bankNo'=>"6225768621318847",//银行卡号                                                                           
-            'bankPhone'=>"16605383329",// 绑定手机号码  String(11)                                                                                              
-            'frontUrl'=>"http://Wallet.test.xijiakeji.com/api/Yipay/card_bind_fronturl",//页面通知地址                                                                            
-            'notifyUrl'=>"http://Wallet.test.xijiakeji.com/api/Yipay/card_bind_notifyUrl",//异步通知地址  String                    
+            'bankNo'=>$MemberCreditcard->card_bankno,//银行卡号                                                                           
+            'bankPhone'=>$MemberCreditcard->card_bankno,//绑定手机号码String(11)                                                                                        
+            'frontUrl'=>System::getName('system_url')."/api/Yipay/card_bind_fronturl",//页面通知地址                                                                            
+            'notifyUrl'=>System::getName('system_url')."/api/Yipay/card_bind_notifyUrl",//异步通知地址  String                    
         );
-        Cache::set($data['linkId'],$data,600);
-        $res=$this->request('SdkBindCardH5',$data);
-        print_r($res);die;
+        // Cache::set($data['linkId'],$data,600);
+        $res=$this->request('SdkBindCardH5',$data,$mech_id,$mech_secret);
+        if($res['code']=='0000'){
+            $res['code']=200;
+        }
+        return $res;
     }
     /**
      * 绑卡页面回跳地址
@@ -119,7 +135,9 @@
         $params=input();
         file_put_contents('card_bind_fronturl', json_encode($params));
         if($params['respCode']=='00'){
-            $this->success('绑卡成功');
+            $this->assign('data','绑卡成功,请关闭当前页面重新提交');
+            return view("Userurl/show_error");die;
+            // $this->success('绑卡成功,请关闭当前页面重新提交');
         }
         print_r($params);die;
     }
@@ -127,9 +145,10 @@
         $params=input();
         file_put_contents('card_bind_notifyUrl', json_encode($params));
         if($params['orderStatus']=='0000'){//快捷绑卡成功
-            $cache=Cache::pull($params['linkId']);
+            // $cache=Cache::pull($params['linkId']);
+            $bind_info=explode(',', $params['linkId']);
             $MemberCreditPas=new MemberCreditPas;
-            $res=$MemberCreditPas->save(['member_credit_pas_creditid'=>$this->param['cardId'],'member_credit_pas_pasid'=>$this->param['passageway']]);
+            $res=$MemberCreditPas->where(['member_credit_pas_creditid'=>$bind_info[0],'member_credit_pas_pasid'=>$bind_info[1]])->update(['member_credit_pas_status'=>1]);
             if(!$res){
                 $this->assign('data','商户入网失败，请重试。');
                 return view("Userurl/show_error");die;
@@ -140,22 +159,61 @@
      * 支付
      * @return [type] [description]
      */
-    public function pay(){
+    public function pay($order,$passageway_mech){
+        #1获取卡信息
+        $card_info=MemberCreditcard::where(['card_bankno'=>$order['order_card']])->find();
+
+        #2获取通道信息
+        $merch=Passageway::where(['passageway_id'=>$order['order_passageway']])->find();
+        //查询子商户号
+        $member_pas=MemberCreditPas::where(['member_credit_pas_pasid'=>$value['order_passageway'],'member_credit_pas_creditid'=>$card_info['card_id']])->find();
+        // $order=GenerationOrder::where(['order_type'=>1])->where('order_no','lt',$value['order_no'])->order('order_id desc')->find();
+        // if($order['user_rate'] !=$value['user_rate']){//重新报备
+        //     $arr['rate']=$value['user_rate']*100;
+        //     // $res=$this->reincome($passageway_mech,$member_pas['member_credit_pas_info'],$arr);
+        // }
+        $member_base=Member::where(['member_id'=>$value['order_member']])->find(); 
+
+        if(!$order['order_platform_no'] || $order['order_status']!=1){
+            $update_order['order_platform_no']=$order['order_platform_no']=get_plantform_pinyin().$member_base->member_mobile.make_rand_code();
+            $update_res=GenerationOrder::where(['order_id'=>$order['order_id']])->update($update_order);
+        }
+
         $data=array(
-            'linkId'  =>"456624852",//订单流水号  M  String 三方平台唯一                                                                  
+            'linkId'  =>$order['order_platform_no'],//订单流水号  M  String 三方平台唯一                                                                  
             'orderType'=>"10",//订单类型M  String 10:实时到账                                                                 
-            'amount'=>"1000" ,// 消费金额M String 单位:分                                                                    
-            'bankNo'=>"6225768621318847",//银行卡号M     String                                                                                              
-            'bankAccount'=>"招商银行",// 银行账户 M  String                                                                                              
-            'bankPhone'=>"16605383329",//绑定手机号码  M String(11)                                                                                              
-            'bankCert' =>"370983199109202832",//绑定身份证号                                                                                  
-            'bankCvv'=>"717",//信用卡后三位 tring(3) 信用卡消费为必选项                                                                   
-            'bankYxq'=>"0722",//  信用卡有效期  信用卡消费为必选项-MMYY(月年格式)                                                                    
-            'notifyUrl'=>"http://Wallet.test.xijiakeji.com/api/Yipay/card_pay_notifyUrl",//异步通知地址,不传系统将不做异步通知                                                                 
+            'amount'=>$order['order_money']*100 ,// 消费金额M String 单位:分                                                                    
+            'bankNo'=>$order['order_card'],//银行卡号M     String                                                                                              
+            'bankAccount'=>$card_info['card_bankname'],// 银行账户 M  String                                                                                              
+            'bankPhone'=>$card_info['card_phone'],//绑定手机号码  M String(11)                                                                                              
+            'bankCert' =>$member_base->memberCert->cert_member_idcard,//绑定身份证号                                                                                  
+            'bankCvv'=>$card_info['card_Ident'],//信用卡后三位 tring(3) 信用卡消费为必选项                                                                   
+            'bankYxq'=>$card_info['card_expireDate'],//  信用卡有效期  信用卡消费为必选项-MMYY(月年格式)                                                                    
+            'notifyUrl'=>System::getName('system_url')."/api/Yipay/card_pay_notifyUrl",//异步通知地址,不传系统将不做异步通知                                                                 
             // 'goodsName' =>"超意兴快餐",//商品名称 String                                                                                              
         );
         $res=$this->request('SdkNocardOrderPayNoSms',$data);
-        var_dump($res);die;
+        $income['code']=-1;
+        $income['msg']=$income['msg']='FAIL';
+        $update['back_tradeNo']=$data['orderNo'];
+        $update['back_statusDesc']=$res['msg'];
+        $is_commission=0;
+        if($res['code']=='0000'){//成功
+            $income['code']=200;
+            $income['back_status']=$income['msg']='success';
+            $update['order_status']='2';
+            $is_commission=1;
+        }else if($res['code']=='0100'){//处理中
+            $update['order_status']='4';
+        }else{//失败
+            $update['order_status']='-1';
+        }
+        //添加执行记录
+        $res=GenerationOrder::where(['order_id'=>$order['order_id']])->update($update);
+         #更改完状态后续操作
+        $notice=new \app\api\controller\Membernet();
+        $action=$notice->plan_notice($order,$income,$member_base,$is_commission,$merch);
+
     }
     /**
      * 支付回调
@@ -164,8 +222,36 @@
     public function card_pay_notifyUrl(){
         $params=input();
         file_put_contents('card_pay_notifyUrl.txt', json_encode($params));
-        if($params['orderStatus']=='0000'){
-            echo 'success';die;
+        $pay=GenerationOrder::where(['order_platform_no'=>$params['linkId']])->find();
+        if($params['code']=='0000'){//成功
+            $income['code']=200;
+            $income['back_status']=$arr['back_status']='success';
+            $arr['order_status']='2';
+            $is_commission=1;
+        }else if($res['code']=='0100'){//处理中
+            $arr['order_status']='4';
+        }else{//失败
+            $arr['order_status']='-1';
+            $arr['back_status']='FAIL';
+        }
+        $arr['back_statusDesc']=$params['orderMemo'];
+        $arr['back_status']=$params['code'];
+        $arr['back_tradeNo']=$data['orderNo'];
+        //添加执行记录
+        $res=GenerationOrder::where(['order_id'=>$pay['order_id']])->update($arr);
+        if($params['code']=='0000'){//成功
+            // 极光推送
+            if($pay['is_commission']=='0'){
+                $has_fenrun=db('commission')->where('commission_from',$pay['order_id'])->find();
+                if(!$has_fenrun){
+                        $update_res=GenerationOrder::where(['order_id'=>$pay['order_id']])->update(['is_commission'=>1]);
+                        $fenrun= new \app\api\controller\Commission();
+                        $fenrun_result=$fenrun->MemberFenRun($pay['order_member'],$pay['order_money'],$pay['order_passageway'],3,'代还分润',$pay['order_id']);
+                }
+            }
+            $card_num=substr($pay['order_card'],-4);
+            jpush($pay['order_member'],'还款计划扣款成功通知',"您制定的尾号{$card_num}的还款计划成功扣款".$pay['order_money']."元，在APP内还款计划里即可查看详情。");
+            echo "success";die;
         }
     }
     /**
@@ -173,7 +259,7 @@
      * @return [type] [description]
      */
     public function order_query(){
-        $data['linkId']='456624852';
+        $data['linkId']='8560125330';
         $res=$this->request('SdkOrderQuery',$data);
         var_dump($res);die;
     }
@@ -191,17 +277,33 @@
      * 代付
      * @return [type] [description]
      */
-    public function qfpay(){
+    public function qfpay($order,$passageway_mech){
+        $card_info=MemberCreditcard::where(['card_bankno'=>$order['order_card']])->find();
+
+        $merch=Passageway::where(['passageway_id'=>$order['order_passageway']])->find();
+         //查询子商户号
+        $Membernet=MemberNets::where(['net_member_id'=>$order['order_member']])->find();
+        $merId=$Membernet[$merch->passageway_no];
+        //查询子商户号
+        $member_pas=MemberCreditPas::where(['member_credit_pas_pasid'=>$order['order_passageway'],'member_credit_pas_creditid'=>$card_info['card_id']])->find();
+        
+        $member_base=Member::where(['member_id'=>$order['order_member']])->find();
+        // $rate=PassagewayItem::where(['item_passageway'=>$order['order_passageway'],'item_group'=>$member_info['member_group_id']])->find();
+        if(!$order['order_platform_no'] || $order['order_status']!=1){
+            $update_order['order_platform_no']=$order['order_platform_no']=get_plantform_pinyin().$member_base->member_mobile.make_rand_code();
+            $update_res=GenerationOrder::where(['order_id'=>$order['order_id']])->update($update_order);
+        }
+
         $data=array(
-            'linkId'=>"1245344134",// 三方订单流水号                                                                                                      
-            'amount'=>"10",// 结算到账金额                                           
-            'bankNo'=>"6225768621318847",//结算银行卡号                                                               
-            'bankAccount'=>"许成成",//结算银行账户                                                                                                           
-            'bankPhone'=>"16605383329",// 绑定手机号码                                           
-            'bankCert' =>"370983199109202832",//身份证号                            
-            'bankName'=>"招商银行",//银行名称String                                                                                              
+            'linkId'=>$order['order_platform_no'],// 三方订单流水号                                                                                                      
+            'amount'=>$order['order_real_get']*100,// 结算到账金额                                           
+            'bankNo'=>$order['order_card'],//结算银行卡号                                                               
+            'bankAccount'=>$member_base->memberCert->cert_member_name,//结算银行账户                                                                                                           
+            'bankPhone'=>$card_info['card_phone'],// 绑定手机号码                                           
+            'bankCert' =>$member_base->memberCert->cert_member_idcard,//身份证号                            
+            'bankName'=>$card_info['card_bankname'],//银行名称String                                                                                              
             'bankCode'=>"03080000",//银行支行联行号支行联行号-大额(超5W)代付需要精确到支行信息                                                                    
-            'notifyUrl'=>"http://Wallet.test.xijiakeji.com/api/Yipay/card_qfpay_notifyUrl",//支付结果回调地址 不传，系统不做后台异步通知推送                                                                 
+            'notifyUrl'=>System::getName('system_url')."/api/Yipay/card_qfpay_notifyUrl",//支付结果回调地址 不传，系统不做后台异步通知推送                                                                 
         );
         $res=$this->request('SdkSettleMcg',$data);
         var_dump($res);die;
@@ -221,10 +323,11 @@
      * 获取联行号
      * @return [type] [description]
      */
-    public function get_card_union(){
-        $data['bankNo']='6225768621318847';
+    public function get_card_union($bank_no='6225768621318847'){
+        $data['bankNo']=$bank_no;
         $res=$this->request('SdkSettleBankCnaps',$data);
-        var_dump($res);die;
+        // var_dump($res);die;
+        return $res;
     }
     /**
      * 获取请求字符串
