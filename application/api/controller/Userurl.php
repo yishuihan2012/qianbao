@@ -302,6 +302,10 @@ class Userurl extends Controller
             $mech_id=$merinfo[0];
             $mech_secret=$merinfo[1];
             $res=$Yipay->mech_rate_set($mech_id,$mech_secret,$passageway);
+            if($res['code']!=200){
+                 $this->assign('data',$res['msg']);
+                      return view("Userurl/show_error");die;
+            }
             #3判断有没有签约
            $has=MemberCreditPas::where(['member_credit_pas_creditid'=>$this->param['cardId'],'member_credit_pas_pasid'=>$this->param['passageway']])->find();
            // var_dump($has);die;
