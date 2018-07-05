@@ -233,7 +233,7 @@
         $params=input();
         file_put_contents('card_pay_notifyUrl.txt', json_encode($params));
         $pay=GenerationOrder::where(['order_platform_no'=>$params['linkId']])->find();
-        if($params['code']=='0000'){//成功
+        if($params['orderStatus']=='0000'){//成功
             $income['code']=200;
             $income['back_status']=$arr['back_status']='success';
             $arr['order_status']='2';
@@ -249,7 +249,7 @@
         $arr['back_tradeNo']=$data['orderNo'];
         //添加执行记录
         $res=GenerationOrder::where(['order_id'=>$pay['order_id']])->update($arr);
-        if($params['code']=='0000'){//成功
+        if($params['orderStatus']=='0000'){//成功
             // 极光推送
             if($pay['is_commission']=='0'){
                 $has_fenrun=db('commission')->where('commission_from',$pay['order_id'])->find();
@@ -361,12 +361,12 @@
         $params=input();
         file_put_contents('card_qfpay_notifyUrl.txt', json_encode($params));
         $pay=GenerationOrder::where(['order_platform_no'=>$params['linkId']])->find();
-        if($params['code']=='0000'){//成功
+        if($params['orderStatus']=='0000'){//成功
             $income['code']=200;
             $income['back_status']=$arr['back_status']='success';
             $arr['order_status']='2';
             $is_commission=1;
-        }else if($res['code']=='0100'){//处理中
+        }else if($res['orderStatus']=='0100'){//处理中
             $arr['order_status']='4';
         }else{//失败
             $arr['order_status']='-1';
