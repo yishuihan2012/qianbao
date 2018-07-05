@@ -289,7 +289,7 @@ class Userurl extends Controller
                 if($res){
                     $merinfo=$res['userCode'].','.$res['userKey'];
                     #存入网id
-                    $member_net=MemberNet::where(['net_member_id'=>$param['uid']])->update([$member_net[$passageway->passageway_no]=>$merinfo]);
+                    $member_net=MemberNet::where(['net_member_id'=>$param['uid']])->update([$passageway->passageway_no=>$merinfo]);
                 }else{
                      $this->assign('data','商户入网失败，请重试。');
                       return view("Userurl/show_error");die;
