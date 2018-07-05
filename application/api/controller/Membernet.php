@@ -778,7 +778,8 @@ use app\index\model\Member;
       //处理没有结果的订单
       public function no_result_order(){
           $time_start=date('Y-m-d H:i:s',time()-3600);
-          $time_end=date('Y-m-d H:i:s',time()-1800);
+          $time_end=date('Y-m-d H:i:s',time()-180);
+          $arr=[];
           //查询半小时前状态为带查证的订单
           $list=GenerationOrder::where('order_status=4 or order_status=-1')->whereTime('order_time','between',[$time_start,$time_end])->select();
           foreach ($list as $key => $order) {
@@ -814,6 +815,8 @@ use app\index\model\Member;
                                $arr['order_status']=2;
                           }else if(isset($res['respCode']) && $res['respCode']=='10001'){
                                 $arr['order_status']=-1;
+                          }
+                          if($order['order_id']==1444){
                           }
                           $arr['back_statusDesc']=isset($res['respMessage'])?$res['respMessage']:$res['message'];
                           $update=GenerationOrder::where(['order_id'=>$order['order_id']])->update($arr);

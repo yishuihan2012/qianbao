@@ -154,8 +154,8 @@
         if($params['orderStatus']=='0000'){//快捷绑卡成功
             // $cache=Cache::pull($params['linkId']);
             $bind_info=explode(',', $params['linkId']);
-            $MemberCreditPas=new MemberCreditPas;
-            $res=$MemberCreditPas->where(['member_credit_pas_creditid'=>$bind_info[0],'member_credit_pas_pasid'=>$bind_info[1]])->update(['member_credit_pas_status'=>1]);
+            // print_r($bind_info);die;
+            $res=MemberCreditPas::where(['member_credit_pas_creditid'=>$bind_info[1],'member_credit_pas_pasid'=>$bind_info[0]])->update(['member_credit_pas_status'=>1]);
             if($res){
                 echo 'success';die;
             }
@@ -245,8 +245,8 @@
             $arr['back_status']='FAIL';
         }
         $arr['back_statusDesc']=$params['orderMemo'];
-        $arr['back_status']=$params['code'];
-        $arr['back_tradeNo']=$data['orderNo'];
+        $arr['back_status']=$params['orderMemo'];
+        $arr['back_tradeNo']=$params['orderNo'];
         //添加执行记录
         $res=GenerationOrder::where(['order_id'=>$pay['order_id']])->update($arr);
         if($params['orderStatus']=='0000'){//成功
@@ -270,12 +270,13 @@
      */
     public function order_status($order_id){
         $order_detail=GenerationOrder::where(['order_id'=>$order_id])->find();
+
         $data['linkId']=$order_detail['order_platform_no'];
         $res=$this->request('SdkOrderQuery',$data);
-        if($res['code']=="0000"){
-            $res['respCode']=10000;
+        if($res['orderStatus']=="0000"){
+            $res['respCode']='10000';
         }
-        $res['respMessage']=$res['msg'];
+        $res['respMessage']=$res['msg']?$res['msg']:$res['orderMemo'];
         return $res;
     }
     /**
@@ -376,8 +377,8 @@
             $arr['back_status']='FAIL';
         }
         $arr['back_statusDesc']=$params['orderMemo'];
-        $arr['back_status']=$params['code'];
-        $arr['back_tradeNo']=$data['orderNo'];
+        $arr['back_status']=$params['orderMemo'];
+        $arr['back_tradeNo']=$params['orderNo'];
         //添加执行记录
         $res=GenerationOrder::where(['order_id'=>$pay['order_id']])->update($arr);
     }
