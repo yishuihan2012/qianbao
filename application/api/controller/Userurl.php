@@ -301,7 +301,7 @@ class Userurl extends Controller
             $merinfo=explode(',', $merinfo);
             $mech_id=$merinfo[0];
             $mech_secret=$merinfo[1];
-            $res=$Yipay->mech_rate_set($mech_id,$mech_secret,$passageway);
+            $res=$Yipay->mech_rate_set($mech_id,$mech_secret,$passageway,$members);
             if($res['code']!=200){
                  $this->assign('data',$res['msg']);
                       return view("Userurl/show_error");die;
