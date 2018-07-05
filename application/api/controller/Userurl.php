@@ -287,7 +287,7 @@ class Userurl extends Controller
             if(!$member_net[$passageway->passageway_no]){ //没有入网
                 $res=$Yipay->mech_income($members);
                 if($res){
-                    $merinfo=$res['id'].','.$res['pwd'];
+                    $merinfo=$res['userCode'].','.$res['userKey'];
                     #存入网id
                     $member_net=MemberNet::where(['net_member_id'=>$param['uid']])->update([$member_net[$passageway->passageway_no]=>$merinfo]);
                 }else{

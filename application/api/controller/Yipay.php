@@ -423,7 +423,7 @@
      * @param  [type] $arr [description]
      * @return [type]      [description]
      */
-    public function request($action,$data,$merno='ST0001000492258',$secretkey='5bdc5f663cb9a2251bc12dccd6f58d84'){
+    public function request($action,$data,$merno='',$secretkey=''){
         $rand_string=generate_password(16);
         // var_dump(base64_decode(AESencode(json_encode($data),$rand_string)));die;
         $merno=$merno?$merno:$this->merno;
