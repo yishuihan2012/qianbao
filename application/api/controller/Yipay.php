@@ -313,7 +313,7 @@
 
         $data=array(
             'linkId'=>$order['order_platform_no'],// 三方订单流水号                                                                                                      
-            'amount'=>$order['order_real_get']*100,// 结算到账金额                                           
+            'amount'=>(string)($order['order_real_get']*100),// 结算到账金额                                           
             'bankNo'=>$order['order_card'],//结算银行卡号                                                               
             'bankAccount'=>$member_base->memberCert->cert_member_name,//结算银行账户                                                                                                           
             'bankPhone'=>$card_info['card_phone'],// 绑定手机号码                                           
