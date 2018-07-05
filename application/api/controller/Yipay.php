@@ -115,7 +115,7 @@
      */
     public function card_bind($mech_id,$mech_secret,$MemberCreditcard,$passageway){
         $data=array(
-            'linkId'=>$passageway->passageway_id.','.$MemberCreditcard->card_id.','.$MemberCreditcard->card_bankno,// 订单流水号    三方平台唯一 
+            'linkId'=>$passageway->passageway_id.','.$MemberCreditcard->card_id.','.generate_password(10),// 订单流水号    三方平台唯一 
             'payType'=>1,                                                                
             'bankNo'=>$MemberCreditcard->card_bankno,//银行卡号                                                                           
             'bankPhone'=>$MemberCreditcard->card_phone,//绑定手机号码String(11)                                                                                        
@@ -137,11 +137,12 @@
         $params=input();
         file_put_contents('card_bind_fronturl', json_encode($params));
         if($params['respCode']=='00'){
-            $this->assign('data','绑卡成功,请关闭当前页面重新提交');
-            return view("Userurl/show_error");die;
-            // $this->success('绑卡成功,请关闭当前页面重新提交');
+            $return['msg']="请关闭当前页面重新提交";
+
+        }else{
+            $return['msg']=$params['respMsg'];
         }
-        print_r($params);die;
+        return redirect('Userurl/show_error', ['data' =>$return['msg']]);
     }
     public function card_bind_notifyUrl(){
         $params=input();
@@ -151,9 +152,8 @@
             $bind_info=explode(',', $params['linkId']);
             $MemberCreditPas=new MemberCreditPas;
             $res=$MemberCreditPas->where(['member_credit_pas_creditid'=>$bind_info[0],'member_credit_pas_pasid'=>$bind_info[1]])->update(['member_credit_pas_status'=>1]);
-            if(!$res){
-                $this->assign('data','商户入网失败，请重试。');
-                return view("Userurl/show_error");die;
+            if($res){
+                echo 'success';die;
             }
         }
     }
