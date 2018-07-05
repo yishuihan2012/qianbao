@@ -47,8 +47,8 @@ use think\Loader;
             	 $return['msg']=isset($return['msg']) ? $return['msg'] : $this->get_code_message($return['code']);
             	 #如果方法有返回值 或者返回的data不为空 则进行加密 返回给App TODo :返回值加密方法 非对称加密
             	 if (isset($return['data']) && !empty($return['data'])) {
-                	 $return['data']=$this->encryption_data($return['data']);
-                	 // $return['data']=$return['data'];// //不需要加密的时候放开
+                	 // $return['data']=$this->encryption_data($return['data']);
+                	 $return['data']=$return['data'];// //不需要加密的时候放开
             	 } else{
                    $return['data']=[]; //需要加密的时候放开
                }

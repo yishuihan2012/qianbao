@@ -165,6 +165,8 @@
 
         #2获取通道信息
         $merch=Passageway::where(['passageway_id'=>$order['order_passageway']])->find();
+        $member_net=MemberNets::where(['net_member_id'=>$order['order_member']])->find();
+        $passageway_mech=explode(',', $member_net[$merch->passageway_no]);
         //查询子商户号
         $member_pas=MemberCreditPas::where(['member_credit_pas_pasid'=>$order['order_passageway'],'member_credit_pas_creditid'=>$card_info['card_id']])->find();
         // $order=GenerationOrder::where(['order_type'=>1])->where('order_no','lt',$value['order_no'])->order('order_id desc')->find();
@@ -192,7 +194,6 @@
             'notifyUrl'=>System::getName('system_url')."/api/Yipay/card_pay_notifyUrl",//异步通知地址,不传系统将不做异步通知                                                                 
             // 'goodsName' =>"超意兴快餐",//商品名称 String                                                                                              
         );
-        $passageway_mech=explode(',', $passageway_mech);
         $res=$this->request('SdkNocardOrderPayNoSms',$data,$passageway_mech[0],$passageway_mech[1]);
         // print_r($res);die;
         $income['code']=-1;
@@ -287,6 +288,7 @@
          //查询子商户号
         $Membernet=MemberNets::where(['net_member_id'=>$order['order_member']])->find();
         $merId=$Membernet[$merch->passageway_no];
+        $passageway_mech=explode(',', $merId);
         //查询子商户号
         $member_pas=MemberCreditPas::where(['member_credit_pas_pasid'=>$order['order_passageway'],'member_credit_pas_creditid'=>$card_info['card_id']])->find();
         
