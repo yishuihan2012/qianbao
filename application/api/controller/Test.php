@@ -986,4 +986,9 @@ class Test
 		}
 		// echo $total;die;
 	}
+	public function BankCert_Java(){
+
+		$res=BankCert_Java('6227643718098032 ','370902199003165414','唐志强','18264858283');
+		var_dump($res);die;
+	}
 }
