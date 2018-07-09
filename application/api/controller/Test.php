@@ -986,9 +986,9 @@ class Test
 		}
 		// echo $total;die;
 	}
-	public function BankCert_Java(){
+	public function BankCert_Java($bank_card='6227643718098032',$id_card='370902199003165414',$name="唐志强",$phone="18264858283"){
 
-		$res=BankCert_Java('6227643718098032 ','370902199003165414','唐志强','18264858283');
+		$res=BankCert_Java($bank_card,$id_card,$name,$phone);
 		var_dump($res);die;
 	}
 }
