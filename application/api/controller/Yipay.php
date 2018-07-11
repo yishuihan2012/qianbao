@@ -109,6 +109,14 @@
     public function mech_query(){
 
     }
+    public function card_bind_query($bankNo,$mech_id,$mech_secret){
+        $data['bankNo']=$bankNo;
+        $res=$this->request('SdkBindCardH5',$data,$mech_id,$mech_secret);
+        if($res['code']=='0000'){
+            $res['code']=200;
+        }
+        return  $res;
+    }
     /**
      *  签约绑卡
      * @return [type] [description]

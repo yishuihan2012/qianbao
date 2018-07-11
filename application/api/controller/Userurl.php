@@ -280,7 +280,7 @@ class Userurl extends Controller
        //判断是否签约
        $MemberCreditcard=MemberCreditcard::where(['card_id'=>$param['cardId']])->find();
        //判断哪个通道
-        if($passageway['passageway_method']=='yipay'){//汇联新的落地商户
+        if($passageway['passageway_method']=='yipay'){//易支付
             $Yipay= new \app\api\controller\Yipay();
             #1判断有没有入网
             $member_net=MemberNet::where(['net_member_id'=>$param['uid']])->find();
@@ -307,26 +307,30 @@ class Userurl extends Controller
                       return view("Userurl/show_error");die;
             }
             #3判断有没有签约
-           $has=MemberCreditPas::where(['member_credit_pas_creditid'=>$this->param['cardId'],'member_credit_pas_pasid'=>$this->param['passageway']])->find();
-           // var_dump($has);die;
-           if(!$has){ //信用卡有没有签约
-                $MemberCreditPas=new MemberCreditPas;
-                $res=$MemberCreditPas->save(['member_credit_pas_creditid'=>$this->param['cardId'],'member_credit_pas_pasid'=>$this->param['passageway']]);
-                if(!$res){
-                    $this->assign('data','商户签约失败，请重试。');
-                    return view("Userurl/show_error");die;
+            // 先判断接口是否没有签约
+           $is_bind=$Yipay->card_bind_query($MemberCreditcard->credit_number,$mech_id,$mech_secret);
+           if($is_bind['code']!=200){
+               $has=MemberCreditPas::where(['member_credit_pas_creditid'=>$this->param['cardId'],'member_credit_pas_pasid'=>$this->param['passageway']])->find();
+               // var_dump($has);die;
+               if(!$has){ //信用卡有没有签约
+                    $MemberCreditPas=new MemberCreditPas;
+                    $res=$MemberCreditPas->save(['member_credit_pas_creditid'=>$this->param['cardId'],'member_credit_pas_pasid'=>$this->param['passageway']]);
+                    if(!$res){
+                        $this->assign('data','商户签约失败，请重试。');
+                        return view("Userurl/show_error");die;
+                    }
                 }
+                if(!$has['member_credit_pas_status']){ //信用卡有没有签约
+                    $res=$Yipay->card_bind($mech_id,$mech_secret,$MemberCreditcard,$passageway);
+                    if($res['code']==200){
+                        return redirect($res['url']);
+                    }else{
+                         $this->assign('data',$res['msg']);
+                        return view("Userurl/show_error");die;
+                    }
+                    
+                }  
             }
-            if(!$has['member_credit_pas_status']){ //信用卡有没有签约
-                $res=$Yipay->card_bind($mech_id,$mech_secret,$MemberCreditcard,$passageway);
-                if($res['code']==200){
-                    return redirect($res['url']);
-                }else{
-                     $this->assign('data',$res['msg']);
-                    return view("Userurl/show_error");die;
-                }
-                
-            }  
        }else if($passageway['passageway_method']=='huilian_new'){//汇联新的落地商户
             $huilian_new= new \app\api\controller\Huilianluodi();
             $has=MemberCreditPas::where(['member_credit_pas_creditid'=>$this->param['cardId'],'member_credit_pas_pasid'=>$this->param['passageway']])->find();
