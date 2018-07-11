@@ -308,7 +308,7 @@ class Userurl extends Controller
             }
             #3判断有没有签约
             // 先判断接口是否没有签约
-           $is_bind=$Yipay->card_bind_query($MemberCreditcard->credit_number,$mech_id,$mech_secret);
+           $is_bind=$Yipay->card_bind_query($MemberCreditcard->card_bankno,$mech_id,$mech_secret);
            if($is_bind['code']!=200){
                $has=MemberCreditPas::where(['member_credit_pas_creditid'=>$this->param['cardId'],'member_credit_pas_pasid'=>$this->param['passageway']])->find();
                // var_dump($has);die;

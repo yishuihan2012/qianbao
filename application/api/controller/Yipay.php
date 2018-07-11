@@ -109,6 +109,13 @@
     public function mech_query(){
 
     }
+    /**
+     *  绑卡查询
+     * @param  [type] $bankNo      [description]
+     * @param  [type] $mech_id     [description]
+     * @param  [type] $mech_secret [description]
+     * @return [type]              [description]
+     */
     public function card_bind_query($bankNo,$mech_id,$mech_secret){
         $data['bankNo']=$bankNo;
         $res=$this->request('SdkBindCardH5',$data,$mech_id,$mech_secret);
