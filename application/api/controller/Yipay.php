@@ -31,9 +31,9 @@
     private $version;
     public function __construct(){
         $this->version='1.0';
-        $this->orgno='TEST0001';
-        $this->merno='990581000011018';
-        $this->secretkey='c93fa4ef77f6ab3a4674595348046985';
+        $this->orgno='18000042';
+        $this->merno='990584000011008';
+        $this->secretkey='866b0eb1616d3c3ffa8e86ba8a27a55d';
         $this->url='http://cgi.yiyoupay.net/cgi-bin/nps/action';
         $this->branchId='70900000';
     }
