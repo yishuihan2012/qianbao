@@ -118,7 +118,8 @@
      */
     public function card_bind_query($bankNo,$mech_id,$mech_secret){
         $data['bankNo']=$bankNo;
-        $res=$this->request('SdkBindCardH5',$data,$mech_id,$mech_secret);
+        $res=$this->request('SdkBindCardH5Query',$data,$mech_id,$mech_secret);
+        // print_r($res);die;
         if($res['code']=='0000'){
             $res['code']=200;
         }
