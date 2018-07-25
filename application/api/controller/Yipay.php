@@ -93,7 +93,7 @@
         $data=array(
             'userCode'=>$mech_id,// 商户编号 系统返回商户编号                                                                    
             'payType' =>"1",// 交易类型                                                                            
-            'orderRateT0'=>$rate->item_also,//交易费率  0.36（费率0.36/100）                                                                    
+            'orderRateT0'=>(string)$rate->item_also,//交易费率  0.36（费率0.36/100）                                                                    
             'settleChargeT0'=>(string)($rate->item_qffix),//提现附加费用 单位：分（200）                                                                   
         );
         $res=$this->request('SdkUserStoreRate',$data,$mech_id,$mech_secret);
