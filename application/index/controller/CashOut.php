@@ -943,7 +943,7 @@ class CashOut
 				}
 				
 			}else{
-                $msg=isset($res['epaypp_wc_trade_pay_response']['sub_msg'])?$res['epaypp_wc_trade_pay_response']['sub_msg']:$res['epaypp_wc_trade_pay_response']['result_code_msg'];
+                $msg=isset($pay['epaypp_wc_trade_pay_response']['sub_msg'])?$pay['epaypp_wc_trade_pay_response']['sub_msg']:$pay['epaypp_wc_trade_pay_response']['result_code_msg'];
 				return ['code'=>'102','msg'=>$msg];
 			}
 		}else{
