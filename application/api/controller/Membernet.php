@@ -96,8 +96,8 @@ use app\index\model\Member;
     public function action_repay_plan(){
       // $where['order_time']=array('lt',date('Y-m-d H:i:s',time()));
       ## 设定执行区间 避免状态修改失败 重复执行多次
-      $time_start = date("Y-m-d H:i:s",time()-120);
-      $time_end = date("Y-m-d H:i:s",time()+120);
+      $time_start = date("Y-m-d H:i:s",time()-60);
+      $time_end = date("Y-m-d H:i:s",time()+60);
       $list=GenerationOrder::where(['order_status'=>1])->whereTime('order_time','between',[$time_start,$time_end])->select();
        if($list){
             foreach ($list as $k => $v) {
