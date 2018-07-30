@@ -109,6 +109,8 @@ use app\index\model\Member;
                      $passageway_mech=$passageway['passageway_mech'];
                      $action=$passageway->Cashout->cashout_action;
                      $controller="app\api\controller\\".$action;
+                     //修改状态为已经执行
+                     GenerationOrder::where(['order_id'=>$v['order_id']])->update(['order_status'=>5]);
                      if(!$action || $action=='Membernet'){
                           if($value['order_type']==1){ //消费
                               $this->payBindCard($value);
