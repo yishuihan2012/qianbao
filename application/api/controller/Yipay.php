@@ -285,12 +285,19 @@
      * @return [type] [description]
      */
     public function order_status($order_id){
+        $res['respCode']=-1;
         $order_detail=GenerationOrder::where(['order_id'=>$order_id])->find();
 
         $data['linkId']=$order_detail['order_platform_no'];
         $res=$this->request('SdkOrderQuery',$data);
-        if($res['orderStatus']=="0000"){
-            $res['respCode']='10000';
+        if($res['code']=="0000"){
+            if( $res['orderStatus']=='0000'){
+                 $res['respCode']='10000';
+            }else if($res['orderStatus']=='0100'){
+
+            }else{
+                $res['respCode']='10001';
+            }
         }
         $res['respMessage']=$res['msg']?$res['msg']:$res['orderMemo'];
         return $res;
