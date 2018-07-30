@@ -254,7 +254,7 @@
             $income['back_status']=$arr['back_status']='success';
             $arr['order_status']='2';
             $is_commission=1;
-        }else if($res['orderStatus']=='0100'){//处理中
+        }else if($params['orderStatus']=='0100'){//处理中
             $arr['order_status']='4';
         }else{//失败
             $arr['order_status']='-1';
