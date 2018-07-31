@@ -221,18 +221,22 @@
         $income['code']=-1;
         $income['msg']=$income['msg']='FAIL';
         
-        $update['back_statusDesc']=$res['msg'];
+        $update['back_statusDesc']=isset($res['orderMemo'])?$res['orderMemo']:$res['msg'];
         $is_commission=0;
         if($res['code']=='0000'){//成功
-            $update['back_tradeNo']=$res['orderNo'];
-            $income['code']=200;
-            $income['back_status']=$income['msg']='success';
-            $update['order_status']='2';
-            $is_commission=1;
-        }else if($res['code']=='0100'){//处理中
-            $update['order_status']='4';
-        }else{//失败
-            $update['order_status']='-1';
+            if($res['orderStatus']=='0000'){//成功
+                $update['back_tradeNo']=$res['orderNo'];
+                $income['code']=200;
+                $income['back_status']=$income['msg']='success';
+                $update['order_status']='2';
+                $is_commission=1;
+            }else if($res['orderStatus']=='0100'){//处理中
+                $update['order_status']='4';
+            }else{//失败
+                $update['order_status']='-1';
+            }
+        }else{
+             $update['order_status']='-1';
         }
         //添加执行记录
         $res=GenerationOrder::where(['order_id'=>$order['order_id']])->update($update);
