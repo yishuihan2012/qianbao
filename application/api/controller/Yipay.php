@@ -288,7 +288,7 @@
      * 订单查询
      * @return [type] [description]
      */
-    public function order_status($order_id){
+    public function order_status($order_id,$is_print=0){
         $res['respCode']=-1;
         $order_detail=GenerationOrder::where(['order_id'=>$order_id])->find();
 
@@ -304,15 +304,19 @@
             }
         }
         $res['respMessage']=$res['msg']?$res['msg']:$res['orderMemo'];
+        if($is_print){
+            echo json_encode($res);die;
+        }
         return $res;
     }
     /**
      * 查询商户余额
      * @return [type] [description]
      */
-    public function merch_remain(){
+    public function merch_remain($order_id){
+        $order_detail=GenerationOrder::where(['order_id'=>$order_id])->find();
+        $data['linkId']=$order_detail['order_platform_no'];
         $data['payType']=1;
-        $data['linkId']='1234543421';
         $res=$this->request('SdkSettleBalance',$data);
         var_dump($res);die;
     }
