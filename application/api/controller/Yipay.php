@@ -313,12 +313,22 @@
      * 查询商户余额
      * @return [type] [description]
      */
-    public function merch_remain($order_id){
-        $order_detail=GenerationOrder::where(['order_id'=>$order_id])->find();
-        $data['linkId']=$order_detail['order_platform_no'];
-        $data['payType']=1;
-        $res=$this->request('SdkSettleBalance',$data);
-        var_dump($res);die;
+    public function merch_remain($user_id,$is_print='0',$passageway_no='Yipayld'){
+        $passageway=Passageway::where(['passageway_true_name'=>$passageway_no])->find();
+        $net=Db::table('wt_member_net')->where(['net_member_id'=>$user_id])->value($passageway->passageway_no); 
+        if($net){
+            $nets=explode(',',$net);
+            $data['linkId']=generate_password(16);
+            $data['payType']=1;
+            $res=$this->request('SdkSettleBalance',$data,$nets[0],$nets[1]);
+            if($is_print){
+                echo json_encode($res);
+            }else{
+                return $res;
+            }
+        }else{
+            echo "尚未入网";die;
+        }
     }
     /**
      * 代付
