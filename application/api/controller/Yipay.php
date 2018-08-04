@@ -403,7 +403,7 @@
         if(!is_array($params)){
             $params=json_decode($params,true);
         }
-        $pay=GenerationOrder::where(['order_platform_no'=>$params['linkId']])->find();
+        $pay=GenerationOrder::get(['order_platform_no'=>$params['linkId']]);
         if($params['settleStatus']=='0000'){//成功
             $income['code']=200;
             $income['back_status']=$arr['back_status']='success';
@@ -419,7 +419,8 @@
         $arr['back_status']=$params['settleMemo'];
         $arr['back_tradeNo']=$params['settleNo'];
         //添加执行记录
-        $res=GenerationOrder::where(['order_id'=>$pay['order_id']])->update($arr);
+        $pay->save($arr);
+        // $res=GenerationOrder::where(['order_id'=>$pay['order_id']])->update($arr);
         if($params['settleStatus']=='0000'){//成功
             echo 'success';die;
         }
