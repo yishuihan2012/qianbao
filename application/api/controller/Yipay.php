@@ -252,7 +252,7 @@
     public function card_pay_notifyUrl(){
         $params=input();
         file_put_contents('card_pay_notifyUrl.txt', json_encode($params));
-        $pay=GenerationOrder::where(['order_platform_no'=>$params['linkId']])->find();
+        $pay=GenerationOrder::get(['order_platform_no'=>$params['linkId']]);
         if($params['orderStatus']=='0000'){//成功
             $income['code']=200;
             $income['back_status']=$arr['back_status']='success';
@@ -268,7 +268,7 @@
         $arr['back_status']=$params['orderMemo'];
         $arr['back_tradeNo']=$params['orderNo'];
         //添加执行记录
-        $res=GenerationOrder::where(['order_id'=>$pay['order_id']])->update($arr);
+        $pay->save($arr);
         if($params['orderStatus']=='0000'){//成功
             // 极光推送
             if($pay['is_commission']=='0'){
