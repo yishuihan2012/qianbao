@@ -121,6 +121,21 @@ class Plan extends Common{
     #失败还款计划
     public function fail(){
         $r=input();
+        #精确查询
+        if(input('passway') && input('mobile')){
+            $uid = db('member')->where('member_mobile',$r['mobile'])->value('member_id');
+            $res = '不支持此通道';
+            if($r['passway']=='Misdh'){
+                $class = new \app\api\controller\Membernet();
+                $res = $class->accountQuery($uid);
+                $res = ($res['availableAmt']-$res['usedAmt']+$res['refundAmt'])/100;
+            }elseif($r['passway']=='Yipayld'){
+                $class = new \app\api\controller\Yipay();
+                $res = $class->merch_remain($uid);
+                $res = $res['ableBalanceT0']/100;
+            }
+            return $res;
+        }
         if(!input('beginTime')){
             $r['beginTime']=date('Y-m-d');
             $endTime=time();
@@ -136,7 +151,7 @@ class Plan extends Common{
             ->where('order_type',1)
             ->whereTime('order_time','between',[$r['beginTime'],$endTime])
             ->group('order_no')
-            ->field('o.*,m.member_nick,p.passageway_name,sum(order_money) as sums')
+            ->field('o.*,m.member_nick,m.member_mobile,p.passageway_name,sum(order_money) as sums')
             ->select();
         #目前为止还款的订单
         $back_orders=db('generation_order')
@@ -159,7 +174,12 @@ class Plan extends Common{
                 return 0;
             return $a['sums']>$b['sums'] ? -1 : 1;
         });
+        $passway = db('Passageway')
+            ->where('passageway_also',2)
+            ->where('passageway_true_name','in','Misdh,Yipayld')
+            ->select();
         // halt($list);
+        $this->assign('passway',$passway);
         $this->assign('list',$list);
         $this->assign('r',$r);
         return view("admin/plan/fail");

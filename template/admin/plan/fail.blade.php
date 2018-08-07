@@ -13,13 +13,24 @@
     <h3><i class="icon-list-ul"></i> 挂账列表详情 <small>共 <strong class="text-danger">{{count($list)}}</strong> 条</small></h3>
   </header>
    <div class="panel">
-    <div class="panel-body">
+    <div class="panel-body" style="display: inline-block;">
       <form action="" name="myform" class="form-group" method="get">
       <div class="input-group" style="width: 360px;float: left;margin-right: 10px;">
         <span class="input-group-addon">日期</span>
         <input type="date" name="beginTime" style="width: 140px" class="form-control" value="{{$r['beginTime'] or ''}}" />
           <button class="btn btn-primary" type="submit">搜索</button>
+        </div>
     </form>
+    </div>
+    <div style="display: inline-block;position:relative;top:-25px;left:-100px">
+  <select name="passway" class="form-control passway" style="width: 180px;display: inline-block;">
+      @foreach($passway as $v)
+        <option value="{{$v['passageway_true_name']}}">{{$v['passageway_name']}}</option>
+      @endforeach
+  </select>
+    <input type="text" class="form-control mobile" name="mobile" value="{{$r['mobile'] or ''}}" placeholder="手机号" style="display: inline-block;width: 120px">
+    <button class="btn btn-primary query">精确查询</button>
+          <span class="res"></span>
     </div>
 </div>
 
@@ -33,8 +44,9 @@
               <th>计划ID</th>
               <th>通道</th>
               <th>会员名称</th>
+              <th>手机号</th>
               <th>信用卡号</th>
-              <th>挂账金额</th>
+              <th>挂账金额(参考值)</th>
           </tr>
       </thead>
      <tbody>
@@ -43,6 +55,7 @@
        <td>{{$value['order_no']}}</td>
        <td>{{$value['passageway_name']}}</td>
        <td>{{$value['member_nick']}}</td>
+       <td>{{$value['member_mobile']}}</td>
        <td>{{$value['order_card']}}</td>
        <td>
         <a href="/index/plan/detail?order_id={{$value['order_id']}}">
@@ -60,6 +73,16 @@
 <script>
  
   $(document).ready(function(){
+    $('.query').click(function(){
+      var passway = $('.passway').val();
+      var mobile = $('.mobile').val();
+      if(passway && mobile){
+        $.post('',{passway:passway,mobile:mobile},function(res){
+          console.log(res);
+          $('.res').html(res);
+        })
+      }
+    })
        $('.menu .nav .active').removeClass('active');
        $('.menu .nav li.plan_fails').addClass('active');
        $('.menu .nav li.plan-manager').addClass('show');
