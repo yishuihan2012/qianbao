@@ -125,11 +125,12 @@ class Plan extends Common{
         if(input('passway') && input('mobile')){
             $uid = db('member')->where('member_mobile',$r['mobile'])->value('member_id');
             $res = '不支持此通道';
-            if($r['passway']=='Misdh'){
+            $passway = db('passageway')->where('passageway_id',$r['passway'])->find();
+            if($passway['passageway_true_name']=='Misdh'){
                 $class = new \app\api\controller\Membernet();
-                $res = $class->accountQuery($uid);
+                $res = $class->accountQuery($uid,$passway['passageway_id']);
                 $res = ($res['availableAmt']-$res['usedAmt']+$res['refundAmt'])/100;
-            }elseif($r['passway']=='Yipayld'){
+            }elseif($passway['passageway_true_name']=='Yipayld'){
                 $class = new \app\api\controller\Yipay();
                 $res = $class->merch_remain($uid);
                 $res = $res['ableBalanceT0']/100;

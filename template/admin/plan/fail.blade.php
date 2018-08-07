@@ -25,7 +25,7 @@
     <div style="display: inline-block;position:relative;top:-25px;left:-100px">
   <select name="passway" class="form-control passway" style="width: 180px;display: inline-block;">
       @foreach($passway as $v)
-        <option value="{{$v['passageway_true_name']}}">{{$v['passageway_name']}}</option>
+        <option value="{{$v['passageway_id']}}">{{$v['passageway_name']}}</option>
       @endforeach
   </select>
     <input type="text" class="form-control mobile" name="mobile" value="{{$r['mobile'] or ''}}" placeholder="手机号" style="display: inline-block;width: 120px">
