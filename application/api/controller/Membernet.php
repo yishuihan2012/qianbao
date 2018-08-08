@@ -602,7 +602,7 @@ use app\index\model\Member;
         $orderTime=date('YmdHis',time()+60);
         $params=array(
           'mchNo'=>$passageway->passageway_mech, //机构号 必填  由平台统一分配 16
-          'userNo'=>$member->passageway->passageway_no,  //平台用户标识  必填  平台下发用户标识  32
+          'userNo'=>$member->{$passageway->passageway_no},  //平台用户标识  必填  平台下发用户标识  32
         );
         // var_dump($params);die;
         $income=repay_request($params,$passageway->passageway_mech,'http://pay.mishua.cn/zhonlinepay/service/rest/creditTrans/accountQuery',$passageway->iv,$passageway->secretkey,$passageway->signkey);
