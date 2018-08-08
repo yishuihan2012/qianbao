@@ -280,7 +280,63 @@ class Userurl extends Controller
        //判断是否签约
        $MemberCreditcard=MemberCreditcard::where(['card_id'=>$param['cardId']])->find();
        //判断哪个通道
-        if($passageway['passageway_method']=='yipay'){//易支付
+        if($passageway['passageway_method']=='yinsheng'){//银生宝
+            $Yinsheng = new \app\api\controller\Yinsheng($passageway);
+            $Yinsheng->passway = $passageway;
+            $Yinsheng->members = $members;
+            $passway_item = PassagewayItem::where(['item_passageway' => $param['passageway'], 'item_group' => $members->member_group_id])->find();
+            $Yinsheng->rate = $passway_item['item_also'];
+            $Yinsheng->fix = $passway_item['item_qffix'];
+            $Yinsheng->creditcard = $MemberCreditcard;
+            #1判断有没有入网
+            $member_net=MemberNet::where(['net_member_id'=>$param['uid']])->find();
+            if(!$member_net[$passageway->passageway_no]){ //没有入网
+                $res=$Yinsheng->net($members);
+                if($res && isset($res['result_code']) && $res['result_code'] == '0000'){
+                    // halt($res);
+                    if($res['aduitCode'] == '1018'){
+                        $merinfo=$res['memberId'].','.$res['merchantNo'];
+                        #存入网id
+                        $member_net=MemberNet::where(['net_member_id'=>$param['uid']])->update([$passageway->passageway_no=>$merinfo]);
+                    }else{
+                      $this->assign('data','商户入网失败，原因:'.$res['aduitMsg']);
+                      return view("Userurl/show_error");die;
+                    }
+                }else{
+                     $this->assign('data','商户入网失败，请重试。');
+                      return view("Userurl/show_error");die;
+                }
+            }else{
+                $merinfo=$member_net[$passageway->passageway_no];
+            }
+            #2设置费率
+            $merinfo=explode(',', $merinfo);
+            $Yinsheng->memberId=$merinfo[0];
+            $Yinsheng->merchantNo=$merinfo[1];
+            $res=$Yinsheng->rate();
+            // halt($res);
+            if($res['result_code']!='0000' || $res['aduitCode'] != '1018'){
+                $this->assign('data',$res['msg']);
+                return view("Userurl/show_error");die;
+            }
+            #3判断有没有签约
+            $is_bind = $Yinsheng->card_bind_query();
+            // halt($is_bind);
+            $need_bind = true;
+            if(isset($is_bind['infoList'])){
+                foreach ($is_bind['infoList'] as $k => $v) {
+                    if($v['cardNo'] == substr($MemberCreditcard->card_bankno,-4)){
+                        $need_bind = false;
+                    }
+                }
+            }
+            #绑卡
+            if($need_bind){
+                $res = $Yinsheng->bind();
+                halt($res);
+            }
+
+        }else if($passageway['passageway_method']=='yipay'){//易支付
             $Yipay= new \app\api\controller\Yipay();
             #1判断有没有入网
             $member_net=MemberNet::where(['net_member_id'=>$param['uid']])->find();
