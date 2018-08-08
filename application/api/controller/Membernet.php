@@ -235,7 +235,7 @@ use app\index\model\Member;
             $update_res=GenerationOrder::where(['order_id'=>$pay['order_id']])->update($update_order);
         }
         $no=$merch['passageway_no'];
-        $userNo=$member->$no
+        $userNo=$member->$no;
         $params=array(
           'mchNo'=>$merch->passageway_mech, //机构号 必填  由平台统一分配 16
           'userNo'=>$userNo,  //平台用户标识  必填  平台下发用户标识  32
@@ -495,7 +495,7 @@ use app\index\model\Member;
               }
 
               $no=$merch['passageway_no'];
-              $userNo=$member->$no
+              $userNo=$member->$no;
 
               $params=array(
                   'mchNo'=>$merch->passageway_mech, //机构号 必填  由平台统一分配 16
