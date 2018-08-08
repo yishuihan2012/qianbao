@@ -234,9 +234,11 @@ use app\index\model\Member;
             $update_order['order_platform_no']=$pay['order_platform_no']=get_plantform_pinyin().$member_base->member_mobile.make_rand_code();
             $update_res=GenerationOrder::where(['order_id'=>$pay['order_id']])->update($update_order);
         }
+        $no=$merch['passageway_no'];
+        $userNo=$member->$no
         $params=array(
           'mchNo'=>$merch->passageway_mech, //机构号 必填  由平台统一分配 16
-          'userNo'=>$member->merch->passageway_no,  //平台用户标识  必填  平台下发用户标识  32
+          'userNo'=>$userNo,  //平台用户标识  必填  平台下发用户标识  32
           'payCardId'=>$card_info->bindId, //支付卡签约ID 必填  支付签约ID，传入签约返回的平台签约ID  32
           'notifyUrl'=>System::getName('system_url').'/Api/Membernet/payCallback',  //异步通知地址  可填  异步回调地址，为空时不起推送  200
           'orderNo'=>$pay['order_platform_no'], //订单流水号 必填  机构订单流水号，需唯一 64
@@ -491,9 +493,13 @@ use app\index\model\Member;
                   $update_order['order_platform_no']=$pay['order_platform_no']=get_plantform_pinyin().$member_base->member_mobile.make_rand_code();
                   $update_res=GenerationOrder::where(['order_id'=>$pay['order_id']])->update($update_order);
               }
+
+              $no=$merch['passageway_no'];
+              $userNo=$member->$no
+
               $params=array(
                   'mchNo'=>$merch->passageway_mech, //机构号 必填  由平台统一分配 16
-                  'userNo'=>$member->merch->passageway_no,  //平台用户标识  必填  平台下发用户标识  32
+                  'userNo'=>$userNo,  //平台用户标识  必填  平台下发用户标识  32
                   'settleBindId'=>$card_info->bindId,  //提现卡签约ID 必填  提现结算的卡，传入签约返回的平台签约ID  32
                   'notifyUrl'=>System::getName('system_url').'/Api/Membernet/cashCallback',// 异步通知地址  可填  异步通知的目标地址
                   'orderNo'=>$pay['order_platform_no'], //提现流水号 必填  机构订单流水号，需唯一 64
