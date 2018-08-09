@@ -334,6 +334,13 @@ class Userurl extends Controller
             #绑卡
             if($need_bind){
                 $res = $Yinsheng->bind();
+                    if($res){
+                        $res = str_replace('/unspay-creditCardRepayment', 'http://180.166.114.151:28084/unspay-creditCardRepayment', $res);
+                        return $res;
+                    }else{
+                      $this->assign('data','商户入网失败，请重试。');
+                      return view("Userurl/show_error");die;
+                    }
                     return $res;
             }
 
