@@ -282,6 +282,7 @@ class Userurl extends Controller
        //判断哪个通道
         if($passageway['passageway_method']=='yinsheng'){//银生宝
             $Yinsheng = new \app\api\controller\Yinsheng($passageway);
+            $is_auto_qf = 1;
             $Yinsheng->passway = $passageway;
             $Yinsheng->members = $members;
             $passway_item = PassagewayItem::where(['item_passageway' => $param['passageway'], 'item_group' => $members->member_group_id])->find();
@@ -333,7 +334,7 @@ class Userurl extends Controller
             #绑卡
             if($need_bind){
                 $res = $Yinsheng->bind();
-                halt($res);
+                    return $res;
             }
 
         }else if($passageway['passageway_method']=='yipay'){//易支付
