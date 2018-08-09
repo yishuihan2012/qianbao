@@ -291,80 +291,84 @@ class Userurl extends Controller
             $this->assign('data', '获取数据失败，请重试。');
             return view("Userurl/show_error");
 
-       }
-       $passageway_rate=$passageway->passageway_rate;
-       $passageway_income=$passageway->passageway_income;
-       $is_auto_qf=0;//是否自动代付
-       // var_dump($passageway->toArray());die;
-       //判断是否签约
-       $MemberCreditcard=MemberCreditcard::where(['card_id'=>$param['cardId']])->find();
-       //判断哪个通道
-        if($passageway['passageway_method']=='yinsheng'){//银生宝
-            $Yinsheng = new \app\api\controller\Yinsheng($passageway);
-            $is_auto_qf = 1;
-            $Yinsheng->passway = $passageway;
-            $Yinsheng->members = $members;
-            $passway_item = PassagewayItem::where(['item_passageway' => $param['passageway'], 'item_group' => $members->member_group_id])->find();
-            $Yinsheng->rate = $passway_item['item_also'];
-            $Yinsheng->fix = $passway_item['item_qffix'];
+        }
+        $passageway_rate   = $passageway->passageway_rate;
+        $passageway_income = $passageway->passageway_income;
+        $is_auto_qf        = 0;//是否自动代付
+        // var_dump($passageway->toArray());die;
+        //判断是否签约
+        $MemberCreditcard = MemberCreditcard::where(['card_id' => $param['cardId']])->find();
+        //判断哪个通道
+        if ($passageway['passageway_method'] == 'yinsheng') {//银生宝
+            $Yinsheng             = new \app\api\controller\Yinsheng($passageway);
+            $is_auto_qf           = 1;
+            $Yinsheng->passway    = $passageway;
+            $Yinsheng->members    = $members;
+            $passway_item         = PassagewayItem::where(['item_passageway' => $param['passageway'], 'item_group' => $members->member_group_id])->find();
+            $Yinsheng->rate       = $passway_item['item_also'];
+            $Yinsheng->fix        = $passway_item['item_qffix'];
             $Yinsheng->creditcard = $MemberCreditcard;
             #1判断有没有入网
-            $member_net=MemberNet::where(['net_member_id'=>$param['uid']])->find();
-            if(!$member_net[$passageway->passageway_no]){ //没有入网
-                $res=$Yinsheng->net($members);
-                if($res && isset($res['result_code']) && $res['result_code'] == '0000'){
+            $member_net = MemberNet::where(['net_member_id' => $param['uid']])->find();
+            if (!$member_net[$passageway->passageway_no]) { //没有入网
+                $res = $Yinsheng->net($members);
+                if ($res && isset($res['result_code']) && $res['result_code'] == '0000') {
                     // halt($res);
-                    if($res['aduitCode'] == '1018'){
-                        $merinfo=$res['memberId'].','.$res['merchantNo'];
+                    if ($res['aduitCode'] == '1018') {
+                        $merinfo = $res['memberId'] . ',' . $res['merchantNo'];
                         #存入网id
-                        $member_net=MemberNet::where(['net_member_id'=>$param['uid']])->update([$passageway->passageway_no=>$merinfo]);
-                    }else{
-                      $this->assign('data','商户入网失败，原因:'.$res['aduitMsg']);
-                      return view("Userurl/show_error");die;
+                        $member_net = MemberNet::where(['net_member_id' => $param['uid']])->update([$passageway->passageway_no => $merinfo]);
+                    } else {
+                        $this->assign('data', '商户入网失败，原因:' . $res['aduitMsg']);
+                        return view("Userurl/show_error");
+                        die;
                     }
-                }else{
-                     $this->assign('data','商户入网失败，请重试。');
-                      return view("Userurl/show_error");die;
+                } else {
+                    $this->assign('data', '商户入网失败，请重试。');
+                    return view("Userurl/show_error");
+                    die;
                 }
-            }else{
-                $merinfo=$member_net[$passageway->passageway_no];
+            } else {
+                $merinfo = $member_net[$passageway->passageway_no];
             }
             #2设置费率
-            $merinfo=explode(',', $merinfo);
-            $Yinsheng->memberId=$merinfo[0];
-            $Yinsheng->merchantNo=$merinfo[1];
-            $res=$Yinsheng->rate();
+            $merinfo              = explode(',', $merinfo);
+            $Yinsheng->memberId   = $merinfo[0];
+            $Yinsheng->merchantNo = $merinfo[1];
+            $res                  = $Yinsheng->rate();
             // halt($res);
-            if($res['result_code']!='0000' || $res['aduitCode'] != '1018'){
-                $this->assign('data',$res['msg']);
-                return view("Userurl/show_error");die;
+            if ($res['result_code'] != '0000' || $res['aduitCode'] != '1018') {
+                $this->assign('data', $res['msg']);
+                return view("Userurl/show_error");
+                die;
             }
             #3判断有没有签约
             $is_bind = $Yinsheng->card_bind_query();
             // halt($is_bind);
             $need_bind = true;
-            if(isset($is_bind['infoList'])){
+            if (isset($is_bind['infoList'])) {
                 foreach ($is_bind['infoList'] as $k => $v) {
-                    if($v['cardNo'] == substr($MemberCreditcard->card_bankno,-4)){
+                    if ($v['cardNo'] == substr($MemberCreditcard->card_bankno, -4)) {
                         $need_bind = false;
                     }
                 }
             }
             #绑卡
-            if($need_bind){
+            if ($need_bind) {
                 $res = $Yinsheng->bind();
-                    if($res){
-                        $res = str_replace('/unspay-creditCardRepayment', 'http://180.166.114.151:28084/unspay-creditCardRepayment', $res);
-                        return $res;
-                    }else{
-                      $this->assign('data','商户入网失败，请重试。');
-                      return view("Userurl/show_error");die;
-                    }
+                if ($res) {
+                    $res = str_replace('/unspay-creditCardRepayment', 'http://180.166.114.151:28084/unspay-creditCardRepayment', $res);
                     return $res;
+                } else {
+                    $this->assign('data', '商户入网失败，请重试。');
+                    return view("Userurl/show_error");
+                    die;
+                }
+                return $res;
             }
 
-        }else if($passageway['passageway_method']=='yipay'){//易支付
-            $Yipay= new \app\api\controller\Yipay();
+        } else if ($passageway['passageway_method'] == 'yipay') {//易支付
+            $Yipay = new \app\api\controller\Yipay();
             #1判断有没有入网
             $member_net = MemberNet::where(['net_member_id' => $param['uid']])->find();
             if (!$member_net[$passageway->passageway_no]) { //没有入网
@@ -2091,9 +2095,11 @@ class Userurl extends Controller
         //获取入网信息
         $memberNet = MemberNet::where(['net_member_id' => $memberId])->find();
         //获取通道信息
-        $passageway = Passageway::get($passagewayId);
-        $tonglian   = new \app\api\payment\Tonglian($passagewayId, $memberId);
-        $bindcard   = $tonglian->bindcard($memberNet[$passageway->passageway_no], $cardId);
+        $passageway        = Passageway::get($passagewayId);
+        $memberNet_value   = $memberNet[$passageway->passageway_no];
+        $memberNet_explode = explode(',', $memberNet_value);
+        $tonglian          = new \app\api\payment\Tonglian($passagewayId, $memberId);
+        $bindcard          = $tonglian->bindcard($memberNet_explode[0], $cardId);
         return $bindcard;
     }
 
@@ -2108,9 +2114,11 @@ class Userurl extends Controller
         //获取入网信息
         $memberNet = MemberNet::where(['net_member_id' => $memberId])->find();
         //获取通道信息
-        $passageway = Passageway::get($passagewayId);
-        $tonglian   = new \app\api\payment\Tonglian($passagewayId, $memberId);
-        $bindsms    = $tonglian->resendbindsms($memberNet[$passageway->passageway_no], $cardId, $thpinfo);
+        $passageway        = Passageway::get($passagewayId);
+        $memberNet_value   = $memberNet[$passageway->passageway_no];
+        $memberNet_explode = explode(',', $memberNet_value);
+        $tonglian          = new \app\api\payment\Tonglian($passagewayId, $memberId);
+        $bindsms           = $tonglian->resendbindsms($memberNet_explode[0], $cardId, $thpinfo);
         return $bindsms;
     }
 
@@ -2126,9 +2134,18 @@ class Userurl extends Controller
         //获取入网信息
         $memberNet = MemberNet::where(['net_member_id' => $memberId])->find();
         //获取通道信息
-        $passageway  = Passageway::get($passagewayId);
-        $tonglian    = new \app\api\payment\Tonglian($passagewayId, $memberId);
-        $confirmcard = $tonglian->bindcardconfirm($memberNet[$passageway->passageway_no], $cardId, $smscode, $thpinfo);
+        $passageway        = Passageway::get($passagewayId);
+        $memberNet_value   = $memberNet[$passageway->passageway_no];
+        $memberNet_explode = explode(',', $memberNet_value);
+        $tonglian          = new \app\api\payment\Tonglian($passagewayId, $memberId);
+        $confirmcard       = $tonglian->bindcardconfirm($memberNet_explode[0], $cardId, $smscode, $thpinfo);
+        if ($confirmcard['trxstatus'] == 0000) {
+            $MemberNet_value = $memberNet[$passageway->passageway_no];
+            $MemberNet_value = $MemberNet_value . ',' . $confirmcard['agreeid'];
+            MemberNet::where(['net_member_id' => $memberId])->update([$passageway->passageway_no => $MemberNet_value]);
+            $memberCreditPas = new MemberCreditPas(['member_credit_pas_creditid' => $cardId, 'member_credit_pas_pasid' => $passagewayId, 'member_credit_pas_status' => 1]);
+            $memberCreditPas->save();
+        }
         return $confirmcard;
     }
 
@@ -2174,9 +2191,11 @@ class Userurl extends Controller
         //获取入网信息
         $memberNet = MemberNet::where(['net_member_id' => $memberId])->find();
         //获取通道信息
-        $passageway = Passageway::get($passagewayId);
-        $tonglian   = new \app\api\payment\Tonglian($passagewayId, $memberId);
-        $applypay   = $tonglian->applypay($memberNet[$passageway->passageway_no], $tradeNo, $agreeId, $price, $trxcode);
+        $passageway        = Passageway::get($passagewayId);
+        $memberNet_value   = $memberNet[$passageway->passageway_no];
+        $memberNet_explode = explode(',', $memberNet_value);
+        $tonglian          = new \app\api\payment\Tonglian($passagewayId, $memberId);
+        $applypay          = $tonglian->applypay($memberNet_explode[0], $tradeNo, $agreeId, $price, $trxcode);
         return $applypay;
     }
 
@@ -2192,9 +2211,11 @@ class Userurl extends Controller
         //获取入网信息
         $memberNet = MemberNet::where(['net_member_id' => $memberId])->find();
         //获取通道信息
-        $passageway = Passageway::get($passagewayId);
-        $tonglian   = new \app\api\payment\Tonglian($passagewayId, $memberId);
-        $paysms     = $tonglian->paysms($memberNet[$passageway->passageway_no], $trxid, $agreeId, $thpinfo);
+        $passageway        = Passageway::get($passagewayId);
+        $memberNet_value   = $memberNet[$passageway->passageway_no];
+        $memberNet_explode = explode(',', $memberNet_value);
+        $tonglian          = new \app\api\payment\Tonglian($passagewayId, $memberId);
+        $paysms            = $tonglian->paysms($memberNet_explode[0], $trxid, $agreeId, $thpinfo);
         return $paysms;
     }
 
@@ -2211,9 +2232,11 @@ class Userurl extends Controller
         //获取入网信息
         $memberNet = MemberNet::where(['net_member_id' => $memberId])->find();
         //获取通道信息
-        $passageway = Passageway::get($passagewayId);
-        $tonglian   = new \app\api\payment\Tonglian($passagewayId, $memberId);
-        $confirmpay = $tonglian->confirmpay($memberNet[$passageway->passageway_no], $trxid, $agreeId, $smscode, $thpinfo);
+        $passageway        = Passageway::get($passagewayId);
+        $memberNet_value   = $memberNet[$passageway->passageway_no];
+        $memberNet_explode = explode(',', $memberNet_value);
+        $tonglian          = new \app\api\payment\Tonglian($passagewayId, $memberId);
+        $confirmpay        = $tonglian->confirmpay($memberNet_explode[0], $trxid, $agreeId, $smscode, $thpinfo);
         return $confirmpay;
     }
 
@@ -2230,9 +2253,11 @@ class Userurl extends Controller
         //获取入网信息
         $memberNet = MemberNet::where(['net_member_id' => $memberId])->find();
         //获取通道信息
-        $passageway = Passageway::get($passagewayId);
-        $tonglian   = new \app\api\payment\Tonglian($passagewayId, $memberId);
-        $query      = $tonglian->query($memberNet[$passageway->passageway_no], $trxid, $orderid, $date);
+        $passageway        = Passageway::get($passagewayId);
+        $memberNet_value   = $memberNet[$passageway->passageway_no];
+        $memberNet_explode = explode(',', $memberNet_value);
+        $tonglian          = new \app\api\payment\Tonglian($passagewayId, $memberId);
+        $query             = $tonglian->query($memberNet_explode[0], $trxid, $orderid, $date);
         return $query;
     }
 
@@ -2244,10 +2269,12 @@ class Userurl extends Controller
         //获取入网信息
         $memberNet = MemberNet::where(['net_member_id' => $memberId])->find();
         //获取通道信息
-        $passageway = Passageway::get($passagewayId);
-        $tonglian   = new \app\api\payment\Tonglian($passagewayId, $memberId);
-        $query      = $tonglian->query($memberNet[$passageway->passageway_no], $trxid, $orderid, $date);
-        $this->assign('query',$query);
+        $passageway        = Passageway::get($passagewayId);
+        $memberNet_value   = $memberNet[$passageway->passageway_no];
+        $memberNet_explode = explode(',', $memberNet_value);
+        $tonglian          = new \app\api\payment\Tonglian($passagewayId, $memberId);
+        $query             = $tonglian->query($memberNet_explode[0], $trxid, $orderid, $date);
+        $this->assign('query', $query);
         return view("Userurl/H5tonglian");
     }
 

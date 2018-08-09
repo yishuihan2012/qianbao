@@ -1363,35 +1363,26 @@ class CashOut
             }
             //用户入网信息
             $memberNet = MemberNet::where(['net_member_id' => $this->member_infos->member_id])->find();
+            $memberNet_value = $memberNet[$this->passway_info->passageway_no];
+            $memberNet_explode = explode(',',$memberNet_value);
             //最后一笔刷卡费率
             $cashOrderRate = CashOrder::where(['order_member' => $this->member_infos->member_id, 'order_passway' => $this->passway_info->passageway_id])->order('order_id desc')->find();
             //查看费率是否修改
             if ($cashOrderRate['user_rate'] != $this->also->item_rate || $cashOrderRate['user_fix'] != $this->also->item_charges / 100) {
                 //修改费率
-                $updatesettinfo = $tonglian->updatesettinfo($memberNet[$this->passway_info->passageway_no]);
-                if ($updatesettinfo['retcode'] != 'SUCCESS'){
+                $updatesettinfo = $tonglian->updatesettinfo($memberNet_explode[0]);
+                if ($updatesettinfo['retcode'] != 'SUCCESS') {
                     return ['code' => 463, 'msg' => $updatesettinfo['retmsg']];
                 }
             }
             //查看是否绑定信用卡
             $memberCreditPas = MemberCreditPas::where(['member_credit_pas_creditid' => $this->card_info->card_id, 'member_credit_pas_pasid' => $this->passway_info->passageway_id])->find();
             if (!$memberCreditPas || $memberCreditPas['member_credit_pas_status'] != 1) {
-                $url = request()->domain() . "/api/Userurl/signed_tonglian/memberId/" . $this->member_infos->member_id . "/passagewayId/" . $this->passway_info->passageway_id . "/cardId/" . $this->card_info->card_id . "/price/" . $price. "/tradeNo/" . $tradeNo;
-                var_dump($url);exit;
+                $url = request()->domain() . "/api/Userurl/signed_tonglian/memberId/" . $this->member_infos->member_id . "/passagewayId/" . $this->passway_info->passageway_id . "/cardId/" . $this->card_info->card_id . "/price/" . $price . "/tradeNo/" . $tradeNo;
                 return ['code' => 200, 'msg' => '订单获取成功~', 'data' => ['url' => $url, 'type' => 1,]];
-            }
-
-            $member_net = MemberNet::where(['net_member_id' => $this->member_infos->member_id])->find();
-            #如果该通道需要用户入网 去检查入网信息 如果用户还没有入网 则先进行入网
-            if (!$member_net || $member_net[$this->passway_info->passageway_no] == "") {
-                $method            = $this->passway_info->passageway_method;
-                $membernetObject   = new Membernets($this->member_infos->member_id, $this->passway_info->passageway_id);
-                $member_net_result = $membernetObject->$method();
-                echo "<pre>";
-                var_dump($member_net_result);
-                exit;
-                if ($member_net_result['respCode'] != "00" || $member_net_result['merchno'] == "")
-                    return ['code' => 462, 'msg' => $member_net_result['message']];
+            } else {
+                $url = request()->domain() . "/api/Userurl/tonglianOrderPay/memberId/" . $this->member_infos->member_id . "/cardId/" . $this->card_info->card_id . "/price/" . $price . "/tradeNo/{{$tradeNo}}/passagewayId/" . $this->passway_info->passageway_id . "/agreeid/" .$memberNet_explode[1];
+                return ['code' => 200, 'msg' => '订单获取成功~', 'data' => ['url' => $url, 'type' => 1,]];
             }
         }
 
