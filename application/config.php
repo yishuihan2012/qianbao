@@ -388,24 +388,24 @@ return [
     'mail' => [ //邮件
         'no-reply' => [
             'showname' => '钱包',
-            'host' => 'smtp.qq.com',
-            'username' => '1374687780@qq.com',
-            'password' => 'smiaxcmxvgljfiae',
+            'host' => 'smtp.163.com',
+            'username' => 'xijiakeji@163.com',
+            'password' => 'xjjtxjkj123',
             'secure' => 'ssl'
         ],
         'system-error' => [
             'showname' => '网站异常',
-            'host' => 'smtp.qq.com',
-            'username' => '1374687780@qq.com',
-            'password' => 'smiaxcmxvgljfiae',
+            'host' => 'smtp.163.com',
+            'username' => 'xijiakeji@163.com',
+            'password' => 'xjjtxjkj123',
             'secure' => 'ssl'
         ],
         'email' => [    // 异常发送对象
-            // '1015571416@qq.com',
-            '1374687780@qq.com',
+            '1015571416@qq.com',
+            // '1374687780@qq.com',
             // 'lwtlove1314@qq.com',
             '794633291@qq.com',//star
-            '3115317085@qq.com',//yang
+            // '3115317085@qq.com',//yang
         ]
     ],
 ];

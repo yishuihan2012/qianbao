@@ -219,7 +219,7 @@ use app\index\model\Member;
         #5:获取用户基本信息
         $member_base=Member::where(['member_id'=>$pay['order_member']])->find(); 
         #6获取渠道提供的费率，如果不一致，重新报备费率
-        $passway_info=$this->accountQuery($pay['order_member']);
+        $passway_info=$this->accountQuery($pay['order_member'],$pay['order_passageway']);
         if(isset($passway_info['feeRatio']) && isset($passway_info['feeAmt'])){
             if($passway_info['feeRatio']!=$also || $passway_info['feeAmt']!=$daikou){//不一致重新报备,修改商户信息
                   $Membernetsedits=new \app\api\controller\Membernetsedit($pay['order_member'],$pay['order_passageway'],'M03','',$member_base['member_mobile']);
@@ -234,9 +234,11 @@ use app\index\model\Member;
             $update_order['order_platform_no']=$pay['order_platform_no']=get_plantform_pinyin().$member_base->member_mobile.make_rand_code();
             $update_res=GenerationOrder::where(['order_id'=>$pay['order_id']])->update($update_order);
         }
+        $no=$merch['passageway_no'];
+        $userNo=$member->$no;
         $params=array(
           'mchNo'=>$merch->passageway_mech, //机构号 必填  由平台统一分配 16
-          'userNo'=>$member->LkYQJ,  //平台用户标识  必填  平台下发用户标识  32
+          'userNo'=>$userNo,  //平台用户标识  必填  平台下发用户标识  32
           'payCardId'=>$card_info->bindId, //支付卡签约ID 必填  支付签约ID，传入签约返回的平台签约ID  32
           'notifyUrl'=>System::getName('system_url').'/Api/Membernet/payCallback',  //异步通知地址  可填  异步回调地址，为空时不起推送  200
           'orderNo'=>$pay['order_platform_no'], //订单流水号 必填  机构订单流水号，需唯一 64
@@ -419,7 +421,7 @@ use app\index\model\Member;
         // $member_base=Member::where(['member_id'=>$pay['order_member']])->find();
         $params=array(
           'mchNo'=>$merch->passageway_mech, //机构号 必填  由平台统一分配
-          'userNo'=>$MemberNets->LkYQJ,  //平台用户标识  必填  平台下发用户标识
+          'userNo'=>$MemberNets->merch->passageway_no,  //平台用户标识  必填  平台下发用户标识
           'orderNo'=>$generation_order->order_platform_no,  //订单流水号 必填  机构订单流水号，需唯一
           'tradeNo'=>$generation_order->back_tradeNo,  //平台流水号 必填  绑卡支付返回的流水号
           // 'tradeDate'=>'', 
@@ -473,7 +475,7 @@ use app\index\model\Member;
               #5:获取用户基本信息
               $member_base=Member::where(['member_id'=>$pay['order_member']])->find(); 
               #6获取渠道提供的费率，如果不一致，重新报备费率
-              $passway_info=$this->accountQuery($pay['order_member']);
+              $passway_info=$this->accountQuery($pay['order_member'],$pay['order_passageway']);
               if(isset($passway_info['drawFeeRatio']) && isset($passway_info['drawFeeAmt'])){
                   if($passway_info['drawFeeRatio']!=$also || $passway_info['drawFeeAmt']!=$daikou){//不一致重新报备,修改商户信息
                         $Membernetsedits=new \app\api\controller\Membernetsedit($pay['order_member'],$pay['order_passageway'],'M03','',$member_base['member_mobile']);
@@ -491,9 +493,13 @@ use app\index\model\Member;
                   $update_order['order_platform_no']=$pay['order_platform_no']=get_plantform_pinyin().$member_base->member_mobile.make_rand_code();
                   $update_res=GenerationOrder::where(['order_id'=>$pay['order_id']])->update($update_order);
               }
+
+              $no=$merch['passageway_no'];
+              $userNo=$member->$no;
+
               $params=array(
                   'mchNo'=>$merch->passageway_mech, //机构号 必填  由平台统一分配 16
-                  'userNo'=>$member->LkYQJ,  //平台用户标识  必填  平台下发用户标识  32
+                  'userNo'=>$userNo,  //平台用户标识  必填  平台下发用户标识  32
                   'settleBindId'=>$card_info->bindId,  //提现卡签约ID 必填  提现结算的卡，传入签约返回的平台签约ID  32
                   'notifyUrl'=>System::getName('system_url').'/Api/Membernet/cashCallback',// 异步通知地址  可填  异步通知的目标地址
                   'orderNo'=>$pay['order_platform_no'], //提现流水号 必填  机构订单流水号，需唯一 64
@@ -588,15 +594,15 @@ use app\index\model\Member;
       }
       //3余额查询
       //http://pay.mishua.cn/zhonlinepay/service/rest/creditTrans/accountQuery
-      public function accountQuery($uid,$is_print=""){
-        $passageway=Passageway::where(['passageway_id'=>8])->find();
+      public function accountQuery($uid,$passageway_id,$is_print=""){
+        $passageway=Passageway::where(['passageway_id'=>$passageway_id])->find();
         #4获取用户信息
         $member=MemberNets::where(['net_member_id'=>$uid])->find();
         // print_r($member);die;
         $orderTime=date('YmdHis',time()+60);
         $params=array(
           'mchNo'=>$passageway->passageway_mech, //机构号 必填  由平台统一分配 16
-          'userNo'=>$member->LkYQJ,  //平台用户标识  必填  平台下发用户标识  32
+          'userNo'=>$member->{$passageway->passageway_no},  //平台用户标识  必填  平台下发用户标识  32
         );
         // var_dump($params);die;
         $income=repay_request($params,$passageway->passageway_mech,'http://pay.mishua.cn/zhonlinepay/service/rest/creditTrans/accountQuery',$passageway->iv,$passageway->secretkey,$passageway->signkey);
@@ -694,7 +700,7 @@ use app\index\model\Member;
                 #执行中的，将本次计划还款卡中余额返回信用卡
                 $money=db('reimbur')->where('reimbur_generation',$generation_id)->value('reimbur_left');
                 if($money>0){
-                  $userinfo=$this->accountQuery($generation['generation_member']);
+                  $userinfo=$this->accountQuery($generation['generation_member'],$generation['generation_passway_id']);
                   // print_r($userinfo);die;
                   $realMoney=$userinfo['lastAmt']+$userinfo['availableAmt']-$userinfo['usedAmt'];
                   //判断本次计划还款总金额 是否不大于 商户平台中该用户的余额
