@@ -160,7 +160,7 @@
             $return['msg']="绑卡成功，请关闭当前页面重新提交";
 
         }else{
-            $return['msg']=$params['respMsg'];
+            $return['msg']=isset($params['respMsg'])?$params['respMsg']:'绑定失败';
         }
         return redirect('Userurl/show_error', ['data' =>$return['msg']]);
     }

@@ -124,7 +124,7 @@
            if(isset($card_validate['data']['bankCardBin']) && $card_validate['data']['bankCardBin']['cardTy']!='C')  return ['code'=>351, 'msg'=>'认证失败:只能绑定信用卡'];
         }else{
            $card_validate=BankCert_Java($this->param['creditCardNo'],$this->idcard,$this->name,$this->param['phone']);
-          if(isset($card_validate['data']['identType']) && $card_validate['data']['identType']=='储蓄卡')
+          if(isset($card_validate['data']['identType']) && $card_validate['data']['identType']!='信用卡')
             return ['code'=>351,'msg'=>'认证失败:只能验证信用卡'];
           if($card_validate['code']!=200)
               return ['code'=>351,'msg'=>$card_validate['info']];
