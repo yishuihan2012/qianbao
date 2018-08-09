@@ -129,11 +129,21 @@ class Plan extends Common{
             if($passway['passageway_true_name']=='Misdh'){
                 $class = new \app\api\controller\Membernet();
                 $res = $class->accountQuery($uid,$passway['passageway_id']);
-                $res = ($res['availableAmt']-$res['usedAmt']+$res['refundAmt'])/100;
+                if(isset($res['availableAmt']) && isset($res['usedAmt']) && isset($res['refundAmt'])){
+                    $res = ($res['availableAmt']-$res['usedAmt']+$res['refundAmt'])/100;
+                }else{
+                    $res = '查询失败';
+                }
+                
             }elseif($passway['passageway_true_name']=='Yipayld'){
                 $class = new \app\api\controller\Yipay();
                 $res = $class->merch_remain($uid);
-                $res = $res['ableBalanceT0']/100;
+                if(isset($res['ableBalanceT0'])){
+                    $res = $res['ableBalanceT0']/100;
+                }else{
+                    $res = '查询失败';
+                }
+                
             }
             return $res;
         }
