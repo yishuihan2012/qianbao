@@ -35,7 +35,7 @@ class Yinsheng extends \app\api\payment\YinshengApi
     public $fix;
     public function __construct()
     {
-        config('default_return_type','json');
+        // config('default_return_type','json');
         $this->notify = 'http://' . $_SERVER['HTTP_HOST'] . '/api/yinsheng/';
     }
     /**
