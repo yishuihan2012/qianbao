@@ -156,7 +156,7 @@
         if(!is_array($params)){
             $params=json_decode($params,true);
         }
-        if($params['respCode']=='00'){
+        if(isset($params['respCode']) &&$params['respCode']=='00'){
             $return['msg']="绑卡成功，请关闭当前页面重新提交";
 
         }else{
