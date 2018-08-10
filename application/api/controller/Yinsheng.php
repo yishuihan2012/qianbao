@@ -128,6 +128,7 @@ class Yinsheng extends \app\api\payment\YinshengApi
      */
     public function pay($order, $passageway_mech)
     {
+        trace(111);
         $card_info=model\MemberCreditcard::where(['card_bankno'=>$order['order_card']])->find();
         $creditpass = model\MemberCreditPas::get(['member_credit_pas_creditid' => $card_info['card_id'], 'member_credit_pas_pasid' => $order['order_passageway']]);
         $arr        = [
@@ -150,6 +151,8 @@ class Yinsheng extends \app\api\payment\YinshengApi
             'delegatePayResponseUrl' => $this->notify . 'qf_notify',
         ];
         $res = $this->form('quickPayInterface/pay', $arr);
+        trace('yinsheng_pay_res');
+        trace($res);
     }
     /**
      * 消费 异步通知
@@ -174,6 +177,8 @@ class Yinsheng extends \app\api\payment\YinshengApi
             $order->order_status = -1;
         }
         $order->save();
+        trace('yinsheng_pay_notify');
+        trace($param);
         return 'ok';
     }
     /**
