@@ -77,13 +77,20 @@
      * 商户信息变更 
      * @return [type] [description]
      */
-    public function mech_update(){
+    public function mech_update($userCode,$card_number,$card_phone){
         $data=array(
-            'userCode'=>'ST0001000470755',// 商户编号               
-            'settleBankNo'=>"",// 绑定结算卡号                 
-            'settleBankPhone'=>"",//绑定结算卡手机           
-            'settleBankCnaps'=>"",// 绑定结算卡联行号
+            'userCode'=>$userCode,// 商户编号               
+            'settleBankNo'=>$card_number,// 绑定结算卡号                 
+            'settleBankPhone'=>$card_phone,//绑定结算卡手机           
+            'settleBankCnaps'=>"123",// 绑定结算卡联行号
         );
+        $card_union=$this->get_card_union($card_number);
+        // print_r($card_union);die;
+        if($card_union['code']==200){
+            $data['settleBankCnaps']=$card_union['bankCode'];
+        }else{
+            return['code'=>-1,'msg'=>"获取联行号失败"];
+        }
         $res=$this->request('SdkUserStoreModify',$data);
         return $res;
     }
@@ -562,5 +569,50 @@
             $return['msg']=$back['respMsg'];
         }
         return $return;
+    }
+    public function bind_card_api(){
+        $data=array(
+            'linkId'=>$passageway->passageway_id.','.$MemberCreditcard->card_id.','.generate_password(10),// 订单流水号    三方平台唯一 
+            'payType'=>1,                                                                
+            'bankNo'=>$MemberCreditcard->card_bankno,//银行卡号                                                                           
+            'bankPhone'=>$MemberCreditcard->card_phone,//绑定手机号码String(11)                                                                                        
+            'frontUrl'=>System::getName('system_url')."/api/Yipay/card_bind_fronturl",//页面通知地址                                                                            
+            'notifyUrl'=>System::getName('system_url')."/api/Yipay/card_bind_notifyUrl",//异步通知地址  String                    
+        );
+        // Cache::set($data['linkId'],$data,600);
+        $res=$this->request('SdkCardToken',$data,$mech_id,$mech_secret);
+        if($res['code']=='0000'){
+            $res['code']=200;
+        }
+        return $res;
+    }
+    /**
+     * 绑定还款卡
+     */
+    public function bind_qf(){
+        $passageway=Db::table('wt_passageway')->where(['passageway_true_name'=>'Yipayld'])->find();
+
+        $plans=Db::table('wt_generation_order')->where(['order_passageway'=>$passageway['passageway_id'],'order_type'=>2,'order_status'=>'-1','back_statusDesc'=>"无此交易"])->select();
+        // var_dump($plans);die;
+        foreach ($plans as $k => $plan) {
+            $card_info=Db::table('wt_member_creditcard')->where(['card_bankno'=>$plan['order_card']])->find();
+
+            $where["card_bankno"] = array('NEQ',$plan['order_card']); //判断字段不为空
+            $other_card=Db::table('wt_member_creditcard')->where($where)->find();
+            if($other_card){
+                $member_net=Db::table('wt_member_net')->where(['net_member_id'=>$plan['order_member']])->find();
+                if($member_net){
+                    $net=explode(',', $member_net[$passageway['passageway_no']]);
+                    $this->bind_new_card($other_card);
+
+                    // var_dump($net);die;
+                    // $update_card=$this->mech_update($net['0'],$plan['order_card'],$card_info['card_phone']);
+                    // var_dump($update_card);die;
+                    // $this->qfpay($plan,$member_net[$passageway['passageway_no']]);
+                }
+            }
+            
+        }
+
     }
  }

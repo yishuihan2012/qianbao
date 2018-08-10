@@ -480,7 +480,6 @@ use app\index\model\Member;
               if(isset($passway_info['drawFeeRatio']) && isset($passway_info['drawFeeAmt'])){
                   if($passway_info['drawFeeRatio']!=$also || $passway_info['drawFeeAmt']!=$daikou){//不一致重新报备,修改商户信息
                         $Membernetsedits=new \app\api\controller\Membernetsedit($pay['order_member'],$pay['order_passageway'],'M03','',$member_base['member_mobile']);
-                        // echo $order_rate;
                         if($order_rate==1){
                           $update=$Membernetsedits->mishuadaihuan('','',$also,$daikou);
                         }else{
