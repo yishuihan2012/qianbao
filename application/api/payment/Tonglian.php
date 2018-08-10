@@ -105,7 +105,7 @@ class Tonglian
             'acctname'     => $this->membercard->card_name,//账户名
             'accttp'       => '00',//卡折类型:00-借记卡;01-存折;
             'expanduser'   => $this->membercard->card_name,//拓展人
-            'prodlist'     => "[{'trxcode':'QUICKPAY_OF_HP','feerate':" . $memberAlso->item_rate . "},{'trxcode':'QUICKPAY_OF_NP','feerate':" . $memberAlso->item_rate . "},{'trxcode':'QUICKPAY_OL_HP','feerate':" . $memberAlso->item_rate . "}]",//支付产品信息列表
+            'prodlist'     => "[{'trxcode':'QUICKPAY_OF_HP','feerate':" . $memberAlso->item_rate . "},{'trxcode':'QUICKPAY_OF_NP','feerate':" . $memberAlso->item_rate . "},{'trxcode':'QUICKPAY_OL_HP','feerate':" . $memberAlso->item_rate . "},{'trxcode':'QUICKPAY_NOSMS','feerate':" . $memberAlso->item_rate . "}]",//支付产品信息列表
             'settfee'      => number_format($memberAlso->item_charges / 100, 2),//提现手续费:2块/笔,该字 段填2.00，为空时，取所属代理商费率
         );
         $data         = array_merge($dataP, $dataS);
@@ -144,7 +144,7 @@ class Tonglian
             'cusid'    => $cusid,//商户号
             'acctid'   => $this->membercard->card_bankno,//账户号
             'accttp'   => '00',//卡折类型:00-借记卡;01-存折;
-            'prodlist' => "[{'trxcode':'QUICKPAY_OF_HP','feerate':" . $memberAlso->item_rate . "},{'trxcode':'QUICKPAY_OF_NP','feerate':" . $memberAlso->item_rate . "},{'trxcode':'QUICKPAY_OL_HP','feerate':" . $memberAlso->item_rate . "}]",//支付产品信息列表
+            'prodlist' => "[{'trxcode':'QUICKPAY_OF_HP','feerate':" . $memberAlso->item_rate . "},{'trxcode':'QUICKPAY_OF_NP','feerate':" . $memberAlso->item_rate . "},{'trxcode':'QUICKPAY_OL_HP','feerate':" . $memberAlso->item_rate . "},{'trxcode':'QUICKPAY_NOSMS','feerate':" . $memberAlso->item_rate . "}]",//支付产品信息列表
             'settfee'  => number_format($memberAlso->item_charges / 100, 2),//提现手续费:2块/笔,该字 段填2.00，为空时，取所属代理商费率
         );
         $data         = array_merge($dataP, $dataS);
@@ -346,6 +346,44 @@ class Tonglian
             'trxid'   => $trxid,//平台交易流水号
             'orderid' => $orderid,//商户订单号
             'date'    => $date,//交易日期
+        );
+        $data         = array_merge($dataP, $dataS);
+        $data['sign'] = $this->getSign($data);
+        $result       = $this->getData($url, $data);
+        return $result;
+    }
+
+    //快捷支付提现
+    public function withdraw($cusid, $orderid)
+    {
+        $url   = 'acct/withdraw';
+        $dataP = $this->paramsPublic();
+        $dataS = array(
+            'cusid'      => $cusid,//商户号
+            'orderid'    => $orderid,//商户订单号
+            'isall'      => 1,//交易日期
+            'trxreserve' => '订单' . $orderid . '的提现申请',//订单内容 订单的展示标题
+            'notifyurl'  => System::getName('system_url') . '/index/Cashoutcallback/tongliancallback'
+    );
+        $data         = array_merge($dataP, $dataS);
+        $data['sign'] = $this->getSign($data);
+        $result       = $this->getData($url, $data);
+        return $result;
+    }
+
+    //代还
+    public function quickpass($cusid, $orderid, $agreeid, $amount)
+    {
+        $url          = 'qpay/quickpass';
+        $dataP        = $this->paramsPublic();
+        $dataS        = array(
+            'cusid'     => $cusid,//商户号
+            'orderid'   => $orderid,//商户订单号
+            'agreeid'   => $agreeid,//协议编号
+            'amount'    => $amount,//订单金额
+            'currency'  => 'CNY',
+            'subject'   => '订单' . $orderid . '的支付申请',//订单内容 订单的展示标题
+            'notifyurl' => ''
         );
         $data         = array_merge($dataP, $dataS);
         $data['sign'] = $this->getSign($data);

@@ -603,8 +603,8 @@ class Cashoutcallback
         if ($params['trxstatus'] == '0000') {//成功
             $order->order_state = 2;
             $returnData         = 'success';
-        }else{
-            $returnData         = 'FAIL';
+        } else {
+            $returnData = 'FAIL';
         }
 
         Db::startTrans();
@@ -638,6 +638,40 @@ class Cashoutcallback
             Db::rollback();
             $returnData = 'FAIL';
         }
+        echo $returnData;
+        die;
+    }
+
+    /**
+     * 通联收银宝 提现回调
+     */
+    public function tongliancallback()
+    {
+        $params = Request::instance()->param();
+        file_put_contents('tonglian.txt', json_encode($params));
+
+        $order = CashOrder::where(['order_no' => $params['outtrxid']])->find();  #查询到当前订单
+        if (!$order) {
+            file_put_contents('tonglian_error.txt', 'get order fail！');
+            echo 'FAIL';
+            die;
+        }
+        $member = Member::get($order->order_member);
+
+        $passway = Passageway::get(['passageway_id' => $order->order_passway]);
+
+        #通道费率
+        $passwayitem = PassagewayItem::get(['item_group' => $member->member_group_id, 'item_passageway' => $passway->passageway_id]);
+
+        $order->order_thead_no = $params['trxid'];
+        if ($params['trxstatus'] == '0000') {//成功
+            $order->order_state = 2;
+            $returnData         = 'success';
+        } else {
+            $order->order_state = -1;
+            $returnData = 'FAIL';
+        }
+        $res = $order->save();
         echo $returnData;
         die;
     }
