@@ -109,7 +109,6 @@
     function mishuadaihuan($rate='',$fix='',$qf_rate='',$qf_fix='')
     {
       $memberAlso=PassagewayItem::where(['item_group'=>$this->member->member_group_id,'item_passageway'=>$this->passway->passageway_id])->find();
-      // $Passageway=Passageway::where(['passageway_id'=>$this->passway->passageway_id])->find();
       $rate=$rate?$rate:$memberAlso['item_also']*10;
       $fix=$fix?$fix:$memberAlso['item_charges'];
       $qf_rate=$qf_rate?$qf_rate:$memberAlso['item_qfalso']*10;
@@ -117,7 +116,7 @@
       $params=array(
         'versionNo'=>'1',//接口版本号 必填  值固定为1
         'mchNo'=>$this->passway->passageway_mech, //mchNo 商户号 必填  由米刷统一分配
-        'userNo'=>$this->membernet->LkYQJ, //用户标识,下级机构对用户身份唯一标识。
+        'userNo'=>$this->membernet->{$this->passway->passageway_no}, //用户标识,下级机构对用户身份唯一标识。
         'userName'=>$this->membercard->card_name,//姓名
         'userCertId'=>$this->membercard->card_idcard,//身份证号  必填  注册后不可修改
         'userPhone'=>$this->phone,
@@ -126,8 +125,10 @@
         'drawFeeRatio'=>$qf_rate,//提现费率
         'drawFeeAmt'=>$qf_fix,//单笔提现易手续费
       );
+      // echo json_encode($params);die;
       $url='http://pay.mishua.cn/zhonlinepay/service/rest/creditTrans/updateMerchant';
       $income=repay_request($params, $this->passway->passageway_mech, $url, $this->passway->iv, $this->passway->secretkey, $this->passway->signkey);
+      // var_dump($income);die;
       if($income['code']==200)
         return true;
       return $income['message'];
