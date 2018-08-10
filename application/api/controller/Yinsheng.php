@@ -128,19 +128,21 @@ class Yinsheng extends \app\api\payment\YinshengApi
      */
     public function pay($order, $passageway_mech)
     {
-        trace(111);
+        trace('yinsheng_pay_res');
         $card_info=model\MemberCreditcard::where(['card_bankno'=>$order['order_card']])->find();
         $creditpass = model\MemberCreditPas::get(['member_credit_pas_creditid' => $card_info['card_id'], 'member_credit_pas_pasid' => $order['order_passageway']]);
         $arr        = [
             'repayVersion'           => '2.0',
             'orderNo'                => $order['order_platform_no'],
-            'orderNo'                => $order['order_platform_no'],
+            'batchNo'                => $order['order_platform_no'],
             'amount'                 => round($order['order_money'], 2),
             'repayInfo'              => [
-                'repayCycle'    => 'D0',
-                'repayAmount'   => round($order['order_money'], 2),
-                'repayOrderNo'  => 'qf_' . $order['order_platform_no'],
-                'repayDateTime' => date('Y-m-d H:i', time() + 3600 * 2 /10),
+                [
+                    'repayCycle'    => 'D0',
+                    'repayAmount'   => round($order['order_money'], 2),
+                    'repayOrderNo'  => 'qf_' . $order['order_platform_no'],
+                    'repayDateTime' => date('Y-m-d H:i', time() + 3600 * 2 /10),
+                ]
             ],
             'memberId'               => $this->memberId,
             'merchantNo'             => $this->merchantNo,
@@ -151,7 +153,6 @@ class Yinsheng extends \app\api\payment\YinshengApi
             'delegatePayResponseUrl' => $this->notify . 'qf_notify',
         ];
         $res = $this->form('quickPayInterface/pay', $arr);
-        trace('yinsheng_pay_res');
         trace($res);
     }
     /**
@@ -159,6 +160,7 @@ class Yinsheng extends \app\api\payment\YinshengApi
      */
     public function pay_notify()
     {
+        trace('yinsheng_pay_notify');
         $param                  = input();
         $order                  = model\GenerationOrder::get(['order_platform_no' => $param['orderNo']]);
         $order->back_statusDesc = $param['result_msg'];
@@ -177,7 +179,6 @@ class Yinsheng extends \app\api\payment\YinshengApi
             $order->order_status = -1;
         }
         $order->save();
-        trace('yinsheng_pay_notify');
         trace($param);
         return 'ok';
     }
