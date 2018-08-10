@@ -128,7 +128,8 @@ class Yinsheng extends \app\api\payment\YinshengApi
      */
     public function pay($order, $passageway_mech)
     {
-        $creditpass = model\MemberCreditPas::get(['member_credit_pas_creditid' => $order['order_card'], 'member_credit_pas_pasid' => $order['order_passageway']]);
+        $card_info=model\MemberCreditcard::where(['card_bankno'=>$order['order_card']])->find();
+        $creditpass = model\MemberCreditPas::get(['member_credit_pas_creditid' => $card_info['card_id'], 'member_credit_pas_pasid' => $order['order_passageway']]);
         $arr        = [
             'repayVersion'           => '2.0',
             'orderNo'                => $order['order_platform_no'],
