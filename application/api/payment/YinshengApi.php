@@ -106,6 +106,9 @@ class YinshengApi
     {
         $arr = array_merge(['accountId' => $this->accountId], $arr);
         foreach ($arr as $k => $v) {
+            if(is_array($v)){
+                $v = json_encode($v);
+            }
             $arr[$k] = (string) $v;
         }
         $signarr        = $arr;
@@ -127,6 +130,9 @@ class YinshengApi
     {
         $arr = array_merge(['accountId' => $this->accountId], $arr);
         foreach ($arr as $k => $v) {
+            if(is_array($v)){
+                $v = json_encode($v);
+            }
             $arr[$k] = (string) $v;
         }
         $signarr        = $arr;
