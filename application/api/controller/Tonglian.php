@@ -84,42 +84,67 @@ class Tonglian
         $income['msg']             = $income['msg'] = 'FAIL';
         $update['back_statusDesc'] = isset($result['errmsg']) ? $result['errmsg'] : $result['trxstatus'];
         $is_commission             = 0;
-
         if ($result['trxstatus'] == '0000') {
-            $urlPay          = 'acct/pay';
-            $dataPayS        = array(
-                'cusid'      => $memberNet_explode[0],//商户号
-                'orderid'    => $order['order_platform_no'],//商户订单号
-                'amount'     => $order['order_money'] * 100,//订单金额 单位分
-                'agreeid'    => $memberNet_explode[1],//协议号
-                'trxreserve' => '订单' . $order['order_platform_no'] . '的付款订单',
-                'notifyurl'  => System::getName('system_url') . "/api/Tonglian/card_pay_notifyUrl",
-            );
-            $dataPay         = array_merge($dataP, $dataPayS);
-            $dataPay['sign'] = $this->getSign($dataPay);
-            $resultPay       = $this->getData($urlPay, $dataPay);
-            if ($resultPay['trxstatus'] == '0000') {
-                $update['back_tradeNo'] = $result['orderid'];
-                $income['code']         = 200;
-                $income['back_status']  = $income['msg'] = 'success';
-                $update['order_status'] = '2';
-                $is_commission          = 1;
-            } else if ($result['trxstatus'] == '2000') {//处理中
-                $update['order_status'] = '4';
-            } else {//失败
-                $update['order_status'] = '-1';
-            }
+            $update['back_tradeNo'] = $result['orderid'];
+            $income['code']         = 200;
+            $income['back_status']  = $income['msg'] = 'success';
+            $update['order_status'] = '2';
+            $is_commission          = 1;
         } else if ($result['trxstatus'] == '2000') {//处理中
             $update['order_status'] = '4';
         } else {//失败
             $update['order_status'] = '-1';
         }
+
         $member_base = Member::where(['member_id' => $order['order_member']])->find();
         //添加执行记录
         $res = GenerationOrder::where(['order_id' => $order['order_id']])->update($update);
         #更改完状态后续操作
         $notice = new \app\api\controller\Membernet();
         $action = $notice->plan_notice($order, $income, $member_base, $is_commission, $passageway);
+    }
+
+    public function qfpay($order, $passageway_mech)
+    {
+        //获取通道信息
+        $passageway = Passageway::where(['passageway_id' => $order['order_passageway']])->find();
+        //获取入网信息
+        $memberNet         = MemberNets::where(['net_member_id' => $order['order_member']])->find();
+        $memberNet_value   = $memberNet[$passageway['passageway_no']];
+        $memberNet_explode = explode(',', $memberNet_value);
+        $url               = 'acct/pay';
+        $dataP             = $this->paramsPublic();
+        $dataS             = array(
+            'cusid'      => $memberNet_explode[0],//商户号
+            'orderid'    => $order['order_platform_no'],//商户订单号
+            'amount'     => $order['order_money'] * 100,//订单金额 单位分
+            'agreeid'    => $memberNet_explode[1],//协议号
+            'trxreserve' => '订单' . $order['order_platform_no'] . '的付款订单',
+            'notifyurl'  => System::getName('system_url') . "/api/Tonglian/card_pay_notifyUrl",
+        );
+        $dataPay           = array_merge($dataP, $dataS);
+        $dataPay['sign']   = $this->getSign($dataPay);
+        $result            = $this->getData($url, $dataPay);
+
+        $income['code']            = -1;
+        $income['msg']             = $income['msg'] = 'FAIL';
+        $update['back_statusDesc'] = isset($result['errmsg']) ? $result['errmsg'] : $result['trxstatus'];
+        $is_commission             = 0;
+        if ($result['trxstatus'] == '0000') {
+            $update['back_tradeNo'] = $result['orderid'];
+            $income['code']         = 200;
+            $income['back_status']  = $income['msg'] = 'success';
+            $update['order_status'] = '2';
+            $is_commission          = 1;
+        } else if ($result['trxstatus'] == '2000') {//处理中
+            $update['order_status'] = '4';
+        } else {//失败
+            $update['order_status'] = '-1';
+        }
+
+        $member_base = Member::where(['member_id' => $order['order_member']])->find();
+        //添加执行记录
+        $res = GenerationOrder::where(['order_id' => $order['order_id']])->update($update);
     }
 
     //支付回调
@@ -161,7 +186,7 @@ class Tonglian
         }
     }
 
-    //付款回调
+//付款回调
     public function card_pay_notifyUrl()
     {
         $params = input();
