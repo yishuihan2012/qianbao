@@ -26,8 +26,8 @@ class Tonglian
     {
         //固定参数基本配置
         $this->config        = array(
-            'tonglianUrl' => 'https://test.allinpaygd.com/ipayapiweb/', //测试
-//            'tonglianUrl' => 'https://ipay.allinpay.com/apiweb/', //正式
+//            'tonglianUrl' => 'https://test.allinpaygd.com/ipayapiweb/', //测试
+            'tonglianUrl' => 'https://ipay.allinpay.com/apiweb/', //正式
         );
         $this->configPassway = Passageway::find($passwayId);
         if (!$this->configPassway)
@@ -40,20 +40,21 @@ class Tonglian
         if (!$this->membercard)
             return ['code' => -404, 'msg' => '找不到会员结算卡~'];
         #测试环境
-        $this->orgid  = '200000000001';//平台分配的机构号
-        $this->appid  = '0000001';//平台分配的机构APPID
-        $this->appkey = '111111';//key
+//        $this->orgid  = '200000000001';//平台分配的机构号
+//        $this->appid  = '0000001';//平台分配的机构APPID
+//        $this->appkey = '111111';//key
         #正式环境
-//        $this->orgid  = '201000077740';//平台分配的机构号
-//        $this->appid  = '0000125';//平台分配的机构APPID
-//        $this->appkey = '10399a98777db00248c317c1d0f13cc4';//key
+        $this->orgid  = '201000077740';//平台分配的机构号
+        $this->appid  = '0000125';//平台分配的机构APPID
+        $this->appkey = '10399a98777db00248c317c1d0f13cc4';//key
 
-        $this->randomstr = '123456';//商户自行生成的随机字符串
+        $this->randomstr = generate_password(16);//商户自行生成的随机字符串
         $this->version   = '11';//接口版本号
         $this->reqip     = $_SERVER['REMOTE_ADDR'];//请求IP 可空
         $this->reqtime   = time();//请求时间戳
 
     }
+
 
     private function paramsPublic()
     {
