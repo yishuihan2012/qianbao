@@ -364,13 +364,12 @@ class Userurl extends Controller
                       return view("Userurl/show_error");die;
                     }
                     return $res;
-                } else {
-                    $this->assign('data', '商户入网失败，请重试。');
-                    return view("Userurl/show_error");
-                    die;
-                }
-                return $res;
+            } else {
+                $this->assign('data', '商户入网失败，请重试。');
+                return view("Userurl/show_error");
+                die;
             }
+            return $res;
 
         } else if ($passageway['passageway_method'] == 'yipay') {//易支付
             $Yipay = new \app\api\controller\Yipay();
