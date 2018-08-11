@@ -623,11 +623,12 @@ class Userurl extends Controller
             $order           = GenerationOrder::where(['order_passageway' => $this->param['passageway'], 'order_member' => $this->param['uid'], 'order_status' => '2', 'order_type' => 1])->order('order_edit_time', 'desc')->find();
             $member_group_id = Members::where(['member_id' => $this->param['uid']])->value('member_group_id');
             $rate            = PassagewayItem::where(['item_passageway' => $this->param['passageway'], 'item_group' => $members['member_group_id']])->find();
+
             #定义税率
             $also = ($rate->item_also) / 100;
             if ($order && $order['user_rate'] != $rate->item_also) {
                 //修改费率
-                $updatesettinfo = $tonglian->updatesettinfo($memberNet_explode[0]);
+                $updatesettinfo = $tonglian->updatesettinfo($memberNet_explode[0],$type ='repay');
                 if ($updatesettinfo['retcode'] != 'SUCCESS') {
                     return ['code' => 463, 'msg' => $updatesettinfo['retmsg']];
                 }

@@ -75,6 +75,8 @@ class Tonglian
             'currency'  => 'CNY',
             'subject'   => '订单' . $order['order_platform_no'] . '的代还申请',//订单内容 订单的展示标题
             'notifyurl' => System::getName('system_url') . "/api/Tonglian/card_quickpass_notifyUrl",
+            'city'      => '530900',  //待优化
+            'mccid'     => $this->getMccid()
         );
         $data              = array_merge($dataP, $dataS);
         $data['sign']      = $this->getSign($data);
@@ -122,10 +124,9 @@ class Tonglian
             'trxreserve' => '订单' . $order['order_platform_no'] . '的付款订单',
             'notifyurl'  => System::getName('system_url') . "/api/Tonglian/card_pay_notifyUrl",
         );
-        $dataPay           = array_merge($dataP, $dataS);
-        $dataPay['sign']   = $this->getSign($dataPay);
-        $result            = $this->getData($url, $dataPay);
-
+        $data              = array_merge($dataP, $dataS);
+        $data['sign']      = $this->getSign($data);
+        $result            = $this->getData($url, $data);
         $income['code']            = -1;
         $income['msg']             = $income['msg'] = 'FAIL';
         $update['back_statusDesc'] = isset($result['errmsg']) ? $result['errmsg'] : $result['trxstatus'];
@@ -228,6 +229,25 @@ class Tonglian
             'reqtime'   => $this->reqtime,
         );
         return $data;
+    }
+
+    private function getMccid()
+    {
+        $mccArray = array(
+            'M001' => '百货商超',
+            'M002' => '餐饮',
+            'M003' => '珠宝/首饰/钟表',
+            'M004' => '服饰',
+            'M005' => '化妆品',
+            'M006' => '健身/俱乐部/高尔夫',
+            'M007' => '美容/SPA',
+            'M008' => '洗浴/按摩',
+            'M009' => '加油站',
+            'M010' => '酒吧/夜总会',
+            'M011' => '酒店/宾馆/住宿',
+            'M012' => '电影院'
+        );
+        return array_rand($mccArray);
     }
 
 //拼sign
