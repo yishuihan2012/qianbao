@@ -99,12 +99,13 @@ class Yinsheng extends \app\api\payment\YinshengApi
         return $this->form('bind/h5bind', $arr);
     }
     /**
-     * 信用卡绑定回调
+     * 信用卡绑定回调 
+     * 前端回调
      */
     public function bind_notify()
     {
         $param = input();
-        if ($param['resultCode'] == '0000' && $param['bindCode'] == '1028') {
+        if ($param['result_code'] == '0000' && $param['bindCode'] == '1028') {
             $passway    = model\Passageway::get(['passageway_method' => 'yinsheng']);
             $creditpass = model\MemberCreditPas::get(['member_credit_pas_creditid' => $param['cardid'], 'member_credit_pas_pasid' => $passway->passageway_id]);
             if (!$creditpass) {
@@ -115,8 +116,11 @@ class Yinsheng extends \app\api\payment\YinshengApi
             $creditpass->member_credit_pas_info   = $param['token'];
             $creditpass->member_credit_pas_status = 1;
             $creditpass->save();
+            $return['msg']="绑卡成功，请关闭当前页面重新提交";
+        }else{
+            $return['msg']=$param['result_msg'];
         }
-        return 'ok';
+        return redirect('Userurl/show_error', ['data' =>$return['msg']]);
     }
     /**
      * 交易 消费还款
@@ -124,17 +128,21 @@ class Yinsheng extends \app\api\payment\YinshengApi
      */
     public function pay($order, $passageway_mech)
     {
-        $creditpass = model\MemberCreditPas::get(['member_credit_pas_creditid' => $order['order_card'], 'member_credit_pas_pasid' => $order['order_passageway']]);
+        trace('yinsheng_pay_res');
+        $card_info=model\MemberCreditcard::where(['card_bankno'=>$order['order_card']])->find();
+        $creditpass = model\MemberCreditPas::get(['member_credit_pas_creditid' => $card_info['card_id'], 'member_credit_pas_pasid' => $order['order_passageway']]);
         $arr        = [
             'repayVersion'           => '2.0',
             'orderNo'                => $order['order_platform_no'],
-            'orderNo'                => $order['order_platform_no'],
+            'batchNo'                => $order['order_platform_no'],
             'amount'                 => round($order['order_money'], 2),
             'repayInfo'              => [
-                'repayCycle'    => 'D0',
-                'repayAmount'   => round($order['order_money'], 2),
-                'repayOrderNo'  => 'qf_' . $order['order_platform_no'],
-                'repayDateTime' => date('Y-m-d H:i', time() + 3600 * 2 /10),
+                [
+                    'repayCycle'    => 'D0',
+                    'repayAmount'   => round($order['order_money'], 2),
+                    'repayOrderNo'  => 'qf_' . $order['order_platform_no'],
+                    'repayDateTime' => date('Y-m-d H:i', time() + 3600 * 2 /10),
+                ]
             ],
             'memberId'               => $this->memberId,
             'merchantNo'             => $this->merchantNo,
@@ -145,16 +153,18 @@ class Yinsheng extends \app\api\payment\YinshengApi
             'delegatePayResponseUrl' => $this->notify . 'qf_notify',
         ];
         $res = $this->form('quickPayInterface/pay', $arr);
+        trace($res);
     }
     /**
      * 消费 异步通知
      */
     public function pay_notify()
     {
+        trace('yinsheng_pay_notify');
         $param                  = input();
         $order                  = model\GenerationOrder::get(['order_platform_no' => $param['orderNo']]);
         $order->back_statusDesc = $param['result_msg'];
-        if ($param['resultCode'] == '0000') {
+        if ($param['result_code'] == '0000') {
             $order->order_status = 2;
             $has_fenrun          = db('commission')
                 ->where('commission_from', $order->order_id)
@@ -169,6 +179,7 @@ class Yinsheng extends \app\api\payment\YinshengApi
             $order->order_status = -1;
         }
         $order->save();
+        trace($param);
         return 'ok';
     }
     /**

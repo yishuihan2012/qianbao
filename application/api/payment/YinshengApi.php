@@ -106,6 +106,9 @@ class YinshengApi
     {
         $arr = array_merge(['accountId' => $this->accountId], $arr);
         foreach ($arr as $k => $v) {
+            if(is_array($v)){
+                $v = json_encode($v);
+            }
             $arr[$k] = (string) $v;
         }
         $signarr        = $arr;
@@ -127,6 +130,9 @@ class YinshengApi
     {
         $arr = array_merge(['accountId' => $this->accountId], $arr);
         foreach ($arr as $k => $v) {
+            if(is_array($v)){
+                $v = $this->toString($v);
+            }
             $arr[$k] = (string) $v;
         }
         $signarr        = $arr;
@@ -136,10 +142,25 @@ class YinshengApi
         // halt($query);
         $arr['mac'] = strtoupper(md5($query));
         // halt($arr);
-        // echo json_encode($arr);die;
+        // trace(json_encode($arr));
+        trace(http_build_query($arr));
         // halt($this->url . $method);
         $res = curl_post($this->url . $method, 'post', http_build_query($arr), 0);
         return $res;
+    }
+    /**
+     * 转换string
+     */
+    public function toString($a){
+        if(is_array($a)){
+            foreach ($a as $k => $v) {
+                $a[$k] = $this->toString($v);
+            }
+            $a = json_encode($a);
+        }elseif(!is_string($a)){
+            $a = (string)$a;
+        }
+        return $a;
     }
 
 }
