@@ -1364,8 +1364,20 @@ class CashOut
             #2查看是否绑定信用卡
             $memberCreditPas = MemberCreditPas::where(['member_credit_pas_creditid' => $this->card_info->card_id, 'member_credit_pas_pasid' => $this->passway_info->passageway_id])->find();
             if (!$memberCreditPas || $memberCreditPas['member_credit_pas_status'] != 1) {
-                $url = request()->domain() . "/api/Userurl/signed_tonglian/memberId/" . $this->member_infos->member_id . "/passagewayId/" . $this->passway_info->passageway_id . "/cardId/" . $this->card_info->card_id . "/price/" . $price . "/tradeNo/" . $tradeNo . "/type/cash";
-                return ['code' => 200, 'msg' => '订单获取成功~', 'data' => ['url' => $url, 'type' => 1,]];
+                if ($cusquery) {
+                    $memberNet              = MemberNet::where(['net_member_id' => $this->member_infos->member_id])->find();
+                    $passagewayOther        = Passageway::where(['passageway_method' => 'tonglian'])
+                        ->where('passageway_id', 'neq', $this->passway_info->passageway_id)
+                        ->find();
+                    $memberNetOther_vlaue   = $memberNet[$passagewayOther['passageway_no']];
+                    $memberNetOther_explode = explode(',', $memberNetOther_vlaue);
+                    $res                    = MemberNet::where(['net_member_id' => $this->param['uid']])->setField($this->passway_info->passageway_no, $memberNetOther_vlaue);
+                    $memberCreditPas        = new MemberCreditPas(['member_credit_pas_creditid' => $this->card_info->card_id, 'member_credit_pas_pasid' => $this->passway_info->passageway_id, 'member_credit_pas_status' => 1]);
+                    $memberCreditPas->save();
+                }else{
+                    $url = request()->domain() . "/api/Userurl/signed_tonglian/memberId/" . $this->member_infos->member_id . "/passagewayId/" . $this->passway_info->passageway_id . "/cardId/" . $this->card_info->card_id . "/price/" . $price . "/tradeNo/" . $tradeNo . "/type/cash";
+                    return ['code' => 200, 'msg' => '订单获取成功~', 'data' => ['url' => $url, 'type' => 1,]];
+                }
             }
             //用户入网信息
             $memberNet         = MemberNet::where(['net_member_id' => $this->member_infos->member_id])->find();

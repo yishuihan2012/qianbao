@@ -356,14 +356,15 @@ class Userurl extends Controller
             #绑卡
             if ($need_bind) {
                 $res = $Yinsheng->bind();
-                    if($res){
-                        $res = str_replace('/unspay-creditCardRepayment-business/bind/h5bindInfo', 'http://180.166.114.151:28084/unspay-creditCardRepayment-business/bind/h5bindInfo', $res);
-                        return $res;
-                    }else{
-                      $this->assign('data','商户入网失败，请重试。');
-                      return view("Userurl/show_error");die;
-                    }
+                if ($res) {
+                    $res = str_replace('/unspay-creditCardRepayment-business/bind/h5bindInfo', 'http://180.166.114.151:28084/unspay-creditCardRepayment-business/bind/h5bindInfo', $res);
                     return $res;
+                } else {
+                    $this->assign('data', '商户入网失败，请重试。');
+                    return view("Userurl/show_error");
+                    die;
+                }
+                return $res;
             } else {
                 $this->assign('data', '商户入网失败，请重试。');
                 return view("Userurl/show_error");
@@ -592,16 +593,27 @@ class Userurl extends Controller
             #2查看是否签约
             $has = MemberCreditPas::where(['member_credit_pas_creditid' => $this->param['cardId'], 'member_credit_pas_pasid' => $this->param['passageway']])->find();
             if (!$has) {
-                #获取信息卡信息
-                $creditcard = MemberCreditcard::get($this->param['cardId']);
-                $this->assign('creditcard', $creditcard);
-                $this->assign('memberId', $this->param['uid']);
-                $this->assign('passagewayId', $this->param['passageway']);
-                $this->assign('price', $this->param['billMoney']);
-                $this->assign('tradeNo', $order_no);
-                $this->assign('type', 'repay');
-                return view("Userurl/signed_tonglian");
-
+                if ($cusquery) {
+                    $memberNet              = MemberNet::where(['net_member_id' => $this->param['uid']])->find();
+                    $passagewayOther        = Passageway::where(['passageway_method' => 'tonglian'])
+                        ->where('passageway_id', 'neq', $this->param['passageway'])
+                        ->find();
+                    $memberNetOther_vlaue   = $memberNet[$passagewayOther['passageway_no']];
+                    $memberNetOther_explode = explode(',', $memberNetOther_vlaue);
+                    $res                    = MemberNet::where(['net_member_id' => $this->param['uid']])->setField($passageway['passageway_no'], $memberNetOther_vlaue);
+                    $memberCreditPas        = new MemberCreditPas(['member_credit_pas_creditid' => $this->param['cardId'], 'member_credit_pas_pasid' => $this->param['passageway'], 'member_credit_pas_status' => 1]);
+                    $memberCreditPas->save();
+                } else {
+                    #获取信息卡信息
+                    $creditcard = MemberCreditcard::get($this->param['cardId']);
+                    $this->assign('creditcard', $creditcard);
+                    $this->assign('memberId', $this->param['uid']);
+                    $this->assign('passagewayId', $this->param['passageway']);
+                    $this->assign('price', $this->param['billMoney']);
+                    $this->assign('tradeNo', $order_no);
+                    $this->assign('type', 'repay');
+                    return view("Userurl/signed_tonglian");
+                }
             }
             //用户入网信息
             $memberNet         = MemberNet::where(['net_member_id' => $this->param['uid']])->find();
@@ -2151,8 +2163,10 @@ class Userurl extends Controller
         $passageway        = Passageway::get($passagewayId);
         $memberNet_value   = $memberNet[$passageway->passageway_no];
         $memberNet_explode = explode(',', $memberNet_value);
-        $tonglian          = new \app\api\payment\Tonglian($passagewayId, $memberId);
-        $bindcard          = $tonglian->bindcard($memberNet_explode[0], $cardId);
+        var_dump($memberNet_value);
+        exit;
+        $tonglian = new \app\api\payment\Tonglian($passagewayId, $memberId);
+        $bindcard = $tonglian->bindcard($memberNet_explode[0], $cardId);
         return $bindcard;
     }
 
