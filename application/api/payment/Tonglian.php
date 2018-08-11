@@ -364,7 +364,7 @@ class Tonglian
             'orderid'    => $orderid,//商户订单号
             'isall'      => 1,//交易日期
             'trxreserve' => '订单' . $orderid . '的提现申请',//订单内容 订单的展示标题
-            'notifyurl'  => System::getName('system_url') . '/index/Cashoutcallback/tongliancallback'
+            'notifyurl'  => System::getName('system_url') . '/index/Cashoutcallback/tonglianWithdrawcallback'
         );
         $data         = array_merge($dataP, $dataS);
         $data['sign'] = $this->getSign($data);

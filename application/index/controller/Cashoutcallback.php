@@ -645,7 +645,7 @@ class Cashoutcallback
     /**
      * 通联收银宝 提现回调
      */
-    public function tongliancallback()
+    public function tonglianWithdrawcallback()
     {
         $params = Request::instance()->param();
         file_put_contents('tonglian.txt', json_encode($params));
