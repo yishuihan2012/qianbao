@@ -289,7 +289,7 @@ class Tonglian
             'orderid'    => $tradeNo,//商户订单号
             'agreeid'    => $agreeId,//协议编号 签约返回
             'trxcode'    => $trxcode,//交易类型
-            'amount'     => $price,//订单金额 单位分
+            'amount'     => $price * 100,//订单金额 单位分
             'currency'   => 'CNY',//币种
             'subject'    => '订单' . $tradeNo . '的支付申请',//订单内容 订单的展示标题
             'validtime'  => '',//订单有效时间
@@ -357,15 +357,15 @@ class Tonglian
     //快捷支付提现
     public function withdraw($cusid, $orderid)
     {
-        $url   = 'acct/withdraw';
-        $dataP = $this->paramsPublic();
-        $dataS = array(
+        $url          = 'acct/withdraw';
+        $dataP        = $this->paramsPublic();
+        $dataS        = array(
             'cusid'      => $cusid,//商户号
             'orderid'    => $orderid,//商户订单号
             'isall'      => 1,//交易日期
             'trxreserve' => '订单' . $orderid . '的提现申请',//订单内容 订单的展示标题
             'notifyurl'  => System::getName('system_url') . '/index/Cashoutcallback/tongliancallback'
-    );
+        );
         $data         = array_merge($dataP, $dataS);
         $data['sign'] = $this->getSign($data);
         $result       = $this->getData($url, $data);

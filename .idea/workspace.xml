@@ -2,8 +2,6 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="a20d3bbe-dec1-48a5-9385-36bfcb06ecfa" name="Default" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/application/api/controller/Tonglian.php" beforeDir="false" afterPath="$PROJECT_DIR$/application/api/controller/Tonglian.php" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/application/api/payment/Tonglian.php" beforeDir="false" afterPath="$PROJECT_DIR$/application/api/payment/Tonglian.php" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
@@ -21,17 +19,17 @@
       <file leaf-file-name="CashOut.php" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/application/index/controller/CashOut.php">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="476">
-              <caret line="1374" column="55" selection-start-line="1374" selection-start-column="55" selection-end-line="1374" selection-end-column="55" />
+            <state relative-caret-position="881">
+              <caret line="1356" column="47" lean-forward="true" selection-start-line="1356" selection-start-column="47" selection-end-line="1356" selection-end-column="47" />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="RepaymentPlan.php" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/application/api/controller/RepaymentPlan.php">
+      <file leaf-file-name="Membernets.php" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/application/api/controller/Membernets.php">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="3429">
-              <caret line="146" column="17" selection-start-line="146" selection-start-column="17" selection-end-line="146" selection-end-column="17" />
+            <state relative-caret-position="611">
+              <caret line="622" column="33" selection-start-line="622" selection-start-column="33" selection-end-line="622" selection-end-column="33" />
             </state>
           </provider>
         </entry>
@@ -51,8 +49,8 @@
       <file leaf-file-name="Tonglian.php" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/application/api/controller/Tonglian.php">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="490">
-              <caret line="49" column="56" selection-start-line="49" selection-start-column="56" selection-end-line="49" selection-end-column="56" />
+            <state relative-caret-position="-693">
+              <caret line="67" column="44" selection-start-line="67" selection-start-column="35" selection-end-line="67" selection-end-column="44" />
               <folding>
                 <element signature="e#122#135#0#PHP" expanded="true" />
               </folding>
@@ -63,8 +61,8 @@
       <file leaf-file-name="Tonglian.php" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/application/api/payment/Tonglian.php">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="648">
-              <caret line="50" column="27" selection-start-line="50" selection-start-column="27" selection-end-line="50" selection-end-column="48" />
+            <state relative-caret-position="414">
+              <caret line="383" column="41" lean-forward="true" selection-start-line="383" selection-start-column="41" selection-end-line="383" selection-end-column="41" />
               <folding>
                 <element signature="e#118#149#0#PHP" expanded="true" />
               </folding>
@@ -93,8 +91,8 @@
       <file leaf-file-name="Userurl.php" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/application/api/controller/Userurl.php">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="490">
-              <caret line="2134" column="5" lean-forward="true" selection-start-line="2134" selection-start-column="5" selection-end-line="2134" selection-end-column="5" />
+            <state relative-caret-position="785">
+              <caret line="2134" column="39" selection-start-line="2134" selection-start-column="39" selection-end-line="2134" selection-end-column="39" />
               <folding>
                 <element signature="n#style#0;n#li#0;n#!!top" expanded="true" />
                 <element signature="n#style#0;n#li#0;n#!!top" expanded="true" />
@@ -109,8 +107,8 @@
       <file leaf-file-name="Index.php" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/application/api/controller/Index.php">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="540">
-              <caret line="34" column="32" lean-forward="true" selection-start-line="34" selection-start-column="32" selection-end-line="34" selection-end-column="32" />
+            <state relative-caret-position="513">
+              <caret line="30" column="54" lean-forward="true" selection-start-line="30" selection-start-column="54" selection-end-line="30" selection-end-column="54" />
             </state>
           </provider>
         </entry>
@@ -128,8 +126,6 @@
   </component>
   <component name="FindInProjectRecents">
     <findStrings>
-      <find>seeDetails</find>
-      <find>writeorder</find>
       <find>show_error</find>
       <find>请稍后</find>
       <find>tonglianPayStatus</find>
@@ -158,6 +154,8 @@
       <find>getRandom</find>
       <find>generation_pass</find>
       <find>generate_password</find>
+      <find>amount</find>
+      <find>quickpass</find>
     </findStrings>
     <dirStrings>
       <dir>F:\zl_projects\wallet\application</dir>
@@ -191,8 +189,8 @@
         <option value="$PROJECT_DIR$/application/api/controller/Membernet.php" />
         <option value="$PROJECT_DIR$/application/api/controller/Userurl.php" />
         <option value="$PROJECT_DIR$/application/index/controller/CashOut.php" />
-        <option value="$PROJECT_DIR$/application/api/payment/Tonglian.php" />
         <option value="$PROJECT_DIR$/application/api/controller/Tonglian.php" />
+        <option value="$PROJECT_DIR$/application/api/payment/Tonglian.php" />
       </list>
     </option>
   </component>
@@ -391,7 +389,7 @@
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="300380000" />
+    <option name="totallyTimeSpent" value="300462000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="-8" y="-8" width="1936" height="1056" extended-state="6" />
@@ -648,8 +646,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/application/api/controller/Membernets.php">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="814">
-          <caret line="625" selection-start-line="625" selection-end-line="625" />
+        <state relative-caret-position="611">
+          <caret line="622" column="33" selection-start-line="622" selection-start-column="33" selection-end-line="622" selection-end-column="33" />
         </state>
       </provider>
     </entry>
@@ -690,8 +688,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/application/index/controller/CashOut.php">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="476">
-          <caret line="1374" column="55" selection-start-line="1374" selection-start-column="55" selection-end-line="1374" selection-end-column="55" />
+        <state relative-caret-position="881">
+          <caret line="1356" column="47" lean-forward="true" selection-start-line="1356" selection-start-column="47" selection-end-line="1356" selection-end-column="47" />
         </state>
       </provider>
     </entry>
@@ -728,22 +726,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/application/api/controller/Index.php">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="540">
-          <caret line="34" column="32" lean-forward="true" selection-start-line="34" selection-start-column="32" selection-end-line="34" selection-end-column="32" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/application/api/controller/Userurl.php">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="490">
-          <caret line="2134" column="5" lean-forward="true" selection-start-line="2134" selection-start-column="5" selection-end-line="2134" selection-end-column="5" />
-          <folding>
-            <element signature="n#style#0;n#li#0;n#!!top" expanded="true" />
-            <element signature="n#style#0;n#li#0;n#!!top" expanded="true" />
-            <element signature="n#style#0;n#li#0;n#!!top" expanded="true" />
-            <element signature="n#style#0;n#li#0;n#!!top" expanded="true" />
-            <element signature="n#style#0;n#li#0;n#!!top" expanded="true" />
-          </folding>
+        <state relative-caret-position="513">
+          <caret line="30" column="54" lean-forward="true" selection-start-line="30" selection-start-column="54" selection-end-line="30" selection-end-column="54" />
         </state>
       </provider>
     </entry>
@@ -792,10 +776,24 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/application/api/controller/Userurl.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="785">
+          <caret line="2134" column="39" selection-start-line="2134" selection-start-column="39" selection-end-line="2134" selection-end-column="39" />
+          <folding>
+            <element signature="n#style#0;n#li#0;n#!!top" expanded="true" />
+            <element signature="n#style#0;n#li#0;n#!!top" expanded="true" />
+            <element signature="n#style#0;n#li#0;n#!!top" expanded="true" />
+            <element signature="n#style#0;n#li#0;n#!!top" expanded="true" />
+            <element signature="n#style#0;n#li#0;n#!!top" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/application/api/payment/Tonglian.php">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="648">
-          <caret line="50" column="27" selection-start-line="50" selection-start-column="27" selection-end-line="50" selection-end-column="48" />
+        <state relative-caret-position="414">
+          <caret line="383" column="41" lean-forward="true" selection-start-line="383" selection-start-column="41" selection-end-line="383" selection-end-column="41" />
           <folding>
             <element signature="e#118#149#0#PHP" expanded="true" />
           </folding>
@@ -804,8 +802,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/application/api/controller/Tonglian.php">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="490">
-          <caret line="49" column="56" selection-start-line="49" selection-start-column="56" selection-end-line="49" selection-end-column="56" />
+        <state relative-caret-position="-693">
+          <caret line="67" column="44" selection-start-line="67" selection-start-column="35" selection-end-line="67" selection-end-column="44" />
           <folding>
             <element signature="e#122#135#0#PHP" expanded="true" />
           </folding>
