@@ -26,8 +26,8 @@ class Tonglian
     {
         //固定参数基本配置
         $this->config        = array(
-            'tonglianUrl' => 'https://test.allinpaygd.com/ipayapiweb/', //测试
-//            'tonglianUrl' => 'https://ipay.allinpay.com/apiweb/', //正式
+//            'tonglianUrl' => 'https://test.allinpaygd.com/ipayapiweb/', //测试
+            'tonglianUrl' => 'https://ipay.allinpay.com/apiweb/', //正式
         );
         $this->configPassway = Passageway::find($passwayId);
         if (!$this->configPassway)
@@ -40,20 +40,21 @@ class Tonglian
         if (!$this->membercard)
             return ['code' => -404, 'msg' => '找不到会员结算卡~'];
         #测试环境
-        $this->orgid  = '200000000001';//平台分配的机构号
-        $this->appid  = '0000001';//平台分配的机构APPID
-        $this->appkey = '111111';//key
+//        $this->orgid  = '200000000001';//平台分配的机构号
+//        $this->appid  = '0000001';//平台分配的机构APPID
+//        $this->appkey = '111111';//key
         #正式环境
-//        $this->orgid  = '201000077740';//平台分配的机构号
-//        $this->appid  = '0000125';//平台分配的机构APPID
-//        $this->appkey = '10399a98777db00248c317c1d0f13cc4';//key
+        $this->orgid  = '201000077740';//平台分配的机构号
+        $this->appid  = '0000125';//平台分配的机构APPID
+        $this->appkey = '10399a98777db00248c317c1d0f13cc4';//key
 
-        $this->randomstr = '123456';//商户自行生成的随机字符串
+        $this->randomstr = generate_password(16);//商户自行生成的随机字符串
         $this->version   = '11';//接口版本号
         $this->reqip     = $_SERVER['REMOTE_ADDR'];//请求IP 可空
         $this->reqtime   = time();//请求时间戳
 
     }
+
 
     private function paramsPublic()
     {
@@ -105,7 +106,7 @@ class Tonglian
             'acctname'     => $this->membercard->card_name,//账户名
             'accttp'       => '00',//卡折类型:00-借记卡;01-存折;
             'expanduser'   => $this->membercard->card_name,//拓展人
-            'prodlist'     => "[{'trxcode':'QUICKPAY_OF_HP','feerate':" . $memberAlso->item_rate . "},{'trxcode':'QUICKPAY_OF_NP','feerate':" . $memberAlso->item_rate . "},{'trxcode':'QUICKPAY_OL_HP','feerate':" . $memberAlso->item_rate . "}]",//支付产品信息列表
+            'prodlist'     => "[{'trxcode':'QUICKPAY_OF_HP','feerate':" . $memberAlso->item_rate . "},{'trxcode':'QUICKPAY_OF_NP','feerate':" . $memberAlso->item_rate . "},{'trxcode':'QUICKPAY_OL_HP','feerate':" . $memberAlso->item_rate . "},{'trxcode':'QUICKPAY_NOSMS','feerate':" . $memberAlso->item_rate . "}]",//支付产品信息列表
             'settfee'      => number_format($memberAlso->item_charges / 100, 2),//提现手续费:2块/笔,该字 段填2.00，为空时，取所属代理商费率
         );
         $data         = array_merge($dataP, $dataS);
@@ -144,7 +145,7 @@ class Tonglian
             'cusid'    => $cusid,//商户号
             'acctid'   => $this->membercard->card_bankno,//账户号
             'accttp'   => '00',//卡折类型:00-借记卡;01-存折;
-            'prodlist' => "[{'trxcode':'QUICKPAY_OF_HP','feerate':" . $memberAlso->item_rate . "},{'trxcode':'QUICKPAY_OF_NP','feerate':" . $memberAlso->item_rate . "},{'trxcode':'QUICKPAY_OL_HP','feerate':" . $memberAlso->item_rate . "}]",//支付产品信息列表
+            'prodlist' => "[{'trxcode':'QUICKPAY_OF_HP','feerate':" . $memberAlso->item_rate . "},{'trxcode':'QUICKPAY_OF_NP','feerate':" . $memberAlso->item_rate . "},{'trxcode':'QUICKPAY_OL_HP','feerate':" . $memberAlso->item_rate . "},{'trxcode':'QUICKPAY_NOSMS','feerate':" . $memberAlso->item_rate . "}]",//支付产品信息列表
             'settfee'  => number_format($memberAlso->item_charges / 100, 2),//提现手续费:2块/笔,该字 段填2.00，为空时，取所属代理商费率
         );
         $data         = array_merge($dataP, $dataS);
@@ -346,6 +347,44 @@ class Tonglian
             'trxid'   => $trxid,//平台交易流水号
             'orderid' => $orderid,//商户订单号
             'date'    => $date,//交易日期
+        );
+        $data         = array_merge($dataP, $dataS);
+        $data['sign'] = $this->getSign($data);
+        $result       = $this->getData($url, $data);
+        return $result;
+    }
+
+    //快捷支付提现
+    public function withdraw($cusid, $orderid)
+    {
+        $url   = 'acct/withdraw';
+        $dataP = $this->paramsPublic();
+        $dataS = array(
+            'cusid'      => $cusid,//商户号
+            'orderid'    => $orderid,//商户订单号
+            'isall'      => 1,//交易日期
+            'trxreserve' => '订单' . $orderid . '的提现申请',//订单内容 订单的展示标题
+            'notifyurl'  => System::getName('system_url') . '/index/Cashoutcallback/tongliancallback'
+    );
+        $data         = array_merge($dataP, $dataS);
+        $data['sign'] = $this->getSign($data);
+        $result       = $this->getData($url, $data);
+        return $result;
+    }
+
+    //代还
+    public function quickpass($cusid, $orderid, $agreeid, $amount)
+    {
+        $url          = 'qpay/quickpass';
+        $dataP        = $this->paramsPublic();
+        $dataS        = array(
+            'cusid'     => $cusid,//商户号
+            'orderid'   => $orderid,//商户订单号
+            'agreeid'   => $agreeid,//协议编号
+            'amount'    => $amount,//订单金额
+            'currency'  => 'CNY',
+            'subject'   => '订单' . $orderid . '的支付申请',//订单内容 订单的展示标题
+            'notifyurl' => ''
         );
         $data         = array_merge($dataP, $dataS);
         $data['sign'] = $this->getSign($data);

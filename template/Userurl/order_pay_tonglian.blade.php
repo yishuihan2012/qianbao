@@ -143,8 +143,20 @@
                 };
                 $.post(url, data, function (res) {
                     if (res.retcode == 'SUCCESS') {
-                        window.location.href = '/api/Userurl/tonglianPayStatus/trxid/' + res.trxid + '/memberId/{{$memberId}}/passagewayId/{{$passagewayId}}/orderid/{{$tradeNo}}';
-                        mui.toast("交易成功");
+                        var urlw = '/api/Userurl/withdraw';
+                        var dataw = {
+                            'memberId': "{{$memberId}}",
+                            'trxid': trxid,
+                            'passagewayId': "{{$passagewayId}}",
+                        };
+                        $.post(urlw, dataw, function (data) {
+                            if (data.retcode == 'SUCCESS') {
+                                window.location.href = '/api/Userurl/tonglianPayStatus/trxid/' + res.trxid + '/memberId/{{$memberId}}/passagewayId/{{$passagewayId}}/orderid/{{$tradeNo}}';
+                                mui.toast("交易成功");
+                            } else {
+                                mui.toast("提现失败");
+                            }
+                        })
                     } else {
                         mui.toast("交易失败：" + res.retmsg);
                     }

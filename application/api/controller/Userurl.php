@@ -273,9 +273,8 @@ class Userurl extends Controller
     {
         // $this->checkToken();
         // $order_no=$this->param['order_no'];
-        $order_no = input('order_no');
-        $data     = explode('_', $order_no);
-        // print_r($data);die;
+        $order_no                  = input('order_no');
+        $data                      = explode('_', $order_no);
         $this->param['uid']        = $param['uid'] = $data[0];
         $this->param['cardId']     = $param['cardId'] = $data[1];
         $this->param['billMoney']  = $param['billMoney'] = $data[2];
@@ -283,6 +282,7 @@ class Userurl extends Controller
         $this->param['startDate']  = $param['startDate'] = $data[4];
         $this->param['endDate']    = $param['endDate'] = $data[5];
         $this->param['passageway'] = $param['passageway'] = $data[6];
+
         #1判断当前通道当前卡用户有没有入网和签约
         // 获取通道信息
         $passageway = Passageway::get($param['passageway']);
@@ -573,6 +573,54 @@ class Userurl extends Controller
             // if(!$MemberCreditcard['huilian_income']){
             //     return redirect('Userurl/signed_huilian', ['passageway_id' =>$param['passageway'],'cardId'=>$param['cardId'],'order_no'=>$order_no]);
             // }
+        } else if ($passageway['passageway_method'] == 'tonglian') {
+            #1查看是否入网
+            $tonglian = new \app\api\payment\Tonglian($this->param['passageway'], $this->param['uid']);
+            $cusquery = $tonglian->cusquery();
+//            var_dump($cusquery);exit;
+            //未入网
+            if ($cusquery['retcode'] != 'SUCCESS') {
+                //进行入网
+                $method            = $passageway['passageway_method'];
+                $membernetObject   = new Membernets($this->param['uid'], $this->param['passageway']);
+                $member_net_result = $membernetObject->$method();
+                if ($member_net_result['retcode'] != 'SUCCESS') {
+                    return ['code' => 462, 'msg' => $member_net_result['retmsg']];
+                }
+                $res = MemberNet::where(['net_member_id' => $this->param['uid']])->setField($passageway['passageway_no'], $member_net_result['cusid']);
+            }
+
+            #2查看是否签约
+            $has = MemberCreditPas::where(['member_credit_pas_creditid' => $this->param['cardId'], 'member_credit_pas_pasid' => $this->param['passageway']])->find();
+            if (!$has) {
+                #获取信息卡信息
+                $creditcard = MemberCreditcard::get($this->param['cardId']);
+                $this->assign('creditcard', $creditcard);
+                $this->assign('memberId', $this->param['uid']);
+                $this->assign('passagewayId', $this->param['passageway']);
+                $this->assign('price', $this->param['billMoney']);
+                $this->assign('tradeNo', $order_no);
+                $this->assign('type', 'repay');
+                return view("Userurl/signed_tonglian");
+
+            }
+            //用户入网信息
+            $memberNet         = MemberNet::where(['net_member_id' => $this->param['uid']])->find();
+            $memberNet_value   = $memberNet[$passageway['passageway_no']];
+            $memberNet_explode = explode(',', $memberNet_value);
+            #2判断是否需要修改费率
+            $order           = GenerationOrder::where(['order_passageway' => $this->param['passageway'], 'order_member' => $this->param['uid'], 'order_status' => '2', 'order_type' => 1])->order('order_edit_time', 'desc')->find();
+            $member_group_id = Members::where(['member_id' => $this->param['uid']])->value('member_group_id');
+            $rate            = PassagewayItem::where(['item_passageway' => $this->param['passageway'], 'item_group' => $members['member_group_id']])->find();
+            #定义税率
+            $also = ($rate->item_also) / 100;
+            if ($order && $order['user_rate'] != $rate->item_also) {
+                //修改费率
+                $updatesettinfo = $tonglian->updatesettinfo($memberNet_explode[0]);
+                if ($updatesettinfo['retcode'] != 'SUCCESS') {
+                    return ['code' => 463, 'msg' => $updatesettinfo['retmsg']];
+                }
+            }
         } else {
             // 判断是否入网
             $member_net = MemberNet::where(['net_member_id' => $param['uid']])->find();
@@ -2078,7 +2126,7 @@ class Userurl extends Controller
     /**
      * 通联收银宝绑定信用卡页面
      */
-    public function signed_tonglian($memberId, $passagewayId, $cardId, $price, $tradeNo)
+    public function signed_tonglian($memberId, $passagewayId, $cardId, $price, $tradeNo, $type)
     {
         #获取信息卡信息
         $creditcard = MemberCreditcard::get($cardId);
@@ -2087,6 +2135,7 @@ class Userurl extends Controller
         $this->assign('passagewayId', $passagewayId);
         $this->assign('price', $price);
         $this->assign('tradeNo', $tradeNo);
+        $this->assign('type', $type);
         return view("Userurl/signed_tonglian");
     }
 
@@ -2243,6 +2292,24 @@ class Userurl extends Controller
         $tonglian          = new \app\api\payment\Tonglian($passagewayId, $memberId);
         $confirmpay        = $tonglian->confirmpay($memberNet_explode[0], $trxid, $agreeId, $smscode, $thpinfo);
         return $confirmpay;
+    }
+
+    //快捷交易提现
+    public function withdraw()
+    {
+        $params       = input('');
+        $memberId     = $params['memberId'];
+        $trxid        = $params['trxid'];
+        $passagewayId = $params['passagewayId'];
+        //获取入网信息
+        $memberNet = MemberNet::where(['net_member_id' => $memberId])->find();
+        //获取通道信息
+        $passageway        = Passageway::get($passagewayId);
+        $memberNet_value   = $memberNet[$passageway->passageway_no];
+        $memberNet_explode = explode(',', $memberNet_value);
+        $tonglian          = new \app\api\payment\Tonglian($passagewayId, $memberId);
+        $withdraw          = $tonglian->withdraw($memberNet_explode[0], $trxid);
+        return $withdraw;
     }
 
     //订单状态循查

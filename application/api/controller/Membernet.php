@@ -96,9 +96,10 @@ use app\index\model\Member;
     public function action_repay_plan(){
       // $where['order_time']=array('lt',date('Y-m-d H:i:s',time()));
       ## 设定执行区间 避免状态修改失败 重复执行多次
-      $time_start = date("Y-m-d H:i:s",time()-60);
-      $time_end = date("Y-m-d H:i:s",time()+60);
+      $time_start = date("Y-m-d H:i:s",time()-3600);
+      $time_end = date("Y-m-d H:i:s",time()+3600);
       $list=GenerationOrder::where(['order_status'=>1])->whereTime('order_time','between',[$time_start,$time_end])->select();
+//        var_dump($list);exit;
        if($list){
             foreach ($list as $k => $v) {
                 $value=$v->toArray();
@@ -110,7 +111,7 @@ use app\index\model\Member;
                      $action=$passageway->Cashout->cashout_action;
                      $controller="app\api\controller\\".$action;
                      //修改状态为已经执行
-                     GenerationOrder::where(['order_id'=>$v['order_id']])->update(['order_status'=>5]);
+//                     GenerationOrder::where(['order_id'=>$v['order_id']])->update(['order_status'=>5]);
                      if(!$action || $action=='Membernet'){
                           if($value['order_type']==1){ //消费
                               $this->payBindCard($value);

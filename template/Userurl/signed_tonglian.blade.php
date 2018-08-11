@@ -53,6 +53,7 @@
         <img src='/static/images/loading.gif'/>
     </div>
     <input type="button" value="确认签约" class="my-confirm2 bg-blue2" id="confirmBtn002">
+    <input type="hidden" id="type" value="{{$type}}">
 </div>
 <script src="/static/js/mui.min.js"></script>
 <script src="/static/js/jquery-2.1.4.min.js"></script>
@@ -134,8 +135,16 @@
             $.post(url, data, function (data) {
                 if (data.retcode == 'SUCCESS') {
                     mui.toast('签约成功！');
+                    var type = $('#type').val();
                     setTimeout(function () {
-                        window.location.href = "/api/Userurl/tonglianOrderPay/memberId/{{$memberId}}/cardId/{{$creditcard['card_id']}}/price/{{$price}}/tradeNo/{{$tradeNo}}/passagewayId/{{$passagewayId}}/agreeid/" + data.agreeid;
+                        //跳转快捷支付
+                        if (type == 'cash'){
+                            window.location.href = "/api/Userurl/tonglianOrderPay/memberId/{{$memberId}}/cardId/{{$creditcard['card_id']}}/price/{{$price}}/tradeNo/{{$tradeNo}}/passagewayId/{{$passagewayId}}/agreeid/" + data.agreeid;
+                        }
+                        //跳转代还
+                        if (type == 'repay'){
+                            window.location.href ="/api/Userurl/repayment_plan_create_detail/order_no/{{$tradeNo}}";
+                        }
                     }, 1000);
                 } else {
                     curCount = 0;

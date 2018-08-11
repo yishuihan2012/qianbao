@@ -56,7 +56,7 @@
            // $this->param['startDate']="2018-04-08";
            // $this->param['endDate']="2018-04-11";
            // $this->param['passageway']='21';
-           if(!$this->param['uid'] || !$this->param['token']=16 || !$this->param['cardId'] || !$this->param['billMoney'] || !$this->param['payCount'] || !$this->param['startDate'] || !$this->param['endDate'] || !$this->param['passageway']){
+           if(!$this->param['uid'] || !$this->param['token'] || !$this->param['cardId'] || !$this->param['billMoney'] || !$this->param['payCount'] || !$this->param['startDate'] || !$this->param['endDate'] || !$this->param['passageway']){
                return['code'=>'313','msg'=>'获取数据失败'];
            }
            //判断是否已经制定过计划
@@ -148,7 +148,7 @@
           }
           // print_r($days);die;
          $generation_id=$this->param['uid'].'_'.$this->param['cardId'].'_'.$this->param['billMoney'].'_'.$this->param['payCount'].'_'.$this->param['startDate'].'_'.$this->param['endDate'].'_'.$this->param['passageway'];
-         exit(json_encode(['code'=>200, 'msg'=> '正在跳转~','data'=>['repaymentScheduleId'=>$generation_id,'repaymentScheduleUrl'=>$_SERVER['SERVER_NAME'].'/api/Userurl/repayment_plan_create_detail/order_no/'.$generation_id]]));die;
+          exit(json_encode(['code'=>200, 'msg'=> '正在跳转~','data'=>['repaymentScheduleId'=>$generation_id,'repaymentScheduleUrl'=>$_SERVER['SERVER_NAME'].'/api/Userurl/repayment_plan_create_detail/order_no/'.$generation_id]]));die;
            
       }
       //创建计划
