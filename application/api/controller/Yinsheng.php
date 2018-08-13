@@ -10,6 +10,7 @@ use app\index\model;
  *
  * 进件信息存储 memberId,merchantNo 进件获取的这个两个字段 存在net表
  * 绑卡信息存储 token  存在 MemberCreditPas 表 member_credit_pas_info 字段
+ * 首次交易返回的批次号 batchNo 存在 MemberCreditPas 表 member_credit_pas_smsseq
  *
  * 注意事项
  * net 进件 接口 中 aduitCode 参数 为 1018 时为通过 (文档里写的是1)
@@ -33,8 +34,18 @@ class Yinsheng extends \app\api\payment\YinshengApi
     public $rate;
     #固定代扣费
     public $fix;
+    #是否测试环境
+    public $debug = 1;
+    #自动还款延迟时间
+    public $qf_time;
     public function __construct()
     {
+        parent::__construct();
+        #设定商户信息
+        $this->url       = $this->debug ? 'http://180.166.114.151:28084/unspay-creditCardRepayment-business/' : '';
+        $this->accountId = $this->debug ? '1120180523103326001' : '';
+        $this->key       = $this->debug ? '123456abc' : '';
+        $this->qf_time   = $this->debug ? 60 : 3600;
         // config('default_return_type','json');
         $this->notify = 'http://' . $_SERVER['HTTP_HOST'] . '/api/yinsheng/';
     }
@@ -94,16 +105,20 @@ class Yinsheng extends \app\api\payment\YinshengApi
         $arr = [
             'memberId'    => $this->memberId,
             'merchantNo'  => $this->merchantNo,
-            'responseUrl' => $this->notify . 'bind_notify/cardid/' . $this->creditcard->card_id,
+            'responseUrl' => $this->notify . 'bind_notify/cardid/' . $this->creditcard->card_id . '?' . $_SERVER['QUERY_STRING'],
         ];
-        return $this->form('bind/h5bind', $arr);
+
+        $res = $this->form('bind/h5bind', $arr);
+        $res = str_replace('/unspay-creditCardRepayment-business/bind/h5bindInfo', $this->url . 'bind/h5bindInfo', $res);
+        return $res;
     }
     /**
-     * 信用卡绑定回调 
+     * 信用卡绑定回调
      * 前端回调
      */
     public function bind_notify()
     {
+        trace('bind_notify');
         $param = input();
         if ($param['result_code'] == '0000' && $param['bindCode'] == '1028') {
             $passway    = model\Passageway::get(['passageway_method' => 'yinsheng']);
@@ -116,43 +131,103 @@ class Yinsheng extends \app\api\payment\YinshengApi
             $creditpass->member_credit_pas_info   = $param['token'];
             $creditpass->member_credit_pas_status = 1;
             $creditpass->save();
-            $return['msg']="绑卡成功，请关闭当前页面重新提交";
-        }else{
-            $return['msg']=$param['result_msg'];
+            // $return['msg'] = "绑卡成功，请关闭当前页面重新提交";
+            // 直接调用创建计划页面
+            return redirect('Userurl/repayment_plan_create_detail?' . $_SERVER['QUERY_STRING']);
+
+        } else {
+            $return['msg'] = $param['result_msg'];
         }
-        return redirect('Userurl/show_error', ['data' =>$return['msg']]);
+        return redirect('Userurl/show_error', ['data' => $return['msg']]);
     }
     /**
-     * 交易 消费还款
-     * 同时会指定还款，每笔消费 都必须指定同额度的还款
+     * 交易  H5
      */
-    public function pay($order, $passageway_mech)
+    public function h5pay()
     {
-        trace('yinsheng_pay_res');
-        $card_info=model\MemberCreditcard::where(['card_bankno'=>$order['order_card']])->find();
-        $creditpass = model\MemberCreditPas::get(['member_credit_pas_creditid' => $card_info['card_id'], 'member_credit_pas_pasid' => $order['order_passageway']]);
-        $arr        = [
+        trace('yisheng_h5pay');
+        $order                                   = db('generation_order')->where(['order_id' => 1525])->find();
+        $card_info                               = model\MemberCreditcard::where(['card_bankno' => $order['order_card']])->find();
+        $creditpass                              = model\MemberCreditPas::get(['member_credit_pas_creditid' => $card_info['card_id'], 'member_credit_pas_pasid' => $order['order_passageway']]);
+        $passway                                 = model\Passageway::get(['passageway_id' => $order['order_passageway']]);
+        $net                                     = model\MemberNet::get(['net_member_id' => $order['order_member']]);
+        list($this->memberId, $this->merchantNo) = explode(',', $net->{$passway->passageway_no});
+        $arr                                     = [
             'repayVersion'           => '2.0',
             'orderNo'                => $order['order_platform_no'],
-            'batchNo'                => $order['order_platform_no'],
             'amount'                 => round($order['order_money'], 2),
             'repayInfo'              => [
-                [
-                    'repayCycle'    => 'D0',
-                    'repayAmount'   => round($order['order_money'], 2),
-                    'repayOrderNo'  => 'qf_' . $order['order_platform_no'],
-                    'repayDateTime' => date('Y-m-d H:i', time() + 3600 * 2 /10),
-                ]
+                'info' => [
+                    [
+                        'repayCycle'    => 'D0',
+                        'repayAmount'   => round($order['order_money'], 2),
+                        'repayOrderNo'  => 'qf' . $order['order_platform_no'],
+                        'repayDateTime' => date('Y-m-d H:i', time() + $this->qf_time),
+                    ],
+                ],
             ],
             'memberId'               => $this->memberId,
             'merchantNo'             => $this->merchantNo,
             'deductCardToken'        => $creditpass->member_credit_pas_info,
             'repayCardToken'         => $creditpass->member_credit_pas_info,
             'purpose'                => '666',
-            'quickPayRes'            => $this->notify . 'pay_notify',
+            'quickPayResponseUrl'    => $this->notify . 'pay_notify/creditpassid/' . $creditpass->member_credit_pas_id,
+            'delegatePayResponseUrl' => $this->notify . 'qf_notify',
+            #返回提示页 因为 批次号 是异步通知的
+            'pageResponseUrl'        => 'http://' . $_SERVER['HTTP_HOST'] . '/api/Userurl/show_error?data=验证成功 请关闭页面 重新创建还款计划',
+        ];
+        $this->assign('url', $this->url . 'quickPayWap/prePay');
+        $this->assign('arr', $this->sign($arr));
+        return view('Userurl/yinshengbao_h5pay');
+        // $res = $this->form('quickPayWap/prePay', $arr);
+        // trace($res);
+        // return $res;
+    }
+    /**
+     * 交易 消费还款
+     * 同时会指定还款，每笔消费 都必须指定同额度的还款
+     *
+     *  首次交易 必须在H5页面执行 包含签约
+     *
+     */
+    public function pay($order, $passageway_mech)
+    // public function pay()
+    {
+        trace('yinsheng_pay_res');
+        // $order = db('generation_order')->where(['order_id'=>1525])->find();
+
+        $card_info                               = model\MemberCreditcard::where(['card_bankno' => $order['order_card']])->find();
+        $creditpass                              = model\MemberCreditPas::get(['member_credit_pas_creditid' => $card_info['card_id'], 'member_credit_pas_pasid' => $order['order_passageway']]);
+        $passway                                 = model\Passageway::get(['passageway_id' => $order['order_passageway']]);
+        $net                                     = model\MemberNet::get(['net_member_id' => $order['order_member']]);
+        list($this->memberId, $this->merchantNo) = explode(',', $net->{$passway->passageway_no});
+        $arr                                     = [
+            'repayVersion'           => '2.0',
+            'orderNo'                => $order['order_platform_no'],
+            'batchNo'                => $creditpass->member_credit_pas_smsseq,
+            'amount'                 => round($order['order_money'], 2),
+            'repayInfo'              => [
+                [
+                    'repayCycle'    => 'D0',
+                    'repayAmount'   => round($order['order_money'], 2),
+                    'repayOrderNo'  => 'qf' . $order['order_platform_no'],
+                    'repayDateTime' => date('Y-m-d H:i', time() + $this->qf_time),
+                ],
+            ],
+            'memberId'               => $this->memberId,
+            'merchantNo'             => $this->merchantNo,
+            'deductCardToken'        => $creditpass->member_credit_pas_info,
+            'repayCardToken'         => $creditpass->member_credit_pas_info,
+            'purpose'                => '666',
+            'quickPayResponseUrl'    => $this->notify . 'pay_notify',
             'delegatePayResponseUrl' => $this->notify . 'qf_notify',
         ];
+        // echo json_encode($arr['repayInfo']);die;
+        // echo json_encode($arr);die;
+        // trace($arr);
+        // halt($arr);
         $res = $this->form('quickPayInterface/pay', $arr);
+        return $res;
         trace($res);
     }
     /**
@@ -161,7 +236,14 @@ class Yinsheng extends \app\api\payment\YinshengApi
     public function pay_notify()
     {
         trace('yinsheng_pay_notify');
-        $param                  = input();
+        $param = input();
+        #首次交易
+        if (input('creditpassid') && $param['result_code'] == '0000') {
+            $creditpass                           = model\MemberCreditPas::get(input('creditpassid'));
+            $creditpass->member_credit_pas_smsseq = $param['batchNo'];
+            $creditpass->save();
+            return 'ok';
+        }
         $order                  = model\GenerationOrder::get(['order_platform_no' => $param['orderNo']]);
         $order->back_statusDesc = $param['result_msg'];
         if ($param['result_code'] == '0000') {
@@ -193,8 +275,8 @@ class Yinsheng extends \app\api\payment\YinshengApi
         $passway     = model\Passageway::get(['passageway_method' => 'yinsheng']);
         $fee         = ceil($pay->order_money * 100 * $rate + $fix * 100) / 100;
         $passway_fee = ceil($pay->order_money * 100 * $passway->passageway_qf_rate / 100 + $passway->passageway_qf_fix * 100) / 100;
-        $order = model\GenerationOrder::get(['order_platform_no' => $param['orderId']]);
-        if(!$order){
+        $order       = model\GenerationOrder::get(['order_platform_no' => $param['orderId']]);
+        if (!$order) {
             #为该笔代付 创建订单
             $order                       = new model\GenerationOrder();
             $order->order_no             = $pay->order_no;
@@ -216,9 +298,9 @@ class Yinsheng extends \app\api\payment\YinshengApi
             $order->order_passway_id     = $passway->passageway_id;
             $order->order_platform_no    = $param['orderId'];
         }
-        if($param['result_code']=='0000'){
+        if ($param['result_code'] == '0000') {
             $order->order_status = 2;
-        }else{
+        } else {
             $order->order_status = -1;
         }
         $order->save();

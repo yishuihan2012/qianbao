@@ -320,28 +320,30 @@ class Userurl extends Controller
                 $this->assign('data',$res['msg']);
                 return view("Userurl/show_error");die;
             }
-            #3判断有没有签约
-            $is_bind = $Yinsheng->card_bind_query();
+            #3判断有没有绑卡
+            $creditpass = MemberCreditPas::get(['member_credit_pas_creditid' => $param['cardId'], 'member_credit_pas_pasid' => $param['passageway']]);
             // halt($is_bind);
-            $need_bind = true;
-            if(isset($is_bind['infoList'])){
-                foreach ($is_bind['infoList'] as $k => $v) {
-                    if($v['cardNo'] == substr($MemberCreditcard->card_bankno,-4)){
-                        $need_bind = false;
-                    }
+            if($creditpass && $creditpass['member_credit_pas_info']){
+              #调用查询接口
+              // $is_bind = $Yinsheng->card_bind_query();
+              // if(isset($is_bind['infoList'])){
+              //     foreach ($is_bind['infoList'] as $k => $v) {
+              //         if($v['cardNo'] == substr($MemberCreditcard->card_bankno,-4)){
+              //         }
+              //     }
+              // }
+            }else{
+                $res = $Yinsheng->bind();
+                if($res){
+                    return $res;
+                }else{
+                  $this->assign('data','商户入网失败，请重试。');
+                  return view("Userurl/show_error");die;
                 }
             }
-            #绑卡
-            if($need_bind){
-                $res = $Yinsheng->bind();
-                    if($res){
-                        $res = str_replace('/unspay-creditCardRepayment-business/bind/h5bindInfo', 'http://180.166.114.151:28084/unspay-creditCardRepayment-business/bind/h5bindInfo', $res);
-                        return $res;
-                    }else{
-                      $this->assign('data','商户入网失败，请重试。');
-                      return view("Userurl/show_error");die;
-                    }
-                    return $res;
+            #首次交易
+            if(!$creditpass['member_credit_pas_smsseq']){
+                return $Yisheng->h5pay();
             }
 
         }else if($passageway['passageway_method']=='yipay'){//易支付
