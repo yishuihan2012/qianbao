@@ -343,7 +343,7 @@ class Userurl extends Controller
             }
             #首次交易
             if(!$creditpass['member_credit_pas_smsseq']){
-                return $Yisheng->h5pay();
+                return $Yinsheng->h5pay();
             }
 
         }else if($passageway['passageway_method']=='yipay'){//易支付
