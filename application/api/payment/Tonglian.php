@@ -131,14 +131,14 @@ class Tonglian
     }
 
     //商户结算、费率信息修改
-    public function updatesettinfo($cusid, $type='cash')
+    public function updatesettinfo($cusid, $type = 'cash')
     {
-        $memberAlso   = PassagewayItem::where(['item_group' => $this->configMember->member_group_id, 'item_passageway' => $this->configPassway->passageway_id])->find();
-        if ($type == 'repay'){
-            $rate = $memberAlso->item_also;
+        $memberAlso = PassagewayItem::where(['item_group' => $this->configMember->member_group_id, 'item_passageway' => $this->configPassway->passageway_id])->find();
+        if ($type == 'repay') {
+            $rate    = $memberAlso->item_also;
             $ratefee = $memberAlso->item_qffix;
-        }else{
-            $rate = $memberAlso->item_rate;
+        } else {
+            $rate    = $memberAlso->item_rate;
             $ratefee = $memberAlso->item_charges;
         }
         $url          = 'org/updatesettinfo';
@@ -157,7 +157,7 @@ class Tonglian
         );
         $data         = array_merge($dataP, $dataS);
         $data['sign'] = $this->getSign($data);
-        $result = $this->getData($url, $data);
+        $result       = $this->getData($url, $data);
         return $result;
     }
 
@@ -398,6 +398,54 @@ class Tonglian
         $result       = $this->getData($url, $data);
         return $result;
     }
+
+    //余额查询
+    public function balance($cusid)
+    {
+        $url          = 'acct/balance';
+        $dataP        = $this->paramsPublic();
+        $dataS        = array(
+            'cusid'     => $cusid,//商户号
+        );
+        $data         = array_merge($dataP, $dataS);
+        $data['sign'] = $this->getSign($data);
+        $result       = $this->getData($url, $data);
+        return $result;
+    }
+
+
+    //提现(付款)交易查询
+    public function querypay($cusid, $orderid)
+    {
+        $url          = 'acct/querypay';
+        $dataP        = $this->paramsPublic();
+        $dataS        = array(
+            'cusid'   => $cusid,//商户号
+            'orderid' => $orderid,
+            'date'    => date('Ymd', time()),//商户订单号
+        );
+        $data         = array_merge($dataP, $dataS);
+        $data['sign'] = $this->getSign($data);
+        $result       = $this->getData($url, $data);
+        return $result;
+    }
+
+
+    //对账文件下载
+    public function download($cusid)
+    {
+        $url          = 'checkacct/download';
+        $dataP        = $this->paramsPublic();
+        $dataS        = array(
+            'cusid'   => $cusid,//商户号
+            'trxdate' => date('Ymd', time()),//商户订单号
+        );
+        $data         = array_merge($dataP, $dataS);
+        $data['sign'] = $this->getSign($data);
+        $result       = $this->getData($url, $data);
+        return $result;
+    }
+
 
     //拼sign
     public function getSign($data)
