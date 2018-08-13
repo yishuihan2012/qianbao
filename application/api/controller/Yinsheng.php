@@ -299,14 +299,16 @@ class Yinsheng extends \app\api\payment\YinshengApi
     {
         trace('yinsheng_pay_notify');
         $param = input();
+        $order                  = model\GenerationOrder::get(['order_platform_no' => $param['orderNo']]);
         #首次交易
         if (input('creditpassid') && $param['result_code'] == '0000') {
             $creditpass                           = model\MemberCreditPas::get(input('creditpassid'));
             $creditpass->member_credit_pas_smsseq = $param['batchNo'];
             $creditpass->save();
+            $order->order_status = 2;
+            $order->save();
             return 'ok';
         }
-        $order                  = model\GenerationOrder::get(['order_platform_no' => $param['orderNo']]);
         $order->back_statusDesc = $param['result_msg'];
         if ($param['result_code'] == '0000') {
             $order->order_status = 2;
@@ -334,9 +336,9 @@ class Yinsheng extends \app\api\payment\YinshengApi
         $param = input();
         #取出对应消费订单
         $pay         = model\GenerationOrder::get(['order_platform_no' => substr($param['orderId'], 2)]);
+        $passway     = model\Passageway::get(['passageway_method' => 'yinsheng']);
         $member = model\Member::get($pay->order_member);
         $rate   = model\PassagewayItem::get(['item_passageway' => $passway->passageway_id, 'item_group' => $member->member_group_id]);
-        $passway     = model\Passageway::get(['passageway_method' => 'yinsheng']);
         $Userurl = new Userurl();
         #定义税率
         $also = ($rate->item_also) / 100;
