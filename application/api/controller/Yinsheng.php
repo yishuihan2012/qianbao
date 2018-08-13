@@ -38,6 +38,8 @@ class Yinsheng extends \app\api\payment\YinshengApi
     public $debug = 1;
     #自动还款延迟时间
     public $qf_time;
+    #首次交易金额
+    public $h5_pay_amount = 2;
     public function __construct()
     {
         parent::__construct();
@@ -143,11 +145,68 @@ class Yinsheng extends \app\api\payment\YinshengApi
     /**
      * 交易  H5
      */
-    public function h5pay()
+    public function h5pay($param)
     {
         trace('yisheng_h5pay');
-        $order                                   = db('generation_order')->where(['order_id' => 1525])->find();
-        $card_info                               = model\MemberCreditcard::where(['card_bankno' => $order['order_card']])->find();
+        $passageway = model\Passageway::get($param['passageway']);
+        $card_info  = model\MemberCreditcard::get(['card_id' => $param['cardId']]);
+
+        #生成一个独立order
+        #
+        $member = model\Member::get($param['uid']);
+        $rate   = model\PassagewayItem::get(['item_passageway' => $param['passageway'], 'item_group' => $member->member_group_id]);
+        #定义税率
+        $also = ($rate->item_also) / 100;
+        #定义代扣费
+        $daikou = ($rate->item_charges) / 100;
+        #获取代付费率
+        $item_qfalso = ($rate->item_qfalso) / 100;
+        #获取代付定额
+        $item_qffix = ($rate->item_qffix) / 100;
+        //如果还款次数小于天数
+        $pound             = $this->h5_pay_amount * $rate->item_also / 100 + $rate->item_qffix / 100;
+        $Generation_result = new model\Generation([
+            'generation_no'         => uniqidNumber(),
+            'generation_count'      => 1,
+            'generation_member'     => $param['uid'],
+            'generation_card'       => $card_info['card_bankno'],
+            'generation_total'      => $this->h5_pay_amount,
+            'generation_left'       => 0,
+            'generation_pound'      => $pound,
+            'generation_start'      => date('Y-m-d'),
+            'generation_end'        => date('Y-m-d'),
+            'generation_passway_id' => $param['passageway'],
+        ]);
+        $Generation_result->save();
+
+        $Userurl = new Userurl();
+        // $pay = $Userurl->get_need_pay($also,$daikou,$this->h5_pay_amount);
+        $real_each_get = $Userurl->get_real_money($also, $daikou, $this->h5_pay_amount, $passageway->passageway_rate, $passageway->passageway_income);
+        $order         = new model\GenerationOrder([
+            'order_no'             => $Generation_result->generation_id,
+            'order_member'         => $param['uid'],
+            'order_type'           => 2,
+            'order_status'         => 5,
+            'order_card'           => $card_info->card_bankno,
+            'order_money'          => $this->h5_pay_amount,
+            'order_pound'          => $real_each_get['fee'],
+            'order_real_get'       => $real_each_get['money'],
+            'order_platform_fee'   => $real_each_get['plantform_fee'],
+            'order_passageway_fee' => $real_each_get['passageway_fee'],
+            'passageway_rate'      => $passageway->passageway_rate,
+            'passageway_fix'       => $passageway->passageway_income,
+            'user_fix'             => $daikou,
+            'user_rate'            => $also * 100,
+            'order_desc'           => '银生宝首次验证消费~',
+            'order_time'           => date('Y-m-d H:i:s'),
+            'order_passageway'     => $param['passageway'],
+            'order_passway_id'     => $param['passageway'],
+            'order_platform_no'    => get_plantform_pinyin() . $member->member_mobile . make_rand_code(),
+        ]);
+
+        $order->save();
+
+        // $order                                   = db('generation_order')->where(['order_id' => 1525])->find();
         $creditpass                              = model\MemberCreditPas::get(['member_credit_pas_creditid' => $card_info['card_id'], 'member_credit_pas_pasid' => $order['order_passageway']]);
         $passway                                 = model\Passageway::get(['passageway_id' => $order['order_passageway']]);
         $net                                     = model\MemberNet::get(['net_member_id' => $order['order_member']]);
@@ -271,10 +330,10 @@ class Yinsheng extends \app\api\payment\YinshengApi
     {
         $param = input();
         #取出对应消费订单
-        $pay         = model\GenerationOrder::get(['order_platform_no' => substr($param['orderId'], 3)]);
+        $pay         = model\GenerationOrder::get(['order_platform_no' => substr($param['orderId'], 2)]);
         $passway     = model\Passageway::get(['passageway_method' => 'yinsheng']);
-        $fee         = ceil($pay->order_money * 100 * $rate + $fix * 100) / 100;
-        $passway_fee = ceil($pay->order_money * 100 * $passway->passageway_qf_rate / 100 + $passway->passageway_qf_fix * 100) / 100;
+        $fee         = ceil($pay->order_real_get * 100 * $rate + $fix * 100) / 100;
+        $passway_fee = ceil($pay->order_real_get * 100 * $passway->passageway_qf_rate / 100 + $passway->passageway_qf_fix * 100) / 100;
         $order       = model\GenerationOrder::get(['order_platform_no' => $param['orderId']]);
         if (!$order) {
             #为该笔代付 创建订单
@@ -283,16 +342,16 @@ class Yinsheng extends \app\api\payment\YinshengApi
             $order->order_member         = $pay->order_member;
             $order->order_type           = 2;
             $order->order_card           = $pay->order_card;
-            $order->order_money          = $pay->order_money;
+            $order->order_money          = $pay->order_real_get;
             $order->order_pound          = $passway->passageway_qf_fix;
-            $order->order_real_get       = $pay->order_money - $passway->passageway_qf_fix;
+            $order->order_real_get       = $pay->order_real_get - $passway->passageway_qf_fix;
             $order->order_platform_fee   = $fee - $passway_fee;
             $order->order_passageway_fee = $passway_fee;
             $order->passageway_rate      = $passway->passageway_qf_rate;
             $order->passageway_fix       = $passway->passageway_qf_fix;
             $order->user_fix             = $passway->passageway_qf_fix;
             $order->user_rate            = 0;
-            $order->order_desc           = '自动代还还款';
+            $order->order_desc           = '银生宝首次验证还款';
             $order->order_time           = date('Y-m-d H:i:s');
             $order->order_passageway     = $passway->passageway_id;
             $order->order_passway_id     = $passway->passageway_id;
