@@ -422,7 +422,7 @@ use app\index\model\Member;
         // $member_base=Member::where(['member_id'=>$pay['order_member']])->find();
         $params=array(
           'mchNo'=>$merch->passageway_mech, //机构号 必填  由平台统一分配
-          'userNo'=>$MemberNets->merch->passageway_no,  //平台用户标识  必填  平台下发用户标识
+          'userNo'=>$MemberNets->{$merch->passageway_no},  //平台用户标识  必填  平台下发用户标识
           'orderNo'=>$generation_order->order_platform_no,  //订单流水号 必填  机构订单流水号，需唯一
           'tradeNo'=>$generation_order->back_tradeNo,  //平台流水号 必填  绑卡支付返回的流水号
           // 'tradeDate'=>'', 
