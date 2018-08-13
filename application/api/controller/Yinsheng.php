@@ -16,6 +16,10 @@ use app\index\model;
  * net 进件 接口 中 aduitCode 参数 为 1018 时为通过 (文档里写的是1)
  * bind_notify 绑卡回调 中 bindCode 为1028 为绑卡成功
  *
+ * 后台地址
+ * 测试
+ * http://180.166.114.155/unspay/main.do
+ *
  */
 class Yinsheng extends \app\api\payment\YinshengApi
 {
@@ -47,7 +51,7 @@ class Yinsheng extends \app\api\payment\YinshengApi
         $this->url       = $this->debug ? 'http://180.166.114.151:28084/unspay-creditCardRepayment-business/' : '';
         $this->accountId = $this->debug ? '1120180523103326001' : '';
         $this->key       = $this->debug ? '123456abc' : '';
-        $this->qf_time   = $this->debug ? 60 : 3600;
+        $this->qf_time   = $this->debug ? 20 : 3600;
         // config('default_return_type','json');
         $this->notify = 'http://' . $_SERVER['HTTP_HOST'] . '/api/yinsheng/';
     }
@@ -163,7 +167,6 @@ class Yinsheng extends \app\api\payment\YinshengApi
         $item_qfalso = ($rate->item_qfalso) / 100;
         #获取代付定额
         $item_qffix = ($rate->item_qffix) / 100;
-        //如果还款次数小于天数
         $pound             = $this->h5_pay_amount * $rate->item_also / 100 + $rate->item_qffix / 100;
         $Generation_result = new model\Generation([
             'generation_no'         => uniqidNumber(),
@@ -331,9 +334,19 @@ class Yinsheng extends \app\api\payment\YinshengApi
         $param = input();
         #取出对应消费订单
         $pay         = model\GenerationOrder::get(['order_platform_no' => substr($param['orderId'], 2)]);
+        $member = model\Member::get($pay->order_member);
+        $rate   = model\PassagewayItem::get(['item_passageway' => $passway->passageway_id, 'item_group' => $member->member_group_id]);
         $passway     = model\Passageway::get(['passageway_method' => 'yinsheng']);
-        $fee         = ceil($pay->order_real_get * 100 * $rate + $fix * 100) / 100;
-        $passway_fee = ceil($pay->order_real_get * 100 * $passway->passageway_qf_rate / 100 + $passway->passageway_qf_fix * 100) / 100;
+        $Userurl = new Userurl();
+        #定义税率
+        $also = ($rate->item_also) / 100;
+        #定义代扣费
+        $daikou = ($rate->item_charges) / 100;
+        #获取代付费率
+        $item_qfalso = ($rate->item_qfalso) / 100;
+        #获取代付定额
+        $item_qffix = ($rate->item_qffix) / 100;
+        $real_qf_get=$Userurl->get_real_money($item_qfalso,$item_qffix,$pay->order_real_get,$passway->passageway_qf_rate,$passway->passageway_qf_fix);
         $order       = model\GenerationOrder::get(['order_platform_no' => $param['orderId']]);
         if (!$order) {
             #为该笔代付 创建订单
@@ -343,14 +356,14 @@ class Yinsheng extends \app\api\payment\YinshengApi
             $order->order_type           = 2;
             $order->order_card           = $pay->order_card;
             $order->order_money          = $pay->order_real_get;
-            $order->order_pound          = $passway->passageway_qf_fix;
-            $order->order_real_get       = $pay->order_real_get - $passway->passageway_qf_fix;
-            $order->order_platform_fee   = $fee - $passway_fee;
-            $order->order_passageway_fee = $passway_fee;
+            $order->order_pound          = $real_qf_get['fee'];
+            $order->order_real_get       = $real_qf_get['money'];
+            $order->order_platform_fee   = $real_qf_get['plantform_fee'];
+            $order->order_passageway_fee = $real_qf_get['passageway_fee'];
             $order->passageway_rate      = $passway->passageway_qf_rate;
             $order->passageway_fix       = $passway->passageway_qf_fix;
-            $order->user_fix             = $passway->passageway_qf_fix;
-            $order->user_rate            = 0;
+            $order->user_fix             = $item_qffix;
+            $order->user_rate            = $item_qfalso*100;
             $order->order_desc           = '银生宝首次验证还款';
             $order->order_time           = date('Y-m-d H:i:s');
             $order->order_passageway     = $passway->passageway_id;
