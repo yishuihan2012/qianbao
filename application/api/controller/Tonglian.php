@@ -111,12 +111,12 @@ class Tonglian
         //获取通道信息
         $passageway = Passageway::where(['passageway_id' => $order['order_passageway']])->find();
         //获取入网信息
-        $memberNet         = MemberNets::where(['net_member_id' => $order['order_member']])->find();
-        $memberNet_value   = $memberNet[$passageway['passageway_no']];
-        $memberNet_explode = explode(',', $memberNet_value);
-        $url               = 'acct/pay';
-        $dataP             = $this->paramsPublic();
-        $dataS             = array(
+        $memberNet                 = MemberNets::where(['net_member_id' => $order['order_member']])->find();
+        $memberNet_value           = $memberNet[$passageway['passageway_no']];
+        $memberNet_explode         = explode(',', $memberNet_value);
+        $url                       = 'acct/pay';
+        $dataP                     = $this->paramsPublic();
+        $dataS                     = array(
             'cusid'      => $memberNet_explode[0],//商户号
             'orderid'    => $order['order_platform_no'],//商户订单号
             'amount'     => $order['order_money'] * 100,//订单金额 单位分
@@ -124,9 +124,9 @@ class Tonglian
             'trxreserve' => '订单' . $order['order_platform_no'] . '的付款订单',
             'notifyurl'  => System::getName('system_url') . "/api/Tonglian/card_pay_notifyUrl",
         );
-        $data              = array_merge($dataP, $dataS);
-        $data['sign']      = $this->getSign($data);
-        $result            = $this->getData($url, $data);
+        $data                      = array_merge($dataP, $dataS);
+        $data['sign']              = $this->getSign($data);
+        $result                    = $this->getData($url, $data);
         $income['code']            = -1;
         $income['msg']             = $income['msg'] = 'FAIL';
         $update['back_statusDesc'] = isset($result['errmsg']) ? $result['errmsg'] : $result['trxstatus'];
@@ -165,9 +165,9 @@ class Tonglian
             $arr['order_status'] = '-1';
             $arr['back_status']  = 'FAIL';
         }
-        $arr['back_statusDesc'] = $params['trxreserved'];
-        $arr['back_status']     = $params['trxcode'];
-        $arr['back_tradeNo']    = $params['trxid'];
+        isset($params['trxreserved']) ? $arr['back_statusDesc'] = $params['trxreserved'] : $arr['back_statusDesc'] = '';
+        isset($params['trxcode']) ? $arr['back_status'] = $params['trxcode'] : $arr['back_status'] = '';
+        isset($params['trxid']) ? $arr['back_tradeNo'] = $params['trxid'] : $arr['back_tradeNo'] = '';
         //添加执行记录
         $pay->save($arr);
         if ($params['trxcode'] == '0000') {//成功
@@ -204,9 +204,9 @@ class Tonglian
             $arr['order_status'] = '-1';
             $arr['back_status']  = 'FAIL';
         }
-        $arr['back_statusDesc'] = $params['trxreserved'];
-        $arr['back_status']     = $params['trxcode'];
-        $arr['back_tradeNo']    = $params['trxid'];
+        isset($params['trxreserved']) ? $arr['back_statusDesc'] = $params['trxreserved'] : $arr['back_statusDesc'] = '';
+        isset($params['trxcode']) ? $arr['back_status'] = $params['trxcode'] : $arr['back_status'] = '';
+        isset($params['trxid']) ? $arr['back_tradeNo'] = $params['trxid'] : $arr['back_tradeNo'] = '';
         //添加执行记录
         $pay->save($arr);
         if ($params['trxcode'] == '0000') {//成功
