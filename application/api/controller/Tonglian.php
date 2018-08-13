@@ -75,7 +75,7 @@ class Tonglian
             'currency'  => 'CNY',
             'subject'   => '订单' . $order['order_platform_no'] . '的代还申请',//订单内容 订单的展示标题
             'notifyurl' => System::getName('system_url') . "/api/Tonglian/card_quickpass_notifyUrl",
-            'city'      => '530900',  //待优化
+            'city'      => '370100',  //待优化
             'mccid'     => $this->getMccid()
         );
         $data              = array_merge($dataP, $dataS);

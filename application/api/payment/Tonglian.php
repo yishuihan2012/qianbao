@@ -96,8 +96,8 @@ class Tonglian
             'outcusid'     => strtoupper($this->membercard->card_idcard),//商户外部唯一标记 //身份证号
             'cusname'      => $this->configMember->member_nick,//商户名称
             'cusshortname' => $this->configMember->member_nick,//商户简称
-            'merprovice'   => '530000',//所在省 山东
-            'areacode'     => '530900',//所在市 济南
+            'merprovice'   => '370000',//所在省 山东
+            'areacode'     => '370100',//所在市 济南
             'legal'        => $this->membercard->card_name,//法人姓名
             'idno'         => $this->membercard->card_idcard,//法人代表证件号
             'phone'        => $this->membercard->card_phone,//法人手机号码
