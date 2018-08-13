@@ -603,6 +603,7 @@ class Userurl extends Controller
                     $res                    = MemberNet::where(['net_member_id' => $this->param['uid']])->setField($passageway['passageway_no'], $memberNetOther_vlaue);
                     $memberCreditPas        = new MemberCreditPas(['member_credit_pas_creditid' => $this->param['cardId'], 'member_credit_pas_pasid' => $this->param['passageway'], 'member_credit_pas_status' => 1]);
                     $memberCreditPas->save();
+                    $updatesettinfo = $tonglian->updatesettinfo($memberNetOther_explode[0],$type ='repay');
                 } else {
                     #获取信息卡信息
                     $creditcard = MemberCreditcard::get($this->param['cardId']);

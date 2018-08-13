@@ -128,7 +128,6 @@ class Membernet
                         if ($value['order_type'] == 1) { //消费
                             $res = $action->pay($value, $passageway_mech);
                         } else if ($value['order_type'] == 2) {//提现
-
                             $res = $action->qfpay($value, $passageway_mech);
                         }
                     }

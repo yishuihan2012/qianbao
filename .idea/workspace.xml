@@ -4,9 +4,7 @@
     <list default="true" id="a20d3bbe-dec1-48a5-9385-36bfcb06ecfa" name="Default" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/application/api/controller/Membernet.php" beforeDir="false" afterPath="$PROJECT_DIR$/application/api/controller/Membernet.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/application/api/controller/Tonglian.php" beforeDir="false" afterPath="$PROJECT_DIR$/application/api/controller/Tonglian.php" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/application/api/controller/Userurl.php" beforeDir="false" afterPath="$PROJECT_DIR$/application/api/controller/Userurl.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/application/api/payment/Tonglian.php" beforeDir="false" afterPath="$PROJECT_DIR$/application/api/payment/Tonglian.php" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="TRACKING_ENABLED" value="true" />
@@ -23,8 +21,8 @@
       <file leaf-file-name="CashOut.php" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/application/index/controller/CashOut.php">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="1286">
-              <caret line="1395" column="20" selection-start-line="1395" selection-start-column="20" selection-end-line="1395" selection-end-column="20" />
+            <state relative-caret-position="571">
+              <caret line="1389" column="22" lean-forward="true" selection-start-line="1389" selection-start-column="22" selection-end-line="1389" selection-end-column="22" />
             </state>
           </provider>
         </entry>
@@ -33,16 +31,16 @@
         <entry file="file://$PROJECT_DIR$/application/api/controller/RepaymentPlan.php">
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="540">
-              <caret line="147" column="11" lean-forward="true" selection-start-line="147" selection-start-column="11" selection-end-line="147" selection-end-column="11" />
+              <caret line="147" column="11" selection-start-line="147" selection-start-column="11" selection-end-line="147" selection-end-column="11" />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="Userurl.php" pinned="false" current-in-tab="false">
+      <file leaf-file-name="Userurl.php" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/application/api/controller/Userurl.php">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="549">
-              <caret line="635" column="13" lean-forward="true" selection-start-line="635" selection-start-column="13" selection-end-line="635" selection-end-column="13" />
+            <state relative-caret-position="603">
+              <caret line="604" column="45" lean-forward="true" selection-start-line="604" selection-start-column="45" selection-end-line="604" selection-end-column="45" />
               <folding>
                 <element signature="n#style#0;n#li#0;n#!!top" expanded="true" />
                 <element signature="n#style#0;n#li#0;n#!!top" expanded="true" />
@@ -54,10 +52,19 @@
           </provider>
         </entry>
       </file>
+      <file leaf-file-name="Membernets.php" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/application/api/controller/Membernets.php">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="515">
+              <caret line="619" column="29" selection-start-line="619" selection-start-column="29" selection-end-line="619" selection-end-column="29" />
+            </state>
+          </provider>
+        </entry>
+      </file>
       <file leaf-file-name="signed_tonglian.blade.php" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/template/Userurl/signed_tonglian.blade.php">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="314">
+            <state relative-caret-position="2079">
               <caret line="77" column="56" selection-start-line="77" selection-start-column="40" selection-end-line="77" selection-end-column="56" />
             </state>
           </provider>
@@ -66,8 +73,8 @@
       <file leaf-file-name="Membernet.php" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/application/api/controller/Membernet.php">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="927">
-              <caret line="119" column="61" lean-forward="true" selection-start-line="119" selection-start-column="61" selection-end-line="119" selection-end-column="61" />
+            <state relative-caret-position="576">
+              <caret line="130" selection-start-line="130" selection-end-line="130" />
             </state>
           </provider>
         </entry>
@@ -75,8 +82,8 @@
       <file leaf-file-name="Yipay.php" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/application/api/controller/Yipay.php">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="603">
-              <caret line="394" column="37" lean-forward="true" selection-start-line="394" selection-start-column="37" selection-end-line="394" selection-end-column="37" />
+            <state relative-caret-position="10125">
+              <caret line="394" column="37" selection-start-line="394" selection-start-column="37" selection-end-line="394" selection-end-column="37" />
               <folding>
                 <element signature="e#38#51#0#PHP" expanded="true" />
               </folding>
@@ -87,8 +94,8 @@
       <file leaf-file-name="Tonglian.php" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/application/api/controller/Tonglian.php">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="461">
-              <caret line="127" column="51" lean-forward="true" selection-start-line="127" selection-start-column="51" selection-end-line="127" selection-end-column="51" />
+            <state relative-caret-position="252">
+              <caret line="113" column="72" selection-start-line="113" selection-start-column="72" selection-end-line="113" selection-end-column="72" />
               <folding>
                 <element signature="e#122#135#0#PHP" expanded="true" />
               </folding>
@@ -96,11 +103,11 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="Tonglian.php" pinned="false" current-in-tab="true">
+      <file leaf-file-name="Tonglian.php" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/application/api/payment/Tonglian.php">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="559">
-              <caret line="159" column="46" lean-forward="true" selection-start-line="159" selection-start-column="46" selection-end-line="159" selection-end-column="46" />
+            <state relative-caret-position="1423">
+              <caret line="110" column="10" lean-forward="true" selection-start-line="110" selection-start-column="10" selection-end-line="110" selection-end-column="10" />
               <folding>
                 <element signature="e#118#149#0#PHP" expanded="true" />
               </folding>
@@ -111,17 +118,8 @@
       <file leaf-file-name="Index.php" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/application/api/controller/Index.php">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="351">
-              <caret line="24" column="10" lean-forward="true" selection-start-line="28" selection-end-line="28" selection-end-column="7" />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="Cashoutcallback.php" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/application/index/controller/Cashoutcallback.php">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="449">
-              <caret line="656" column="16" lean-forward="true" selection-start-line="656" selection-start-column="16" selection-end-line="656" selection-end-column="16" />
+            <state relative-caret-position="432">
+              <caret line="24" column="10" selection-start-line="28" selection-end-line="28" selection-end-column="7" />
             </state>
           </provider>
         </entry>
@@ -155,11 +153,11 @@
       <find>strlen</find>
       <find>amount</find>
       <find>repayment_plan_create_detail</find>
-      <find>tonglian</find>
       <find>tonglianBindcard</find>
       <find>signed_tonglian</find>
       <find>quickpass</find>
       <find>qfpay</find>
+      <find>tonglian</find>
     </findStrings>
     <dirStrings>
       <dir>F:\zl_projects\wallet\application</dir>
@@ -182,7 +180,6 @@
         <option value="D:/phpStudy/PHPTutorial/Apache/conf/vhosts.conf" />
         <option value="$PROJECT_DIR$/application/api/payment/yibaoPay.php" />
         <option value="$PROJECT_DIR$/application/api/controller/MemberCash.php" />
-        <option value="$PROJECT_DIR$/application/api/controller/Membernets.php" />
         <option value="$PROJECT_DIR$/template/Userurl/signed.blade.php" />
         <option value="$PROJECT_DIR$/template/Userurl/H5tonglian.blade.php" />
         <option value="$PROJECT_DIR$/template/Userurl/signed_tonglian.blade.php" />
@@ -191,10 +188,11 @@
         <option value="$PROJECT_DIR$/application/api/controller/RepaymentPlan.php" />
         <option value="$PROJECT_DIR$/application/index/controller/CashOut.php" />
         <option value="$PROJECT_DIR$/application/api/controller/Index.php" />
-        <option value="$PROJECT_DIR$/application/api/payment/Tonglian.php" />
-        <option value="$PROJECT_DIR$/application/api/controller/Userurl.php" />
         <option value="$PROJECT_DIR$/application/api/controller/Tonglian.php" />
         <option value="$PROJECT_DIR$/application/api/controller/Membernet.php" />
+        <option value="$PROJECT_DIR$/application/api/payment/Tonglian.php" />
+        <option value="$PROJECT_DIR$/application/api/controller/Membernets.php" />
+        <option value="$PROJECT_DIR$/application/api/controller/Userurl.php" />
       </list>
     </option>
   </component>
@@ -242,6 +240,7 @@
       <foldersAlwaysOnTop value="true" />
     </navigator>
     <panes>
+      <pane id="Scope" />
       <pane id="ProjectPane">
         <subPane>
           <expand>
@@ -319,7 +318,6 @@
           <select />
         </subPane>
       </pane>
-      <pane id="Scope" />
     </panes>
   </component>
   <component name="PropertiesComponent">
@@ -389,51 +387,38 @@
       <workItem from="1533774782499" duration="19386000" />
       <workItem from="1533801230112" duration="6161000" />
       <workItem from="1533862179064" duration="29061000" />
+      <workItem from="1534123316591" duration="1392000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="315484000" />
+    <option name="totallyTimeSpent" value="317012000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="-8" y="-8" width="1936" height="1056" extended-state="6" />
     <editor active="true" />
     <layout>
       <window_info anchor="bottom" id="TODO" order="6" />
-      <window_info anchor="bottom" id="Messages" order="7" />
       <window_info anchor="bottom" id="Event Log" order="7" side_tool="true" />
       <window_info anchor="bottom" id="Database Changes" order="7" show_stripe_button="false" />
-      <window_info anchor="bottom" id="Run" order="2" />
       <window_info anchor="bottom" id="Version Control" order="7" weight="0.6002179" />
+      <window_info anchor="bottom" id="Run" order="2" />
       <window_info id="npm" order="2" side_tool="true" />
       <window_info anchor="bottom" id="Terminal" order="7" />
-      <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.12633263" />
+      <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.14925373" />
       <window_info anchor="bottom" id="Docker" order="7" show_stripe_button="false" />
       <window_info anchor="right" id="Database" order="3" />
-      <window_info anchor="bottom" id="Find" order="1" weight="0.08278867" />
       <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
-      <window_info anchor="bottom" id="Debug" order="3" weight="0.4" />
       <window_info id="Favorites" order="2" side_tool="true" />
+      <window_info anchor="bottom" id="Debug" order="3" weight="0.4" />
       <window_info anchor="right" content_ui="combo" id="Hierarchy" order="2" weight="0.25" />
-      <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.14765458" />
-      <window_info id="npm" order="2" side_tool="true" />
       <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
-      <window_info anchor="bottom" id="Docker" order="7" show_stripe_button="false" />
-      <window_info anchor="bottom" id="Terminal" order="7" />
-      <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
       <window_info anchor="right" id="Commander" internal_type="SLIDING" order="0" type="SLIDING" weight="0.4" />
       <window_info anchor="right" id="Ant Build" order="1" weight="0.25" />
-      <window_info anchor="bottom" id="TODO" order="6" />
-      <window_info anchor="bottom" id="Version Control" order="7" weight="0.6002179" />
-      <window_info anchor="bottom" id="Run" order="2" />
-      <window_info anchor="bottom" id="Database Changes" order="7" show_stripe_button="false" />
-      <window_info anchor="right" id="Database" order="3" />
       <window_info anchor="bottom" id="Message" order="0" />
-      <window_info anchor="bottom" id="Event Log" order="7" side_tool="true" />
       <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
-      <window_info anchor="bottom" id="Debug" order="3" weight="0.4" />
+      <window_info anchor="bottom" id="Find" order="1" weight="0.08278867" />
       <window_info anchor="bottom" id="Messages" order="7" />
-      <window_info id="Favorites" order="2" side_tool="true" />
     </layout>
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -723,93 +708,93 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/application/index/controller/Cashoutcallback.php">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="449">
-          <caret line="656" column="16" lean-forward="true" selection-start-line="656" selection-start-column="16" selection-end-line="656" selection-end-column="16" />
+        <state relative-caret-position="17361">
+          <caret line="656" column="16" selection-start-line="656" selection-start-column="16" selection-end-line="656" selection-end-column="16" />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/application/api/controller/Yipay.php">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="603">
-          <caret line="394" column="37" lean-forward="true" selection-start-line="394" selection-start-column="37" selection-end-line="394" selection-end-column="37" />
+        <state relative-caret-position="10125">
+          <caret line="394" column="37" selection-start-line="394" selection-start-column="37" selection-end-line="394" selection-end-column="37" />
           <folding>
             <element signature="e#38#51#0#PHP" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/application/api/controller/Membernets.php">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="287">
-          <caret line="610" column="5" lean-forward="true" selection-start-line="610" selection-start-column="5" selection-end-line="610" selection-end-column="5" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/template/Userurl/signed_tonglian.blade.php">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="314">
+        <state relative-caret-position="2079">
           <caret line="77" column="56" selection-start-line="77" selection-start-column="40" selection-end-line="77" selection-end-column="56" />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/application/api/controller/RepaymentPlan.php">
+    <entry file="file://$PROJECT_DIR$/application/api/controller/Index.php">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="540">
-          <caret line="147" column="11" lean-forward="true" selection-start-line="147" selection-start-column="11" selection-end-line="147" selection-end-column="11" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/application/index/controller/CashOut.php">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1286">
-          <caret line="1395" column="20" selection-start-line="1395" selection-start-column="20" selection-end-line="1395" selection-end-column="20" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/application/api/controller/Userurl.php">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="549">
-          <caret line="635" column="13" lean-forward="true" selection-start-line="635" selection-start-column="13" selection-end-line="635" selection-end-column="13" />
-          <folding>
-            <element signature="n#style#0;n#li#0;n#!!top" expanded="true" />
-            <element signature="n#style#0;n#li#0;n#!!top" expanded="true" />
-            <element signature="n#style#0;n#li#0;n#!!top" expanded="true" />
-            <element signature="n#style#0;n#li#0;n#!!top" expanded="true" />
-            <element signature="n#style#0;n#li#0;n#!!top" expanded="true" />
-          </folding>
+        <state relative-caret-position="432">
+          <caret line="24" column="10" selection-start-line="28" selection-end-line="28" selection-end-column="7" />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/application/api/controller/Tonglian.php">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="461">
-          <caret line="127" column="51" lean-forward="true" selection-start-line="127" selection-start-column="51" selection-end-line="127" selection-end-column="51" />
+        <state relative-caret-position="252">
+          <caret line="113" column="72" selection-start-line="113" selection-start-column="72" selection-end-line="113" selection-end-column="72" />
           <folding>
             <element signature="e#122#135#0#PHP" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/application/api/controller/Membernet.php">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="927">
-          <caret line="119" column="61" lean-forward="true" selection-start-line="119" selection-start-column="61" selection-end-line="119" selection-end-column="61" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/application/api/controller/Index.php">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="351">
-          <caret line="24" column="10" lean-forward="true" selection-start-line="28" selection-end-line="28" selection-end-column="7" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/application/api/payment/Tonglian.php">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="559">
-          <caret line="159" column="46" lean-forward="true" selection-start-line="159" selection-start-column="46" selection-end-line="159" selection-end-column="46" />
+        <state relative-caret-position="1423">
+          <caret line="110" column="10" lean-forward="true" selection-start-line="110" selection-start-column="10" selection-end-line="110" selection-end-column="10" />
           <folding>
             <element signature="e#118#149#0#PHP" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/application/index/controller/CashOut.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="571">
+          <caret line="1389" column="22" lean-forward="true" selection-start-line="1389" selection-start-column="22" selection-end-line="1389" selection-end-column="22" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/application/api/controller/RepaymentPlan.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="540">
+          <caret line="147" column="11" selection-start-line="147" selection-start-column="11" selection-end-line="147" selection-end-column="11" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/application/api/controller/Membernets.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="515">
+          <caret line="619" column="29" selection-start-line="619" selection-start-column="29" selection-end-line="619" selection-end-column="29" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/application/api/controller/Membernet.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="576">
+          <caret line="130" selection-start-line="130" selection-end-line="130" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/application/api/controller/Userurl.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="603">
+          <caret line="604" column="45" lean-forward="true" selection-start-line="604" selection-start-column="45" selection-end-line="604" selection-end-column="45" />
+          <folding>
+            <element signature="n#style#0;n#li#0;n#!!top" expanded="true" />
+            <element signature="n#style#0;n#li#0;n#!!top" expanded="true" />
+            <element signature="n#style#0;n#li#0;n#!!top" expanded="true" />
+            <element signature="n#style#0;n#li#0;n#!!top" expanded="true" />
+            <element signature="n#style#0;n#li#0;n#!!top" expanded="true" />
           </folding>
         </state>
       </provider>
