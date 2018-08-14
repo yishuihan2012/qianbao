@@ -65,6 +65,7 @@ class Tonglian
         $memberNet         = MemberNets::where(['net_member_id' => $order['order_member']])->find();
         $memberNet_value   = $memberNet[$passageway['passageway_no']];
         $memberNet_explode = explode(',', $memberNet_value);
+        $mccid             = $this->getMccid();
         $url               = 'qpay/quickpass';
         $dataP             = $this->paramsPublic();
         $dataS             = array(
@@ -75,8 +76,8 @@ class Tonglian
             'currency'  => 'CNY',
             'subject'   => '订单' . $order['order_platform_no'] . '的代还申请',//订单内容 订单的展示标题
             'notifyurl' => System::getName('system_url') . "/api/Tonglian/card_quickpass_notifyUrl",
-            'city'      => '370100',  //待优化
-            'mccid'     => $this->getMccid()
+            'city'      => $order['order_city_code'],  //用户订单自选
+            'mccid'     => $mccid['type']
         );
         $data              = array_merge($dataP, $dataS);
         $data['sign']      = $this->getSign($data);
@@ -97,8 +98,9 @@ class Tonglian
         } else {//失败
             $update['order_status'] = '-1';
         }
-
-        $member_base = Member::where(['member_id' => $order['order_member']])->find();
+        $update['order_product_type'] = $mccid['type'];
+        $update['order_product_name'] = $mccid['name'];
+        $member_base                  = Member::where(['member_id' => $order['order_member']])->find();
         //添加执行记录
         $res = GenerationOrder::where(['order_id' => $order['order_id']])->update($update);
         #更改完状态后续操作
@@ -234,20 +236,57 @@ class Tonglian
     private function getMccid()
     {
         $mccArray = array(
-            'M001' => '百货商超',
-            'M002' => '餐饮',
-            'M003' => '珠宝/首饰/钟表',
-            'M004' => '服饰',
-            'M005' => '化妆品',
-            'M006' => '健身/俱乐部/高尔夫',
-            'M007' => '美容/SPA',
-            'M008' => '洗浴/按摩',
-            'M009' => '加油站',
-            'M010' => '酒吧/夜总会',
-            'M011' => '酒店/宾馆/住宿',
-            'M012' => '电影院'
+            array(
+                'type' => 'M001',
+                'name' => '百货商超'
+            ),
+            array(
+                'type' => 'M002',
+                'name' => '餐饮'
+            ),
+            array(
+                'type' => 'M003',
+                'name' => '珠宝/首饰/钟表'
+            ),
+            array(
+                'type' => 'M004',
+                'name' => '服饰'
+            ),
+            array(
+                'type' => 'M005',
+                'name' => '化妆品'
+            ),
+            array(
+                'type' => 'M006',
+                'name' => '健身/俱乐部/高尔夫'
+            ),
+            array(
+                'type' => 'M007',
+                'name' => '美容/SPA'
+            ),
+            array(
+                'type' => 'M008',
+                'name' => '洗浴/按摩'
+            ),
+            array(
+                'type' => 'M009',
+                'name' => '加油站'
+            ),
+            array(
+                'type' => 'M010',
+                'name' => '酒吧/夜总会'
+            ),
+            array(
+                'type' => 'M011',
+                'name' => '酒店/宾馆/住宿'
+            ),
+            array(
+                'type' => 'M012',
+                'name' => '电影院'
+            ),
         );
-        return array_rand($mccArray);
+        $key      = array_rand($mccArray);
+        return $mccArray[$key];
     }
 
 //拼sign

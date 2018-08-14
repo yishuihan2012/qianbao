@@ -300,6 +300,8 @@ class Tonglian
             'currency'   => 'CNY',//币种
             'subject'    => '订单' . $tradeNo . '的支付申请',//订单内容 订单的展示标题
             'validtime'  => '',//订单有效时间
+//            'city'       => '',//市别 待优化
+//            'mccid'      => $this->getMccid(),//行业id
             'trxreserve' => '备注',//交易备注 用于用户订单个性化信息 交易完成通知会带上本字段
             'notifyurl'  => System::getName('system_url') . '/index/Cashoutcallback/tongliancallback', //异步通知URL,  //后台异步通知地址'//交易结果通知地址 接收交易结果通知回调地址，通知url必须为直接可访问的url，不能携带参数。
         );
@@ -405,7 +407,7 @@ class Tonglian
         $url          = 'acct/balance';
         $dataP        = $this->paramsPublic();
         $dataS        = array(
-            'cusid'     => $cusid,//商户号
+            'cusid' => $cusid,//商户号
         );
         $data         = array_merge($dataP, $dataS);
         $data['sign'] = $this->getSign($data);
@@ -444,6 +446,25 @@ class Tonglian
         $data['sign'] = $this->getSign($data);
         $result       = $this->getData($url, $data);
         return $result;
+    }
+
+    private function getMccid()
+    {
+        $mccArray = array(
+            'M001' => '百货商超',
+            'M002' => '餐饮',
+            'M003' => '珠宝/首饰/钟表',
+            'M004' => '服饰',
+            'M005' => '化妆品',
+            'M006' => '健身/俱乐部/高尔夫',
+            'M007' => '美容/SPA',
+            'M008' => '洗浴/按摩',
+            'M009' => '加油站',
+            'M010' => '酒吧/夜总会',
+            'M011' => '酒店/宾馆/住宿',
+            'M012' => '电影院'
+        );
+        return array_rand($mccArray);
     }
 
 
