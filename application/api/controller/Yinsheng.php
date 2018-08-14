@@ -19,6 +19,7 @@ use app\index\model;
  * 后台地址
  * 测试
  * http://180.166.114.155/unspay/main.do
+ * 账户名：wysdxx@unspay.com   操作员：admin   登录密码：123456abc
  *
  */
 class Yinsheng extends \app\api\payment\YinshengApi
@@ -368,7 +369,7 @@ class Yinsheng extends \app\api\payment\YinshengApi
             $order->passageway_fix       = $passway->passageway_qf_fix;
             $order->user_fix             = $item_qffix;
             $order->user_rate            = $item_qfalso*100;
-            $order->order_desc           = '银生宝首次验证还款';
+            $order->order_desc           = '自动还款';
             $order->order_time           = date('Y-m-d H:i:s');
             $order->order_passageway     = $passway->passageway_id;
             $order->order_passway_id     = $passway->passageway_id;
