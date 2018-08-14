@@ -149,7 +149,7 @@
                 'card_state'  => 0,
                 'mchno' =>$passageway->passageway_mech,
                 'bindId'    =>$bindId
-                // 'card_return' =>json_encode($card_validate),
+                'card_return' =>json_encode($card_validate),
             ];
              if($card){
                 $member_cashcard=MemberCreditcard::where(["card_bankno"=>$this->param['creditCardNo']])->update($arr);
