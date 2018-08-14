@@ -65,13 +65,16 @@ class Tonglian
         $memberNet         = MemberNets::where(['net_member_id' => $order['order_member']])->find();
         $memberNet_value   = $memberNet[$passageway['passageway_no']];
         $memberNet_explode = explode(',', $memberNet_value);
+        //获取签约信息
+        $orderCardInfo = MemberCreditcard::where(['card_member_id'=>$order['order_member'],'card_bankno'=>$order['order_card']])->find();
+        $memberPass = MemberCreditPas::where(['member_credit_pas_creditid' => $orderCardInfo['card_id'], 'member_credit_pas_pasid' => $order['order_passageway'], 'member_credit_pas_status' => 1])->find();
         $mccid             = $this->getMccid();
         $url               = 'qpay/quickpass';
         $dataP             = $this->paramsPublic();
         $dataS             = array(
             'cusid'     => $memberNet_explode[0],//商户号
             'orderid'   => $order['order_platform_no'],//商户订单号
-            'agreeid'   => $memberNet_explode[1],//协议编号
+            'agreeid'   => $memberPass['member_credit_pas_info'],//协议编号
             'amount'    => $order['order_money'] * 100,//订单金额 单位分
             'currency'  => 'CNY',
             'subject'   => '订单' . $order['order_platform_no'] . '的代还申请',//订单内容 订单的展示标题
@@ -116,19 +119,23 @@ class Tonglian
         $memberNet                 = MemberNets::where(['net_member_id' => $order['order_member']])->find();
         $memberNet_value           = $memberNet[$passageway['passageway_no']];
         $memberNet_explode         = explode(',', $memberNet_value);
+        //获取签约信息
+        $orderCardInfo = MemberCreditcard::where(['card_member_id'=>$order['order_member'],'card_bankno'=>$order['order_card']])->find();
+        $memberPass = MemberCreditPas::where(['member_credit_pas_creditid' => $orderCardInfo['card_id'], 'member_credit_pas_pasid' => $order['order_passageway'], 'member_credit_pas_status' => 1])->find();
         $url                       = 'acct/pay';
         $dataP                     = $this->paramsPublic();
         $dataS                     = array(
             'cusid'      => $memberNet_explode[0],//商户号
             'orderid'    => $order['order_platform_no'],//商户订单号
             'amount'     => $order['order_money'] * 100,//订单金额 单位分
-            'agreeid'    => $memberNet_explode[1],//协议号
+            'agreeid'    => $memberPass['member_credit_pas_info'],//协议编号
             'trxreserve' => '订单' . $order['order_platform_no'] . '的付款订单',
             'notifyurl'  => System::getName('system_url') . "/api/Tonglian/card_pay_notifyUrl",
         );
         $data                      = array_merge($dataP, $dataS);
         $data['sign']              = $this->getSign($data);
         $result                    = $this->getData($url, $data);
+        file_put_contents('qfpay_result.txt', json_encode($result));
         $income['code']            = -1;
         $income['msg']             = $income['msg'] = 'FAIL';
         $update['back_statusDesc'] = isset($result['errmsg']) ? $result['errmsg'] : $result['trxstatus'];
