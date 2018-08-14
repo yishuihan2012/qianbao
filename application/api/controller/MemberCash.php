@@ -132,4 +132,52 @@ class MemberCash
         return $arr;
     }
 
+    //对账下载 (待zl)
+    public function checkAmounts()
+    {
+        #获取到用户的信息
+        $member = Member::get($this->param['uid']);
+        #获取用户实名认证信息
+        $member_cert = MemberCert::get(['cert_member_id' => $this->param['uid']]);
+        #获取通道信息
+        $passway = Passageway::get($this->param['passwayid']);
+        $method = $passway->cashout->cashout_method;
+        // return ['code'=>442,'msg'=>'123','data'=>$method];
+        $cashObject = new CashOut($this->param['uid'], $this->param['passwayid'], $this->param['cardid']);
+        $DaoLong = $cashObject->tonglianCheck();
+        var_dump($DaoLong);exit;
+    }
+
+    //对账下载 (待zl)
+    public function queryPay()
+    {
+        #获取到用户的信息
+        $member = Member::get($this->param['uid']);
+        #获取用户实名认证信息
+        $member_cert = MemberCert::get(['cert_member_id' => $this->param['uid']]);
+        #获取通道信息
+        $passway = Passageway::get($this->param['passwayid']);
+        $method = $passway->cashout->cashout_method;
+        // return ['code'=>442,'msg'=>'123','data'=>$method];
+        $cashObject = new CashOut($this->param['uid'], $this->param['passwayid'], $this->param['cardid']);
+        $DaoLong = $cashObject->tonglianQuery();
+        var_dump($DaoLong);exit;
+    }
+
+    //对账下载 (待zl)
+    public function balance()
+    {
+        #获取到用户的信息
+        $member = Member::get($this->param['uid']);
+        #获取用户实名认证信息
+        $member_cert = MemberCert::get(['cert_member_id' => $this->param['uid']]);
+        #获取通道信息
+        $passway = Passageway::get($this->param['passwayid']);
+        $method = $passway->cashout->cashout_method;
+        // return ['code'=>442,'msg'=>'123','data'=>$method];
+        $cashObject = new CashOut($this->param['uid'], $this->param['passwayid'], $this->param['cardid']);
+        $DaoLong = $cashObject->tonglianBalance();
+        var_dump($DaoLong);exit;
+    }
+
 }

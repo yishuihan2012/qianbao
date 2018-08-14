@@ -65,6 +65,7 @@ class Tonglian
         $memberNet         = MemberNets::where(['net_member_id' => $order['order_member']])->find();
         $memberNet_value   = $memberNet[$passageway['passageway_no']];
         $memberNet_explode = explode(',', $memberNet_value);
+        $mccid             = $this->getMccid();
         $url               = 'qpay/quickpass';
         $dataP             = $this->paramsPublic();
         $dataS             = array(
@@ -75,6 +76,8 @@ class Tonglian
             'currency'  => 'CNY',
             'subject'   => '订单' . $order['order_platform_no'] . '的代还申请',//订单内容 订单的展示标题
             'notifyurl' => System::getName('system_url') . "/api/Tonglian/card_quickpass_notifyUrl",
+            'city'      => $order['order_city_code'],  //用户订单自选
+            'mccid'     => $mccid['type']
         );
         $data              = array_merge($dataP, $dataS);
         $data['sign']      = $this->getSign($data);
@@ -95,8 +98,9 @@ class Tonglian
         } else {//失败
             $update['order_status'] = '-1';
         }
-
-        $member_base = Member::where(['member_id' => $order['order_member']])->find();
+        $update['order_product_type'] = $mccid['type'];
+        $update['order_product_name'] = $mccid['name'];
+        $member_base                  = Member::where(['member_id' => $order['order_member']])->find();
         //添加执行记录
         $res = GenerationOrder::where(['order_id' => $order['order_id']])->update($update);
         #更改完状态后续操作
@@ -109,12 +113,12 @@ class Tonglian
         //获取通道信息
         $passageway = Passageway::where(['passageway_id' => $order['order_passageway']])->find();
         //获取入网信息
-        $memberNet         = MemberNets::where(['net_member_id' => $order['order_member']])->find();
-        $memberNet_value   = $memberNet[$passageway['passageway_no']];
-        $memberNet_explode = explode(',', $memberNet_value);
-        $url               = 'acct/pay';
-        $dataP             = $this->paramsPublic();
-        $dataS             = array(
+        $memberNet                 = MemberNets::where(['net_member_id' => $order['order_member']])->find();
+        $memberNet_value           = $memberNet[$passageway['passageway_no']];
+        $memberNet_explode         = explode(',', $memberNet_value);
+        $url                       = 'acct/pay';
+        $dataP                     = $this->paramsPublic();
+        $dataS                     = array(
             'cusid'      => $memberNet_explode[0],//商户号
             'orderid'    => $order['order_platform_no'],//商户订单号
             'amount'     => $order['order_money'] * 100,//订单金额 单位分
@@ -122,10 +126,9 @@ class Tonglian
             'trxreserve' => '订单' . $order['order_platform_no'] . '的付款订单',
             'notifyurl'  => System::getName('system_url') . "/api/Tonglian/card_pay_notifyUrl",
         );
-        $dataPay           = array_merge($dataP, $dataS);
-        $dataPay['sign']   = $this->getSign($dataPay);
-        $result            = $this->getData($url, $dataPay);
-
+        $data                      = array_merge($dataP, $dataS);
+        $data['sign']              = $this->getSign($data);
+        $result                    = $this->getData($url, $data);
         $income['code']            = -1;
         $income['msg']             = $income['msg'] = 'FAIL';
         $update['back_statusDesc'] = isset($result['errmsg']) ? $result['errmsg'] : $result['trxstatus'];
@@ -164,9 +167,9 @@ class Tonglian
             $arr['order_status'] = '-1';
             $arr['back_status']  = 'FAIL';
         }
-        $arr['back_statusDesc'] = $params['trxreserved'];
-        $arr['back_status']     = $params['trxcode'];
-        $arr['back_tradeNo']    = $params['trxid'];
+        isset($params['trxreserved']) ? $arr['back_statusDesc'] = $params['trxreserved'] : $arr['back_statusDesc'] = '';
+        isset($params['trxcode']) ? $arr['back_status'] = $params['trxcode'] : $arr['back_status'] = '';
+        isset($params['trxid']) ? $arr['back_tradeNo'] = $params['trxid'] : $arr['back_tradeNo'] = '';
         //添加执行记录
         $pay->save($arr);
         if ($params['trxcode'] == '0000') {//成功
@@ -203,9 +206,9 @@ class Tonglian
             $arr['order_status'] = '-1';
             $arr['back_status']  = 'FAIL';
         }
-        $arr['back_statusDesc'] = $params['trxreserved'];
-        $arr['back_status']     = $params['trxcode'];
-        $arr['back_tradeNo']    = $params['trxid'];
+        isset($params['trxreserved']) ? $arr['back_statusDesc'] = $params['trxreserved'] : $arr['back_statusDesc'] = '';
+        isset($params['trxcode']) ? $arr['back_status'] = $params['trxcode'] : $arr['back_status'] = '';
+        isset($params['trxid']) ? $arr['back_tradeNo'] = $params['trxid'] : $arr['back_tradeNo'] = '';
         //添加执行记录
         $pay->save($arr);
         if ($params['trxcode'] == '0000') {//成功
@@ -228,6 +231,62 @@ class Tonglian
             'reqtime'   => $this->reqtime,
         );
         return $data;
+    }
+
+    private function getMccid()
+    {
+        $mccArray = array(
+            array(
+                'type' => 'M001',
+                'name' => '百货商超'
+            ),
+            array(
+                'type' => 'M002',
+                'name' => '餐饮'
+            ),
+            array(
+                'type' => 'M003',
+                'name' => '珠宝/首饰/钟表'
+            ),
+            array(
+                'type' => 'M004',
+                'name' => '服饰'
+            ),
+            array(
+                'type' => 'M005',
+                'name' => '化妆品'
+            ),
+            array(
+                'type' => 'M006',
+                'name' => '健身/俱乐部/高尔夫'
+            ),
+            array(
+                'type' => 'M007',
+                'name' => '美容/SPA'
+            ),
+            array(
+                'type' => 'M008',
+                'name' => '洗浴/按摩'
+            ),
+            array(
+                'type' => 'M009',
+                'name' => '加油站'
+            ),
+            array(
+                'type' => 'M010',
+                'name' => '酒吧/夜总会'
+            ),
+            array(
+                'type' => 'M011',
+                'name' => '酒店/宾馆/住宿'
+            ),
+            array(
+                'type' => 'M012',
+                'name' => '电影院'
+            ),
+        );
+        $key      = array_rand($mccArray);
+        return $mccArray[$key];
     }
 
 //拼sign

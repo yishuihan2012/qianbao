@@ -96,8 +96,8 @@ class Tonglian
             'outcusid'     => strtoupper($this->membercard->card_idcard),//商户外部唯一标记 //身份证号
             'cusname'      => $this->configMember->member_nick,//商户名称
             'cusshortname' => $this->configMember->member_nick,//商户简称
-            'merprovice'   => '530000',//所在省 山东
-            'areacode'     => '530900',//所在市 济南
+            'merprovice'   => '370000',//所在省 山东
+            'areacode'     => '370100',//所在市 济南
             'legal'        => $this->membercard->card_name,//法人姓名
             'idno'         => $this->membercard->card_idcard,//法人代表证件号
             'phone'        => $this->membercard->card_phone,//法人手机号码
@@ -106,7 +106,7 @@ class Tonglian
             'acctname'     => $this->membercard->card_name,//账户名
             'accttp'       => '00',//卡折类型:00-借记卡;01-存折;
             'expanduser'   => $this->membercard->card_name,//拓展人
-            'prodlist'     => "[{'trxcode':'QUICKPAY_OF_HP','feerate':" . $memberAlso->item_rate . "},{'trxcode':'QUICKPAY_OF_NP','feerate':" . $memberAlso->item_rate . "},{'trxcode':'QUICKPAY_OL_HP','feerate':" . $memberAlso->item_rate . "},{'trxcode':'QUICKPAY_NOSMS','feerate':" . $memberAlso->item_rate . "}]",//支付产品信息列表
+            'prodlist'     => "[{'trxcode':'QUICKPAY_OF_HP','feerate':" . $memberAlso->item_rate . "},{'trxcode':'QUICKPAY_OF_NP','feerate':" . $memberAlso->item_rate . "},{'trxcode':'QUICKPAY_OL_HP','feerate':" . $memberAlso->item_rate . "},{'trxcode':'QUICKPAY_NOSMS','feerate':" . $memberAlso->item_rate . "},{'trxcode':'TRX_PAY','feerate':" . $memberAlso->item_qffix / 100 . "}]",//支付产品信息列表
             'settfee'      => number_format($memberAlso->item_charges / 100, 2),//提现手续费:2块/笔,该字 段填2.00，为空时，取所属代理商费率
         );
         $data         = array_merge($dataP, $dataS);
@@ -131,9 +131,16 @@ class Tonglian
     }
 
     //商户结算、费率信息修改
-    public function updatesettinfo($cusid)
+    public function updatesettinfo($cusid, $type = 'cash')
     {
-        $memberAlso   = PassagewayItem::where(['item_group' => $this->configMember->member_group_id, 'item_passageway' => $this->configPassway->passageway_id])->find();
+        $memberAlso = PassagewayItem::where(['item_group' => $this->configMember->member_group_id, 'item_passageway' => $this->configPassway->passageway_id])->find();
+        if ($type == 'repay') {
+            $rate    = $memberAlso->item_also;
+            $ratefee = $memberAlso->item_qffix;
+        } else {
+            $rate    = $memberAlso->item_rate;
+            $ratefee = $memberAlso->item_charges;
+        }
         $url          = 'org/updatesettinfo';
         $dataP        = $this->paramsPublic();
         $dataS        = array(
@@ -145,8 +152,8 @@ class Tonglian
             'cusid'    => $cusid,//商户号
             'acctid'   => $this->membercard->card_bankno,//账户号
             'accttp'   => '00',//卡折类型:00-借记卡;01-存折;
-            'prodlist' => "[{'trxcode':'QUICKPAY_OF_HP','feerate':" . $memberAlso->item_rate . "},{'trxcode':'QUICKPAY_OF_NP','feerate':" . $memberAlso->item_rate . "},{'trxcode':'QUICKPAY_OL_HP','feerate':" . $memberAlso->item_rate . "},{'trxcode':'QUICKPAY_NOSMS','feerate':" . $memberAlso->item_rate . "}]",//支付产品信息列表
-            'settfee'  => number_format($memberAlso->item_charges / 100, 2),//提现手续费:2块/笔,该字 段填2.00，为空时，取所属代理商费率
+            'prodlist' => "[{'trxcode':'QUICKPAY_OF_HP','feerate':" . $rate . "},{'trxcode':'QUICKPAY_OF_NP','feerate':" . $rate . "},{'trxcode':'QUICKPAY_OL_HP','feerate':" . $rate . "},{'trxcode':'QUICKPAY_NOSMS','feerate':" . $rate . "},{'trxcode':'TRX_PAY','feerate':" . $ratefee / 100 . "}]",//支付产品信息列表
+            'settfee'  => number_format($ratefee / 100, 2),//提现手续费:2块/笔,该字 段填2.00，为空时，取所属代理商费率
         );
         $data         = array_merge($dataP, $dataS);
         $data['sign'] = $this->getSign($data);
@@ -293,6 +300,8 @@ class Tonglian
             'currency'   => 'CNY',//币种
             'subject'    => '订单' . $tradeNo . '的支付申请',//订单内容 订单的展示标题
             'validtime'  => '',//订单有效时间
+//            'city'       => '',//市别 待优化
+//            'mccid'      => $this->getMccid(),//行业id
             'trxreserve' => '备注',//交易备注 用于用户订单个性化信息 交易完成通知会带上本字段
             'notifyurl'  => System::getName('system_url') . '/index/Cashoutcallback/tongliancallback', //异步通知URL,  //后台异步通知地址'//交易结果通知地址 接收交易结果通知回调地址，通知url必须为直接可访问的url，不能携带参数。
         );
@@ -391,6 +400,73 @@ class Tonglian
         $result       = $this->getData($url, $data);
         return $result;
     }
+
+    //余额查询
+    public function balance($cusid)
+    {
+        $url          = 'acct/balance';
+        $dataP        = $this->paramsPublic();
+        $dataS        = array(
+            'cusid' => $cusid,//商户号
+        );
+        $data         = array_merge($dataP, $dataS);
+        $data['sign'] = $this->getSign($data);
+        $result       = $this->getData($url, $data);
+        return $result;
+    }
+
+
+    //提现(付款)交易查询
+    public function querypay($cusid, $orderid)
+    {
+        $url          = 'acct/querypay';
+        $dataP        = $this->paramsPublic();
+        $dataS        = array(
+            'cusid'   => $cusid,//商户号
+            'orderid' => $orderid,
+            'date'    => date('Ymd', time()),//商户订单号
+        );
+        $data         = array_merge($dataP, $dataS);
+        $data['sign'] = $this->getSign($data);
+        $result       = $this->getData($url, $data);
+        return $result;
+    }
+
+
+    //对账文件下载
+    public function download($cusid)
+    {
+        $url          = 'checkacct/download';
+        $dataP        = $this->paramsPublic();
+        $dataS        = array(
+            'cusid'   => $cusid,//商户号
+            'trxdate' => date('Ymd', time()),//商户订单号
+        );
+        $data         = array_merge($dataP, $dataS);
+        $data['sign'] = $this->getSign($data);
+        $result       = $this->getData($url, $data);
+        return $result;
+    }
+
+    private function getMccid()
+    {
+        $mccArray = array(
+            'M001' => '百货商超',
+            'M002' => '餐饮',
+            'M003' => '珠宝/首饰/钟表',
+            'M004' => '服饰',
+            'M005' => '化妆品',
+            'M006' => '健身/俱乐部/高尔夫',
+            'M007' => '美容/SPA',
+            'M008' => '洗浴/按摩',
+            'M009' => '加油站',
+            'M010' => '酒吧/夜总会',
+            'M011' => '酒店/宾馆/住宿',
+            'M012' => '电影院'
+        );
+        return array_rand($mccArray);
+    }
+
 
     //拼sign
     public function getSign($data)

@@ -342,35 +342,31 @@ class Userurl extends Controller
                 return view("Userurl/show_error");
                 die;
             }
-            #3判断有没有签约
-            $is_bind = $Yinsheng->card_bind_query();
+            #3判断有没有绑卡
+            $creditpass = MemberCreditPas::get(['member_credit_pas_creditid' => $param['cardId'], 'member_credit_pas_pasid' => $param['passageway']]);
             // halt($is_bind);
-            $need_bind = true;
-            if (isset($is_bind['infoList'])) {
-                foreach ($is_bind['infoList'] as $k => $v) {
-                    if ($v['cardNo'] == substr($MemberCreditcard->card_bankno, -4)) {
-                        $need_bind = false;
-                    }
-                }
-            }
-            #绑卡
-            if ($need_bind) {
+            if($creditpass && $creditpass['member_credit_pas_info']){
+              #调用查询接口
+              // $is_bind = $Yinsheng->card_bind_query();
+              // if(isset($is_bind['infoList'])){
+              //     foreach ($is_bind['infoList'] as $k => $v) {
+              //         if($v['cardNo'] == substr($MemberCreditcard->card_bankno,-4)){
+              //         }
+              //     }
+              // }
+            }else{
                 $res = $Yinsheng->bind();
-                if ($res) {
-                    $res = str_replace('/unspay-creditCardRepayment-business/bind/h5bindInfo', 'http://180.166.114.151:28084/unspay-creditCardRepayment-business/bind/h5bindInfo', $res);
+                if($res){
                     return $res;
-                } else {
-                    $this->assign('data', '商户入网失败，请重试。');
-                    return view("Userurl/show_error");
-                    die;
+                }else{
+                  $this->assign('data','商户入网失败，请重试。');
+                  return view("Userurl/show_error");die;
                 }
-                return $res;
-            } else {
-                $this->assign('data', '商户入网失败，请重试。');
-                return view("Userurl/show_error");
-                die;
             }
-            return $res;
+            #首次交易
+            if(!$creditpass['member_credit_pas_smsseq']){
+                return $Yinsheng->h5pay($param);
+            }
 
         } else if ($passageway['passageway_method'] == 'yipay') {//易支付
             $Yipay = new \app\api\controller\Yipay();
@@ -603,6 +599,7 @@ class Userurl extends Controller
                     $res                    = MemberNet::where(['net_member_id' => $this->param['uid']])->setField($passageway['passageway_no'], $memberNetOther_vlaue);
                     $memberCreditPas        = new MemberCreditPas(['member_credit_pas_creditid' => $this->param['cardId'], 'member_credit_pas_pasid' => $this->param['passageway'], 'member_credit_pas_status' => 1]);
                     $memberCreditPas->save();
+                    $updatesettinfo = $tonglian->updatesettinfo($memberNetOther_explode[0], $type = 'repay');
                 } else {
                     #获取信息卡信息
                     $creditcard = MemberCreditcard::get($this->param['cardId']);
@@ -623,15 +620,41 @@ class Userurl extends Controller
             $order           = GenerationOrder::where(['order_passageway' => $this->param['passageway'], 'order_member' => $this->param['uid'], 'order_status' => '2', 'order_type' => 1])->order('order_edit_time', 'desc')->find();
             $member_group_id = Members::where(['member_id' => $this->param['uid']])->value('member_group_id');
             $rate            = PassagewayItem::where(['item_passageway' => $this->param['passageway'], 'item_group' => $members['member_group_id']])->find();
+
             #定义税率
             $also = ($rate->item_also) / 100;
             if ($order && $order['user_rate'] != $rate->item_also) {
                 //修改费率
-                $updatesettinfo = $tonglian->updatesettinfo($memberNet_explode[0]);
+                $updatesettinfo = $tonglian->updatesettinfo($memberNet_explode[0], $type = 'repay');
                 if ($updatesettinfo['retcode'] != 'SUCCESS') {
                     return ['code' => 463, 'msg' => $updatesettinfo['retmsg']];
                 }
             }
+
+            $city_list  = db('tonglian_city')->select();
+            $cityP      = array();
+            $cityP_item = array();
+            $cityC_item = array();
+            foreach ($city_list as $key => $value) {
+                if ($value['city_level'] == 2) {
+                    $cityP_item['value']    = $value['city_code'];
+                    $cityP_item['text']     = $value['city_name'];
+                    $cityP_item['children'] = array();
+                    array_push($cityP, $cityP_item);
+                    unset($city_list[$key]);
+                }
+
+            }
+            foreach ($cityP as $key => $value) {
+                foreach ($city_list as $k => $v) {
+                    if ($value['value'] == $v['city_parent_code']) {
+                        $cityC_item['value'] = $v['city_code'];
+                        $cityC_item['text']  = $v['city_name'];
+                        array_push($cityP[$key]['children'], $cityC_item);
+                    }
+                }
+            }
+            $cityP = json_encode($cityP, JSON_UNESCAPED_UNICODE);
         } else {
             // 判断是否入网
             $member_net = MemberNet::where(['net_member_id' => $param['uid']])->find();
@@ -844,7 +867,16 @@ class Userurl extends Controller
         $this->assign('order_pound', $order_pound);
         $this->assign('generation', $generation);
         $this->assign('order', $data);
-        return view("Userurl/repayment_plan_create_detail");
+
+        if (isset($cityP)) {
+            $generation_order_base = base64_encode(urlencode(json_encode($Generation_order_insert)));
+            $this->assign('generation_order_base', $generation_order_base);
+            $this->assign('city_list', $cityP);
+            $this->assign('city_list', $cityP);
+            return view("Userurl/repayment_plan_create_detail1");
+        } else {
+            return view("Userurl/repayment_plan_create_detail");
+        }
     }
 
     /**
@@ -855,9 +887,10 @@ class Userurl extends Controller
      * param   $id  为generation表主键 generation_id
      * @return   [type]
      */
-    public function repayment_plan_confirm($id)
+    public function repayment_plan_confirm($id, $city_code = '', $city_name = '')
     {
         $this->checkToken();
+        $GenerationOrderCity = GenerationOrder::where(['order_no' => $id])->update(['order_city_code' => $city_code, 'order_city_name' => $city_name]);
         //查出计划第一条
         $GenerationOrder = GenerationOrder::order('order_time')->where(['order_no' => $id])->find();
         $time            = date('Y-m-d', strtotime($GenerationOrder['order_time']));
@@ -2163,8 +2196,6 @@ class Userurl extends Controller
         $passageway        = Passageway::get($passagewayId);
         $memberNet_value   = $memberNet[$passageway->passageway_no];
         $memberNet_explode = explode(',', $memberNet_value);
-        var_dump($memberNet_value);
-        exit;
         $tonglian = new \app\api\payment\Tonglian($passagewayId, $memberId);
         $bindcard = $tonglian->bindcard($memberNet_explode[0], $cardId);
         return $bindcard;

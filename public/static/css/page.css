@@ -177,3 +177,43 @@
 .media-img{width:100%;height:auto;}
 .wrap-list{margin:2%;}
 .my-badge-org{display:inline-block;font-size:14px;padding:2px 5px;background-color:#ff4400;color:#fff;border-radius:3px;position:absolute;top:-25%;-webkit-transform: translateX(-50%);transform: translateX(-50%);}
+/*新信用卡*/
+.recommendation-content-list{
+	padding:3% 2%;
+	min-height:95px;
+}
+.recommendation-content-list .my-img-responsive{
+	max-width:135px;
+}
+.select-city-con{
+	width:94%;
+	margin:0 auto;
+	border-bottom:1px solid #605252;
+}
+.select-city{
+	border:none !important;
+	background-color:#f5f5f5 !important;
+	flex:2;
+	margin:0 0 0 20px !important;
+	padding:0 !important;
+}
+.bg-blue-tit{
+	border-radius:10px 10px 0 0;
+	background-color:#4496c8;
+}
+.bor-frame{
+	display:inline-block;
+	width:70px;
+	text-align:center;
+	border:1px dashed #4496c8;
+	padding:0 3px;
+}
+.mui-picker,.mui-poppicker{
+	background-color:#f5f5f5;
+}
+.reset-btn{
+	border:1px solid #ccc;
+	border-radius:5px;
+	padding:2px 8px;
+	color:#333;
+}
