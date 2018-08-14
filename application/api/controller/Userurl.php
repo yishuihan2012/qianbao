@@ -594,23 +594,26 @@ class Userurl extends Controller
             $has = MemberCreditPas::where(['member_credit_pas_creditid' => $this->param['cardId'], 'member_credit_pas_pasid' => $this->param['passageway']])->find();
             if (!$has) {
                 if ($cusquery) {
-                    $memberNet              = MemberNet::where(['net_member_id' => $this->param['uid']])->find();
-                    $passagewayOther        = Passageway::where(['passageway_method' => 'tonglian'])
-                        ->where('passageway_id', 'neq', $this->param['passageway'])
-                        ->find();
-                    $memberNetOther_vlaue   = $memberNet[$passagewayOther['passageway_no']];
-                    $memberNetOther_explode = explode(',', $memberNetOther_vlaue);
-                    $res                    = MemberNet::where(['net_member_id' => $this->param['uid']])->setField($passageway['passageway_no'], $memberNetOther_explode[0]);
+                    $res = MemberNet::where(['net_member_id' => $this->param['uid']])->setField($passageway['passageway_no'], $cusquery['cusid']);
                 }
-                #获取信息卡信息
-                $creditcard = MemberCreditcard::get($this->param['cardId']);
-                $this->assign('creditcard', $creditcard);
-                $this->assign('memberId', $this->param['uid']);
-                $this->assign('passagewayId', $this->param['passageway']);
-                $this->assign('price', $this->param['billMoney']);
-                $this->assign('tradeNo', $order_no);
-                $this->assign('type', 'repay');
-                return view("Userurl/signed_tonglian");
+                $passagewayOther      = Passageway::where(['passageway_method' => 'tonglian'])
+                    ->where('passageway_id', 'neq', $this->param['passageway'])
+                    ->find();
+                $memberCreditPasOther = MemberCreditPas::where(['member_credit_pas_creditid' => $this->param['cardId'], 'member_credit_pas_pasid' => $passagewayOther['passageway_id']])->find();
+                if ($memberCreditPasOther) {
+                    $memberCreditPas = new MemberCreditPas(['member_credit_pas_creditid' => $this->param['cardId'], 'member_credit_pas_pasid' => $this->param['passageway'], 'member_credit_pas_status' => 1, 'member_credit_pas_info' => $memberCreditPasOther['member_credit_pas_info']]);
+                    $memberCreditPas->save();
+                } else {
+                    #获取信息卡信息
+                    $creditcard = MemberCreditcard::get($this->param['cardId']);
+                    $this->assign('creditcard', $creditcard);
+                    $this->assign('memberId', $this->param['uid']);
+                    $this->assign('passagewayId', $this->param['passageway']);
+                    $this->assign('price', $this->param['billMoney']);
+                    $this->assign('tradeNo', $order_no);
+                    $this->assign('type', 'repay');
+                    return view("Userurl/signed_tonglian");
+                }
             }
             //用户入网信息
             $memberNet         = MemberNet::where(['net_member_id' => $this->param['uid']])->find();
