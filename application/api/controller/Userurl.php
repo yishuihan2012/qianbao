@@ -599,7 +599,11 @@ class Userurl extends Controller
                 $passagewayOther      = Passageway::where(['passageway_method' => 'tonglian'])
                     ->where('passageway_id', 'neq', $this->param['passageway'])
                     ->find();
-                $memberCreditPasOther = MemberCreditPas::where(['member_credit_pas_creditid' => $this->param['cardId'], 'member_credit_pas_pasid' => $passagewayOther['passageway_id']])->find();
+                if ($passagewayOther){
+                    $memberCreditPasOther = MemberCreditPas::where(['member_credit_pas_creditid' => $this->param['cardId'], 'member_credit_pas_pasid' => $passagewayOther['passageway_id']])->find();
+                }else{
+                    $memberCreditPasOther = '';
+                }
                 if ($memberCreditPasOther) {
                     $memberCreditPas = new MemberCreditPas(['member_credit_pas_creditid' => $this->param['cardId'], 'member_credit_pas_pasid' => $this->param['passageway'], 'member_credit_pas_status' => 1, 'member_credit_pas_info' => $memberCreditPasOther['member_credit_pas_info']]);
                     $memberCreditPas->save();
