@@ -133,6 +133,7 @@ class Tonglian
         $data                      = array_merge($dataP, $dataS);
         $data['sign']              = $this->getSign($data);
         $result                    = $this->getData($url, $data);
+        file_put_contents('qfpay_result.txt', json_encode($result));
         $income['code']            = -1;
         $income['msg']             = $income['msg'] = 'FAIL';
         $update['back_statusDesc'] = isset($result['errmsg']) ? $result['errmsg'] : $result['trxstatus'];

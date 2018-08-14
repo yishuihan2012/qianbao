@@ -869,6 +869,16 @@ class Userurl extends Controller
         $this->assign('order', $data);
 
         if (isset($cityP)) {
+//            $getIp    = $_SERVER["REMOTE_ADDR"];
+            $getIp    = '39.82.131.157';
+            $content  = file_get_contents("https://restapi.amap.com/v3/ip?ip=$getIp&output=JSON&key=6ab42a509070f4d80165912f13e8b144 ");//待优化 zl
+            $location = json_decode($content, true);
+            if ($location['status']) {
+                $location = $location['city'];
+                $this->assign('location', $location);
+            } else {
+                $this->assign('location', '济南市');
+            }
             $generation_order_base = base64_encode(urlencode(json_encode($Generation_order_insert)));
             $this->assign('generation_order_base', $generation_order_base);
             $this->assign('city_list', $cityP);

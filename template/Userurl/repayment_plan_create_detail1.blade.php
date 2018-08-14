@@ -53,6 +53,7 @@
             <input type="hidden" name="city_code" value="">
             <input type="hidden" name="city_name" value="">
         @endif
+        <input type="hidden" name="location_city" value="{{$location}}">
         <ul>
             @foreach($order as $key=>$list)
                 <li class="space-up2">
@@ -121,7 +122,9 @@
             // console.log(entity,'->',res);
             return res;
         }
-
+        //定位市
+        var location_city = $("input[name='location_city']").val();
+        console.log(location_city);
         //选择省市区
         var city_picker = new mui.PopPicker({
             layer: 2
