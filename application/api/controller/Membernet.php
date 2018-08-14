@@ -617,9 +617,21 @@ class Membernet
     //http://pay.mishua.cn/zhonlinepay/service/rest/creditTrans/accountQuery
     public function accountQuery($uid, $passageway_id, $is_print = "")
     {
+        if(!$uid){
+            return false;
+        }
         $passageway = Passageway::where(['passageway_id' => $passageway_id])->find();
+        if(!$passageway){
+            return false;
+        }
         #4获取用户信息
         $member = MemberNets::where(['net_member_id' => $uid])->find();
+        if(!$member){
+            return false;
+        }
+        if(!isset($member->{$passageway->passageway_no}) || !$member->{$passageway->passageway_no}){
+            return false;
+        }
         // print_r($member);die;
         $orderTime = date('YmdHis', time() + 60);
         $params    = array(
