@@ -28,6 +28,7 @@ use app\index\model\MemberNet;//入网模型
 use app\index\model\SmsCode;
 use app\api\controller\Helibao; //入网
 use app\index\model\GenerationOrder;
+
 class CashOut
 {
     public $error;
@@ -1372,13 +1373,10 @@ class CashOut
                         ->find();
                     $memberNetOther_vlaue   = $memberNet[$passagewayOther['passageway_no']];
                     $memberNetOther_explode = explode(',', $memberNetOther_vlaue);
-                    $res                    = MemberNet::where(['net_member_id' => $this->param['uid']])->setField($this->passway_info->passageway_no, $memberNetOther_vlaue);
-                    $memberCreditPas        = new MemberCreditPas(['member_credit_pas_creditid' => $this->card_info->card_id, 'member_credit_pas_pasid' => $this->passway_info->passageway_id, 'member_credit_pas_status' => 1]);
-                    $memberCreditPas->save();
-                } else {
-                    $url = request()->domain() . "/api/Userurl/signed_tonglian/memberId/" . $this->member_infos->member_id . "/passagewayId/" . $this->passway_info->passageway_id . "/cardId/" . $this->card_info->card_id . "/price/" . $price . "/tradeNo/" . $tradeNo . "/type/cash";
-                    return ['code' => 200, 'msg' => '订单获取成功~', 'data' => ['url' => $url, 'type' => 1,]];
+                    $res                    = MemberNet::where(['net_member_id' => $this->param['uid']])->setField($this->passway_info->passageway_no, $memberNetOther_explode[0]);
                 }
+                $url = request()->domain() . "/api/Userurl/signed_tonglian/memberId/" . $this->member_infos->member_id . "/passagewayId/" . $this->passway_info->passageway_id . "/cardId/" . $this->card_info->card_id . "/price/" . $price . "/tradeNo/" . $tradeNo . "/type/cash";
+                return ['code' => 200, 'msg' => '订单获取成功~', 'data' => ['url' => $url, 'type' => 1,]];
             }
             //用户入网信息
             $memberNet         = MemberNet::where(['net_member_id' => $this->member_infos->member_id])->find();
@@ -1394,7 +1392,7 @@ class CashOut
                     return ['code' => 463, 'msg' => $updatesettinfo['retmsg']];
                 }
             }
-            $url = request()->domain() . "/api/Userurl/tonglianOrderPay/memberId/" . $this->member_infos->member_id . "/cardId/" . $this->card_info->card_id . "/price/" . $price . "/tradeNo/" . $tradeNo . "/passagewayId/" . $this->passway_info->passageway_id . "/agreeid/" . $memberNet_explode[1];
+            $url = request()->domain() . "/api/Userurl/tonglianOrderPay/memberId/" . $this->member_infos->member_id . "/cardId/" . $this->card_info->card_id . "/price/" . $price . "/tradeNo/" . $tradeNo . "/passagewayId/" . $this->passway_info->passageway_id . "/agreeid/" . $memberCreditPas['member_credit_pas_info'];
             return ['code' => 200, 'msg' => '订单获取成功~', 'data' => ['url' => $url, 'type' => 1,]];
         }
 
@@ -1421,7 +1419,7 @@ class CashOut
         $memberNet_explode = explode(',', $memberNet_value);
 //        $order             = GenerationOrder::where(['order_status' => 1])->where
         $tonglian = new \app\api\payment\Tonglian($this->passway_info->passageway_id, $this->member_infos->member_id);
-        $res               = $tonglian->querypay($memberNet_explode[0], 'cesqb166053833296GOS1QTT');
+        $res      = $tonglian->querypay($memberNet_explode[0], 'cesqb166053833296GOS1QTT');
         return $res;
     }
 
@@ -1434,7 +1432,7 @@ class CashOut
         $memberNet_explode = explode(',', $memberNet_value);
 //        $order             = GenerationOrder::where(['order_status' => 1])->where
         $tonglian = new \app\api\payment\Tonglian($this->passway_info->passageway_id, $this->member_infos->member_id);
-        $res               = $tonglian->balance($memberNet_explode[0]);
+        $res      = $tonglian->balance($memberNet_explode[0]);
         return $res;
     }
 }

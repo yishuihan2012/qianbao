@@ -600,21 +600,17 @@ class Userurl extends Controller
                         ->find();
                     $memberNetOther_vlaue   = $memberNet[$passagewayOther['passageway_no']];
                     $memberNetOther_explode = explode(',', $memberNetOther_vlaue);
-                    $res                    = MemberNet::where(['net_member_id' => $this->param['uid']])->setField($passageway['passageway_no'], $memberNetOther_vlaue);
-                    $memberCreditPas        = new MemberCreditPas(['member_credit_pas_creditid' => $this->param['cardId'], 'member_credit_pas_pasid' => $this->param['passageway'], 'member_credit_pas_status' => 1]);
-                    $memberCreditPas->save();
-                    $updatesettinfo = $tonglian->updatesettinfo($memberNetOther_explode[0], $type = 'repay');
-                } else {
-                    #获取信息卡信息
-                    $creditcard = MemberCreditcard::get($this->param['cardId']);
-                    $this->assign('creditcard', $creditcard);
-                    $this->assign('memberId', $this->param['uid']);
-                    $this->assign('passagewayId', $this->param['passageway']);
-                    $this->assign('price', $this->param['billMoney']);
-                    $this->assign('tradeNo', $order_no);
-                    $this->assign('type', 'repay');
-                    return view("Userurl/signed_tonglian");
+                    $res                    = MemberNet::where(['net_member_id' => $this->param['uid']])->setField($passageway['passageway_no'], $memberNetOther_explode[0]);
                 }
+                #获取信息卡信息
+                $creditcard = MemberCreditcard::get($this->param['cardId']);
+                $this->assign('creditcard', $creditcard);
+                $this->assign('memberId', $this->param['uid']);
+                $this->assign('passagewayId', $this->param['passageway']);
+                $this->assign('price', $this->param['billMoney']);
+                $this->assign('tradeNo', $order_no);
+                $this->assign('type', 'repay');
+                return view("Userurl/signed_tonglian");
             }
             //用户入网信息
             $memberNet         = MemberNet::where(['net_member_id' => $this->param['uid']])->find();
@@ -2200,8 +2196,8 @@ class Userurl extends Controller
         $passageway        = Passageway::get($passagewayId);
         $memberNet_value   = $memberNet[$passageway->passageway_no];
         $memberNet_explode = explode(',', $memberNet_value);
-        $tonglian = new \app\api\payment\Tonglian($passagewayId, $memberId);
-        $bindcard = $tonglian->bindcard($memberNet_explode[0], $cardId);
+        $tonglian          = new \app\api\payment\Tonglian($passagewayId, $memberId);
+        $bindcard          = $tonglian->bindcard($memberNet_explode[0], $cardId);
         return $bindcard;
     }
 
@@ -2242,10 +2238,7 @@ class Userurl extends Controller
         $tonglian          = new \app\api\payment\Tonglian($passagewayId, $memberId);
         $confirmcard       = $tonglian->bindcardconfirm($memberNet_explode[0], $cardId, $smscode, $thpinfo);
         if ($confirmcard['trxstatus'] == 0000) {
-            $MemberNet_value = $memberNet[$passageway->passageway_no];
-            $MemberNet_value = $MemberNet_value . ',' . $confirmcard['agreeid'];
-            MemberNet::where(['net_member_id' => $memberId])->update([$passageway->passageway_no => $MemberNet_value]);
-            $memberCreditPas = new MemberCreditPas(['member_credit_pas_creditid' => $cardId, 'member_credit_pas_pasid' => $passagewayId, 'member_credit_pas_status' => 1]);
+            $memberCreditPas = new MemberCreditPas(['member_credit_pas_creditid' => $cardId, 'member_credit_pas_pasid' => $passagewayId, 'member_credit_pas_status' => 1, 'member_credit_pas_info' => $confirmcard['agreeid']]);
             $memberCreditPas->save();
         }
         return $confirmcard;
