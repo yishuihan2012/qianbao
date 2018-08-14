@@ -116,7 +116,6 @@ class Yinsheng extends \app\api\payment\YinshengApi
         ];
 
         $res = $this->form('bind/h5bind', $arr);
-        $res = str_replace('/unspay-creditCardRepayment-business/bind/h5bindInfo', $this->url . 'bind/h5bindInfo', $res);
         return $res;
     }
     /**
@@ -167,7 +166,7 @@ class Yinsheng extends \app\api\payment\YinshengApi
         #获取代付费率
         $item_qfalso = ($rate->item_qfalso) / 100;
         #获取代付定额
-        $item_qffix = ($rate->item_qffix) / 100;
+        $item_qffix        = ($rate->item_qffix) / 100;
         $pound             = $this->h5_pay_amount * $rate->item_also / 100 + $rate->item_qffix / 100;
         $Generation_result = new model\Generation([
             'generation_no'         => uniqidNumber(),
@@ -302,7 +301,7 @@ class Yinsheng extends \app\api\payment\YinshengApi
     {
         trace('yinsheng_pay_notify');
         $param = input();
-        $order                  = model\GenerationOrder::get(['order_platform_no' => $param['orderNo']]);
+        $order = model\GenerationOrder::get(['order_platform_no' => $param['orderNo']]);
         #首次交易
         if (input('creditpassid') && $param['result_code'] == '0000') {
             $creditpass                           = model\MemberCreditPas::get(input('creditpassid'));
@@ -338,10 +337,10 @@ class Yinsheng extends \app\api\payment\YinshengApi
     {
         $param = input();
         #取出对应消费订单
-        $pay         = model\GenerationOrder::get(['order_platform_no' => substr($param['orderId'], 2)]);
-        $passway     = model\Passageway::get(['passageway_method' => 'yinsheng']);
-        $member = model\Member::get($pay->order_member);
-        $rate   = model\PassagewayItem::get(['item_passageway' => $passway->passageway_id, 'item_group' => $member->member_group_id]);
+        $pay     = model\GenerationOrder::get(['order_platform_no' => substr($param['orderId'], 2)]);
+        $passway = model\Passageway::get(['passageway_method' => 'yinsheng']);
+        $member  = model\Member::get($pay->order_member);
+        $rate    = model\PassagewayItem::get(['item_passageway' => $passway->passageway_id, 'item_group' => $member->member_group_id]);
         $Userurl = new Userurl();
         #定义税率
         $also = ($rate->item_also) / 100;
@@ -350,8 +349,8 @@ class Yinsheng extends \app\api\payment\YinshengApi
         #获取代付费率
         $item_qfalso = ($rate->item_qfalso) / 100;
         #获取代付定额
-        $item_qffix = ($rate->item_qffix) / 100;
-        $real_qf_get=$Userurl->get_real_money($item_qfalso,$item_qffix,$pay->order_real_get,$passway->passageway_qf_rate,$passway->passageway_qf_fix);
+        $item_qffix  = ($rate->item_qffix) / 100;
+        $real_qf_get = $Userurl->get_real_money($item_qfalso, $item_qffix, $pay->order_real_get, $passway->passageway_qf_rate, $passway->passageway_qf_fix);
         $order       = model\GenerationOrder::get(['order_platform_no' => $param['orderId']]);
         if (!$order) {
             #为该笔代付 创建订单
@@ -368,7 +367,7 @@ class Yinsheng extends \app\api\payment\YinshengApi
             $order->passageway_rate      = $passway->passageway_qf_rate;
             $order->passageway_fix       = $passway->passageway_qf_fix;
             $order->user_fix             = $item_qffix;
-            $order->user_rate            = $item_qfalso*100;
+            $order->user_rate            = $item_qfalso * 100;
             $order->order_desc           = '自动还款';
             $order->order_time           = date('Y-m-d H:i:s');
             $order->order_passageway     = $passway->passageway_id;
