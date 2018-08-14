@@ -66,7 +66,8 @@ class Tonglian
         $memberNet_value   = $memberNet[$passageway['passageway_no']];
         $memberNet_explode = explode(',', $memberNet_value);
         //获取签约信息
-        $memberPass = MemberCreditPas::where(['member_credit_pas_creditid' => $order['order_card'], 'member_credit_pas_pasid' => $order['order_passageway'], 'member_credit_pas_status' => 1])->find();
+        $orderCardInfo = MemberCreditcard::where(['card_member_id'=>$order['order_member'],'card_bankno'=>$order['order_card']])->find();
+        $memberPass = MemberCreditPas::where(['member_credit_pas_creditid' => $orderCardInfo['card_id'], 'member_credit_pas_pasid' => $order['order_passageway'], 'member_credit_pas_status' => 1])->find();
         $mccid             = $this->getMccid();
         $url               = 'qpay/quickpass';
         $dataP             = $this->paramsPublic();
@@ -119,7 +120,8 @@ class Tonglian
         $memberNet_value           = $memberNet[$passageway['passageway_no']];
         $memberNet_explode         = explode(',', $memberNet_value);
         //获取签约信息
-        $memberPass = MemberCreditPas::where(['member_credit_pas_creditid' => $order['order_card'], 'member_credit_pas_pasid' => $order['order_passageway'], 'member_credit_pas_status' => 1])->find();
+        $orderCardInfo = MemberCreditcard::where(['card_member_id'=>$order['order_member'],'card_bankno'=>$order['order_card']])->find();
+        $memberPass = MemberCreditPas::where(['member_credit_pas_creditid' => $orderCardInfo['card_id'], 'member_credit_pas_pasid' => $order['order_passageway'], 'member_credit_pas_status' => 1])->find();
         $url                       = 'acct/pay';
         $dataP                     = $this->paramsPublic();
         $dataS                     = array(
@@ -133,6 +135,7 @@ class Tonglian
         $data                      = array_merge($dataP, $dataS);
         $data['sign']              = $this->getSign($data);
         $result                    = $this->getData($url, $data);
+        var_dump($result);exit;
         file_put_contents('qfpay_result.txt', json_encode($result));
         $income['code']            = -1;
         $income['msg']             = $income['msg'] = 'FAIL';
