@@ -269,11 +269,13 @@ class Yinsheng extends \app\api\payment\YinshengApi
             'batchNo'                => $creditpass->member_credit_pas_smsseq,
             'amount'                 => round($order['order_money'], 2),
             'repayInfo'              => [
-                [
-                    'repayCycle'    => 'D0',
-                    'repayAmount'   => round($order['order_money'], 2),
-                    'repayOrderNo'  => 'qf' . $order['order_platform_no'],
-                    'repayDateTime' => date('Y-m-d H:i', time() + $this->qf_time),
+                'info' => [
+                    [
+                        'repayCycle'    => 'D0',
+                        'repayAmount'   => round($order['order_money'], 2),
+                        'repayOrderNo'  => 'qf' . $order['order_platform_no'],
+                        'repayDateTime' => date('Y-m-d H:i', time() + $this->qf_time),
+                    ],
                 ],
             ],
             'memberId'               => $this->memberId,
