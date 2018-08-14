@@ -6,7 +6,7 @@ use app\index\model;
 /**
  * 银生宝 API
  */
-class YinshengApi
+class YinshengApi extends \think\Controller
 {
     #api url 前缀
     public $url = 'http://180.166.114.151:28084/unspay-creditCardRepayment-business/';
@@ -40,6 +40,7 @@ class YinshengApi
             'memberId'   => $this->memberId,
             'merchantNo' => $this->merchantNo,
         ];
+        // return json($this->curl('bind/queryCardInfo', $arr));
         return $this->curl('bind/queryCardInfo', $arr);
     }
 
@@ -104,19 +105,7 @@ class YinshengApi
      */
     public function curl($method, $arr)
     {
-        $arr = array_merge(['accountId' => $this->accountId], $arr);
-        foreach ($arr as $k => $v) {
-            if(is_array($v)){
-                $v = json_encode($v);
-            }
-            $arr[$k] = (string) $v;
-        }
-        $signarr        = $arr;
-        $signarr['key'] = $this->key;
-        $query          = urldecode(http_build_query($signarr));
-        // $query = http_build_query($signarr) ;
-        // halt($query);
-        $arr['mac'] = strtoupper(md5($query));
+        $arr = $this->sign($arr);
         // halt($arr);
         // echo json_encode($arr);die;
         // halt($this->url . $method);
@@ -128,12 +117,26 @@ class YinshengApi
      */
     public function form($method, $arr)
     {
+        $arr = $this->sign($arr);
+        trace($arr);
+        // trace(http_build_query($arr));
+        // halt($this->url . $method);
+        $res = curl_post($this->url . $method, 'post', http_build_query($arr), 0);
+        $res = str_replace('"/unspay-creditCardRepayment-business', '"http://180.166.114.151:28084/unspay-creditCardRepayment-business', $res);
+        return $res;
+    }
+    /**
+     * sign
+     */
+    public function sign($arr){
         $arr = array_merge(['accountId' => $this->accountId], $arr);
         foreach ($arr as $k => $v) {
             if(is_array($v)){
                 $v = $this->toString($v);
+                $arr[$k] = json_encode($v);
+            }else{
+                $arr[$k] = (string) $v;
             }
-            $arr[$k] = (string) $v;
         }
         $signarr        = $arr;
         $signarr['key'] = $this->key;
@@ -141,12 +144,7 @@ class YinshengApi
         // $query = http_build_query($signarr) ;
         // halt($query);
         $arr['mac'] = strtoupper(md5($query));
-        // halt($arr);
-        // trace(json_encode($arr));
-        trace(http_build_query($arr));
-        // halt($this->url . $method);
-        $res = curl_post($this->url . $method, 'post', http_build_query($arr), 0);
-        return $res;
+        return $arr;
     }
     /**
      * 转换string
@@ -156,7 +154,7 @@ class YinshengApi
             foreach ($a as $k => $v) {
                 $a[$k] = $this->toString($v);
             }
-            $a = json_encode($a);
+            // $a = json_encode($a);
         }elseif(!is_string($a)){
             $a = (string)$a;
         }
