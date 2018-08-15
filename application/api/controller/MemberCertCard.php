@@ -148,7 +148,7 @@
                 'card_bankicon' => $ident_icon,
                 'card_state'  => 0,
                 'mchno' =>$passageway->passageway_mech,
-                'bindId'    =>$bindId
+                'bindId'    =>$bindId,
                 'card_return' =>json_encode($card_validate),
             ];
              if($card){
