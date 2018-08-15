@@ -592,12 +592,12 @@ class Userurl extends Controller
                 if ($cusquery) {
                     $res = MemberNet::where(['net_member_id' => $this->param['uid']])->setField($passageway['passageway_no'], $cusquery['cusid']);
                 }
-                $passagewayOther      = Passageway::where(['passageway_method' => 'tonglian'])
+                $passagewayOther = Passageway::where(['passageway_method' => 'tonglian'])
                     ->where('passageway_id', 'neq', $this->param['passageway'])
                     ->find();
-                if ($passagewayOther){
+                if ($passagewayOther) {
                     $memberCreditPasOther = MemberCreditPas::where(['member_credit_pas_creditid' => $this->param['cardId'], 'member_credit_pas_pasid' => $passagewayOther['passageway_id']])->find();
-                }else{
+                } else {
                     $memberCreditPasOther = '';
                 }
                 if ($memberCreditPasOther) {
@@ -658,6 +658,25 @@ class Userurl extends Controller
                 }
             }
             $cityP = json_encode($cityP, JSON_UNESCAPED_UNICODE);
+            //            $getIp    = $_SERVER["REMOTE_ADDR"];
+            $getIp    = '39.82.131.157';//待优化 zl
+            $content  = file_get_contents("https://restapi.amap.com/v3/ip?ip=$getIp&output=JSON&key=6ab42a509070f4d80165912f13e8b144 ");//待优化 zl
+            $location = json_decode($content, true);
+            if ($location['status']) {
+                //省编码
+                $province = mb_substr($location['province'], 0, -1);
+                $province = db('tonglian_city')->where('city_name', 'like', $province)->find();
+                $province = $province['city_code'];
+                //市编码
+                $city = mb_substr($location['city'], 0, -1);
+                $city = db('tonglian_city')->where('city_name', 'like', $city)->find();
+                $city = $city['city_code'];
+                $this->assign('province', $province);
+                $this->assign('city', $city);
+            } else {
+                $this->assign('location', '');
+            }
+
         } else {
             // 判断是否入网
             $member_net = MemberNet::where(['net_member_id' => $param['uid']])->find();
@@ -872,16 +891,6 @@ class Userurl extends Controller
         $this->assign('order', $data);
 
         if (isset($cityP)) {
-//            $getIp    = $_SERVER["REMOTE_ADDR"];
-            $getIp    = '39.82.131.157';
-            $content  = file_get_contents("https://restapi.amap.com/v3/ip?ip=$getIp&output=JSON&key=6ab42a509070f4d80165912f13e8b144 ");//待优化 zl
-            $location = json_decode($content, true);
-            if ($location['status']) {
-                $location = $location['city'];
-                $this->assign('location', $location);
-            } else {
-                $this->assign('location', '济南市');
-            }
             $generation_order_base = base64_encode(urlencode(json_encode($Generation_order_insert)));
             $this->assign('generation_order_base', $generation_order_base);
             $this->assign('city_list', $cityP);
