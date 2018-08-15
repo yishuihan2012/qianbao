@@ -658,17 +658,20 @@ class Userurl extends Controller
                 }
             }
             $cityP = json_encode($cityP, JSON_UNESCAPED_UNICODE);
-            //            $getIp    = $_SERVER["REMOTE_ADDR"];
-            $getIp    = '39.82.131.157';//待优化 zl
-            $content  = file_get_contents("https://restapi.amap.com/v3/ip?ip=$getIp&output=JSON&key=6ab42a509070f4d80165912f13e8b144 ");//待优化 zl
+            $getIp = getIp();
+//            $getIp    = '39.82.131.157';//待优化 zl
+            $content  = file_get_contents("https://restapi.amap.com/v3/ip?ip=$getIp&output=JSON&key=54365efc83d81ef7771cd468b5850154 ");
             $location = json_decode($content, true);
+
             if ($location['status']) {
                 //省编码
-                $province = mb_substr($location['province'], 0, -1);
+                !empty($location['province']) ? $province = mb_substr($location['province'], 0, -1) : $province = '';
+//                $province = mb_substr($location['province'], 0, -1);
                 $province = db('tonglian_city')->where('city_name', 'like', $province)->find();
                 $province = $province['city_code'];
                 //市编码
-                $city = mb_substr($location['city'], 0, -1);
+                !empty($location['city']) ? $city = mb_substr($location['city'], 0, -1) : $city = '';
+//                $city = mb_substr($location['city'], 0, -1);
                 $city = db('tonglian_city')->where('city_name', 'like', $city)->find();
                 $city = $city['city_code'];
                 $this->assign('province', $province);
