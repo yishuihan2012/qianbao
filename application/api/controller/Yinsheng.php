@@ -40,7 +40,7 @@ class Yinsheng extends \app\api\payment\YinshengApi
     #固定代扣费
     public $fix;
     #是否测试环境
-    public $debug = 1;
+    public $debug = 0;
     #自动还款延迟时间
     public $qf_time;
     #首次交易金额
@@ -49,9 +49,9 @@ class Yinsheng extends \app\api\payment\YinshengApi
     {
         parent::__construct();
         #设定商户信息
-        $this->url       = $this->debug ? 'http://180.166.114.151:28084/unspay-creditCardRepayment-business/' : '';
-        $this->accountId = $this->debug ? '1120180523103326001' : '';
-        $this->key       = $this->debug ? '123456abc' : '';
+        $this->url       = $this->debug ? 'http://180.166.114.151:28084/unspay-creditCardRepayment-business/' : 'http://114.80.54.76:48081/unspay-creditCardRepayment-business';
+        $this->accountId = $this->debug ? '1120180523103326001' : '2120180601135129001';
+        $this->key       = $this->debug ? '123456abc' : 'xijujituan0815';
         $this->qf_time   = $this->debug ? 20 : 3600;
         // config('default_return_type','json');
         $this->notify = 'http://' . $_SERVER['HTTP_HOST'] . '/api/yinsheng/';
