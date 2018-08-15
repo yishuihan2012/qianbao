@@ -53,7 +53,8 @@
             <input type="hidden" name="city_code" value="">
             <input type="hidden" name="city_name" value="">
         @endif
-        <input type="hidden" name="location_city" value="{{$location}}">
+        <input type="hidden" name="location_city" value="{{$city}}">
+        <input type="hidden" name="location_province" value="{{$province}}">
         <ul>
             @foreach($order as $key=>$list)
                 <li class="space-up2">
@@ -122,9 +123,11 @@
             // console.log(entity,'->',res);
             return res;
         }
+
+        //定位省
+        var location_province = $("input[name='location_province']").val();
         //定位市
         var location_city = $("input[name='location_city']").val();
-        console.log(location_city);
         //选择省市区
         var city_picker = new mui.PopPicker({
             layer: 2
@@ -133,6 +136,16 @@
         var city_list = entityToString(city_json);
         var city_list = eval('(' + city_list + ')');
         city_picker.setData(city_list);
+        //默认值
+        city_picker.pickers[0].setSelectedValue(location_province, 0, function () {
+            setTimeout(function () {
+                city_picker.pickers[1].setSelectedValue(location_city);
+                $("#site").val(city_picker.getSelectedItems()[0].text + "-" + city_picker.getSelectedItems()[1].text);
+                $("input[name='city_code']").val(city_picker.getSelectedItems()[1].value);
+                $("input[name='city_name']").val(city_picker.getSelectedItems()[1].text);
+            }, 100);
+        });
+        // city_picker.pickers[1].setSelectedValue(location_city);
         $("#site").on("tap", function () {
             city_picker.show(function (items) {
                 if ((items[0] || {}).text == undefined) {
@@ -142,6 +155,7 @@
                 }
                 //该ID为接收城市ID字段
                 $("#site").val((items[0] || {}).text + "-" + (items[1] || {}).text);
+
                 $("input[name='city_code']").val((items[1] || {}).value);
                 $("input[name='city_name']").val((items[1] || {}).text);
             });
@@ -157,8 +171,6 @@
             }
             var city_code = $("input[name='city_code']").val();
             var city_name = $("input[name='city_name']").val();
-            console.log(city_code);
-            console.log(city_name);
             window.top.location.href = '/api/userurl/repayment_plan_confirm/uid/{{$uid}}/token/{{$token}}/id/{{$generation["generation_id"]}}/city_code/' + city_code + '/city_name/' + city_name;
         });
     });
