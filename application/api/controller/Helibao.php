@@ -203,7 +203,7 @@ class Helibao extends Controller{
 			);
 		    $file_path=__DIR__.'/1.jpg';
 		    // echo $file_path;die;
-		    file_put_contents($file_path, $file_info);
+		    // file_put_contents($file_path, $file_info);
 			$encKey='lENn7v8OZ1z7WdlMKMgu5KNj';
 			$signKey='blYXETCKznBGIcdEWlwgg1WeA8TVGuA6';
 			$post['interfaceName']='uploadCredential';
@@ -360,7 +360,7 @@ class Helibao extends Controller{
 		);
 		$file_path=__DIR__.'/'.time().'.jpg';
 	    // echo $file_path;die;
-	    file_put_contents($file_path, $file_info);
+	    // file_put_contents($file_path, $file_info);
 		$encKey='lENn7v8OZ1z7WdlMKMgu5KNj';
 		$signKey='blYXETCKznBGIcdEWlwgg1WeA8TVGuA6';
 		$post['interfaceName']='uploadAlterationAptitude';

@@ -293,33 +293,33 @@ class Cashoutcallback
     public function elife_notify()
     {
         $params = Request::instance()->param();
-        file_put_contents('elife.txt', json_encode($params));
+        // file_put_contents('elife.txt', json_encode($params));
         $elifepay = new \app\api\payment\Elifepay;
         // 校验签名
         $sign = $params['sign'];
         unset($params['sign']);
         $verifyResult = $elifepay->verifySignature($params, $sign);
         if (!$verifyResult) {
-            file_put_contents('elife_error.txt', 'check sign fail!');
+            // file_put_contents('elife_error.txt', 'check sign fail!');
             return null;
         }
         // 解密数据
         $randomKey  = $elifepay->merchantPrivateDecrypt($params['random_key']);
         $bizContent = $elifepay->opensslDecrypt(hex2bin(strtolower($params['biz_content'])), '16-Bytes--String', $randomKey);
         if (!$bizContent) {
-            file_put_contents('elife_error.txt', 'Decrypt fail！');
+            // file_put_contents('elife_error.txt', 'Decrypt fail！');
             return null;
         }
         // 去掉特殊字符
         $bizContent = preg_replace('/[\x00-\x1F\x80-\x9F]/u', '', trim($bizContent));
         // 处理业务
         $result = json_decode($bizContent, true);
-        file_put_contents('elife_result.txt', json_encode($result));
+        // file_put_contents('elife_result.txt', json_encode($result));
 
 
         $order = CashOrder::where(['order_no' => $result['out_trade_no']])->find();  #查询到当前订单
         if (!$order) {
-            file_put_contents('elife_error.txt', 'get order fail！');
+            // file_put_contents('elife_error.txt', 'get order fail！');
             echo 'FAIL';
             die;
         }
@@ -385,7 +385,7 @@ class Cashoutcallback
     public function yilian_notify()
     {
         $params = Request::instance()->param();
-        file_put_contents('yilian.txt', json_encode($params));
+        // file_put_contents('yilian.txt', json_encode($params));
 
         $order = CashOrder::where(['order_no' => $params['ord_no']])->find();  #查询到当前订单
         if (!$order) {
@@ -462,7 +462,7 @@ class Cashoutcallback
         if ($params['action'] == 'WITHDRAW') {
             $order = CashOrder::where(['order_no' => $params['partnerOrderNo']])->find();  #查询到当前订单
             if (!$order) {
-                file_put_contents('yilian_error.txt', 'get order fail！');
+                // file_put_contents('yilian_error.txt', 'get order fail！');
                 echo 'FAIL';
                 die;
             }
@@ -585,11 +585,11 @@ class Cashoutcallback
     public function tongliancallback()
     {
         $params = Request::instance()->param();
-        file_put_contents('tonglian.txt', json_encode($params));
+        // file_put_contents('tonglian.txt', json_encode($params));
 
         $order = CashOrder::where(['order_no' => $params['outtrxid']])->find();  #查询到当前订单
         if (!$order) {
-            file_put_contents('tonglian_error.txt', 'get order fail！');
+            // file_put_contents('tonglian_error.txt', 'get order fail！');
             echo 'FAIL';
             die;
         }
@@ -649,11 +649,11 @@ class Cashoutcallback
     public function tonglianWithdrawcallback()
     {
         $params = Request::instance()->param();
-        file_put_contents('tonglian.txt', json_encode($params));
+        // file_put_contents('tonglian.txt', json_encode($params));
 
         $order = CashOrder::where(['order_no' => $params['outtrxid']])->find();  #查询到当前订单
         if (!$order) {
-            file_put_contents('tonglian_error.txt', 'get order fail！');
+            // file_put_contents('tonglian_error.txt', 'get order fail！');
             echo 'FAIL';
             die;
         }

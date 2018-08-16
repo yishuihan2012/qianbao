@@ -366,7 +366,7 @@ class Membernet
             $datas = AESdecrypt($result['payload'], $merch->secretkey, $merch->iv);
             $datas = trim($datas);
             $datas = substr($datas, 0, strpos($datas, '}') + 1);
-            file_put_contents("mishua_payCallback.txt", $datas);
+            // file_put_contents("mishua_payCallback.txt", $datas);
             $resul = json_decode($datas, true);
             // $arr['back_tradeNo']=$resul['tradeNo'];
             $arr['back_status']     = $resul['status'];
@@ -572,7 +572,7 @@ class Membernet
             $datas = AESdecrypt($result['payload'], $merch->secretkey, $merch->iv);
             $datas = trim($datas);
             $datas = substr($datas, 0, strpos($datas, '}') + 1);
-            file_put_contents("mishua_cashCallback.txt", $datas);
+            // file_put_contents("mishua_cashCallback.txt", $datas);
             $resul = json_decode($datas, true);
             // $arr['back_tradeNo']=$resul['tradeNo'];
             $arr['back_status']     = $resul['status'];

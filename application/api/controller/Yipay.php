@@ -159,7 +159,7 @@
     public function card_bind_fronturl(){
         $params=input();
         $str = var_export($params,TRUE);
-        file_put_contents('card_bind_fronturl.txt', $str);
+        // file_put_contents('card_bind_fronturl.txt', $str);
         if(!is_array($params)){
             $params=json_decode($params,true);
         }
@@ -173,7 +173,7 @@
     }
     public function card_bind_notifyUrl(){
         $params=input();
-        file_put_contents('card_bind_notifyUrl', json_encode($params));
+        // file_put_contents('card_bind_notifyUrl', json_encode($params));
         if($params['orderStatus']=='0000'){//快捷绑卡成功
             // $cache=Cache::pull($params['linkId']);
             $bind_info=explode(',', $params['linkId']);
@@ -258,7 +258,7 @@
      */
     public function card_pay_notifyUrl(){
         $params=input();
-        file_put_contents('card_pay_notifyUrl.txt', json_encode($params));
+        // file_put_contents('card_pay_notifyUrl.txt', json_encode($params));
         $pay=GenerationOrder::get(['order_platform_no'=>$params['linkId']]);
         if(!$pay){
             return false;
@@ -409,7 +409,7 @@
      */
     public function card_qfpay_notifyUrl(){
         $params=input();
-        file_put_contents('card_qfpay_notifyUrl.txt', json_encode($params));
+        // file_put_contents('card_qfpay_notifyUrl.txt', json_encode($params));
         if(!is_array($params)){
             $params=json_decode($params,true);
         }

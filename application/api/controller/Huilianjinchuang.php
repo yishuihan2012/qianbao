@@ -519,7 +519,7 @@
      */
     public function cashCallback(){
         $data = file_get_contents("php://input");
-        file_put_contents('huiliancash_callback.txt', $data);
+        // file_put_contents('huiliancash_callback.txt', $data);
         $pay=GenerationOrder::where(['order_platform_no'=>$data['orderNo']])->find();
         if($data['code']==10000){ //是否处理成功
                 if($data['respCode']==10000){

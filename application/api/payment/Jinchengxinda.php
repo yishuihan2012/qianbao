@@ -52,7 +52,7 @@
  		// echo json_encode($data);die;
  		$url='/yt/synonymNamePay';
  		$res=$this->request($url,$data);
- 		file_put_contents('ceshi1.txt', json_encode($res));
+ 		// file_put_contents('ceshi1.txt', json_encode($res));
  		if($res['status']=="000"){
  			$return['code']=200;
  			$return['msg']="支付成功";

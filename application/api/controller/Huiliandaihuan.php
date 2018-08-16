@@ -272,7 +272,7 @@
  	public function payCallback(){
  		$data = file_get_contents("php://input");
         parse_str($data,$res);
-        file_put_contents('huiliandahuan.txt',json_encode($res));
+        // file_put_contents('huiliandahuan.txt',json_encode($res));
         $pay=GenerationOrder::where(['order_platform_no'=>$res['orderNo']])->find();
         $income['code']=-1;
         $income['back_status']=$income['status']='FAIL';
