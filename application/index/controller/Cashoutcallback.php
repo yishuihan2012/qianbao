@@ -450,6 +450,7 @@ class Cashoutcallback
      */
     public function jiyifucallback()
     {
+        $returnData='';
         $params = Request::instance()->param();
         // print_r($params);die;
         file_put_contents('jiyifucallback.txt', json_encode($params));
