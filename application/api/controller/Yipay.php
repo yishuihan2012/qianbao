@@ -414,6 +414,9 @@
             $params=json_decode($params,true);
         }
         $pay=GenerationOrder::get(['order_platform_no'=>$params['linkId']]);
+        if(!$pay){
+            return false;
+        }
         if($params['settleStatus']=='0000'){//成功
             $income['code']=200;
             $income['back_status']=$arr['back_status']='success';
