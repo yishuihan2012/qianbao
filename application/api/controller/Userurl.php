@@ -680,7 +680,20 @@ class Userurl extends Controller
                 $this->assign('location', '');
             }
 
-        } else {
+        }else if($passageway['passageway_method'] == 'Newmishua'){
+
+            $member_net = MemberNet::where(['net_member_id' => $param['uid']])->find();
+            if (!$member_net[$passageway->passageway_no]) { //没有入网
+                // 重定向到签约页面
+                return redirect('Userurl/signed_newmishua', ['passageway_id' => $param['passageway'], 'cardId' => $param['cardId'], 'order_no' => $order_no]);
+            }
+            //判断是否签约
+            $pas=MemberCreditPas::where(['member_credit_pas_creditid'=>$param['cardId'],'member_credit_pas_pasid'=>$param['passageway']])->find();
+            if (!$pas || $pas['member_credit_pas_status']!=1) { //未绑定
+                //重定向到签约
+                return redirect('Userurl/signed_newmishua', ['passageway_id' => $param['passageway'], 'cardId' => $param['cardId'], 'order_no' => $order_no]);
+            }
+        }else {
             // 判断是否入网
             $member_net = MemberNet::where(['net_member_id' => $param['uid']])->find();
             if (!$member_net[$passageway->passageway_no]) { //没有入网
@@ -1738,7 +1751,24 @@ class Userurl extends Controller
         $this->assign('data', $data);
         return view("Userurl/signed");
     }
-
+    public function signed_newmishua($passageway_id, $cardId, $order_no){
+        #信用卡信息
+        $data['MemberCreditcard'] = $MemberCreditcard = MemberCreditcard::where(['card_id' => $cardId])->find();
+        #通道信息
+        $data['passageway'] = $passageway = Passageway::get($passageway_id);
+        #通道入网信息
+        $member_net = MemberNet::where(['net_member_id' => $MemberCreditcard['card_member_id']])->find();
+        #用户基本信息
+        $data['Members'] = $Members = Members::haswhere('memberLogin', '')->where(['member_id' => $MemberCreditcard['card_member_id']])->find();
+        #登录信息
+        // if(!$MemberCreditcard || !$passageway || $member_net){
+        //  exit('获取信息失败');
+        // }
+        $this->assign('order_no', $order_no);
+        $this->assign('passageway_id', $passageway_id);
+        $this->assign('data', $data);
+        return view("Userurl/signed_newmishua");
+    }
     public function signed_huilian($passageway_id, $cardId, $order_no)
     {
         #信用卡信息

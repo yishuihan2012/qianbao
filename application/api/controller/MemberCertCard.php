@@ -49,6 +49,7 @@
  use app\index\model\SmsCode as SmsCodes;
  use app\index\model\GenerationOrder;
  use app\index\model\Generation;
+ use app\index\model\MemberCreditPas;
 
  class MemberCertCard 
  {
@@ -249,6 +250,56 @@
                 'bindStatus'=>$income['bindStatus'],
               );
               $edit=MemberCreditcard::where("bindId='{$this->param['bindId']}' and mchno='{$creditcard['mchno']}'")->update($bindStatus);
+              
+              if($edit){
+                return ['code'=>200, 'msg'=>'签约成功~', 'data'=>''];
+              }else{
+                return ['code'=>464];
+              }
+              
+            }else{
+              return ['code' => 102, 'msg' => $income['message']];
+            }
+            
+      }
+       public function addition_card_codes_new(){
+           #判断参数是否存在
+           if(!isset($this->param['bindId']) || empty($this->param['bindId']))
+                 return ['code'=>441];
+           #查询信用卡信息
+           $creditcard=MemberCreditcard::where("bindId='{$this->param['bindId']}' and card_member_id={$this->param['uid']}")->find();
+           // return ['code'=>441,'msg'=>'13','data'=>$creditcard];
+           if(empty($creditcard))
+              return ['code'=>353,'msg'=>'获取信用卡信息失败'];
+             #查询当前卡有没有绑定过
+            // $passageway=Passageway::where('passageway_status=1 and passageway_also=2')->find();
+            $passageway_id=$this->param['passageway_id'];
+            $passageway=Passageway::where('passageway_id',$passageway_id)->find();
+            $member_net=MemberNet::where('net_member_id='.$this->param['uid'])->find();
+            $params=array(
+              'mchNo'=>$creditcard['mchno'], //机构号 必填  由平台统一分配 16
+              'userNo'=>$member_net[$passageway['passageway_no']],  //平台用户标识  必填  默认为平台下发用户标识 32
+              'bindId'=>$creditcard['bindId'],  //平台签约ID  必填  签约短信下发  32
+              'smsCode'=>$this->param['smsCode'],  //短信验证码 必填    10
+            );
+            $url='http://pay.mishua.cn/zhonlinepay/service/rest/creditTrans/bindCardConfirm';
+            $income=repay_request($params,$passageway['passageway_mech'],$url,$passageway['iv'],$passageway['secretkey'],$passageway['signkey']);
+            // print_r($income);die;
+            if($income['code']=='200'){
+              #记录签约日志
+              PassagewayBind::create([
+                'bind_passway_id'=>$passageway['passageway_id'],
+                'bind_member_id'=>$this->param['uid'],
+                'bind_card'=>$creditcard['card_bankno'],
+                'bind_money'=>$passageway['passageway_bind_money']
+              ]);
+
+              //修改签约状态
+              // $bindStatus=array(
+              //   'bindStatus'=>$income['bindStatus'],
+              // );
+              $edit=MemberCreditPas::where(['member_credit_pas_info'=>$this->param['bindId']])->update(['member_credit_pas_status'=>1]);
+              // $edit=MemberCreditcard::where("bindId='{$this->param['bindId']}' and mchno='{$creditcard['mchno']}'")->update($bindStatus);
               
               if($edit){
                 return ['code'=>200, 'msg'=>'签约成功~', 'data'=>''];
