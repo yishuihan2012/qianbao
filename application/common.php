@@ -962,14 +962,17 @@ function repay_request($params, $mechid, $url, $iv, $secretkey, $signkey, $type 
         'payload' => $payload,
         'sign'    => $sign,
     );
+    // echo json_encode($request);die;
     $res     = curl_post($url, 'post', json_encode($request));
     $result  = json_decode($res, true);
     if ($result['code'] == 0 && isset($result['payload'])) {
+        // echo json_encode($result);die;
         $datas         = AESdecrypt($result['payload'], $secretkey, $iv);
         $datas         = trim($datas);
         $datas         = substr($datas, 0, strpos($datas, '}') + 1);
         $resul         = json_decode($datas, true);
         $resul['code'] = 200;
+        // var_dump($resul);die;
         return $resul;
     } else {
         return $result;
@@ -1017,18 +1020,17 @@ function mishua($passageway, $rate, $member_info, $phone)
         'userCertId'   => $member_info['cert_member_idcard'],//身份证号  必填  注册后不可修改
         'userPhone'    => $phone,
         'feeRatio'     => $rate['item_also'] * 10, //交易费率  必填  单位：千分位。如交易费率为0.005时,需传入5.0
-        'feeAmt'       => $rate['item_charges'],//单笔交易手续费  必填  单位：分。如机构无单笔手续费，可传入0
+        'feeAmt'       => '0',//单笔交易手续费  必填  单位：分。如机构无单笔手续费，可传入0
         'drawFeeRatio' => '0',//提现费率
-        'drawFeeAmt'   => '0',//单笔提现易手续费
+        'drawFeeAmt'   => $rate['item_qffix'],//单笔提现易手续费
     );
+    // echo json_encode($params);die;
     $url    = 'http://pay.mishua.cn/zhonlinepay/service/rest/creditTrans/createMerchant';
     $income = repay_request($params, $passageway['passageway_mech'], $url, $passageway['iv'], $passageway['secretkey'], $passageway['signkey']);
-    // var_dump($income)
+    // var_dump($income);
     return $income;
     return $arr;
 }
-
-
 //米刷入网修改方法
 function mishuaedit($passageway, $rate, $member_info, $phone, $userno)
 {
@@ -1041,9 +1043,9 @@ function mishuaedit($passageway, $rate, $member_info, $phone, $userno)
         'userCertId'   => $member_info['cert_member_idcard'],//身份证号  必填  注册后不可修改
         'userPhone'    => $phone,
         'feeRatio'     => $rate['item_also'] * 10, //交易费率  必填  单位：千分位。如交易费率为0.005时,需传入5.0
-        'feeAmt'       => $rate['item_charges'],//单笔交易手续费  必填  单位：分。如机构无单笔手续费，可传入0
+        'feeAmt'       => '0',//单笔交易手续费  必填  单位：分。如机构无单笔手续费，可传入0
         'drawFeeRatio' => '0',//提现费率
-        'drawFeeAmt'   => '0',//单笔提现易手续费
+        'drawFeeAmt'   => $rate['item_qffix'],//单笔提现易手续费
     );
     // var_dump($params);die;
     $url    = 'http://pay.mishua.cn/zhonlinepay/service/rest/creditTrans/updateMerchant';

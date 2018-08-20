@@ -829,61 +829,6 @@ class Membernet
             return ['code' => 400, 'msg' => $income['message']];
         }
     }
-    /**
-     * 米刷入网
-     * @return [type] [description]
-     * 许成成 20180206
-     */
-    public function mishua_income_new()
-    {
-        $params     = input('');
-        $passageway = Passageway::where(['passageway_id' => $params['passageway_id']])->find();
-        $member_net = MemberNets::where('net_member_id=' . $params['uid'])->find();
-        // 判断有没有入网：
-        if (!$member_net[$passageway['passageway_no']]) {//没有入网
-            $member_info = MemberCert::where('cert_member_id=' . $params['uid'])->find();
-            $Members     = Member::where(['member_id' => $params['uid']])->find();
-            $rate        = PassagewayItem::where('item_passageway=' . $params['passageway_id'] . ' and item_group=' . $Members['member_group_id'])->find();
-            $mishua_res  = mishua($passageway, $rate, $member_info, $params['phone']);
-            if ($mishua_res['code'] != 200) {
-                return ['code' => '101', 'msg' => $mishua_res['message']];
-            }
-            $arr                                      = array(
-                'net_member_id'                  => $member_info['cert_member_id'],
-                "{$passageway['passageway_no']}" => $mishua_res['userNo']
-            );
-            $add_net                                  = MemberNets::where('net_member_id=' . $params['uid'])->update($arr);
-            $member_net[$passageway['passageway_no']] = $mishua_res['userNo'];
-        }
-        // $passageway=Passageway::where(['passageway_id'=>$params['passageway_id']])->find();
-        #绑定信用卡签约
-        $data   = array(
-            'mchNo'       => $passageway['passageway_mech'], //mchNo 商户号 必填  由米刷统一分配
-            'userNo'      => $member_net[$passageway['passageway_no']],
-            'phone'       => $params['phone'],
-            'cardNo'      => $params['creditCardNo'],
-            'expiredDate' => $params['expireDate'],
-            'cvv'         => $params['cvv']
-        );
-        $url    = 'http://pay.mishua.cn/zhonlinepay/service/rest/creditTrans/bindCardSms';
-        $income = repay_request($data, $passageway['passageway_mech'], $url, $passageway['iv'], $passageway['secretkey'], $passageway['signkey']);
-        $card= new MemberCreditPas();
-        if ($income['code'] == '200') {
-            if ($income['bindStatus'] == '01') {
-                // $card = MemberCreditcard::where(["card_bankno" => $params['creditCardNo']])->update(['bindId' => $income['bindId'], 'bindStatus' => $income['bindStatus'], 'mchno' => $passageway['passageway_mech']]);
-                 $card->save(['member_credit_pas_creditid'=>$params['creditCardId'],'member_credit_pas_pasid'=>$params['passageway_id'],'member_credit_pas_info'=>$income['bindId']]);
-                ###
-                return ['code' => 463, 'msg' => '签约成功'];//此卡已签约
-            }
-            #更新信用卡表
-            // $card = MemberCreditcard::where(["card_bankno" => $params['creditCardNo']])->update(['bindId' => $income['bindId'], 'bindStatus' => $income['bindStatus'], 'mchno' => $passageway['passageway_mech']]);
-            $card->save(['member_credit_pas_creditid'=>$params['creditCardId'],'member_credit_pas_pasid'=>$params['passageway_id'],'member_credit_pas_info'=>$income['bindId'],'member_credit_pas_status'=>0]);
-            ###
-            return ['code' => 200, 'msg' => '短信发送成功~', 'data' => ['bindId' => $income['bindId']]];
-        } else {
-            return ['code' => 400, 'msg' => $income['message']];
-        }
-    }
     //处理没有结果的订单
     public function no_result_order()
     {

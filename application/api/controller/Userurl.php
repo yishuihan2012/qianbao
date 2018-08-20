@@ -282,7 +282,6 @@ class Userurl extends Controller
         $this->param['startDate']  = $param['startDate'] = $data[4];
         $this->param['endDate']    = $param['endDate'] = $data[5];
         $this->param['passageway'] = $param['passageway'] = $data[6];
-
         #1判断当前通道当前卡用户有没有入网和签约
         // 获取通道信息
         $passageway = Passageway::get($param['passageway']);
@@ -681,17 +680,42 @@ class Userurl extends Controller
             }
 
         }else if($passageway['passageway_method'] == 'Newmishua'){
-
             $member_net = MemberNet::where(['net_member_id' => $param['uid']])->find();
+            $membernet=new \app\api\controller\Misdhnew;
+            // echo $member_net[$passageway->passageway_no];die;
             if (!$member_net[$passageway->passageway_no]) { //没有入网
-                // 重定向到签约页面
-                return redirect('Userurl/signed_newmishua', ['passageway_id' => $param['passageway'], 'cardId' => $param['cardId'], 'order_no' => $order_no]);
+                //入网
+                $income=$membernet->income($param['passageway'],$param['uid']);
+                if($income['code']==200){
+                     $arr= array(
+                        "{$passageway['passageway_no']}" => $income['userNo'],
+                    );
+                $add_net = MemberNets::where('net_member_id=' . $params['uid'])->update($arr);
+                $userNo=$income['userNo'];
+                }else{
+                    $this->assign('data', $income['msg']);
+                    return view("Userurl/show_error");
+                }
+            }else{
+                $userNo=$member_net[$passageway->passageway_no];
             }
-            //判断是否签约
-            $pas=MemberCreditPas::where(['member_credit_pas_creditid'=>$param['cardId'],'member_credit_pas_pasid'=>$param['passageway']])->find();
-            if (!$pas || $pas['member_credit_pas_status']!=1) { //未绑定
-                //重定向到签约
-                return redirect('Userurl/signed_newmishua', ['passageway_id' => $param['passageway'], 'cardId' => $param['cardId'], 'order_no' => $order_no]);
+            $res=$membernet->sign_search($userNo,$MemberCreditcard['card_bankno']);
+            if(!$res){
+                $back=$membernet->sign_card($userNo,$MemberCreditcard['card_phone'],$MemberCreditcard['card_bankno'],$MemberCreditcard['card_expireDate'],$MemberCreditcard['card_Ident']);
+                if($back['code']==200){
+                    if($back['bindUrl']){
+                        return redirect($back['bindUrl']);
+                    }
+                    if($back['bindStatus']=='01'){//已经签约
+                        $wt_member_credit_pas=MemberCreditPas::where(['member_credit_pas_creditid'=>$param['cardId'],'member_credit_pas_pasid'=>$param['passageway']])->find();
+                        if(!$wt_member_credit_pas){
+                            $res=MemberCreditPas::save(['member_credit_pas_creditid'=>$param['cardId'],'member_credit_pas_pasid'=>$param['passageway'],'member_credit_pas_info'=>$back['bindId']]);
+                        }
+                    }
+                }else{
+                    $this->assign('data', isset($back['msg'])?$back['msg']:'签约失败');
+                    return view("Userurl/show_error");
+                }
             }
         }else {
             // 判断是否入网
@@ -1750,24 +1774,6 @@ class Userurl extends Controller
         $this->assign('passageway_id', $passageway_id);
         $this->assign('data', $data);
         return view("Userurl/signed");
-    }
-    public function signed_newmishua($passageway_id, $cardId, $order_no){
-        #信用卡信息
-        $data['MemberCreditcard'] = $MemberCreditcard = MemberCreditcard::where(['card_id' => $cardId])->find();
-        #通道信息
-        $data['passageway'] = $passageway = Passageway::get($passageway_id);
-        #通道入网信息
-        $member_net = MemberNet::where(['net_member_id' => $MemberCreditcard['card_member_id']])->find();
-        #用户基本信息
-        $data['Members'] = $Members = Members::haswhere('memberLogin', '')->where(['member_id' => $MemberCreditcard['card_member_id']])->find();
-        #登录信息
-        // if(!$MemberCreditcard || !$passageway || $member_net){
-        //  exit('获取信息失败');
-        // }
-        $this->assign('order_no', $order_no);
-        $this->assign('passageway_id', $passageway_id);
-        $this->assign('data', $data);
-        return view("Userurl/signed_newmishua");
     }
     public function signed_huilian($passageway_id, $cardId, $order_no)
     {
