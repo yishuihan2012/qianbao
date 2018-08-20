@@ -7,6 +7,7 @@ use app\index\model\Member;
 use app\index\model\System;
 use app\index\model\Passageway;
 use app\index\model\PassagewayItem;
+use app\index\model\MemberCreditcard;
 class Misdhnew{
 	protected $mech='100000';
 	protected $secretkey='1234567812345678';
