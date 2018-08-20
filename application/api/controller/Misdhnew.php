@@ -217,7 +217,8 @@ class Misdhnew{
         // 更新卡计划
         // Generation::where(['generation_id'=>$pay['order_no']])->update($generation);
         #更改完状态后续操作
-        $action = $this->plan_notice($pay, $income, $member_base, $is_commission, $merch);
+        $notice=new \app\api\controller\Membernet();
+        $action = $notice->plan_notice($pay, $income, $member_base, $is_commission, $merch);
 	}
 	/**
 	 * 支付回掉
@@ -363,7 +364,8 @@ class Misdhnew{
             Generation::update(['generation_id' => $pay['order_no'], 'generation_state' => $generation_state]);
         }
         //执行完后操作
-        $action = $this->plan_notice($pay, $income, $member_base, 0, $merch);
+        $notice=new \app\api\controller\Membernet();
+        $action = $notice->plan_notice($pay, $income, $member_base, 0, $merch);
     }
     /**
      * 代付回调
