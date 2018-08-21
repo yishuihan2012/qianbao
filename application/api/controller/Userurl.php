@@ -679,10 +679,9 @@ class Userurl extends Controller
                 $this->assign('location', '');
             }
 
-        }else if($passageway['passageway_method'] == 'Newmishua'){
+        }else if($passageway['passageway_method'] == 'Misdhnew'){
             $member_net = MemberNet::where(['net_member_id' => $param['uid']])->find();
             $membernet=new \app\api\controller\Misdhnew;
-            // echo $member_net[$passageway->passageway_no];die;
             if (!$member_net[$passageway->passageway_no]) { //没有入网
                 //入网
                 $income=$membernet->income($param['passageway'],$param['uid']);
