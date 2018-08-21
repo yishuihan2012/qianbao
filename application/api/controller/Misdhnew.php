@@ -13,9 +13,9 @@ use app\index\model\MemberCreditPas;
 use app\index\model\Generation;
 use app\index\model\GenerationOrder;
 class Misdhnew{
-	protected $mech='100000';
-	protected $secretkey='1234567812345678';
-	protected $signkey='1234';
+	protected $mech='100464';
+	protected $secretkey='H54H745496Y4569H';
+	protected $signkey='G54Y4R';
 	protected $iv="0102030405060708";
 	protected $url="http://pay.mishua.cn/zhonlinepay/service/rest/creditTrans";
 	public function __construct(){
