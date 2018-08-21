@@ -324,13 +324,10 @@ class Misdhnew{
                 $update_order['order_platform_no'] = $pay['order_platform_no'] = get_plantform_pinyin() . $member_base->member_mobile . make_rand_code();
                 $update_res                        = GenerationOrder::where(['order_id' => $pay['order_id']])->update($update_order);
             }
-
-            $no     = $merch['passageway_no'];
-            $userNo = $member->$no;
             $MemberCreditPas = MemberCreditPas::where(['member_credit_pas_creditid' => $card_info['card_id'], 'member_credit_pas_pasid' => $pay['order_passageway']])->find();
             $params = array(
-                'mchNo'        => $merch->passageway_mech, //机构号 必填  由平台统一分配 16
-                'userNo'       => $userNo,  //平台用户标识  必填  平台下发用户标识  32
+                'mchNo'        => $this->mech, //机构号 必填  由平台统一分配 16
+                'userNo'       => $member->{$merch['passageway_no']},  //平台用户标识  必填  平台下发用户标识  32
                 'settleBindId' => $MemberCreditPas->member_credit_pas_info,//提现卡签约ID 必填  提现结算的卡，传入签约返回的平台签约ID 
                 'notifyUrl'    => System::getName('system_url') . '/Api/Misdhnew/qfcallback',// 异步通知地址  可填  异步通知的目标地址
                 'orderNo'      => $pay['order_platform_no'], //提现流水号 必填  机构订单流水号，需唯一 64
