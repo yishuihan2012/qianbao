@@ -192,7 +192,7 @@ class Misdhnew{
             'goodsName'    =>"线上消费",//商品名称
             'orderDesc'    =>"米刷代还",
             'clientIp'     =>$_SERVER['REMOTE_ADDR'],
-            'orderAmt'     => $pay['order_real_get'] * 100,  //提现金额  必填  单位：分  整型(9,0)
+            'orderAmt'     => $pay['order_money'] * 100,  //提现金额  必填  单位：分  整型(9,0)
             'feeRatio'     => $also,  //提现费率  必填  需与用户入网信息保持一致  数值(5,2)
             'feeAmt'       => $daikou,//提现单笔手续费   需与用户入网信息保持一致  整型(4,0)
             // 'payFeeMode'   =>'',//默认验证入网费率信息。传入01，标识不效验入网信息，feeRatio和feeAmt仅针对本次交易有效
@@ -277,7 +277,7 @@ class Misdhnew{
 	/**
 	 * 代付
 	 */
-	public function qf_pay($pay, $isCancel = null, $is_admin = '')
+	public function qfpay($pay, $isCancel = null, $is_admin = '')
     {
         #1判断当天有没有失败的订单
         $today       = date('Y-m-d', strtotime($pay['order_time']));
