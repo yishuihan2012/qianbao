@@ -200,7 +200,6 @@ class Misdhnew{
         $url    =  $this->url.'/payBindCard';
   	    $income = repay_request($params, $this->mech, $url, $this->iv, $this->secretkey, $this->signkey);
         // print_r($income);
-        file_put_contents('new_mishua_pay.txt',json_encode($income));
         $is_commission = 0;
         if ($income['code'] == '200') {
             $arr['back_tradeNo']    = $income['tradeNo'];
@@ -227,6 +226,7 @@ class Misdhnew{
         }
         //添加执行记录
         $res = GenerationOrder::where(['order_id' => $pay['order_id']])->update($arr);
+        file_put_contents('new_mishua_pay.txt',json_encode($income));
         // 更新卡计划
         // Generation::where(['generation_id'=>$pay['order_no']])->update($generation);
         #更改完状态后续操作
