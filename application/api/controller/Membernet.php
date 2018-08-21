@@ -192,7 +192,7 @@ class Membernet
                     // var_dump($res);die;
                 } else if ($value['order_type'] == 2) {//提现
                     $today       = date('Y-m-d', strtotime($pay['order_time']));
-                    $fail_order  = GenerationOrder::where(['order_no' => $value['order_no'], 'order_type' => 1])->where('order_status', 'neq', '2')->where('order_time', 'like', $today . '%')->find();();
+                    $fail_order  = GenerationOrder::where(['order_no' => $value['order_no'], 'order_type' => 1])->where('order_status', 'neq', '2')->where('order_time', 'like', $today . '%')->find();
                     if ($fail_order) {//如果当天有失败订单
                         $arr['back_status']     = 'FAIL';
                         $arr['back_statusDesc'] = '当天有失败的订单无法进行还款，请先处理失败的订单。';
