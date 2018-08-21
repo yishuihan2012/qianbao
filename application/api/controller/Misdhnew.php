@@ -243,7 +243,7 @@ class Misdhnew{
         // print_r($result);die;
         if ($result['code'] == 0) {
             $merch = Passageway::where(['passageway_mech' => $result['mchNo']])->find();
-            $datas = AESdecrypt($result['payload'], $merch->secretkey, $merch->iv);
+            $datas = AESdecrypt($result['payload'], $this->secretkey, $this->iv);
             $datas = trim($datas);
             $datas = substr($datas, 0, strpos($datas, '}') + 1);
             // file_put_contents("mishua_cashCallback.txt", $datas);
@@ -387,7 +387,7 @@ class Misdhnew{
         // print_r($result);die;
         if ($result['code'] == 0) {
             $merch = Passageway::where(['passageway_mech' => $result['mchNo']])->find();
-            $datas = AESdecrypt($result['payload'], $merch->secretkey, $merch->iv);
+            $datas = AESdecrypt($result['payload'], $this->secretkey, $this->iv);
             $datas = trim($datas);
             $datas = substr($datas, 0, strpos($datas, '}') + 1);
             // file_put_contents("mishua_cashCallback.txt", $datas);
