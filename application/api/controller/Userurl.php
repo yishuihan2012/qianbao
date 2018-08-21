@@ -708,7 +708,7 @@ class Userurl extends Controller
                     if($back['bindStatus']=='01'){//已经签约
                         $wt_member_credit_pas=MemberCreditPas::where(['member_credit_pas_creditid'=>$param['cardId'],'member_credit_pas_pasid'=>$param['passageway']])->find();
                         if(!$wt_member_credit_pas){
-                            $res=MemberCreditPas::save(['member_credit_pas_creditid'=>$param['cardId'],'member_credit_pas_pasid'=>$param['passageway'],'member_credit_pas_info'=>$back['bindId']]);
+                            $res=MemberCreditPas::create(['member_credit_pas_creditid'=>$param['cardId'],'member_credit_pas_pasid'=>$param['passageway'],'member_credit_pas_info'=>$back['bindId']]);
                         }
                     }
                 }else{
