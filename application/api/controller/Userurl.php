@@ -692,7 +692,7 @@ class Userurl extends Controller
                 $add_net = MemberNets::where('net_member_id=' . $params['uid'])->update($arr);
                 $userNo=$income['userNo'];
                 }else{
-                    $this->assign('data', $income['msg']);
+                    $this->assign('data', isset($income['message'])?$income['message']:'入网失败');
                     return view("Userurl/show_error");
                 }
             }else{
