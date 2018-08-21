@@ -367,7 +367,7 @@ class Misdhnew{
         $GenerationOrder = GenerationOrder::where(['order_no' => $pay['order_no'], 'order_status' => 1])->find();
         if (!$GenerationOrder) {
             #根据传入的isCancel来判断是否是因为主动取消而结束的本次计划
-            $generation_state = $isCancel ? 4 : 3;
+            $generation_state =  3;
             Generation::update(['generation_id' => $pay['order_no'], 'generation_state' => $generation_state]);
         }
         //执行完后操作
