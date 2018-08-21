@@ -689,7 +689,7 @@ class Userurl extends Controller
                      $arr= array(
                         "{$passageway['passageway_no']}" => $income['userNo'],
                     );
-                $add_net = MemberNet::where('net_member_id=' . $params['uid'])->update($arr);
+                $add_net = MemberNet::where('net_member_id=' . $param['uid'])->update($arr);
                 $userNo=$income['userNo'];
                 }else{
                     $this->assign('data', isset($income['message'])?$income['message']:'入网失败');
