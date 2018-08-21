@@ -49,6 +49,24 @@ class Misdhnew{
 	    $income = repay_request($params, $this->mech, $url, $this->iv, $this->secretkey, $this->signkey);
 	    return $income;	
 	}
+	public function mech_update($userNo,$userName,$userCertId,$userPhone,$feeRatio,$drawFeeAmt){
+		$params=array(
+			'versionNo'=>'1',//	接口版本号	必填	值固定为1	2
+			'mchNo'=>$this->mech,//	机构号	必填	由平台统一分配	16
+			'userNo'=>$userNo,//	平台用户标识	必填	平台下发用户标识	32
+			'userName'=>$userName,//	姓名	必填		50
+			'userCertId'=>$userCertId,//	身份证号	必填		64
+			'userPhone'=>$userPhone,//	用户联系电话	必填		20
+			'feeRatio'=>$feeRatio,//	交易费率	必填	单位：千分位。如交易费率为0.005时,需传入5.0	数值(5,2)
+			'feeAmt'=>'0',//	单笔交易手续费	必填	单位：分。(通常为0，如需变更请跟运营人员沟通)	整型(4,0)
+			'drawFeeRatio'=>"0",//	提现费率	必填	单位：千分位。(通常为0，如需变更请跟运营人员沟通)	数值(5,2)
+			'drawFeeAmt'=>$drawFeeAmt,//	单笔提现易手续费	必填	单位：整型-分。如机构无单笔手续费，可传入0	整型(4,0)
+		);
+		$url    = $this->url.'/updateMerchant';
+	    $income = repay_request($params, $this->mech, $url, $this->iv, $this->secretkey, $this->signkey);
+	    var_dump($income);die;
+	    return $income;	
+	}
 	/**
 	 * 信用卡签约查询
 	 */
@@ -154,12 +172,7 @@ class Misdhnew{
         $passway_info = $this->accountQuery($pay['order_member'], $pay['order_passageway']);
         if (isset($passway_info['drawFeeRatio']) && isset($passway_info['drawFeeAmt'])) {
             if ($passway_info['drawFeeRatio'] != $also || $passway_info['drawFeeAmt'] != $daikou) {//不一致重新报备,修改商户信息
-                $Membernetsedits = new \app\api\controller\Membernetsedit($pay['order_member'], $pay['order_passageway'], 'M03', '', $member_base['member_mobile']);
-                if ($order_rate == 1) {
-                    $update = $Membernetsedits->mishuadaihuan('', '', $also, $daikou);
-                } else {
-                    $update = $Membernetsedits->mishuadaihuan();
-                }
+                $Membernetsedits =$this->mech_update($member->{$merch['passageway_no']},$card_info['card_name'],$card_info['card_idcard'],$member_base['member_mobile'],$also,$daikou);
             }
         }
 
@@ -302,10 +315,7 @@ class Misdhnew{
             $passway_info = $this->accountQuery($pay['order_member'], $pay['order_passageway']);
             if (isset($passway_info['drawFeeRatio']) && isset($passway_info['drawFeeAmt'])) {
                 if ($passway_info['drawFeeRatio'] != $also || $passway_info['drawFeeAmt'] != $daikou) {//不一致重新报备,修改商户信息
-                    $update=$this->rate_update();
-                    if ($update ) {
-                    } else {
-                    }
+                    $Membernetsedits =$this->mech_update($member->{$merch['passageway_no']},$card_info['card_name'],$card_info['card_idcard'],$member_base['member_mobile'],$also,$daikou);
                 }
             }
 
