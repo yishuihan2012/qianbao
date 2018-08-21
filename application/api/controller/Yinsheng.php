@@ -21,6 +21,10 @@ use app\index\model;
  * http://180.166.114.155/unspay/main.do
  * 账户名：wysdxx@unspay.com   操作员：admin   登录密码：123456abc
  *
+ * test 成成
+ * 370983199109202832_xj_6001,2110000000000000001342
+ * http://wallet.test.xijiakeji.com/api/Userurl/repayment_plan_create_detail?uid=42&token=acad800fb1dc0d5552a73e94685a7687&order_no=42_63_4_1_2018-08-19_2018-08-19_40
+ *
  */
 class Yinsheng extends \app\api\payment\YinshengApi
 {
@@ -49,7 +53,7 @@ class Yinsheng extends \app\api\payment\YinshengApi
     {
         parent::__construct();
         #设定商户信息
-        $this->url       = $this->debug ? 'http://180.166.114.151:28084/unspay-creditCardRepayment-business/' : 'http://114.80.54.76:48081/unspay-creditCardRepayment-business';
+        $this->url       = $this->debug ? 'http://180.166.114.151:28084/unspay-creditCardRepayment-business/' : 'http://114.80.54.76:48081/unspay-creditCardRepayment-business/';
         $this->accountId = $this->debug ? '1120180523103326001' : '2120180601135129001';
         $this->key       = $this->debug ? '123456abc' : 'xijujituan0815';
         $this->qf_time   = $this->debug ? 20 : 3600;
@@ -63,6 +67,7 @@ class Yinsheng extends \app\api\payment\YinshengApi
      */
     public function net()
     {
+        trace('yinsheng_net');
         //获取通道费率
         $rate =
         $arr  = [
@@ -91,6 +96,7 @@ class Yinsheng extends \app\api\payment\YinshengApi
      */
     public function rate()
     {
+        trace('passway_rate');
         $arr = [
             'memberId'   => $this->memberId,
             'merchantNo' => $this->merchantNo,
@@ -108,6 +114,7 @@ class Yinsheng extends \app\api\payment\YinshengApi
      */
     public function bind()
     {
+        trace('passway_bind');
         // $this->creditcard = model\MemberCreditcard::get(63);
         $arr = [
             'memberId'    => $this->memberId,
