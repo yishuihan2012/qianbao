@@ -313,7 +313,7 @@
                 $res['respCode']='10001';
             }
         }
-        $res['respMessage']=$res['msg']?$res['msg']:$res['orderMemo'];
+        $res['respMessage']=$res['orderMemo']?$res['orderMemo']:$res['msg'];
         if($is_print){
             echo json_encode($res);die;
         }

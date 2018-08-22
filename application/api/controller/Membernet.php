@@ -167,7 +167,7 @@ class Membernet
         if ($value['order_retry_count'] > 3) {
             return json_encode(['code' => 102, 'msg' => '最多有三次重试机会。']);
         } else {
-            GenerationOrder::where(['order_id' => $id])->update(['order_retry_count' => $value['order_retry_count'] + 1]);
+            GenerationOrder::where(['order_id' => $id])->update(['order_retry_count' => $value['order_retry_count'] + 1,'order_status'=>5]);
         }
         try {
             // print_r($value);die;
