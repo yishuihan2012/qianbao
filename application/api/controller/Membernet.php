@@ -303,6 +303,7 @@ class Membernet
             // $arr['order_buckle']=$rate['item_charges']/100;
         }
         //添加执行记录
+        $arr['order_edit_time']=date('Y-m-d H:i:s',time());
         $res = GenerationOrder::where(['order_id' => $pay['order_id']])->update($arr);
         // 更新卡计划
         // Generation::where(['generation_id'=>$pay['order_no']])->update($generation);
@@ -392,6 +393,7 @@ class Membernet
             }
         }
         //更新计划表
+        $arr['order_edit_time']=date('Y-m-d H:i:s',time());
         $update_res = GenerationOrder::where(['order_platform_no' => $resul['orderNo']])->update($arr);
         //更新卡计划
         // $id=GenerationOrder::where(['back_tradeNo'=>$resul['tradeNo']])->value('order_no');
@@ -399,9 +401,9 @@ class Membernet
         if ($resul['status'] == "SUCCESS") {
             $pay = GenerationOrder::where(['order_platform_no' => $resul['orderNo']])->find();
             //如果原来表里状态不是成功,添加余额。
-            if ($pay['order_status'] != 2) {
-                db('reimbur')->where('reimbur_generation', $pay['order_no'])->setInc('reimbur_left', $pay['order_money'] - $pay['order_pound']);
-            }
+            // if ($pay['order_status'] != 2) {
+            //     db('reimbur')->where('reimbur_generation', $pay['order_no'])->setInc('reimbur_left', $pay['order_money'] - $pay['order_pound']);
+            // }
             //判断有没有写入收益
             if ($pay['order_platform'] < 0.01) {
                 $arr['order_platform'] = $pay['order_pound'] - ($pay['order_money'] * $merch['passageway_rate'] / 100) - $merch['passageway_income'];
@@ -558,6 +560,7 @@ class Membernet
             }
         }
         //更新订单状态
+        $arr['order_edit_time']=date('Y-m-d H:i:s',time());
         GenerationOrder::where(['order_id' => $pay['order_id']])->update($arr);
         //更新卡计划 判断是否是最后一次执行还款计划
         $GenerationOrder = GenerationOrder::where(['order_no' => $pay['order_no'], 'order_status' => 1])->find();
@@ -595,13 +598,14 @@ class Membernet
                 $arr['order_status'] = '4';
                 //带查证或者支付中。。。mchNo
             }
+            $arr['order_edit_time']=date('Y-m-d H:i:s',time());
             $res = GenerationOrder::where(['order_platform_no' => $resul['orderNo']])->update($arr);
             if ($resul['status'] == "SUCCESS") {
                 $pay = GenerationOrder::where(['order_platform_no' => $resul['orderNo']])->find();
 
-                if (isset($pay['order_status']) && $pay['order_status'] != 2) {
-                    db('reimbur')->where('reimbur_generation', $pay['order_no'])->setDec('reimbur_left', $pay['order_money']);
-                }
+                // if (isset($pay['order_status']) && $pay['order_status'] != 2) {
+                //     db('reimbur')->where('reimbur_generation', $pay['order_no'])->setDec('reimbur_left', $pay['order_money']);
+                // }
                 $card_num = substr($pay['order_card'], -4);
                 jpush($pay['order_member'], '还款计划扣款成功通知', "您制定的尾号{$card_num}的还款计划成功还款" . $pay['order_money'] . "元，在APP内还款计划里即可查看详情。");
                 echo "success";

@@ -246,6 +246,7 @@
              $update['order_status']='-1';
         }
         //添加执行记录
+        $update['order_edit_time']=date('Y-m-d H:i:s',time());
         $res=GenerationOrder::where(['order_id'=>$order['order_id']])->update($update);
          #更改完状态后续操作
         $notice=new \app\api\controller\Membernet();
@@ -398,6 +399,7 @@
             $update['order_status']='-1';
         }
         //添加执行记录
+        $update['order_edit_time']=date('Y-m-d H:i:s',time());
         $res=GenerationOrder::where(['order_id'=>$order['order_id']])->update($update);
          #更改完状态后续操作
         // $notice=new \app\api\controller\Membernet();

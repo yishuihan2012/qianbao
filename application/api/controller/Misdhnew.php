@@ -225,8 +225,9 @@ class Misdhnew{
             // $arr['order_buckle']=$rate['item_charges']/100;
         }
         //添加执行记录
+        $arr['order_edit_time']=date('Y-m-d H:i:s',time());
         $res = GenerationOrder::where(['order_id' => $pay['order_id']])->update($arr);
-        file_put_contents('new_mishua_pay.txt',json_encode($income));
+        // file_put_contents('new_mishua_pay.txt',json_encode($income));
         // 更新卡计划
         // Generation::where(['generation_id'=>$pay['order_no']])->update($generation);
         #更改完状态后续操作
@@ -238,7 +239,7 @@ class Misdhnew{
 	 */
 	public function cashCallback(){
 		$data   = file_get_contents("php://input");
-		file_put_contents('new_mishua_paycallback.txt', $data);
+		// file_put_contents('new_mishua_paycallback.txt', $data);
         $result = json_decode($data, true);
         // print_r($result);die;
         if ($result['code'] == 0) {
@@ -260,13 +261,14 @@ class Misdhnew{
                 $arr['order_status'] = '4';
                 //带查证或者支付中。。。mchNo
             }
+            $arr['order_edit_time']=date('Y-m-d H:i:s',time());
             $res = GenerationOrder::where(['order_platform_no' => $resul['orderNo']])->update($arr);
             if ($resul['status'] == "SUCCESS") {
                 $pay = GenerationOrder::where(['order_platform_no' => $resul['orderNo']])->find();
 
-                if (isset($pay['order_status']) && $pay['order_status'] != 2) {
-                    db('reimbur')->where('reimbur_generation', $pay['order_no'])->setDec('reimbur_left', $pay['order_money']);
-                }
+                // if (isset($pay['order_status']) && $pay['order_status'] != 2) {
+                //     db('reimbur')->where('reimbur_generation', $pay['order_no'])->setDec('reimbur_left', $pay['order_money']);
+                // }
                 $card_num = substr($pay['order_card'], -4);
                 jpush($pay['order_member'], '还款计划扣款成功通知', "您制定的尾号{$card_num}的还款计划成功还款" . $pay['order_money'] . "元，在APP内还款计划里即可查看详情。");
                 echo "success";
@@ -338,7 +340,7 @@ class Misdhnew{
             );
             $url=$this->url.'/transferApply';
             $income = repay_request($params, $this->mech, $url, $this->iv, $this->secretkey, $this->signkey);
-            file_put_contents('new_mishua_qf.txt',json_encode($income));
+            // file_put_contents('new_mishua_qf.txt',json_encode($income));
             // print_r($income);
             //
             if ($income['code'] == '200') {
@@ -348,7 +350,7 @@ class Misdhnew{
                 if ($income['status'] == "SUCCESS") {
                     $arr['order_status'] = '2';
                     #0在此计划的还款卡余额中减去本次的金额
-                    db('reimbur')->where('reimbur_generation', $pay['order_no'])->setDec('reimbur_left', $pay['order_money']);
+                    // db('reimbur')->where('reimbur_generation', $pay['order_no'])->setDec('reimbur_left', $pay['order_money']);
                 } elseif ($income['status'] == "FAIL") {
                     //失败推送消息
                     $arr['order_status'] = '-1';
@@ -362,6 +364,7 @@ class Misdhnew{
             }
         }
         //更新订单状态
+        $arr['order_edit_time']=date('Y-m-d H:i:s',time());
         GenerationOrder::where(['order_id' => $pay['order_id']])->update($arr);
         //更新卡计划 判断是否是最后一次执行还款计划
         $GenerationOrder = GenerationOrder::where(['order_no' => $pay['order_no'], 'order_status' => 1])->find();
@@ -379,7 +382,7 @@ class Misdhnew{
      */
     public function qfcallback(){
     	$data   = file_get_contents("php://input");
-    	file_put_contents('new_mishua_qfcallback', $data);
+    	// file_put_contents('new_mishua_qfcallback', $data);
         $result = json_decode($data, true);
         // print_r($result);die;
         if ($result['code'] == 0) {
@@ -401,13 +404,14 @@ class Misdhnew{
                 $arr['order_status'] = '4';
                 //带查证或者支付中。。。mchNo
             }
+            $arr['order_edit_time']=date('Y-m-d H:i:s',time());
             $res = GenerationOrder::where(['order_platform_no' => $resul['orderNo']])->update($arr);
             if ($resul['status'] == "SUCCESS") {
                 $pay = GenerationOrder::where(['order_platform_no' => $resul['orderNo']])->find();
 
-                if (isset($pay['order_status']) && $pay['order_status'] != 2) {
-                    db('reimbur')->where('reimbur_generation', $pay['order_no'])->setDec('reimbur_left', $pay['order_money']);
-                }
+                // if (isset($pay['order_status']) && $pay['order_status'] != 2) {
+                //     db('reimbur')->where('reimbur_generation', $pay['order_no'])->setDec('reimbur_left', $pay['order_money']);
+                // }
                 $card_num = substr($pay['order_card'], -4);
                 jpush($pay['order_member'], '还款计划扣款成功通知', "您制定的尾号{$card_num}的还款计划成功还款" . $pay['order_money'] . "元，在APP内还款计划里即可查看详情。");
                 echo "success";
