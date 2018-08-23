@@ -846,10 +846,10 @@ class Membernet
     public function no_result_order()
     {
         $time_start = date('Y-m-d H:i:s', time() - 3600);
-        $time_end   = date('Y-m-d H:i:s', time() - 180);
+        $time_end   = date('Y-m-d H:i:s', time() - 1800);
         $arr        = [];
         //查询半小时前状态为带查证的订单
-        $list = GenerationOrder::where('order_status=4 or order_status=-1')->whereTime('order_time', 'between', [$time_start, $time_end])->select();
+        $list = GenerationOrder::where('order_status=4')->whereTime('order_time', 'between', [$time_start, $time_end])->select();
         foreach ($list as $key => $order) {
             $generation = Generation::where(['generation_id' => $order['order_no']])->find();
             //如果计划是执行中的
