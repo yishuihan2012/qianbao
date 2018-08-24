@@ -795,6 +795,7 @@ class Userurl extends Controller
         $Generation_order_insert = [];
         $generation_pound        = 0;
         //计算单笔最大消费金额
+        $single_max=20000;
         $support_list=Db::table('wt_credit_card')->where(['passageway_true_name'=>$passageway['passageway_true_name']])->select();
         foreach ($support_list as $k => $support_bank) {
             if($support_bank['card_name']==$card_info['card_bankname']){
