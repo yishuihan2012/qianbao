@@ -147,7 +147,7 @@ class Misdhnew{
 	/**
 	 * 支付
 	 */
-	public function pay($pay){
+	public function pay($pay,$mech=''){
         // 兼容老的数据没有费率的情况，新的订单都直接取订单里的费率
         $order_rate = 0;//0代表系统费率1代表订单上费率
         if ($pay['user_rate'] > 0 || $pay['user_fix'] > 0) { //如果设置了费率
