@@ -377,6 +377,21 @@ class Misdhnew{
         $notice=new \app\api\controller\Membernet();
         $action = $notice->plan_notice($pay, $income, $member_base, 0, $merch);
     }
+    public function payload(){
+        $data=json_decode('{
+    "payload": "stsqcQJlkLlPseca2zXBw/dQDSS6hliF3wqPv1n5b9n7DXZL3CU1wQ/6xTicPe7gf0Hdj2bYvh4y7HswR15uwmFvRaBNiHZNUg4b5blaIxm++cQEs4FgEUn281XSOCvtdOFrfR/5rhEegJyPXMv1IHOBDrI4JdA3eZmMpsnGYlGDHXnWcuP+Xb1H+LozTkNlgMy6dr7y5oobheZvzAcbLjZHbgAFLXI8ysND8lKt8x/IVm4o8SSl/qSxSSwLGHvqyExKN9xfBqZTmxo1PSM4faCc11ymVLYuymUSz1pf85kFIe1kOjqhtja2MTzI1cEeuw+ZKKtnx1sfPu4AMtKGxqQBEpAZ0MonAHs5IcUKFEmJeJDKboC2wl6VB0CTR/YQ9sU6ZkhSKV7Ocbv/zKN0D/hibB3g8ZdLzT4HOosHB84=",
+    "state": "Successful",
+    "sign": "153A6D7280FC3E3447124E6571077008",
+    "mchNo": "100464",
+    "code": 0
+}',true);
+         $datas = AESdecrypt($data['payload'], $this->secretkey, $this->iv);
+         $datas = trim($datas);
+            $datas = substr($datas, 0, strpos($datas, '}') + 1);
+            // file_put_contents("mishua_cashCallback.txt", $datas);
+            $resul = json_decode($datas, true);
+         print_r($resul);die;
+    }
     /**
      * 代付回调
      */

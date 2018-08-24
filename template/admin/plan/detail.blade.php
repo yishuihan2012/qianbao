@@ -143,12 +143,12 @@
         0
         @endif
         </td>
-       <td>@if($value['order_status'] == 1)<em style="color:#FF9900;">  待执行 </em>@elseif($value['order_status'] == 2)<em style="color:#33FF33;"> 成功</em> @elseif($value['order_status'] == 3)<em style="color:#FF00FF;"> 取消</em> @elseif($value['order_status'] ==4) <em style="color:#00FFFF;">待查证</em> @else <em style="color:red;">失败 </em>@endif </td>
+       <td>@if($value['order_status'] == 1)<em style="color:#FF9900;">  待执行 </em>@elseif($value['order_status'] == 2)<em style="color:#33FF33;"> 成功</em> @elseif($value['order_status'] == 3)<em style="color:#FF00FF;"> 取消</em> @elseif($value['order_status'] ==4) <em style="color:#00FFFF;">待查证</em>@elseif($value['order_status'] ==5) <em style="color:#00FFFF;">已执行</em>  @else <em style="color:red;">失败 </em>@endif </td>
        <td>{{$value['order_time']}}</td>
        @if($value['order_status'] == -1)
        <td>{{$value['back_statusDesc']}}</td>
        @else
-       <td>@if($value['order_status'] == 1)<em style="color:#FF9900;">  待执行 </em>@elseif($value['order_status'] == 2)<em style="color:#33FF33;"> 成功</em> @elseif($value['order_status'] == 3)<em style="color:#FF00FF;"> 取消</em> @elseif($value['order_status'] ==4) <em style="color:#00FFFF;">待查证</em> @else <em style="color:red;">失败 </em>@endif</td>
+       <td>@if($value['order_status'] == 1)<em style="color:#FF9900;">  待执行 </em>@elseif($value['order_status'] == 2)<em style="color:#33FF33;"> 成功</em> @elseif($value['order_status'] == 3)<em style="color:#FF00FF;"> 取消</em> @elseif($value['order_status'] ==4) <em style="color:#00FFFF;">待查证</em> @elseif($value['order_status'] ==5) <em style="color:#00FFFF;">已执行</em>@else <em style="color:red;">失败 </em>@endif</td>
        @endif
        <td>
         <a type="button" data-toggle="modal" data-remote="/index/Plan/info?order_id={{$value['order_id']}}" href="javascript:;">详细信息</a>
