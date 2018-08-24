@@ -794,6 +794,19 @@ class Userurl extends Controller
         #5计算出每天实际刷卡金额，和实际到账金额
         $Generation_order_insert = [];
         $generation_pound        = 0;
+        //计算单笔最大消费金额
+        $support_list=Db::table('wt_credit_card')->where(['passageway_true_name'=>$passageway['passageway_true_name']])->select();
+        foreach ($support_list as $k => $support_bank) {
+            if($support_bank['card_name']==$card_info['card_bankname']){
+                if($support_bank['bank_attrbute']=='万'){
+                  $single_max=$support_bank['bank_single']*10000;
+                }else if($support_bank['bank_attrbute']=='千'){
+                  $single_max=$support_bank['bank_single']*1000;
+                }else if($support_bank['bank_attrbute']=='百'){
+                  $single_max=$support_bank['bank_single']*100;
+                }
+            }
+        }
 
         for ($i = 0; $i < count($date); $i++) {
             $day_real_get_money = 0;
@@ -809,6 +822,14 @@ class Userurl extends Controller
             foreach ($each_pay_money as $k => $each_money) {
                 //获取每次实际需要支付金额
                 $real_each_pay_money = $this->get_need_pay($also, $daikou, $each_money);
+
+                //查看有没有超额的消费
+                if($real_each_pay_money>$single_max){
+                    Db::rollback();
+                    $this->assign('data', '单笔消费金额最大'.$single_max.'元，请增加还款次数或减小天数');
+                    return view("Userurl/show_error");
+                }
+
                 //获取每次实际到账金额
                 $real_each_get = $this->get_real_money($also, $daikou, $real_each_pay_money, $passageway_rate, $passageway_income);
 
