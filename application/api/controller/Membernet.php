@@ -200,7 +200,7 @@ class Membernet
                     $res = $action->pay($value, $passageway_mech);
                     // var_dump($res);die;
                 } else if ($value['order_type'] == 2) {//提现
-                    if($is_admin){
+                    if(!$is_admin){
                         $today       = date('Y-m-d', strtotime($value['order_time']));
                         $fail_order  = GenerationOrder::where(['order_no' => $value['order_no'], 'order_type' => 1])->where('order_status', 'neq', '2')->where('order_time', 'like', $today . '%')->find();
                         if ($fail_order && !$is_admin) {//如果当天有失败订单
