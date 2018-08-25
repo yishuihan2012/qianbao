@@ -279,89 +279,78 @@ class Misdhnew{
 	/**
 	 * 代付
 	 */
-	public function qfpay($pay, $mech = null, $is_admin = '')
+	public function qfpay($pay, $mech = null, $is_admin = '1')
     {
         #1判断当天有没有失败的订单
-        $today       = date('Y-m-d', strtotime($pay['order_time']));
-        $fail_order  = GenerationOrder::where(['order_no' => $pay['order_no'], 'order_type' => 1])->where('order_status', 'neq', '2')->where('order_time', 'like', $today . '%')->find();
         $member_base = Member::where(['member_id' => $pay['order_member']])->find();
         $merch       = Passageway::where(['passageway_id' => $pay['order_passageway']])->find();
-        // $remain_money=Reimbur::where(['reimbur_generation'=>$pay['order_no']])->find();
-        // if($remain_money && $remain_money['reimbur_left']<$pay['order_money']){/
-        if ($fail_order && empty($is_admin)) {//如果当天有失败订单
-            $arr['back_status']     = 'FAIL';
-            $arr['back_statusDesc'] = '当天有失败的订单无法进行还款，请先处理失败的订单。';
-            $arr['order_status']    = '-1';
-            $income['code']         = '200';
-            $income['status']       = "FAIL";
+
+        // 兼容老的数据没有费率的情况，新的订单都直接取订单里的费率
+        $order_rate = 0;//0代表系统费率1代表订单上费率
+        if ($pay['user_rate'] > 0 || $pay['user_fix'] > 0) { //如果设置了费率
+            $order_rate = 1;
+            $also       = $pay['user_rate'] * 10;
+            $daikou     = $pay['user_fix'] * 100;
         } else {
-            // 兼容老的数据没有费率的情况，新的订单都直接取订单里的费率
-            $order_rate = 0;//0代表系统费率1代表订单上费率
-            if ($pay['user_rate'] > 0 || $pay['user_fix'] > 0) { //如果设置了费率
-                $order_rate = 1;
-                $also       = $pay['user_rate'] * 10;
-                $daikou     = $pay['user_fix'] * 100;
-            } else {
-                $member_group_id = Member::where(['member_id' => $pay['order_member']])->value('member_group_id');
-                $rate            = PassagewayItem::where(['item_passageway' => $pay['order_passageway'], 'item_group' => $member_group_id])->find();
-                $also            = ($rate->item_qfalso) * 10;
-                $daikou          = ($rate->item_qffix);
-            }
+            $member_group_id = Member::where(['member_id' => $pay['order_member']])->value('member_group_id');
+            $rate            = PassagewayItem::where(['item_passageway' => $pay['order_passageway'], 'item_group' => $member_group_id])->find();
+            $also            = ($rate->item_qfalso) * 10;
+            $daikou          = ($rate->item_qffix);
+        }
 
-            // print_r($merch->passageway_mech);die;
-            #3获取银行卡信息
-            $card_info = MemberCreditcard::where(['card_bankno' => $pay['order_card']])->find();
-            #4获取用户信息
-            $member = MemberNets::where(['net_member_id' => $pay['order_member']])->find();
-            #6获取渠道提供的费率，如果不一致，重新报备费率
-            $passway_info = $this->accountQuery($pay['order_member'], $pay['order_passageway']);
-            if (isset($passway_info['drawFeeRatio']) && isset($passway_info['drawFeeAmt'])) {
-                if ($passway_info['drawFeeRatio'] != $also || $passway_info['drawFeeAmt'] != $daikou) {//不一致重新报备,修改商户信息
-                    $Membernetsedits =$this->mech_update($member->{$merch['passageway_no']},$card_info['card_name'],$card_info['card_idcard'],$member_base['member_mobile'],$also,$daikou);
-                }
+        // print_r($merch->passageway_mech);die;
+        #3获取银行卡信息
+        $card_info = MemberCreditcard::where(['card_bankno' => $pay['order_card']])->find();
+        #4获取用户信息
+        $member = MemberNets::where(['net_member_id' => $pay['order_member']])->find();
+        #6获取渠道提供的费率，如果不一致，重新报备费率
+        $passway_info = $this->accountQuery($pay['order_member'], $pay['order_passageway']);
+        if (isset($passway_info['drawFeeRatio']) && isset($passway_info['drawFeeAmt'])) {
+            if ($passway_info['drawFeeRatio'] != $also || $passway_info['drawFeeAmt'] != $daikou) {//不一致重新报备,修改商户信息
+                $Membernetsedits =$this->mech_update($member->{$merch['passageway_no']},$card_info['card_name'],$card_info['card_idcard'],$member_base['member_mobile'],$also,$daikou);
             }
+        }
 
-            $orderTime = date('YmdHis', time() + 60);
-            if (!$pay['order_platform_no'] || $pay['order_status'] != 1) {
-                $update_order['order_platform_no'] = $pay['order_platform_no'] = get_plantform_pinyin() . $member_base->member_mobile . make_rand_code();
-                $update_res                        = GenerationOrder::where(['order_id' => $pay['order_id']])->update($update_order);
-            }
-            $MemberCreditPas = MemberCreditPas::where(['member_credit_pas_creditid' => $card_info['card_id'], 'member_credit_pas_pasid' => $pay['order_passageway']])->find();
-            $params = array(
-                'mchNo'        => $this->mech, //机构号 必填  由平台统一分配 16
-                'userNo'       => $member->{$merch['passageway_no']},  //平台用户标识  必填  平台下发用户标识  32
-                'settleBindId' => $MemberCreditPas->member_credit_pas_info,//提现卡签约ID 必填  提现结算的卡，传入签约返回的平台签约ID 
-                'notifyUrl'    => System::getName('system_url') . '/Api/Misdhnew/qfcallback',// 异步通知地址  可填  异步通知的目标地址
-                'orderNo'      => $pay['order_platform_no'], //提现流水号 必填  机构订单流水号，需唯一 64
-                'orderTime'    => $orderTime,//  提现时间点 必填  格式：yyyyMMddHHmmss 14
-                'depositAmt'   => $pay['order_real_get'] * 100,  //提现金额  必填  单位：分  整型(9,0)
-                'feeRatio'     => $also,  //提现费率  必填  需与用户入网信息保持一致  数值(5,2)
-                'feeAmt'       => $daikou,//提现单笔手续费   需与用户入网信息保持一致  整型(4,0)
-            );
-            $url=$this->url.'/transferApply';
-            $income = repay_request($params, $this->mech, $url, $this->iv, $this->secretkey, $this->signkey);
-            // file_put_contents('new_mishua_qf.txt',json_encode($income));
-            // print_r($income);
-            //
-            if ($income['code'] == '200') {
-                $arr['back_tradeNo']    = $income['orderNo'];
-                $arr['back_status']     = $income['status'];
-                $arr['back_statusDesc'] = $income['statusDesc'];
-                if ($income['status'] == "SUCCESS") {
-                    $arr['order_status'] = '2';
-                    #0在此计划的还款卡余额中减去本次的金额
-                    // db('reimbur')->where('reimbur_generation', $pay['order_no'])->setDec('reimbur_left', $pay['order_money']);
-                } elseif ($income['status'] == "FAIL") {
-                    //失败推送消息
-                    $arr['order_status'] = '-1';
-                } else {
-                    $arr['order_status'] = '4';
-                }
+        $orderTime = date('YmdHis', time() + 60);
+        if (!$pay['order_platform_no'] || $pay['order_status'] != 1) {
+            $update_order['order_platform_no'] = $pay['order_platform_no'] = get_plantform_pinyin() . $member_base->member_mobile . make_rand_code();
+            $update_res                        = GenerationOrder::where(['order_id' => $pay['order_id']])->update($update_order);
+        }
+        $MemberCreditPas = MemberCreditPas::where(['member_credit_pas_creditid' => $card_info['card_id'], 'member_credit_pas_pasid' => $pay['order_passageway']])->find();
+        $params = array(
+            'mchNo'        => $this->mech, //机构号 必填  由平台统一分配 16
+            'userNo'       => $member->{$merch['passageway_no']},  //平台用户标识  必填  平台下发用户标识  32
+            'settleBindId' => $MemberCreditPas->member_credit_pas_info,//提现卡签约ID 必填  提现结算的卡，传入签约返回的平台签约ID 
+            'notifyUrl'    => System::getName('system_url') . '/Api/Misdhnew/qfcallback',// 异步通知地址  可填  异步通知的目标地址
+            'orderNo'      => $pay['order_platform_no'], //提现流水号 必填  机构订单流水号，需唯一 64
+            'orderTime'    => $orderTime,//  提现时间点 必填  格式：yyyyMMddHHmmss 14
+            'depositAmt'   => $pay['order_real_get'] * 100,  //提现金额  必填  单位：分  整型(9,0)
+            'feeRatio'     => $also,  //提现费率  必填  需与用户入网信息保持一致  数值(5,2)
+            'feeAmt'       => $daikou,//提现单笔手续费   需与用户入网信息保持一致  整型(4,0)
+        );
+        $url=$this->url.'/transferApply';
+        $income = repay_request($params, $this->mech, $url, $this->iv, $this->secretkey, $this->signkey);
+        // file_put_contents('new_mishua_qf.txt',json_encode($income));
+        // print_r($income);
+        //
+        if ($income['code'] == '200') {
+            $arr['back_tradeNo']    = $income['orderNo'];
+            $arr['back_status']     = $income['status'];
+            $arr['back_statusDesc'] = $income['statusDesc'];
+            if ($income['status'] == "SUCCESS") {
+                $arr['order_status'] = '2';
+                #0在此计划的还款卡余额中减去本次的金额
+                // db('reimbur')->where('reimbur_generation', $pay['order_no'])->setDec('reimbur_left', $pay['order_money']);
+            } elseif ($income['status'] == "FAIL") {
+                //失败推送消息
+                $arr['order_status'] = '-1';
             } else {
-                $arr['back_status']     = 'FAIL';
-                $arr['back_statusDesc'] = $income['message'];
-                $arr['order_status']    = '-1';
+                $arr['order_status'] = '4';
             }
+        } else {
+            $arr['back_status']     = 'FAIL';
+            $arr['back_statusDesc'] = $income['message'];
+            $arr['order_status']    = '-1';
         }
         //更新订单状态
         $arr['order_edit_time']=date('Y-m-d H:i:s',time());
