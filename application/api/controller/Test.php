@@ -19,6 +19,7 @@ use app\index\model\MemberCreditcard;
 use app\index\model\CashOrder;
 use app\index\model\PassagewayItem;
 use app\api\payment\Elifepay;
+use app\index\model\Passageway;
 class Test 
 {
 
@@ -65,10 +66,20 @@ class Test
             	$a=$sms->check('17569615504','7041');
 				print_r($a);
 		}
-		public function merch_Settlement_setting(){
+		public function merch_Settlement_setting($passwayId,$member_id){
+
+			$member_info = Member::get($member_id);
+			if(!$member_info){
+				echo "获取信息失败！";die;
+			}
+			$passageway = Passageway::get($passwayId);
+			$MemberNet       = MemberNet::where(['net_member_id' => $member_id])->find();
+			$MemberNet_value = $MemberNet[$passageway->passageway_no];
+      		$explode         = explode(',', $MemberNet_value);
 			$eli = new Elifepay();
-			// dump(input());die;
-			$res = $eli->merch_Settlement_setting('1',input());
+			// var_dump($member_info);die;
+			$res = $eli->merch_Settlement_setting($explode[0],$member_info);
+			echo json_encode($res);die;
 		}
 		//curl请求
 		public function curlPost($url, $method = 'post', $data = ''){
@@ -986,9 +997,31 @@ class Test
 		}
 		// echo $total;die;
 	}
+	//java四元素验证
 	public function BankCert_Java($bank_card='6227643718098032',$id_card='370902199003165414',$name="唐志强",$phone="18264858283"){
 
 		$res=BankCert_Java($bank_card,$id_card,$name,$phone);
-		return json_encode($res);die;
+		echo  json_encode($res);die;
+	}
+	/**
+	 * 阿里云四元素验证
+	 */
+	public function aliBankCert($bankCardNo='6227643718098032',$identityNo='370902199003165414',$name='唐志强',$mobileNo='18264858283'){
+		$data=array(
+			'bankCardNo'=>$bankCardNo,
+			'identityNo'=>$identityNo,
+			'name'=>$name,
+			'mobileNo'=>$mobileNo,
+		);
+		$res=BankCert_ali($bankCardNo, $mobileNo, $identityNo, $name);
+		echo json_encode($res);die;
+	}
+	/**
+	 * 获取联行号--易支付
+	 */
+	public function get_uinion($card_no='6217921777467534'){
+		$yipay=new \app\api\controller\Yipay();
+		$res=$yipay->get_card_union($card_no);
+		echo json_encode($res);die;
 	}
 }

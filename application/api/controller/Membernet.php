@@ -128,6 +128,15 @@ class Membernet
                         if ($value['order_type'] == 1) { //消费
                             $res = $action->pay($value, $passageway_mech);
                         } else if ($value['order_type'] == 2) {//提现
+                            $today       = date('Y-m-d', strtotime($value['order_time']));
+                            $fail_order  = GenerationOrder::where(['order_no' => $value['order_no'], 'order_type' => 1])->where('order_status', 'neq', '2')->where('order_time', 'like', $today . '%')->find();
+                            if ($fail_order) {//如果当天有失败订单
+                                $arr['back_status']     = 'FAIL';
+                                $arr['back_statusDesc'] = '当天有失败的订单无法进行还款，请先处理失败的订单。';
+                                $arr['order_status']    = '-1';
+                                GenerationOrder::where(['order_id' => $value['order_id']])->update($arr);
+                                return json_encode(['code' => 101, 'msg' => '当天有失败的订单无法进行还款，请先处理失败的订单。']);
+                            }
                             $res = $action->qfpay($value, $passageway_mech);
                         }
                     }
@@ -191,14 +200,16 @@ class Membernet
                     $res = $action->pay($value, $passageway_mech);
                     // var_dump($res);die;
                 } else if ($value['order_type'] == 2) {//提现
-                    $today       = date('Y-m-d', strtotime($value['order_time']));
-                    $fail_order  = GenerationOrder::where(['order_no' => $value['order_no'], 'order_type' => 1])->where('order_status', 'neq', '2')->where('order_time', 'like', $today . '%')->find();
-                    if ($fail_order && !$is_admin) {//如果当天有失败订单
-                        $arr['back_status']     = 'FAIL';
-                        $arr['back_statusDesc'] = '当天有失败的订单无法进行还款，请先处理失败的订单。';
-                        $arr['order_status']    = '-1';
-                        GenerationOrder::where(['order_id' => $value['order_id']])->update($arr);
-                        return json_encode(['code' => 101, 'msg' => '当天有失败的订单无法进行还款，请先处理失败的订单。']);
+                    if($is_admin){
+                        $today       = date('Y-m-d', strtotime($value['order_time']));
+                        $fail_order  = GenerationOrder::where(['order_no' => $value['order_no'], 'order_type' => 1])->where('order_status', 'neq', '2')->where('order_time', 'like', $today . '%')->find();
+                        if ($fail_order && !$is_admin) {//如果当天有失败订单
+                            $arr['back_status']     = 'FAIL';
+                            $arr['back_statusDesc'] = '当天有失败的订单无法进行还款，请先处理失败的订单。';
+                            $arr['order_status']    = '-1';
+                            GenerationOrder::where(['order_id' => $value['order_id']])->update($arr);
+                            return json_encode(['code' => 101, 'msg' => '当天有失败的订单无法进行还款，请先处理失败的订单。']);
+                        }
                     }
                     $res = $action->qfpay($value, $passageway_mech);
                     // var_dump($res);die;

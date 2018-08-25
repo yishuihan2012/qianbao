@@ -279,7 +279,7 @@ class Misdhnew{
 	/**
 	 * 代付
 	 */
-	public function qfpay($pay, $isCancel = null, $is_admin = '')
+	public function qfpay($pay, $mech = null, $is_admin = '')
     {
         #1判断当天有没有失败的订单
         $today       = date('Y-m-d', strtotime($pay['order_time']));

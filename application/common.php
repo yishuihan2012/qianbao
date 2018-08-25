@@ -222,6 +222,31 @@ function BankCert($accountNo, $bankPreMobile, $idCardCode, $name)
         curl_setopt($curl, CURLOPT_SSL_VERIFYHOST, false);
     }
     return json_decode(json_encode(json_decode(curl_exec($curl))), true);
+} 
+function BankCert_ali($accountNo, $bankPreMobile, $idCardCode, $name){
+    $host = "http://yhsys.market.alicloudapi.com";
+    $path = "/bank4";
+    $method = "GET";
+    $appcode = "d04d00f17ddd430abc630269b4c30324";
+    $headers = array();
+    array_push($headers, "Authorization:APPCODE " . $appcode);
+    $querys = "bankCardNo={$accountNo}&identityNo={$idCardCode}&mobileNo={$bankPreMobile}&name={$name}";
+    $bodys = "";
+    $url = $host . $path . "?" . $querys;
+
+    $curl = curl_init();
+    curl_setopt($curl, CURLOPT_CUSTOMREQUEST, $method);
+    curl_setopt($curl, CURLOPT_URL, $url);
+    curl_setopt($curl, CURLOPT_HTTPHEADER, $headers);
+    curl_setopt($curl, CURLOPT_FAILONERROR, false);
+    curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
+    curl_setopt($curl, CURLOPT_HEADER, true);
+    if (1 == strpos("$".$host, "https://"))
+    {
+        curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, false);
+        curl_setopt($curl, CURLOPT_SSL_VERIFYHOST, false);
+    }
+    var_dump(curl_exec($curl));
 }
 
 // @version  BankCert  银行卡实名认证新
@@ -232,20 +257,20 @@ function BankCert($accountNo, $bankPreMobile, $idCardCode, $name)
 // @return  $data 返回认证结果
 function BankCertNew($data = array(), $method = 'GET')
 {
-    $CertDatas = Cache::get('CertDatas');
-    if ($CertDatas) {
-        foreach ($CertDatas as $k => $CertData) {
-            if ($CertData['bankCard'] == $data['bankCardNo'] && $CertData['personCard'] == $data['identityNo'] && $CertData['personPhone'] == $data['mobileNo'] && $CertData['personName'] == $data['name']) {
-                return ['code' => '0000',
-                        'msg'  => '当前数据认证有误，请核实信息后或过30分钟后再试',
-                        'data' => [
-                            'resultCode' => 'R002',
-                            'remark'     => '因你填写的资料未作修改，请修改后再次提交,或稍后再试。'
-                        ],
-                ];
-            }
-        }
-    }
+    // $CertDatas = Cache::get('CertDatas');
+    // if ($CertDatas) {
+    //     foreach ($CertDatas as $k => $CertData) {
+    //         if ($CertData['bankCard'] == $data['bankCardNo'] && $CertData['personCard'] == $data['identityNo'] && $CertData['personPhone'] == $data['mobileNo'] && $CertData['personName'] == $data['name']) {
+    //             return ['code' => '0000',
+    //                     'msg'  => '当前数据认证有误，请核实信息后或过30分钟后再试',
+    //                     'data' => [
+    //                         'resultCode' => 'R002',
+    //                         'remark'     => '因你填写的资料未作修改，请修改后再次提交,或稍后再试。'
+    //                     ],
+    //             ];
+    //         }
+    //     }
+    // }
     $post['bankCard']    = $data['bankCardNo'];
     $post['personCard']  = $data['identityNo'];
     $post['personName']  = $data['name'];
@@ -263,11 +288,10 @@ function BankCertNew($data = array(), $method = 'GET')
     curl_setopt($curl, CURLOPT_FAILONERROR, false);
     curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
     curl_setopt($curl, CURLOPT_HEADER, false);
-    if (1 == strpos("$" . System::getName('certhost'), "https://")) {
+    if (1 == strpos("$" . System::getName('certhost'), "http://")) {
         curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, false);
         curl_setopt($curl, CURLOPT_SSL_VERIFYHOST, false);
     }
-    //return System::getName('certhost');
     return json_decode(curl_exec($curl), true);
 }
 
