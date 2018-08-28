@@ -1367,7 +1367,7 @@ class CashOut
             $memberCreditPas = MemberCreditPas::where(['member_credit_pas_creditid' => $this->card_info->card_id, 'member_credit_pas_pasid' => $this->passway_info->passageway_id])->find();
             if (!$memberCreditPas || $memberCreditPas['member_credit_pas_status'] != 1) {
                 if ($cusquery) {
-                    $res = MemberNet::where(['net_member_id' => $this->param['uid']])->setField($this->passway_info->passageway_no, $cusquery['cusid']);
+                    $res = MemberNet::where(['net_member_id' => $this->member_infos->member_id])->setField($this->passway_info->passageway_no, $cusquery['cusid']);
                 }
                 $passagewayOther      = Passageway::where(['passageway_method' => 'tonglian'])
                     ->where('passageway_id', 'neq', $this->passway_info->passageway_id)
