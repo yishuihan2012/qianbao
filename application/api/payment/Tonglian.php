@@ -93,7 +93,7 @@ class Tonglian
 //            'prodlist'     => "[{'trxcode':'QUICKPAY_OF_HP','feerate':'0.50'},{'trxcode':'QUICKPAY_OF_NP','feerate':'0.50'},{'trxcode':'QUICKPAY_OL_HP','feerate':'0.50'}]",//支付产品信息列表
 //            'settfee'      => '1.00',//提现手续费:2块/笔,该字 段填2.00，为空时，取所属代理商费率
             'belongorgid'  => $this->orgid,//拓展代理商号
-            'outcusid'     => strtoupper($this->membercard->card_idcard),//商户外部唯一标记 //身份证号
+            'outcusid'     => strtoupper($this->membercard->card_idcard).'20',//商户外部唯一标记 //身份证号
             'cusname'      => $this->configMember->member_nick,//商户名称
             'cusshortname' => $this->configMember->member_nick,//商户简称
             'merprovice'   => '370000',//所在省 山东
@@ -122,7 +122,7 @@ class Tonglian
         $dataP        = $this->paramsPublic();
         $dataS        = array(
 //            'outcusid' => '123456789123456789',//商户外部唯一标记
-            'outcusid' => strtoupper($this->membercard->card_idcard),//商户外部唯一标记
+            'outcusid' => strtoupper($this->membercard->card_idcard).'20',//商户外部唯一标记
         );
         $data         = array_merge($dataP, $dataS);
         $data['sign'] = $this->getSign($data);
@@ -178,7 +178,7 @@ class Tonglian
 //            'idno'      => '370105199901015321',
 //            'tel'       => '15192495297'
             'cusid'     => $cusid,//商户号
-            'meruserid' => strtoupper($this->membercard->card_idcard),//商户外部唯一标记
+            'meruserid' => strtoupper($this->membercard->card_idcard).'20',//商户外部唯一标记
             'cardno'    => $creditCard['card_bankno'],//信用卡号
             'acctname'  => $creditCard['card_name'],//账户名
             'accttype'  => '02',//卡折类型:00-借记卡;02-信用卡;
@@ -228,7 +228,7 @@ class Tonglian
 //            'idno'      => '370105199901015321',
 //            'tel'       => '15192495297'
             'cusid'     => $cusid,//商户号
-            'meruserid' => strtoupper($this->membercard->card_idcard),//商户外部唯一标记
+            'meruserid' => strtoupper($this->membercard->card_idcard).'20',//商户外部唯一标记
             'cardno'    => $creditCard['card_bankno'],//信用卡号
             'acctname'  => $creditCard['card_name'],//账户名
             'accttype'  => '02',//卡折类型:00-借记卡;02-信用卡;
@@ -265,7 +265,7 @@ class Tonglian
 //            'thpinfo'   => $thpinfo,
 //            'smscode'   => $smscode
             'cusid'     => $cusid,//商户号
-            'meruserid' => strtoupper($this->membercard->card_idcard),//商户外部唯一标记
+            'meruserid' => strtoupper($this->membercard->card_idcard).'20',//商户外部唯一标记
             'cardno'    => $creditCard['card_bankno'],//信用卡号
             'acctname'  => $creditCard['card_name'],//账户名
             'accttype'  => '02',//卡折类型:00-借记卡;02-信用卡;
