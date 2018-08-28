@@ -165,13 +165,13 @@ class Tonglian
         $params = input();
          file_put_contents('card_pay_notifyUrl.txt', json_encode($params));
         $pay = GenerationOrder::get(['order_platform_no' => $params['outtrxid']]);
-        if ($params['trxcode'] == '0000') {
+        if ($params['trxstatus'] == '0000') {
             //成功
             $income['code']        = 200;
             $income['back_status'] = $arr['back_status'] = 'success';
             $arr['order_status']   = '2';
             $is_commission         = 1;
-        } else if ($params['trxcode'] == '2000') {
+        } else if ($params['trxstatus'] == '2000') {
             //处理中
             $arr['order_status'] = '4';
         } else {//失败
@@ -183,7 +183,7 @@ class Tonglian
         isset($params['trxid']) ? $arr['back_tradeNo'] = $params['trxid'] : $arr['back_tradeNo'] = '';
         //添加执行记录
         $pay->save($arr);
-        if ($params['trxcode'] == '0000') {//成功
+        if ($params['trxstatus'] == '0000') {//成功
             // 极光推送
             if ($pay['is_commission'] == '0') {
                 $has_fenrun = db('commission')->where('commission_from', $pay['order_id'])->find();
@@ -206,23 +206,23 @@ class Tonglian
         $params = input();
          file_put_contents('card_pay_notifyUrl.txt', json_encode($params));
         $pay = GenerationOrder::get(['order_platform_no' => $params['outtrxid']]);
-        if ($params['trxcode'] == '0000') {//成功
+        if ($params['trxstatus'] == '0000') {//成功
             $income['code']        = 200;
             $income['back_status'] = $arr['back_status'] = 'success';
             $arr['order_status']   = '2';
             $is_commission         = 1;
-        } else if ($params['trxcode'] == '2000') {//处理中
+        } else if ($params['trxstatus'] == '2000') {//处理中
             $arr['order_status'] = '4';
         } else {//失败
             $arr['order_status'] = '-1';
             $arr['back_status']  = 'FAIL';
         }
         isset($params['trxreserved']) ? $arr['back_statusDesc'] = $params['trxreserved'] : $arr['back_statusDesc'] = '';
-        isset($params['trxcode']) ? $arr['back_status'] = $params['trxcode'] : $arr['back_status'] = '';
+        isset($params['trxstatus']) ? $arr['back_status'] = $params['trxstatus'] : $arr['back_status'] = '';
         isset($params['trxid']) ? $arr['back_tradeNo'] = $params['trxid'] : $arr['back_tradeNo'] = '';
         //添加执行记录
         $pay->save($arr);
-        if ($params['trxcode'] == '0000') {//成功
+        if ($params['trxstatus'] == '0000') {//成功
             // 极光推送
             $card_num = substr($pay['order_card'], -4);
             jpush($pay['order_member'], '还款计划到款成功通知', "您制定的尾号{$card_num}的还款计划成功到款" . $pay['order_money'] . "元，在APP内还款计划里即可查看详情。");
