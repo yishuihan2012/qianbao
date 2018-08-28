@@ -34,6 +34,9 @@
       <div class="input-group" style="width: 120px;float: left;margin-right: 10px;">
         <span class="input-group-addon">计划ID</span>
         <input type="text" class="form-control" name="order_no" value="{{$r['order_no'] or ''}}" placeholder="计划ID"></div>
+      <div class="input-group" style="width: 180px;float: left;margin-right: 10px;">
+        <span class="input-group-addon">订单号</span>
+        <input type="text" class="form-control" name="order_platform_no" value="{{$r['order_platform_no'] or ''}}" placeholder="订单号"></div>
       <div class="input-group" style="width: 120px;float: left;margin-right: 10px;">
         <span class="input-group-addon">状态</span>
         <select name="order_status" class="form-control order_status">
