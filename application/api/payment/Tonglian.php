@@ -106,7 +106,7 @@ class Tonglian
             'acctname'     => $this->membercard->card_name,//账户名
             'accttp'       => '00',//卡折类型:00-借记卡;01-存折;
             'expanduser'   => $this->membercard->card_name,//拓展人
-            'prodlist'     => "[{'trxcode':'QUICKPAY_OF_HP','feerate':" . $memberAlso->item_rate . "},{'trxcode':'QUICKPAY_OF_NP','feerate':" . $memberAlso->item_rate . "},{'trxcode':'QUICKPAY_OL_HP','feerate':" . $memberAlso->item_rate . "},{'trxcode':'QUICKPAY_NOSMS','feerate':" . $memberAlso->item_rate . "},{'trxcode':'TRX_PAY','feerate':" . $memberAlso->item_qffix / 100 . "}]",//支付产品信息列表
+            'prodlist'     => "[{'trxcode':'QUICKPAY_OF_HP','feerate':" . $memberAlso->item_rate . "},{'trxcode':'QUICKPAY_OF_NP','feerate':" . $memberAlso->item_rate . "},{'trxcode':'QUICKPAY_OL_HP','feerate':" . $memberAlso->item_rate . "},{'trxcode':'QUICKPAY_NOSMS','feerate':" . $memberAlso->item_rate . "},{'trxcode':'TRX_PAY','feerate':'1'}]",//支付产品信息列表
             'settfee'      => number_format($memberAlso->item_charges / 100, 2),//提现手续费:2块/笔,该字 段填2.00，为空时，取所属代理商费率
         );
         $data         = array_merge($dataP, $dataS);
