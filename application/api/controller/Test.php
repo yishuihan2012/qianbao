@@ -1001,6 +1001,7 @@ class Test
 	public function BankCert_Java($bank_card='6227643718098032',$id_card='370902199003165414',$name="唐志强",$phone="18264858283"){
 
 		$res=BankCert_Java($bank_card,$id_card,$name,$phone);
+		print_r($res);die;
 		echo  json_encode($res);die;
 	}
 	/**
@@ -1014,6 +1015,7 @@ class Test
 			'mobileNo'=>$mobileNo,
 		);
 		$res=BankCert_ali($bankCardNo, $mobileNo, $identityNo, $name);
+		print_r($res);die;
 		echo json_encode($res);die;
 	}
 	/**
@@ -1022,6 +1024,7 @@ class Test
 	public function get_uinion($card_no='6217921777467534'){
 		$yipay=new \app\api\controller\Yipay();
 		$res=$yipay->get_card_union($card_no);
+		print_r($res);die;
 		echo json_encode($res);die;
 	}
 }

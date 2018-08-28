@@ -45,9 +45,9 @@ class Tonglian
 //        $this->appid  = '0000001';//平台分配的机构APPID
 //        $this->appkey = '111111';//key
         #正式环境
-        $this->orgid  = '201000077740';//平台分配的机构号
-        $this->appid  = '0000125';//平台分配的机构APPID
-        $this->appkey = '10399a98777db00248c317c1d0f13cc4';//key
+        $this->orgid  = '201000615736';//平台分配的机构号
+        $this->appid  = '0000180';//平台分配的机构APPID
+        $this->appkey = '506eb989a6adc1607e25361e06996003';//key
 
         $this->randomstr = generate_password(16);//商户自行生成的随机字符串
         $this->version   = '11';//接口版本号
