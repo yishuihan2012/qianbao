@@ -43,7 +43,7 @@
 				    </div>
 				   
 				    <!--支持循环，需要重复图片节点第一张-->
-				    <div class="mui-slider-item mui-slider-item-duplicate">
+<!-- 				    <div class="mui-slider-item mui-slider-item-duplicate">
 				    	<div class="my-slide-con fl"> 
 			    		  <img src="/static/images/20180224113642.png">
 			    		</div>
@@ -55,7 +55,7 @@
 			    			<a href="http://www.365creditbank.com/index/index?id=2387&card=pa" class="my-slide-btn">立即申请</a>
 			    		</div>
 				    </div>
-				  </div>
+ -->				  </div>
 				</div>
 				<!--轮播2结束-->
 				<!--列表-->
