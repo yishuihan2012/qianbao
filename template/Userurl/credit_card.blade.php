@@ -31,7 +31,7 @@
 				  	<!--支持循环，需要重复图片节点最后一张-->
 				    <div class="mui-slider-item mui-slider-item-duplicate">
 				    	<div class="my-slide-con fl"> 
-			    		  <img src="/static/images/20180224113642.png">
+			    		  <img src="http://wallet-source.oss-cn-hangzhou.aliyuncs.com/uploads/other/2018-08-29/55895b8658437c887.jpg">
 			    		</div>
 			    		<div class="my-slide-con fr wrap2">
 			    			<div class="f-telli2">
