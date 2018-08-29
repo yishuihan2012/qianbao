@@ -14,20 +14,20 @@
 	<body>
 		<div class="mui-content">
 			<!--头部轮播图-->
-				<div class="mui-slider mui-slider1">
-				  <div class="mui-slider-group mui-slider-loop">
+				<!-- <div class="mui-slider mui-slider1"> -->
+				  <!-- <div class="mui-slider-group mui-slider-loop"> -->
 				    <!--支持循环，需要重复图片节点最后一张-->
-				    <div class="mui-slider-item mui-slider-item-duplicate"><a href="#"><img src="/static/images/20180224112730.png" /></a></div>
+				    <!-- <div class="mui-slider-item mui-slider-item-duplicate"><a href="#"><img src="/static/images/20180224112730.png" /></a></div> -->
 					    <!-- <div class="mui-slider-item"><a href="#"><img src="/static/images/20180224112001.png" /></a></div> -->
 					    <!-- <div class="mui-slider-item"><a href="#"><img src="/static/images/20180224112730.png" /></a></div> -->
 				    <!--支持循环，需要重复图片节点第一张-->
-				    <div class="mui-slider-item mui-slider-item-duplicate"><a href="http://www.do68.com/"><img src="/static/images/20180224112001.png" /></a></div>
-				  </div>
-				</div>
+				    <!-- <div class="mui-slider-item mui-slider-item-duplicate"><a href="http://www.do68.com/"><img src="/static/images/20180224112001.png" /></a></div> -->
+				  <!-- </div> -->
+				<!-- </div> -->
 			<div class="wrap">
 			    <!--轮播2-->
-			    	<div class="mui-slider mui-slider2 clear wrap-bt bg-w">
-				  <div class="mui-slider-group mui-slider-loop">
+			    	<!-- <div class="mui-slider mui-slider2 clear wrap-bt bg-w"> -->
+				  <!-- <div class="mui-slider-group mui-slider-loop"> -->
 				  	<!--支持循环，需要重复图片节点最后一张-->
 <!-- 				    <div class="mui-slider-item mui-slider-item-duplicate">
 				    	<div class="my-slide-con fl"> 
@@ -55,8 +55,8 @@
 			    			<a href="http://www.365creditbank.com/index/index?id=2387&card=pa" class="my-slide-btn">立即申请</a>
 			    		</div>
 				    </div>
- -->				  </div>
-				</div>
+ -->				  <!-- </div>
+				</div> -->
 				<!--轮播2结束-->
 				<!--列表-->
 				<div class="wrap-bt">
