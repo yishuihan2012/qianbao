@@ -2045,6 +2045,7 @@ class Userurl extends Controller
         $info              = ServiceItemList::where($wheres)->order("list_id desc")->find();
         $this->assign("info", $info);
         $where['list_parent_id'] = input("parent_id");
+        $where['list_state'] = 1;
         $list                    = ServiceItemList::where($where)->order("list_id desc")->select();
         $this->assign("list", $list);
         return view("Userurl/credit_card");
