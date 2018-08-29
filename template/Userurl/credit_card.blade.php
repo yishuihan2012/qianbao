@@ -29,7 +29,7 @@
 			    	<div class="mui-slider mui-slider2 clear wrap-bt bg-w">
 				  <div class="mui-slider-group mui-slider-loop">
 				  	<!--支持循环，需要重复图片节点最后一张-->
-				    <div class="mui-slider-item mui-slider-item-duplicate">
+<!-- 				    <div class="mui-slider-item mui-slider-item-duplicate">
 				    	<div class="my-slide-con fl"> 
 			    		  <img src="http://wallet-source.oss-cn-hangzhou.aliyuncs.com/uploads/other/2018-08-29/55895b8658437c887.jpg">
 			    		</div>
@@ -41,7 +41,7 @@
 			    			<a href="http://www.365creditbank.com/index/index?id=2387&card=jt" class="my-slide-btn">立即申请</a>
 			    		</div>
 				    </div>
-				   
+ -->				   
 				    <!--支持循环，需要重复图片节点第一张-->
 <!-- 				    <div class="mui-slider-item mui-slider-item-duplicate">
 				    	<div class="my-slide-con fl"> 
