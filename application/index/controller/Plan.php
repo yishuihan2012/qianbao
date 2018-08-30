@@ -60,10 +60,10 @@ class Plan extends Common{
                 ->join('member_creditcard c','c.card_bankno=g.generation_card')
                 ->where($where)
                 ->order("generation_id desc")
-                ->field('generation_id,member_nick,member_mobile,generation_no,generation_card,generation_total,generation_count,generation_has,generation_left,generation_pound,generation_start,generation_end,generation_state,generation_desc')
+                ->field('generation_id,order_platform_no,member_nick,member_mobile,generation_no,generation_card,generation_total,generation_count,generation_has,generation_left,generation_pound,generation_start,generation_end,generation_state,generation_desc')
                 ->select();
 
-            $head=['ID','还款会员','手机号码','计划代号','需还信用卡','需还款总额','还款次数','已还款总额','剩余总额','手续费','开始还款日期','最后还款日期','计划状态','还款失败原因'];
+            $head=['ID','订单号','还款会员','手机号码','计划代号','需还信用卡','需还款总额','还款次数','已还款总额','剩余总额','手续费','开始还款日期','最后还款日期','计划状态','还款失败原因'];
             export_csv($head,$generation_list,$fp);
             return;
         }
