@@ -374,6 +374,8 @@ class Plan extends Common{
           $where['o.back_statusDesc']=['like','%'.$r['back_statusDesc'].'%'];
         if(input('order_platform_no'))
           $where['o.order_platform_no']=$r['order_platform_no'];
+        if(input('order_card'))
+          $where['o.order_card']=$r['order_card'];
         if(input('order_money'))
           $where['o.order_money']=$r['order_money'];
         if(input('order_id'))
