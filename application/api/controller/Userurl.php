@@ -586,6 +586,7 @@ class Userurl extends Controller
                     return ['code' => 462, 'msg' => $member_net_result['retmsg']];
                 }
                 $res = MemberNet::where(['net_member_id' => $this->param['uid']])->setField($passageway['passageway_no'], $member_net_result['cusid']);
+                $cusquery = $tonglian->cusquery();
             }
 
             #2查看是否签约
