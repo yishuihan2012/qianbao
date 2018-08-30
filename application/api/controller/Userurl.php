@@ -45,7 +45,6 @@ use app\api\controller\Huilianjinchuang;
 use app\api\controller\Huiliandaihuan;
 use app\index\model\ServiceItemList;
 use app\index\model\MemberCreditPas;
-use app\index\model\Membernets;
 use think\Session;
 
 /**
@@ -578,7 +577,7 @@ class Userurl extends Controller
             if ($cusquery['retcode'] != 'SUCCESS') {
                 //进行入网
                 $method            = $passageway['passageway_method'];
-                $membernetObject   = new Membernets($this->param['uid'], $this->param['passageway']);
+                $membernetObject   = new con\Membernets($this->param['uid'], $this->param['passageway']);
                 $member_net_result = $membernetObject->$method();
                 if ($member_net_result['retcode'] != 'SUCCESS') {
                     return ['code' => 462, 'msg' => $member_net_result['retmsg']];
