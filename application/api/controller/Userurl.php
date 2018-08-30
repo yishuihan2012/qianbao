@@ -580,6 +580,9 @@ class Userurl extends Controller
                 $membernetObject   = new con\Membernets($this->param['uid'], $this->param['passageway']);
                 $member_net_result = $membernetObject->$method();
                 if ($member_net_result['retcode'] != 'SUCCESS') {
+                    $this->assign('data', $member_net_result['retmsg']);
+                    return view("Userurl/show_error");
+                    die;
                     return ['code' => 462, 'msg' => $member_net_result['retmsg']];
                 }
                 $res = MemberNet::where(['net_member_id' => $this->param['uid']])->setField($passageway['passageway_no'], $member_net_result['cusid']);
