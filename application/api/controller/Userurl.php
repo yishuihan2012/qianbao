@@ -1070,7 +1070,7 @@ class Userurl extends Controller
     }
 
     //根据开始时间结束时间随机每天刷卡时间---有问题
-    public function get_random_time($day, $count, $begin = '08', $end = '16')
+    public function get_random_time($day, $count, $begin = '09', $end = '16')
     {
         //如果日期为今天，刷卡时间大于当前小时
         $now_d = date('Y-m-d', time());
