@@ -45,6 +45,7 @@ use app\api\controller\Huilianjinchuang;
 use app\api\controller\Huiliandaihuan;
 use app\index\model\ServiceItemList;
 use app\index\model\MemberCreditPas;
+use app\index\model\Membernets;
 use think\Session;
 
 /**
