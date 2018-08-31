@@ -577,12 +577,16 @@ class Userurl extends Controller
             if ($cusquery['retcode'] != 'SUCCESS') {
                 //进行入网
                 $method            = $passageway['passageway_method'];
-                $membernetObject   = new Membernets($this->param['uid'], $this->param['passageway']);
+                $membernetObject   = new con\Membernets($this->param['uid'], $this->param['passageway']);
                 $member_net_result = $membernetObject->$method();
                 if ($member_net_result['retcode'] != 'SUCCESS') {
+                    $this->assign('data', $member_net_result['retmsg']);
+                    return view("Userurl/show_error");
+                    die;
                     return ['code' => 462, 'msg' => $member_net_result['retmsg']];
                 }
                 $res = MemberNet::where(['net_member_id' => $this->param['uid']])->setField($passageway['passageway_no'], $member_net_result['cusid']);
+                $cusquery = $tonglian->cusquery();
             }
 
             #2查看是否签约
@@ -1069,7 +1073,7 @@ class Userurl extends Controller
     }
 
     //根据开始时间结束时间随机每天刷卡时间---有问题
-    public function get_random_time($day, $count, $begin = '08', $end = '16')
+    public function get_random_time($day, $count, $begin = '09', $end = '16')
     {
         //如果日期为今天，刷卡时间大于当前小时
         $now_d = date('Y-m-d', time());
@@ -2045,6 +2049,7 @@ class Userurl extends Controller
         $info              = ServiceItemList::where($wheres)->order("list_id desc")->find();
         $this->assign("info", $info);
         $where['list_parent_id'] = input("parent_id");
+        $where['list_state'] = 1;
         $list                    = ServiceItemList::where($where)->order("list_id desc")->select();
         $this->assign("list", $list);
         return view("Userurl/credit_card");
