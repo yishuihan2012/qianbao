@@ -233,7 +233,7 @@
               'bindId'=>$creditcard['bindId'],  //平台签约ID  必填  签约短信下发  32
               'smsCode'=>$this->param['smsCode'],  //短信验证码 必填    10
             );
-            $url='http://pay.mishua.cn/zhonlinepay/service/rest/creditTrans/bindCardConfirm';
+            $url='http://pay.miduoduo.online/zhonlinepay/service/rest/creditTrans/bindCardConfirm';
             $income=repay_request($params,$passageway['passageway_mech'],$url,$passageway['iv'],$passageway['secretkey'],$passageway['signkey']);
             // print_r($income);die;
             if($income['code']=='200'){
@@ -282,7 +282,7 @@
               'bindId'=>$creditcard['bindId'],  //平台签约ID  必填  签约短信下发  32
               'smsCode'=>$this->param['smsCode'],  //短信验证码 必填    10
             );
-            $url='http://pay.mishua.cn/zhonlinepay/service/rest/creditTrans/bindCardConfirm';
+            $url='http://pay.miduoduo.online/zhonlinepay/service/rest/creditTrans/bindCardConfirm';
             $income=repay_request($params,$passageway['passageway_mech'],$url,$passageway['iv'],$passageway['secretkey'],$passageway['signkey']);
             // print_r($income);die;
             if($income['code']=='200'){
@@ -345,7 +345,7 @@
               // if($cert_card['bindStatus']=="01" && strlen($cert_card['bindId'])>20){
               //     $passageway=Passageway::where('passageway_status=1 and passageway_also=2')->find();
               //     $member_net=MemberNet::where('net_member_id='.$this->param['uid'])->find();
-              //     $url='http://pay.mishua.cn/zhonlinepay/service/rest/creditTrans/unbindCard';
+              //     $url='http://pay.miduoduo.online/zhonlinepay/service/rest/creditTrans/unbindCard';
               //     $params=array(
               //       'mchNo'=> $cert_card['mchno'],
               //       'userNo'=> $member_net[$passageway['passageway_no']],

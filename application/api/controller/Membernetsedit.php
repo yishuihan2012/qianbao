@@ -126,7 +126,7 @@
         'drawFeeAmt'=>$qf_fix,//单笔提现易手续费
       );
       // echo json_encode($params);die;
-      $url='http://pay.mishua.cn/zhonlinepay/service/rest/creditTrans/updateMerchant';
+      $url='http://pay.miduoduo.online/zhonlinepay/service/rest/creditTrans/updateMerchant';
       $income=repay_request($params, $this->passway->passageway_mech, $url, $this->passway->iv, $this->passway->secretkey, $this->passway->signkey);
       // var_dump($income);die;
       if($income['code']==200)

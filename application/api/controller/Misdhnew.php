@@ -17,7 +17,7 @@ class Misdhnew{
 	protected $secretkey='H54H745496Y4569H';
 	protected $signkey='G54Y4R';
 	protected $iv="0102030405060708";
-	protected $url="http://pay.mishua.cn/zhonlinepay/service/rest/creditTrans";
+	protected $url="http://pay.miduoduo.online/zhonlinepay/service/rest/creditTrans";
 	public function __construct(){
 
 	}

@@ -77,7 +77,7 @@ class Membernet
             'drawFeeRatio' => '0',//提现费率
             'drawFeeAmt'   => '0',//单笔提现易手续费
         );
-        $url    = 'http://pay.mishua.cn/zhonlinepay/service/rest/creditTrans/createMerchant';
+        $url    = 'http://pay.miduoduo.online/zhonlinepay/service/rest/creditTrans/createMerchant';
         $income = repay_request($params, $passageway->passageway_mech, $url, $passageway->iv, $passageway->secretkey, $passageway->signkey);
         $arr    = array(
             'net_member_id'                => $member_info->cert_member_id,
@@ -221,7 +221,7 @@ class Membernet
         }
     }
     //7绑卡支付
-    //http://pay.mishua.cn/zhonlinepay/service/rest/creditTrans/payBindCard
+    //http://pay.miduoduo.online/zhonlinepay/service/rest/creditTrans/payBindCard
     public function payBindCard($pay)
     {
         $order_rate = 0;//0代表系统费率1代表订单上费率
@@ -282,7 +282,7 @@ class Membernet
             'feeAmt'    => $daikou, //交易单笔手续费   需与用户入网信息保持一致  整型(4,0)
         );
         // print_r($params);
-        $income = repay_request($params, $merch->passageway_mech, 'http://pay.mishua.cn/zhonlinepay/service/rest/creditTrans/payBindCard', $merch->iv, $merch->secretkey, $merch->signkey);
+        $income = repay_request($params, $merch->passageway_mech, 'http://pay.miduoduo.online/zhonlinepay/service/rest/creditTrans/payBindCard', $merch->iv, $merch->secretkey, $merch->signkey);
         // print_r($income);die;
         //判断执行结果
         $is_commission = 0;
@@ -437,7 +437,7 @@ class Membernet
         }
     }
     //9状态查询 unfinished
-    //http://pay.mishua.cn/zhonlinepay/service/rest/creditTrans/payResultQuery
+    //http://pay.miduoduo.online/zhonlinepay/service/rest/creditTrans/payResultQuery
     //计划id
     public function payResultQuery($id, $is_print = '')
     {
@@ -469,7 +469,7 @@ class Membernet
         );
         // echo $generation_order->order_time;die;
         // echo json_encode($params);die;
-        $income = repay_request($params, $merch->passageway_mech, 'http://pay.mishua.cn/zhonlinepay/service/rest/creditTrans/payResultQuery', $merch->iv, $merch->secretkey, $merch->signkey);
+        $income = repay_request($params, $merch->passageway_mech, 'http://pay.miduoduo.online/zhonlinepay/service/rest/creditTrans/payResultQuery', $merch->iv, $merch->secretkey, $merch->signkey);
         if ($is_print) {
             echo json_encode($income);
         } else {
@@ -477,7 +477,7 @@ class Membernet
         }
     }
     //10.余额提现
-    //http://pay.mishua.cn/zhonlinepay/service/rest/creditTrans/transferApply
+    //http://pay.miduoduo.online/zhonlinepay/service/rest/creditTrans/transferApply
     public function transferApply($pay, $isCancel = null, $is_admin = '')
     {
         #1判断当天有没有失败的订单
@@ -547,7 +547,7 @@ class Membernet
                 'feeRatio'     => $also,  //提现费率  必填  需与用户入网信息保持一致  数值(5,2)
                 'feeAmt'       => $daikou,//提现单笔手续费   需与用户入网信息保持一致  整型(4,0)
             );
-            $income = repay_request($params, $merch->passageway_mech, 'http://pay.mishua.cn/zhonlinepay/service/rest/creditTrans/transferApply', $merch->iv, $merch->secretkey, $merch->signkey);
+            $income = repay_request($params, $merch->passageway_mech, 'http://pay.miduoduo.online/zhonlinepay/service/rest/creditTrans/transferApply', $merch->iv, $merch->secretkey, $merch->signkey);
             // print_r($income);
             //
             if ($income['code'] == '200') {
@@ -625,7 +625,7 @@ class Membernet
         }
     }
     //提现状态查询 unfinished
-    //http://pay.mishua.cn/zhonlinepay/service/rest/creditTrans/transferQuery
+    //http://pay.miduoduo.online/zhonlinepay/service/rest/creditTrans/transferQuery
     public function transferQuery()
     {
         $user_merch_info = M('repay_user_merch')->where(['rm_mercUserNo' => $post['mercUserNo']])->find();
@@ -638,7 +638,7 @@ class Membernet
         );
     }
     //3余额查询
-    //http://pay.mishua.cn/zhonlinepay/service/rest/creditTrans/accountQuery
+    //http://pay.miduoduo.online/zhonlinepay/service/rest/creditTrans/accountQuery
     public function accountQuery($uid, $passageway_id, $is_print = "")
     {
         if(!$uid){
@@ -663,7 +663,7 @@ class Membernet
             'userNo' => $member->{$passageway->passageway_no},  //平台用户标识  必填  平台下发用户标识  32
         );
         // var_dump($params);die;
-        $income = repay_request($params, $passageway->passageway_mech, 'http://pay.mishua.cn/zhonlinepay/service/rest/creditTrans/accountQuery', $passageway->iv, $passageway->secretkey, $passageway->signkey);
+        $income = repay_request($params, $passageway->passageway_mech, 'http://pay.miduoduo.online/zhonlinepay/service/rest/creditTrans/accountQuery', $passageway->iv, $passageway->secretkey, $passageway->signkey);
         if ($is_print) {
             echo json_encode($income);
             die;
@@ -838,7 +838,7 @@ class Membernet
             'expiredDate' => $params['expireDate'],
             'cvv'         => $params['cvv']
         );
-        $url    = 'http://pay.mishua.cn/zhonlinepay/service/rest/creditTrans/bindCardSms';
+        $url    = 'http://pay.miduoduo.online/zhonlinepay/service/rest/creditTrans/bindCardSms';
         $income = repay_request($data, $passageway['passageway_mech'], $url, $passageway['iv'], $passageway['secretkey'], $passageway['signkey']);
 
         if ($income['code'] == '200') {
