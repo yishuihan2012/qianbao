@@ -72,7 +72,7 @@
      * resp_message 交易成功
      */
     public function order_query($order){
-        $url='http://pay.mishua.cn/zhonlinepay/service/down/trans/checkDzero';
+        $url='http://pay.miduoduo.online/zhonlinepay/service/down/trans/checkDzero';
         $p=Passageway::get($order->order_passway)->toarray();
         $data=[
           'versionNo'=>1,

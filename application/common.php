@@ -1049,7 +1049,7 @@ function mishua($passageway, $rate, $member_info, $phone)
         'drawFeeAmt'   => $rate['item_qffix'],//单笔提现易手续费
     );
     // echo json_encode($params);die;
-    $url    = 'http://pay.mishua.cn/zhonlinepay/service/rest/creditTrans/createMerchant';
+    $url    = 'http://pay.miduoduo.online/zhonlinepay/service/rest/creditTrans/createMerchant';
     $income = repay_request($params, $passageway['passageway_mech'], $url, $passageway['iv'], $passageway['secretkey'], $passageway['signkey']);
     // var_dump($income);
     return $income;
@@ -1072,7 +1072,7 @@ function mishuaedit($passageway, $rate, $member_info, $phone, $userno)
         'drawFeeAmt'   => $rate['item_qffix'],//单笔提现易手续费
     );
     // var_dump($params);die;
-    $url    = 'http://pay.mishua.cn/zhonlinepay/service/rest/creditTrans/updateMerchant';
+    $url    = 'http://pay.miduoduo.online/zhonlinepay/service/rest/creditTrans/updateMerchant';
     $income = repay_request($params, $passageway['passageway_mech'], $url, $passageway['iv'], $passageway['secretkey'], $passageway['signkey']);
     // print_r($income);die;
     // echo $income['userNo'];die;
