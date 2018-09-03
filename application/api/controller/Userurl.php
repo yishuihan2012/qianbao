@@ -2430,12 +2430,13 @@ class Userurl extends Controller
     }
     public function tonglian_cash_qf(){
         $passway=Db::table('wt_passageway')->where(['passageway_true_name'=>'Tonglkj'])->find();
-        // var_dump($passway);die;
-        $order_update_time=date('Y-m-d H:i:s',time()-120);
-        $were['order_update_time']=array('lt',$order_update_time);
+        $time_start=date('Y-m-d H:i:s',time()-120);
+        $time_end=date('Y-m-d H:i:s',time()-240);
+        // $were['order_update_time']=array('lt',$order_update_time);
         $where['order_state']=-2;
         $where['order_passway']=$passway['passageway_id'];
-        $orders=Db::table('wt_cash_order')->where($where)->select();
+        $orders=Db::table('wt_cash_order')->where($where)
+        ->whereTime('order_update_time', 'between', [$time_start, $time_end])->select();
         if($orders){
             foreach ($orders as $k => $order) {
                 $res=$this->withdraw($order['order_member'],$order['order_thead_no'],$order['order_passway']);
