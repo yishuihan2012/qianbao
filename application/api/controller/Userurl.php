@@ -2325,7 +2325,7 @@ class Userurl extends Controller
         $memberNet_explode = explode(',', $memberNet_value);
         $tonglian          = new \app\api\payment\Tonglian($passagewayId, $memberId);
         $confirmcard       = $tonglian->bindcardconfirm($memberNet_explode[0], $cardId, $smscode, $thpinfo);
-        if ($confirmcard['trxstatus'] == 0000) {
+        if (isset($confirmcard['trxstatus']) &&$confirmcard['trxstatus'] == 0000) {
             $memberCreditPas = new MemberCreditPas(['member_credit_pas_creditid' => $cardId, 'member_credit_pas_pasid' => $passagewayId, 'member_credit_pas_status' => 1, 'member_credit_pas_info' => $confirmcard['agreeid']]);
             $memberCreditPas->save();
         }
