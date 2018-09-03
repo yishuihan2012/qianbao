@@ -436,13 +436,13 @@ class Tonglian
 
 
     //对账文件下载
-    public function download($cusid)
+    public function download($cusid,$date)
     {
         $url          = 'checkacct/download';
         $dataP        = $this->paramsPublic();
         $dataS        = array(
             'cusid'   => $cusid,//商户号
-            'trxdate' => date('Ymd', time()),//商户订单号
+            'trxdate' =>$date?$date:date('Ymd', time()),//商户订单号
         );
         $data         = array_merge($dataP, $dataS);
         $data['sign'] = $this->getSign($data);

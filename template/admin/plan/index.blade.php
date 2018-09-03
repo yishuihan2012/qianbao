@@ -74,13 +74,13 @@
 	      	<th>需还信用卡</th>
 	      	<th>需还款总额</th>
 	      	<th>还款次数</th>
-	      	<th>已还款总额</th>
-	      	<th>剩余总额</th>
+	      	<!-- <th>已还款总额</th> -->
+	      	<!-- <th>剩余总额</th> -->
 	      	<th>手续费</th>
 	      	<th>开始还款日期</th>
 	      	<th>最后还款日期</th>
           <th>计划状态</th>
-          <th>还款失败原因</th>
+          <!-- <th>还款失败原因</th> -->
 	      	<th>操作</th>
 	      
 	    </tr>
@@ -99,13 +99,13 @@
 	      	<td>{{$v['generation_card']}}</td>
 	      	<td>{{$v['generation_total']}}</td>
 	      	<td>{{$v['generation_count']}}</td>
-	      	<td>{{$v['generation_has']}}</td>
-	      	<td>{{$v['generation_left']}}</td>
+	      	<!-- <td>{{$v['generation_has']}}</td> -->
+	      	<!-- <td>{{$v['generation_left']}}</td> -->
 	      	<td>{{$v['generation_pound']}}</td>
 	      	<td>{{$v['generation_start']}}</td>
           <td>{{$v['generation_end']}}</td>
 	      	<td>@if($v['generation_state']==2) 还款中 @elseif($v['generation_state']==3)还款结束 @elseif($v['generation_state']==-1)还款失败 @else 取消 @endif</td>
-	      	<td>{{$v['generation_desc']}}</td>
+	      	<!-- <td>{{$v['generation_desc']}}</td> -->
 	      	<td><a class="btn btn-sm"  href="/index/Plan/detail?order_no={{$v['generation_id']}}" >查看订单</a></td>
 	    </tr>
 	    	@endforeach

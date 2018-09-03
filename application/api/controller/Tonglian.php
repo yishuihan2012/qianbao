@@ -349,5 +349,12 @@ class Tonglian
         curl_close($ch);
         return $result;
     }
-
-}
+     /**
+     *对账单下载
+     */
+    public function download(){
+        $tonglian=new \app\api\payment\Tonglian(39,42);
+        $res=$tonglian->download(101000624364,date('Ymd',strtotime('-3day')));
+        var_dump($res);die;
+    }
+} 
