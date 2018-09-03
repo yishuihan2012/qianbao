@@ -2419,11 +2419,18 @@ class Userurl extends Controller
         $memberNet_explode = explode(',', $memberNet_value);
         $tonglian          = new \app\api\payment\Tonglian($passagewayId, $memberId);
         $confirmpay        = $tonglian->confirmpay($memberNet_explode[0], $trxid, $agreeId, $smscode, $thpinfo);
-        return $confirmpay;
+        if($confirmpay['retcode'] == 'SUCCESS') {
+            sleep(2);
+            $res=$this->withdraw($memberId,$trxid,$passagewayId);
+            $res['method']='withdraw';
+             return $res;
+        }else{
+            return $confirmpay;
+        }
     }
 
     //快捷交易提现
-    public function withdraw()
+    public function withdraw($memberId='',$trxid='',$passagewayId='',$isprint=0)
     {
         $params       = input('');
         $memberId     = $params['memberId'];
@@ -2437,6 +2444,9 @@ class Userurl extends Controller
         $memberNet_explode = explode(',', $memberNet_value);
         $tonglian          = new \app\api\payment\Tonglian($passagewayId, $memberId);
         $withdraw          = $tonglian->withdraw($memberNet_explode[0], $trxid);
+        if($isprint){
+            echo json_encode($withdraw);die;
+        }
         return $withdraw;
     }
 
