@@ -602,7 +602,7 @@ class Cashoutcallback
 
         $order->order_thead_no = $params['trxid'];
         if ($params['trxstatus'] == '0000') {//成功
-            $order->order_state = 2;
+            $order->order_state =-2;
             $returnData         = 'success';
         } else {
             $returnData = 'FAIL';
