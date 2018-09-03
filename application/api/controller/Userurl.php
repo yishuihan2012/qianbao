@@ -2421,6 +2421,7 @@ class Userurl extends Controller
         $confirmpay        = $tonglian->confirmpay($memberNet_explode[0], $trxid, $agreeId, $smscode, $thpinfo);
         if($confirmpay['retcode'] == 'SUCCESS') {
             $res=$this->withdraw($memberId,$trxid,$passagewayId);
+            $res['method']='withdraw';
              return $res;
         }else{
             return $confirmpay;
@@ -2428,7 +2429,7 @@ class Userurl extends Controller
     }
 
     //快捷交易提现
-    public function withdraw($memberId='',$trxid='',$passagewayId='')
+    public function withdraw($memberId='',$trxid='',$passagewayId='',$isprint=0)
     {
         $params       = input('');
         $memberId     = $params['memberId'];
@@ -2442,6 +2443,9 @@ class Userurl extends Controller
         $memberNet_explode = explode(',', $memberNet_value);
         $tonglian          = new \app\api\payment\Tonglian($passagewayId, $memberId);
         $withdraw          = $tonglian->withdraw($memberNet_explode[0], $trxid);
+        if($isprint){
+            echo json_encode($withdraw);die;
+        }
         return $withdraw;
     }
 
