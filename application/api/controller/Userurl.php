@@ -2433,7 +2433,7 @@ class Userurl extends Controller
         // var_dump($passway);die;
         $order_update_time=date('Y-m-d H:i:s',time()-120);
         $were['order_update_time']=array('lt',$order_update_time);
-        $where['order_state']=2;
+        $where['order_state']=-2;
         $where['order_passway']=$passway['passageway_id'];
         $orders=Db::table('wt_cash_order')->where($where)->select();
         if($orders){
@@ -2446,10 +2446,10 @@ class Userurl extends Controller
     //快捷交易提现
     public function withdraw($memberId='',$trxid='',$passagewayId='',$isprint=0)
     {
-        $params       = input('');
-        $memberId     = $params['memberId'];
-        $trxid        = $params['trxid'];
-        $passagewayId = $params['passagewayId'];
+        // $params       = input('');
+        // $memberId     = $params['memberId'];
+        // $trxid        = $params['trxid'];
+        // $passagewayId = $params['passagewayId'];
         //获取入网信息
         $memberNet = MemberNet::where(['net_member_id' => $memberId])->find();
         //获取通道信息
