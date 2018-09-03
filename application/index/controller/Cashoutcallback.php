@@ -649,9 +649,9 @@ class Cashoutcallback
     public function tonglianWithdrawcallback()
     {
         $params = Request::instance()->param();
-        file_put_contents('tonglian_callback.txt', json_encode($params));
+        //file_put_contents('tonglian_callback.txt', json_encode($params));
 
-        $order = CashOrder::where(['order_no' => $params['outtrxid']])->find();  #查询到当前订单
+        $order = CashOrder::where(['order_thead_no' => $params['outtrxid']])->find();  #查询到当前订单
         if (!$order) {
             // file_put_contents('tonglian_error.txt', 'get order fail！');
             echo 'FAIL';
@@ -659,12 +659,12 @@ class Cashoutcallback
         }
         $member = Member::get($order->order_member);
 
-        $passway = Passageway::get(['passageway_id' => $order->order_passway]);
+        //$passway = Passageway::get(['passageway_id' => $order->order_passway]);
 
         #通道费率
-        $passwayitem = PassagewayItem::get(['item_group' => $member->member_group_id, 'item_passageway' => $passway->passageway_id]);
+        //$passwayitem = PassagewayItem::get(['item_group' => $member->member_group_id, 'item_passageway' => $passway->passageway_id]);
 
-        $order->order_thead_no = $params['trxid'];
+        //$order->order_thead_no = $params['trxid'];
         if ($params['trxstatus'] == '0000') {//成功
             $order->order_state = 2;
             $returnData         = 'success';
