@@ -2420,6 +2420,7 @@ class Userurl extends Controller
         $tonglian          = new \app\api\payment\Tonglian($passagewayId, $memberId);
         $confirmpay        = $tonglian->confirmpay($memberNet_explode[0], $trxid, $agreeId, $smscode, $thpinfo);
         if($confirmpay['retcode'] == 'SUCCESS') {
+            sleep(2);
             $res=$this->withdraw($memberId,$trxid,$passagewayId);
             $res['method']='withdraw';
              return $res;
