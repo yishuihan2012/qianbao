@@ -3,6 +3,7 @@
 namespace app\api\controller;
 
 use think\Db;
+use  think\Cache;
 use think\Config;
 use think\Loader;
 use think\Request;
@@ -2420,15 +2421,28 @@ class Userurl extends Controller
         $tonglian          = new \app\api\payment\Tonglian($passagewayId, $memberId);
         $confirmpay        = $tonglian->confirmpay($memberNet_explode[0], $trxid, $agreeId, $smscode, $thpinfo);
         if($confirmpay['retcode'] == 'SUCCESS') {
-            sleep(2);
+            // cache::put('122',$);
             $res=$this->withdraw($memberId,$trxid,$passagewayId);
-            $res['method']='withdraw';
              return $res;
         }else{
             return $confirmpay;
         }
     }
+    public function tonglian_cash_qf(){
+        $passway=Db::table('wt_passageway')->where(['passageway_true_name'=>'Tonglkj'])->find();
+        // var_dump($passway);die;
+        $order_update_time=date('Y-m-d H:i:s',time()-120);
+        $were['order_update_time']=array('lt',$order_update_time);
+        $where['order_state']=2;
+        $where['order_passway']=$passway['passageway_id'];
+        $orders=Db::table('wt_cash_order')->where($where)->select();
+        if($orders){
+            foreach ($orders as $k => $order) {
+                $res=$this->withdraw($order['order_member'],$order['order_thead_no'],$order['order_passway']);
+            }
+        }
 
+    }
     //快捷交易提现
     public function withdraw($memberId='',$trxid='',$passagewayId='',$isprint=0)
     {
