@@ -8,6 +8,7 @@ use think\Config;
 use think\Loader;
 use think\Request;
 use think\Controller;
+use app\index\model;
 use app\index\model\CustomerService;
 use app\api\controller as con;
 use app\index\model\Share;
@@ -720,6 +721,17 @@ class Userurl extends Controller
                     $this->assign('data', isset($back['msg'])?$back['msg']:'签约失败');
                     return view("Userurl/show_error");
                 }
+            }
+            //添加鉴权记录
+            $card = MemberCreditcard::get($this->param['cardId']);
+            $authlog = model\PassagewayBind::get(['bind_passway_id'=>$param['passageway'],'bind_card'=>$card->card_bankno]);
+            if(!$authlog){
+                model\PassagewayBind::create([
+                    'bind_passway_id'=>$param['passageway'],
+                    'bind_member_id'=>$param['uid'],
+                    'bind_card'=>$card->card_bankno,
+                    'bind_money'=>$passageway->passageway_bind_money
+                ]);
             }
         }else {
             // 判断是否入网
