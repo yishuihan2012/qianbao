@@ -64,7 +64,6 @@ class Misdhnew{
 		);
 		$url    = $this->url.'/updateMerchant';
 	    $income = repay_request($params, $this->mech, $url, $this->iv, $this->secretkey, $this->signkey);
-	    var_dump($income);die;
 	    return $income;	
 	}
 	/**
