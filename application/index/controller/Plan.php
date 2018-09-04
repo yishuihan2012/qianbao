@@ -144,6 +144,15 @@ class Plan extends Common{
                     $res = '查询失败';
                 }
                 
+            }elseif($passway['passageway_true_name']=='newMisdh'){
+                $class = new \app\api\controller\Misdhnew();
+                $res = $class->accountQuery($uid,$passway['passageway_id']);
+                if(isset($res['availableAmt']) && isset($res['usedAmt']) && isset($res['refundAmt'])){
+                    $res = ($res['availableAmt']-$res['usedAmt']+$res['refundAmt'])/100;
+                }else{
+                    $res = '查询失败';
+                }
+                
             }
             return $res;
         }
@@ -187,7 +196,7 @@ class Plan extends Common{
         });
         $passway = db('Passageway')
             ->where('passageway_also',2)
-            ->where('passageway_true_name','in','Misdh,Yipayld')
+            ->where('passageway_true_name','in','Misdh,Yipayld,newMisdh')
             ->select();
         // halt($list);
         $this->assign('passway',$passway);

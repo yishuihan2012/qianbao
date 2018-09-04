@@ -64,7 +64,6 @@ class Misdhnew{
 		);
 		$url    = $this->url.'/updateMerchant';
 	    $income = repay_request($params, $this->mech, $url, $this->iv, $this->secretkey, $this->signkey);
-	    var_dump($income);die;
 	    return $income;	
 	}
 	/**
@@ -441,7 +440,6 @@ class Misdhnew{
         if(!isset($member->{$passageway->passageway_no}) || !$member->{$passageway->passageway_no}){
             return false;
         }
-        // print_r($member);die;
         $orderTime = date('YmdHis', time() + 60);
         $params    = array(
             'mchNo'  => $passageway->passageway_mech, //机构号 必填  由平台统一分配 16
