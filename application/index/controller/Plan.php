@@ -305,7 +305,7 @@ class Plan extends Common{
         $order_data=cache($_SERVER['HTTP_HOST'].'order_data_cache'.md5(json_encode($where)));
         if(!$order_data){
             $order_data=$order_lists->field('o.order_id,o.order_type,o.order_money,o.order_pound,o.order_status,o.order_passageway_fee,o.order_platform_fee')->select();
-            cache($_SERVER['HTTP_HOST'].'order_data_cache'.md5(json_encode($where)),$order_data,300);
+            cache($_SERVER['HTTP_HOST'].'order_data_cache'.md5(json_encode($where)),$order_data,30);
         }
         #分页数据
         $order_lists=$list
