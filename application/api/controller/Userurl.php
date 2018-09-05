@@ -2443,15 +2443,24 @@ class Userurl extends Controller
     public function tonglian_cash_qf(){
         $passway=Db::table('wt_passageway')->where(['passageway_true_name'=>'Tonglkj'])->find();
         $time_start=date('Y-m-d H:i:s',time()-120);
-        $time_end=date('Y-m-d H:i:s',time()-240);
-        // $were['order_update_time']=array('lt',$order_update_time);
+        $time_end=date('Y-m-d H:i:s',time()-11240);
         $where['order_state']=-2;
         $where['order_passway']=$passway['passageway_id'];
-        $orders=Db::table('wt_cash_order')->where($where)
-        ->whereTime('order_update_time', 'between', [$time_start, $time_end])->select();
+        $where['order_add_time']=array('lt',date('Y-m-d H:i:s',time()-180));
+        $orders=Db::table('wt_cash_order')
+        ->where($where)->select();
+        // print_r($orders);die;
         if($orders){
             foreach ($orders as $k => $order) {
-                $res=$this->withdraw($order['order_member'],$order['order_thead_no'],$order['order_passway']);
+                if($order['order_thead_no'] && $order['order_state']==-2){
+                    $res=$this->withdraw($order['order_member'],$order['order_thead_no'],$order['order_passway']);
+                    print_r($res);die;
+                    if($res['trxstatus']=='0000'){
+                       Db::table('wt_cash_order')->where(['order_id'=>$order['order_id']])->update(['order_state'=>2]);
+                    }
+                }else{
+                     Db::table('wt_cash_order')->where(['order_id'=>$order['order_id']])->update(['order_state'=>-1]);
+                }
             }
         }
 
