@@ -2454,7 +2454,6 @@ class Userurl extends Controller
             foreach ($orders as $k => $order) {
                 if($order['order_thead_no'] && $order['order_state']==-2){
                     $res=$this->withdraw($order['order_member'],$order['order_thead_no'],$order['order_passway']);
-                    print_r($res);die;
                     if($res['trxstatus']=='0000'){
                        Db::table('wt_cash_order')->where(['order_id'=>$order['order_id']])->update(['order_state'=>2]);
                     }

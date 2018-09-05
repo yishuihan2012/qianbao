@@ -649,7 +649,7 @@ class Cashoutcallback
     public function tonglianWithdrawcallback()
     {
         $params = Request::instance()->param();
-        file_put_contents('tonglian_callback.txt', json_encode($params));
+        //file_put_contents('tonglian_callback.txt', json_encode($params));
 
         $order = CashOrder::where(['order_thead_no' => $params['outtrxid']])->find();  #查询到当前订单
         if (!$order) {
