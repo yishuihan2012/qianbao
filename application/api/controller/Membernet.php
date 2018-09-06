@@ -137,7 +137,12 @@ class Membernet
                                 GenerationOrder::where(['order_id' => $value['order_id']])->update($arr);
                                 return json_encode(['code' => 101, 'msg' => '当天有失败的订单无法进行还款，请先处理失败的订单。']);
                             }
+                            $GenerationOrder = GenerationOrder::where(['order_no' => $value['order_no'], 'order_status' => 1])->find();
+                            if (!$GenerationOrder) {
+                                Generation::update(['generation_id' => $pay['order_no'], 'generation_state' => 3]);
+                            }
                             $res = $action->qfpay($value, $passageway_mech);
+
                         }
                     }
                 }
@@ -172,12 +177,14 @@ class Membernet
 
     public function action_single_plan($id, $is_admin = null)
     {
-        $value = GenerationOrder::where(['order_id' => $id])->find();
-        if ($value['order_retry_count'] > 3) {
-            return json_encode(['code' => 102, 'msg' => '最多有三次重试机会。']);
-        } else {
-            GenerationOrder::where(['order_id' => $id])->update(['order_retry_count' => $value['order_retry_count'] + 1,'order_status'=>5]);
-        }
+        $value = Db::table('wt_generation_order')->where(['order_id' => $id])->find();
+        unset($value['order_id']);
+        $value['order_platform_no'] = get_plantform_pinyin().generate_password(16);
+        $insert = new GenerationOrder($value);
+        $insert->save();
+        // var_dump($insert);die;
+        $value['order_id']= $insert->order_id;
+        GenerationOrder::where(['order_id' => $id])->update(['order_status'=>5]);
         try {
             // print_r($value);die;
             $passageway      = Passageway::where(['passageway_id' => $value['order_passageway']])->find();
@@ -209,6 +216,10 @@ class Membernet
                             $arr['order_status']    = '-1';
                             GenerationOrder::where(['order_id' => $value['order_id']])->update($arr);
                             return json_encode(['code' => 101, 'msg' => '当天有失败的订单无法进行还款，请先处理失败的订单。']);
+                        }
+                        $GenerationOrder = GenerationOrder::where(['order_no' => $value['order_no'], 'order_status' => 1])->find();
+                        if (!$GenerationOrder) {
+                            Generation::update(['generation_id' => $pay['order_no'], 'generation_state' => 3]);
                         }
                     }
                     $res = $action->qfpay($value, $passageway_mech);

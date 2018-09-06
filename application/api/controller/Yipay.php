@@ -205,10 +205,10 @@
         // }
         $member_base=Member::where(['member_id'=>$order['order_member']])->find(); 
 
-        if(!$order['order_platform_no'] || $order['order_status']!=1){
-            $update_order['order_platform_no']=$order['order_platform_no']=get_plantform_pinyin().$member_base->member_mobile.make_rand_code();
-            $update_res=GenerationOrder::where(['order_id'=>$order['order_id']])->update($update_order);
-        }
+        // if(!$order['order_platform_no'] || $order['order_status']!=1){
+        //     $update_order['order_platform_no']=$order['order_platform_no']=get_plantform_pinyin().$member_base->member_mobile.make_rand_code();
+        //     $update_res=GenerationOrder::where(['order_id'=>$order['order_id']])->update($update_order);
+        // }
 
         $data=array(
             'linkId'  =>$order['order_platform_no'],//订单流水号  M  String 三方平台唯一                                                                  
@@ -360,10 +360,10 @@
         
         $member_base=Member::where(['member_id'=>$order['order_member']])->find();
         // $rate=PassagewayItem::where(['item_passageway'=>$order['order_passageway'],'item_group'=>$member_info['member_group_id']])->find();
-        if(!$order['order_platform_no'] || $order['order_status']!=1){
-            $update_order['order_platform_no']=$order['order_platform_no']=get_plantform_pinyin().$member_base->member_mobile.make_rand_code();
-            $update_res=GenerationOrder::where(['order_id'=>$order['order_id']])->update($update_order);
-        }
+        // if(!$order['order_platform_no'] || $order['order_status']!=1){
+        //     $update_order['order_platform_no']=$order['order_platform_no']=get_plantform_pinyin().$member_base->member_mobile.make_rand_code();
+        //     $update_res=GenerationOrder::where(['order_id'=>$order['order_id']])->update($update_order);
+        // }
 
         $data=array(
             'linkId'=>$order['order_platform_no'],// 三方订单流水号                                                                                                      

@@ -176,10 +176,10 @@ class Misdhnew{
         }
 
         $orderTime = date('YmdHis', time() + 60);
-        if (!$pay['order_platform_no'] || $pay['order_status'] != 1) {
-            $update_order['order_platform_no'] = $pay['order_platform_no'] = get_plantform_pinyin() . $member_base->member_mobile . make_rand_code();
-            $update_res = GenerationOrder::where(['order_id' => $pay['order_id']])->update($update_order);
-        }
+        // if (!$pay['order_platform_no'] || $pay['order_status'] != 1) {
+        //     $update_order['order_platform_no'] = $pay['order_platform_no'] = get_plantform_pinyin() . $member_base->member_mobile . make_rand_code();
+        //     $update_res = GenerationOrder::where(['order_id' => $pay['order_id']])->update($update_order);
+        // }
         $MemberCreditPas = MemberCreditPas::where(['member_credit_pas_creditid' => $card_info['card_id'], 'member_credit_pas_pasid' => $pay['order_passageway']])->find();
         $params = array(
             'mchNo'        => $this->mech, //机构号 必填  由平台统一分配 16
@@ -311,10 +311,10 @@ class Misdhnew{
         }
 
         $orderTime = date('YmdHis', time() + 60);
-        if (!$pay['order_platform_no'] || $pay['order_status'] != 1) {
-            $update_order['order_platform_no'] = $pay['order_platform_no'] = get_plantform_pinyin() . $member_base->member_mobile . make_rand_code();
-            $update_res                        = GenerationOrder::where(['order_id' => $pay['order_id']])->update($update_order);
-        }
+        // if (!$pay['order_platform_no'] || $pay['order_status'] != 1) {
+        //     $update_order['order_platform_no'] = $pay['order_platform_no'] = get_plantform_pinyin() . $member_base->member_mobile . make_rand_code();
+        //     $update_res                        = GenerationOrder::where(['order_id' => $pay['order_id']])->update($update_order);
+        // }
         $MemberCreditPas = MemberCreditPas::where(['member_credit_pas_creditid' => $card_info['card_id'], 'member_credit_pas_pasid' => $pay['order_passageway']])->find();
         $params = array(
             'mchNo'        => $this->mech, //机构号 必填  由平台统一分配 16
