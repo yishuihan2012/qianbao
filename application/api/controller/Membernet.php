@@ -139,7 +139,7 @@ class Membernet
                             }
                             $GenerationOrder = GenerationOrder::where(['order_no' => $value['order_no'], 'order_status' => 1])->find();
                             if (!$GenerationOrder) {
-                                Generation::update(['generation_id' => $pay['order_no'], 'generation_state' => 3]);
+                                Generation::update(['generation_id' => $value['order_no'], 'generation_state' => 3]);
                             }
                             $res = $action->qfpay($value, $passageway_mech);
 
@@ -219,7 +219,7 @@ class Membernet
                         }
                         $GenerationOrder = GenerationOrder::where(['order_no' => $value['order_no'], 'order_status' => 1])->find();
                         if (!$GenerationOrder) {
-                            Generation::update(['generation_id' => $pay['order_no'], 'generation_state' => 3]);
+                            Generation::update(['generation_id' => $value['order_no'], 'generation_state' => 3]);
                         }
                     }
                     $res = $action->qfpay($value, $passageway_mech);
