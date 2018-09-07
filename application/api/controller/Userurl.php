@@ -574,7 +574,7 @@ class Userurl extends Controller
             #1查看是否入网
             $tonglian = new \app\api\payment\Tonglian($this->param['passageway'], $this->param['uid']);
             $cusquery = $tonglian->cusquery();
-//            var_dump($cusquery);exit;
+           // var_dump($cusquery);exit;
             //未入网
             if ($cusquery['retcode'] != 'SUCCESS') {
                 //进行入网

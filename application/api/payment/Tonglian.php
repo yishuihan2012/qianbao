@@ -73,7 +73,7 @@ class Tonglian
     public function addcus()
     {
         $memberAlso   = PassagewayItem::where(['item_group' => $this->configMember->member_group_id, 'item_passageway' => $this->configPassway->passageway_id])->find();
-        $rate    = $memberAlso->item_rate ? $memberAlso->item_rate : $memberAlso->item_also;
+        $rate    = $memberAlso->item_rate>0 ? $memberAlso->item_rate : $memberAlso->item_also;
         $ratefee = $memberAlso->item_charges ? $memberAlso->item_charges : $memberAlso->item_qffix;
         $url          = 'org/addcus';
         $dataP        = $this->paramsPublic();
