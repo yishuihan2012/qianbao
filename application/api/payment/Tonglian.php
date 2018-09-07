@@ -372,7 +372,7 @@ class Tonglian
         $dataP        = $this->paramsPublic();
         $dataS        = array(
             'cusid'      => $cusid,//商户号
-            'orderid'    => $orderid,//商户订单号
+            'orderid'    => $orderid."_".generate_password(8),//商户订单号
             'isall'      => 1,//交易日期
             'trxreserve' => '订单' . $orderid . '的提现申请',//订单内容 订单的展示标题
             'notifyurl'  => System::getName('system_url') . '/index/Cashoutcallback/tonglianWithdrawcallback'

@@ -90,13 +90,13 @@ class Tonglian
         $income['msg']             = $income['msg'] = 'FAIL';
         $update['back_statusDesc'] = isset($result['errmsg']) ? $result['errmsg'] : $result['trxstatus'];
         $is_commission             = 0;
-        if ($result['trxstatus'] == '0000') {
+        if (isset($result['trxstatus']) && $result['trxstatus'] == '0000') {
             $update['back_tradeNo'] = $result['orderid'];
             $income['code']         = 200;
             $income['back_status']  = $income['msg'] = 'success';
             $update['order_status'] = '2';
             $is_commission          = 1;
-        } else if ($result['trxstatus'] == '2000') {//处理中
+        } else if ( isset($result['trxstatus']) && $result['trxstatus'] == '2000') {//处理中
             $update['order_status'] = '4';
         } else {//失败
             $update['order_status'] = '-1';
@@ -141,13 +141,13 @@ class Tonglian
         $income['msg']             = $income['msg'] = 'FAIL';
         $update['back_statusDesc'] = isset($result['errmsg']) ? $result['errmsg'] : $result['trxstatus'];
         $is_commission             = 0;
-        if ($result['trxstatus'] == '0000') {
+        if (isset($result['trxstatus']) && $result['trxstatus'] == '0000') {
             $update['back_tradeNo'] = $result['orderid'];
             $income['code']         = 200;
             $income['back_status']  = $income['msg'] = 'success';
             $update['order_status'] = '2';
             $is_commission          = 1;
-        } else if ($result['trxstatus'] == '2000') {//处理中
+        } else if ($result['trxstatus'] && $result['trxstatus'] == '2000') {//处理中
             $update['order_status'] = '4';
         } else {//失败
             $update['order_status'] = '-1';
