@@ -88,7 +88,7 @@ class Tonglian
         file_put_contents('tonglian_pay.txt', json_encode($result));
         $income['code']            = -1;
         $income['msg']             = $income['msg'] = 'FAIL';
-        $update['back_statusDesc'] = isset($result['errmsg']) ? $result['errmsg'] : $result['trxstatus'];
+        $update['back_statusDesc'] = isset($result['errmsg']) ? $result['errmsg'] : $result['retmsg'];
         $is_commission             = 0;
         if (isset($result['trxstatus']) && $result['trxstatus'] == '0000') {
             $update['back_tradeNo'] = $result['orderid'];
@@ -139,7 +139,7 @@ class Tonglian
         file_put_contents('tonglian_qfpay.txt', json_encode($result));
         $income['code']            = -1;
         $income['msg']             = $income['msg'] = 'FAIL';
-        $update['back_statusDesc'] = isset($result['errmsg']) ? $result['errmsg'] : $result['trxstatus'];
+        $update['back_statusDesc'] = isset($result['errmsg']) ? $result['errmsg'] : $result['retmsg'];
         $is_commission             = 0;
         if (isset($result['trxstatus']) && $result['trxstatus'] == '0000') {
             $update['back_tradeNo'] = $result['orderid'];
