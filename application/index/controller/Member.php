@@ -371,16 +371,16 @@ namespace app\index\controller;
 				 			#查询出启用的通道
 				 			$passageway=Passageway::where(['passageway_state'=>1,'passageway_status'=>1])->select();
 				 			#遍历通道修改用户在同道入网信息
-				 			foreach ($passageway as $key => $value) {
-				 				$members=Members::haswhere('membernet',$value['passageway_no']." != ''")->where(['member_id'=>$info['member_id']])->find();
+				 			// foreach ($passageway as $key => $value) {
+				 			// 	$members=Members::haswhere('membernet',$value['passageway_no']." != ''")->where(['member_id'=>$info['member_id']])->find();
 				 				
-				 				if(empty($members)){
-				 					continue;
-				 				}
-				 				 $Membernetsedit=new \app\api\controller\Membernetsedit($info['member_id'],$value['passageway_id'],'M03','',$info['member_mobile']);
-				 				 $method=$value['passageway_method'];
-				 				 $success=$Membernetsedit->$method();
-				 			}
+				 			// 	if(empty($members)){
+				 			// 		continue;
+				 			// 	}
+				 			// 	 $Membernetsedit=new \app\api\controller\Membernetsedit($info['member_id'],$value['passageway_id'],'M03','',$info['member_mobile']);
+				 			// 	 $method=$value['passageway_method'];
+				 			// 	 $success=$Membernetsedit->$method();
+				 			// }
 				 			
 				 			//添加用户日志
 				 			$Upgrade =  new Upgrade($upgrade_data);
