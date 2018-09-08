@@ -117,12 +117,12 @@ class Membernet
                     $controller      = "app\api\controller\\" . $action;
                     //修改状态为已经执行
                     GenerationOrder::where(['order_id'=>$v['order_id']])->update(['order_status'=>5]);
-                    $new_controller = new $controller();//实例化类
                     if ($value['order_type'] == 1) { //消费
                         if (!$action || $action == 'Membernet') {
                            $this->payBindCard($value);
                         } else {//提现
-                             $res = $new_controller->pay($value, $passageway_mech);
+                            $new_controller = new $controller();//实例化类
+                            $res = $new_controller->pay($value, $passageway_mech);
                         }
                     } else if ($value['order_type'] == 2) {//提现
                         $today       = date('Y-m-d', strtotime($value['order_time']));
@@ -141,6 +141,7 @@ class Membernet
                         if (!$action || $action == 'Membernet') {
                             $this->transferApply($value);
                         } else {//提现
+                            $new_controller = new $controller();//实例化类
                             $res = $new_controller->qfpay($value, $passageway_mech);
                         }
 
@@ -191,11 +192,11 @@ class Membernet
             $passageway_mech = $passageway['passageway_mech'];
             $action          = $passageway->Cashout->cashout_action;
             $controller      = "app\api\controller\\" . $action;
-            $new_controller = new $controller();//实例化类
             if ($value['order_type'] == 1) { //消费
                 if (!$action || $action == 'Membernet') {
                     $res = $this->payBindCard($value);
                 }else{
+                    $new_controller = new $controller();//实例化类
                     $res = $new_controller->pay($value, $passageway_mech);
                 }
             } else if ($value['order_type'] == 2) {//提现
@@ -218,6 +219,7 @@ class Membernet
                 if (!$action || $action == 'Membernet') {
                     $this->transferApply($value);
                 }else{
+                    $new_controller = new $controller();//实例化类
                     $res = $new_controller->qfpay($value, $passageway_mech);
                 }
             }
