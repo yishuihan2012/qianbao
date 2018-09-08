@@ -116,34 +116,34 @@ class Membernet
                     $action          = $passageway->Cashout->cashout_action;
                     $controller      = "app\api\controller\\" . $action;
                     //修改状态为已经执行
-                     GenerationOrder::where(['order_id'=>$v['order_id']])->update(['order_status'=>5]);
-                    if (!$action || $action == 'Membernet') {
-                        if ($value['order_type'] == 1) { //消费
-                            $this->payBindCard($value);
-                        } else if ($value['order_type'] == 2) {//提现
+                    GenerationOrder::where(['order_id'=>$v['order_id']])->update(['order_status'=>5]);
+                    $new_controller = new $controller();//实例化类
+                    if ($value['order_type'] == 1) { //消费
+                        if (!$action || $action == 'Membernet') {
+                           $this->payBindCard($value);
+                        } else {//提现
+                             $res = $new_controller->pay($value, $passageway_mech);
+                        }
+                    } else if ($value['order_type'] == 2) {//提现
+                        $today       = date('Y-m-d', strtotime($value['order_time']));
+                        $fail_order  = GenerationOrder::where(['order_no' => $value['order_no'], 'order_type' => 1])->where('order_status', 'neq', '2')->where('order_time', 'like', $today . '%')->find();
+                        if ($fail_order) {//如果当天有失败订单
+                            $arr['back_status']     = 'FAIL';
+                            $arr['back_statusDesc'] = '当天有失败的订单无法进行还款，请先处理失败的订单。';
+                            $arr['order_status']    = '-1';
+                            GenerationOrder::where(['order_id' => $value['order_id']])->update($arr);
+                            return json_encode(['code' => 101, 'msg' => '当天有失败的订单无法进行还款，请先处理失败的订单。']);
+                        }
+                        $GenerationOrder = GenerationOrder::where(['order_no' => $value['order_no']])->order('order_id desc')->find();
+                        if ($GenerationOrder['order_no']==$value['order_no']) {
+                            Generation::update(['generation_id' => $value['order_no'], 'generation_state' => 3]);
+                        }
+                        if (!$action || $action == 'Membernet') {
                             $this->transferApply($value);
+                        } else {//提现
+                            $res = $new_controller->qfpay($value, $passageway_mech);
                         }
-                    } else {
-                        $action = new $controller();//实例化类
-                        if ($value['order_type'] == 1) { //消费
-                            $res = $action->pay($value, $passageway_mech);
-                        } else if ($value['order_type'] == 2) {//提现
-                            $today       = date('Y-m-d', strtotime($value['order_time']));
-                            $fail_order  = GenerationOrder::where(['order_no' => $value['order_no'], 'order_type' => 1])->where('order_status', 'neq', '2')->where('order_time', 'like', $today . '%')->find();
-                            if ($fail_order) {//如果当天有失败订单
-                                $arr['back_status']     = 'FAIL';
-                                $arr['back_statusDesc'] = '当天有失败的订单无法进行还款，请先处理失败的订单。';
-                                $arr['order_status']    = '-1';
-                                GenerationOrder::where(['order_id' => $value['order_id']])->update($arr);
-                                return json_encode(['code' => 101, 'msg' => '当天有失败的订单无法进行还款，请先处理失败的订单。']);
-                            }
-                            $GenerationOrder = GenerationOrder::where(['order_no' => $value['order_no'], 'order_status' => 1])->find();
-                            if (!$GenerationOrder) {
-                                Generation::update(['generation_id' => $value['order_no'], 'generation_state' => 3]);
-                            }
-                            $res = $action->qfpay($value, $passageway_mech);
 
-                        }
                     }
                 }
             }
@@ -191,41 +191,37 @@ class Membernet
             $passageway_mech = $passageway['passageway_mech'];
             $action          = $passageway->Cashout->cashout_action;
             $controller      = "app\api\controller\\" . $action;
-            if (!$action || $action == 'Membernet') {
-                if ($value['order_type'] == 1) { //消费
+            $new_controller = new $controller();//实例化类
+            if ($value['order_type'] == 1) { //消费
+                if (!$action || $action == 'Membernet') {
                     $res = $this->payBindCard($value);
-                } else if ($value['order_type'] == 2) {//提现
-                    if (!empty($is_admin)) {
-                        $res = $this->transferApply($value, null, 1);
-                    } else {
-                        $res = $this->transferApply($value);
+                }else{
+                    $res = $new_controller->pay($value, $passageway_mech);
+                }
+            } else if ($value['order_type'] == 2) {//提现
+                $GenerationOrder = GenerationOrder::where(['order_no' => $value['order_no']])->order('order_id desc')->find();
+                if ($GenerationOrder['order_no']==$value['order_no']) {
+                    Generation::update(['generation_id' => $value['order_no'], 'generation_state' => 3]);
+                }
+                if(!$is_admin){
+                    $today       = date('Y-m-d', strtotime($value['order_time']));
+                    $fail_order  = GenerationOrder::where(['order_no' => $value['order_no'], 'order_type' => 1])->where('order_status', 'neq', '2')->where('order_time', 'like', $today . '%')->find();
+                    if ($fail_order) {//如果当天有失败订单
+                        $arr['back_status']     = 'FAIL';
+                        $arr['back_statusDesc'] = '当天有失败的订单无法进行还款，请先处理失败的订单。';
+                        $arr['order_status']    = '-1';
+                        GenerationOrder::where(['order_id' => $value['order_id']])->update($arr);
+                        return json_encode(['code' => 101, 'msg' => '当天有失败的订单无法进行还款，请先处理失败的订单。']);
                     }
                 }
-            } else {
-                $action = new $controller();//实例化类
-                if ($value['order_type'] == 1) { //消费
-                    $res = $action->pay($value, $passageway_mech);
-                    // var_dump($res);die;
-                } else if ($value['order_type'] == 2) {//提现
-                    if(!$is_admin){
-                        $today       = date('Y-m-d', strtotime($value['order_time']));
-                        $fail_order  = GenerationOrder::where(['order_no' => $value['order_no'], 'order_type' => 1])->where('order_status', 'neq', '2')->where('order_time', 'like', $today . '%')->find();
-                        if ($fail_order && !$is_admin) {//如果当天有失败订单
-                            $arr['back_status']     = 'FAIL';
-                            $arr['back_statusDesc'] = '当天有失败的订单无法进行还款，请先处理失败的订单。';
-                            $arr['order_status']    = '-1';
-                            GenerationOrder::where(['order_id' => $value['order_id']])->update($arr);
-                            return json_encode(['code' => 101, 'msg' => '当天有失败的订单无法进行还款，请先处理失败的订单。']);
-                        }
-                        $GenerationOrder = GenerationOrder::where(['order_no' => $value['order_no'], 'order_status' => 1])->find();
-                        if (!$GenerationOrder) {
-                            Generation::update(['generation_id' => $value['order_no'], 'generation_state' => 3]);
-                        }
-                    }
-                    $res = $action->qfpay($value, $passageway_mech);
-                    // var_dump($res);die;
+
+                if (!$action || $action == 'Membernet') {
+                    $this->transferApply($value);
+                }else{
+                    $res = $new_controller->qfpay($value, $passageway_mech);
                 }
             }
+
             return json_encode(['code' => 200, 'msg' => '执行成功。']);
         } catch (Exception $e) {
             return json_encode(['code' => 101, 'msg' => '执行失败。']);
