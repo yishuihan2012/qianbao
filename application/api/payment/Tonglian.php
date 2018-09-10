@@ -30,15 +30,15 @@ class Tonglian
             'tonglianUrl' => 'https://ipay.allinpay.com/apiweb/', //正式
         );
         $this->configPassway = Passageway::find($passwayId);
-        if (!$this->configPassway)
-            return ['code' => -404, 'msg' => '找不到此通道~'];
+        // if (!$this->configPassway)
+            // return ['code' => -404, 'msg' => '找不到此通道~'];
         $this->configMember = Member::find($memberId);
-        if (!$this->configMember)
-            return ['code' => -404, 'msg' => '找不到会员信息~'];
+        // if (!$this->configMember)
+        //     return ['code' => -404, 'msg' => '找不到会员信息~'];
         #获取用户结算卡信息
         $this->membercard = MemberCashcard::get(['card_member_id' => $memberId]);
-        if (!$this->membercard)
-            return ['code' => -404, 'msg' => '找不到会员结算卡~'];
+        // if (!$this->membercard)
+        //     return ['code' => -404, 'msg' => '找不到会员结算卡~'];
         #测试环境
 //        $this->orgid  = '200000000001';//平台分配的机构号
 //        $this->appid  = '0000001';//平台分配的机构APPID
