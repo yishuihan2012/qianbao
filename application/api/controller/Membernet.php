@@ -134,8 +134,8 @@ class Membernet
                             GenerationOrder::where(['order_id' => $value['order_id']])->update($arr);
                             return json_encode(['code' => 101, 'msg' => '当天有失败的订单无法进行还款，请先处理失败的订单。']);
                         }
-                        $GenerationOrder = GenerationOrder::where(['order_no' => $value['order_no']])->order('order_id desc')->find();
-                        if ($GenerationOrder['order_no']==$value['order_no']) {
+                        $GenerationOrder = GenerationOrder::where(['order_no' => $value['order_no'],'order_status'=>1])->find();
+                        if (!$GenerationOrder) {
                             Generation::update(['generation_id' => $value['order_no'], 'generation_state' => 3]);
                         }
                         if (!$action || $action == 'Membernet') {
@@ -200,8 +200,8 @@ class Membernet
                     $res = $new_controller->pay($value, $passageway_mech);
                 }
             } else if ($value['order_type'] == 2) {//提现
-                $GenerationOrder = GenerationOrder::where(['order_no' => $value['order_no']])->order('order_id desc')->find();
-                if ($GenerationOrder['order_no']==$value['order_no']) {
+                $GenerationOrder = GenerationOrder::where(['order_no' => $value['order_no'],'order_status'=>1])->find();
+                if (!$GenerationOrder) {
                     Generation::update(['generation_id' => $value['order_no'], 'generation_state' => 3]);
                 }
                 if(!$is_admin){
