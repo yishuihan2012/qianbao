@@ -83,7 +83,11 @@
                     console.log(res.trxid);
                     $("#trxid").val(trxid);
                     $("#thpinfo").val(thpinfo);
-                    mui.toast(res.retmsg);
+                    if(res.trxstatus==1999){
+                        mui.toast('发送验证码成功。');
+                    }else{
+                        mui.toast(res.errmsg);
+                    } 
                 })
             } else {
                 console.log($('#trxid').val());
@@ -142,7 +146,7 @@
                     'smscode': smsCode,
                 };
                 $.post(url, data, function (res) {
-                    if (res.retcode == 'SUCCESS') {
+                    if (res.trxstatus == '0000') {
                         mui.toast("交易成功");
                         setTimeout(function () {
                             if (!isAndroid) {
@@ -152,7 +156,7 @@
                             }
                         }, 2000);
                     } else {
-                        mui.toast("交易失败：" + res.retmsg);
+                        mui.toast("交易失败：" + res.errmsg);
                     }
                 })
             } else {

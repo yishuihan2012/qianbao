@@ -172,6 +172,9 @@ class Userurl extends Controller
                 $bg_url = ROOT_PATH . 'public' . $bg_url;
                 // $bg=ROOT_PATH.'public\static\images\exclusice_code_bg.png';
                 //合成专属二维码
+                if (!file_exists($bg_url)) {
+                    echo "生成失败";die;
+                }
                 $bg        = imagecreatefromstring(file_get_contents($bg_url));
                 $QR_width  = imagesx($QR);//二维码图片宽度
                 $QR_height = imagesy($QR);//二维码图片高度
@@ -2399,6 +2402,9 @@ class Userurl extends Controller
     public function paysms()
     {
         $params       = input('');
+        if(!isset($params['trxid'])){
+            return ['retmsg'=>"参数错误，请尝试重新交易"];die;
+        }
         $memberId     = $params['memberId'];
         $trxid        = $params['trxid'];
         $agreeId      = $params['agreeId'];
@@ -2433,7 +2439,7 @@ class Userurl extends Controller
         $memberNet_explode = explode(',', $memberNet_value);
         $tonglian          = new \app\api\payment\Tonglian($passagewayId, $memberId);
         $confirmpay        = $tonglian->confirmpay($memberNet_explode[0], $trxid, $agreeId, $smscode, $thpinfo);
-        if($confirmpay['retcode'] == 'SUCCESS') {
+        if($confirmpay['trxstatus'] == '0000') {
             // cache::put('122',$);
             $res=$this->withdraw($memberId,$trxid,$passagewayId);
              return $res;

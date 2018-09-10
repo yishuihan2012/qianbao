@@ -199,7 +199,31 @@ class Tonglian
             die;
         }
     }
+    /**
+     * 订单状态查询
+     */
+    public function order_status($order_id,$is_print=0){
+        return false;
+        $res['respCode']=-1;
+        $order_detail=GenerationOrder::where(['order_id'=>$order_id])->find();
 
+        // $res['respCode']='10001';
+
+        if($res['code']=="0000"){
+            if( $res['orderStatus']=='0000'){
+                 $res['respCode']='10000';
+            }else if($res['orderStatus']=='0100'){
+
+            }else{
+                $res['respCode']='10001';
+            }
+        }
+        $res['respMessage']=$res['orderMemo']?$res['orderMemo']:$res['msg'];
+        if($is_print){
+            echo json_encode($res);die;
+        }
+        return $res;
+    }
 //付款回调
     public function card_pay_notifyUrl()
     {
