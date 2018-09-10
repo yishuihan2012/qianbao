@@ -2439,7 +2439,7 @@ class Userurl extends Controller
         $memberNet_explode = explode(',', $memberNet_value);
         $tonglian          = new \app\api\payment\Tonglian($passagewayId, $memberId);
         $confirmpay        = $tonglian->confirmpay($memberNet_explode[0], $trxid, $agreeId, $smscode, $thpinfo);
-        if($confirmpay['trxstatus'] == '0000') {
+        if(isset($confirmpay['trxstatus']) && $confirmpay['trxstatus'] == '0000') {
             // cache::put('122',$);
             $res=$this->withdraw($memberId,$trxid,$passagewayId);
              return $res;

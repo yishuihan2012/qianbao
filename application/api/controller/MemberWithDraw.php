@@ -79,23 +79,35 @@
            #判断用户可提现余额是否足够提现的金额和手续费总额
            if($memberwallet['wallet_amount']<$this->param['money'])
                  return ['code'=>357];
-           $charge=0; //默认手续费为0
-           $total=0;//总扣款默认值
-           $prac=0;//实际扣款
-           #判断用户是否需要交纳提现费
-           if($this->param['money']>System::getName('min_poundage'))
-                 $charge=$this->param['money']*System::getName('poundage')/100;
-           #查看余额是否够支付手续费
-           $yue=$memberwallet['wallet_amount']-$this->param['money'];
-           if($yue>=$charge)
-           {
-                 $total=$this->param['money']+$charge;
-                 $prac=$this->param['money'];
-           }else{
-                 $total=$memberwallet['wallet_amount'];
-                 $prac=$memberwallet['wallet_amount']-$charge;
-           }
-           $meyyue=$memberwallet['wallet_amount']-$total;
+
+          // ****************************************************
+           // $charge=0; //默认手续费为0
+           // $total=0;//总扣款默认值
+           // $prac=0;//实际扣款
+           // #判断用户是否需要交纳提现费
+           // if($this->param['money']>System::getName('min_poundage'))
+           //       $charge=$this->param['money']*System::getName('poundage')/100;
+           // #查看余额是否够支付手续费
+           // $yue=$memberwallet['wallet_amount']-$this->param['money'];
+           // if($yue>=$charge)
+           // {
+           //       $total=$this->param['money']+$charge;
+           //       $prac=$this->param['money'];
+           // }else{
+           //       $total=$memberwallet['wallet_amount'];
+           //       $prac=$memberwallet['wallet_amount']-$charge;
+           // }
+           // $meyyue=$memberwallet['wallet_amount']-$total;
+
+          // ***************************************************************
+          $charge=ceil($this->param['money']*System::getName('poundage'))/100;
+          $total=$this->param['money'];
+          $prac=$total-$charge;
+          $meyyue=$memberwallet['wallet_amount']-$total;
+          if($prac<0){
+             return ['code'=>'-1','msg'=>"提现金额小于手续费，不能提现"];
+          }
+           // ****************************************************
            #是否需要审核？
            $need=$this->param['money']>System::getName('examine') ? '0' : '1';
            Db::startTrans();
