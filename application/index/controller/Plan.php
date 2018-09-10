@@ -13,6 +13,7 @@ use app\index\model\Cashout;
 use app\index\model\CreditCard;
 use app\index\model\Generation;
 use app\index\model\GenerationOrder;
+use app\index\model;
 use think\Controller;
 use think\Request;
 use think\Session;
@@ -152,6 +153,21 @@ class Plan extends Common{
                 }else{
                     $res = '查询失败';
                 }
+            }elseif($passway['passageway_true_name']=='Tongldh'){
+                $class = new \app\api\payment\Tonglian(1,1);
+                $pas_no = Passageways::get(['passageway_true_name'=>'Tongldh']);
+                $net = model\MemberNet::get(['net_member_id'=>$uid]);
+                if(isset($net->{$pas_no->passageway_no}) && $net->{$pas_no->passageway_no}){
+                    $nets = explode(',', $net->{$pas_no->passageway_no});
+                    $res = $class->balance($nets[0]);
+                    if(isset($res['balance'])){
+                        $res = $res['balance']/100;
+                    }else{
+                        $res = '查询失败'.$res['retmsg'];
+                    }
+                }else{
+                    $res = '未入网';
+                }
                 
             }
             return $res;
@@ -196,7 +212,7 @@ class Plan extends Common{
         });
         $passway = db('Passageway')
             ->where('passageway_also',2)
-            ->where('passageway_true_name','in','Misdh,Yipayld,newMisdh')
+            ->where('passageway_true_name','in','Misdh,Yipayld,newMisdh,Tongldh')
             ->select();
         // halt($list);
         $this->assign('passway',$passway);
