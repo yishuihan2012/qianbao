@@ -61,7 +61,12 @@
            }
            //判断是否已经制定过计划
           $card_info=MemberCreditcard::where('card_id='.$this->param['cardId'])->find();
-          $plan=Generation::where(['generation_card'=>$card_info->card_bankno,'generation_state'=>2])->find();
+          
+          $plan=db('generation')->alias('g')
+              ->join('generation_order o','g.generation_id=o.order_no')
+              ->where(['o.order_card'=>$card_info->card_bankno,'o.order_status'=>1,'g.generation_state'=>2])
+              ->find();
+
           if($plan){
                  return['code'=>479];//此卡已经在还款计划内，请先删除原计划再重新制定计划。
            }
