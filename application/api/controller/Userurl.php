@@ -694,7 +694,7 @@ class Userurl extends Controller
             if (!$member_net[$passageway->passageway_no]) { //没有入网
                 //入网
                 $income=$membernet->income($param['passageway'],$param['uid']);
-                var_dump($income);die;
+                // var_dump($income);die;
                 if($income['code']==200){
                      $arr= array(
                         "{$passageway['passageway_no']}" => $income['userNo'],
