@@ -155,8 +155,8 @@ class Misdhnew{
         } else {
             $member_group_id = Member::where(['member_id' => $pay['order_member']])->value('member_group_id');
             $rate            = PassagewayItem::where(['item_passageway' => $pay['order_passageway'], 'item_group' => $member_group_id])->find();
-            $also            = ($rate->item_qfalso) * 10;
-            $daikou          = ($rate->item_qffix);
+            $also            = ($rate->item_also) * 10;
+            $daikou          = ($rate->item_charges);
         }
         #2获取通道信息
         $merch = Passageway::where(['passageway_id' => $pay['order_passageway']])->find();
@@ -168,8 +168,8 @@ class Misdhnew{
         $member = MemberNets::where(['net_member_id' => $pay['order_member']])->find();
         #6获取渠道提供的费率，如果不一致，重新报备费率
         $passway_info = $this->accountQuery($pay['order_member'], $pay['order_passageway']);
-        if (isset($passway_info['drawFeeRatio']) && isset($passway_info['drawFeeAmt'])) {
-            if ($passway_info['drawFeeRatio'] != $also || $passway_info['drawFeeAmt'] != $daikou) {//不一致重新报备,修改商户信息
+        if (isset($passway_info['feeRatio']) && isset($passway_info['feeAmt'])) {
+            if ($passway_info['feeRatio'] != $also || $passway_info['feeAmt'] != $daikou) {//不一致重新报备,修改商户信息
                 $Membernetsedits =$this->mech_update($member->{$merch['passageway_no']},$card_info['card_name'],$card_info['card_idcard'],$member_base['member_mobile'],$also,$daikou);
             }
         }
@@ -441,7 +441,7 @@ class Misdhnew{
         }
         $orderTime = date('YmdHis', time() + 60);
         $params    = array(
-            'mchNo'  => $passageway->passageway_mech, //机构号 必填  由平台统一分配 16
+            'mchNo'  => $this->mech, //机构号 必填  由平台统一分配 16
             'userNo' => $member->{$passageway->passageway_no},  //平台用户标识  必填  平台下发用户标识  32
         );
         // var_dump($params);die;
