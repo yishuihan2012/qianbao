@@ -78,7 +78,6 @@ class Misdhnew{
 		// echo json_encode($params);die;
 		$url    = $this->url.'/listBindCards';
 	    $result = repay_request($params, $this->mech, $url, $this->iv, $this->secretkey, $this->signkey);
-	    // var_dump($result);die;
 	    if($result['code']==200 && isset($result['cards'])){
 	    	foreach ($result['cards'] as $key => $card) {
 	    		if($card['cardNo']==$card_bankno && $card['bindStatus']=='01'){

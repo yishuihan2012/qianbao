@@ -989,14 +989,14 @@ function repay_request($params, $mechid, $url, $iv, $secretkey, $signkey, $type 
     // echo json_encode($request);die;
     $res     = curl_post($url, 'post', json_encode($request));
     $result  = json_decode($res, true);
+    // var_dump($result);die;
     if ($result['code'] == 0 && isset($result['payload'])) {
         // echo json_encode($result);die;
         $datas         = AESdecrypt($result['payload'], $secretkey, $iv);
         $datas         = trim($datas);
-        $datas         = substr($datas, 0, strpos($datas, '}') + 1);
+        $datas         = substr($datas, 0, strripos($datas, '}') + 1);
         $resul         = json_decode($datas, true);
         $resul['code'] = 200;
-        // var_dump($resul);die;
         return $resul;
     } else {
         return $result;
