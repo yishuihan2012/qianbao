@@ -179,7 +179,7 @@ class Membernet
     public function action_single_plan($id, $is_admin = null)
     {
         $value = Db::table('wt_generation_order')->where(['order_id' => $id])->find();
-        if($value['order_status']!=1){
+        if($value['order_status']==2){
             unset($value['order_id']);
             $value['order_platform_no'] = get_plantform_pinyin().generate_password(16);
             $insert = new GenerationOrder($value);
