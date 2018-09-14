@@ -181,14 +181,12 @@ class Membernet
         $value = Db::table('wt_generation_order')->where(['order_id' => $id])->find();
         if($value['order_status']==2){
             unset($value['order_id']);
-            $value['order_platform_no'] = get_plantform_pinyin().generate_password(16);
             $insert = new GenerationOrder($value);
             $insert->save();
             // var_dump($insert);die;
             $value['order_id']= $insert->order_id;
-        }else{
-            $value['order_platform_no'] = get_plantform_pinyin().generate_password(16);
         }
+        $value['order_platform_no'] = get_plantform_pinyin().generate_password(16);
         GenerationOrder::where(['order_id' => $id])->update(['order_status'=>5]);
         try {
             // print_r($value);die;
