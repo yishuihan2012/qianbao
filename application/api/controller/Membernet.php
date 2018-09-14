@@ -186,6 +186,8 @@ class Membernet
             $insert->save();
             // var_dump($insert);die;
             $value['order_id']= $insert->order_id;
+        }else{
+            $value['order_platform_no'] = get_plantform_pinyin().generate_password(16);
         }
         GenerationOrder::where(['order_id' => $id])->update(['order_status'=>5]);
         try {
