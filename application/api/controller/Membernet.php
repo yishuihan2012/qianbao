@@ -187,7 +187,7 @@ class Membernet
             $value['order_id']= $insert->order_id;
         }
         $value['order_platform_no'] = get_plantform_pinyin().generate_password(16);
-        GenerationOrder::where(['order_id' => $id])->update(['order_status'=>5]);
+        GenerationOrder::where(['order_id' => $id])->update(['order_status'=>5,'order_platform_no'=>$value['order_platform_no'] ]);
         try {
             // print_r($value);die;
             $passageway      = Passageway::where(['passageway_id' => $value['order_passageway']])->find();
