@@ -180,6 +180,11 @@ class Misdhnew{
         //     $update_res = GenerationOrder::where(['order_id' => $pay['order_id']])->update($update_order);
         // }
         $MemberCreditPas = MemberCreditPas::where(['member_credit_pas_creditid' => $card_info['card_id'], 'member_credit_pas_pasid' => $pay['order_passageway']])->find();
+        if(!$MemberCreditPas){
+             $res=$membernet->sign_search($userNo,$MemberCreditcard['card_bankno']);
+             $MemberCreditPas->member_credit_pas_info=$res;
+             MemberCreditPas::create(['member_credit_pas_creditid'=>$card_info['card_id'],'member_credit_pas_pasid'=>$pay['order_passageway'],'member_credit_pas_info'=>$res]);
+        }
         $params = array(
             'mchNo'        => $this->mech, //机构号 必填  由平台统一分配 16
             'userNo'       => $member->{$merch['passageway_no']},  //平台用户标识  必填  平台下发用户标识  32
