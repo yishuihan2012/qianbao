@@ -181,7 +181,7 @@ class Misdhnew{
         // }
         $MemberCreditPas = MemberCreditPas::where(['member_credit_pas_creditid' => $card_info['card_id'], 'member_credit_pas_pasid' => $pay['order_passageway']])->find();
         if(!$MemberCreditPas){
-             $res=$membernet->sign_search($userNo,$MemberCreditcard['card_bankno']);
+             $res=$this->sign_search($member->{$merch['passageway_no']},$pay['order_card']);
              $MemberCreditPas->member_credit_pas_info=$res;
              MemberCreditPas::create(['member_credit_pas_creditid'=>$card_info['card_id'],'member_credit_pas_pasid'=>$pay['order_passageway'],'member_credit_pas_info'=>$res]);
         }
