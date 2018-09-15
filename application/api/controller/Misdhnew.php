@@ -81,7 +81,7 @@ class Misdhnew{
 	    if($result['code']==200 && isset($result['cards'])){
 	    	foreach ($result['cards'] as $key => $card) {
 	    		if($card['cardNo']==$card_bankno && $card['bindStatus']=='01'){
-	    			$res=1;
+	    			$res=$card['bindId'];
 	    		}
 	    	}
 	    }else{

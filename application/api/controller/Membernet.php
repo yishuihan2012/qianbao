@@ -875,7 +875,7 @@ class Membernet
         foreach ($list as $key => $order) {
             $generation = Generation::where(['generation_id' => $order['order_no']])->find();
             //如果计划是执行中的
-            if ($generation['generation_state'] == 2) {
+            // if ($generation['generation_state'] == 2) {
                 //判断哪个通道
                 $passageway      = Passageway::where(['passageway_id' => $order['order_passageway']])->find();
                 $passageway_mech = $passageway['passageway_mech'];
@@ -911,7 +911,7 @@ class Membernet
                     $arr['back_statusDesc'] = isset($res['respMessage']) ? $res['respMessage'] : $res['message'];
                     $update                 = GenerationOrder::where(['order_id' => $order['order_id']])->update($arr);
                 }
-            }
+            // }
         }
 
     }

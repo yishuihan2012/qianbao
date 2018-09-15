@@ -316,7 +316,7 @@
                 $res['respCode']='10001';
             }
         }
-        $res['respMessage']=$res['orderMemo']?$res['orderMemo']:$res['msg'];
+        $res['respMessage']=isset($res['orderMemo'])?$res['orderMemo']:"查询状态失败：".$res['msg'];
         if($is_print){
             echo json_encode($res);die;
         }

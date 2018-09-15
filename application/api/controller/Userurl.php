@@ -719,12 +719,21 @@ class Userurl extends Controller
                         $wt_member_credit_pas=MemberCreditPas::where(['member_credit_pas_creditid'=>$param['cardId'],'member_credit_pas_pasid'=>$param['passageway']])->find();
                         if(!$wt_member_credit_pas){
                             $res=MemberCreditPas::create(['member_credit_pas_creditid'=>$param['cardId'],'member_credit_pas_pasid'=>$param['passageway'],'member_credit_pas_info'=>$back['bindId']]);
+                        }else{
+                             $res=MemberCreditPas::where(['member_credit_pas_creditid'=>$param['cardId'],'member_credit_pas_pasid'=>$param['passageway']])->update(['member_credit_pas_info'=>$res]);
                         }
                     }
                 }else{
                     $this->assign('data', isset($back['msg'])?$back['msg']:'签约失败');
                     return view("Userurl/show_error");
                 }
+            }else{
+                $wt_member_credit_pas=MemberCreditPas::where(['member_credit_pas_creditid'=>$param['cardId'],'member_credit_pas_pasid'=>$param['passageway']])->find();
+                if(!$wt_member_credit_pas){
+                    $res=MemberCreditPas::create(['member_credit_pas_creditid'=>$param['cardId'],'member_credit_pas_pasid'=>$param['passageway'],'member_credit_pas_info'=>$res]);
+                }else{
+                    $res=MemberCreditPas::where(['member_credit_pas_creditid'=>$param['cardId'],'member_credit_pas_pasid'=>$param['passageway']])->update(['member_credit_pas_info'=>$res]);
+                }   
             }
             //添加鉴权记录
             $card = MemberCreditcard::get($this->param['cardId']);
