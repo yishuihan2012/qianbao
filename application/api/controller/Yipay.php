@@ -419,7 +419,7 @@
         }
         $pay=GenerationOrder::get(['order_platform_no'=>$params['linkId']]);
         if(!$pay){
-            think\Log::init(['type' => 'File', 'path' => '../runtime/api_log/']);
+            \think\Log::init(['type' => 'File', 'path' => '../runtime/api_log/']);
             \think\Log::write(json_encode($params), '接口回调日志--未查询到订单--参数：');
             echo "success";die;
         }
