@@ -148,13 +148,14 @@ class Misdhnew{
 	public function pay($pay,$mech=''){
         // 兼容老的数据没有费率的情况，新的订单都直接取订单里的费率
         $order_rate = 0;//0代表系统费率1代表订单上费率
+        $member_group_id = Member::where(['member_id' => $pay['order_member']])->value('member_group_id');
+        $rate= PassagewayItem::where(['item_passageway' => $pay['order_passageway'], 'item_group' => $member_group_id])->find();
         if ($pay['user_rate'] > 0 || $pay['user_fix'] > 0) { //如果设置了费率
             $order_rate = 1;
             $also       = $pay['user_rate'] * 10;
             $daikou     = $pay['user_fix'] * 100;
         } else {
-            $member_group_id = Member::where(['member_id' => $pay['order_member']])->value('member_group_id');
-            $rate            = PassagewayItem::where(['item_passageway' => $pay['order_passageway'], 'item_group' => $member_group_id])->find();
+           
             $also            = ($rate->item_also) * 10;
             $daikou          = ($rate->item_charges);
         }
@@ -170,7 +171,7 @@ class Misdhnew{
         $passway_info = $this->accountQuery($pay['order_member'], $pay['order_passageway']);
         if (isset($passway_info['feeRatio']) && isset($passway_info['feeAmt'])) {
             if ($passway_info['feeRatio'] != $also || $passway_info['feeAmt'] != $daikou) {//不一致重新报备,修改商户信息
-                $Membernetsedits =$this->mech_update($member->{$merch['passageway_no']},$card_info['card_name'],$card_info['card_idcard'],$member_base['member_mobile'],$also,$daikou);
+                $Membernetsedits =$this->mech_update($member->{$merch['passageway_no']},$card_info['card_name'],$card_info['card_idcard'],$member_base['member_mobile'],$also,$rate->item_qffix);
             }
         }
 
@@ -293,13 +294,13 @@ class Misdhnew{
 
         // 兼容老的数据没有费率的情况，新的订单都直接取订单里的费率
         $order_rate = 0;//0代表系统费率1代表订单上费率
+        $member_group_id = Member::where(['member_id' => $pay['order_member']])->value('member_group_id');
+        $rate= PassagewayItem::where(['item_passageway' => $pay['order_passageway'], 'item_group' => $member_group_id])->find();
         if ($pay['user_rate'] > 0 || $pay['user_fix'] > 0) { //如果设置了费率
             $order_rate = 1;
             $also       = $pay['user_rate'] * 10;
             $daikou     = $pay['user_fix'] * 100;
         } else {
-            $member_group_id = Member::where(['member_id' => $pay['order_member']])->value('member_group_id');
-            $rate            = PassagewayItem::where(['item_passageway' => $pay['order_passageway'], 'item_group' => $member_group_id])->find();
             $also            = ($rate->item_qfalso) * 10;
             $daikou          = ($rate->item_qffix);
         }
@@ -313,7 +314,7 @@ class Misdhnew{
         $passway_info = $this->accountQuery($pay['order_member'], $pay['order_passageway']);
         if (isset($passway_info['drawFeeRatio']) && isset($passway_info['drawFeeAmt'])) {
             if ($passway_info['drawFeeRatio'] != $also || $passway_info['drawFeeAmt'] != $daikou) {//不一致重新报备,修改商户信息
-                $Membernetsedits =$this->mech_update($member->{$merch['passageway_no']},$card_info['card_name'],$card_info['card_idcard'],$member_base['member_mobile'],$also,$daikou);
+                $Membernetsedits =$this->mech_update($member->{$merch['passageway_no']},$card_info['card_name'],$card_info['card_idcard'],$member_base['member_mobile'],$rate->item_also,$rate->item_qffix);
             }
         }
 
