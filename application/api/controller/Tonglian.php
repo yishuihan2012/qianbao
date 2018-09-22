@@ -381,4 +381,25 @@ class Tonglian
         $res=$tonglian->download(101000624364,date('Ymd',strtotime('-3day')));
         var_dump($res);die;
     }
+    /** 
+     * 获取账户余额
+     */
+    public function get_remain($member_id='',$mobile=''){
+        if(!$member_id){
+            $member_id=Db::table('wt_member')->where(['member_mobile'=>$mobile])->value('member_id');
+        }
+        $passageway=Db::table('wt_passageway')->where(['passageway_true_name'=>'Tonglkj'])->find();
+
+        $memberNet         = MemberNets::where(['net_member_id' => $member_id])->find();
+        $memberNet_value   = $memberNet[$passageway['passageway_no']];
+        if($memberNet_value){
+            $memberNet_explode = explode(',', $memberNet_value);
+            $tonglian=new \app\api\payment\Tonglian($passageway['passageway_id'], $member_id);
+            $res=$tonglian->balance($memberNet_explode[0]);
+            var_dump($res);die;
+        }else{
+            echo "该用户尚未入网";
+        }
+        
+    }
 } 
